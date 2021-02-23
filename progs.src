@@ -1,0 +1,63 @@
+../progs.dat
+
+defs.qc
+subs.qc
+fight.qc
+ai.qc
+combat.qc
+items.qc
+weapons.qc
+world.qc
+client.qc
+player.qc
+monsters.qc
+doors.qc
+buttons.qc
+triggers.qc
+plats.qc
+misc.qc
+
+ogre.qc
+demon.qc
+shambler.qc
+knight.qc
+soldier.qc
+wizard.qc
+dog.qc
+zombie.qc
+boss.qc
+
+tarbaby.qc		// registered
+hknight.qc		// registered
+fish.qc			// registered
+shalrath.qc		// registered
+enforcer.qc		// registered
+enforce2.qc		// zerstorer
+lieutenant.qc		// forwards compatible
+oldone.qc		// registered
+
+rubicon2.qc		// johnfitz
+dread.qc		// johnfitz
+floyd.qc		// johnfitz
+centurion.qc		// johnfitz
+turret.qc		// johnfitz
+
+hiprot.qc		// hipnotic
+
+rrp_defs.qc		// ijed (RRP)
+rrp_weapons.qc 		// ijed (RRP)
+schism.qc		// ijed (RRP)
+hunter.qc		// ijed (RRP)
+ogreb.qc		// ijed (RRP)
+
+hip_defs.qc		// hipnotic
+hip_expl.qc		// hipnotic
+hip_items.qc		// hipnotic
+hip_weapons.qc		// hipnotic
+hip_ai.qc		// hipnotic
+hiparma.qc		// hipnotic
+hipscrge.qc		// hipnotic
+
+drone1.qc		// OUM
+axegrunt.qc		// Lunaran
+eel.qc			// Rogue

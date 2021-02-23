@@ -1,0 +1,27 @@
+March 3, 2011
+=========================================================================
+Title                   : Rubicon 2 QuakeC source
+Filename                : rubicon2_quakec_src.zip
+Author                  : John Fitzgibbons
+Email Address           : johnfitz@u.washington.edu
+Homepage                : http://www.celephais.net/
+
+This is the QuakeC source for the Quake mod/episode, Rubicon 2. To compile 
+this code, I used the latest version of FrikQCC.  I'm not sure but I think
+the only special feature I used was the "nosave" keyword, which is needed 
+to restore some looping sounds correctly after loading a savegame.
+
+=========================================================================
+
+* Copyrights / Permissions *
+
+Rubicon 2 code copyright 2011 John Fitzgibbons.
+Rotating entity code copyright 1997 Hipnotic Interactive.
+Original Quake code copyright 1996 id Software.
+
+You are allowed to make Quake mods with this. No commercial use is allowed.
+
+This archive may not be distributed commercially, may not be distributed
+in modified or incomplete form, and may not be distributed in any way that
+misrepresents its authorship. Aside from those restrictions, you may 
+distribute it freely.
