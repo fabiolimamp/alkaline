@@ -29,17 +29,23 @@
 	sounds(integer) : "CD track to play" : 1
 	light(integer) : "Ambient light"
 	sky(string) : "Skybox"
+	
 	_dirt(integer) : "Use dirtmapping (ambient occlusion)" : 0
-	_bounce(integer) : "Use bounce" : 0
-	_bouncestyled(integer) : "Bounce styled lights" : 0
+	_bounce(integer) : "Bounce Lighting" : 0 : "1 enables bounce lighting, default 0."
+	_bouncestyled(integer) : "Bounce Styled Lights" : 0 : "1 makes styled lights bounce (e.g. flickering or switchable lights), default is 0, they do not bounce."
+	
 	_sunlight(integer) : "Sunlight"
 	_sun_mangle(string) : "Sun mangle (Yaw pitch roll)"
-	_sunlight_penumbra(integer) : "Specifies the penumbra width, in degrees, of sunlight. Useful values are 3-4 for a gentle soft edge, or 10-20+ for more diffuse sunlight." : 0
+	_sunlight_penumbra(integer) : "Sunlight Penumbra" : : "Specifies the penumbra width, in degrees, of sunlight. Useful values are 3-4 for a gentle soft edge, or 10-20+ for more diffuse sunlight." 
 	_sunlight_color(color255) : "Sunlight Color" :  : "Specify the red(r), green(g) and blue(b) components for the colour of the sunlight. Default is white(255 255 255)." 
 	_sunlight2(integer) : "Set the brightness of a dome of lights arranged around the upper hemisphere. (i.e. ambient light, coming from above the horizon). Default 0."
-	fog(string) : "Fog Command" :  : "ENGINE only 'console command' for setting fog parameters, Density/R/G/B example = (0.05 0.3 0.3 0.3). NOTE- If you plan to use 'trigger_fog' in your map, be sure to set both INDIVIDUAL 'Fog Density' and 'Fog Colour' values for proper operation."
-	fog_density(integer) : "Fog Density" :  : "Global fog density (def 0.1). NOTE - An Initial value MUST be entered for proper 'trigger_fog' operation."
-	fog_colour(color1) : "Fog Colour" :  : "Initial global fog colour (def 0.1 0.1 0.1). NOTE - An initial value MUST be entered for proper trigger_fog operation."
+	_sunlight2_color(color255) : "Sunlight 2 color" :  : "Specifies the color of '_sunlight2', same format as '_sunlight_color'. Default (255 255 255)"
+	_sunlight3(integer) : "Sunlight 3" :  : "Same as _sunlight2, but for the bottom hemisphere, where ambient light is coming from below the horizon. Combine '_sunlight2' and '_sunlight3' to have light coming equally from all directions. Useful in levels with a Sky/Void theme. Default 0."
+	_sunlight3_color(color255) : "Sunlight 3 color" :  : "Specifies the color of '_sunlight3', same format as '_sunlight_color'. Default (255 255 255)"
+
+	fog(string) : "Fog Command" :  : "ENGINE only 'console command' for setting fog parameters, Density/R/G/B example = (0.05 0.3 0.3 0.3)."
+	fog_density(integer) : "Fog Density" :  : "Global fog density (def 0.1)."
+	fog_colour(color1) : "Fog Colour" :  : "Initial global fog colour (def 0.1 0.1 0.1)."
 ]
 
 //
