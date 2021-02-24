@@ -284,7 +284,7 @@ The func_rotate_train entity is the center of rotation of all objects targeted b
 ]
 
 
-@PointClass base(Appearflags, Targetname, Target) color(128 64 0) = path_rotate :
+@PointClass base(Appearflags, Targetname, Target) color(128 64 0) size(8 8 8) = path_rotate :
 "Path for rotate_train.
 
 ROTATION tells train to rotate at rate specified by 'rotate'.  Use '0 0 0' to stop rotation.
@@ -333,7 +333,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 
 @baseclass base(Appearflags) size(-16 -16 -24, 16 16 32) 
 	color(0 255 0) model({"path" :"progs/player.mdl"}) = PlayerClass [
-		angle(float) : "Angle"
+		angle(integer) : "Angle"
 	]
 
 @PointClass base(PlayerClass) = info_player_start : "Player 1 start" []
@@ -362,7 +362,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 //
 // items
 //
-@baseclass base(Target, Targetname) = Item
+@baseclass color(80 0 200) base(Target, Targetname) = Item
 [
 	message(string) : "Message"
 ]
@@ -399,7 +399,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
         }}
     ) = item_spikes : "Perforator/Nailgun ammo" []
 
-@PointClass size(0 0 0, 32 32 56) base(Appearflags) model(
+@PointClass size(0 0 0, 32 32 56) base(Item, Appearflags) model(
         {{
             spawnflags & 2 ->   ":maps/b_bh100.bsp",
             spawnflags & 1 ->   ":maps/b_bh10.bsp",
@@ -449,7 +449,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // ITEM_CIRCUITBOARD
 // Collectible circuit board thingie
 
-@PointClass base(Appearflags, Targetname, Target) color(255 255 32) = item_circuitboard : "Circuit board" []
+@PointClass base(Appearflags, Targetname, Target, Item) color(255 255 32) = item_circuitboard : "Circuit board" []
 
 
 //
@@ -457,7 +457,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // added shotgun & axe for Rubicon 2
 //
 
-@baseclass size(-16 -16 0, 16 16 32) color(0 0 200) base(Item, Appearflags) = Weapon []
+@baseclass size(-16 -16 0, 16 16 32) color(128 128 255) base(Item, Appearflags) = Weapon []
 
 @PointClass base(Weapon) model({"path": "progs/g_axe.mdl"}) = weapon_axe : "Axe." []
 @PointClass base(Weapon) model({"path": "progs/g_shotgn.mdl"}) = weapon_shotgun : "Shotgun." []
@@ -473,7 +473,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // added enemies for Rubicon 2
 //
 
-@baseclass base(Appearflags, Target, Targetname) color(220 0 0) = Monster 
+@baseclass base(Appearflags, Target, Targetname) color(192 64 64) = Monster 
 [
 	spawnflags(Flags) = 
 	[
@@ -503,7 +503,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 
 // Regular monsters
 		
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/.mdl"}) = monster_army :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier.mdl"}) = monster_army :
 "Grunt, 30 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog.mdl"}) = monster_dog :
@@ -518,7 +518,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight.mdl"}) = monster_knight :
 "Knight, 75 health points." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/.mdl"}) = monster_hell_knight :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/hknight.mdl"}) = monster_hell_knight :
 "Sabre Knight, 250 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/wizard.mdl"}) = monster_wizard :
@@ -614,25 +614,27 @@ Don't shake hands with this crazy bastard!" []
 @PointClass size(-8 -8 -8, 8 8 8) base(Light, Target, Targetname) = light_fluorospark : "Sparking fluorescent light" []
 @PointClass size(-8 -8 -8, 8 8 8) base(Light, Target, Targetname) = light_globe : "Globe light" []
 
-@PointClass size(-8 -8 -12, 8 8 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = 
-	light_flame_large_yellow : "Large yellow flame" []
-@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = 
-	light_flame_small_yellow : "Small yellow flame" []
-@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = 
-	light_flame_small_white : "Small white flame" []
+@PointClass size(-8 -8 -12, 8 8 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_large_yellow :
+"Large yellow flame" []
+@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_small_yellow :
+"Small yellow flame" []
+@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_small_white :
+"Small white flame" []
 
-@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame.mdl" }) = 
-	light_torch_small_walltorch : "Small walltorch" []
+@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame.mdl" }) = light_torch_small_walltorch :
+"Small walltorch" []
 
 
 
-@PointClass base(Appearflags, Targetname, Target, Light) size(-8 -8 -8, 8 8 24) color(255 255 64) model({"path":"progs/fixture1.mdl"})= light_fixture1 : "Wall-mounted light fixture."
+@PointClass base(Appearflags, Targetname, Target, Light) size(-8 -8 -8, 8 8 24) model({"path":"progs/fixture1.mdl"})= light_fixture1 :
+"Wall-mounted light fixture."
 [
 	angle2(string) : "Angle" : : "The angle the model should be facing; set it to face away from the wall"
 ]
 
 
-@PointClass base(Appearflags, Targetname, Target, Light) size(-8 -8 -36, 8 8 8) color(255 255 64)  model({"path": "progs/beacon.mdl"}) = light_beacon : "Floor-mounted flashing red beacon
+@PointClass base(Appearflags, Targetname, Target, Light) size(-8 -8 -36, 8 8 8) model({"path": "progs/beacon.mdl"}) = light_beacon :
+"Floor-mounted flashing red beacon
 Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to match the skin animation.)"
 [
 	angle2(string) : "Angle" : : "The angle the model should be facing; set it to face away from the wall"
@@ -652,8 +654,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 
 @PointClass base(Appearflags, Name) = air_bubbles : "Air bubbles" []
 @PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning" []
-@PointClass base(Appearflags) = misc_fireball : "Small fireball"
-	[ speed(integer) : "Speed" : 40 ]
+
 @PointClass size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" []
 @PointClass size(0 0 0, 32 32 32) model({"path":"maps/b_exbox2.bsp"}) = misc_explobox2 : "Small nuclear container" []
 
@@ -663,21 +664,26 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 //	model(string)
 //]
 
-@PointClass base(Targetname) = trap_spikeshooter : "Triggered shooter" 
+@PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter" 
 [	
-	angle(float) : "Angle"
+	angle(integer) : "Angle"
 	spawnflags(Flags) = 
 	[
 		1 : "Superspike" : 0
 		2 : "Laser" : 0
 	]
 ]
-@PointClass base(trap_spikeshooter) = trap_shooter : "Continuous shooter" [
+
+@PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter" [
 	wait(integer) : "time between spikes (1.0 default)" : 1
 	nextthink(integer) : "delay before firing first spike, so multiple shooters can be stagered"
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_sparks : "Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks. 
+@PointClass base(Appearflags) color(0 128 204) = misc_fireball : "Small fireball"
+	[ speed(integer) : "Speed" : 40 ]
+
+@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_sparks :
+"Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks. 
 Note: targeted lights should be set to START_OFF."
 [
 	wait(integer) : "Delay between sparks" : 2 : "Average delay between bursts (variance is 1/2 wait)."
@@ -695,7 +701,8 @@ Note: targeted lights should be set to START_OFF."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_smoke : "Produces a jet of smoke/steam. If targeted, it will toggle between on or off."
+@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_smoke :
+"Produces a jet of smoke/steam. If targeted, it will toggle between on or off."
 [
 	wait(integer) : "Time between puffs" : 1
 	movedir(string) : "Initial velocity" : "0 0 250" : "A vector representing the initial velocity in X Y Z values. Default is '0 0 250' (up)"
@@ -712,7 +719,8 @@ Note: targeted lights should be set to START_OFF."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_splash : "Produces a continuous particle splash for waterfalls."
+@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_splash :
+"Produces a continuous particle splash for waterfalls."
 [
 	color(integer) : "Color (0-15)" : 0 : "Color of particles.  0 through 15, corresponds to a row of the quake palette. (default 0)"
 	movedir(string) : "Move vector (X Y Z)"
@@ -720,9 +728,10 @@ Note: targeted lights should be set to START_OFF."
 	volume(integer) : "Density" : 10
 ]
 
-@PointClass base(Appearflags, Targetname, Target)  color(255 255 64) model(
+@PointClass base(Appearflags, Targetname, Target)  color(0 128 204) model(
 	{"path":"progs/flag.mdl", "frame": spawnflags & 2}
-) = misc_flag : "A hanging banner, gently waving in the wind. Normal dimensions: 64 wide by 144 long.
+) = misc_flag :
+"A hanging banner, gently waving in the wind. Normal dimensions: 64 wide by 144 long.
 Big banner is twice as big: 128 wide by 288 long."
 [	
 	spawnflags(flags) =
@@ -732,28 +741,34 @@ Big banner is twice as big: 128 wide by 288 long."
 	]
 ]
 
+@PointClass = viewthing :
+"A model will be spawned at the position of this entity. (default = player)
 
+Just for debugging. Don't use.
+
+Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to view frames of model."
+[]
 
 // 
 // ambient sounds
 // added Rubicon 2 ambient_general
 //
 
-@PointClass = ambient_general : "Ambient sounds"
+@PointClass color(64 32 192) = ambient_general : "Ambient sounds"
 [
 	noise(string) : "File to play"
 	volume(integer) : "Volume (0-1)" : 0.5
 	speed(integer) : "Attenuation" : 3
 ]
-@PointClass = ambient_drip : "Dripping sound" []
-@PointClass = ambient_drone : "Engine/machinery sound" []
-@PointClass = ambient_comp_hum : "Computer background sounds" []
-@PointClass = ambient_flouro_buzz : "Fluorescent buzzing sound" []
-@PointClass = ambient_light_buzz : "Buzzing sound from light" []
-@PointClass = ambient_suck_wind : "Wind sound" []
-@PointClass = ambient_swamp1 : "Frogs croaking" []
-@PointClass = ambient_swamp2 : "Frogs croaking B" []
-@PointClass = ambient_thunder : "Thunder sound" []
+@PointClass color(64 32 192) = ambient_drip : "Dripping sound" []
+@PointClass color(64 32 192) = ambient_drone : "Engine/machinery sound" []
+@PointClass color(64 32 192) = ambient_comp_hum : "Computer background sounds" []
+@PointClass color(64 32 192) = ambient_flouro_buzz : "Fluorescent buzzing sound" []
+@PointClass color(64 32 192) = ambient_light_buzz : "Buzzing sound from light" []
+@PointClass color(64 32 192) = ambient_suck_wind : "Wind sound" []
+@PointClass color(64 32 192) = ambient_swamp1 : "Frogs croaking" []
+@PointClass color(64 32 192) = ambient_swamp2 : "Frogs croaking B" []
+@PointClass color(64 32 192) = ambient_thunder : "Thunder sound" []
 
 // 
 // moving things
@@ -762,6 +777,7 @@ Big banner is twice as big: 128 wide by 288 long."
 
 @SolidClass base(Appearflags, Targetname, Target, ModelLight) = func_door : "Basic door" 
 [
+	angle(integer) : "Angle" : : "determines the opening direction"
 	speed(integer) : "Speed" : 100
 	sounds(choices) : "Sound" : 0 = 
 	[
@@ -791,6 +807,7 @@ Big banner is twice as big: 128 wide by 288 long."
 
 @SolidClass base(Appearflags, Targetname, Target, ModelLight) = func_door_secret : "Triggered door" 
 [
+	angle(integer) : "Angle" : : "determines the opening direction"
 	t_width(integer) : "First move lenght"
 	t_length(integer) : "Second move lenght"
 	dmg(integer) : "Damage when blocked" : 2
@@ -818,7 +835,7 @@ Big banner is twice as big: 128 wide by 288 long."
 
 @SolidClass base(Targetname, Target, ModelLight) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
 [
-	angle(float) : "Angle" : : "determines the opening direction"
+	
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
 	health(integer) : "Health (shootable if > 0)"
@@ -859,7 +876,7 @@ RETRIGGER: stop at each path_corner and don't resume until triggered again (igno
 	]
 ]
 
-@PointClass base(Targetname) size(16 16 16) = path_corner :
+@PointClass base(Targetname) color(128 64 0) size(8 8 8) = path_corner :
 "Moving platform stop"
 [
 	target(target_source) : "Next stop target"
@@ -905,7 +922,7 @@ low_trigger: plat will only be triggered when in lowered position"
 // triggers
 //
 
-@baseclass base(Target, Targetname) = Trigger
+@baseclass color(128 0 128) base(Target, Targetname) = Trigger
 [
 	sounds(choices) : "Sound style" : 0 =
 	[
@@ -985,7 +1002,7 @@ low_trigger: plat will only be triggered when in lowered position"
 [
 	speed(integer) : "Jump Speed" : 200
 	height(integer) : "Jump Height" : 200
-	angle(float) : "Angle"
+	angle(integer) : "Angle"
 ]
 @PointClass base(Trigger, Target, Targetname) = trigger_counter : "Trigger counter" 
 [
@@ -994,7 +1011,7 @@ low_trigger: plat will only be triggered when in lowered position"
 ]
 @SolidClass base(Targetname) = trigger_push : "Trigger player push"
 [
-	angle(float) : "Angle"
+	angle(integer) : "Angle"
 	spawnflags(flags) = [ 1: "Once Only" : 0 ]
 	speed(integer) : "Speed of push" : 1000
 ]
