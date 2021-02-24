@@ -390,6 +390,12 @@ float	MSG_ONE			= 1;		// reliable to one (msg_entity)
 float	MSG_ALL			= 2;		// reliable to all
 float	MSG_INIT		= 3;		// write to the init string
 
+// skill levels
+float   SKILL_EASY      = 0;
+float   SKILL_NORMAL    = 1;
+float   SKILL_HARD      = 2;
+float   SKILL_NIGHTMARE = 3;
+
 //================================================
 
 //
@@ -729,6 +735,7 @@ float SPAWNFLAG_NOTOUCH = 1;
 float SVC_SETVIEWPORT = 5;
 float SVC_SETVIEWANGLES = 10;
 float PROBE_VOLUME = 0.5;
+float SERVO_VOLUME = 0.5;
 float ATTN_BANSHEE = 0.5;
 float MAX_DROPS = 12;
 .vector old_angles;

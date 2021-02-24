@@ -2,57 +2,19 @@ void() Projectile_Hit;
 void() ban_fire_still;
 void() FuelTankExplode;
 
-void() d_explode1 = [0, d_explode2]
-{
-};
-
-void() d_explode2 = [1, d_explode3]
-{
-};
-
-void() d_explode3 = [2, d_explode4]
-{
-};
-
-void() d_explode4 = [3, d_explode5]
-{
-};
-
-void() d_explode5 = [4, d_explode6]
-{
-};
-
-void() d_explode6 = [5, d_explode7]
-{
-};
-
-void() d_explode7 = [6, d_explode8]
-{
-};
-
-void() d_explode8 = [7, d_explode9]
-{
-};
-
-void() d_explode9 = [8, d_explode10]
-{
-};
-
-void() d_explode10 = [9, d_explode11]
-{
-};
-
-void() d_explode11 = [10, d_explode12]
-{
-};
-
-void() d_explode12 = [11, d_explode13]
-{
-};
-
-void() d_explode13 = [12, SUB_Remove]
-{
-};
+void() d_explode1 = [0, d_explode2]{};
+void() d_explode2 = [1, d_explode3]{};
+void() d_explode3 = [2, d_explode4]{};
+void() d_explode4 = [3, d_explode5]{};
+void() d_explode5 = [4, d_explode6]{};
+void() d_explode6 = [5, d_explode7]{};
+void() d_explode7 = [6, d_explode8]{};
+void() d_explode8 = [7, d_explode9]{};
+void() d_explode9 = [8, d_explode10]{};
+void() d_explode10 = [9, d_explode11]{};
+void() d_explode11 = [10, d_explode12]{};
+void() d_explode12 = [11, d_explode13]{};
+void() d_explode13 = [12, SUB_Remove]{};
 
 void(float ofs, float turn) b_fire_rocket = 
 {
@@ -64,13 +26,13 @@ void(float ofs, float turn) b_fire_rocket =
 	local float dist;
 	ang = self.angles;
 	ang_y = ang_y + self.fixangle;
-	if (turn == SPAWNFLAG_SUPERSPIKE)
+	if (turn == 1)
 	{
 		ang_y = ang_y + 165;
 	}
 	else
 	{
-		if (turn == SPAWNFLAG_LASER)
+		if (turn == 2)
 		{
 			ang_y = ang_y - 165;
 		}
@@ -78,7 +40,7 @@ void(float ofs, float turn) b_fire_rocket =
 	makevectors(ang);
 	src = self.origin + '0 0 66' + v_right * ofs + v_forward * 84;
 	targ = self.enemy.origin + self.enemy.view_ofs;
-	if (skill != MSG_BROADCAST)
+	if (skill != SKILL_EASY)
 	{
 		dist = vlen(targ - src);
 		targ = targ + self.enemy.velocity * (dist / 1000);
@@ -90,8 +52,8 @@ void(float ofs, float turn) b_fire_rocket =
 	{
 		vec = v_forward;
 	}
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	sound(self, CHAN_WEAPON, "weapons/sgun1.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+	//self.effects = self.effects | EF_MUZZLEFLASH; //b_fire_rocket is a ported, more general-purpose function, so this wasn't needed for the banshee
+	sound(self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 	missile = spawn();
 	missile.owner = self;
 	missile.movetype = MOVETYPE_FLYMISSILE;
@@ -100,7 +62,7 @@ void(float ofs, float turn) b_fire_rocket =
 	missile.velocity = vec * 800;
 	missile.angles = vectoangles(vec);
 	missile.touch = Projectile_Hit;
-	missile.nextthink = time + SVC_SETVIEWPORT;
+	missile.nextthink = time + 5;
 	missile.think = SUB_Remove;
 	setmodel(missile, "progs/missile.mdl");
 	setsize(missile, VEC_ORIGIN, VEC_ORIGIN);
@@ -121,7 +83,7 @@ void() Projectile_Hit =
 	}
 	org = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
 	SpawnBlood(org, self.velocity * 0.2, 15);
-	T_Damage(other, self, self.owner, SVC_SETVIEWANGLES);
+	T_Damage(other, self, self.owner, 10);
 	T_RadiusDamage(self, self, 20, self);
 	self.origin = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
 	WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
@@ -492,7 +454,7 @@ void() banshee_walk4 = [23, banshee_walk5]
 
 void() banshee_walk5 = [24, banshee_walk6]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	movetogoal(14);
 	ban_thinkwalk();
 };
@@ -517,7 +479,7 @@ void() banshee_walk8 = [27, banshee_walk9]
 
 void() banshee_walk9 = [28, banshee_walk10]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	movetogoal(14);
 	ban_thinkwalk();
 };
@@ -530,7 +492,7 @@ void() banshee_walk10 = [29, banshee_walk11]
 
 void() banshee_walk11 = [30, banshee_walk12]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	movetogoal(14);
 	ban_thinkwalk();
 };
@@ -544,7 +506,7 @@ void() banshee_walk12 = [31, banshee_walk1]
 void() banshee_run1 = [20, banshee_run2]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -552,16 +514,16 @@ void() banshee_run1 = [20, banshee_run2]
 void() banshee_run2 = [21, banshee_run3]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
 
 void() banshee_run3 = [22, banshee_run4]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -569,16 +531,16 @@ void() banshee_run3 = [22, banshee_run4]
 void() banshee_run4 = [23, banshee_run5]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
 
 void() banshee_run5 = [24, banshee_run6]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -586,7 +548,7 @@ void() banshee_run5 = [24, banshee_run6]
 void() banshee_run6 = [25, banshee_run7]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -594,7 +556,7 @@ void() banshee_run6 = [25, banshee_run7]
 void() banshee_run7 = [26, banshee_run8]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -602,7 +564,7 @@ void() banshee_run7 = [26, banshee_run8]
 void() banshee_run8 = [27, banshee_run9]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -611,7 +573,7 @@ void() banshee_run9 = [28, banshee_run10]
 {
 	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -619,16 +581,16 @@ void() banshee_run9 = [28, banshee_run10]
 void() banshee_run10 = [29, banshee_run11]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
 
 void() banshee_run11 = [30, banshee_run12]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
 };
@@ -636,12 +598,12 @@ void() banshee_run11 = [30, banshee_run12]
 void() banshee_run12 = [31, banshee_run1]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = SPAWNFLAG_SUPERSPIKE;
+	RUN_STRAIGHT = 1;
 	ai_run(14);
 	banshee_think();
-	if (self.lefty == SPAWNFLAG_SUPERSPIKE)
+	if (self.lefty == 1)
 	{
-		self.lefty = MSG_BROADCAST;
+		self.lefty = 0;
 		self.think = self.th_missile;
 	}
 };
@@ -655,7 +617,7 @@ void() ban_fire_walk1 = [44, ban_fire_walk2]
 
 void() ban_fire_walk2 = [45, ban_fire_walk3]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -670,7 +632,7 @@ void() ban_fire_walk3 = [46, ban_fire_walk4]
 
 void() ban_fire_walk4 = [47, ban_fire_walk5]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -688,7 +650,7 @@ void() ban_fire_walk6 = [49, ban_fire_walk7]
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
-	b_fire_rocket(40, MSG_BROADCAST);
+	b_fire_rocket(40, 0);
 };
 
 void() ban_fire_walk7 = [50, ban_fire_walk8]
@@ -715,7 +677,7 @@ void() ban_fire_walk9 = [52, ban_fire_walk10]
 
 void() ban_fire_walk10 = [53, ban_fire_walk11]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -726,7 +688,7 @@ void() ban_fire_walk11 = [54, ban_fire_walk13]
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
-	b_fire_rocket(-40, MSG_BROADCAST);
+	b_fire_rocket(-40, 0);
 };
 
 void() ban_fire_walk13 = [55, banshee_run1]
@@ -734,7 +696,7 @@ void() ban_fire_walk13 = [55, banshee_run1]
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
-	SUB_AttackFinished(SPAWNFLAG_SUPERSPIKE);
+	SUB_AttackFinished(1);
 };
 
 void() ban_stomp1 = [75, ban_stomp2]
@@ -746,7 +708,7 @@ void() ban_stomp1 = [75, ban_stomp2]
 
 void() ban_stomp2 = [76, ban_stomp3]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -755,7 +717,7 @@ void() ban_stomp2 = [76, ban_stomp3]
 void() ban_stomp3 = [77, ban_stomp4]
 {
 	ChangeYaw();
-	walkmove(self.angles_y, SVC_SETVIEWANGLES);
+	walkmove(self.angles_y, 10);
 	banshee_think();
 };
 
@@ -774,7 +736,7 @@ void() ban_stomp6 = [80, ban_stomp7]
 {
 	ChangeYaw();
 	ChangeYaw();
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	banshee_think();
 	FuelTankExplode();
 	T_RadiusDamage(self, self, 100, self);
@@ -797,7 +759,7 @@ void() ban_stomp9 = [83, ban_stomp10]
 
 void() ban_stomp10 = [84, ban_stomp11]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -812,7 +774,7 @@ void() ban_stomp11 = [85, ban_stomp12]
 
 void() ban_stomp12 = [86, ban_stomp13]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -852,7 +814,7 @@ void() banshee_stop1 = [57, banshee_stop2]
 
 void() banshee_stop2 = [58, banshee_plant1]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	banshee_think();
 };
 
@@ -883,7 +845,7 @@ void() ban_launch_field5 = [36, ban_launch_field6]
 
 void() ban_launch_field6 = [37, ban_launch_field7]
 {
-	sound(self, TE_LIGHTNING2, "banshee/footfall.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	banshee_think();
 };
 
@@ -900,8 +862,8 @@ void() ban_launch_field8 = [39, ban_launch_field9]
 void() ban_launch_field9 = [40, ban_launch_field10]
 {
 	banshee_think();
-	b_fire_rocket(40, MSG_BROADCAST);
-	b_fire_rocket(-40, MSG_BROADCAST);
+	b_fire_rocket(40, 0);
+	b_fire_rocket(-40, 0);
 };
 
 void() ban_launch_field10 = [41, ban_launch_field11]
@@ -924,7 +886,7 @@ void() banshee_die1 = [57, banshee_die2]
 {
 	banshee_think();
 	self.nextthink = time + 0.2;
-	sound(self, CHAN_AUTO, "banshee/death.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+	sound(self, CHAN_AUTO, "banshee/death.wav", 1, ATTN_NORM);
 };
 
 void() banshee_die2 = [58, banshee_die3]
@@ -1009,8 +971,8 @@ void() banshee_die15 = [71, banshee_die16]
 {
 	banshee_think();
 	self.nextthink = time + 0.1;
-	sound(self, CHAN_WEAPON, "doors/airdoor2.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
-	sound(self, CHAN_VOICE, "doors/drclos4.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NONE);
+	sound(self, CHAN_WEAPON, "doors/airdoor2.wav", 1, ATTN_NORM);
+	sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE);
 };
 
 void() banshee_die16 = [72, banshee_die17]
@@ -1027,7 +989,7 @@ void() banshee_die17 = [73, banshee_die18]
 
 void() banshee_die18 = [74, banshee_die19]
 {
-	sound(self, CHAN_VOICE, "doors/drclos4.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NONE);
+	sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE);
 	banshee_think();
 	self.nextthink = time + 0.1;
 };
@@ -1038,7 +1000,7 @@ void() banshee_die19 = [74, banshee_die19]
 
 void(entity attacker, float damage) banshee_pain = 
 {
-	if (self.health <= MSG_BROADCAST)
+	if (self.health <= 0)
 	{
 		return;
 	}
@@ -1050,8 +1012,8 @@ void(entity attacker, float damage) banshee_pain =
 	{
 		return;
 	}
-	self.pain_finished = time + SPAWNFLAG_LASER;
-	sound(self, CHAN_VOICE, "banshee/pain.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+	self.pain_finished = time + 2;
+	sound(self, CHAN_VOICE, "banshee/pain.wav", 1, ATTN_NORM);
 };
 
 void() banshee_missile_attack = 
@@ -1064,7 +1026,7 @@ void() banshee_missile_attack =
 	}
 	else
 	{
-		if (n < SPAWNFLAG_SUPERSPIKE)
+		if (n < 1)
 		{
 			ban_launch_field1();
 		}
@@ -1080,36 +1042,29 @@ void() banshee_repulse_attack =
 	local entity head;
 	local vector dir;
 	banshee_think();
-	if (self.state == MSG_BROADCAST)
-	{
+	if (self.state == STATE_TOP) {
 		SUB_AttackFinished(SERVO_VOLUME);
-		sound(self, CHAN_BODY, "banshee/repel.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
-		self.state = SPAWNFLAG_SUPERSPIKE;
+		sound(self, CHAN_BODY, "banshee/repel.wav", 1, ATTN_NORM);
+		self.state = 1;
 		return;
 	}
-	else
-	{
-		if (self.state == SPAWNFLAG_SUPERSPIKE)
-		{
-			head = findradius(self.origin, 300);
-			while (head)
-			{
-				if (!(head.flags & FL_NOTARGET) && (head.flags & FL_CLIENT))
-				{
-					if (visible(head) && head.health > MSG_BROADCAST)
-					{
-						dir = head.origin - (self.origin - '0 0 24');
-						dir = normalize(dir);
-						head.velocity = head.velocity + dir * 1500;
-					}
+	else if (self.state == STATE_BOTTOM) {
+		head = findradius(self.origin, 300);
+		while (head) {
+			if (!(head.flags & FL_NOTARGET) && (head.flags & FL_CLIENT)) {
+				if (visible(head) && head.health > 0) {
+					dir = head.origin - (self.origin - '0 0 24');
+					dir = normalize(dir);
+					head.velocity = head.velocity + dir * 1500;
 				}
-				head = head.chain;
 			}
-			T_RadiusDamage(self, self, 60, self);
-			self.state = MSG_BROADCAST;
-			SUB_AttackFinished(0.1);
+			head = head.chain;
 		}
+		T_RadiusDamage(self, self, 60, self);
+		self.state = STATE_TOP;
+		SUB_AttackFinished(0.1);
 	}
+	
 };
 
 void() ban_fire_still = 
@@ -1138,14 +1093,14 @@ void() ban_fire_still =
 		ban_stomp1();
 		return;
 	}
-	self.state = MSG_BROADCAST;
+	self.state = STATE_TOP;
 	if (vlen(spot2 - spot1) > 450)
 	{
 		banshee_run1();
 		return;
 	}
 	ban_launch_field1();
-	if (self.cnt == SPAWNFLAG_SUPERSPIKE)
+	if (self.cnt == 1)
 	{
 		banshee_run1();
 		return;
@@ -1161,32 +1116,28 @@ float() BansheeCheckAttack =
 	local float ang;
 	local float delta;
 	local float dist;
-	self.lefty = MSG_BROADCAST;
+	self.lefty = 0;
 	targ = self.enemy;
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	traceline(spot1, spot2, 0, self);
-	if (trace_inopen && trace_inwater)
-	{
+	if (trace_inopen && trace_inwater) {
 		return 0;
 	}
-	if (time < self.attack_finished)
-	{
+	if (time < self.attack_finished) {
 		return 0;
 	}
 	ang = self.angles_y + self.fixangle;
 	delta = self.ideal_yaw - ang;
 	dist = vlen(spot2 - spot1);
-	if (fabs(delta) > SVC_SETVIEWANGLES && dist > 200 || self.enemy.classname != "player")
-	{
+	if (fabs(delta) > 10 && dist > 200 || self.enemy.classname != "player") {
 		return 0;
 	}
-	if (dist < 400)
-	{
+	if (dist < 400)	{
 		self.th_melee();
 		return 1;
 	}
-	self.lefty = SPAWNFLAG_SUPERSPIKE;
+	self.lefty = 1;
 	return 0;
 };
 
@@ -1194,9 +1145,8 @@ void() monster_banshee =
 {
 	local entity body;
 	local float sk;
-	if (!deathmatch)
-	{
-		self.lefty = MSG_BROADCAST;
+	if (!deathmatch) {
+		self.lefty = 0;
 		sk = cvar("skill");
 		precache_model("progs/banbody.mdl");
 		precache_model("progs/banlegs.mdl");
@@ -1215,47 +1165,45 @@ void() monster_banshee =
 		precache_sound("doors/drclos4.wav");
 		precache_sound("banshee/fuelexp.wav");
 		precache_sound("banshee/repel.wav");
+
 		body = spawn();
 		body.origin = self.origin;
 		body.origin = body.origin - '0 0 64';
-		self.classname = "monster_banshee";
-		self.solid = SOLID_SLIDEBOX;
-		self.fixangle = MSG_BROADCAST;
-		self.movetype = MOVETYPE_STEP;
 		body.solid = SOLID_NOT;
 		body.movetype = MOVETYPE_STEP;
-		self.trigger_field = body;
 		body.trigger_field = self;
 		setmodel(body, "progs/banbody.mdl");
+		setorigin(body, body.origin);
+
+		self.classname = "monster_banshee";
+		self.solid = SOLID_SLIDEBOX;
+		self.fixangle = 0;
+		self.movetype = MOVETYPE_STEP;
+		self.trigger_field = body;
 		setmodel(self, "progs/banlegs.mdl");
 		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 		setorigin(self, self.origin);
-		setorigin(body, body.origin);
-		if (sk == MSG_BROADCAST)
-		{
-			self.yaw_speed = SVC_SETVIEWPORT;
+
+		if (sk == SKILL_EASY) {
+			self.yaw_speed = 5; //5
 			self.health = 1300;
 			self.worldtype = 0.9;
 		}
-		else
-		{
-			if (sk == SPAWNFLAG_SUPERSPIKE)
-			{
-				self.yaw_speed = TE_LIGHTNING3;
-				self.health = 1300;
-				self.worldtype = 0.85;
-			}
-			else
-			{
-				self.yaw_speed = MAX_DROPS;
-				self.health = 1300;
-				self.worldtype = 0.75;
-			}
+		else if (sk == SKILL_NORMAL) {
+			self.yaw_speed = 9; // 9
+			self.health = 1300;
+			self.worldtype = 0.85;
 		}
-		//dealwithskill();
-		self.state = MSG_BROADCAST;
-		self.super_time = MSG_BROADCAST;
-		self.ltime = MSG_BROADCAST;
+		else {
+			self.yaw_speed = 12; //12
+			self.health = 1300;
+			self.worldtype = 0.75;
+		}
+		
+		//dealwithskill(); // Malice stuff, changes monster health depending on skill
+		self.state = 0;
+		self.super_time = 0;
+		self.ltime = 0;
 		self.th_stand = banshee_stand1;
 		self.th_walk = banshee_walk1;
 		self.th_run = banshee_run1;
@@ -1265,8 +1213,7 @@ void() monster_banshee =
 		self.th_pain = banshee_pain;
 		walkmonster_start();
 	}
-	else
-	{
+	else {
 		remove(self);
 	}
 };
