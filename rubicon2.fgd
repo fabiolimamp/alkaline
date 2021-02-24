@@ -44,7 +44,7 @@
 	_sunlight3_color(color255) : "Sunlight 3 color" :  : "Specifies the color of '_sunlight3', same format as '_sunlight_color'. Default (255 255 255)"
 
 	fog(string) : "Fog Command" :  : "ENGINE only 'console command' for setting fog parameters, Density/R/G/B example = (0.05 0.3 0.3 0.3)."
-	fog_density(integer) : "Fog Density" :  : "Global fog density (def 0.1)."
+	fog_density(float) : "Fog Density" :  : "Global fog density (def 0.1)."
 	fog_colour(color1) : "Fog Colour" :  : "Initial global fog colour (def 0.1 0.1 0.1)."
 ]
 
@@ -71,10 +71,10 @@
 
 @baseclass color(255 255 40) = Light [
 	light(integer) : "Brightness" : 300
-	wait(integer) : "Fade distance multiplier" : 1
+	wait(float) : "Fade distance multiplier" : "1"
 	_color(color) : "Light color"
 	mangle(string) : "Spotlight angle"
-	angle(float) : "Spotlight angle width" : "40"
+	angle(integer) : "Spotlight angle width" : 40
 	_softangle(float) : "Inner spotlight angle width" : "0"
 	delay(choices) : "Attenuation" =
 	[
@@ -83,7 +83,7 @@
 		2 : "Inverse distance squared"
 		3 : "No falloff"
 	]
-	style(Choices) : "Animated light style" : 0 =
+	style(choices) : "Animated light style" : 0 =
 	[
 		0 : "Normal"
 		10: "Fluorescent flicker"
@@ -117,7 +117,7 @@
 ]
 
 @baseclass = Alpha [
-	alpha(float) : "Opacity" : 1 : "Controls entity opacity in the 0-1 range. 0: fully transparent, 1: fully opaque"
+	alpha(float) : "Opacity" : "1.0" : "Controls entity opacity in the 0-1 range. 0: fully transparent, 1: fully opaque"
 ]
 
 //
@@ -162,7 +162,7 @@ NO_MONSTERS: object ignores damage from monsters"
 "A togglable laser, hurts to touch, can be used to block players." 
 [
 	dmg(integer) : "Damage" : 1
-	alpha(integer) : "Opacity" : 0.5 : "Approximate alpha you want the laser drawn at. default 0.5. alpha will vary by 20% of this value."
+	alpha(float) : "Opacity" : "0.5" : "Approximate alpha you want the laser drawn at. default 0.5. alpha will vary by 20% of this value."
 	message(string) : "Activated message"
 	message2(string) : "Deactivated message"
 	spawnflags(flags) =
@@ -358,7 +358,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	think(string) : "self.think"
 	nextthink(integer) : "nextthink"
 	noise(string) : "noise"
-	wait(integer) : "wait"
+	wait(float) : "wait"
 ]
 @PointClass base(Appearflags) = info_intermission : "Intermission camera" 
 [
@@ -613,39 +613,53 @@ Don't shake hands with this crazy bastard!" []
 // lights
 //
 
+@baseclass = LightTarget [
+	target(string) : "Target" : : "Makes this light a spot light. This should be an entity for the spot line to point at (usually a info_null)"
+]
 
+@PointClass size(-8 -8 -8, 8 8 8) base(Light, LightTarget, Targetname) = light : "Invisible lightsource"	[]
+@PointClass size(-8 -8 -8, 8 8 8) base(Light, LightTarget, Targetname) = light_fluoro : "Fluorescent light" []
+@PointClass size(-8 -8 -8, 8 8 8) base(Light, LightTarget, Targetname) = light_fluorospark : "Sparking fluorescent light" []
+@PointClass size(-8 -8 -8, 8 8 8) base(Light, LightTarget, Targetname) = light_globe : "Globe light" []
 
-@PointClass size(-8 -8 -8, 8 8 8) base(Light, Target, Targetname) = light : "Invisible lightsource"	[]
-@PointClass size(-8 -8 -8, 8 8 8) base(Light, Target, Targetname) = light_fluoro : "Fluorescent light" []
-@PointClass size(-8 -8 -8, 8 8 8) base(Light, Target, Targetname) = light_fluorospark : "Sparking fluorescent light" []
-@PointClass size(-8 -8 -8, 8 8 8) base(Light, Target, Targetname) = light_globe : "Globe light" []
-
-@PointClass size(-8 -8 -12, 8 8 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_large_yellow :
+@PointClass size(-8 -8 -12, 8 8 20) base(Light, LightTarget, Targetname) model({ "path": ":progs/flame2.mdl", "frame": 1 }) = light_flame_large_yellow :
 "Large yellow flame" []
-@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_small_yellow :
+@PointClass size(-4 -4 -12, 4 4 20) base(Light, LightTarget, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_small_yellow :
 "Small yellow flame" []
-@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_small_white :
+@PointClass size(-4 -4 -12, 4 4 20) base(Light, LightTarget, Targetname) model({ "path": ":progs/flame2.mdl" }) = light_flame_small_white :
 "Small white flame" []
 
-@PointClass size(-4 -4 -12, 4 4 20) base(Light, Target, Targetname) model({ "path": ":progs/flame.mdl" }) = light_torch_small_walltorch :
+@PointClass size(-4 -4 -12, 4 4 20) base(Light, LightTarget, Targetname) model({ "path": ":progs/flame.mdl" }) = light_torch_small_walltorch :
 "Small walltorch" []
 
 
 
-@PointClass base(Appearflags, Targetname, Target, Light) size(-8 -8 -8, 8 8 24) model({"path":"progs/fixture1.mdl"})= light_fixture1 :
+@PointClass base(Appearflags, Targetname, LightTarget, Light) size(-8 -8 -8, 8 8 24) model({"path":"progs/fixture1.mdl"})= light_fixture1 :
 "Wall-mounted light fixture."
 [
 	angle2(string) : "Angle" : : "The angle the model should be facing; set it to face away from the wall"
 ]
 
 
-@PointClass base(Appearflags, Targetname, Target, Light) size(-8 -8 -36, 8 8 8) model({"path": "progs/beacon.mdl"}) = light_beacon :
+@PointClass base(Appearflags, Targetname, LightTarget, Light) size(-8 -8 -36, 8 8 8) model({"path": "progs/beacon.mdl"}) = light_beacon :
 "Floor-mounted flashing red beacon
 Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to match the skin animation.)"
 [
 	angle2(string) : "Angle" : : "The angle the model should be facing; set it to face away from the wall"
 	style(choices) : "Appearance" : 0 =
 	[
+		0 : "Normal"
+		10: "Fluorescent flicker"
+		2 : "Slow, strong pulse"
+		11: "Slow pulse, noblack"
+		5 : "Gentle pulse"
+		1 : "Flicker A"
+		6 : "Flicker B"
+		3 : "Candle A"
+		7 : "Candle B"
+		8 : "Candle C"
+		4 : "Fast strobe"
+		9 : "Slow strobe"
 		16 : "Match blinking animation"
 	]
 	spawnflags(flags) =
@@ -658,7 +672,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 // misc
 //
 
-@PointClass base(Appearflags, Name) = air_bubbles : "Air bubbles" []
+@PointClass base(Appearflags, Targetname) = air_bubbles : "Air bubbles" []
 @PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning" []
 
 @PointClass size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" []
@@ -681,7 +695,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 ]
 
 @PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter" [
-	wait(integer) : "time between spikes (1.0 default)" : 1
+	wait(float) : "time between spikes (1.0 default)" : "1.0"
 	nextthink(integer) : "delay before firing first spike, so multiple shooters can be stagered"
 ]
 
@@ -692,7 +706,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 "Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks. 
 Note: targeted lights should be set to START_OFF."
 [
-	wait(integer) : "Delay between sparks" : 2 : "Average delay between bursts (variance is 1/2 wait)."
+	wait(float) : "Delay between sparks" : "2.0" : "Average delay between bursts (variance is 1/2 wait)."
 	cnt(integer) : "Amount of sparks" : 15 : "Average number of sparks in a burst (variance is 1/4 cnt)."
 	sounds(choices) : "Sounds" =
 	[
@@ -710,7 +724,7 @@ Note: targeted lights should be set to START_OFF."
 @PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_smoke :
 "Produces a jet of smoke/steam. If targeted, it will toggle between on or off."
 [
-	wait(integer) : "Time between puffs" : 1
+	wait(float) : "Time between puffs" : "1.0"
 	movedir(string) : "Initial velocity" : "0 0 250" : "A vector representing the initial velocity in X Y Z values. Default is '0 0 250' (up)"
 	movedir2(string) : "Wind direction" : "0 0 0" : "a vector representing the wind in X Y Z values.  Default is '0 0 0'"
 	dmg(integer) : "Damage" : 0 : "Amount of damage each puff gives on contact."
@@ -730,7 +744,7 @@ Note: targeted lights should be set to START_OFF."
 [
 	color(integer) : "Color (0-15)" : 0 : "Color of particles.  0 through 15, corresponds to a row of the quake palette. (default 0)"
 	movedir(string) : "Move vector (X Y Z)"
-	wait(integer) : "Time between cycles" : 0.1
+	wait(float) : "Time between cycles" : "0.1"
 	volume(integer) : "Density" : 10
 ]
 
@@ -763,7 +777,7 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 @PointClass color(64 32 192) = ambient_general : "Ambient sounds"
 [
 	noise(string) : "File to play"
-	volume(integer) : "Volume (0-1)" : 0.5
+	volume(float) : "Volume (0-1)" : "0.5"
 	speed(integer) : "Attenuation" : 3
 ]
 @PointClass color(64 32 192) = ambient_drip : "Dripping sound" []
@@ -796,7 +810,7 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 	]
 	noise2(string) : "Move sound"
  	noise1(string) : "Stop sound"
-	wait(string) : "Delay before close" : "4" 
+	wait(float) : "Delay before close" : "4.0"
 	lip(integer) : "Lip" : 8
 	dmg(integer) : "Damage inflicted when blocked" : 0
 	message(string) : "Message if triggered"
@@ -817,7 +831,7 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 	t_width(integer) : "First move lenght"
 	t_length(integer) : "Second move lenght"
 	dmg(integer) : "Damage when blocked" : 2
-	wait(string) : "Time before close" : "2"
+	wait(float) : "Time before close" : "2.0"
 	sounds(choices) : "Sounds" : 3 =
 	[
 		1: "Medieval"
@@ -852,7 +866,7 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 		2 : "Metallic clink"
 		3 : "In-out"
 	]
-	wait(string) : "Delay before reset" : "1"
+	wait(float) : "Delay before reset" : "1.0"
 	delay(string) : "Delay before trigger"
 	message(string) : "Message" 
 ]
@@ -886,7 +900,7 @@ RETRIGGER: stop at each path_corner and don't resume until triggered again (igno
 "Moving platform stop"
 [
 	target(target_source) : "Next stop target"
-	wait(integer) : "Wait" : 0
+	wait(float) : "Wait" : "0"
 ]
 
 @SolidClass base(Targetname, ModelLight) = func_plat :
@@ -959,7 +973,7 @@ low_trigger: plat will only be triggered when in lowered position"
 ]
 @SolidClass base(Trigger) = trigger_multiple : "Trigger: Activate multiple" 
 [
-	wait(string) : "Wait before reset" : "4"
+	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health"
 	spawnflags(flags) = [ 1: "Entity only" : 0 ]
 ]
@@ -1024,7 +1038,7 @@ low_trigger: plat will only be triggered when in lowered position"
 @SolidClass  base(Targetname) = trigger_hurt : "Trigger player hurt" 
 [
 	dmg(integer) : "Damage" : 5
-	wait(integer) : "Delay before reset"
+	wait(float) : "Delay before reset"
 	message(string) : "Message"
 ]
 
