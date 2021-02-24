@@ -1,20 +1,39 @@
 void() Projectile_Hit;
 void() ban_fire_still;
-void() FuelTankExplode;
 
-void() d_explode1 = [0, d_explode2]{};
-void() d_explode2 = [1, d_explode3]{};
-void() d_explode3 = [2, d_explode4]{};
-void() d_explode4 = [3, d_explode5]{};
-void() d_explode5 = [4, d_explode6]{};
-void() d_explode6 = [5, d_explode7]{};
-void() d_explode7 = [6, d_explode8]{};
-void() d_explode8 = [7, d_explode9]{};
-void() d_explode9 = [8, d_explode10]{};
-void() d_explode10 = [9, d_explode11]{};
-void() d_explode11 = [10, d_explode12]{};
-void() d_explode12 = [11, d_explode13]{};
-void() d_explode13 = [12, SUB_Remove]{};
+
+void() Projectile_Hit = 
+{
+	local vector org;
+	if (other == self.owner)
+	{
+		return;
+	}
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		remove(self);
+		return;
+	}
+	org = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
+	SpawnBlood(org, self.velocity * 0.2, 15);
+	T_Damage(other, self, self.owner, 10);
+	T_RadiusDamage(self, self, 20, self);
+	self.origin = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
+	WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte(MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord(MSG_BROADCAST, self.origin_x);
+	WriteCoord(MSG_BROADCAST, self.origin_y);
+	WriteCoord(MSG_BROADCAST, self.origin_z);
+	if (!(other.health))
+	{
+		BecomeExplosion();
+	}
+	else
+	{
+		remove(self);
+	}
+};
+
 
 void(float ofs, float turn) b_fire_rocket = 
 {
@@ -69,76 +88,9 @@ void(float ofs, float turn) b_fire_rocket =
 	setorigin(missile, src);
 };
 
-void() Projectile_Hit = 
-{
-	local vector org;
-	if (other == self.owner)
-	{
-		return;
-	}
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
-		return;
-	}
-	org = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
-	SpawnBlood(org, self.velocity * 0.2, 15);
-	T_Damage(other, self, self.owner, 10);
-	T_RadiusDamage(self, self, 20, self);
-	self.origin = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
-	WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte(MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord(MSG_BROADCAST, self.origin_x);
-	WriteCoord(MSG_BROADCAST, self.origin_y);
-	WriteCoord(MSG_BROADCAST, self.origin_z);
-	if (!(other.health))
-	{
-		BecomeExplosion();
-	}
-	else
-	{
-		remove(self);
-	}
-};
 
 
-void(vector org, vector dir) Fire_bomb = 
-{
-	local float x;
-	newmis = spawn();
-	newmis.owner = self;
-	newmis.movetype = MOVETYPE_NOCLIP;
-	newmis.solid = SOLID_BBOX;
-	newmis.touch = SUB_Remove;
-	setmodel(newmis, "progs/d_explod.spr");
-	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);
-	setorigin(newmis, org);
-	if (random() > 0.5)
-	{
-		x = CONTENT_EMPTY;
-	}
-	else
-	{
-		x = AS_STRAIGHT;
-	}
-	newmis.nextthink = time;
-	newmis.think = d_explode1;
-	newmis.velocity_x = random() * 600 * x;
-	newmis.velocity_y = random() * 600 * x;
-	newmis.velocity_z = random() * 300;
-};
 
-void() FuelTankExplode = 
-{
-	local vector dir;
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	sound(self, CHAN_VOICE, "banshee/fuelexp.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
-	Fire_bomb(self.origin, dir);
-	Fire_bomb(self.origin, dir);
-	Fire_bomb(self.origin, dir);
-	Fire_bomb(self.origin, dir);
-	Fire_bomb(self.origin, dir);
-};
 
 void(float angdelta, float delta) ban_rotate = 
 {
@@ -1163,7 +1115,7 @@ void() monster_banshee =
 		precache_sound("banshee/idle4.wav");
 		precache_sound("doors/airdoor2.wav");
 		precache_sound("doors/drclos4.wav");
-		precache_sound("banshee/fuelexp.wav");
+		precache_sound("weapons/fuelexp.wav");
 		precache_sound("banshee/repel.wav");
 
 		body = spawn();

@@ -17,6 +17,8 @@ triggers.qc
 plats.qc
 misc.qc
 
+malice_subs.qc
+
 ogre.qc
 demon.qc
 shambler.qc
@@ -64,3 +66,4 @@ eel.qc			// Rogue
 
 monster_frogman.qc // Malice
 monster_banshee.qc // Malice
+monster_rider.qc // Malice

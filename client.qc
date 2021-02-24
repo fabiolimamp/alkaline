@@ -1673,6 +1673,8 @@ void(entity targ, entity attacker) ClientObituary =
 				if (attacker.classname == "monster_banshee")
 					bprint (" is Banshee fodder\n");
 
+				if (attacker.classname == "monster_rider")
+					bprint (" was killed by a Raider\n"); // TODO: check obituary message
 				return;
 			}
 			

@@ -738,4 +738,9 @@ float PROBE_VOLUME = 0.5;
 float SERVO_VOLUME = 0.5;
 float ATTN_BANSHEE = 0.5;
 float MAX_DROPS = 12;
+float SERV_VOL = 0.5;
 .vector old_angles;
+
+
+void() FuelTankExplode;
+void(vector org, vector dir) Fire_bomb;
