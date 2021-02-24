@@ -728,4 +728,7 @@ float SPAWNFLAG_NOMESSAGE = 1;
 float SPAWNFLAG_NOTOUCH = 1;
 float SVC_SETVIEWPORT = 5;
 float SVC_SETVIEWANGLES = 10;
+float PROBE_VOLUME = 0.5;
+float ATTN_BANSHEE = 0.5;
+float MAX_DROPS = 12;
 .vector old_angles;
