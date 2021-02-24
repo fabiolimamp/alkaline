@@ -1667,6 +1667,9 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" was perforated by a Centurion\n");
 				//johnfitz
 				
+				if (attacker.classname == "monster_frogman")
+					bprint (" was harpooned by a Frogman\n");
+
 				return;
 			}
 			

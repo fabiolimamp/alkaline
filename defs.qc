@@ -716,3 +716,16 @@ float BREAKABLE_NO_MONSTERS = 1;
 
 void(entity e, float dur) 	StartBurning;
 void(entity e) 				StopBurning;
+
+
+
+/*****************************************************
+Malice defs
+******************************************************/
+float SPAWNFLAG_SUPERSPIKE = 1;
+float SPAWNFLAG_LASER = 2;
+float SPAWNFLAG_NOMESSAGE = 1;
+float SPAWNFLAG_NOTOUCH = 1;
+float SVC_SETVIEWPORT = 5;
+float SVC_SETVIEWANGLES = 10;
+.vector old_angles;

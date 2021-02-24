@@ -709,3 +709,24 @@ void() misc_noisemaker =
 	self.nextthink = time + 0.1 + random();
 	self.think = noise_think;
 };
+
+
+/***********************************************************
+ Malice stuff
+************************************************************/
+
+void(vector where) make_bub = 
+{
+	local entity bubble;
+	bubble = spawn();
+	setmodel(bubble, "progs/s_bubble.spr");
+	setorigin(bubble, where);
+	bubble.movetype = MOVETYPE_NOCLIP;
+	bubble.solid = SOLID_NOT;
+	bubble.velocity_z = SVC_SETVIEWANGLES + random() * SVC_SETVIEWANGLES;
+	bubble.touch = bubble_remove;
+	bubble.classname = "bubble";
+	setsize(bubble, '-8 -8 -8', '8 8 8');
+	bubble.nextthink = time;
+	bubble.think = bubble_bob;
+};

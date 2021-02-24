@@ -609,6 +609,10 @@ Don't shake hands with this crazy bastard!" []
 @PointClass base(Monster) size(32 32 48) model({"path":"progs/eel2.mdl"}) = monster_eel :
 "Eel, 25 health points." []
 
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/frogman.mdl"}) = monster_frogman :
+"Frogman, 100 health points." []
+
+
 //
 // lights
 //

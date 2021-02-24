@@ -211,7 +211,7 @@ void() boss_death9 = [$death9, boss_death10]
 	WriteCoord (MSG_BROADCAST, self.origin_z);
 };
 
-Void() GibBoss =
+void() GibBoss =
 {
 sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 // throw tons of meat chunks
