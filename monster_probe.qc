@@ -119,6 +119,7 @@ void() probe_think =
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
+	//dprint("Setting frame ");dprint(ftos(self.frame));dprint("\n");
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
@@ -248,6 +249,8 @@ void() probe_walkthink =
 		FoundTarget();
 	}
 };
+
+
 
 void() probe_stand1 = [0, probe_stand2]
 {
@@ -715,6 +718,7 @@ void(entity attacker, float damage) probe_pain =
 
 void() probe_missile_attack = 
 {
+	
 	local float n;
 	n = random();
 	if (n < PROBE_VOLUME)
@@ -729,6 +733,7 @@ void() probe_missile_attack =
 
 void() probe_stand_attack = 
 {
+	
 	local vector spot1;
 	local vector spot2;
 	spot1 = self.origin + self.view_ofs;
@@ -754,6 +759,7 @@ void() probe_stand_attack =
 		probe_run1();
 		return;
 	}
+	
 	probe_satk1();
 	if (self.cnt == 1)
 	{
@@ -833,8 +839,8 @@ void() monster_probe =
 		body.movetype = MOVETYPE_STEP;
 		self.trigger_field = body;
 		body.trigger_field = self;
-		setmodel(body, "progs/probebod.mdl");
 		setmodel(self, "progs/probedom.mdl");
+		setmodel(body, "progs/probebod.mdl");
 		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 		setorigin(self, self.origin);
 		setorigin(body, body.origin);
