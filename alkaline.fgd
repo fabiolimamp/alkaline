@@ -468,7 +468,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // added shotgun & axe for Rubicon 2
 //
 
-@baseclass size(-16 -16 0, 16 16 32) color(128 128 255) base(Item, Appearflags) = Weapon []
+@baseclass size(-16 -16 0, 16 16 56) color(128 128 255) base(Item, Appearflags) = Weapon []
 
 @PointClass base(Weapon) model({"path": "progs/g_axe.mdl"}) = weapon_axe : "Axe." []
 @PointClass base(Weapon) model({"path": "progs/g_shotgn.mdl"}) = weapon_shotgun : "Shotgun." []
@@ -478,6 +478,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 @PointClass base(Weapon) model({"path": "progs/g_rock.mdl"}) = weapon_grenadelauncher : "Grenade launcher" []
 @PointClass base(Weapon) model({"path": "progs/g_rock2.mdl"}) = weapon_rocketlauncher : "Rocket launcher" []
 @PointClass base(Weapon) model({"path": "progs/g_light.mdl"}) = weapon_lightning : "Thunderbolt" []
+@PointClass base(Weapon) model({"path": "progs/g_laserg.mdl"}) = weapon_laser_gun : "Laser Cannon" []
 
 //
 // badasses
@@ -1018,14 +1019,15 @@ low_trigger: plat will only be triggered when in lowered position"
 ]
 
 @baseclass = TriggerWait [
-	is_waiting(choices) : "Dormant Trigger" : 0 : "If set to 1, the trigger starts dormant and waits for activation." =
+	is_waiting(choices) : "Dormant Trigger" : 0 :
+	"If set to 1, the trigger starts dormant and waits for activation. Subsequent activations trigger its target as usual." =
 	[
 		0 : "Default"
 		1 : "Wait for Trigger"
 	]
 ]
 
-@SolidClass= trigger_changelevel : "Trigger: Change level"
+@SolidClass = trigger_changelevel : "Trigger: Change level"
 [
 	map(string) : "New map name"
 	target(target_destination) : "Target"
