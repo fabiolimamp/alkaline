@@ -701,3 +701,46 @@ void() trigger_monsterjump =
 	self.touch = trigger_monsterjump_touch;
 };
 
+
+//This is necros' trigger_void from Lost Chapters pack, modified by dumptruck_ds
+
+float 	MONSTER_SAFE = 1;
+float 	PLAYER_SAFE = 2;
+
+void() trigger_void_touch =
+{
+	if (other.movetype == MOVETYPE_NOCLIP) // from Copper -- dumptruck_ds
+		return FALSE;
+
+	if (self.spawnflags & MONSTER_SAFE && other.flags & FL_MONSTER) return; //ignore monsters
+	if (self.spawnflags & PLAYER_SAFE && other.flags & FL_CLIENT) return; // ignore players
+
+	if (other.takedamage)
+	{
+		other.invincible_finished = 0; // kills even with Pentagram, this took forever to figure out!! -- dumptruck_ds
+		T_Damage (other, self, self, other.health + 1000 /*, DTH_TRIGGER_VOID, 1, 1*/);
+
+		if (other.flags & FL_MONSTER)
+		remove(other);
+	}
+
+	if (other.classname == "gib" ||
+	other.classname == "grenade" ||
+	other.classname == "spike" ||
+	other.classname == "missile")
+	remove(other);
+
+	if (other.flags & FL_ITEM)
+	remove(other);
+
+	force_retouch = 2;
+};
+
+/*QUAKED trigger_void (.5 .5 .5) ? X X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
+Use this for a 'void' area.  removes monsters, gibs, ammo, etc...  also kills player.
+*/
+void() trigger_void =
+{
+	InitTrigger ();
+	self.touch = trigger_void_touch;
+};

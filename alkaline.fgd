@@ -1057,6 +1057,15 @@ low_trigger: plat will only be triggered when in lowered position"
 	]
 ]
 
+@SolidClass base(Appearflags) = trigger_void : "Use this for a 'void' area. Removes monsters, gibs, ammo, etc... also kills player"
+[
+	spawnflags(Flags) =
+	[
+		1 : "No Effect on Monsters" : 0
+		2 : "No Effect on Players" : 0
+	]
+]
+
 // need updates:
 
 @SolidClass = trigger_setskill : "Trigger set skill" 
