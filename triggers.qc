@@ -66,14 +66,30 @@ void() multi_trigger =
 	}
 };
 
-void() multi_killed =
+void() multi_killed = //dumptruck_ds
 {
+	if (self.is_waiting)	// Supa, restore health and do nothing if we're still waiting to be activated
+	{
+		self.health		= self.max_health;	// nyah nyah~!
+		self.takedamage	= DAMAGE_YES;
+		self.solid		= SOLID_BBOX;
+
+		return;
+	}
+
 	self.enemy = damage_attacker;
 	multi_trigger();
 };
 
-void() multi_use =
+void() multi_use = //dumptruck_ds
 {
+	if (self.is_waiting)	// Supa, if this trigger is waiting to be activated we'll tell it to get ready!
+	{
+		self.is_waiting = FALSE;	// Get ready!
+
+		return;	// Must be used or triggered again to do anything
+	}
+
 	self.enemy = activator;
 	multi_trigger();
 };
@@ -110,6 +126,17 @@ set "message" to text string
 */
 void() trigger_multiple =
 {
+	if (self.is_waiting)
+	{
+		dprint("Spawned a waiting ");
+		dprint(self.classname);
+		dprint(" with targetname ");
+		dprint(self.targetname);
+		dprint(" and target ");
+		dprint(self.target);
+		dprint("\n");
+	}
+
 	if (self.sounds == 1)
 	{
 		precache_sound ("misc/secret.wav");
@@ -278,6 +305,10 @@ TELEPORT TRIGGERS
 
 float	PLAYER_ONLY	= 1;
 float	SILENT = 2;
+/*float RANDOM = 4;
+float TELE_STEALTH = 8;
+float MONSTER_ONLY = 16;
+float TELE_DD = 32;*/
 
 void() play_teleport =
 {
@@ -378,6 +409,18 @@ local vector	org;
 			return;
 	}
 
+	if (self.is_waiting == TRUE)	// Supa, is this trigger waiting to be activated?
+		return;
+
+	if (self.is_waiting != -1)	// Special case
+	if (self.targetname != "")
+	{
+		if (self.nextthink < time)
+		{
+			return;		// not fired yet
+		}
+	}
+
 // only teleport living creatures
 	if (other.health <= 0 || other.solid != SOLID_SLIDEBOX)
 		return;
@@ -435,6 +478,13 @@ void() info_teleport_destination =
 
 void() teleport_use =
 {
+	if (self.is_waiting)	// Supa, if this trigger is waiting to be activated we'll tell it to get ready!
+	{
+		self.is_waiting = -1;	// Special case to tell teleport_touch to ignore the usual targetname->nextthink check
+
+		return;	// Must be used or triggered again to do anything
+	}
+
 	self.nextthink = time + 0.2;
 	force_retouch = 2;		// make sure even still objects get hit
 	self.think = SUB_Null;

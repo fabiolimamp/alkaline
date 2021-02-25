@@ -830,6 +830,12 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 @PointClass color(64 32 192) = ambient_swamp2 : "Frogs croaking B" []
 @PointClass color(64 32 192) = ambient_thunder : "Thunder sound" []
 
+
+
+
+
+
+
 // 
 // moving things
 //
@@ -996,6 +1002,14 @@ low_trigger: plat will only be triggered when in lowered position"
 	message(string) : "Message (set sound too!)"
 ]
 
+@baseclass = TriggerWait [
+	is_waiting(choices) : "Dormant Trigger" : 0 : "If set to 1, the trigger starts dormant and waits for activation." =
+	[
+		0 : "Default"
+		1 : "Wait for Trigger"
+	]
+]
+
 @SolidClass= trigger_changelevel : "Trigger: Change level"
 [
 	map(string) : "New map name"
@@ -1006,12 +1020,12 @@ low_trigger: plat will only be triggered when in lowered position"
 	]
 ]
 
-@SolidClass base(Trigger) = trigger_once : "Trigger: Activate once"
+@SolidClass base(Trigger, TriggerWait) = trigger_once : "Trigger: Activate once"
 [
 	health(integer) : "Health"
 	spawnflags(flags) = [ 1: "Entity only" : 0 ]
 ]
-@SolidClass base(Trigger) = trigger_multiple : "Trigger: Activate multiple" 
+@SolidClass base(Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple" 
 [
 	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health"
@@ -1021,7 +1035,7 @@ low_trigger: plat will only be triggered when in lowered position"
 [
 	spawnflags(flags) = [ 1: "Entity only" : 0 ]
 ]
-@SolidClass base(Trigger) = trigger_secret : "Trigger: Secret" 
+@SolidClass base(Trigger, TriggerWait) = trigger_secret : "Trigger: Secret" 
 [
 	sounds(choices) : "Sound style" : 1 =
 	[

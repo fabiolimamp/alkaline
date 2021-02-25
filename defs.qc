@@ -541,6 +541,7 @@ float	AS_MISSILE		= 4;
 // triggers
 //
 .float		count;			// for counting triggers
+.float 		is_waiting;		// delayed spawn triggerz
 
 
 //
