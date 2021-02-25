@@ -120,6 +120,11 @@
 	alpha(float) : "Opacity" : "1.0" : "Controls entity opacity in the 0-1 range. 0: fully transparent, 1: fully opaque"
 ]
 
+@baseclass = Angle [
+	angle(integer) : "Angle"
+]
+
+
 //
 // Rubicon 2 specific additions
 // New enemies have been added to the monster section
@@ -841,9 +846,8 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 //
 
 
-@SolidClass base(Appearflags, Targetname, Target, ModelLight) = func_door : "Basic door" 
+@SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door : "Basic door" 
 [
-	angle(integer) : "Angle" : : "determines the opening direction"
 	speed(integer) : "Speed" : 100
 	sounds(choices) : "Sound" : 0 = 
 	[
@@ -871,9 +875,8 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname, Target, ModelLight) = func_door_secret : "Triggered door" 
+@SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door_secret : "Triggered door" 
 [
-	angle(integer) : "Angle" : : "determines the opening direction"
 	t_width(integer) : "First move lenght"
 	t_length(integer) : "Second move lenght"
 	dmg(integer) : "Damage when blocked" : 2
@@ -899,9 +902,8 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
-@SolidClass base(Targetname, Target, ModelLight) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
+@SolidClass base(Angle, Targetname, Target, ModelLight) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
 [
-	
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
 	health(integer) : "Health (shootable if > 0)"
