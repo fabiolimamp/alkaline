@@ -17,6 +17,9 @@ triggers.qc
 plats.qc
 misc.qc
 
+math.qc
+misc_model.qc
+
 malice_subs.qc
 
 ogre.qc

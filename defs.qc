@@ -528,6 +528,8 @@ float	AS_MISSILE		= 4;
 // misc
 //
 .float		cnt; 			// misc flag
+.vector 	centeroffset;	// misc_model
+.vector 	mdlsz;			// misc_model
 	
 //
 // subs
