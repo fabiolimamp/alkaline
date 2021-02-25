@@ -984,6 +984,19 @@ low_trigger: plat will only be triggered when in lowered position"
 
 @SolidClass = func_bossgate : "Boss gate" []
 
+
+@SolidClass color(128 128 230) base(ModelLight) = func_detail : "Detail brush. Ignored by vis so can speed up compile times consideratbly. Also allows you to set new compiler lighting options on brushes. DOES NOT SEAL MAPS FROM VOID" []
+
+@SolidClass color(128 128 230) base(ModelLight) = func_detail_illusionary : "func_detail variant with no collision (players / monsters / gunfire) and doesn't split world faces. Doesn't cast shadows unless enabled with _shadow 1. Useful for hanging vines. Still creates BSP leafs." []
+
+@SolidClass color(128 128 230) base(ModelLight) = func_detail_wall : "func_detail variant that doesn't split world faces. Useful for when you want a decoration touching a floor or wall to not split the floor - wall faces (you'll get some overdraw instead.) If it completely covers up a world face, that face will get clipped away, so it's not suitable for fence textures; see func_detail_fence instead" []
+
+@SolidClass color(128 128 230) base(ModelLight) = func_detail_fence : "Similar to func_detail_wall except it's suitable for fence textures, never clips away world faces. Useful for fences, grates, etc., that are solid and block gunfire" []
+
+@SolidClass base(ModelLight) = func_group : "Brush group. Is treated by qbsp as world brushes but allows you to add light shading settings. _dirt and _shadow currently only accept -1 as a valid setting for func_group" []
+
+
+
 //
 // triggers
 //
