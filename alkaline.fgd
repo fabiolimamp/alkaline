@@ -52,7 +52,7 @@
 // base marker definitions
 //
 
-@baseclass = Appearflags [
+@BaseClass = Appearflags [
 	spawnflags(Flags) =
 	[
 		256 : "Not in Easy" : 0
@@ -62,14 +62,14 @@
 	]
 ]
 
-@baseclass = Targetname [ targetname(target_source) : "Name" ]
-@baseclass = Target [ 
+@BaseClass = Targetname [ targetname(target_source) : "Name" ]
+@BaseClass = Target [ 
 	target(target_destination) : "Target" 
 	killtarget(target_destination) : "Killtarget"
 ]
 
 
-@baseclass color(255 255 40) = Light [
+@BaseClass color(255 255 40) = Light [
 	light(integer) : "Brightness" : 300
 	wait(float) : "Fade distance multiplier" : "1"
 	_color(color) : "Light color"
@@ -102,7 +102,7 @@
 	spawnflags(Flags) = [ 1 : "Initially dark" : 0 ]
 ]
 
-@baseclass = ModelLight	[
+@BaseClass = ModelLight	[
 	_minlight(integer) : "Min light" :  : "Set the minimum light level for any surface of the brush model. Default 0"
 	_mincolor(color255) : "Min light color R G B" : "255 255 255" : "Specify red(r), green(g) and blue(b) components for the colour of the minlight. RGB component values are between 0 and 255 (between 0 and 1 is also accepted). Default is white light (255 255 255)"
 	_shadow(integer) : "Shadows" :  : "If n is 1, this model will cast shadows on other models and itself (i.e. '_shadow' implies '_shadowself'). Note that this doesn’t magically give Quake dynamic lighting powers, so the shadows will not move if the model moves. Func_detail ONLY - If set to -1, light will pass through this brush model. Default 0"
@@ -116,11 +116,11 @@
 	_phong_angle(integer) : "Phong shading angle" :  : "Enables phong shading on faces of this model with a custom angle. Adjacent faces with normals this many degrees apart (or less) will be smoothed. Consider setting '_anglescale' to '1' on lights or worldspawn to make the effect of phong shading more visible. Use the '-phongdebug' command-line flag to save the interpolated normals to the lightmap for previewing (use 'r_lightmap 1' or 'gl_lightmaps 1' in your engine to preview.)"
 ]
 
-@baseclass = Alpha [
+@BaseClass = Alpha [
 	alpha(float) : "Opacity" : "1.0" : "Controls entity opacity in the 0-1 range. 0: fully transparent, 1: fully opaque"
 ]
 
-@baseclass = Angle [
+@BaseClass = Angle [
 	angle(integer) : "Angle"
 ]
 
@@ -342,7 +342,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // player starts, deathmatch, coop, teleport
 //
 
-@baseclass base(Appearflags) size(-16 -16 -24, 16 16 32) 
+@BaseClass base(Appearflags) size(-16 -16 -24, 16 16 32) 
 	color(0 255 0) model({"path" :"progs/player.mdl"}) = PlayerClass [
 		angle(integer) : "Angle"
 	]
@@ -373,11 +373,34 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 //
 // items
 //
-@baseclass color(80 0 200) base(Target, Targetname) = Item
+
+
+@BaseClass base(Appearflags, Target, Targetname) =
+	NonRespawnableItem
 [
-	message(string) : "Message"
+	spawnflags(flags) =
+	[
+		32 : "Spawn silent" : 0
+		64 : "Trigger spawned" : 0
+		128 : "Suspended in air" : 0
+	]
+	// message(string) : "Message"
+	// delay(integer) : "Delay"
 ]
-@baseclass size(0 0 0, 32 32 56) color(80 0 200) base(Item, Appearflags) = Ammo
+
+@BaseClass base(NonRespawnableItem) =
+	RespawnableItem
+[
+	spawnflags(flags) =
+	[
+		16384 : "Respawn with DM effects" : 0
+	]
+	ritem(integer) : "Respawn item if set to 1"
+	respawndelay(integer) : "Respawn time"
+	respawncount(integer) : "How many respawns?"
+]
+
+@BaseClass size(0 0 0, 32 32 56) color(80 0 200) base(RespawnableItem, Appearflags) = Ammo
 [
 	spawnflags(flags) = 
 	[
@@ -410,7 +433,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
         }}
     ) = item_spikes : "Perforator/Nailgun ammo" []
 
-@PointClass size(0 0 0, 32 32 56) base(Item, Appearflags) model(
+@PointClass size(0 0 0, 32 32 56) base(RespawnableItem, Appearflags) model(
         {{
             spawnflags & 2 ->   ":maps/b_bh100.bsp",
             spawnflags & 1 ->   ":maps/b_bh10.bsp",
@@ -425,27 +448,27 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	]
 ]
 
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/suit.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/suit.mdl" }) =
 	item_artifact_envirosuit : "Environmental protection suit" []
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/quaddama.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/quaddama.mdl" }) =
 	item_artifact_super_damage : "Quad damage" []
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/invulner.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/invulner.mdl" }) =
 	item_artifact_invulnerability : "Pentagram of Protection" []
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/invisibl.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/invisibl.mdl" }) =
 	item_artifact_invisibility : "Ring of Shadows" []
 
 
-@PointClass size(-16 -16 0, 16 16 56) base(Item, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 2 }) =
+@PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 2 }) =
 	item_armorInv : "Red armor (200%)" []
-@PointClass size(-16 -16 0, 16 16 56) base(Item, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 1 }) =
+@PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 1 }) =
 	item_armor2 : "Yellow armor (150%)" []
-@PointClass size(-16 -16 0, 16 16 56) base(Item, Appearflags) model({ "path": ":progs/armor.mdl" }) =
+@PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl" }) =
 	item_armor1 : "Green armor (100%)" []
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/w_s_key.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(NonRespawnableItem, Appearflags) model({ "path": ":progs/w_s_key.mdl" }) =
 	item_key1 : "Silver key" []
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/w_g_key.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(NonRespawnableItem, Appearflags) model({ "path": ":progs/w_g_key.mdl" }) =
 	item_key2 : "Gold key" []
-@PointClass size(-16 -16 -24, 16 16 32) base(Item, Appearflags) model({ "path": ":progs/end1.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(NonRespawnableItem, Appearflags) model({ "path": ":progs/end1.mdl" }) =
 	item_sigil : "Sigil"
 [
 	spawnflags(Flags) =
@@ -460,7 +483,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // ITEM_CIRCUITBOARD
 // Collectible circuit board thingie
 
-@PointClass base(Appearflags, Targetname, Target, Item) color(255 255 32) = item_circuitboard : "Circuit board" []
+@PointClass base(Appearflags, Targetname, Target, RespawnableItem) color(255 255 32) = item_circuitboard : "Circuit board" []
 
 
 //
@@ -468,7 +491,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // added shotgun & axe for Rubicon 2
 //
 
-@baseclass size(-16 -16 0, 16 16 56) color(128 128 255) base(Item, Appearflags) = Weapon []
+@BaseClass size(-16 -16 0, 16 16 56) color(128 128 255) base(RespawnableItem, Appearflags) = Weapon []
 
 @PointClass base(Weapon) model({"path": "progs/g_axe.mdl"}) = weapon_axe : "Axe." []
 @PointClass base(Weapon) model({"path": "progs/g_shotgn.mdl"}) = weapon_shotgun : "Shotgun." []
@@ -485,7 +508,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // added enemies for Rubicon 2
 //
 
-@baseclass base(Appearflags, Target, Targetname) color(192 64 64) = Monster 
+@BaseClass base(Appearflags, Target, Targetname) color(192 64 64) = Monster 
 [
 	spawnflags(Flags) = 
 	[
@@ -631,7 +654,7 @@ Don't shake hands with this crazy bastard!" []
 // lights
 //
 
-@baseclass = LightTarget [
+@BaseClass = LightTarget [
 	target(string) : "Target" : : "Makes this light a spot light. This should be an entity for the spot line to point at (usually a info_null)"
 ]
 
@@ -1004,7 +1027,7 @@ low_trigger: plat will only be triggered when in lowered position"
 // triggers
 //
 
-@baseclass color(128 0 128) base(Target, Targetname) = Trigger
+@BaseClass color(128 0 128) base(Target, Targetname) = Trigger
 [
 	sounds(choices) : "Sound style" : 0 =
 	[
@@ -1018,7 +1041,7 @@ low_trigger: plat will only be triggered when in lowered position"
 	message(string) : "Message (set sound too!)"
 ]
 
-@baseclass = TriggerWait [
+@BaseClass = TriggerWait [
 	is_waiting(choices) : "Dormant Trigger" : 0 :
 	"If set to 1, the trigger starts dormant and waits for activation. Subsequent activations trigger its target as usual." =
 	[
