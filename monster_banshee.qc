@@ -14,11 +14,13 @@ void() Projectile_Hit =
 		remove(self);
 		return;
 	}
-	org = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
-	SpawnBlood(org, self.velocity * 0.2, 15);
-	T_Damage(other, self, self.owner, 10);
+	org = self.origin - 8 * normalize(self.velocity);
+	if(other.health) {
+		SpawnBlood(org, self.velocity * 0.2, 15);
+		T_Damage(other, self, self.owner, 10);
+	}
 	T_RadiusDamage(self, self, 20, self);
-	self.origin = self.origin - SECRET_NO_SHOOT * normalize(self.velocity);
+	self.origin = self.origin - 8 * normalize(self.velocity);
 	WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte(MSG_BROADCAST, TE_EXPLOSION);
 	WriteCoord(MSG_BROADCAST, self.origin_x);

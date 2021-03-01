@@ -68,8 +68,11 @@ void() Rider_Missile_Touch =
 		return;
 	}
 	org = self.origin - 8 * normalize(self.velocity);
-	SpawnBlood(org, self.velocity * 0.2, 15);
-	T_Damage(other, self, self.owner, 10);
+	
+	if(other.health) {
+		SpawnBlood(org, self.velocity * 0.2, 15);
+		T_Damage(other, self, self.owner, 10);
+	}
 	sound(self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8 * normalize(self.velocity);
 	WriteByte(0, SVC_TEMPENTITY);
