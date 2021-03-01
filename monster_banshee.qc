@@ -998,7 +998,7 @@ void() banshee_repulse_attack =
 	banshee_think();
 	if (self.state == STATE_TOP) {
 		SUB_AttackFinished(SERVO_VOLUME);
-		sound(self, CHAN_BODY, "banshee/repel.wav", 1, ATTN_NORM);
+		sound(self, CHAN_BODY, "armagon/repel.wav", 1, ATTN_NORM);
 		self.state = 1;
 		return;
 	}
@@ -1118,7 +1118,7 @@ void() monster_banshee =
 		precache_sound("doors/airdoor2.wav");
 		precache_sound("doors/drclos4.wav");
 		precache_sound("weapons/fuelexp.wav");
-		precache_sound("banshee/repel.wav");
+		precache_sound("armagon/repel.wav");
 
 		body = spawn();
 		body.origin = self.origin;
