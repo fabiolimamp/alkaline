@@ -306,6 +306,17 @@ local float	rsnd;
 		sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_zombie")
 		sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_NORM);
+
+else if (self.classname == "monster_rider")
+		sound (self, CHAN_VOICE, "rider/sight.wav", 1, ATTN_NORM);
+else if (self.classname == "monster_frogman")
+		sound(self, CHAN_VOICE, "frogman/sight.wav", AS_STRAIGHT, ATTN_NORM);
+else if (self.classname == "monster_banshee")
+		if (random() < 0.5)
+		sound(self, CHAN_VOICE, "banshee/sight.wav", AS_STRAIGHT, ATTN_NORM);
+		else
+		sound(self, CHAN_VOICE, "banshee/sight2.wav", AS_STRAIGHT, ATTN_NORM);
+
 	else if (self.classname == "monster_dog")
 		sound (self, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_hell_knight")
