@@ -1668,16 +1668,13 @@ void(entity targ, entity attacker) ClientObituary =
 				//johnfitz
 				
 				if (attacker.classname == "monster_frogman")
-					bprint (" was harpooned by a Frogman\n");
-
+					bprint (" was harpooned by a Frogman\n"); 
 				if (attacker.classname == "monster_banshee")
-					bprint (" is Banshee fodder\n");
-
+					bprint (" was wrecked by an Annihilator\n");
 				if (attacker.classname == "monster_rider")
-					bprint (" was killed by a Raider\n"); // TODO: check obituary message
-
+					bprint (" was picked off by a Prowler\n");
 				if (attacker.classname == "monster_probe")
-					bprint (" was killed by a Probe\n"); // TODO: check obituary message		
+					bprint (" was plugged by a Probe\n");		
 				return;
 			}
 			
