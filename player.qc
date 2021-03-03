@@ -477,7 +477,8 @@ vector(float dm) VelocityForDamage =
 	return v;
 };
 
-void(string gibname, float dm) ThrowGib =
+// The following implementations were moved to meat.qc
+/*void(string gibname, float dm) ThrowGib =
 {
 	local	entity new;
 
@@ -513,7 +514,7 @@ void(string gibname, float dm) ThrowHead =
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	self.avelocity = crandom() * '0 600 0';
 };
-
+*/
 
 void() GibPlayer =
 {

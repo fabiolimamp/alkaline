@@ -2,7 +2,27 @@
 
 void() SUB_Null = {};
 
-void() SUB_Remove = {remove(self);};
+/*
+=============
+SUB_Remove/SUB_RemoveSoon
+
+RemoveSoon is to be used during touch functions to avoid touchlinks errors
+===============
+*/
+void() SUB_Remove = { remove(self); }
+void() SUB_RemoveSoon = 
+{
+	// ensure no shenanigans take place in the next hundredth of a second
+	// otherwise we get weirdness like items being picked up twice at high framerates
+	self.model = string_null;
+	self.solid = SOLID_NOT;
+	self.touch = SUB_Null;
+	self.use = SUB_Null;
+	
+	self.think = SUB_Remove;
+	self.nextthink = time;
+}
+
 
 
 /*
@@ -316,3 +336,25 @@ void (void() thinkst) SUB_CheckRefire =
 	self.cnt = 1;
 	self.think = thinkst;
 };
+
+/*
+=============
+SUB_ChangeModel
+
+size changes after a model change, use this to preserve it
+===============
+*/
+void(entity ent, string mdl) SUB_ChangeModel =
+{
+	local vector sz,smin,smax;
+	sz = ent.size;
+	smin = ent.mins;
+	smax = ent.maxs;
+	
+	setmodel(ent, mdl);
+	
+	if (sz == VEC_ORIGIN)
+		setsize(ent, VEC_ORIGIN, VEC_ORIGIN);
+	else
+		setsize(ent, smin, smax);
+}

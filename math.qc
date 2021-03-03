@@ -6,11 +6,24 @@
  * A collection of helpful math functions.
  */
 
+float mathlib_accuracy;
+
 // Forward declarations
 float(float value, float minValue, float maxValue) clamp;
 float(float a, float b) mod;
 float(float x) sign;
 float(float value, float minValue, float maxValue) wrap;
+
+
+
+vector(float x, float y, float z) Vector =
+{
+    local vector swiz;
+    swiz_x = x;
+    swiz_y = y;
+    swiz_z = z;
+    return swiz;
+}
 
 /*
  * clamp
@@ -90,3 +103,50 @@ float(float value, float minValue, float maxValue) wrap = {
 
     return mod(value - minValue, range + 1) + minValue;
 };
+
+float(float a, float b) min = { if (a <= b) return a; return b; }
+float(float a, float b) max = { if (a >= b) return a; return b; }
+
+float(float a, float b) xor = { return (a | b) - (a & b); }
+float(float a, float b) not = { return a - (a & b); }
+
+
+
+//faster version of id's anglemod
+float(float v) anglemod =
+{
+    return v - floor(v/360) * 360;
+}
+
+float(float anga, float angb) angledif =
+{
+    float dif;
+    dif = fabs(anga - angb);
+    if (dif > 180)
+        dif = 360 - dif;
+    return dif;
+}
+
+// mathlib_sqrt
+float(float num) sqrt =
+{
+    local float apr;
+
+    if(mathlib_accuracy <= 0)
+        mathlib_accuracy = 0.001;   //this sets a level of accuracy, it's a global float
+
+    if (num < mathlib_accuracy)
+        return 0;
+    if (num>1)
+        apr = num;
+    else
+        apr = 1;
+    do
+    {
+        apr = (num + (apr * apr)) / (2 * apr);
+    }
+    while (fabs((apr * apr) - num) > (num * mathlib_accuracy));
+    return apr;
+}
+
+

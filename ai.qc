@@ -43,7 +43,7 @@ walkmove(angle, speed) primitive is all or nothing
 //
 entity	sight_entity;
 float	sight_entity_time;
-
+/*
 float(float v) anglemod =
 {
 	while (v >= 360)
@@ -52,7 +52,7 @@ float(float v) anglemod =
 		v = v + 360;
 	return v;
 };
-
+*/
 /*
 ==============================================================================
 

@@ -102,7 +102,10 @@ vector() wall_velocity =
 ================
 SpawnMeatSpray
 ================
+
+Redefined in meat.qc
 */
+/*
 void(vector org, vector vel) SpawnMeatSpray =
 {
 	local	entity missile;
@@ -128,6 +131,8 @@ void(vector org, vector vel) SpawnMeatSpray =
 	setsize (missile, '0 0 0', '0 0 0');		
 	setorigin (missile, org);
 };
+*/
+
 
 /*
 ================

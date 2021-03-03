@@ -802,6 +802,17 @@ Big banner is twice as big: 128 wide by 288 long."
 	]
 ]
 
+
+@PointClass base(Appearflags, Targetname) size(32 32 32) color(180 0 50) = target_meat_fireworks : "trigger for meat"
+[
+	count(integer) : "Repeat meat" : 1
+	delay(string) : "Delay before first meat" : "0"
+	wait(string) : "Wait between meat" : "1"
+	rand(string) : "Random extra wait before meat" : "0"
+	speed(integer) : "Speed of meat" : 128
+	mangle(string) : "Override meat vector" : "0 0 1"
+]
+
 @PointClass base(Appearflags, Target, Targetname) size(32 32 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_model :
 "A point entity for displaying models. A frame range can be given to animate the model.
 

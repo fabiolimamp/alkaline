@@ -332,6 +332,10 @@ vector	VEC_HULL_MAX = '16 16 32';
 vector	VEC_HULL2_MIN = '-32 -32 -24';
 vector	VEC_HULL2_MAX = '32 32 64';
 
+vector	VEC_ONE			= '1 1 1';
+vector	VEC_UP			= '0 0 1';
+vector	VEC_DOWN 		= '0 0 -1';
+
 // protocol bytes
 float	SVC_TEMPENTITY		= 23;
 float	SVC_KILLEDMONSTER	= 27;
@@ -406,6 +410,8 @@ float	gameover;		// set when a rule exits
 
 string	string_null;	// null string, nothing should be held here
 // float	empty_float;
+
+nosave float	clients;
 
 entity	newmis;			// launch_spike sets this after spawning it
 
@@ -748,3 +754,15 @@ float ATTN_PROBE = 0.5;
 
 void() FuelTankExplode;
 void(vector org, vector dir) Fire_bomb;
+
+/*****************************************************
+End Malice defs
+******************************************************/
+
+.vector oldvelocity;
+.float lifetime_finished;
+.string type;
+
+void(string gibname, float dm) ThrowGib; //meat.qc
+void(string gibname, float dm) ThrowHead; //meat.qc
+void(vector org, vector vel) SpawnMeatSpray;
