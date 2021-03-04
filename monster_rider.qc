@@ -951,6 +951,7 @@ void() monster_rider =
 		precache_sound("rider/down2.wav");
 		precache_sound("weapons/fuelexp.wav");
 		precache_model("progs/laser.mdl");
+		precache_sound("rider/sight.wav");
 		precache_sound("rider/shoot.wav");
 		precache_sound("rider/pain1.wav");
 		precache_sound("rider/down.wav");

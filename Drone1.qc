@@ -63,9 +63,7 @@ void() DLaser_Touch =
 
 void(vector org, vector vec) LaunchDLaser =
 {
-	local	vector	vec;
-		
-        if (self.classname == "monster_drone")
+    if (self.classname == "monster_drone")
 		sound (self, CHAN_WEAPON, "drone/enfire.wav", 1, ATTN_NORM);
 
 	vec = normalize(vec);
@@ -290,7 +288,7 @@ void() drn_pain =
 	else
 		sound (self, CHAN_VOICE, "drone/drnpain.wav", 1, ATTN_NORM);
 
-        ThrowGib ("progs/spike.mdl", -10, self.dest);
+        ThrowGib ("progs/spike.mdl", -10);
 	if (random() > 0.5)
                 drn_paina1 ();
 	else
@@ -320,9 +318,9 @@ void()  drn_die7         =[      $base1,        drn_die7       ]
         ThrowGib ("progs/spike.mdl", -100, self.dest);
         ThrowGib ("progs/spike.mdl", -100, self.dest);
 */
-        ThrowGib ("progs/drngib1.mdl", -65, self.dest);
-        ThrowGib ("progs/drngib2.mdl", -65, self.dest);
-        ThrowGib ("progs/drngib3.mdl", -65, self.dest);
+        ThrowGib ("progs/drngib1.mdl", -65);
+        ThrowGib ("progs/drngib2.mdl", -65);
+        ThrowGib ("progs/drngib3.mdl", -65);
 
 	self.nextthink = time + 2.5; // OUM - gives time to play death sound before going bang
         T_RadiusDamage (self, self, 80, world); // reduced (Speedy)

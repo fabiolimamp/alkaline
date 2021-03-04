@@ -400,9 +400,8 @@ float()	CheckOgreBJump =
 
 float()	OgreBCheckAttack =
 {
-	local	vector	vec;
-	
-// if close enough for slashing, go for it
+		
+	// if close enough for slashing, go for it
 	if (CheckOgreBMelee ())
 	{
 		self.attack_state = AS_MELEE;
@@ -428,6 +427,7 @@ void() ogreb_cache =
 {
 	precache_model ("progs/ogreb.mdl");
 	precache_model ("progs/h_ogreb.mdl");
+	precache_model ("progs/gib.mdl");
 
 	precache_sound ("ogre/ogdrag.wav");
 	precache_sound ("ogre/ogdth.wav");
