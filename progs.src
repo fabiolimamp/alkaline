@@ -80,3 +80,5 @@ monster_probe.qc // Malice
 projectile.qc
 meat.qc
 fog.qc
+
+func_bob.qc
