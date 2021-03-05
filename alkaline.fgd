@@ -125,6 +125,18 @@
 ]
 
 
+@baseclass = Fog [ 
+	fog_density(string) : "Fog Density" 
+	fog_color(color1) : "Fog Color" 
+]
+@baseclass = FogShift [ 
+	fog_density(string) : "Start Fog Density" 
+	fog_color(color1) : "Start Fog Color" 
+	fog_density2(string) : "End Fog Density" 
+	fog_color2(color1) : "End Fog Color" 
+]
+
+
 //
 // Rubicon 2 specific additions
 // New enemies have been added to the monster section
@@ -342,7 +354,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // player starts, deathmatch, coop, teleport
 //
 
-@BaseClass base(Appearflags) size(-16 -16 -24, 16 16 32) 
+@BaseClass base(Appearflags, Fog) size(-16 -16 -24, 16 16 32) 
 	color(0 255 0) model({"path" :"progs/player.mdl"}) = PlayerClass [
 		angle(integer) : "Angle"
 	]
@@ -351,7 +363,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 @PointClass base(PlayerClass) = info_player_coop : "Player cooperative start" []
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
 @PointClass base(PlayerClass) = info_player_deathmatch : "DM start" []
-@PointClass size(-16 -16 0, 16 16 64) base(Targetname) = info_teleport_destination : "Teleport destination" []
+@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog) = info_teleport_destination : "Teleport destination" []
 @PointClass = info_null : "info_null (spotlight target)"
 [
 	targetname(target_source) : "Name" 
@@ -1156,3 +1168,33 @@ low_trigger: plat will only be triggered when in lowered position"
 	message(string) : "Message"
 ]
 
+
+
+@SolidClass base(Appearflags, Targetname, Target, FogShift) = trigger_fogblend : 
+"Trigger: Fog Blend
+Acts as a smoothly blending portal between two zones of different fog. Sets the fog for any client passing through it, blending their global fog settings between start and end values proportional to their position within the trigger.
+
+- will 'stuffcmd' 2 dozen times per frame so try not to make these huge
+- a bug in most quake engine ports will reset the eye position smoothing that happens when climbing stairs or riding a plat on every frame that a 'stuffcmd' is sent, so fog transitions during upwards motion will cause noticeable stuttering." 
+[
+	distance(integer) : "Length of blend distance (defaults to size of trigger)"
+	angle(integer) : "Axis of motion of blend (points toward end values)"
+]
+
+
+@PointClass base(Appearflags, Targetname, Target, FogShift) color(128 128 50) = target_fogblend : 
+"Target: Fog Blend
+Activator's fog will be blended over time from start to end values.
+
+- will 'stuffcmd' 2 dozen times per frame so try not to make this take too long
+- a bug in most quake engine ports will reset the eye position smoothing that happens when climbing stairs or riding a plat on every frame that a 'stuffcmd' is sent, so fog transitions during upwards motion will cause noticeable stuttering." 
+[
+	spawnflags(flags) = [
+		1 : "One-Way Only" : 0
+		2 : "Reverse Start/End" : 0
+		4 : "All clients" : 0
+	]
+	delay(string) : "Pause before starting blend"
+	speed(string) : "Time to blend (-1 for instant)"
+	speed2(string) : "Time to blend back, if different (-1 for instant)"
+]

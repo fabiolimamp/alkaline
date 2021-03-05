@@ -57,6 +57,34 @@ float(float in, float def) zeroconvertdefault =
 
 
 
+// for measuring how large an entity is along an arbitrary vector
+// FIXME: this is trash and it returns trash
+float(vector v, vector s) BoundsAngleSize =
+{
+	v_x = fabs(v_x);
+	v_y = fabs(v_y);
+	v_z = fabs(v_z);
+	
+	// size is always + + + but this is in case I switch the parameters somewhere
+	s_x = fabs(s_x);
+	s_y = fabs(s_y);
+	s_z = fabs(s_z);
+	
+	return v * s;
+}
+
+//count -4 = numclients in coop
+void(.float fld) playercount_convert =
+{
+	if (self.fld != -4) return;
+	if (!coop)
+		self.fld = 1;
+	else
+		self.fld = clients;
+}
+
+
+
 // wonderful stuffcmd code from Honey by czg
 
 /*
@@ -170,12 +198,3 @@ void stuffcmd_float( entity client, float f) =
 }
 
 
-//count -4 = numclients in coop
-void(.float fld) playercount_convert =
-{
-	if (self.fld != -4) return;
-	if (!coop)
-		self.fld = 1;
-	else
-		self.fld = clients;
-}

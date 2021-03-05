@@ -455,6 +455,7 @@ local vector	org;
 	other.angles = t.mangle;
 	if (other.classname == "player")
 	{
+		fog_setFromEnt(other, t);
 		other.fixangle = 1;		// turn this way immediately
 		other.teleport_time = time + 0.7;
 		if (other.flags & FL_ONGROUND)
@@ -746,3 +747,26 @@ void() trigger_void =
 	InitTrigger ();
 	self.touch = trigger_void_touch;
 };
+
+
+
+/*
+================================
+CheckValidTouch
+health and playerhood checks were duplicated everywhere
+added noclip check because Quake's default still-touch-everything noclip is awful
+================================
+*/
+float() CheckValidTouch = 
+{
+	if (other.classname != "player")
+		return FALSE;
+	if (other.health <= 0)
+		return FALSE;
+	if (other.movetype == MOVETYPE_NOCLIP)
+		return FALSE;
+	// players in telelimbo aren't supposed to 'be' anywhere
+	//if (other.flags & CFL_LIMBO)
+	//	return FALSE;
+	return TRUE;
+}

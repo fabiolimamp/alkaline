@@ -290,6 +290,7 @@ void() execute_changelevel =
 		other.movetype = MOVETYPE_NONE;
 		other.modelindex = 0;
 		setorigin (other, pos.origin);
+		fog_setFromEnt(other, pos);
 		other = find (other, classname, "player");
 	}	
 
@@ -533,6 +534,13 @@ void() PutClientInServer =
 	self.origin = spot.origin + '0 0 1';
 	self.angles = spot.angles;
 	self.fixangle = TRUE;		// turn this way immediately
+
+
+	if (spot.fog_density)
+		fog_save(self,spot.fog_density,spot.fog_color);
+	else if (world.fog_density)
+		fog_save(self,world.fog_density,world.fog_color);
+	cleanUpClientStuff = 2;
 
 // oh, this is a hack!
 	setmodel (self, "progs/eyes.mdl");
@@ -986,6 +994,9 @@ void() PlayerPreThink =
 //	local	float	mspeed, aspeed;
 //	local	float	r;
 
+	if (cleanUpClientStuff)
+		fog_setFromEnt( self, self );
+	
 	if (intermission_running)
 	{
 		IntermissionThink ();	// otherwise a button could be missed between

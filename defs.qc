@@ -422,6 +422,9 @@ float	framecount;
 
 float		skill;
 
+nosave float cleanUpClientStuff;
+nosave float gamestarted;
+
 //================================================
 
 //
@@ -456,6 +459,7 @@ float		skill;
 .entity		oldenemy;		// mad at this player before taking damage
 
 .float		speed;
+.float 		speed2;
 
 .float	lefty;
 
@@ -564,6 +568,9 @@ float	AS_MISSILE		= 4;
 .float		waitmin, waitmax;
 .float		distance;
 .float		volume;
+
+
+
 
 //===========================================================================
 	
@@ -766,3 +773,17 @@ End Malice defs
 void(string gibname, float dm) ThrowGib; //meat.qc
 void(string gibname, float dm) ThrowHead; //meat.qc
 void(vector org, vector vel) SpawnMeatSpray;
+
+
+
+//
+// fog
+//
+.vector		fog_color, fog_color2;
+.float		fog_density, fog_density2;
+
+void( entity client, float density, vector color ) fog_save;
+void( entity client, entity fogger ) fog_setFromEnt;
+void( entity client, float density, vector color ) fog_set;
+
+float() CheckValidTouch;
