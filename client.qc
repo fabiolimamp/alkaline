@@ -511,6 +511,8 @@ void() PutClientInServer =
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
+	self.gravity = 0;
+	self.wantedgravity = 0;
 	self.invincible_finished = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
@@ -1055,7 +1057,7 @@ void() PlayerPreThink =
 	}		
 	else
 	{
-		self.gravity = 1; 
+		self.gravity = self.wantedgravity; 
 		if (self.button2)
 			PlayerJump ();
 		else
