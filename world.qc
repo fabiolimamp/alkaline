@@ -281,6 +281,7 @@ void() worldspawn =
 
 	precache_model ("progs/s_bubble.spr");	// drowning bubbles
 	precache_model ("progs/s_explod.spr");	// sprite explosion
+	precache_model ("progs/s_explo2.spr");	// sprite explosion
 
 	precache_model ("progs/v_axe.mdl");
 	precache_model ("progs/v_shot.mdl");
@@ -430,7 +431,7 @@ void() StartFrame =
 		
 		gamestarted = TRUE;
 	}
-	
+
 	//johnfitz -- new stuff for LoadSaveGameCallback function
 	if (framecount == 3)
 		loadsavegamecallback_done = 1; //if this variable ever gets to zero again that means a savegame was loaded

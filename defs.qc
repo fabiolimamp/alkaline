@@ -507,6 +507,9 @@ float	AS_MISSILE		= 4;
 .string		deathtype;		// keeps track of how the player died
 
 .float 		wantedgravity; // thanks Spike!
+
+.float	healamount, healtype;
+
 //
 // object stuff
 //
@@ -515,8 +518,9 @@ float	AS_MISSILE		= 4;
 
 .vector		oldorigin;		// only used by secret door
 
+.float		length, width, height;
 .float		t_length, t_width;
-
+.float		strength;
 
 //
 // doors, etc
@@ -576,6 +580,9 @@ float	AS_MISSILE		= 4;
 .float		volume;
 
 
+// OVERLOADS:
+
+.float rand = healamount;	// for trigger_timer
 
 
 //===========================================================================
@@ -740,6 +747,9 @@ float (entity e, float healamount, float ignore) T_Heal; // health function
 float(entity targ, entity inflictor) CanDamage;
 
 void() StartItem;
+
+entity(vector org, float damg, entity parent, float multi) kaboom;
+void() BecomeExplosion;
 
 /*============================================================================
 johnfitz new defs
