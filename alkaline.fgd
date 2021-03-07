@@ -566,8 +566,9 @@ The behavior of an item_key_custom should be as the player expects (based on the
 	spawnflags(Flags) = 
 	[
 		1 : "Ambush" : 0
-		64 : "Spawned" : 0
-		128 : "Silent" : 0
+		32 : "Spawn Angry" : 0
+		64 : "Trigger Spawned" : 0
+		128 : "Silent Spawn" : 0
 	]
 ]
 

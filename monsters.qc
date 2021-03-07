@@ -67,6 +67,7 @@ void() monster_death_use =
 //============================================================================
 
 //johnfitz -- delayed spawning
+float SPAWN_ANGRY = 32;
 float SPAWN_TRIGGERED = 64;
 float SPAWN_SILENT = 128;
 //johnfitz
@@ -126,6 +127,8 @@ if(!(self.spawnflags & SPAWN_TRIGGERED))
 	// spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 //johnfitz
+
+	if(self.spawnflags & SPAWN_ANGRY) monster_use();
 };
 
 //johnfitz -- added monster spawning code from Preach
@@ -229,6 +232,8 @@ void() flymonster_start_go =
 		self.pausetime = 99999999;
 		self.th_stand ();
 	}
+
+	if(self.spawnflags & SPAWN_ANGRY) monster_use();
 };
 
 void() flymonster_start =
@@ -303,6 +308,8 @@ void() swimmonster_start_go =
 
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
+
+	if(self.spawnflags & SPAWN_ANGRY) monster_use();
 };
 
 void() swimmonster_start =
