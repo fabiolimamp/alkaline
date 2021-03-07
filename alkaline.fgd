@@ -476,10 +476,51 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	item_armor2 : "Yellow armor (150%)" []
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl" }) =
 	item_armor1 : "Green armor (100%)" []
-@PointClass size(-16 -16 -24, 16 16 32) base(NonRespawnableItem, Appearflags) model({ "path": ":progs/w_s_key.mdl" }) =
+
+
+@BaseClass base(NonRespawnableItem) size(-16 -16 -24, 16 16 32) =
+	Key []
+
+@PointClass base(Key) model({ "path": ":progs/w_s_key.mdl" }) =
 	item_key1 : "Silver key" []
-@PointClass size(-16 -16 -24, 16 16 32) base(NonRespawnableItem, Appearflags) model({ "path": ":progs/w_g_key.mdl" }) =
+@PointClass base(Key) model({ "path": ":progs/w_g_key.mdl" }) =
 	item_key2 : "Gold key" []
+
+@PointClass base(Key) model({ "path": mdl, "skin": skin }) =
+	item_key_custom :
+"A customizable key item.
+
+This allows mappers to use any Quake compatible model, sprite or BSP as a key. We’ve also included new key models with different variations. You can find these in the progs folder and set their paths in the mdl key.
+
+keyname: name of the key, e.g. 'bronze key' (required), mdl: model file path (required) noise: sound file for the pickup sound (default is per worldtype), skin: skin index (default 0), frame (default 0): display this single frame of the model, if animated. NOTE: The key will not display any animation.
+
+Three new models based on id’s original keys are included. One for each worldtype: base, runic and wizard. Each of these has four color variations, also referred to as their skin index: jade (green, skin 0), runic (magenta, skin 1), blood (red, skin 2) and alabaster (gray, skin 3). The development/wads folder has a small wad with textures for use with the different styles seen below.
+
+'keyname': name of the key, e.g. 'bronze key' (required)
+
+'mdl': model file (required)
+
+'noise': sound file for the pickup sound (default is per worldtype)
+
+'skin': skin index (default 0)
+
+The 'keyname' value is used both for the pickup message and to associate the key with the entity that it unlocks.
+
+To make a func_door or trigger_usekey require this key, set the 'keyname' value of that entity so that it matches the 'keyname' value of the key.
+
+If different item_key_custom entities have the same 'keyname' value, they will be treated as different copies of the same key and may be used interchangeably.
+
+A map may have a maximum of 23 unique 'keyname' values across all entities.
+
+The behavior of an item_key_custom should be as the player expects (based on the behavior of the silver and gold keys), except for the fact that it will not appear as an icon in the player's status bar when picked up.  This is a limitation of the engine."
+[
+	keyname(string) : "Name of the key, e.g. 'bronze key' (required)"
+	mdl(string) : "Model file (required)"
+	noise(string) : "Sound file for the pickup sound (default is per worldtype)"
+	skin(integer) : "Skin index (default 0)"
+]
+
+
 @PointClass size(-16 -16 -24, 16 16 32) base(NonRespawnableItem, Appearflags) model({ "path": ":progs/end1.mdl" }) =
 	item_sigil : "Sigil"
 [
@@ -956,9 +997,17 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 		4: "Screechy Metal"
 		5: "Custom sounds"
 	]
-	noise2(string) : "Move sound"
- 	noise1(string) : "Stop sound"
-	wait(float) : "Delay before close" : "4.0"
+	noise1(string) : "Sound file for the 'stop moving' sound (if set, overrides 'sounds')"
+	noise2(string) : "Sound file for the 'move' sound (if set, overrides 'sounds')"
+	noise3(string) : "Sound file for the 'key required' sound (default is per worldtype)"
+	noise4(string) : "Sound file for the 'key used' sound (default is per worldtype)"
+	cnt(choices) : "Leave key in player's inventory?" : 0 =
+	[
+		0 : "Don't leave key in player's inventory"
+		1 : "Leave key in player's inventory"
+	]
+	keyname(string) : "If set, this is the keyname of the item_key_custom which unlocks this entity"
+	wait(float) : "Delay before close" : "3.0"
 	lip(integer) : "Lip" : 8
 	dmg(integer) : "Damage inflicted when blocked" : 0
 	message(string) : "Message if triggered"
@@ -1313,4 +1362,28 @@ If using multiple triggers, do not have them touching. Leave a 'buffer' between 
 		16: "Player only" : 0
 	]
 	gravity(integer) : "Gravity : Normal = 0" : 0
+]
+
+
+//dumptruck_ds added from Hipnotic Mission Pack
+@SolidClass base(Appearflags, Target, Targetname) = trigger_usekey :
+"Trigger: Requires a Key
+
+NOTE: You must specify either the silver or gold key by setting the relevant spawnflag, or specify an item_key_custom by setting the 'keyname' value so that it matches the 'keyname' value of the item_key_custom."
+[
+	cnt(choices) : "Leave key in player's inventory?" : 0 =
+	[
+		0 : "Don't leave key in player's inventory"
+		1 : "Leave key in player's inventory"
+	]
+	delay(float) : "Delay before trigger" : "0" : "Delay before trigger"
+	keyname(string) : "If set, this is the keyname of the item_key_custom which unlocks this entity"
+	message(string) : "Custom message"
+	noise1(string) : "Sound file for the 'key required' sound (default is per worldtype)"
+	noise2(string) : "Sound file for the 'key used' sound (default is per worldtype)"
+	spawnflags(flags) =
+	[
+		8 : "Silver Key Required" : 0
+		16 : "Gold Key Required" : 0
+	]
 ]

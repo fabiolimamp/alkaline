@@ -11,6 +11,7 @@ fight.qc
 ai.qc
 combat.qc
 items.qc
+keylock.qc
 weapons.qc
 world.qc
 client.qc

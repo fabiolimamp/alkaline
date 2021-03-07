@@ -516,6 +516,7 @@ void() PutClientInServer =
 	self.invincible_finished = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
+	self.customkeys = 0;  // support for item_key_custom -- iw
 	
 	StopBurning(self);//johnfitz -- reset burning	
 

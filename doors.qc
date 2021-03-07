@@ -4,6 +4,7 @@ float DOOR_DONT_LINK = 4;
 float DOOR_GOLD_KEY = 8;
 float DOOR_SILVER_KEY = 16;
 float DOOR_TOGGLE = 32;
+float DOOR_DOOM_STYLE_UNLOCK = 64;
 
 /*
 
@@ -109,13 +110,7 @@ void() door_fire =
 	if (self.owner != self)
 		objerror ("door_fire: self.owner != self");
 
-// play use key sound
-
-	if (self.items)
-		//johnfitz play on chan_item so that you hear the key sound.
-		//sound (self, CHAN_VOICE, self.noise4, 1, ATTN_NORM);
-		sound (self, CHAN_ITEM, self.noise4, 1, ATTN_NORM);
-
+// self.noise4 is now played in keylock_try_to_unlock -- iw
 
 	self.message = string_null;		// no more message
 	oself = self;
@@ -191,6 +186,29 @@ void() door_killed =
 
 /*
 ================
+door_unlock
+
+Perform the actions which should be performed when self is successfully
+unlocked with a key.
+
+This function exists so that it can be passed as an argument to the new
+keylock_try_to_unlock function.  This code was previously part of the
+door_touch function.  -- iw
+================
+*/
+void() door_unlock =
+{
+	if (!(self.spawnflags & DOOR_DOOM_STYLE_UNLOCK))
+	{
+		self.touch = SUB_Null;
+		if (self.enemy)
+			self.enemy.touch = SUB_Null;	// get paired door
+	}
+	door_use ();
+};
+
+/*
+================
 door_touch
 
 Prints messages and opens key doors
@@ -200,6 +218,7 @@ void() door_touch =
 {
 	if (other.classname != "player")
 		return;
+
 	if (self.owner.attack_finished > time)
 		return;
 
@@ -212,56 +231,10 @@ void() door_touch =
 	}
 	
 // key door stuff
-	if (!self.items)
+	if (!keylock_has_key_set ())
 		return;
 
-// FIXME: blink key on player's status bar
-	if ( (self.items & other.items) != self.items )
-	{
-		if (self.owner.items == IT_KEY1)
-		{
-			if (world.worldtype == 2)
-			{
-				centerprint (other, "You need the silver keycard");
-				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-			}
-			else if (world.worldtype == 1)
-			{
-				centerprint (other, "You need the silver runekey");
-				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-			}
-			else if (world.worldtype == 0)
-			{
-				centerprint (other, "You need the silver key");
-				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-			}
-		}
-		else
-		{
-			if (world.worldtype == 2)
-			{
-				centerprint (other, "You need the gold keycard");
-				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-			}
-			else if (world.worldtype == 1)
-			{
-				centerprint (other, "You need the gold runekey");
-				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);			
-			}
-			else if (world.worldtype == 0)
-			{
-				centerprint (other, "You need the gold key");
-				sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-			}
-		}
-		return;
-	}
-
-	other.items = other.items - self.items;
-	self.touch = SUB_Null;
-	if (self.enemy)
-		self.enemy.touch = SUB_Null;	// get paired door
-	door_use ();
+	keylock_try_to_unlock (other, "", door_unlock);
 };
 
 /*
@@ -341,7 +314,7 @@ void() LinkDoors =
 
 		if (self.health)
 			starte.health = self.health;
-		if (self.targetname)
+		if (self.targetname != "")
 			starte.targetname = self.targetname;
 		if (self.message != "")
 			starte.message = self.message;
@@ -358,9 +331,9 @@ void() LinkDoors =
 
 			if (self.health)
 				return;
-			if (self.targetname)
+			if (self.targetname != "")
 				return;
-			if (self.items)
+			if (keylock_has_key_set ())
 				return;
 
 			self.owner.trigger_field = spawn_field(cmins, cmaxs);
@@ -422,67 +395,48 @@ Key doors are allways wait -1.
 void() func_door =
 
 {
+	local string default_noise1;
+	local string default_noise2;
 
-	if (world.worldtype == 0)
-	{
-		precache_sound ("doors/medtry.wav");
-		precache_sound ("doors/meduse.wav");
-		self.noise3 = "doors/medtry.wav";
-		self.noise4 = "doors/meduse.wav";
-	}
-	else if (world.worldtype == 1)
-	{
-		precache_sound ("doors/runetry.wav");
-		precache_sound ("doors/runeuse.wav");
-		self.noise3 = "doors/runetry.wav";
-		self.noise4 = "doors/runeuse.wav";
-	}
-	else if (world.worldtype == 2)
-	{
-		precache_sound ("doors/basetry.wav");
-		precache_sound ("doors/baseuse.wav");
-		self.noise3 = "doors/basetry.wav";
-		self.noise4 = "doors/baseuse.wav";
-	}
-	else
-	{
-		dprint ("no worldtype set!\n");
-	}
-	if (self.sounds == 0)
-	{
-		precache_sound ("misc/null.wav");
-		precache_sound ("misc/null.wav");
-		self.noise1 = "misc/null.wav";
-		self.noise2 = "misc/null.wav";
-	}
+	local entity shadow;
+	local entity oldself;
+
+// self.noise3 and self.noise4 can now be overridden by the mapper, but
+// will be set to default values in keylock_init if necessary -- iw
+	keylock_init ();
+
+	// self.noise1 and self.noise2 can now be overridden by the mapper -- iw
+	default_noise1 = "misc/null.wav";
+	default_noise2 = "misc/null.wav";
 	if (self.sounds == 1)
 	{
-		precache_sound ("doors/drclos4.wav");
-		precache_sound ("doors/doormv1.wav");
-		self.noise1 = "doors/drclos4.wav";
-		self.noise2 = "doors/doormv1.wav";
+		default_noise1 = "doors/drclos4.wav";
+		default_noise2 = "doors/doormv1.wav";
 	}
 	if (self.sounds == 2)
 	{
-		precache_sound ("doors/hydro1.wav");
-		precache_sound ("doors/hydro2.wav");
-		self.noise2 = "doors/hydro1.wav";
-		self.noise1 = "doors/hydro2.wav";
+		default_noise1 = "doors/hydro2.wav";
+		default_noise2 = "doors/hydro1.wav";
 	}
 	if (self.sounds == 3)
 	{
-		precache_sound ("doors/stndr1.wav");
-		precache_sound ("doors/stndr2.wav");
-		self.noise2 = "doors/stndr1.wav";
-		self.noise1 = "doors/stndr2.wav";
+		default_noise1 = "doors/stndr2.wav";
+		default_noise2 = "doors/stndr1.wav";
 	}
 	if (self.sounds == 4)
 	{
-		precache_sound ("doors/ddoor1.wav");
-		precache_sound ("doors/ddoor2.wav");
-		self.noise1 = "doors/ddoor2.wav";
-		self.noise2 = "doors/ddoor1.wav";
+		default_noise1 = "doors/ddoor2.wav";
+		default_noise2 = "doors/ddoor1.wav";
 	}
+
+	if (self.noise1 == "")
+		self.noise1 = default_noise1;
+	if (self.noise2 == "")
+		self.noise2 = default_noise2;
+
+	precache_sound (self.noise1);
+	precache_sound (self.noise2);
+
 
 	self.max_health = self.health;
 	self.solid = SOLID_BSP;
@@ -495,9 +449,18 @@ void() func_door =
 	self.use = door_use;
 	
 	if (self.spawnflags & DOOR_SILVER_KEY)
-		self.items = IT_KEY1;
+		keylock_set_silver_key ();
 	if (self.spawnflags & DOOR_GOLD_KEY)
-		self.items = IT_KEY2;
+		keylock_set_gold_key ();
+
+// support for item_key_custom -- iw
+	if (self.keyname != "")
+	{
+		keylock_set_custom_key (self.keyname);
+		self.keyname = "";  // this should not be referenced again
+	}
+
+
 	if (!self.wait)
 		self.wait = 3;
 	if (!self.dmg)
@@ -540,9 +503,16 @@ void() func_door =
 		self.th_die = door_killed;
 	}
 	
-	if (self.items)
-		self.wait = -1;
-		
+	if (self.spawnflags & DOOR_DOOM_STYLE_UNLOCK)
+		self.cnt = 1;
+
+	if (keylock_has_key_set ())
+	{
+		if (!(self.spawnflags & DOOR_DOOM_STYLE_UNLOCK))
+		{
+			self.wait = -1;
+		}
+	}	
 	self.touch = door_touch;
 
 // LinkDoors can't be done until all of the doors have been spawned, so
