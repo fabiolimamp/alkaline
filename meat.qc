@@ -12,7 +12,6 @@ than fall through grates (also they look too big)
 ==============================================================================
 */
 
-.float rand = healamount;
 
 
 vector(float dm) GibVelocityForHealth =

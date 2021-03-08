@@ -405,6 +405,8 @@ float	WORLDTYPE_MEDIEVAL		= 0;
 float	WORLDTYPE_METAL			= 1;
 float	WORLDTYPE_BASE			= 2;
 
+float START_OFF = 1;
+
 //================================================
 
 //

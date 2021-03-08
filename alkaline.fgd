@@ -1114,6 +1114,24 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 
 @SolidClass base(Targetname, Appearflags, ModelLight, Alpha) = func_wall : "Wall" []
 
+
+@SolidClass base(Appearflags, Targetname) = func_togglewall : "Creates a invisible wall that can be toggled on and off.
+
+START_OFF wall doesn't block until triggered.
+
+noise is the sound to play when wall is turned off.
+noise1 is the sound to play when wall is blocking.
+dmg is the amount of damage to cause when touched."
+[
+	noise(string) : "Power off sound"
+	noise1(string) : "Sound when touched"
+	dmg(integer) : "Amount of damage when touched" : 0
+	spawnflags(flags) =
+	[
+		1 : "Start Off" : 0
+	]
+]
+
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
 @SolidClass base(Angle, Targetname, Target, ModelLight) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 

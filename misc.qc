@@ -16,7 +16,7 @@ void() info_notnull =
 
 //============================================================================
 
-float START_OFF = 1;
+
 
 void() light_use =
 {
@@ -413,6 +413,83 @@ void() func_wall =
 	self.use = func_wall_use;
 	setmodel (self, self.model);
 };
+
+
+/*QUAKED func_togglewall (0 .5 .8) ? START_OFF X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
+
+Creates a invisible wall that can be toggled on and off.
+
+START_OFF wall doesn't block until triggered.
+
+"noise" is the sound to play when wall is turned off.
+"noise1" is the sound to play when wall is blocking.
+"dmg" is the amount of damage to cause when touched.
+*/
+
+void () blocker_touch =
+	{
+   if ( !self.dmg )
+      return;
+
+	if (time < self.attack_finished)
+		return;
+	self.attack_finished = time + 0.5;
+	T_Damage (other, self, self, self.dmg);
+	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+   };
+
+void () blocker_use =
+	{
+   if ( !self.state )
+      {
+      self.state = 1;
+      self.movetype = MOVETYPE_PUSH;
+      // sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+      }
+   else
+      {
+      self.state = 0;
+      self.movetype = MOVETYPE_NONE;
+      sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+      }
+   };
+
+void() func_togglewall =
+	{
+
+   self.classname = "togglewall";
+   self.movetype = MOVETYPE_PUSH;
+   self.mdl = self.model;
+   setmodel (self, self.model);
+   setsize (self, self.mins, self.maxs);
+   setorigin (self, self.origin);
+   self.touch = blocker_touch;
+   self.use = blocker_use;
+   if ( !self.noise )
+      {
+      self.noise = ("misc/null.wav");
+      }
+   if ( !self.noise1 )
+      {
+      self.noise1 = ("misc/null.wav");
+      }
+
+   precache_sound( self.noise );
+   precache_sound( self.noise1 );
+
+   self.solid = SOLID_BSP;
+   self.model = string_null;
+   if ( self.spawnflags & START_OFF )
+      {
+      self.state = 0;
+      setorigin( self, self.origin + '8000 8000 8000' );
+      }
+   else
+      {
+      self.state = 1;
+      sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+      }
+   };
 
 
 /*QUAKED func_illusionary (0 .5 .8) ?
