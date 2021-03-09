@@ -102,6 +102,15 @@ void() DecodeLevelParms =
 	self.armortype = parm9 * 0.01;
 };
 
+
+void(entity client, string savename) autosave =
+{
+	//autosavename = savename;
+	stuffcmd(client, "echo Autosaving...; wait; save ");
+	stuffcmd(client, savename);
+	stuffcmd(client, "\n");
+}
+
 /*
 ============
 FindIntermission
