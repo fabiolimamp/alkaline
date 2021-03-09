@@ -587,6 +587,16 @@ float	AS_MISSILE		= 4;
 .float rand = healamount;	// for trigger_timer
 
 
+.string		origmodel; // addition by bmFbr for switchable brushes
+
+//
+// switchable shadow
+// 
+.float		switchshadstyle;
+.float		shadowoff;
+.entity shadowcontroller;
+.float speed2;
+
 //===========================================================================
 	
 

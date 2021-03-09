@@ -548,6 +548,72 @@ void() func_togglewall =
       }
    };
 
+/*****************
+func_togglevisiblewall
+
+A bmodel which you can toggle its visibility. Behaves much like a traditional func_wall in any other way,
+but you can target it to toggle visible/invisible.
+If the entity has a switchable shadow it also toggles.
+
+spawnflag 1: starts invisible
+spawnflag 2: set brush as non-solid
+
+******************/
+
+float TOGGLEVISWALL_STARTOFF = 1;
+float TOGGLEVISWALL_NOTSOLID = 2;
+
+void() func_togglevisiblewall_use =
+{
+	if(!self.state) {
+		if(!(self.spawnflags & TOGGLEVISWALL_NOTSOLID)) {
+			self.solid = SOLID_BSP;
+			self.movetype = MOVETYPE_PUSH;
+		}
+		setmodel (self, self.origmodel);
+		if(self.switchshadstyle) lightstyle(self.switchshadstyle, "a");
+		self.state = 1;
+	} else {
+
+		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_NONE;
+		setmodel (self, "");
+		if(self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
+		self.state = 0;
+	}
+
+};
+
+/*QUAKED func_togglevisiblewall (0 .5 .8) ? TOGGLEVISWALL_STARTOFF TOGGLEVISWALL_NOTSOLID X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
+
+A bmodel which you can toggle its visibility. Behaves much like a traditional func_wall in any other way,
+but you can target it to toggle visible/invisible.
+If the entity has a switchable shadow it also toggles.
+
+TOGGLEVISWALL_STARTOFF spawns in disabled state.
+
+TOGGLEVISWALL_NOTSOLID sets it to be non-solid.
+
+*/
+void() func_togglevisiblewall =
+{
+
+	self.angles = '0 0 0';
+	self.use = func_togglevisiblewall_use;
+
+	self.origmodel = self.model;
+
+	if(self.spawnflags & TOGGLEVISWALL_STARTOFF) self.state = 1;
+	else self.state = 0;
+
+	if(self.spawnflags & TOGGLEVISWALL_NOTSOLID) {
+		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_NONE;
+	}
+
+	func_togglevisiblewall_use();
+
+};
 
 /*QUAKED func_illusionary (0 .5 .8) ?
 A simple entity that looks solid but lets you walk through it.

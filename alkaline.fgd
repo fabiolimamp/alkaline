@@ -135,6 +135,8 @@
 	fog_density2(string) : "End Fog Density" 
 	fog_color2(color1) : "End Fog Color" 
 ]
+     
+@baseclass = Deathtype [ deathtype(string) : "Obituary message" ]
 
 
 //
@@ -1147,6 +1149,20 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 
 @SolidClass base(Targetname, Appearflags, ModelLight, Alpha) = func_wall : "Wall" []
 
+@SolidClass base(Appearflags, Targetname, ModelLight) = func_togglevisiblewall : "A bmodel which you can toggle its visibility. Behaves much like a traditional func_wall in any other way, but you can target it to toggle visible/invisible.
+If the entity has a switchable shadow it also toggles automatically (no need for a shadow controller)."
+[
+	spawnflags(flags) =
+	[
+		1 : "Start Off" : 0
+		2 : "Non-solid" : 0
+	]
+	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables dynamic shadows that toggle on/off with the entity" = [
+		0: "No"
+		1: "Yes"
+	]
+
+]
 
 @SolidClass base(Appearflags, Targetname) = func_togglewall : "Creates a invisible wall that can be toggled on and off.
 
