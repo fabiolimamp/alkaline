@@ -72,11 +72,14 @@ void(vector org, vector vec) LaunchDLaser =
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
+	newmis.origin = self.origin;
+	
 
 	setmodel (newmis, "progs/laser.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
 
-	setorigin (newmis, org);
+	makevectors(self.angles);
+	setorigin (newmis, org + v_right * -3 + v_forward * 2.5 + v_up * -6.5);
 
 	newmis.velocity = vec * 600;
 	newmis.angles = vectoangles(newmis.velocity);
@@ -106,8 +109,8 @@ void(float offset) drone_fire =
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	makevectors (self.angles);
 	
-        org = self.origin + v_forward * 30 + '-5 15 0';
-
+ //       org = self.origin + v_forward * 30 + '-5 15 0';
+        org = self.origin;
 
         LaunchDLaser(org, self.enemy.origin + v_right * offset - self.origin);
         SUB_AttackFinished (4);
@@ -265,7 +268,7 @@ void()  drn_atta14      =[      $cam8,               drn_atta15      ] {ai_face(
 void()  drn_atta15      =[      $cam9,               drn_atta16      ] {ai_face();};
 void()  drn_atta16      =[      $cam10,              drn_atta17      ] {ai_face();};
 void()  drn_atta17      =[      $cam10,              drn_atta18      ] {ai_face();};
-void()  drn_atta18      =[      $cam10,              drn_run         ] {	ai_face();};
+void()  drn_atta18      =[      $cam10,              drn_run         ] {ai_face();};
 
 
 void()  drn_paina1       =[      $paa1,         drn_paina2       ] {};

@@ -287,16 +287,16 @@ local float	rsnd;
 	else if (self.classname == "monster_knight" || self.classname == "monster_axegrunt")
 		sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM); //lunaran
 	else if (self.classname == "monster_super_enforcer")
-{
+	{
 		rsnd = rint(random() * 3);			
 		if (rsnd == 1)
-			sound (self, CHAN_VOICE, "lieut/target.wav", 1, ATTN_NORM);
+			sound (self, CHAN_BODY, "lieut/target.wav", 1, ATTN_NORM);
 		else if (rsnd == 2)
-			sound (self, CHAN_VOICE, "lieut/alert.wav", 1, ATTN_NORM);
+			sound (self, CHAN_BODY, "lieut/alert.wav", 1, ATTN_NORM);
 		else if (rsnd == 0)
-			sound (self, CHAN_VOICE, "lieut/you.wav", 1, ATTN_NORM);
+			sound (self, CHAN_BODY, "lieut/you.wav", 1, ATTN_NORM);
 		else
-			sound (self, CHAN_VOICE, "lieut/objective.wav", 1, ATTN_NORM);
+			sound (self, CHAN_BODY, "lieut/objective.wav", 1, ATTN_NORM);
 	}
 	else if (self.classname == "monster_shambler")
 		sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);

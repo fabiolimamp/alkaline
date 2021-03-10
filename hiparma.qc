@@ -661,21 +661,24 @@ void()   armagon_die14    =[ $ldie12.asc, armagon_die14    ]
    body.gorging = TRUE;
    };
 
+
+void(string, float) ThrowGibArmagon;
+
 void()   armagon_body_explode2 =
    {
    local entity expl;
 
    sound (self , CHAN_AUTO, "misc/longexpl.wav", 1, ATTN_ARMAGON);
    self.think = armagon_body_explode2;
-   ThrowGib ("progs/gib1.mdl", -200);
-   ThrowGib ("progs/gib2.mdl", -200);
-   ThrowGib ("progs/gib3.mdl", -200);
-   ThrowGib ("progs/gib1.mdl", -200);
-   ThrowGib ("progs/gib2.mdl", -200);
-   ThrowGib ("progs/gib3.mdl", -200);
-   ThrowGib ("progs/gib1.mdl", -200);
-   ThrowGib ("progs/gib2.mdl", -200);
-   ThrowGib ("progs/gib3.mdl", -200);
+   ThrowGibArmagon ("progs/gib1.mdl", -200);
+   ThrowGibArmagon ("progs/gib2.mdl", -200);
+   ThrowGibArmagon ("progs/gib3.mdl", -200);
+   ThrowGibArmagon ("progs/gib1.mdl", -200);
+   ThrowGibArmagon ("progs/gib2.mdl", -200);
+   ThrowGibArmagon ("progs/gib3.mdl", -200);
+   ThrowGibArmagon ("progs/gib1.mdl", -200);
+   ThrowGibArmagon ("progs/gib2.mdl", -200);
+   ThrowGibArmagon ("progs/gib3.mdl", -200);
    self.movetype = MOVETYPE_NONE;
    setmodel (self, "progs/s_explod.spr");
    self.solid = SOLID_NOT;
@@ -696,9 +699,9 @@ void()   armagon_body_explode1 =
       {
       if (self.cnt > self.count)
          {
-         ThrowGib ("progs/gib1.mdl", -100);
-         ThrowGib ("progs/gib2.mdl", -100);
-         ThrowGib ("progs/gib3.mdl", -100);
+         ThrowGibArmagon ("progs/gib1.mdl", -100);
+         ThrowGibArmagon ("progs/gib2.mdl", -100);
+         ThrowGibArmagon ("progs/gib3.mdl", -100);
          self.count = self.cnt + 1;
          }
       self.cnt = self.cnt + 1;

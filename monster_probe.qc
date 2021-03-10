@@ -652,8 +652,8 @@ void() probe_satk1 = [23, probe_satk2]
 void() probe_satk2 = [24, probe_satk3]
 {
 	probe_think();
-	Probe_laser_fire(-30, 0);
-	Probe_laser_fire(30, 0);
+	Probe_laser_fire(-18, 0);
+	Probe_laser_fire(18, 0);
 };
 
 void() probe_satk3 = [25, probe_satk4]

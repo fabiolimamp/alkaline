@@ -1335,7 +1335,7 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 	
-	if (self.impulse >= 225)
+	if (self.impulse == 225)
 		W_ChangeWeapon ();
 	
 	if (self.impulse == 9)

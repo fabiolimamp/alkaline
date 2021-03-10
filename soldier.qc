@@ -257,6 +257,7 @@ void() army_die =
 // check for gib
 	if (self.health < -35)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_guard.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -353,7 +354,7 @@ void() monster_nailgrunt =
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
 	self.th_missile = army_natk1;
-        self.ammo_nails = 10;
+    self.ammo_nails = 10;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
 

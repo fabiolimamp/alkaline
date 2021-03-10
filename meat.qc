@@ -41,6 +41,20 @@ void(entity gib, string gibname) MakeGib =
 	gib.flags = 0;
 }
 
+void(string gibname, float dm) ThrowGibArmagon =
+{
+	local entity gib;
+
+	// gibs have to be thinking ballistic projectiles to pass through monsterclip/notrace :(
+	gib = toss_projectile(self.origin + '0 0 96', GibVelocityForHealth(dm), "gib");
+	MakeGib(gib, gibname);
+	
+	//changed by bmFbr, why was this being returned?
+	//return gib;
+}
+
+
+
 void(string gibname, float dm) ThrowGib =
 {
 	local entity gib;
@@ -54,8 +68,7 @@ void(string gibname, float dm) ThrowGib =
 }
 
 void(string gibname, float dm) ThrowHead =
-{
-	setmodel (self, gibname);
+{	setmodel (self, gibname);
 	self.frame = 0;
 	self.nextthink = -1;
 	self.movetype = MOVETYPE_BOUNCE;
