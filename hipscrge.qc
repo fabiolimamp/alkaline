@@ -383,7 +383,6 @@ void() scourge_die =
 //
 void() scourge_melee =
    {
-	local float chance;
 
 //   chance = random();
 //   if (chance < 0.5 )
@@ -465,8 +464,6 @@ void() ScourgeTriggerTouch =
 */
 void() monster_scourge =
 {
-   local entity trig;
-
 	if (deathmatch)
 	{
 		remove(self);
@@ -474,7 +471,7 @@ void() monster_scourge =
 	}
    precache_model2 ("progs/scor.mdl");
    precache_model2 ("progs/h_scourg.mdl");
-	precache_model2 ("progs/laser.mdl");
+   precache_model2 ("progs/laser.mdl");
    precache_model2 ("progs/s_light.mdl");
    precache_model2 ("progs/spike.mdl");
 

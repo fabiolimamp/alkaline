@@ -476,6 +476,7 @@ void() W_FireLightning =
 {
 	local	vector		org;
 	local	float		cells;
+	local entity victim;
 
 	if (self.ammo_cells < 1)
 	{
@@ -490,7 +491,23 @@ void() W_FireLightning =
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
 		W_SetCurrentAmmo ();
-		T_RadiusDamage (self, self, 35*cells, world);
+		victim = findradius(self.origin, 35*cells);
+		while (victim)
+		{
+			if (victim.classname != "monster_eel")
+				{
+				if (victim.takedamage)
+					{
+					if (victim.waterlevel > 0)
+						{
+						T_Damage(victim, self,self, 35*cells);					
+						}
+					}	
+				}
+
+			victim = victim.chain;
+		}
+
 		return;
 	}
 

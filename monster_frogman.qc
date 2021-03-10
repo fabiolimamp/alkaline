@@ -18,7 +18,7 @@ void(vector where) make_bub =
 	bubble.think = bubble_bob;
 };
 
-void() frogmen_fire1 = [20, frogmen_fire2]{ai_face();};
+void() frogmen_fire1 = [20, frogmen_fire2]{self.yaw_speed = 20; ai_face();};
 void() frogmen_fire2 = [21, frogmen_fire3]{ai_face();};
 void() frogmen_fire3 = [22, frogmen_fire4]{ai_face();};
 void() frogmen_fire4 = [23, frogmen_fire5]{ai_face();};
@@ -32,7 +32,7 @@ void() frogmen_fire11 = [16, frogmen_fire12]{ai_face();sound(self, CHAN_VOICE, "
 void() frogmen_fire12 = [17, frogmen_fire13]{ai_face();};
 void() frogmen_fire13 = [18, frogmen_fire14]{ai_face();};
 void() frogmen_fire14 = [19, frogman_down1]{ai_face();};
-//void() frogmen_fire10 = [18, frogman_down1]{ai_face();};
+//void() frogmen_fire10 = [18, frogman_down1]{ai_face();self.yaw_speed = 10;};
 
 void() frogman_down1 = [34, frogman_down2]{};
 void() frogman_down2 = [35, frogman_down3]{};
@@ -42,7 +42,7 @@ void() frogman_down5 = [38, frogmen_run1]{};
 
 void() frogmen_fire = 
 {
-	if (random() < 0.4)
+	if (random() < 0.8)
 	{
 		frogmen_fire1();
 	}

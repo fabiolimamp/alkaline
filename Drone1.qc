@@ -284,7 +284,7 @@ void()  drn_painb4       =[      $pab4,         drn_painb5       ] {};
 void()  drn_painb5       =[      $pab4,         drn_run         ] {};
 
 
-void() drn_pain =
+void(entity attacker, float damage) drn_pain =
 {
 	if (random() > 0.75)
         sound (self, CHAN_VOICE, "drone/drnpain2.wav", 1, ATTN_NORM);
