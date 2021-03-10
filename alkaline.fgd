@@ -97,6 +97,7 @@
 		8 : "Candle C"
 		4 : "Fast strobe"
 		9 : "Slow strobe"
+		12: "Blink (syncs with animations)"
 	]
 
 	spawnflags(Flags) = [ 1 : "Initially dark" : 0 ]
@@ -138,6 +139,17 @@
      
 @baseclass = Deathtype [ deathtype(string) : "Obituary message" ]
 
+@baseclass = Shadow [
+	_shadow(integer) : "Shadows" :  : "If n is 1, this model will cast shadows on other models and itself (i.e. '_shadow' implies '_shadowself'). Note that this doesn’t magically give Quake dynamic lighting powers, so the shadows will not move if the model moves. Func_detail ONLY - If set to -1, light will pass through this brush model. Default 0"
+	_shadowself(integer) : "Self Shadow" :  : "If n is 1, this model will cast shadows on itself if one part of the model blocks the light from another model surface. This can be a better compromise for moving models than full shadowing. Default 0"
+]
+
+@baseclass = SwitchShadow [
+	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables a switchable shadow that can be controlled with a targeting misc_shadowcontroller." = [
+		0: "No"
+		1: "Yes"
+	]
+]
 
 //
 // Rubicon 2 specific additions
@@ -1009,6 +1021,23 @@ the bprint tends to stomp any other prints on screen in most quake clients, so u
 // added Rubicon 2 ambient_general
 //
 
+@PointClass base(Appearflags, Targetname) size(16 16 16) color(64 64 64) = misc_shadowcontroller : "Controls switchable shadows on any bmodel entity (except doors). 
+Target this entity to toggle the shadows on/off with an optional fading animation.
+
+Targeted bmodel must have _switchableshadow set to 1.
+
+If the target entity changes its default behavior when 'targetname' is set (such as breakables), you can target the entity's 'targetname2' key."
+[
+	target(target_destination) : "Target" : : "Target with _switchableshadow enabled."
+	speed(integer) : "Fade-in speed" : 0.5 : "Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading."
+	speed2(integer) : "Fade-out speed" :  : "Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'."
+	spawnflags(flags) =
+	[
+		1 : "Shadow start off" : 0
+
+	]
+]
+
 @PointClass color(64 32 192) = ambient_general : "Ambient sounds"
 [
 	noise(string) : "File to play"
@@ -1122,6 +1151,10 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
         16: "Silver Key required" : 0
         32: "Toggle" : 0
 	]
+	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables dynamic shadows that fade on/off when the door moves." = [
+		0: "No"
+		1: "Yes"
+	]
 ]
 
 @SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door_secret : "Triggered door" 
@@ -1147,7 +1180,7 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 	]
 ]
 
-@SolidClass base(Targetname, Appearflags, ModelLight, Alpha) = func_wall : "Wall" []
+@SolidClass base(Targetname, Appearflags, ModelLight, Alpha, SwitchShadow) = func_wall : "Wall" []
 
 @SolidClass base(Appearflags, Targetname, ModelLight) = func_togglevisiblewall : "A bmodel which you can toggle its visibility. Behaves much like a traditional func_wall in any other way, but you can target it to toggle visible/invisible.
 If the entity has a switchable shadow it also toggles automatically (no need for a shadow controller)."
@@ -1163,6 +1196,8 @@ If the entity has a switchable shadow it also toggles automatically (no need for
 	]
 
 ]
+
+@SolidClass base(Targetname, Shadow, SwitchShadow) = func_shadow : "An invisible, non-solid brush entity that can be used to cast shadows. " []
 
 @SolidClass base(Appearflags, Targetname) = func_togglewall : "Creates a invisible wall that can be toggled on and off.
 

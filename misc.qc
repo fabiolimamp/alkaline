@@ -1,166 +1,4 @@
 
-/*QUAKED info_null (0 0.5 0) (-4 -4 -4) (4 4 4)
-Used as a positional target for spotlights, etc.
-*/
-void() info_null =
-{
-	remove(self);
-};
-
-/*QUAKED info_notnull (0 0.5 0) (-4 -4 -4) (4 4 4)
-Used as a positional target for lightning.
-*/
-void() info_notnull =
-{
-};
-
-//============================================================================
-
-
-
-void() light_use =
-{
-	if (self.spawnflags & START_OFF)
-	{
-		lightstyle(self.style, "m");
-		self.spawnflags = self.spawnflags - START_OFF;
-	}
-	else
-	{
-		lightstyle(self.style, "a");
-		self.spawnflags = self.spawnflags + START_OFF;
-	}
-};
-
-/*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
-Non-displayed light.
-Default light value is 300
-Default style is 0
-If targeted, it will toggle between on or off.
-*/
-void() light =
-{
-	if (!self.targetname)
-	{	// inert light
-		remove(self);
-		return;
-	}
-	
-	if (self.style >= 32)
-	{
-		self.use = light_use;
-		if (self.spawnflags & START_OFF)
-			lightstyle(self.style, "a");
-		else
-			lightstyle(self.style, "m");
-	}
-};
-
-/*QUAKED light_fluoro (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
-Non-displayed light.
-Default light value is 300
-Default style is 0
-If targeted, it will toggle between on or off.
-Makes steady fluorescent humming sound
-*/
-void() light_fluoro =
-{
-	if (self.style >= 32)
-	{
-		self.use = light_use;
-		if (self.spawnflags & START_OFF)
-			lightstyle(self.style, "a");
-		else
-			lightstyle(self.style, "m");
-	}
-	
-	precache_sound ("ambience/fl_hum1.wav");
-	ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
-};
-
-/*QUAKED light_fluorospark (0 1 0) (-8 -8 -8) (8 8 8)
-Non-displayed light.
-Default light value is 300
-Default style is 10
-Makes sparking, broken fluorescent sound
-*/
-void() light_fluorospark =
-{
-	if (!self.style)
-		self.style = 10;
-
-	precache_sound ("ambience/buzz1.wav");
-	ambientsound (self.origin, "ambience/buzz1.wav", 0.5, ATTN_STATIC);
-};
-
-/*QUAKED light_globe (0 1 0) (-8 -8 -8) (8 8 8)
-Sphere globe light.
-Default light value is 300
-Default style is 0
-*/
-void() light_globe =
-{
-	precache_model ("progs/s_light.spr");
-	setmodel (self, "progs/s_light.spr");
-	makestatic (self);
-};
-
-void() FireAmbient =
-{
-	precache_sound ("ambience/fire1.wav");
-// attenuate fast
-	ambientsound (self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
-};
-
-/*QUAKED light_torch_small_walltorch (0 .5 0) (-10 -10 -20) (10 10 20)
-Short wall torch
-Default light value is 200
-Default style is 0
-*/
-void() light_torch_small_walltorch =
-{
-	precache_model ("progs/flame.mdl");
-	setmodel (self, "progs/flame.mdl");
-	FireAmbient ();
-	makestatic (self);
-};
-
-/*QUAKED light_flame_large_yellow (0 1 0) (-10 -10 -12) (12 12 18)
-Large yellow flame ball
-*/
-void() light_flame_large_yellow =
-{
-	precache_model ("progs/flame2.mdl");
-	setmodel (self, "progs/flame2.mdl");
-	self.frame = 1;
-	FireAmbient ();
-	makestatic (self);
-};
-
-/*QUAKED light_flame_small_yellow (0 1 0) (-8 -8 -8) (8 8 8) START_OFF
-Small yellow flame ball
-*/
-void() light_flame_small_yellow =
-{
-	precache_model ("progs/flame2.mdl");
-	setmodel (self, "progs/flame2.mdl");
-	FireAmbient ();
-	makestatic (self);
-};
-
-/*QUAKED light_flame_small_white (0 1 0) (-10 -10 -40) (10 10 40) START_OFF
-Small white flame ball
-*/
-void() light_flame_small_white =
-{
-	precache_model ("progs/flame2.mdl");
-	setmodel (self, "progs/flame2.mdl");
-	FireAmbient ();
-	makestatic (self);
-};
-
-//============================================================================
-
 
 /*QUAKED misc_fireball (0 .5 .8) (-8 -8 -8) (8 8 8)
 Lava Balls
@@ -691,6 +529,24 @@ void () ambient_general =
 
 /*QUAKED ambient_suck_wind (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 */
+
+void() FireAmbient =
+{
+	precache_sound ("ambience/fire1.wav");
+// attenuate fast
+	ambientsound (self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
+};
+
+/*QUAKED ambient_fire (0.3 0.1 0.6) (-10 -10 -8) (10 10 8) X X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
+ambinet fire sound effects added for consistency
+same as FireAmbient
+*/
+
+void() ambient_fire =
+{
+	FireAmbient();
+};
+
 void() ambient_suck_wind =
 {
 	precache_sound ("ambience/suck1.wav");
