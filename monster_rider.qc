@@ -1,6 +1,9 @@
 void() Rider_Missile_Touch;
 void() rider_stand_attack;
 void() rider_pppain1;
+.float torsoframe;
+.vector heightofs;
+.float takedam;
 void(float ofs, float turn) rider_launch_missile = 
 {
 	local vector src;
@@ -54,6 +57,33 @@ void(float ofs, float turn) rider_launch_missile =
 	setsize(missile, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(missile, src);
 };
+
+void() Rider_Push =
+{
+	local	vector	dir;
+	local	entity	pushtarg;
+	
+	pushtarg = findradius(self.origin, 128);
+	
+	while (pushtarg)
+	{
+		if ((pushtarg.classname == "player") || (pushtarg == self.enemy))
+			{
+			dir = normalize (pushtarg.origin - self.origin);
+			pushtarg.flags = pushtarg.flags - FL_ONGROUND;
+			pushtarg.velocity = dir*400;
+			pushtarg.velocity_z = 0;
+			pushtarg.velocity_z = 200;
+			sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);			
+			}
+	
+	pushtarg = pushtarg.chain;
+	}
+	
+	
+};
+
+
 
 void() Rider_Missile_Touch = 
 {
@@ -141,6 +171,50 @@ void() rider_think =
 		return;
 	}
 };
+
+void() rider_think_rail = 
+{
+	local float delta;
+	local float angdelta;
+	setorigin(self.trigger_field, self.origin + self.heightofs);
+	self.trigger_field.angles = self.angles;
+//	self.trigger_field.frame = self.frame;
+	self.trigger_field.frame = self.torsoframe;
+	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
+	self.ideal_yaw = enemy_yaw;
+	delta = self.ideal_yaw - self.angles_y;
+	self.cnt = 0;
+	if (delta > 180)
+	{
+		delta = delta - 360;
+	}
+	if (delta < -180)
+	{
+		delta = delta + 360;
+	}
+	if (fabs(delta) > 90)
+	{
+		delta = 0;
+		self.cnt = 1;
+	}
+	angdelta = delta - self.fixangle;
+	rider_turn(angdelta, delta);
+	if (self.health < 0)
+	{
+		return;
+	}
+	
+//	oself = self;
+//	self = self.trigger_field;
+//	self.yaw_speed = 40;
+//	self.enemy = oself.enemy;
+//	ChangeYaw();
+//	self = oself;	
+	
+};
+
+
 
 void() rider_walkthink = 
 {
@@ -398,15 +472,16 @@ void() rider_run4 = [27, rider_run5]
 	RUN_STRAIGHT = 1;
 	ai_run(20);
 	rider_think();
+	self.trigger_field.origin = self.trigger_field.origin + '0 0 -4';	
 };
 
 void() rider_run5 = [28, rider_run6]
-{
-	sound(self, TE_WIZSPIKE, "rider/down2.wav", SERV_VOL, ATTN_NORM);
+{	sound(self, TE_WIZSPIKE, "rider/down2.wav", SERV_VOL, ATTN_NORM);
 	ChangeYaw();
 	RUN_STRAIGHT = 1;
 	ai_run(20);
 	rider_think();
+	self.trigger_field.origin = self.trigger_field.origin + '0 0 -4';	
 };
 
 void() rider_run6 = [29, rider_run7]
@@ -849,16 +924,92 @@ void() rider_jump13 = [54, rider_satk1]
 	}
 };
 
+void() rider_rail_shoot =
+{
+	local vector src, vec;
+	local float disttoenemy, segments;
+	
+	if !(visible(self.enemy))
+		return;
+		
+	self.takedam = self.takedam + 1;
+	
+	if (self.takedam == 5)
+		{
+		T_Damage(self.enemy, self, self, 50);
+		self.takedam = 0;
+		}
+
+	makevectors(self.angles);
+	src = self.origin + '0 0 28' + v_right * 10 + v_forward * 2;
+	
+	traceline(src, self.enemy.origin, TRUE, self);
+	
+	disttoenemy = vlen(src - trace_endpos);
+//	how many railbeam models do we need to draw
+//	where 32 = the length of our beam model
+	segments = floor(disttoenemy / 32);
+	
+	while (segments)
+		{
+		
+		vec = normalize(trace_endpos - src);
+		launch_spike (src, vec);
+		newmis.owner = self.owner;
+		newmis.classname = "railbeam";
+		setmodel (newmis, "progs/bolt.mdl");
+		setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);	
+		setorigin(newmis, src + vec * 32 * segments);
+		newmis.solid = SOLID_NOT;
+		newmis.touch = SUB_Null;
+		newmis.think = SUB_Remove;
+		newmis.movetype = MOVETYPE_NONE;		
+		newmis.nextthink = time + 0.1;
+		newmis.velocity = 0;		
+		segments = segments - 1;
+		
+		}
+
+};
+
+
+void() rider_rail1 = [42, rider_rail2]{ai_face();rider_think();self.yaw_speed = 40;};
+void() rider_rail2 = [43, rider_rail3]{ai_face();rider_think();};
+void() rider_rail3 = [44, rider_rail4]{ai_face();rider_think();};
+void() rider_rail4 = [45, rider_rail5]{ai_face();rider_think();};
+void() rider_rail5 = [46, rider_rail6]{ai_face();rider_think();};
+void() rider_rail6 = [47, rider_rail7]{ai_face();rider_think();};
+void() rider_rail7 = [48, rider_rail8]{ai_face();rider_think();};
+void() rider_rail8 = [49, rider_rail9]{ai_face();rider_think();};
+void() rider_rail9 = [50, rider_rail10]{ai_face();rider_think();};
+void() rider_rail10 = [51, rider_rail11]{ai_face();rider_think();Rider_Push();};
+void() rider_rail11 = [52, rider_rail12]{self.torsoframe = 36;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
+void() rider_rail12 = [52, rider_rail13]{self.torsoframe = 37;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
+void() rider_rail13 = [52, rider_rail14]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();rider_rail_shoot();};
+void() rider_rail14 = [52, rider_rail15]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();rider_rail_shoot();sound(self, CHAN_VOICE, "armagon/repel.wav", 1, ATTN_NORM);};
+void() rider_rail15 = [52, rider_rail16]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();rider_rail_shoot();};
+void() rider_rail16 = [52, rider_rail17]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();rider_rail_shoot();};
+void() rider_rail17 = [52, rider_rail18]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();rider_rail_shoot();self.attack_finished = time + 2;};
+void() rider_rail18 = [52, rider_rail19]{self.torsoframe = 39;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
+void() rider_rail19 = [52, rider_rail20]{self.torsoframe = 40;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
+void() rider_rail20 = [53, rider_rail21]{self.torsoframe = 41;self.heightofs = '0 0 -8';ai_face();rider_think_rail();};
+void() rider_rail21 = [54, rider_run1]{self.torsoframe = 0;self.heightofs = '0 0 -4'; ai_face();rider_think_rail();self.yaw_speed = 8;};
+
+
+
 void() rider_missile_attack = 
 {
-	if (random() < 0.8)
-	{
-		rider_watk1();
-	}
-	else
-	{
-		rider_satk1();
-	}
+
+rider_rail1();
+
+//	if (random() < 0.8)
+//	{
+//		rider_watk1();
+//	}
+//	else
+//	{
+//		rider_satk1();
+//	}
 };
 
 void() rider_stand_attack = 
@@ -925,17 +1076,27 @@ float() RiderCheckAttack =
 	ang = self.angles_y + self.fixangle;
 	delta = self.ideal_yaw - ang;
 	dist = vlen(spot2 - spot1);
-	if (fabs(delta) > 10 && dist > 200 || self.enemy.classname != "player")
+	
+	if (self.enemy.classname != "player")
 	{
-		return 0;
+	return FALSE;
 	}
-	if (dist < 400)
-	{
-		self.th_melee();
-		return 1;
-	}
+	
+//	if (fabs(delta) > 10 && dist > 200 || self.enemy.classname != "player")
+//	{
+//		return 0;
+//	}
+//	if (dist < 400)
+//	{
+//		self.th_melee();
+//		return 1;
+//	}
+
+	if (self.attack_finished < time)
+		return TRUE;
+
 	self.lefty = 1;
-	return 0;
+	return FALSE;
 };
 
 void() monster_rider = 
@@ -946,10 +1107,14 @@ void() monster_rider =
 	{
 		self.lefty = 0;
 		sk = cvar("skill");
+		// temp rail beam
+		precache_model ("progs/bolt.mdl");
 		precache_model("progs/ridbody.mdl");
 		precache_model("progs/ridlegs.mdl");
 		precache_sound("rider/down2.wav");
 		precache_sound("weapons/fuelexp.wav");
+		precache_sound("armagon/repel.wav");	
+		precache_sound("weapons/r_exp3.wav");
 		precache_model("progs/laser.mdl");
 		precache_sound("rider/sight.wav");
 		precache_sound("rider/shoot.wav");
@@ -1004,7 +1169,7 @@ void() monster_rider =
 		self.th_run = rider_run1;
 		self.th_die = rider_die1;
 		self.th_missile = rider_missile_attack;
-		self.th_melee = rider_jump01;
+//		self.th_melee = rider_jump01;
 		self.th_pain = rider_pain;
 		walkmonster_start();
 	}
