@@ -575,7 +575,7 @@ The behavior of an item_key_custom should be as the player expects (based on the
 // added enemies for Rubicon 2
 //
 
-@baseclass base(Appearflags, Target, Targetname) color(192 64 64) = Monster 
+@baseclass base(Appearflags, Target, Targetname) color(192 64 64) = Monster
 [
 	spawnflags(Flags) = 
 	[
@@ -979,7 +979,7 @@ Color Reference:
 	speed2(integer) : "Dots per clump" : 16
 	health(integer) : "Color index (0-255)" : 0
 	movedir(string) : "Velocity of particles (x y z)"
-	wait(string) : "Interval" : 0.1
+	wait(float) : "Interval" : "0.1"
 	velocity(string) : "Direction of optional sweep effect (x y z)"
 ]
 
@@ -1029,8 +1029,8 @@ Targeted bmodel must have _switchableshadow set to 1.
 If the target entity changes its default behavior when 'targetname' is set (such as breakables), you can target the entity's 'targetname2' key."
 [
 	target(target_destination) : "Target" : : "Target with _switchableshadow enabled."
-	speed(integer) : "Fade-in speed" : 0.5 : "Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading."
-	speed2(integer) : "Fade-out speed" :  : "Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'."
+	speed(float) : "Fade-in speed" : "0.5" : "Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading."
+	speed2(float) : "Fade-out speed" :  : "Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'."
 	spawnflags(flags) =
 	[
 		1 : "Shadow start off" : 0
@@ -1116,7 +1116,16 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 //
 
 
-@SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door : "Basic door" 
+@SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door : "Basic door.
+Now you have three ways of setting the door's movement:
+- using the traditional 'angle'/'lip' keys
+- setting 'movedir' as a direct x/y/z distance vector relative to its initial position
+- setting 'mangle' and 'distance' to make it move in a specific angle and linear distance
+
+Note that those methods are mutually exclusive, so if you use one of those, remember to remove the keys relative to other methods, or you may get some unexpected behaviour.
+
+The door now has built-in support for switchable shadows, that fade in/out automatically as the door moves.
+" 
 [
 	speed(integer) : "Speed" : 100
 	sounds(choices) : "Sound" : 0 = 
@@ -1155,6 +1164,9 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 		0: "No"
 		1: "Yes"
 	]
+	movedir(string) : "Move direction" : : "Sets a direct 'x y z' distance vector for the door to move relative to its initial position."
+	mangle(string) : "Angle vector" : : "Use together with 'distance'. Sets a 'pitch yaw 0' angle vector for the door to move."
+	distance(integer) : "Movement distance" : : "Use together with 'mangle'. Sets the linear distance which the door will move."
 ]
 
 @SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door_secret : "Triggered door" 
