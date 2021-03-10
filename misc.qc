@@ -181,7 +181,7 @@ void() misc_fireball =
 
 void() fire_fly =
 {
-local entity	fireball;
+	local entity	fireball;
 
 	fireball = spawn();
 	fireball.solid = SOLID_TRIGGER;
@@ -205,7 +205,7 @@ local entity	fireball;
 
 void() fire_touch =
 {
-	T_Damage (other, self, self, 20);
+	if (other.health) T_Damage (other, self, self, 20);
 	remove(self);
 };
 

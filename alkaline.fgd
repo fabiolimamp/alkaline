@@ -52,7 +52,7 @@
 // base marker definitions
 //
 
-@BaseClass = Appearflags [
+@baseclass = Appearflags [
 	spawnflags(Flags) =
 	[
 		256 : "Not in Easy" : 0
@@ -62,14 +62,14 @@
 	]
 ]
 
-@BaseClass = Targetname [ targetname(target_source) : "Name" ]
-@BaseClass = Target [ 
+@baseclass = Targetname [ targetname(target_source) : "Name" ]
+@baseclass = Target [ 
 	target(target_destination) : "Target" 
 	killtarget(target_destination) : "Killtarget"
 ]
 
 
-@BaseClass color(255 255 40) = Light [
+@baseclass color(255 255 40) = Light [
 	light(integer) : "Brightness" : 300
 	wait(float) : "Fade distance multiplier" : "1"
 	_color(color) : "Light color"
@@ -102,7 +102,7 @@
 	spawnflags(Flags) = [ 1 : "Initially dark" : 0 ]
 ]
 
-@BaseClass = ModelLight	[
+@baseclass = ModelLight	[
 	_minlight(integer) : "Min light" :  : "Set the minimum light level for any surface of the brush model. Default 0"
 	_mincolor(color255) : "Min light color R G B" : "255 255 255" : "Specify red(r), green(g) and blue(b) components for the colour of the minlight. RGB component values are between 0 and 255 (between 0 and 1 is also accepted). Default is white light (255 255 255)"
 	_shadow(integer) : "Shadows" :  : "If n is 1, this model will cast shadows on other models and itself (i.e. '_shadow' implies '_shadowself'). Note that this doesn’t magically give Quake dynamic lighting powers, so the shadows will not move if the model moves. Func_detail ONLY - If set to -1, light will pass through this brush model. Default 0"
@@ -116,11 +116,11 @@
 	_phong_angle(integer) : "Phong shading angle" :  : "Enables phong shading on faces of this model with a custom angle. Adjacent faces with normals this many degrees apart (or less) will be smoothed. Consider setting '_anglescale' to '1' on lights or worldspawn to make the effect of phong shading more visible. Use the '-phongdebug' command-line flag to save the interpolated normals to the lightmap for previewing (use 'r_lightmap 1' or 'gl_lightmaps 1' in your engine to preview.)"
 ]
 
-@BaseClass = Alpha [
+@baseclass = Alpha [
 	alpha(float) : "Opacity" : "1.0" : "Controls entity opacity in the 0-1 range. 0: fully transparent, 1: fully opaque"
 ]
 
-@BaseClass = Angle [
+@baseclass = Angle [
 	angle(integer) : "Angle"
 ]
 
@@ -356,7 +356,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 // player starts, deathmatch, coop, teleport
 //
 
-@BaseClass base(Appearflags, Fog) size(-16 -16 -24, 16 16 32) 
+@baseclass base(Appearflags, Fog) size(-16 -16 -24, 16 16 32) 
 	color(0 255 0) model({"path" :"progs/player.mdl"}) = PlayerClass [
 		angle(integer) : "Angle"
 	]
@@ -389,7 +389,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 //
 
 
-@BaseClass base(Appearflags, Target, Targetname) =
+@baseclass base(Appearflags, Target, Targetname) =
 	NonRespawnableItem
 [
 	spawnflags(flags) =
@@ -402,7 +402,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	// delay(integer) : "Delay"
 ]
 
-@BaseClass base(NonRespawnableItem) =
+@baseclass base(NonRespawnableItem) =
 	RespawnableItem
 [
 	spawnflags(flags) =
@@ -414,7 +414,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	respawncount(integer) : "How many respawns?"
 ]
 
-@BaseClass size(0 0 0, 32 32 56) color(80 0 200) base(RespawnableItem, Appearflags) = Ammo
+@baseclass size(0 0 0, 32 32 56) color(80 0 200) base(RespawnableItem, Appearflags) = Ammo
 [
 	spawnflags(flags) = 
 	[
@@ -480,7 +480,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	item_armor1 : "Green armor (100%)" []
 
 
-@BaseClass base(NonRespawnableItem) size(-16 -16 -24, 16 16 32) =
+@baseclass base(NonRespawnableItem) size(-16 -16 -24, 16 16 32) =
 	Key []
 
 @PointClass base(Key) model({ "path": ":progs/w_s_key.mdl" }) =
@@ -546,7 +546,7 @@ The behavior of an item_key_custom should be as the player expects (based on the
 // added shotgun & axe for Rubicon 2
 //
 
-@BaseClass size(-16 -16 0, 16 16 56) color(128 128 255) base(RespawnableItem, Appearflags) = Weapon []
+@baseclass size(-16 -16 0, 16 16 56) color(128 128 255) base(RespawnableItem, Appearflags) = Weapon []
 
 @PointClass base(Weapon) model({"path": "progs/g_axe.mdl"}) = weapon_axe : "Axe." []
 @PointClass base(Weapon) model({"path": "progs/g_shotgn.mdl"}) = weapon_shotgun : "Shotgun." []
@@ -563,7 +563,7 @@ The behavior of an item_key_custom should be as the player expects (based on the
 // added enemies for Rubicon 2
 //
 
-@BaseClass base(Appearflags, Target, Targetname) color(192 64 64) = Monster 
+@baseclass base(Appearflags, Target, Targetname) color(192 64 64) = Monster 
 [
 	spawnflags(Flags) = 
 	[
@@ -580,7 +580,7 @@ The behavior of an item_key_custom should be as the player expects (based on the
 // Dreadnaught, 150 hp
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
 
-@PointClass base(Appearflags, Target, Targetname) size(-32 -32 -24, 32 32 64) model({"path":"progs/floyd.mdl"}) = monster_floyd : "Floyd automaton robot, 200 hp
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/floyd.mdl", "frame":1}) = monster_floyd : "Floyd automaton robot, 200 hp
 ROLLING Floyd is on his back and helpless, explodes after taking 75 damage
 ASLEEP Floyd will not respond to anything unless he is shot or his targetname is triggered"
 [
@@ -710,7 +710,7 @@ Don't shake hands with this crazy bastard!" []
 // lights
 //
 
-@BaseClass = LightTarget [
+@baseclass = LightTarget [
 	target(string) : "Target" : : "Makes this light a spot light. This should be an entity for the spot line to point at (usually a info_null)"
 ]
 
@@ -1324,7 +1324,7 @@ low_trigger: plat will only be triggered when in lowered position"
 // triggers
 //
 
-@BaseClass color(128 0 128) base(Target, Targetname) = Trigger
+@baseclass color(128 0 128) base(Target, Targetname) = Trigger
 [
 	sounds(choices) : "Sound style" : 0 =
 	[
@@ -1338,7 +1338,7 @@ low_trigger: plat will only be triggered when in lowered position"
 	message(string) : "Message (set sound too!)"
 ]
 
-@BaseClass = TriggerWait [
+@baseclass = TriggerWait [
 	is_waiting(choices) : "Dormant Trigger" : 0 :
 	"If set to 1, the trigger starts dormant and waits for activation. Subsequent activations trigger its target as usual." =
 	[

@@ -270,6 +270,7 @@ void() SUB_UseTargets =
 		t = find (world, targetname, self.killtarget);
 		while (t)
 		{
+			if(t.switchshadstyle) lightstyle(t.switchshadstyle, "m");
 			remove (t);
 			t = find (t, targetname, self.killtarget);
 		}

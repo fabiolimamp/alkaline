@@ -64,6 +64,9 @@ void() door_hit_bottom =
 
 void() door_go_down =
 {
+	entity shadow;
+	entity oldself;
+
 	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
 	if (self.max_health)
 	{
@@ -73,10 +76,30 @@ void() door_go_down =
 	
 	self.state = STATE_DOWN;
 	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
+
+	if(self.switchshadstyle) {
+		shadow = self.shadowcontroller;
+		oldself = self;
+		self = shadow;
+		
+		if(oldself.spawnflags & DOOR_START_OPEN) {
+			shadow_fade_out();
+			shadow.shadowoff = 1;
+		} else {
+			shadow_fade_in();
+			shadow.shadowoff = 0;
+		}
+		
+		self = oldself;
+		
+	}
 };
 
 void() door_go_up =
 {
+	entity shadow;
+	entity oldself;
+
 	if (self.state == STATE_UP)
 		return;		// allready going up
 
@@ -91,6 +114,23 @@ void() door_go_up =
 	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
 
 	SUB_UseTargets();
+
+
+	if(self.switchshadstyle) {
+		shadow = self.shadowcontroller;
+		oldself = self;
+		self = shadow;
+		
+		if(oldself.spawnflags & DOOR_START_OPEN) {
+			shadow_fade_in();
+			shadow.shadowoff = 0;
+		} else {
+			shadow_fade_out();
+			shadow.shadowoff = 1;
+		}
+		
+		self = oldself;
+	}
 };
 
 
@@ -470,18 +510,26 @@ void() func_door =
 
 	self.pos1 = self.origin;
 
-// johnfitz -- alternate door settings (movedir instead of lip/angle)
-	if (!self.movedir)
+
+	if (self.movedir) // johnfitz -- alternate door settings (movedir instead of lip/angle)
+	{
+		self.pos2 = self.pos1 + self.movedir;
+		self.angles = '0 0 0';
+	}
+	else if (self.mangle != '0 0 0') { // bmFbr -- set door based on mangle and distance
+		if(!self.distance) self.distance = 64;
+
+		makevectors (self.mangle);
+		self.movedir = v_forward * self.distance;
+
+		self.pos2 = self.pos1 + self.movedir;
+	}
+	else
 	{
 		SetMovedir ();
 		if (!self.lip)
 			self.lip = 8;
 		self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
-	}
-	else
-	{
-		self.pos2 = self.pos1 + self.movedir;
-		self.angles = '0 0 0';
 	}
 // johnfitz
 
@@ -519,6 +567,29 @@ void() func_door =
 // the sizes can be detected properly.
 	self.think = LinkDoors;
 	self.nextthink = self.ltime + 0.1;
+
+		// creates a shadow controller entity for the door if it has switchable shadows
+	if(self.switchshadstyle) {
+		
+		shadow = spawn();
+		
+		self.shadowcontroller = shadow;
+		
+		shadow.classname = "misc_shadowcontroller";
+		shadow.switchshadstyle = self.switchshadstyle;
+		shadow.speed = vlen(self.pos2 - self.pos1) / self.speed;
+		
+		if(self.spawnflags & DOOR_START_OPEN) shadow.spawnflags = 1;
+		else shadow.spawnflags = 0;
+		
+		
+		oldself = self;
+		
+		self = shadow;
+		misc_shadowcontroller();
+		
+		self = oldself;
+	}
 };
 
 /*
@@ -547,7 +618,7 @@ float SECRET_YES_SHOOT = 16;	// shootable even if targeted
 void () fd_secret_use =
 {
 	local float temp;
-	
+
 	self.health = 10000;
 
 	// exit if still moving around...

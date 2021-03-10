@@ -596,7 +596,7 @@ float	AS_MISSILE		= 4;
 .float		shadowoff;
 .entity shadowcontroller;
 .float speed2;
-
+.string targetname2;
 //===========================================================================
 	
 
@@ -848,3 +848,11 @@ float() CheckValidTouch;
 //
 .string keyname;
 .float customkeys;
+
+.float style2; //c0burn's switchable lights
+
+string(float num) lightstyle_fade_lookup; //addition by bmFbr for switchable shadows
+void() misc_shadowcontroller;
+void() misc_shadowcontroller_use;
+void() shadow_fade_in;
+void() shadow_fade_out;
