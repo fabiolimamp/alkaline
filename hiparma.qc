@@ -666,7 +666,7 @@ void(string, float) ThrowGibArmagon;
 
 void()   armagon_body_explode2 =
    {
-   local entity expl;
+   //local entity expl;
 
    sound (self , CHAN_AUTO, "misc/longexpl.wav", 1, ATTN_ARMAGON);
    self.think = armagon_body_explode2;

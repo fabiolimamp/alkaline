@@ -291,7 +291,7 @@ void () floyd_explode =
 
 	T_RadiusDamage (self, self, 100, world);
 	if (self.health > -50) self.health = -50;
-	if (!self.spawnflags & FLOYD_ROLLING) //don't throw head if you're on your back, cuz it looks funny
+	if (!(self.spawnflags & FLOYD_ROLLING)) //don't throw head if you're on your back, cuz it looks funny
 		ThrowFloydHead ("progs/h_floyd.mdl", self.health);
 		
 	//gibs
