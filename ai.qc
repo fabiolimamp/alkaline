@@ -282,6 +282,8 @@ local float	rsnd;
 
 	if (self.classname == "monster_ogre")	
 		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_ogre_marksman")	
+		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
 	else if	(self.classname == "monster_ogreb")	//ijed
 		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_knight" || self.classname == "monster_axegrunt")
