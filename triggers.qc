@@ -789,13 +789,11 @@ void() grav_toggle =
 	//dumptruck_ds based on hipnotic blocker_use
 	if ( !self.state )
 	{
-		dprint("SOLID_TRIGGER\n");
 		self.state = 1;
 		self.solid = SOLID_TRIGGER;
 	}
 	else
 	{
-		dprint("SOLID_NOT\n");
 		self.state = 0;
 		self.solid = SOLID_NOT;
 	}
@@ -848,17 +846,30 @@ set the gravity of a player
 
 */
 
+void() trigger_gravity_late_init = 
+{
+	self.solid = SOLID_NOT;
+	self.use = grav_toggle;
+	self.touch = trigger_gravity_touch;
+};
+
 void() trigger_setgravity = {
 
 	InitTrigger ();
-	self.use = grav_toggle; // dumptruck_ds
-	self.touch = trigger_gravity_touch;
 	self.solid = SOLID_TRIGGER;
-	self.state = 1;
+	
 	if ( self.spawnflags & DT_GRAVTOFF ) //dumptruck_ds
 	{
-		 self.nextthink = time + 1;
-		 self.think = grav_toggle;
+		self.use = SUB_Null;
+		self.touch = SUB_Null;
+		self.nextthink = time + 1;
+		self.think = trigger_gravity_late_init;
+	}
+	else
+	{
+		self.use = grav_toggle; // dumptruck_ds
+		self.touch = trigger_gravity_touch;
+		self.state = 1;
 	}
 	
 	if (!self.gravity)
