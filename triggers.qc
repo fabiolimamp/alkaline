@@ -784,14 +784,18 @@ trigger_setgravity
 float DT_GRAVTOFF = 8;  // trigger will start off
 float DT_PLAYERONLY = 16;  // trigger will start off
 
-void() grav_toggle = { //dumptruck_ds based on hipnotic blocker_use
-if ( !self.state )
+void() grav_toggle = 
+{ 
+	//dumptruck_ds based on hipnotic blocker_use
+	if ( !self.state )
 	{
+		dprint("SOLID_TRIGGER\n");
 		self.state = 1;
 		self.solid = SOLID_TRIGGER;
 	}
-else
+	else
 	{
+		dprint("SOLID_NOT\n");
 		self.state = 0;
 		self.solid = SOLID_NOT;
 	}
@@ -843,21 +847,22 @@ set the gravity of a player
  triggers not to work properly.
 
 */
+
 void() trigger_setgravity = {
 
 	InitTrigger ();
 	self.use = grav_toggle; // dumptruck_ds
 	self.touch = trigger_gravity_touch;
+	self.solid = SOLID_TRIGGER;
+	self.state = 1;
 	if ( self.spawnflags & DT_GRAVTOFF ) //dumptruck_ds
 	{
-		 self.state = 0;
-		 self.solid = SOLID_NOT;
+		 self.nextthink = time + 1;
+		 self.think = grav_toggle;
 	}
-	else {
-		 self.state = 1;
-	}  //end dumptruck_ds
+	
 	if (!self.gravity)
 		self.gravity = -1;
 	else
-	      self.gravity = ((self.gravity - 1) / 100);
+		self.gravity = ((self.gravity - 1) / 100);
 };
