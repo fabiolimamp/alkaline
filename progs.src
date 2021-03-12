@@ -21,6 +21,8 @@ doors.qc
 buttons.qc
 triggers.qc
 plats.qc
+doeplats.qc
+elvbutton.qc
 fx.qc
 misc.qc
 lights.qc

@@ -856,3 +856,21 @@ void() misc_shadowcontroller;
 void() misc_shadowcontroller_use;
 void() shadow_fade_in;
 void() shadow_fade_out;
+
+
+//
+// elevator fields
+//
+
+.float 		elevatorLastUse;
+.float		elevatorOnFloor;
+.float		elevatorToFloor;
+.vector		elevatorDestination;
+
+//
+// plat2 fields
+//
+.float		plat2Called;
+.float		plat2LastMove;
+.float		plat2GoTime;
+.float		plat2GoTo;
