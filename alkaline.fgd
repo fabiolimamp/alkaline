@@ -1016,6 +1016,17 @@ the bprint tends to stomp any other prints on screen in most quake clients, so u
 	message(string) : "Change save filename" : "auto"
 ]
 
+@PointClass base(Appearflags, Targetname) = target_infight : "Makes 'target' monster angry at 'target2'.
+
+By default, the infighting doesn't start mutually, that is, 'target2' monster will only get mad back at 'target' after it's been attacked.
+If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'."
+[
+	target(target_destination) : "The monster who will get angry."
+	target2(target_destination) : "Who target will get angry at."
+	spawnflags(flags) = [ 1: "Mutual hate" : 0 ]
+]
+
+
 // 
 // ambient sounds
 // added Rubicon 2 ambient_general

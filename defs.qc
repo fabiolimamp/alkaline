@@ -874,3 +874,7 @@ void() shadow_fade_out;
 .float		plat2LastMove;
 .float		plat2GoTime;
 .float		plat2GoTo;
+
+
+.string		target2;
+.string		targetname2;
