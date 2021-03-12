@@ -259,6 +259,7 @@ void() worldspawn =
 	precache_sound ("weapons/ax1.wav");			// ax swoosh
 	precache_sound ("player/axhit1.wav");		// ax hit meat
 	precache_sound ("player/axhit2.wav");		// ax hit world
+	precache_sound ("weapons/axhit3.wav");		// new player meat
 
 	precache_sound ("player/h2ojump.wav");		// player jumping into water
 	precache_sound ("player/slimbrn2.wav");		// player enter slime
@@ -393,8 +394,6 @@ void() ResetPlayerLoopingSounds =
 //johnfitz -- new stuff for loadsavegame callback function
 nosave float loadsavegamecallback_done;
 void() smoke_firstthink;
-void() FindAndReadGlobalGravity;
-
 void() LoadSaveGameCallback =
 {
 	local entity e;
@@ -413,8 +412,6 @@ void() LoadSaveGameCallback =
 	e = spawn();
 	e.think = ResetPlayerLoopingSounds;
 	e.nextthink = time + 0.1;
-	
-	FindAndReadGlobalGravity();
 	
 	loadsavegamecallback_done = 1;
 } 

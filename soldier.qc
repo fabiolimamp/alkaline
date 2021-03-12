@@ -229,7 +229,7 @@ void() army_firenails =
 void()	army_die1	=[	$death1,	army_die2	] {};
 void()	army_die2	=[	$death2,	army_die3	] {};
 void()	army_die3	=[	$death3,	army_die4	]
-{self.solid = SOLID_NOT;self.ammo_shells = 5;DropBackpack();};
+{self.solid = SOLID_NOT;DropBackpack();};
 void()	army_die4	=[	$death4,	army_die5	] {};
 void()	army_die5	=[	$death5,	army_die6	] {};
 void()	army_die6	=[	$death6,	army_die7	] {};
@@ -241,7 +241,7 @@ void()	army_die10	=[	$death10,	army_die10	] {};
 void()	army_cdie1	=[	$deathc1,	army_cdie2	] {};
 void()	army_cdie2	=[	$deathc2,	army_cdie3	] {ai_back(5);};
 void()	army_cdie3	=[	$deathc3,	army_cdie4	]
-{self.solid = SOLID_NOT;self.ammo_shells = 5;DropBackpack();ai_back(4);};
+{self.solid = SOLID_NOT;DropBackpack();ai_back(4);};
 void()	army_cdie4	=[	$deathc4,	army_cdie5	] {ai_back(13);};
 void()	army_cdie5	=[	$deathc5,	army_cdie6	] {ai_back(3);};
 void()	army_cdie6	=[	$deathc6,	army_cdie7	] {ai_back(4);};
@@ -314,7 +314,8 @@ void() monster_army =
 	self.th_missile = army_atk1;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
-
+    self.ammo_shells = 10;
+	
 	walkmonster_start ();
 };
 

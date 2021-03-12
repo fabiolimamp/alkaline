@@ -29,7 +29,7 @@ $frame paina1 paina2 paina3 paina4
 
 void() super_enforcer_fire =
 {
-	vector dir;
+	vector dir, liut_ofs;
 
 	ai_face();
 	local vector org;
@@ -37,17 +37,32 @@ void() super_enforcer_fire =
 	
 	org = self.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';
 if (skill == 0)
-    dir = self.enemy.origin - self.origin;
+    dir = self.enemy.origin - org;
 else if (skill == 1)
-    dir = (self.enemy.origin + (self.enemy.velocity * 0.1)) - self.origin;
+	{
+	liut_ofs_x = (self.enemy.velocity_x * 0.1);
+	liut_ofs_y = (self.enemy.velocity_y * 0.1);
+	liut_ofs_z = (self.enemy.velocity_z * 0.1 * -1);
+    dir = (self.enemy.origin + liut_ofs) - org;
+   	}
 else if (skill == 2)
-    dir = (self.enemy.origin + (self.enemy.velocity * 0.2)) - self.origin;
+	{
+	liut_ofs_x = (self.enemy.velocity_x * 0.2);
+	liut_ofs_y = (self.enemy.velocity_y * 0.2);
+	liut_ofs_z = (self.enemy.velocity_z * 0.2 * -1);	
+   dir = (self.enemy.origin + liut_ofs) - org;
+   	}
 else
-    dir = (self.enemy.origin + (self.enemy.velocity * 0.3)) - self.origin;
+	{
+	liut_ofs_x = (self.enemy.velocity_x * 0.3);
+	liut_ofs_y = (self.enemy.velocity_y * 0.3);
+	liut_ofs_z = (self.enemy.velocity_z * 0.3 * -1);
+   dir = (self.enemy.origin + liut_ofs) - org;
+   	}
 	dir = normalize(dir);
 	launch_spike (org, dir);
 	//launch_spike (org, self.enemy.origin - self.origin);
-	setmodel(newmis, "progs/s_spike.mdl");
+	// setmodel(newmis, "progs/s_spike.mdl");
 	newmis.touch = superspike_touch;
 	newmis.velocity = newmis.velocity * 0.8;
 

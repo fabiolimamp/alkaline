@@ -126,13 +126,14 @@ void() make_breakable_debris =
 		
 		i = i + 1;
 	}
+	
 };
 
 void () func_breakable_die =
 {
 	self.origin = ((self.absmin + self.absmax) * 0.5);
 	setorigin (self, self.origin);
-	
+	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);	
 	make_breakable_debris ();
 	
 	remove (self);
@@ -172,6 +173,18 @@ void () func_breakable =
 	self.movetype = MOVETYPE_PUSH;
 	setmodel (self, self.model);
 	precache_model ("progs/debris.mdl");
+	precache_sound ("misc/metal_impact.wav");
+	precache_sound ("misc/conc_impact.wav");	
+	
+
+	if (self.style == 2)
+		{
+		self.noise1 = "misc/conc_impact.wav";
+		}
+	else 
+		{
+		self.noise1 = "misc/metal_impact.wav";
+		}
 		
 	if (!self.health) 
 		self.health = 20;

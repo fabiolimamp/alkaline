@@ -67,7 +67,14 @@ void() W_FireAxe =
 		
 		//johnfitz -- make clank sound when hitting brushmodels
 		if (trace_ent.movetype == MOVETYPE_PUSH || trace_ent.movetype == MOVETYPE_NONE)
+			{
 			sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+			}
+		if ((trace_ent.flags & FL_MONSTER) || (trace_ent.classname == "player"))
+			{
+			sound (self, CHAN_WEAPON, "weapons/axhit3.wav", 1, ATTN_NORM);	
+			}
+		
 		//johnfitz
 	}
 	else

@@ -403,14 +403,14 @@ void()   armagon_walk12    =[ $lwalk12.asc  , armagon_walk1    ]
 void()   armagon_run1    =[ $lwalk1.asc  , armagon_run2    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
 void()   armagon_run2    =[ $lwalk2.asc  , armagon_run3    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
@@ -418,14 +418,14 @@ void()   armagon_run3    =[ $lwalk3.asc  , armagon_run4    ]
    {
    sound (self, 7, "armagon/servo.wav", SERVO_VOLUME, ATTN_ARMAGON);
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
 void()   armagon_run4    =[ $lwalk4.asc  , armagon_run5    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
@@ -433,28 +433,28 @@ void()   armagon_run5    =[ $lwalk5.asc  , armagon_run6    ]
    {
    sound (self, 6, "armagon/footfall.wav", 1, ATTN_ARMAGON);
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
 void()   armagon_run6    =[ $lwalk6.asc  , armagon_run7    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
 void()   armagon_run7    =[ $lwalk7.asc  , armagon_run8    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
 void()   armagon_run8    =[ $lwalk8.asc  , armagon_run9    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
@@ -462,14 +462,14 @@ void()   armagon_run9    =[ $lwalk9.asc  , armagon_run10    ]
    {
    sound (self, 7, "armagon/servo.wav", SERVO_VOLUME, ATTN_ARMAGON);
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
 void()   armagon_run10    =[ $lwalk10.asc  , armagon_run11    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
@@ -477,14 +477,14 @@ void()   armagon_run11    =[ $lwalk11.asc  , armagon_run12    ]
    {
    sound (self, 6, "armagon/footfall.wav", 1, ATTN_ARMAGON);
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    };
 void()   armagon_run12    =[ $lwalk12.asc  , armagon_run1    ]
    {
    ChangeYaw();
-   RUN_STRAIGHT = 1;
+   
    ai_run(14);
    armagon_think();
    if ((self.cnt == 1) && (time > self.attack_finished))

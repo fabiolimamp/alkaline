@@ -460,7 +460,7 @@ void() banshee_walk12 = [31, banshee_walk1]
 void() banshee_run1 = [20, banshee_run2]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -468,7 +468,7 @@ void() banshee_run1 = [20, banshee_run2]
 void() banshee_run2 = [21, banshee_run3]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -477,7 +477,7 @@ void() banshee_run3 = [22, banshee_run4]
 {
 	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -485,7 +485,7 @@ void() banshee_run3 = [22, banshee_run4]
 void() banshee_run4 = [23, banshee_run5]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -494,7 +494,7 @@ void() banshee_run5 = [24, banshee_run6]
 {
 	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -502,7 +502,7 @@ void() banshee_run5 = [24, banshee_run6]
 void() banshee_run6 = [25, banshee_run7]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -510,7 +510,7 @@ void() banshee_run6 = [25, banshee_run7]
 void() banshee_run7 = [26, banshee_run8]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -518,7 +518,7 @@ void() banshee_run7 = [26, banshee_run8]
 void() banshee_run8 = [27, banshee_run9]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -527,7 +527,7 @@ void() banshee_run9 = [28, banshee_run10]
 {
 	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -535,7 +535,7 @@ void() banshee_run9 = [28, banshee_run10]
 void() banshee_run10 = [29, banshee_run11]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -544,7 +544,7 @@ void() banshee_run11 = [30, banshee_run12]
 {
 	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 };
@@ -552,7 +552,7 @@ void() banshee_run11 = [30, banshee_run12]
 void() banshee_run12 = [31, banshee_run1]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(14);
 	banshee_think();
 	if (self.lefty == 1)
@@ -950,6 +950,7 @@ void() banshee_die18 = [74, banshee_die19]
 
 void() banshee_die19 = [74, banshee_die19]
 {
+self.solid = SOLID_NOT;
 };
 
 void(entity attacker, float damage) banshee_pain = 

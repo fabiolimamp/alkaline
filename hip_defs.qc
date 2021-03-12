@@ -1,5 +1,3 @@
-float	RUN_STRAIGHT;
-
 float AS_DODGING     = 5;
 
 float MIN_ANGLE_DELTA = 10;

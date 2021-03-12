@@ -241,7 +241,7 @@ void()	menf_shld1	=[	$fieldon1 ,	menf_shld2	] {};
 void()	menf_shld2	=[	$fieldon2 ,	menf_shld3	] {};
 void()	menf_shld3	=[	$fieldon3 ,	menf_shld4  ] {self.takedamage = DAMAGE_NO; sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
 void()	menf_shld4	=[	$fieldon4 ,	menf_shld5	] {};
-void()	menf_shld5	=[	$fieldon5 ,	menf_shld6	] { };
+void()	menf_shld5	=[	$fieldon5 ,	menf_shld6	] {};
 void()	menf_shld6	=[	$fieldon6 ,	menf_shld7	] {};
 void()	menf_shld7	=[	$fieldon7 ,	menf_run1	] {};
 

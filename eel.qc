@@ -221,6 +221,7 @@ void() monster_eel =
 	self.th_die = eel_death;
 	self.th_pain = eel_pain1;
 	self.th_melee = eel_attack1;
+	self.effects = EF_DIMLIGHT;
 
     self.delay = time + random() * 6;
     self.weapon = 0;

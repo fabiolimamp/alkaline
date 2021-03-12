@@ -422,7 +422,7 @@ void() probe_run1 = [0, probe_run2]
 {
 	sound(self, 7, "probe/servo.wav", 1, ATTN_PROBE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -430,7 +430,7 @@ void() probe_run1 = [0, probe_run2]
 void() probe_run2 = [1, probe_run3]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -439,7 +439,7 @@ void() probe_run3 = [2, probe_run4]
 {
 	sound(self, 6, "probe/footfall.wav", PROBE_VOLUME, ATTN_PROBE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -447,7 +447,7 @@ void() probe_run3 = [2, probe_run4]
 void() probe_run4 = [3, probe_run5]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -456,7 +456,7 @@ void() probe_run5 = [4, probe_run6]
 {
 	sound(self, 7, "probe/servo.wav", 1, ATTN_PROBE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -464,7 +464,7 @@ void() probe_run5 = [4, probe_run6]
 void() probe_run6 = [5, probe_run7]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -473,7 +473,7 @@ void() probe_run7 = [6, probe_run8]
 {
 	sound(self, 6, "probe/footfall.wav", 1, ATTN_PROBE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -481,7 +481,7 @@ void() probe_run7 = [6, probe_run8]
 void() probe_run8 = [7, probe_run9]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -490,7 +490,7 @@ void() probe_run9 = [8, probe_run10]
 {
 	sound(self, 7, "probe/servo.wav", PROBE_VOLUME, ATTN_PROBE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -498,7 +498,7 @@ void() probe_run9 = [8, probe_run10]
 void() probe_run10 = [9, probe_run11]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -507,7 +507,7 @@ void() probe_run11 = [10, probe_run12]
 {
 	sound(self, 6, "probe/footfall.wav", 1, ATTN_PROBE);
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -515,7 +515,7 @@ void() probe_run11 = [10, probe_run12]
 void() probe_run12 = [11, probe_run13]
 {
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 };
@@ -524,7 +524,7 @@ void() probe_run13 = [12, probe_run1]
 {
 	local float delta;
 	ChangeYaw();
-	RUN_STRAIGHT = 1;
+	
 	ai_run(10);
 	probe_think();
 	if (self.cnt == 1 && time > self.attack_finished)
@@ -677,12 +677,26 @@ void() probe_satk6 = [28, probe_plant1]
 	SUB_AttackFinished(0.3);
 };
 
+void() bodydie =
+{
+	self.health = self.trigger_field.health;
+	self.origin = self.origin + '0 0 -32';
+	FuelTankExplode();
+	ThrowGib ("progs/progib1.mdl", self.health);	
+	ThrowGib ("progs/progib2.mdl", self.health);
+	ThrowGib ("progs/progib3.mdl", self.health);
+	SUB_Remove();
+
+};
+
+
 void() probe_die1 = [13, probe_die2]
 {
 	probe_think();
 	ai_run_slide();
 	ai_run_slide();
 	FuelTankExplode();
+		
 };
 
 void() probe_die2 = [14, probe_die3]
@@ -694,8 +708,12 @@ void() probe_die2 = [14, probe_die3]
 };
 
 void() probe_die3 = [15, SUB_Remove]
-{
+
+{	self.trigger_field.trigger_field = self;
+	self.trigger_field.think = bodydie;
+	self.trigger_field.nextthink = time + 0.1;
 	self.trigger_field.frame = self.frame;
+	FuelTankExplode();	
 };
 
 void(entity attacker, float damage) probe_pain = 
@@ -813,6 +831,9 @@ void() monster_probe =
 	{
 		self.lefty = 0;
 		sk = cvar("skill");
+		precache_model("progs/progib1.mdl");
+		precache_model("progs/progib2.mdl");
+		precache_model("progs/progib3.mdl");		
 		precache_model("progs/probebod.mdl");
 		precache_model("progs/probedom.mdl");
 		precache_model("progs/d_explod.spr");
