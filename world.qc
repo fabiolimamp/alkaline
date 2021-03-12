@@ -393,6 +393,8 @@ void() ResetPlayerLoopingSounds =
 //johnfitz -- new stuff for loadsavegame callback function
 nosave float loadsavegamecallback_done;
 void() smoke_firstthink;
+void() FindAndReadGlobalGravity;
+
 void() LoadSaveGameCallback =
 {
 	local entity e;
@@ -411,6 +413,8 @@ void() LoadSaveGameCallback =
 	e = spawn();
 	e.think = ResetPlayerLoopingSounds;
 	e.nextthink = time + 0.1;
+	
+	FindAndReadGlobalGravity();
 	
 	loadsavegamecallback_done = 1;
 } 
