@@ -72,8 +72,11 @@ void() W_FireAxe =
 			}
 		if ((trace_ent.flags & FL_MONSTER) || (trace_ent.classname == "player"))
 			{
-			sound (self, CHAN_WEAPON, "weapons/axhit3.wav", 1, ATTN_NORM);	
-			}
+			if (random() < 0.5)
+		sound (self, CHAN_WEAPON, "weapons/axhit3.wav", 1, ATTN_NORM);
+			else
+		sound (self, CHAN_WEAPON, "weapons/axhit4.wav", 1, ATTN_NORM);
+}
 		
 		//johnfitz
 	}
