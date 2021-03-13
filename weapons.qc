@@ -1053,11 +1053,24 @@ void() W_ChangeWeapon =
 			am = 1;
 	}
 	else if (self.impulse == 8)
+
+	{
+		if (self.weapon & IT_LIGHTNING)
+	{
+		fl = IT_LASER_CANNON;
+	}
+	else if (self.weapon & IT_LASER_CANNON)
 	{
 		fl = IT_LIGHTNING;
+	}
+	else
+	{
+		fl = IT_LIGHTNING;
+	}
 		if (self.ammo_cells < 1)
 			am = 1;
 	}
+
 	else if (self.impulse == 225)
 	{
 		fl = IT_LASER_CANNON;
