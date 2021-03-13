@@ -154,8 +154,8 @@ void() bam_swingl7 =[      $swingl7,      bam_swingl8   ] {ai_charge(5); bamClaw
 void() bam_swingl8 =[      $swingl8,      bam_swingl9   ] {ai_charge(4);};
 void() bam_swingl9 =[      $swingl9,      bam_run1  ] {
 ai_charge(8);
-if (random()<0.5)
-	self.think = bam_swingr1;
+//if (random()<0.5)			Removed to avoid useless swinging attacks
+//	self.think = bam_swingr1;
 };
 
 void() bam_swingr1	=[      $swingr1,      bam_swingr2   ] {
@@ -170,8 +170,8 @@ void() bam_swingr7 =[      $swingr7,      bam_swingr8   ] {ai_charge(6); bamClaw
 void() bam_swingr8 =[      $swingr8,      bam_swingr9   ] {ai_charge(3);};
 void() bam_swingr9 =[      $swingr9,      bam_run1  ] {ai_charge(1);
 ai_charge(10);
-if (random()<0.5)
-	self.think = bam_swingl1;
+//if (random()<0.5)			Removed to avoid useless swinging attacks
+//	self.think = bam_swingl1;
 };
 
 void() bam_melee =
