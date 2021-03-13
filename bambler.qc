@@ -278,7 +278,7 @@ void() monster_bambler =
 	setmodel (self, "progs/bambler.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 600;
+	self.health = 500;
 
 	self.th_stand = bam_stand1;
 	self.th_walk = bam_walk1;
