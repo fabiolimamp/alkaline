@@ -35,7 +35,7 @@ ogre.qc
 demon.qc
 shambler.qc
 knight.qc
-soldier.qc
+soldier.qc		// greenwood (nail grunt)
 wizard.qc
 dog.qc
 zombie.qc
@@ -75,6 +75,7 @@ hipscrge.qc		// hipnotic
 drone1.qc		// OUM
 axegrunt.qc		// Lunaran
 eel.qc			// Rogue
+bambler.qc		// greenwood
 
 monster_frogman.qc // Malice
 monster_banshee.qc // Malice
