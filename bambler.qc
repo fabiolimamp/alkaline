@@ -285,7 +285,6 @@ void() monster_bambler =
 	self.th_run = bam_run1;
 	self.th_die = bam_die;
 	self.th_melee = bam_melee;
-	self.th_missile = bam_magic1;
 	self.th_pain = bam_pain;
 	
 	walkmonster_start();
