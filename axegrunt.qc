@@ -19,6 +19,8 @@ $frame axrun1 axrun2 axrun3 axrun4 axrun5 axrun6
 
 $frame rockrun1 rockrun2 rockrun3 rockrun4 rockrun5 rockrun6
 
+// walking is just slowed down running - Greenwood's "mall walker" fix
+
 //
 // standing
 //
@@ -100,6 +102,16 @@ void()	axe_run3	=[	$axrun3,		axe_run4	] {ai_run(12);};
 void()	axe_run4	=[	$axrun4,		axe_run5	] {ai_run(25);};
 void()	axe_run5	=[	$axrun5,		axe_run6	] {ai_run(18);};
 void()	axe_run6	=[	$axrun6,		axe_run1	] {ai_run(12);};
+
+void()    axe_walk1    =[    $axrun1,        axe_walk2    ] {
+if (random() < 0.2)
+    sound (self, CHAN_VOICE, "soldier/idle.wav", 1,  ATTN_IDLE);
+ai_walk(8);};
+void()    axe_walk2    =[    $axrun2,        axe_walk3    ] {ai_walk(6);};
+void()    axe_walk3    =[    $axrun3,        axe_walk4    ] {ai_walk(3);};
+void()    axe_walk4    =[    $axrun4,        axe_walk5    ] {ai_walk(8);};
+void()    axe_walk5    =[    $axrun5,        axe_walk6    ] {ai_walk(6);};
+void()    axe_walk6    =[    $axrun6,        axe_walk1    ] {ai_walk(3);};
 
 //===========================================================================
 
@@ -271,6 +283,7 @@ void() monster_axegrunt =
 	precache_sound ("knight/sword1.wav");
 	precache_sound ("knight/sword2.wav");
 	precache_sound ("knight/idle.wav");
+	precache_sound ("soldier/idle.wav");
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -281,7 +294,7 @@ void() monster_axegrunt =
 	self.health = 75;
 
 	self.th_stand = axe_stand1;
-//	self.th_walk = axe_walk1;
+	self.th_walk = axe_walk1;
 	self.th_run = axe_run1;
 	self.th_melee = axe_atk;
 	self.th_pain = axe_pain;
