@@ -1,7 +1,11 @@
 /*
 ==============================================================================
 
-BAMBLER
+BAMBLER - by Greenwood & Markie Music (concept)
+
+Bambler is a Bald shAMBLER. He's 20% smaller, a tad weaker, and melee only.
+He's sort of like Doom's Pinky demon for Alkaline (and he's pink too!).
+P.S. Markie hates the name Bambler :)
 
 ==============================================================================
 */
