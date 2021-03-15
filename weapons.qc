@@ -72,8 +72,11 @@ void() W_FireAxe =
 			}
 		if ((trace_ent.flags & FL_MONSTER) || (trace_ent.classname == "player"))
 			{
-			sound (self, CHAN_WEAPON, "weapons/axhit3.wav", 1, ATTN_NORM);	
-			}
+			if (random() < 0.5)
+		sound (self, CHAN_WEAPON, "weapons/axhit3.wav", 1, ATTN_NORM);
+			else
+		sound (self, CHAN_WEAPON, "weapons/axhit4.wav", 1, ATTN_NORM);
+}
 		
 		//johnfitz
 	}
@@ -1050,11 +1053,24 @@ void() W_ChangeWeapon =
 			am = 1;
 	}
 	else if (self.impulse == 8)
+
+	{
+		if (self.weapon & IT_LIGHTNING)
+	{
+		fl = IT_LASER_CANNON;
+	}
+	else if (self.weapon & IT_LASER_CANNON)
 	{
 		fl = IT_LIGHTNING;
+	}
+	else
+	{
+		fl = IT_LIGHTNING;
+	}
 		if (self.ammo_cells < 1)
 			am = 1;
 	}
+
 	else if (self.impulse == 225)
 	{
 		fl = IT_LASER_CANNON;

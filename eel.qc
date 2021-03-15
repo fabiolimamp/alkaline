@@ -3,6 +3,9 @@
 
 Eel
 
+Basically the DOE eel, but it uses Khreathor's
+modified eel zap (shoots a lightning bolt)
+
 ==============================================
 */
 $cd /qwork/xpack/models/eel

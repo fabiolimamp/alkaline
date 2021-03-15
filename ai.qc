@@ -302,6 +302,8 @@ local float	rsnd;
 	}
 	else if (self.classname == "monster_shambler")
 		sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
+	else if (self.classname == "monster_bambler")
+		sound (self, CHAN_VOICE, "bambler/ssight.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_demon1")
 		sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
 	else if (self.classname == "monster_wizard")

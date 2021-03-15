@@ -1618,6 +1618,8 @@ void(entity targ, entity attacker) ClientObituary =
 			{
 				if (attacker.classname == "monster_army")
 					bprint (" was shot by a Grunt\n");
+				if (attacker.classname == "monster_nailgrunt")
+					bprint (" was nailed by a Nail Grunt\n");
 				if (attacker.classname == "monster_demon1")
 					bprint (" was eviscerated by a Fiend\n");
 				if (attacker.classname == "monster_dog")
@@ -1644,6 +1646,8 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" was exploded by a Vore\n");
 				if (attacker.classname == "monster_shambler")
 					bprint (" was smashed by a Shambler\n");
+				if (attacker.classname == "monster_bambler")
+					bprint (" was bashed by a Bambler\n");
 				if (attacker.classname == "monster_tarbaby")
 					bprint (" was slimed by a Spawn\n");
 				if (attacker.classname == "monster_vomit")

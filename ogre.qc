@@ -3,6 +3,9 @@
 
 OGRE
 
+INCLUDES ADDITIONAL CODE: Preach's "better aiming" code & Shamblernaut's 
+code for my (Greenwood) concept of a rocket shooting ogre marksman.
+
 ==============================================================================
 */
 

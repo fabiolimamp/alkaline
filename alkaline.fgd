@@ -635,6 +635,12 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 Rockets only have half damage
 when hitting the Shambler." []
 
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/bambler.mdl"}) = monster_bambler :
+"Bambler, 500 health points.
+Melee only bald shamblers.
+Rockets only have half damage
+when hitting the Bambler." []
+
 @PointClass base(Monster) size(-128 -128 -24, 128 128 256) model({"path":"progs/boss.mdl"}) = monster_boss :
 "Chthon (Boss of Shareware Quake)
 Only event_lightning can kill him." []

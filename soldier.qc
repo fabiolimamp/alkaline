@@ -3,6 +3,8 @@
 
 SOLDIER / PLAYER
 
+NAIL GRUNT VARIANT by Greenwood, from a bit of code from Xsoldier v2
+
 ==============================================================================
 */
 
