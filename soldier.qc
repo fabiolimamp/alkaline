@@ -211,6 +211,7 @@ void() army_fire =
 	dir = normalize (dir - self.origin);
 	
 	FireBullets (4, dir, '0.1 0.1 0');
+	ThrowGib("progs/shelcase.mdl", self.health);
 };
 
 
