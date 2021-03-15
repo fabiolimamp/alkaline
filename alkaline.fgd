@@ -1166,10 +1166,13 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 	spawnflags(flags) =
 	[
 		1 : "Starts Open" : 0
+		2 : "Crushing" : 0
 		4 : "Don't link" : 0
 		8 : "Gold Key required" : 0
         16: "Silver Key required" : 0
         32: "Toggle" : 0
+        64: "Doom-style unlock" : 0
+        128: "Sound during delay" : 0
 	]
 	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables dynamic shadows that fade on/off when the door moves." = [
 		0: "No"
@@ -1178,6 +1181,8 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 	movedir(string) : "Move direction" : : "Sets a direct 'x y z' distance vector for the door to move relative to its initial position."
 	mangle(string) : "Angle vector" : : "Use together with 'distance'. Sets a 'pitch yaw 0' angle vector for the door to move."
 	distance(integer) : "Movement distance" : : "Use together with 'mangle'. Sets the linear distance which the door will move."
+	delay(integer) : "Delay" : : "Sets a delay before opening/closing. Useful to stagger movement of certain elements on complex, multi-part doors."
+	groupname(string) : "Group name for linking" : : "Doors with the same groupname will be linked and always activate together. By setting this key, the touching check for linking is ignored."
 ]
 
 @SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door_secret : "Triggered door" 

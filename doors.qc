@@ -1,10 +1,17 @@
+/*
+Advanced doors by bmFbr
+Based on progs_dump 2.0
+*/
+
 
 float DOOR_START_OPEN = 1;
+float DOOR_CRUSHING = 2;
 float DOOR_DONT_LINK = 4;
 float DOOR_GOLD_KEY = 8;
 float DOOR_SILVER_KEY = 16;
 float DOOR_TOGGLE = 32;
 float DOOR_DOOM_STYLE_UNLOCK = 64;
+float DOOR_SOUND_DURING_DELAY = 128;
 
 /*
 
@@ -12,12 +19,91 @@ Doors are similar to buttons, but can spawn a fat trigger field around them
 to open without a touch, and they link together to form simultanious
 double/quad doors.
  
-Door.owner is the master door.  If there is only one door, it points to itself.
+Door.owner is the master door. If there is only one door, it points to itself.
 If multiple doors, all will point to a single one.
+The master door also controls movement for the whole linked group.
+
+You can force link doors with the new 'groupname' key. Doors with this key set
+will disregard all touching tests for linking, and do that based only on the 
+groupname.
+
+Fixed the bug with toggled linked doors firing between themselves, so now you
+don't need to set "don't link" on toggling doors anymore.
 
 Door.enemy chains from the master door through all doors linked in the chain.
 
+
+
 */
+
+
+void() door_use_targets =
+{
+	local entity t, stemp, otemp, act;
+
+//
+// print the message
+//
+	if (activator.classname == "player" && self.message != "")
+	{
+		centerprint (activator, self.message);
+		if (!self.noise)
+			sound (activator, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
+	}
+
+//
+// kill the killtagets
+//
+	if (self.killtarget)
+	{
+		//johnfitz -- fix for "killtarget" prevents "target" from firing
+		t = find (world, targetname, self.killtarget);
+		while (t)
+		{
+			if(t.switchshadstyle) lightstyle(t.switchshadstyle, "m");
+			remove (t);
+			t = find (t, targetname, self.killtarget);
+		}
+		//johnfitz
+	}
+	
+//
+// fire targets
+//
+	if (self.target)
+	{
+		act = activator;
+		t = world;
+		do
+		{
+			t = find (t, targetname, self.target);
+			if (!t)
+			{
+				return;
+			}
+			stemp = self;
+			otemp = other;
+			self = t;
+			other = stemp;
+
+			// Don't fire the target if it's a door belonging to the same group.
+			// So now you don't need to set "don't link" on toggling doors anymore.
+			if (self.use != SUB_Null && !(self.classname == act.classname && self.owner == act.owner) ) 
+			{
+				if (self.use)
+					self.use ();
+			}
+			self = stemp;
+			other = otemp;
+			activator = act;
+		} while ( 1 );
+	}
+	
+
+};
+
+
+
 
 /*
 =============================================================================
@@ -36,20 +122,30 @@ void() door_blocked =
 	
 // if a door has a negative wait, it would never come back if blocked,
 // so let it just squash the object to death real fast
-	if (self.wait >= 0)
+	if (self.wait >= 0 && !(self.spawnflags & DOOR_CRUSHING))
 	{
-		if (self.state == STATE_DOWN)
+		if (self.owner.groupstate == STATE_DOWN)
 			door_go_up ();
 		else
 			door_go_down ();
 	}
 };
 
+void() door_start_sound = {
+	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+}
+
+void() door_stop_sound = {
+	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+}
 
 void() door_hit_top =
 {
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	door_stop_sound();
+
 	self.state = STATE_TOP;
+	if(self.delay >= self.owner.maxdelay) self.owner.groupstate = STATE_TOP; // this is the last door to open
+	
 	if (self.spawnflags & DOOR_TOGGLE)
 		return;		// don't come down automatically
 	self.think = door_go_down;
@@ -58,16 +154,51 @@ void() door_hit_top =
 
 void() door_hit_bottom =
 {
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) {
+		self.think = door_stop_sound;
+		self.nextthink = self.ltime + 0.01 + (self.delay - self.owner.mindelay);
+	}
+	else door_stop_sound();
+
 	self.state = STATE_BOTTOM;
+	if(self.delay <= self.owner.mindelay) self.owner.groupstate = STATE_BOTTOM; //this is the last door to close
 };
 
-void() door_go_down =
-{
+void() door_move_up = {
 	entity shadow;
 	entity oldself;
 
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_start_sound();
+	self.state = STATE_UP;
+	self.owner.groupstate = STATE_UP;
+	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
+
+	door_use_targets();
+
+
+	if(self.switchshadstyle) {
+		shadow = self.shadowcontroller;
+		oldself = self;
+		self = shadow;
+		
+		if(oldself.spawnflags & DOOR_START_OPEN) {
+			shadow_fade_in();
+			shadow.shadowoff = 0;
+		} else {
+			shadow_fade_out();
+			shadow.shadowoff = 1;
+		}
+		
+		self = oldself;
+	}
+}
+
+
+void() door_move_down = {
+	entity shadow;
+	entity oldself;
+
+	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_start_sound();
 	if (self.max_health)
 	{
 		self.takedamage = DAMAGE_YES;
@@ -75,6 +206,7 @@ void() door_go_down =
 	}
 	
 	self.state = STATE_DOWN;
+	self.owner.groupstate = STATE_DOWN;
 	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
 
 	if(self.switchshadstyle) {
@@ -93,46 +225,49 @@ void() door_go_down =
 		self = oldself;
 		
 	}
+}
+
+void() door_go_down =
+{	
+	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
+
+	if(self.owner.maxdelay != self.owner.mindelay || self.delay) {
+		self.think = door_move_down;
+
+		// self.ltime passes down the opening delay, so we need to double that for closing -bmFbr
+		self.nextthink = self.ltime + 0.01 + (self.owner.maxdelay + self.owner.mindelay - self.delay)*2;
+
+	}
+	else door_move_down();
 };
 
 void() door_go_up =
 {
-	entity shadow;
-	entity oldself;
-
 	if (self.state == STATE_UP)
-		return;		// allready going up
+		return;		// already going up
 
-	if (self.state == STATE_TOP)
+	if (self.owner.groupstate == STATE_TOP)
 	{	// reset top wait time
 		self.nextthink = self.ltime + self.wait;
 		return;
 	}
-	
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
-	self.state = STATE_UP;
-	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
 
-	SUB_UseTargets();
+	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
-
-	if(self.switchshadstyle) {
-		shadow = self.shadowcontroller;
-		oldself = self;
-		self = shadow;
-		
-		if(oldself.spawnflags & DOOR_START_OPEN) {
-			shadow_fade_in();
-			shadow.shadowoff = 0;
-		} else {
-			shadow_fade_out();
-			shadow.shadowoff = 1;
-		}
-		
-		self = oldself;
+	if(self.owner.groupstate == STATE_DOWN){
+		self.think = door_move_up;
+		self.nextthink = self.ltime + 0.01 + self.delay - (time - self.owner.lastthink);
+		dprint("CLOSING: self.delay: ");dprint(ftos(self.delay));dprint("; ");
+		dprint("time: ");dprint(ftos(time));dprint("; ");
+		dprint("self.owner.lastthink: ");dprint(ftos(self.owner.lastthink));dprint(";");
+		dprint("self.nextthink: ");dprint(ftos(self.nextthink));dprint(";\n");
+	} else if(self.delay) {
+		self.think = door_move_up;
+		self.nextthink = self.ltime + self.delay;
 	}
-};
+	else door_move_up();
 
+};
 
 /*
 =============================================================================
@@ -157,7 +292,7 @@ void() door_fire =
 
 	if (self.spawnflags & DOOR_TOGGLE)
 	{
-		if (self.state == STATE_UP || self.state == STATE_TOP)
+		if (self.owner.groupstate == STATE_UP || self.owner.groupstate == STATE_TOP)
 		{
 			starte = self;
 			do
@@ -171,12 +306,18 @@ void() door_fire =
 	}
 	
 // trigger all paired doors
+	if(self.groupstate != STATE_DOWN) {
+		self.lastthink = time + self.wait + self.mindelay;
+		dprint("OPENING: time: ");dprint(ftos(time));dprint("; ");
+		dprint("self.lastthink: ");dprint(ftos(self.lastthink));dprint(";\n");
+	}
 	starte = self;
 	do
 	{
 		door_go_up ();
 		self = self.enemy;
 	} while ( (self != starte) && (self != world) );
+	
 	self = oself;
 };
 
@@ -185,7 +326,7 @@ void() door_use =
 {
 	local entity oself;
 
-	self.message = "";			// door message are for touch only
+	self.message = "";			// door message is for touch only
 	self.owner.message = "";	
 	self.enemy.message = "";
 	oself = self;
@@ -218,7 +359,7 @@ void() door_killed =
 	oself = self;
 	self = self.owner;
 	self.health = self.max_health;
-	self.takedamage = DAMAGE_NO;	// wil be reset upon return
+	self.takedamage = DAMAGE_NO;	// will be reset upon return
 	door_use ();
 	self = oself;
 };
@@ -336,7 +477,7 @@ void() LinkDoors =
 
 	if (self.enemy)
 		return;		// already linked by another door
-	if (self.spawnflags & 4)
+	if (self.spawnflags & DOOR_DONT_LINK)
 	{
 		self.owner = self.enemy = self;
 		return;		// don't want to link this door
@@ -386,6 +527,10 @@ void() LinkDoors =
 			if (t.enemy)
 				objerror ("cross connected doors");
 			
+			if(t.delay > starte.maxdelay) starte.maxdelay = t.delay;
+			if(t.delay < starte.mindelay) starte.mindelay = t.delay;
+
+
 			self.enemy = t;
 			self = t;
 
@@ -401,6 +546,8 @@ void() LinkDoors =
 				cmaxs_y = t.maxs_y;
 			if (t.maxs_z > cmaxs_z)
 				cmaxs_z = t.maxs_z;
+
+
 		}
 	} while (1 );
 
@@ -531,6 +678,9 @@ void() func_door =
 			self.lip = 8;
 		self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
 	}
+
+	self.maxdelay = self.delay;
+	self.mindelay = self.delay;
 // johnfitz
 
 
@@ -544,6 +694,7 @@ void() func_door =
 	}
 
 	self.state = STATE_BOTTOM;
+	self.groupstate = STATE_BOTTOM;
 
 	if (self.health)
 	{

@@ -878,3 +878,10 @@ void() shadow_fade_out;
 
 .string		target2;
 .string		targetname2;
+
+//
+// new door features
+//
+.float 		maxdelay, mindelay, lastthink;
+.float 		groupstate;
+.string 	groupname;
