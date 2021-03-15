@@ -477,7 +477,7 @@ void() shadow_fade_out =
 	if (self.count > 12)
 		self.count = 12;
 
-	dprint(ftos(self.count));dprint("\n");
+	//dprint(ftos(self.count));dprint("\n");
 
 	lightstyle(self.switchshadstyle, lightstyle_fade_lookup(self.count));
 	self.count = self.count + self.dmg;
@@ -495,7 +495,7 @@ void() shadow_fade_in =
 	if (self.count > 12)
 		self.count = 12;
 
-	dprint(ftos(self.count));dprint("\n");
+	//dprint(ftos(self.count));dprint("\n");
 
 	lightstyle(self.switchshadstyle, lightstyle_fade_lookup(self.count));
 	self.count = self.count - self.dmg;
