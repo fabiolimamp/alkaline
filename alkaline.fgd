@@ -1680,3 +1680,9 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 		16 : "Gold Key Required" : 0
 	]
 ]
+
+@PointClass base(Targetname) = trigger_globalgravity : "Trigger Global Gravity"
+[
+	gravity(integer) : "Gravity" : 800
+	return_gravity(integer) : "Return Gravity"
+]

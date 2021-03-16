@@ -28,6 +28,7 @@ void() W_Precache =
 	precache_sound ("weapons/grenade.wav");		// grenade launcher
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
 	precache_sound ("weapons/shotgn2.wav");		// super shotgun
+	precache_sound ("weapons/axhit4.wav");		// extra axe sound for melee - greenwood
 	
 	precache_sound ("enforcer/enfstop.wav");	// laser cannon
 	
