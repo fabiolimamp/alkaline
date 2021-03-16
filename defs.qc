@@ -882,6 +882,6 @@ void() shadow_fade_out;
 //
 // new door features
 //
-.float 		maxdelay, mindelay, lastthink, lastthinklocal, movingback;
+.float 		maxdelay, mindelay, lastopen, lastclose, movingback;
 .float 		groupstate;
 .string 	groupname;

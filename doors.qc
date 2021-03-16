@@ -88,7 +88,7 @@ void() door_use_targets =
 
 			// Don't fire the target if it's a door belonging to the same group.
 			// So now you don't need to set "don't link" on toggling doors anymore.
-			if (self.use != SUB_Null && !(self.classname == act.classname && self.owner == act.owner) ) 
+			if (self.use != SUB_Null)// && !(self.classname == stemp.classname && self.owner == stemp.owner) ) 
 			{
 				if (self.use)
 					self.use ();
@@ -103,6 +103,13 @@ void() door_use_targets =
 };
 
 
+void() target_debugtime_use = {
+	dprint("----------- Current time: ");dprint(ftos(time));dprint("-----------\n");
+};
+
+void() target_debugtime = {
+	self.use = target_debugtime_use;
+};
 
 
 /*
@@ -116,6 +123,7 @@ THINK FUNCTIONS
 void() door_go_down;
 void() door_go_up;
 void() door_group_go_up;
+void() door_group_go_down;
 
 void() door_blocked =
 {
@@ -129,7 +137,7 @@ void() door_blocked =
 			//door_go_up ();
 			door_group_go_up ();
 		else
-			door_go_down ();
+			door_group_go_down ();
 	}
 };
 
@@ -146,15 +154,21 @@ void() door_hit_top =
 	door_stop_sound();
 
 	self.state = STATE_TOP;
+	self.lastopen = time;
+	
+	//if (self.spawnflags & DOOR_TOGGLE)
+	//	return;		// don't come down automatically
+
 	if(self.delay >= self.owner.maxdelay) {
 		self.owner.groupstate = STATE_TOP; // this is the last door to open
 		dprint("Door finished opening!\n");
+
+		if (self.spawnflags & DOOR_TOGGLE)
+			return;		// don't come down automatically
+
+		self.owner.think = door_group_go_down;
+		self.owner.nextthink = self.owner.ltime + self.owner.wait;
 	}
-	
-	if (self.spawnflags & DOOR_TOGGLE)
-		return;		// don't come down automatically
-	self.think = door_go_down;
-	self.nextthink = self.ltime + self.wait;
 };
 
 void() door_hit_bottom =
@@ -164,13 +178,19 @@ void() door_hit_bottom =
 		self.nextthink = self.ltime + 0.01 + (self.delay - self.owner.mindelay);
 	}
 	else door_stop_sound();
-	self.lastthinklocal = time;
+
+	self.lastclose = time;
 	self.state = STATE_BOTTOM;
+	dprint("------------ CLOSING -------------\n");
+	//eprint(self);
+
 	if(self.delay <= self.owner.mindelay) {
-		dprint("Door finished closing!\n");
 		self.owner.groupstate = STATE_BOTTOM; //this is the last door to close
+		dprint("Door finished closing!\n");
 	}
+	
 };
+
 
 void() door_move_up = {
 	entity shadow;
@@ -218,7 +238,7 @@ void() door_move_down = {
 	if(self.owner.groupstate != STATE_DOWN) {
 		dprint("Door started closing!\n");
 		self.owner.groupstate = STATE_DOWN;
-		self.owner.lastthink = time;
+		
 	}
 	
 	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
@@ -245,60 +265,61 @@ void() door_go_down =
 {	
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
-	if(self.owner.maxdelay != self.owner.mindelay || self.delay) {
-		self.think = door_move_down;
+	// all doors should pass through think for consistency
+	self.think = door_move_down;
+	self.nextthink = self.ltime + 0.01 + (self.owner.maxdelay + self.owner.mindelay - self.delay);
 
-		// self.ltime passes down the opening delay? so we need to double that for closing --bmFbr
-		self.nextthink = self.ltime + 0.01 + (self.owner.maxdelay + self.owner.mindelay - self.delay)*2;
-
-	}
-	else door_move_down();
 };
 
 void() door_go_up =
 {
-	if (self.state == STATE_UP)
+	if (self.owner.groupstate == STATE_UP)
 		return;		// already going up
-
-	if (self.owner.groupstate == STATE_TOP)
-	{	// reset top wait time
-		self.nextthink = self.ltime + self.wait;
-		return;
-	}
 
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
 	if(self.owner.movingback){
-		dprint("CLOSING: self.delay: ");dprint(ftos(self.delay));dprint("; ");
-		dprint("time: ");dprint(ftos(time));dprint("; ");
-		dprint("self.owner.lastthink: ");dprint(ftos(self.owner.lastthink));dprint(";");
-		dprint("self.nextthink: ");dprint(ftos(self.nextthink));dprint("; ");
 
-		//if(FALSE){
-		//if(self.delay - (time - self.owner.lastthink) <= 0) {
-		if(self.state == STATE_DOWN){
-			dprint(" instant move\n");
-			door_move_up();
-		}
-		else {
-			dprint(" think move\n");
+		if(self.state == STATE_BOTTOM){
 			self.think = door_move_up;
-			self.nextthink = self.ltime + (time - self.lastthinklocal);
-		}
-	} else if(self.delay) {
-		self.think = door_move_up;
-		self.nextthink = self.ltime + self.delay;
-	}
-	else door_move_up();
+			self.nextthink = self.ltime + (time - self.lastclose);
+			dprint("------------ MOVING BACK - think move -------------------\n");
 
+		}
+		else {//if(self.state == STATE_DOWN) {
+			
+			self.think = door_move_up;
+			self.nextthink = self.ltime + 0.01;
+			dprint("------------ MOVING BACK - instant move -------------------\n");
+			//eprint(self);
+
+		}
+	} else {
+		self.think = door_move_up;
+		self.nextthink = self.ltime + 0.01 + self.delay;
+		dprint("---------------- OPENING -------------------\n");
+	}
+	
+	dprint("self.ltime: ");dprint(ftos(self.ltime));dprint("\n");
+	dprint("self.nextthink: ");dprint(ftos(self.nextthink));dprint("\n");
+	dprint("time: ");dprint(ftos(time));dprint(";\n");
+	dprint("self.lastclose: ");dprint(ftos(self.lastclose));dprint("\n");
+	dprint("difference: ");dprint(ftos(time - self.lastclose));dprint("\n");
+	
+		
 };
 
 void() door_group_go_up = {
 	local entity starte, oself;
 
+	if (self.owner.groupstate == STATE_TOP)
+	{	// reset top wait time
+		self.owner.nextthink = self.owner.ltime + self.owner.wait;
+		return;
+	}
+
 	oself = self;
 	if(self.owner.groupstate == STATE_DOWN) {
-		//self.lastthink = time + self.wait + self.mindelay;
 		self.owner.movingback = TRUE;
 	}
 	starte = self;
@@ -310,6 +331,20 @@ void() door_group_go_up = {
 
 	self = oself;
 	self.owner.movingback = FALSE;
+}
+
+void() door_group_go_down = {
+	local entity starte, oself;
+
+	oself = self;
+	starte = self;
+	do
+	{
+		door_go_down ();
+		self = self.enemy;
+	} while ( (self != starte) && (self != world) );
+
+	self = oself;
 }
 
 /*
@@ -337,18 +372,12 @@ void() door_fire =
 	{
 		if (self.owner.groupstate == STATE_UP || self.owner.groupstate == STATE_TOP)
 		{
-			starte = self;
-			do
-			{
-				door_go_down ();
-				self = self.enemy;
-			} while ( (self != starte) && (self != world) );
-			self = oself;
+			door_group_go_down();
 			return;
 		}
 	}
 	
-// trigger all paired doors
+	// trigger all paired doors
 	door_group_go_up();
 };
 
