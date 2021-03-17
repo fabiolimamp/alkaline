@@ -1039,6 +1039,61 @@ If you want to make them angry at each other instantly, you can set the spawnfla
 	spawnflags(flags) = [ 1: "Mutual hate" : 0 ]
 ]
 
+@PointClass base(Target, Targetname, Appearflags) color(168 224 255) = misc_lightning_start :
+"Starting point of a lightning trail effect.
+Requires the target to be a misc_lightning_end or a misc_lightning_relay.
+You can create a long, continuous effect by chaining one or more misc_lightning_relays between the start and the end entities.
+
+Set 'dmg' to amount of damage you want the lightning to do. Set it to -1 if you want no damage. Default is 25.
+
+Set 'count' to the duration of the lightning. Default is 0.3 seconds.
+
+Set 'delay' to the delay before activating the next point in the chain. Default is 0.
+
+Set 'sounds' for the effect to be silent or not. Default is 1 (noisy).
+
+Set the LT_TOGGLE spawnflag if you want the lightning shooter to continuously fire until triggered again ('count' parameter will be ignored).
+Set the LT_START_ON spawnflag if you want the lightning to start in a fired state. If it's not togglable it will fire once on level load."
+[
+	dmg(integer) : "Damage" : 25 : "The amount of damage you want the lightning to do. Set it to -1 if you want no damage."
+	count(float) : "Duration" : "0.3" : "The duration of the lightning effect. Will be ignored if it's togglable."
+	delay(float) : "Delay" : "0" : "Time delay before activating the next point."
+	sounds(choices) : "Sound" : 1 = [
+		1 : "Lightning noise"
+		2 : "Silent"
+	]
+	spawnflags(flags) = [
+		1 : "Togglable"
+		2 : "Start on"
+	]
+]
+
+@PointClass base(Target, Targetname, Appearflags) color(168 224 255) = misc_lightning_relay :
+"Mid-point of a lightning trail effect. Refer to misc_lightning_start for a more detailed explanation.
+Must target a misc_lightning_end or another misc_lightning_relay.
+
+Set 'dmg' to amount of damage you want the lightning to do at this point. Set it to -1 if you want no damage.
+Default is to inherit the damage value from misc_lightning_start.
+
+Set 'count' to override the duration of the lightning at this specific point.
+Default is to inherit the value from misc_lightning_start.
+
+Set 'delay' to the delay before activating the next point in the chain. Default is 0."
+[
+	dmg(integer) : "Damage" : : "Overrides the amount of damage the lightning does at this point. Set it to -1 if you want no damage."
+	count(float) : "Duration" : : "Overrides the duration of the lightning effect at this point. Will be ignored if it's togglable."
+	delay(float) : "Delay" : "0" : "Time delay before activating the next point."
+	sounds(choices) : "Sound" : 0 = [
+		0 : "Inherit from misc_lightning_start"
+		1 : "Lightning noise"
+		2 : "Silent"
+	]
+]
+
+@PointClass base(Targetname, Appearflags) color(168 224 255) = misc_lightning_end :
+"Endpoint of a lightning trail effect. Refer to misc_lightning_start for a more detailed explanation."
+[]
+
 
 // 
 // ambient sounds

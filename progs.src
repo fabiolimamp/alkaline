@@ -28,6 +28,7 @@ misc.qc
 lights.qc
 forcefield.qc
 misc_model.qc
+ltrail.qc
 
 malice_subs.qc
 
