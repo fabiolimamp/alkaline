@@ -1134,14 +1134,27 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 
 
 @SolidClass base(Angle, Appearflags, Targetname, Target, ModelLight) = func_door : "Basic door.
-Now you have three ways of setting the door's movement:
+
+You have three ways of setting the door's movement:
 - using the traditional 'angle'/'lip' keys
 - setting 'movedir' as a direct x/y/z distance vector relative to its initial position
 - setting 'mangle' and 'distance' to make it move in a specific angle and linear distance
 
-Note that those methods are mutually exclusive, so if you use one of those, remember to remove the keys relative to other methods, or you may get some unexpected behaviour.
+Note that those methods are mutually exclusive, so if you use one of those, remember to remove the keys relative to the others, or else you might have some unexpected behaviour.
 
-The door now has built-in support for switchable shadows, that fade in/out automatically as the door moves.
+Other new features:
+
+You can set delayed movement for a door part with the 'delay' key. The timings are automatically reverted when closing, which means that the first part to open will be the last to close.
+
+You have the option to link different door entities through the 'groupname' key, whether they're touching or not. Useful to create a multi-part door. Setting a groupname on a door ignores the usual touching check, and will only link if they have the same groupname.
+
+You can set the sound of the door to play during only that door's movement, or for the whole linked door animaton (spawnflag 'Sound during delay'). Also you can set custom sounds with 'noise1' to 'noise4'.
+
+You're not required to set 'Don't link' on toggling doors anymore (yay!). The door automatically checks if it's trying to activate another linked door.
+
+You can force a door to be crushing regardless of its 'wait' value, with the spawnflag 'Crushing'.
+
+The door now has built-in support for switchable shadows, that fade in/out automatically as the door moves. Setting '_switchableshadow' to 1 should be enough.
 " 
 [
 	speed(integer) : "Speed" : 100

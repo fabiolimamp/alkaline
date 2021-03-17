@@ -103,14 +103,6 @@ void() door_use_targets =
 };
 
 
-void() target_debugtime_use = {
-	dprint("----------- Current time: ");dprint(ftos(time));dprint("-----------\n");
-};
-
-void() target_debugtime = {
-	self.use = target_debugtime_use;
-};
-
 
 /*
 =============================================================================
@@ -134,7 +126,6 @@ void() door_blocked =
 	if (self.wait >= 0 && !(self.spawnflags & DOOR_CRUSHING))
 	{
 		if (self.owner.groupstate == STATE_DOWN)
-			//door_go_up ();
 			door_group_go_up ();
 		else
 			door_group_go_down ();
@@ -151,17 +142,26 @@ void() door_stop_sound = {
 
 void() door_hit_top =
 {
-	door_stop_sound();
+	local entity starte, oself;
+	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_stop_sound();
+
 
 	self.state = STATE_TOP;
-	self.lastopen = time;
 	
-	//if (self.spawnflags & DOOR_TOGGLE)
-	//	return;		// don't come down automatically
+	if(self.delay >= self.owner.maxdelay) { // this is the last door to open
+		self.owner.groupstate = STATE_TOP; 
+		//dprint("Door finished opening!\n");
 
-	if(self.delay >= self.owner.maxdelay) {
-		self.owner.groupstate = STATE_TOP; // this is the last door to open
-		dprint("Door finished opening!\n");
+
+		oself = self;
+		starte = self;
+		do
+		{
+			if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_stop_sound();
+			self = self.enemy;
+		} while ( (self != starte) && (self != world) );
+		self = oself;
+
 
 		if (self.spawnflags & DOOR_TOGGLE)
 			return;		// don't come down automatically
@@ -175,18 +175,16 @@ void() door_hit_bottom =
 {
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) {
 		self.think = door_stop_sound;
-		self.nextthink = self.ltime + 0.01 + (self.delay - self.owner.mindelay);
+		self.nextthink = self.ltime + 0.013 + (self.delay - self.owner.mindelay);
 	}
 	else door_stop_sound();
 
 	self.lastclose = time;
 	self.state = STATE_BOTTOM;
-	dprint("------------ CLOSING -------------\n");
-	//eprint(self);
 
-	if(self.delay <= self.owner.mindelay) {
-		self.owner.groupstate = STATE_BOTTOM; //this is the last door to close
-		dprint("Door finished closing!\n");
+	if(self.delay <= self.owner.mindelay) { //this is the last door to close
+		self.owner.groupstate = STATE_BOTTOM; 
+		//dprint("Door finished closing!\n");
 	}
 	
 };
@@ -197,12 +195,12 @@ void() door_move_up = {
 	entity oldself;
 
 	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_start_sound();
-	if(self.owner.groupstate != STATE_UP) dprint("Door started opening!\n");
+	//if(self.owner.groupstate != STATE_UP) dprint("Door started opening!\n");
 	self.state = STATE_UP;
 	self.owner.groupstate = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
 
-	//door_use_targets();
+	door_use_targets();
 
 
 	if(self.switchshadstyle) {
@@ -236,7 +234,7 @@ void() door_move_down = {
 	
 	self.state = STATE_DOWN;
 	if(self.owner.groupstate != STATE_DOWN) {
-		dprint("Door started closing!\n");
+		//dprint("Door started closing!\n");
 		self.owner.groupstate = STATE_DOWN;
 		
 	}
@@ -266,8 +264,9 @@ void() door_go_down =
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
 	// all doors should pass through think for consistency
+	// otherwise some flags are set when they're not supposed to
 	self.think = door_move_down;
-	self.nextthink = self.ltime + 0.01 + (self.owner.maxdelay + self.owner.mindelay - self.delay);
+	self.nextthink = self.ltime + 0.013 + (self.owner.maxdelay + self.owner.mindelay - self.delay);
 
 };
 
@@ -282,30 +281,28 @@ void() door_go_up =
 
 		if(self.state == STATE_BOTTOM){
 			self.think = door_move_up;
-			self.nextthink = self.ltime + (time - self.lastclose);
-			dprint("------------ MOVING BACK - think move -------------------\n");
+			self.nextthink = self.ltime + 0.013 + (time - self.lastclose);
+			//dprint("------------ MOVING BACK - think move -------------------\n");
 
 		}
-		else {//if(self.state == STATE_DOWN) {
-			
+		else {
 			self.think = door_move_up;
-			self.nextthink = self.ltime + 0.01;
-			dprint("------------ MOVING BACK - instant move -------------------\n");
-			//eprint(self);
-
+			self.nextthink = self.ltime + 0.013;
+			//dprint("------------ MOVING BACK - instant move -------------------\n");
 		}
 	} else {
 		self.think = door_move_up;
-		self.nextthink = self.ltime + 0.01 + self.delay;
-		dprint("---------------- OPENING -------------------\n");
+		self.nextthink = self.ltime + 0.013 + self.delay;
+		//dprint("---------------- OPENING -------------------\n");
 	}
 	
+	/*
 	dprint("self.ltime: ");dprint(ftos(self.ltime));dprint("\n");
 	dprint("self.nextthink: ");dprint(ftos(self.nextthink));dprint("\n");
 	dprint("time: ");dprint(ftos(time));dprint(";\n");
 	dprint("self.lastclose: ");dprint(ftos(self.lastclose));dprint("\n");
 	dprint("difference: ");dprint(ftos(time - self.lastclose));dprint("\n");
-	
+	*/
 		
 };
 
@@ -582,7 +579,7 @@ void() LinkDoors =
 			return;
 		}
 
-		if (EntitiesTouching(self,t))
+		if ((EntitiesTouching(self,t) && !self.groupname) || (self.groupname && t.groupname == self.groupname))
 		{
 			if (t.enemy)
 				objerror ("cross connected doors");
@@ -739,8 +736,7 @@ void() func_door =
 		self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
 	}
 
-	self.maxdelay = self.delay;
-	self.mindelay = self.delay;
+
 // johnfitz
 
 
@@ -752,6 +748,9 @@ void() func_door =
 		self.pos2 = self.pos1;
 		self.pos1 = self.origin;
 	}
+
+	self.maxdelay = self.delay;
+	self.mindelay = self.delay;
 
 	self.state = STATE_BOTTOM;
 	self.groupstate = STATE_BOTTOM;
