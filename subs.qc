@@ -1,7 +1,7 @@
 
 
 void() SUB_Null = {};
-
+void(entity attacker, float damage) SUB_NullPain = {};
 /*
 =============
 SUB_Remove/SUB_RemoveSoon
