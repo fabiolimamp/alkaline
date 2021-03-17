@@ -313,65 +313,10 @@ void() worldspawn =
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
+// Moved to lights.qc -- bmFbr
 //
 
-	// 0 normal
-	lightstyle(0, "m");
-	
-	// 1 FLICKER (first variety)
-	lightstyle(1, "mmnmmommommnonmmonqnmmo");
-	
-	// 2 SLOW STRONG PULSE
-	lightstyle(2, "abcdefghijklmnopqrstuvwxyzyxwvutsrqponmlkjihgfedcba");
-	
-	// 3 CANDLE (first variety)
-	lightstyle(3, "mmmmmaaaaammmmmaaaaaabcdefgabcdefg");
-	
-	// 4 FAST STROBE
-	lightstyle(4, "mamamamamama");
-	
-	// 5 GENTLE PULSE 1
-	lightstyle(5,"jklmnopqrstuvwxyzyxwvutsrqponmlkj");
-	
-	// 6 FLICKER (second variety)
-	lightstyle(6, "nmonqnmomnmomomno");
-	
-	// 7 CANDLE (second variety)
-	lightstyle(7, "mmmaaaabcdefgmmmmaaaammmaamm");
-	
-	// 8 CANDLE (third variety)
-	lightstyle(8, "mmmaaammmaaammmabcdefaaaammmmabcdefmmmaaaa");
-	
-	// 9 SLOW STROBE (fourth variety)
-	lightstyle(9, "aaaaaaaazzzzzzzz");
-	
-	// 10 FLUORESCENT FLICKER
-	lightstyle(10, "mmamammmmammamamaaamammma");
-
-	// 11 SLOW PULSE NOT FADE TO BLACK
-	lightstyle(11, "abcdefghijklmnopqrrqponmlkjihgfedcba");
-		
-	// styles 32-62 are assigned by the light program for switchable lights
-
-	// 63 testing
-	lightstyle(63, "a");
-	
-	
-	// johnfitz new lightstyles
-	// 12 ALARM PULSE
-	lightstyle(12, "zxvtrpnlj");
-	
-	// 13 STROBE-PULSE COMBO (first variety)
-	lightstyle(13, "jalanaparatavaxazaxavatarapanala");
-	
-	// 14 STROBE-PULSE COMBO (second variety)
-	lightstyle(14, "zaxavatarapanalajalanaparatavaxa");
-	
-	// 15 VANITY
-	lightstyle(15, "johnfitzgibbons");
-	
-	// 16 LANDING BEACON STROBE
-	lightstyle(16, "mmaammaammaammaa");
+	setup_lightstyles();
 };
 
 //johnfitz -- need to wait a bit before resetting burning/underwater sounds so client will be fully connected when we do

@@ -78,10 +78,35 @@ string(float num) lightstyle_lookup =
 		case 11:
 			return "abcdefghijklmnopqrrqponmlkjihgfedcba";
 			break;
-		// 12 BLINK OFF / ON (can be synced with animated textures, e.g. +0light and +1light)
+
+		// johnfitz new lightstyles
+		// 12 ALARM PULSE
 		case 12:
-			return "aamm";	// textures animate at 5fps but lights are 10fps...
+			return "zxvtrpnlj";	
 			break;
+		// 13 STROBE-PULSE COMBO (first variety)
+		case 13:
+			return "jalanaparatavaxazaxavatarapanala";
+			break;
+		// 14 STROBE-PULSE COMBO (second variety)
+		case 14:
+			return "zaxavatarapanalajalanaparatavaxa";
+			break;
+		// 15 VANITY
+		case 15:
+			return "johnfitzgibbons";
+			break;
+		// 16 LANDING BEACON STROBE
+		case 16:
+			return "mmaammaammaammaa";
+			break;
+		// end johnfitz new lightstyles
+
+		// 17 GENERAL BLINK OFF / ON (can be synced with animated textures, e.g. +0light and +1light)
+		case 17:
+			return "aamm";
+			break;
+
 		// DEFAULT
 		default:
 			return "a";
@@ -97,7 +122,7 @@ Styles 32+ are assigned by the light program for switchable lights.
 ==========*/
 void() setup_lightstyles =
 {
-	for (float i = 0; i <= 12; i++)
+	for (float i = 0; i <= 17; i++)
 	{
 		lightstyle(i, lightstyle_lookup(i));
 	}

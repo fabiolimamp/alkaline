@@ -857,6 +857,7 @@ void() misc_shadowcontroller_use;
 void() shadow_fade_in;
 void() shadow_fade_out;
 
+void() setup_lightstyles; //lights.qc
 
 //
 // elevator fields
