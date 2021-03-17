@@ -131,9 +131,9 @@ void() make_breakable_debris =
 
 void () func_breakable_die =
 {
+	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	self.origin = ((self.absmin + self.absmax) * 0.5);
-	setorigin (self, self.origin);
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);	
+	setorigin (self, self.origin);	
 	make_breakable_debris ();
 	
 	remove (self);
