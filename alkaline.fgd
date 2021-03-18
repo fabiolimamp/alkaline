@@ -1652,11 +1652,13 @@ Other than that, this entity functions like a normal button.
 @PointClass base(Trigger) = trigger_relay : "Trigger relay"
 [
 ]
-@SolidClass base(Targetname) = trigger_monsterjump : "Trigger monster jump" 
+@SolidClass base(Targetname) = trigger_monsterjump : "Trigger monster jump.
+Can be set an optional use limit." 
 [
 	speed(integer) : "Jump Speed" : 200
 	height(integer) : "Jump Height" : 200
 	angle(integer) : "Angle"
+	count(integer) : "Triggering limit count"
 ]
 @PointClass base(Trigger, Target, Targetname) = trigger_counter : "Trigger counter" 
 [
@@ -1672,7 +1674,7 @@ Other than that, this entity functions like a normal button.
 @SolidClass base(Targetname) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
 [
 	dmg(integer) : "Damage" : 5
-	wait(float) : "Damage interval" : 1
+	wait(float) : "Damage interval" : "1"
 ]
 
 

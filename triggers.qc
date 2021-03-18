@@ -673,6 +673,9 @@ void() trigger_push =
 
 void() trigger_monsterjump_touch =
 {
+	if(!self.count)
+		return;
+
 	if ( other.flags & (FL_MONSTER | FL_FLY | FL_SWIM) != FL_MONSTER )
 		return;
 
@@ -686,6 +689,8 @@ void() trigger_monsterjump_touch =
 	other.flags = other.flags - FL_ONGROUND;
 
 	other.velocity_z = self.height;
+
+	if(self.count > 0) self.count--;
 };
 
 /*QUAKED trigger_monsterjump (.5 .5 .5) ?
@@ -701,6 +706,8 @@ void() trigger_monsterjump =
 		self.height = 200;
 	if (self.angles == '0 0 0')
 		self.angles = '0 360 0';
+	if(!self.count)
+		self.count = -1;
 	InitTrigger ();
 	self.touch = trigger_monsterjump_touch;
 };
