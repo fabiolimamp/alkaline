@@ -1669,11 +1669,10 @@ Other than that, this entity functions like a normal button.
 	spawnflags(flags) = [ 1: "Once Only" : 0 ]
 	speed(integer) : "Speed of push" : 1000
 ]
-@SolidClass  base(Targetname) = trigger_hurt : "Trigger player hurt" 
+@SolidClass base(Targetname) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
 [
 	dmg(integer) : "Damage" : 5
-	wait(float) : "Delay before reset"
-	message(string) : "Message"
+	wait(float) : "Damage interval" : 1
 ]
 
 

@@ -612,7 +612,7 @@ void() hurt_touch =
 		self.solid = SOLID_NOT;
 		T_Damage (other, self, self, self.dmg);
 		self.think = hurt_on;
-		self.nextthink = time + 1;
+		self.nextthink = time + self.wait;
 	}
 
 	return;
@@ -627,6 +627,7 @@ void() trigger_hurt =
 {
 	InitTrigger ();
 	self.touch = hurt_touch;
+	if(!self.wait) self.wait = 1;
 	if (!self.dmg)
 		self.dmg = 5;
 };
