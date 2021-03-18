@@ -28,12 +28,12 @@ void() misc_lightning_fire =
 
 	t = find(world, targetname, self.target);
 
-	// TODO: make lightning shooter target multiple points
-	// Looping doesn't work for some reason
-	//while(t) {
+	// Unsupported feature: emitter can target multiple points
+	// Use at your own risk, may or may not work
+	while(t) {
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 		WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
-		WriteEntity (MSG_BROADCAST, self);
+		WriteEntity (MSG_BROADCAST, t);
 		WriteCoord (MSG_BROADCAST, self.origin_x);
 		WriteCoord (MSG_BROADCAST, self.origin_y);
 		WriteCoord (MSG_BROADCAST, self.origin_z);
@@ -44,8 +44,8 @@ void() misc_lightning_fire =
 		LightningDamage (self.origin, t.origin, self, damage);
 		t.enemy = self;
 
-	//	t = find(t, targetname, self.target);
-	//}
+		t = find(t, targetname, self.target);
+	}
 	
 	
 
