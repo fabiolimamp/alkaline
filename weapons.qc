@@ -554,6 +554,12 @@ void() W_FireLightning =
 
 void() GrenadeExplode =
 {
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		remove(self);
+		return;
+	}
+
 	T_RadiusDamage (self, self.owner, 120, world);
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
@@ -574,7 +580,8 @@ void() GrenadeTouch =
 		GrenadeExplode();
 		return;
 	}
-	sound (self, CHAN_WEAPON, "weapons/bounce.wav", 1, ATTN_NORM);	// bounce sound
+	if (pointcontents(self.origin) != CONTENT_SKY) // doesn't make a sound when inside a sky brush
+		sound (self, CHAN_WEAPON, "weapons/bounce.wav", 1, ATTN_NORM); // bounce sound
 	if (self.velocity == '0 0 0')
 		self.avelocity = '0 0 0';
 };
