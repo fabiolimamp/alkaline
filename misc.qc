@@ -394,60 +394,51 @@ void () blocker_touch =
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
    };
 
-void () blocker_use =
-	{
-   if ( !self.state )
-      {
-      self.state = 1;
-      self.solid = SOLID_BSP;
-      self.movetype = MOVETYPE_PUSH;
-      // sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-      }
-   else
-      {
-      self.state = 0;
-      self.solid = SOLID_NOT;
-      self.movetype = MOVETYPE_NONE;
-      sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-      }
-   };
+void () blocker_use = {
+	if ( !self.state ) {
+		self.state = 1;
+		self.solid = SOLID_BSP;
+		self.movetype = MOVETYPE_PUSH;
+		// sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	}
+	else {
+		self.state = 0;
+		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_NONE;
+		sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	}
+};
 
-void() func_togglewall =
-	{
+void() func_togglewall = {
 
-   self.classname = "togglewall";
-   self.movetype = MOVETYPE_PUSH;
-   self.mdl = self.model;
-   setmodel (self, self.model);
-   setsize (self, self.mins, self.maxs);
-   setorigin (self, self.origin);
-   self.touch = blocker_touch;
-   self.use = blocker_use;
-   if ( !self.noise )
-      {
+	self.classname = "togglewall";
+	
+	self.mdl = self.model;
+	setmodel (self, self.model);
+	setsize (self, self.mins, self.maxs);
+	setorigin (self, self.origin);
+
+	self.touch = blocker_touch;
+	self.use = blocker_use;
+
+	if ( !self.noise )
       self.noise = ("misc/null.wav");
-      }
-   if ( !self.noise1 )
-      {
+
+   	if ( !self.noise1 )
       self.noise1 = ("misc/null.wav");
-      }
 
-   precache_sound( self.noise );
-   precache_sound( self.noise1 );
+	precache_sound( self.noise );
+	precache_sound( self.noise1 );
 
-   self.solid = SOLID_BSP;
-   self.model = string_null;
-   if ( self.spawnflags & START_OFF )
-      {
-      self.state = 0;
-      setorigin( self, self.origin + '8000 8000 8000' );
-      }
-   else
-      {
-      self.state = 1;
-      sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-      }
-   };
+	self.movetype = MOVETYPE_PUSH;
+	self.solid = SOLID_BSP;
+	self.model = string_null;
+
+	self.state = 1;
+
+	if ( self.spawnflags & START_OFF )
+      	blocker_use();
+};
 
 /*****************
 func_togglevisiblewall
