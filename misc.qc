@@ -399,12 +399,14 @@ void () blocker_use =
    if ( !self.state )
       {
       self.state = 1;
+      self.solid = SOLID_BSP;
       self.movetype = MOVETYPE_PUSH;
       // sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
       }
    else
       {
       self.state = 0;
+      self.solid = SOLID_NOT;
       self.movetype = MOVETYPE_NONE;
       sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
       }
