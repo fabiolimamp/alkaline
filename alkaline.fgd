@@ -195,7 +195,7 @@ NO_MONSTERS: object ignores damage from monsters"
 @SolidClass base(Appearflags, Targetname, Target) color(255 128 128) = func_laser : 
 "A togglable laser, hurts to touch, can be used to block players." 
 [
-	dmg(integer) : "Damage" : 1
+	dmg(integer) : "Damage" : 1 : "Damage dealt. Set to -1 to do no damage."
 	alpha(float) : "Opacity" : "0.5" : "Approximate alpha you want the laser drawn at. default 0.5. alpha will vary by 20% of this value."
 	message(string) : "Activated message"
 	message2(string) : "Deactivated message"

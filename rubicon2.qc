@@ -355,6 +355,8 @@ void () func_laser =
 		
 	if (!self.dmg)
 		self.dmg = 1;
+	else if (self.dmg == -1)
+		self.dmg = 0;
 		
 	self.use = func_laser_use;
 
