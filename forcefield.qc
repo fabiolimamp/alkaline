@@ -158,6 +158,31 @@ FORCEFIELD_SOLID Blocks movement when the field is active.
 "dmg" is the amount of damage to cause when touched.
 */
 
+/*FGD
+@SolidClass base(Appearflags, Targetname) = misc_forcefield : "Creates a force field particle effect roughly the size of the defining brush. Can be toggled on/off by targeting it.
+
+FORCEFIELD_START_ON Force field will spawn in the active state.
+
+FORCEFIELD_PULSE Instead of a constant effect, the entity will generate a single pulse of the field effect each time it's triggered.
+
+FORCEFIELD_SOLID Blocks movement when the field is active.
+
+color is the color of the particles.  Default is 192 (yellow).
+count is the density of the particles.  Default is 2.
+noise is the sound to play when triggered.  Do not use a looping sound here.
+dmg is the amount of damage to cause when touched."
+[
+   color(integer) : "Palette index for color" : 192
+   count(integer) : "Density of particles" : 2
+   dmg(integer) : "Amount of damage when touched" : 0
+   spawnflags(flags) =
+   [
+      1 : "FORCEFIELD_START_ON" : 0
+      2 : "FORCEFIELD_PULSE" : 0
+      4 : "FORCEFIELD_SOLID" : 0
+   ]
+]
+*/
 void() misc_forcefield = {
 
    if ( !self.color )
