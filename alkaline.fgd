@@ -1741,3 +1741,43 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 	gravity(integer) : "Gravity" : 800
 	return_gravity(integer) : "Return Gravity"
 ]
+
+@SolidClass base(Appearflags, Targetname) = trigger_removeitems :
+"Removes the selected items from the inventory."
+[
+	count(integer) : "Use count" : 1 : "Maximum usage count. Set to -1 for infinite uses. Defaults to 1."
+	items(flags) = [
+		
+		1: "IT_SHOTGUN"	
+		2: "IT_SUPER_SHOTGUN"
+		4: "IT_NAILGUN"
+		8: "IT_SUPER_NAILGUN"
+		16: "IT_GRENADE_LAUNCHER"
+		32: "IT_ROCKET_LAUNCHER"
+		64: "IT_LIGHTNING"
+		4096: "IT_AXE"
+		//131072: "IT_KEY1"
+		//262144: "IT_KEY2"
+		8388608: "IT_LASER_CANNON"
+	]
+]
+
+@PointClass base(Appearflags, Targetname) = target_removeitems :
+"Removes the selected items from the inventory."
+[
+	count(integer) : "Use count" : : "Maximum usage count. Set to -1 for infinite uses. Default is infinite"
+	items(flags) = [
+		
+		1: "IT_SHOTGUN"	
+		2: "IT_SUPER_SHOTGUN"
+		4: "IT_NAILGUN"
+		8: "IT_SUPER_NAILGUN"
+		16: "IT_GRENADE_LAUNCHER"
+		32: "IT_ROCKET_LAUNCHER"
+		64: "IT_LIGHTNING"
+		4096: "IT_AXE"
+		//131072: "IT_KEY1"
+		//262144: "IT_KEY2"
+		8388608: "IT_LASER_CANNON"
+	]
+]

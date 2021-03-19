@@ -885,3 +885,74 @@ void() trigger_setgravity = {
 	else
 		self.gravity = ((self.gravity - 1) / 100);
 };
+
+
+
+/*
+=============================================================
+
+trigger_removeitems / target_removeitems
+
+=============================================================
+*/
+
+void(entity plr, float removeditems) removeitems_go = {
+	local entity oself;
+
+	if(plr.classname != "player")
+		return;
+
+	oself = self;
+	self = plr;
+
+	self.items -= self.items & removeditems;
+
+	if(!(self.items & self.weapon)) { //if player is wielding a removed weapon
+		self.weapon = W_BestWeapon();
+	}
+
+	W_SetCurrentAmmo();
+
+	self = oself;
+
+};
+
+void() trigger_removeitems_touch = {
+
+	if(!self.count)
+		return;
+
+	removeitems_go (other, self.items);
+
+	if(self.count > 0)
+		self.count--;
+};
+
+void() trigger_removeitems = {
+	InitTrigger();
+
+	self.touch = trigger_removeitems_touch;
+	
+	if(!self.count)
+		self.count = 1;
+};
+
+
+void() target_removeitems_use = {
+
+	if(!self.count)
+		return;
+
+	removeitems_go (activator, self.items);
+
+	if(self.count > 0)
+		self.count--;
+};
+
+void() target_removeitems = {
+
+	self.use = target_removeitems_use;
+	
+	if(!self.count)
+		self.count = -1;
+};
