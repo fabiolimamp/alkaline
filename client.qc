@@ -85,13 +85,8 @@ void() SetNewParms =
 };
 
 void() TakeAndGiveItems = {
-	local float allweapons = IT_AXE + IT_SHOTGUN + IT_SUPER_SHOTGUN +
-		IT_NAILGUN + IT_SUPER_NAILGUN +
-		IT_GRENADE_LAUNCHER + IT_ROCKET_LAUNCHER +
-		IT_LIGHTNING + IT_LASER_CANNON;
-
 	parm1 -= parm1 & world.take_weapons;
-	parm1 = parm1 | (world.give_weapons & allweapons);
+	parm1 = parm1 | (world.give_weapons & ALL_WEAPONS);
 
 	if (world.ammo_shells > 0) parm4 = world.ammo_shells;
 	else if(world.ammo_shells == -1) parm4 = 0;
