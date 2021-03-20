@@ -46,6 +46,39 @@
 	fog(string) : "Fog Command" :  : "ENGINE only 'console command' for setting fog parameters, Density/R/G/B example = (0.05 0.3 0.3 0.3)."
 	fog_density(float) : "Fog Density" :  : "Global fog density (def 0.1)."
 	fog_colour(color1) : "Fog Colour" :  : "Initial global fog colour (def 0.1 0.1 0.1)."
+
+	take_weapons(flags) = [		
+		1: "IT_SHOTGUN"	
+		2: "IT_SUPER_SHOTGUN"
+		4: "IT_NAILGUN"
+		8: "IT_SUPER_NAILGUN"
+		16: "IT_GRENADE_LAUNCHER"
+		32: "IT_ROCKET_LAUNCHER"
+		64: "IT_LIGHTNING"
+		4096: "IT_AXE"
+		8388608: "IT_LASER_CANNON"
+	]
+	give_weapons(flags) = [		
+		1: "IT_SHOTGUN"	
+		2: "IT_SUPER_SHOTGUN"
+		4: "IT_NAILGUN"
+		8: "IT_SUPER_NAILGUN"
+		16: "IT_GRENADE_LAUNCHER"
+		32: "IT_ROCKET_LAUNCHER"
+		64: "IT_LIGHTNING"
+		4096: "IT_AXE"
+		8388608: "IT_LASER_CANNON"
+	]
+	reset_items(choices) : "Reset items/weapons" : 0 =
+	[
+		0 : "Keep items from previous level"
+		1 : "Reset items to default on map start"
+	]
+	ammo_shells(integer) : "Shells on start" : : "Override the shells amount on startup. Set to -1 to force it to 0."
+	ammo_nails(integer) : "Nails on start" : : "Override the nails amount on startup. Set to -1 to force it to 0."
+	ammo_rockets(integer) : "Rockets on start" : : "Override the rockets amount on startup. Set to -1 to force it to 0."
+	ammo_cells(integer) : "Cells on start" : : "Override the cells amount on startup. Set to -1 to force it to 0."
+
 ]
 
 //
@@ -1742,11 +1775,9 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 	return_gravity(integer) : "Return Gravity"
 ]
 
-@SolidClass base(Appearflags, Targetname) = trigger_removeitems :
-"Removes the selected items from the inventory."
-[
-	count(integer) : "Use count" : 1 : "Maximum usage count. Set to -1 for infinite uses. Defaults to 1."
+@baseclass = ItemsList [
 	items(flags) = [
+
 		
 		1: "IT_SHOTGUN"	
 		2: "IT_SUPER_SHOTGUN"
@@ -1762,22 +1793,14 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 	]
 ]
 
-@PointClass base(Appearflags, Targetname) = target_removeitems :
+@SolidClass base(Appearflags, Targetname, ItemsList) = trigger_removeitems :
+"Removes the selected items from the inventory."
+[
+	count(integer) : "Use count" : 1 : "Maximum usage count. Set to -1 for infinite uses. Defaults to 1."
+]
+
+@PointClass base(Appearflags, Targetname, ItemsList) = target_removeitems :
 "Removes the selected items from the inventory."
 [
 	count(integer) : "Use count" : : "Maximum usage count. Set to -1 for infinite uses. Default is infinite"
-	items(flags) = [
-		
-		1: "IT_SHOTGUN"	
-		2: "IT_SUPER_SHOTGUN"
-		4: "IT_NAILGUN"
-		8: "IT_SUPER_NAILGUN"
-		16: "IT_GRENADE_LAUNCHER"
-		32: "IT_ROCKET_LAUNCHER"
-		64: "IT_LIGHTNING"
-		4096: "IT_AXE"
-		//131072: "IT_KEY1"
-		//262144: "IT_KEY2"
-		8388608: "IT_LASER_CANNON"
-	]
 ]

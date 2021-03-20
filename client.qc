@@ -28,7 +28,8 @@ void() info_intermission =
 {
 };
 
-
+float(float items, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
+float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms;
 
 void() SetChangeParms =
 {
@@ -83,13 +84,41 @@ void() SetNewParms =
 	
 };
 
+void() TakeAndGiveItems = {
+	local float allweapons = IT_AXE + IT_SHOTGUN + IT_SUPER_SHOTGUN +
+		IT_NAILGUN + IT_SUPER_NAILGUN +
+		IT_GRENADE_LAUNCHER + IT_ROCKET_LAUNCHER +
+		IT_LIGHTNING + IT_LASER_CANNON;
+
+	parm1 -= parm1 & world.take_weapons;
+	parm1 = parm1 | (world.give_weapons & allweapons);
+
+	if (world.ammo_shells > 0) parm4 = world.ammo_shells;
+	else if(world.ammo_shells == -1) parm4 = 0;
+
+	if (world.ammo_nails > 0) parm5 = world.ammo_nails;
+	else if(world.ammo_nails == -1) parm5 = 0;
+
+	if (world.ammo_rockets > 0) parm6 = world.ammo_rockets;
+	else if(world.ammo_rockets == -1) parm6 = 0;
+
+	if (world.ammo_cells > 0) parm7 = world.ammo_cells;
+	else if(world.ammo_cells == -1) parm7 = 0;
+
+	//if player is wielding a removed or ammo-less weapon
+	if(!(parm1 & parm8) || !W_CheckAmmoParms(parm8, parm4, parm5, parm6, parm7)) {
+		parm8 = W_BestWeaponParms(parm1, parm4, parm5, parm7, 0);
+	}
+};
+
 void() DecodeLevelParms =
 {
-	if (serverflags)
-	{
-		if (world.model == "maps/start.bsp")
-			SetNewParms ();		// take away all stuff on starting new episode
-	}
+	// take away all stuff on starting new episode
+	// or if set in worldspawn
+	if ((serverflags && world.model == "maps/start.bsp") || world.reset_items)
+		SetNewParms ();
+	
+	TakeAndGiveItems();
 	
 	self.items = parm1;
 	self.health = parm2;

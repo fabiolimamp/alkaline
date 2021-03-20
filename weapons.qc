@@ -882,28 +882,49 @@ void() W_SetCurrentAmmo =
 	}
 };
 
+float(float items, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms =
+{
+
+	if (waterlevel <= 1 && cells >= 1 && (items & IT_LIGHTNING) )
+		return IT_LIGHTNING;
+	if(cells >= 1 && (items & IT_LASER_CANNON) )
+		return IT_LASER_CANNON;
+	if(nails >= 2 && (items & IT_SUPER_NAILGUN) )
+		return IT_SUPER_NAILGUN;
+	if(shells >= 2 && (items & IT_SUPER_SHOTGUN) )
+		return IT_SUPER_SHOTGUN;
+	if(nails >= 1 && (items & IT_NAILGUN) )
+		return IT_NAILGUN;
+	if(shells >= 1 && (items & IT_SHOTGUN) )
+		return IT_SHOTGUN;
+	if(items & IT_AXE)
+		return IT_AXE;
+	return IT_NO_WEAPON; //johnfitz
+};
+
 float() W_BestWeapon =
 {
 	local	float	it;
 	
 	it = self.items;
 
-	if (self.waterlevel <= 1 && self.ammo_cells >= 1 && (it & IT_LIGHTNING) )
-			return IT_LIGHTNING;
-		
-	if(self.ammo_cells >= 1 && (it & IT_LASER_CANNON) )
-		return IT_LASER_CANNON;
-	if(self.ammo_nails >= 2 && (it & IT_SUPER_NAILGUN) )
-		return IT_SUPER_NAILGUN;
-	if(self.ammo_shells >= 2 && (it & IT_SUPER_SHOTGUN) )
-		return IT_SUPER_SHOTGUN;
-	if(self.ammo_nails >= 1 && (it & IT_NAILGUN) )
-		return IT_NAILGUN;
-	if(self.ammo_shells >= 1 && (it & IT_SHOTGUN) )
-		return IT_SHOTGUN;
-	if(it & IT_AXE)
-		return IT_AXE;
-	return IT_NO_WEAPON; //johnfitz
+	return W_BestWeaponParms(it, self.ammo_shells, self.ammo_nails, self.ammo_cells, self.waterlevel);
+};
+
+float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms = {
+	if (
+		(currentweapon == IT_NO_WEAPON) ||
+		(currentweapon == IT_AXE) ||
+		(currentweapon == IT_SHOTGUN && shells >= 1) ||
+		(currentweapon == IT_SUPER_SHOTGUN && shells >= 2) ||
+		(currentweapon == IT_NAILGUN && nails >= 1) ||
+		(currentweapon == IT_SUPER_NAILGUN && nails >= 2) ||
+		(currentweapon == IT_GRENADE_LAUNCHER && rockets >= 1) ||
+		(currentweapon == IT_ROCKET_LAUNCHER && rockets >= 1) ||
+		(currentweapon == IT_LIGHTNING && cells >= 1) ||
+		(currentweapon == IT_LASER_CANNON && cells >= 1)
+	) return TRUE;
+	else return FALSE;
 };
 
 float() W_CheckNoAmmo =
@@ -921,6 +942,8 @@ float() W_CheckNoAmmo =
 // drop the weapon down
 	return FALSE;
 };
+
+
 
 /*
 ============

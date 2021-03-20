@@ -881,6 +881,13 @@ void() setup_lightstyles; //lights.qc
 .string		targetname2;
 
 //
+// for worldspawn
+//
+.float 		give_weapons;
+.float 		take_weapons;
+.float 		reset_items;
+
+//
 // new door features
 //
 .float 		maxdelay, mindelay, lastclose, movingback;
