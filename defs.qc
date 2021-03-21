@@ -840,10 +840,13 @@ void(vector org, vector vel) SpawnMeatSpray;
 //
 .vector		fog_color, fog_color2;
 .float		fog_density, fog_density2;
+.float 		skyfog_density, skyfog_density2;
 
 void( entity client, float density, vector color ) fog_save;
 void( entity client, entity fogger ) fog_setFromEnt;
 void( entity client, float density, vector color ) fog_set;
+void( entity client, float density) skyfog_set;
+
 
 float() CheckValidTouch;
 
