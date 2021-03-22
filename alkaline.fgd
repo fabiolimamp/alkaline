@@ -727,7 +727,7 @@ This ugly cyborg can penetrate your heart
 ...and not in a good way." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl"}) = monster_axegrunt :
-"Axe Grunt, 30 health points." []
+"Axe Grunt, 75 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/scor.mdl"}) = monster_scourge :
 "Centroid, 300 health points." []
@@ -756,7 +756,7 @@ Don't shake hands with this crazy bastard!" []
 "Banshee Mech, 1300 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ridlegs.mdl"}) = monster_rider :
-"Takahiro Raiders, 600 health points." []
+"Takahiro Raiders, 777 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/probebod.mdl"}) = monster_probe :
 "Probe, 200 health points." []
