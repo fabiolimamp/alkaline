@@ -384,7 +384,7 @@ START_OFF wall doesn't block until triggered.
 
 void () blocker_touch =
 	{
-   if ( !self.dmg )
+    if ( !self.dmg )
       return;
 
 	if (time < self.attack_finished)
@@ -399,12 +399,15 @@ void () blocker_use = {
 		self.state = 1;
 		self.solid = SOLID_BSP;
 		self.movetype = MOVETYPE_PUSH;
+		setmodel(self, self.mdl);
+		self.model = "";
 		// sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	}
 	else {
 		self.state = 0;
 		self.solid = SOLID_NOT;
 		self.movetype = MOVETYPE_NONE;
+		setmodel(self, "");
 		sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	}
 };
@@ -415,8 +418,8 @@ void() func_togglewall = {
 	
 	self.mdl = self.model;
 	setmodel (self, self.model);
-	setsize (self, self.mins, self.maxs);
-	setorigin (self, self.origin);
+	//setsize (self, self.mins, self.maxs);
+	//setorigin (self, self.origin);
 
 	self.touch = blocker_touch;
 	self.use = blocker_use;
@@ -430,14 +433,13 @@ void() func_togglewall = {
 	precache_sound( self.noise );
 	precache_sound( self.noise1 );
 
-	self.movetype = MOVETYPE_PUSH;
-	self.solid = SOLID_BSP;
-	self.model = string_null;
+	//self.model = string_null;
 
-	self.state = 1;
-
-	if ( self.spawnflags & START_OFF )
-      	blocker_use();
+	
+	if ( self.spawnflags & START_OFF ) self.state = 1;
+	else self.state = 0;
+      
+    blocker_use();
 };
 
 /*****************
