@@ -4,6 +4,7 @@ void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
 void () player_run;
 void(entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
 void(vector org, vector vel, float damage) SpawnBlood;
+void(vector org, vector vel, float damage) SpawnDirt;
 void() SuperDamageSound;
 
 
@@ -166,7 +167,14 @@ void(float damage) spawn_touchblood =
 
 	vel = wall_velocity () * 0.2;
 
-	SpawnBlood (self.origin + vel*0.01, vel, damage);
+	if(other.classname == "func_breakable") {
+		eprint(other);
+		SpawnDirt (self.origin + vel*0.01, vel, damage);
+	}
+	else {
+		eprint(other);
+		SpawnBlood (self.origin + vel*0.01, vel, damage);
+	}
 };
 
 /*
@@ -177,6 +185,17 @@ SpawnChunk
 void(vector org, vector vel) SpawnChunk =
 {
 	particle (org, vel*0.02, 0, 10);
+};
+
+
+/*
+================
+SpawnDirt
+================
+*/
+void(vector org, vector vel, float damage) SpawnDirt =
+{
+		particle (org, vel*0.05, 22, damage);
 };
 
 /*
@@ -237,15 +256,29 @@ void(float damage, vector dir) TraceAttack =
 {
 	local	vector	vel, org;
 	
-	vel = normalize(dir + v_up*crandom() + v_right*crandom());
-	vel = vel + 2*trace_plane_normal;
-	vel = vel * 200;
+
 
 	org = trace_endpos - dir*4;
 
 	if (trace_ent.takedamage)
 	{
-		SpawnBlood (org, vel*0.2, damage);
+
+
+		if(trace_ent.classname == "func_breakable"){
+			vel = normalize(dir - v_up*crandom() * 20 + v_right*crandom());
+			vel = vel + 2*trace_plane_normal;
+			vel = vel * 200;
+			
+			SpawnDirt (org, vel*0.2, damage);
+		}
+		else {
+			vel = normalize(dir + v_up*crandom() + v_right*crandom());
+			vel = vel + 2*trace_plane_normal;
+			vel = vel * 200;
+
+			SpawnBlood (org, vel*0.2, damage);
+		}
+		
 		AddMultiDamage (trace_ent, damage);
 	}
 	else
