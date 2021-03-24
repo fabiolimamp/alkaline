@@ -835,7 +835,8 @@ void()	monster_hunter	=
 
 	setsize (self,	VEC_HULL2_MIN,	VEC_HULL2_MAX);	
 	self.health	=	600;
-
+	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+	
 	self.th_stand = hunter_check_idle;
 	self.th_walk = hunter_check_walk;
 	self.th_run = hunter_check_run;

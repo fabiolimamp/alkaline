@@ -46,8 +46,8 @@ void() DLaser_Touch =
 
 	if (other.health)
 	{
-		SpawnBlood (org, self.velocity*0.2, 15);
-                T_Damage (other, self, self.owner, 10); // reduced (Speedy)
+		ImpactSpawn (org, self.velocity*0.2, 15, other.bloodtype);
+        T_Damage (other, self, self.owner, 10); // reduced (Speedy)
 	}
 	else
 	{
@@ -387,7 +387,8 @@ void() monster_drone =
 	setsize (self, '-16 -16 -24', '16 16 40');
         self.health = 100;
         self.touch = DroneTouch;
-     
+     	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+
         self.th_stand = drn_stand1;
         self.th_walk = drn_walk1;
         self.th_run = drn_run;

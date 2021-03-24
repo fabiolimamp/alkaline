@@ -176,6 +176,8 @@ void () func_breakable =
 	precache_sound ("misc/metal_impact.wav");
 	precache_sound ("misc/conc_impact.wav");	
 	
+	if(!self.bloodtype)
+		self.bloodtype = SPAWN_DIRT;
 
 	if (self.style == 2)
 		{

@@ -86,7 +86,7 @@ void() FLaser_Touch =
 
 	if (other.health)
 	{
-		SpawnBlood (org, self.velocity*0.2, 15);
+		ImpactSpawn (org, self.velocity*0.2, 15, other.bloodtype);
 		T_Damage (other, self, self.owner, 15);
 	}
 	else
@@ -485,6 +485,8 @@ void() monster_floyd =
 	precache_sound2("enforcer/enfstop.wav");
 	
 	setmodel(self, "progs/floyd.mdl");
+
+	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 
 	if (self.spawnflags & FLOYD_ROLLING)
 	{

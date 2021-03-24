@@ -411,6 +411,14 @@ float	WORLDTYPE_MEDIEVAL		= 0;
 float	WORLDTYPE_METAL			= 1;
 float	WORLDTYPE_BASE			= 2;
 
+
+// "blood" types
+float   SPAWN_BLOOD			= 1;
+float   SPAWN_CHUNK			= 2;
+float   SPAWN_DIRT			= 3;
+float   SPAWN_YELLOWSPARK	= 4;
+float   SPAWN_WHITESPARK	= 5;
+
 float START_OFF = 1;
 
 //================================================
@@ -483,6 +491,8 @@ float	AS_STRAIGHT		= 1;
 float	AS_SLIDING		= 2;
 float	AS_MELEE		= 3;
 float	AS_MISSILE		= 4;
+
+.float      bloodtype;
 
 //
 // player only fields
@@ -768,6 +778,21 @@ void() StartItem;
 
 entity(vector org, float damg, entity parent, float multi) kaboom;
 void() BecomeExplosion;
+
+
+//
+//  weapons.qc
+//
+
+void(vector org, vector vel, float damage, float bloodtype) ImpactSpawn;
+void(vector org, vector vel, float damage) SpawnBlood;
+void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
+void () player_run;
+void(entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
+void() SuperDamageSound;
+void() flame_touch;
+void() flame_fly;
+
 
 /*============================================================================
 johnfitz new defs

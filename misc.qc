@@ -418,8 +418,6 @@ void() func_togglewall = {
 	
 	self.mdl = self.model;
 	setmodel (self, self.model);
-	//setsize (self, self.mins, self.maxs);
-	//setorigin (self, self.origin);
 
 	self.touch = blocker_touch;
 	self.use = blocker_use;
@@ -432,9 +430,6 @@ void() func_togglewall = {
 
 	precache_sound( self.noise );
 	precache_sound( self.noise1 );
-
-	//self.model = string_null;
-
 	
 	if ( self.spawnflags & START_OFF ) self.state = 1;
 	else self.state = 0;

@@ -1,18 +1,3 @@
-/*
-*/
-void (entity targ, entity inflictor, entity attacker, float damage) T_Damage;
-void () player_run;
-void(entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
-void(vector org, vector vel, float damage) SpawnBlood;
-void(vector org, vector vel, float damage) SpawnDirt;
-void() SuperDamageSound;
-
-
-//johnfitz
-void() flame_touch;
-void() flame_fly;
-//johnfitz
-
 
 // called by worldspawn
 void() W_Precache =
@@ -60,26 +45,23 @@ void() W_FireAxe =
 	
 	org = trace_endpos - v_forward*4;
 
-	if (trace_ent.takedamage)
-	{
+	if (trace_ent.takedamage) {
 		trace_ent.axhitme = 1;
 
-		SpawnBlood (org, '0 0 0', 20);
+		ImpactSpawn(org, '0 0 0', 20, trace_ent.bloodtype);
 		T_Damage (trace_ent, self, self, 20);
 		
 		//johnfitz -- make clank sound when hitting brushmodels
-		if (trace_ent.movetype == MOVETYPE_PUSH || trace_ent.movetype == MOVETYPE_NONE)
-			{
+		if (trace_ent.movetype == MOVETYPE_PUSH || trace_ent.movetype == MOVETYPE_NONE)	{
 			sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+
+			if ((trace_ent.flags & FL_MONSTER) || (trace_ent.classname == "player")) {
+				if (random() < 0.5)
+					sound (self, CHAN_WEAPON, "weapons/axhit3.wav", 1, ATTN_NORM);
+				else
+					sound (self, CHAN_WEAPON, "weapons/axhit4.wav", 1, ATTN_NORM);
 			}
-		if ((trace_ent.flags & FL_MONSTER) || (trace_ent.classname == "player"))
-			{
-			if (random() < 0.5)
-		sound (self, CHAN_WEAPON, "weapons/axhit3.wav", 1, ATTN_NORM);
-			else
-		sound (self, CHAN_WEAPON, "weapons/axhit4.wav", 1, ATTN_NORM);
-}
-		
+		}
 		//johnfitz
 	}
 	else
@@ -148,13 +130,35 @@ void(vector org, vector vel) SpawnMeatSpray =
 
 /*
 ================
-SpawnBlood
+Impact spawn functions
 ================
 */
-void(vector org, vector vel, float damage) SpawnBlood =
-{
-		particle (org, vel*0.1, 73, damage*2);
+
+// SpawnBlood and SpawnChunk kept intact only for plug-in compatibility with eventual ported code from other mods
+// All new code should implement ImpactSpawn instead
+// --bmFbr
+
+void(vector org, vector vel, float damage) SpawnBlood = {
+	particle (org, vel*0.1, 73, damage*2);
 };
+
+void(vector org, vector vel) SpawnChunk = {
+	particle (org, vel*0.02, 0, 10);
+};
+
+void(vector org, vector vel, float damage, float bloodtype) ImpactSpawn = {
+	if(bloodtype == SPAWN_CHUNK)
+		SpawnChunk(org, vel);
+	else if(bloodtype == SPAWN_DIRT)
+		particle (org, vel*0.05, 25, damage*2);
+	else if(bloodtype == SPAWN_YELLOWSPARK)
+		particle (org, vel*0.1, 105, damage);
+	else if(bloodtype == SPAWN_WHITESPARK)
+		particle (org, vel*0.1, 9, damage);
+	else // blood should always be default, so it works either with .bloodtype = 1 (explicit) or 0 (unset)
+		SpawnBlood(org, vel, damage);
+};
+
 
 /*
 ================
@@ -167,36 +171,9 @@ void(float damage) spawn_touchblood =
 
 	vel = wall_velocity () * 0.2;
 
-	if(other.classname == "func_breakable") {
-		eprint(other);
-		SpawnDirt (self.origin + vel*0.01, vel, damage);
-	}
-	else {
-		eprint(other);
-		SpawnBlood (self.origin + vel*0.01, vel, damage);
-	}
+	ImpactSpawn(self.origin + vel*0.01, vel, damage, other.bloodtype);	
 };
 
-/*
-================
-SpawnChunk
-================
-*/
-void(vector org, vector vel) SpawnChunk =
-{
-	particle (org, vel*0.02, 0, 10);
-};
-
-
-/*
-================
-SpawnDirt
-================
-*/
-void(vector org, vector vel, float damage) SpawnDirt =
-{
-		particle (org, vel*0.05, 22, damage);
-};
 
 /*
 ==============================================================================
@@ -256,27 +233,23 @@ void(float damage, vector dir) TraceAttack =
 {
 	local	vector	vel, org;
 	
-
-
 	org = trace_endpos - dir*4;
 
 	if (trace_ent.takedamage)
 	{
-
-
-		if(trace_ent.classname == "func_breakable"){
+		if(trace_ent.bloodtype == SPAWN_DIRT || trace_ent.bloodtype == SPAWN_CHUNK){
 			vel = normalize(dir - v_up*crandom() * 20 + v_right*crandom());
 			vel = vel + 2*trace_plane_normal;
 			vel = vel * 200;
 			
-			SpawnDirt (org, vel*0.2, damage);
+			ImpactSpawn(org, vel*0.2, damage, trace_ent.bloodtype);
 		}
 		else {
 			vel = normalize(dir + v_up*crandom() + v_right*crandom());
 			vel = vel + 2*trace_plane_normal;
 			vel = vel * 200;
 
-			SpawnBlood (org, vel*0.2, damage);
+			ImpactSpawn(org, vel*0.2, damage, trace_ent.bloodtype);
 		}
 		
 		AddMultiDamage (trace_ent, damage);

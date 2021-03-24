@@ -528,6 +528,8 @@ void() monster_rider =
 		body.movetype = MOVETYPE_STEP;
 		self.trigger_field = body;
 		body.trigger_field = self;
+		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+		body.bloodtype = self.bloodtype;		
 		setmodel(body, "progs/ridbody.mdl");
 		setmodel(self, "progs/ridlegs.mdl");
 		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);

@@ -188,6 +188,16 @@
 	]
 ]
 
+@baseclass = Blood [
+	bloodtype(choices) : "Blood type" : : "Type of particle effect spawned when hit." = [
+		1 : "Blood"
+		2 : "Standard grey chunks"
+		3 : "Brown dirt"
+		4 : "Yellow sparks"
+		5 : "White sparks"
+	]
+]
+
 //
 // Rubicon 2 specific additions
 // New enemies have been added to the monster section
@@ -204,7 +214,7 @@
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname, Target) color(255 128 128) = func_breakable : 
+@SolidClass base(Appearflags, Targetname, Target, Blood) color(255 128 128) = func_breakable : 
 "A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable.
 
 NO_MONSTERS: object ignores damage from monsters" 
@@ -221,6 +231,7 @@ NO_MONSTERS: object ignores damage from monsters"
 	[
 		1 : "No monsters" : 0
 	]
+
 ]
 
 // FUNC_LASER

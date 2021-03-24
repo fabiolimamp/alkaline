@@ -924,6 +924,8 @@ void() monster_armagon =
    body.movetype = MOVETYPE_STEP;
    self.trigger_field = body;
    body.trigger_field = self;
+   if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+   body.bloodtype = self.bloodtype;
 
    setmodel (body, "progs/armabody.mdl");
    setmodel (self, "progs/armalegs.mdl");

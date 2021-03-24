@@ -16,7 +16,7 @@ void() Projectile_Hit =
 	}
 	org = self.origin - 8 * normalize(self.velocity);
 	if(other.health) {
-		SpawnBlood(org, self.velocity * 0.2, 15);
+		ImpactSpawn(org, self.velocity * 0.2, 15, other.bloodtype);
 		T_Damage(other, self, self.owner, 10);
 	}
 	T_RadiusDamage(self, self, 20, self);
@@ -1127,6 +1127,7 @@ void() monster_banshee =
 		body.solid = SOLID_NOT;
 		body.movetype = MOVETYPE_STEP;
 		body.trigger_field = self;
+		if(!self.bloodtype) body.bloodtype = SPAWN_YELLOWSPARK;
 		setmodel(body, "progs/banbody.mdl");
 		setorigin(body, body.origin);
 
@@ -1135,6 +1136,7 @@ void() monster_banshee =
 		self.fixangle = 0;
 		self.movetype = MOVETYPE_STEP;
 		self.trigger_field = body;
+		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 		setmodel(self, "progs/banlegs.mdl");
 		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 		setorigin(self, self.origin);
