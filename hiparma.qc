@@ -759,7 +759,7 @@ void() armagon_repulse_attack =
          {
          if(!(head.flags & FL_NOTARGET) && (head.flags & FL_CLIENT))
             {
-            if (visible(head) && (head.health > 0))
+            if (visible(head) && (head.health > 0))  // originally "if (visible(head) && (head.health > 0))"
                {
                dir = head.origin - (self.origin - '0 0 24');
                dir = normalize(dir);
