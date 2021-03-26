@@ -157,7 +157,12 @@ local float go;
 	missile.enemy = self.enemy;
 	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_BBOX;
-	missile.effects = EF_DIMLIGHT;     //doesn't work, why??!?
+	missile.effects = EF_DIMLIGHT;     // it works now! - greenwood
+	missile.angles = self.angles;     // new projectile code 
+
+	setmodel (missile, "progs/flaser.mdl");
+	setorigin (missile, org);
+	setsize (missile, '0 0 0', '0 0 0');  // end of new projectile code
 		
 // set missile speed	
 
@@ -178,6 +183,8 @@ local float go;
 	missile.oldorigin = lead*5;	//particle direction?	
 
 	missile.velocity = lead * 620;
+	missile.angles = '0 0 0';			// more new projectile code
+    	missile.angles = vectoangles(missile.velocity); // end of more new projectile code
 	missile.touch = Laser_Touch;
 	missile.cnt = 1;
 	
@@ -477,6 +484,8 @@ void() monster_me =
 	precache_model2 ("progs/enforce2.mdl");
 	precache_model2 ("progs/h_me.mdl");
 	precache_model2 ("progs/memissil.mdl");
+	precache_model2 ("progs/flaser.mdl");	   // borrowed Floyd's projectile - greenwood
+
 
 	precache_sound2 ("me/medeath1.wav");
 	precache_sound2 ("me/medeath2.wav");
