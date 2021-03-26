@@ -50,6 +50,8 @@ void() menf_satck1;
 //where does sf64_teledeath function exist in the zer source code??
 //void() sf64_teledeath;
 
+.entity sibling;
+
 //--------------------------------------------------------------------
 void() DrunkExplode =
 {
@@ -69,67 +71,191 @@ void() DrunkExplode =
 //DHM - fix for trigger_gravity movement
 	self.movetype = MOVETYPE_FLYMISSILE;
 
+	remove(self.sibling);
 	self.solid = SOLID_NOT;
 	s_explode1 ();
 };
 
-void() drunkthink =
+
+void() spiralthink =
 {
-	if (!infront(self.enemy))
+//	if (!infront(self.enemy))
+//		return;
+
+local entity pointer;
+local vector vel;
+
+pointer = self.sibling;
+
+	if (time > self.attack_finished)
+		{
+		DrunkExplode();
+		remove(pointer);
 		return;
+		}
+		
+		
+	if (vlen(self.enemy.origin - self.origin) < 256) 
+		{
+		vel = normalize(self.enemy.origin - self.origin);
+		self.velocity = vel * 250;
+		self.angles = vectoangles(self.velocity);
+		self.nextthink = time + 0.1;
+		return;		
+		}
+		
 
-	self.velocity = normalize(self.enemy.origin - self.origin);
-	self.velocity = self.velocity * (450 + (random() * 50));
-	makevectors(self.velocity);
-	self.velocity = self.velocity + (v_right * ((random()*100 + 100) * self.cnt));
-	self.angles = vectoangles(self.velocity);
-	if(self.cnt == 1)
-		self.cnt = -1;
+local float voffs, hoffs;
+
+	if (self.cnt == 0)
+		{
+		voffs = 24;
+		hoffs = 0;		
+		}
+	else if (self.cnt == 1)
+		{
+		voffs = 16;
+		hoffs = 16;		
+		} 	
+	else if (self.cnt == 2)
+		{
+		voffs = 0;
+		hoffs = 24;			
+		} 	
+	else if (self.cnt == 3)
+		{
+		voffs = -16;
+		hoffs = 16;	
+		} 			
+	else if (self.cnt == 4)
+		{
+		voffs = -24;
+		hoffs = 0;	
+		} 	
+	else if (self.cnt == 5)
+		{
+		voffs = -16;
+		hoffs = -16;	
+		} 			
+	else if (self.cnt == 6)
+		{
+		voffs = 0;
+		hoffs = -24;	
+		} 	
 	else
-		self.cnt = 1;
+		{
+		voffs = 16;
+		hoffs = -16;		
+		} 
+		
+	if (vlen(self.origin - pointer.origin) < 16)	
+		{
+//			dprint(ftos(vlen(self.origin - pointer.origin)));
+//			dprint("\n");
+			self.nextthink = time + 0.1;
+			return;
+		}
+		else
+		{
+			self.cnt = self.cnt + 1;
+		}
+	
 
-	if (vlen(self.enemy.origin - self.origin) > 250)
-	   self.nextthink = time + 0.30;
+	if (self.cnt > 7)
+		{self.cnt = 0;}
+
+	self.velocity = '0 0 0';
+	makevectors(pointer.velocity);
+	vel = normalize((pointer.origin + v_right * hoffs + v_up * voffs) - self.origin);
+	self.velocity = vel * 250;
+
+	self.angles = vectoangles(self.velocity);
+	self.think = spiralthink;
+	self.nextthink = time + 0.1;
+
 };
 
-void() FireDrunkMissile =
+
+
+void() changemovetype =
 {
-	local	entity missile;
-	local vector org, lead;
-//	local float go;
+	self.movetype = MOVETYPE_FLYMISSILE;
+	self.think = ShalHome;
+	self.nextthink = time + 0.1;
+}
+
+
+
+//--------------------------------------------------------------------
+// Missile will launch then spiral around an invisible point toward
+// the player. The missile will track slowly and have a TTL
+//--------------------------------------------------------------------
+
+
+
+void() FireMissileSpiral =
+{
+	local	entity missile, pointer;
+	local	vector org, vel, vel2;
 	
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
 	sound (self, CHAN_WEAPON, "me/me_fire2.wav", 1, ATTN_NORM);
-
-	missile = spawn ();
+	
+	makevectors(self.angles);	
+	org = self.origin + '0 0 28' + (v_right * 6);
+	
+	pointer = spawn();
+	pointer.owner = self;
+	pointer.sibling = missile;
+	pointer.enemy = self.enemy;
+	pointer.movetype = MOVETYPE_BOUNCE;
+	pointer.solid = SOLID_NOT;
+//	setmodel(pointer, "progs/s_light.spr");	
+	setorigin (pointer, org);	
+	pointer.think = changemovetype;
+	pointer.nextthink = time + 0.2;
+	
+	
+	// set intial pointer velocity	
+	vel = normalize(self.enemy.origin - self.origin);
+	pointer.velocity = vel * 200;
+	pointer.velocity_z = pointer.velocity_z + 250;
+	// set v_right, etc
+	makevectors(pointer.velocity);	
+	pointer.angles = vectoangles(pointer.velocity);	
+	
+	missile = spawn();
 	missile.owner = self;
+	missile.sibling = pointer;
 	missile.enemy = self.enemy;
 	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_BBOX;
-		
-// set missile speed	
+	missile.effects = EF_DIMLIGHT;
+	
+	setorigin (missile, org);
 
-	lead = normalize(self.enemy.origin - self.origin);
-	missile.velocity = lead * (450 + (random() * 50));
-	makevectors(missile.velocity);
-	missile.velocity = missile.velocity + (v_up * ((random()*20) - 10)) + (v_right * ((random()*40) - 20));
-
-	missile.angles = vectoangles(missile.velocity);
-	missile.touch = DrunkExplode;
-	missile.cnt = 1;
+	// set intial missile velocity	
+	vel2 = normalize(pointer.origin + v_forward * 64 + v_up * 64 - missile.origin);
+	missile.velocity = vel2 * 100;
+	// set v_right, etc
+	makevectors(missile.velocity);	
+	missile.angles = vectoangles(missile.velocity);		
+	
+	// no harm in keeping this, but remember to delete the pointer on touch
+	missile.touch = DrunkExplode;	
 	
 // set missile duration
-	missile.nextthink = time + 0.25;
-	missile.think = drunkthink;
+	missile.nextthink = time + 0.05;
+	missile.think = spiralthink;
 
 	setmodel (missile, "progs/memissil.mdl");
 	setsize (missile, '0 0 0', '0 0 0');		
 
-	makevectors(self.angles);
-	org = self.origin + '0 0 28' + (v_right * 6);
-	setorigin (missile, org);
-};
+	missile.attack_finished = time + 6;
+
+}
+
 
 void() particlethink =
 {
@@ -206,9 +332,20 @@ local float edist;
 	else
 	{
 		if (random() < 0.65 || edist > 700)
-			menf_satck1 ();
+			{
+			if (time > self.attack_finished)
+				{
+				menf_satck1 ();
+				}
+			else
+				{
+				menf_atk1 ();
+				}
+			}
 		else
+			{
 			menf_atk1 ();
+			}
 	}
 };
 
@@ -295,7 +432,7 @@ void()	menf_satck3 =[	$attackp2,  menf_satck4 ] {ai_face();};
 void()	menf_satck4 =[	$attackp3,  menf_satck5 ] {ai_face();};
 void()	menf_satck5 =[	$attackp4,  menf_satck6 ] {ai_face();};
 void()	menf_satck6 =[	$attackp4,  menf_satck7 ] {ai_face();};
-void()	menf_satck7 =[	$attackp5,  menf_satck8 ] {ai_face(); FireDrunkMissile (); };
+void()	menf_satck7 =[	$attackp5,  menf_satck8 ] {ai_face(); FireMissileSpiral (); self.attack_finished = time + 1.5;};
 void()	menf_satck8 =[	$attackp6,  menf_satck9 ] {ai_face(); sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
 void()	menf_satck9 =[	$attackp7,  menf_run1   ] {ai_face(); self.takedamage = DAMAGE_NO; };
 
@@ -482,10 +619,11 @@ void() monster_me =
 		return;
 	}
 	precache_model2 ("progs/enforce2.mdl");
+	// for debugging
+	precache_model2 ("progs/s_light.spr");
 	precache_model2 ("progs/h_me.mdl");
 	precache_model2 ("progs/memissil.mdl");
 	precache_model2 ("progs/flaser.mdl");	   // borrowed Floyd's projectile - greenwood
-
 
 	precache_sound2 ("me/medeath1.wav");
 	precache_sound2 ("me/medeath2.wav");
