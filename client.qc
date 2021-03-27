@@ -28,7 +28,7 @@ void() info_intermission =
 {
 };
 
-float(float items, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
+float(float items, float extra_items, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
 float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms;
 
 void() SetChangeParms =
@@ -60,6 +60,7 @@ void() SetChangeParms =
 	parm7 = self.ammo_cells;
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
+	parm10 = self.extra_items;
 };
 
 void() SetNewParms =
@@ -73,6 +74,7 @@ void() SetNewParms =
 	parm7 = 0;
 	parm8 = 1;
 	parm9 = 0;
+	parm10 = 0;
 	
 	if (world.model == "maps/test.bsp") // johnfitz start the player with nothing
 	{
@@ -102,7 +104,7 @@ void() TakeAndGiveItems = {
 
 	//if player is wielding a removed or ammo-less weapon
 	if(!(parm1 & parm8) || !W_CheckAmmoParms(parm8, parm4, parm5, parm6, parm7)) {
-		parm8 = W_BestWeaponParms(parm1, parm4, parm5, parm7, 0);
+		parm8 = W_BestWeaponParms(parm1, parm10, parm4, parm5, parm7, 0);
 	}
 };
 
@@ -116,6 +118,7 @@ void() DecodeLevelParms =
 	TakeAndGiveItems();
 	
 	self.items = parm1;
+	self.extra_items = parm10;
 	self.health = parm2;
 	self.armorvalue = parm3;
 	self.ammo_shells = parm4;
@@ -1103,10 +1106,13 @@ void() PlayerPreThink =
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if(time > self.attack_finished && self.currentammo == 0 && self.weapon != IT_AXE)
+	if(time > self.attack_finished && self.currentammo == 0)
 	{
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
+		if(self.weapon != IT_AXE && self.weapon != WEAPON_CHAINSAW)
+		{
+			self.weapon = W_BestWeapon ();
+			W_SetCurrentAmmo ();
+		}
 	}
 };
 	
@@ -1563,6 +1569,11 @@ void(entity targ, entity attacker) ClientObituary =
 				{
 					deathstring = " was ax-murdered by ";
 					deathstring2 = "\n";
+				}
+				if (rnum == IT_CHAINSAW)
+				{
+					deathstring = " was chewed up by ";
+					deathstring2 = "'s bloody chainsaw\n";
 				}
 				if (rnum == IT_SHOTGUN)
 				{

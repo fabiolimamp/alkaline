@@ -215,7 +215,12 @@ void() worldspawn =
 	precache_sound ("weapons/lhit.wav");		//lightning
 	precache_sound ("weapons/lstart.wav");		//lightning start
 	precache_sound ("items/damage3.wav");
-
+	
+	precache_sound ("weapons/sawidle.wav");		//chainsaw idle
+	precache_sound ("weapons/sawridle.wav");	//chainsaw idle
+	precache_sound ("weapons/sawatck.wav");		//chainsaw attack
+	precache_sound ("weapons/sawguts.wav");		//chainsaw hit guts
+	
 	precache_sound ("misc/power.wav");			//lightning for boss
 	
 // johnfitz -- precache sounds for ladder
@@ -292,6 +297,7 @@ void() worldspawn =
 	precache_model ("progs/v_nail2.mdl");
 	precache_model ("progs/v_rock2.mdl");
 	precache_model ("progs/v_laserg.mdl");
+	precache_model ("progs/v_saw.mdl");		//dhm - Chainsaw
 	
 	precache_model ("progs/bolt.mdl");		// for lightning gun
 	precache_model ("progs/bolt2.mdl");		// for lightning gun

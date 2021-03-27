@@ -312,6 +312,12 @@ float	IT_SUIT					= 2097152;
 float	IT_QUAD					= 4194304;
 float	IT_LASER_CANNON			= 8388608;
 
+///	Extra Item Mask
+float	IT_CHAINSAW				= 1;
+
+///	extra .weapon number
+float	WEAPON_CHAINSAW			= 3;
+
 float   ALL_WEAPONS 			= IT_AXE + IT_SHOTGUN + IT_SUPER_SHOTGUN +
 									IT_NAILGUN + IT_SUPER_NAILGUN +
 									IT_GRENADE_LAUNCHER + IT_ROCKET_LAUNCHER +
@@ -457,6 +463,8 @@ nosave float gamestarted;
 .float		light_lev;		// not used by game, but parsed by light util
 .float		style;
 
+
+.float		extra_items;		// extra weapons
 
 //
 // monster ai

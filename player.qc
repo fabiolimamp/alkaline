@@ -1,5 +1,6 @@
 
 void() bubble_bob;
+void() player_die_sw1;
 void(float stat) HIP_FireLaser;
 /*
 ==============================================================================
@@ -21,10 +22,14 @@ $frame axrun1 axrun2 axrun3 axrun4 axrun5 axrun6
 
 $frame rockrun1 rockrun2 rockrun3 rockrun4 rockrun5 rockrun6
 
+$frame sawrun1 sawrun2 sawrun3 sawrun4 sawrun5 sawrun6
+
 //
 // standing
 //
 $frame stand1 stand2 stand3 stand4 stand5
+
+$frame swstnd1 swstnd2 swstnd3 swstnd4 swstnd5
 
 $frame axstnd1 axstnd2 axstnd3 axstnd4 axstnd5 axstnd6
 $frame axstnd7 axstnd8 axstnd9 axstnd10 axstnd11 axstnd12
@@ -37,6 +42,7 @@ $frame axpain1 axpain2 axpain3 axpain4 axpain5 axpain6
 
 $frame pain1 pain2 pain3 pain4 pain5 pain6
 
+$frame swpain1 swpain2 swpain3 swpain4 swpain5 swpain6
 
 //
 // death
@@ -44,6 +50,9 @@ $frame pain1 pain2 pain3 pain4 pain5 pain6
 
 $frame axdeth1 axdeth2 axdeth3 axdeth4 axdeth5 axdeth6
 $frame axdeth7 axdeth8 axdeth9
+
+$frame swdeth1 swdeth2 swdeth3 swdeth4 swdeth5 swdeth6
+$frame swdeth7 swdeth8 swdeth9
 
 $frame deatha1 deatha2 deatha3 deatha4 deatha5 deatha6 deatha7 deatha8
 $frame deatha9 deatha10 deatha11
@@ -64,6 +73,8 @@ $frame deathe8 deathe9
 // attacks
 //
 $frame nailatt1 nailatt2
+
+$frame sawatt1 sawatt2
 
 $frame light1 light2
 
@@ -90,14 +101,32 @@ void() player_run;
 
 void()	player_stand1 =[	$axstnd1,	player_stand1	]
 {
-	self.weaponframe=0;
 	if (self.velocity_x || self.velocity_y)
 	{
 		self.walkframe=0;
 		player_run();
 		return;
 	}
-
+	
+	if (self.weapon == WEAPON_CHAINSAW)
+	{
+		self.weaponframe = self.weaponframe + 1;
+		if(self.weaponframe >= 5)
+		{
+			self.weaponframe = 0;
+			if (self.view_ofs != '0 0 0')
+				sound (self, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_NORM);
+		}
+		if (self.walkframe >= 5)
+			self.walkframe = 0;
+		self.frame = $swstnd1 + self.walkframe;
+		self.walkframe = self.walkframe + 1;	
+		
+		return;
+	}
+	else
+		self.weaponframe=0;
+	
 	if (self.weapon == IT_AXE)
 	{
 		if (self.walkframe >= 12)
@@ -115,14 +144,31 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 
 void()	player_run =[	$rockrun1,	player_run	]
 {
-	self.weaponframe=0;
 	if (!self.velocity_x && !self.velocity_y)
 	{
 		self.walkframe=0;
 		player_stand1();
 		return;
 	}
-
+	
+	if (self.weapon == WEAPON_CHAINSAW)
+	{
+		self.weaponframe = self.weaponframe + 1;
+		if(self.weaponframe >= 5)
+		{
+			self.weaponframe = 0;
+			if (self.view_ofs != '0 0 0')
+				sound (self, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_NORM);
+		}
+		if (self.walkframe == 6)
+			self.walkframe = 0;
+		self.frame = $sawrun1 + self.walkframe;
+		self.walkframe = self.walkframe + 1;
+		return;
+	}
+	else
+		self.weaponframe=0;
+	
 	if (self.weapon == IT_AXE)
 	{
 		if (self.walkframe == 6)
@@ -167,6 +213,46 @@ void()	player_axed2 =	[$axattd2, player_axed3	] {self.weaponframe=6;};
 void()	player_axed3 =	[$axattd3, player_axed4	] {self.weaponframe=7;W_FireAxe();};
 void()	player_axed4 =	[$axattd4, player_run	] {self.weaponframe=8;};
 
+
+//============================================================================
+
+void() player_chainsaw1   =[$sawatt1, player_chainsaw2 ] 
+{
+	self.weaponframe=5; 
+	W_FireSaw();
+};
+void() player_chainsaw2   =[$sawatt2, player_chainsaw3 ] 
+{
+	self.weaponframe=6;
+	if (!self.button0)
+	{
+		player_run ();
+		return;
+	}
+};
+void() player_chainsaw3   =[$sawatt1, player_chainsaw4 ] 
+{
+	self.weaponframe=7;
+	W_FireSaw();
+};
+void() player_chainsaw4   =[$sawatt2, player_chainsaw5 ] 
+{
+	self.weaponframe=8;
+	if (!self.button0)
+	{
+		player_run ();
+		return;
+	}
+};
+void() player_chainsaw5   =[$sawatt1, player_chainsaw6 ]
+{
+	self.weaponframe=9;
+	W_FireSaw();
+};
+void() player_chainsaw6   =[$sawatt2, player_run  ]
+{
+	self.weaponframe=10;
+};
 
 //============================================================================
 
@@ -348,6 +434,13 @@ void()	player_pain4 =	[	$pain4,	player_pain5	] {};
 void()	player_pain5 =	[	$pain5,	player_pain6	] {};
 void()	player_pain6 =	[	$pain6,	player_run	] {};
 
+void()	player_swpain1 =	[	$swpain1,	player_pain2	] {PainSound();self.weaponframe=0;};
+void()	player_swpain2 =	[	$swpain2,	player_pain3	] {};
+void()	player_swpain3 =	[	$swpain3,	player_pain4	] {};
+void()	player_swpain4 =	[	$swpain4,	player_pain5	] {};
+void()	player_swpain5 =	[	$swpain5,	player_pain6	] {};
+void()	player_swpain6 =	[	$swpain6,	player_run		] {};
+
 void()	player_axpain1 =	[	$axpain1,	player_axpain2	] {PainSound();self.weaponframe=0;};
 void()	player_axpain2 =	[	$axpain2,	player_axpain3	] {};
 void()	player_axpain3 =	[	$axpain3,	player_axpain4	] {};
@@ -365,6 +458,8 @@ void(entity attacker, float damage) player_pain =
 
 	if (self.weapon == IT_AXE)
 		player_axpain1 ();
+	else if (self.weapon == WEAPON_CHAINSAW)
+		player_swpain1 ();
 	else
 		player_pain1 ();
 };
@@ -585,6 +680,12 @@ void() PlayerDie =
 		return;
 	}
 	
+	if (self.weapon == WEAPON_CHAINSAW)
+	{
+		player_die_sw1 ();
+		return;
+	}
+	
 	i = cvar("temp1");
 	if (!i)
 		i = 1 + floor(random()*6);
@@ -681,3 +782,13 @@ void()	player_die_ax6	=	[	$axdeth6,	player_die_ax7	] {};
 void()	player_die_ax7	=	[	$axdeth7,	player_die_ax8	] {};
 void()	player_die_ax8	=	[	$axdeth8,	player_die_ax9	] {};
 void()	player_die_ax9	=	[	$axdeth9,	player_die_ax9	] {PlayerDead();};
+
+void()	player_die_sw1	=	[	$swdeth1,	player_die_sw2	] {};
+void()	player_die_sw2	=	[	$swdeth2,	player_die_sw3	] {};
+void()	player_die_sw3	=	[	$swdeth3,	player_die_sw4	] {};
+void()	player_die_sw4	=	[	$swdeth4,	player_die_sw5	] {};
+void()	player_die_sw5	=	[	$swdeth5,	player_die_sw6	] {};
+void()	player_die_sw6	=	[	$swdeth6,	player_die_sw7	] {};
+void()	player_die_sw7	=	[	$swdeth7,	player_die_sw8	] {};
+void()	player_die_sw8	=	[	$swdeth8,	player_die_sw9	] {};
+void()	player_die_sw9	=	[	$swdeth9,	player_die_sw9	] {PlayerDead();};

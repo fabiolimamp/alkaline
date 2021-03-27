@@ -6,6 +6,7 @@ void(entity bomb, entity attacker, float rad, entity ignore) T_RadiusDamage;
 void(vector org, vector vel, float damage) SpawnBlood;
 void() SuperDamageSound;
 
+void() player_chainsaw1;
 
 //johnfitz
 void() flame_touch;
@@ -177,6 +178,56 @@ SpawnChunk
 void(vector org, vector vel) SpawnChunk =
 {
 	particle (org, vel*0.02, 0, 10);
+};
+
+/*
+================
+W_FireSaw
+================
+*/
+void() W_FireSaw =
+{
+	local	vector	source;
+	local	vector	org;
+	local	entity	ent;
+
+	makevectors (self.v_angle);
+	source = self.origin + '0 0 16';
+	traceline (source, source + v_forward*64, FALSE, self);
+	if (trace_fraction == 1.0)
+		return;
+	
+	org = trace_endpos - v_forward*4;
+	
+	if(!trace_ent)
+		return;
+	
+	ent = trace_ent;
+	
+	if (ent.takedamage)
+	{
+		ent.axhitme = 2;
+		SpawnBlood(trace_endpos, '0 0 5', 20);
+		SpawnMeatSpray (self.origin + v_forward*16, ((random()*300) - 150) * v_right + (100 * v_forward));
+		
+		if (deathmatch == 0)
+			T_Damage (ent, self, self, 24);
+		else
+			T_Damage (ent, self, self, 30);
+		
+		ent.velocity = ent.velocity * 0.5;
+		sound (self, CHAN_WEAPON, "weapons/sawguts.wav", 1, ATTN_NORM);
+		self.punchangle_x = -8;
+	}
+	else
+	{	// hit wall
+		sound (self, CHAN_WEAPON, "player/axhit2.wav", 1, ATTN_NORM);
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
+		WriteCoord (MSG_BROADCAST, org_x);
+		WriteCoord (MSG_BROADCAST, org_y);
+		WriteCoord (MSG_BROADCAST, org_z);
+	}
 };
 
 /*
@@ -818,6 +869,14 @@ void() W_SetCurrentAmmo =
 		self.weaponmodel = "progs/v_axe.mdl";
 		self.weaponframe = 0;
 	}
+	else if (self.weapon == WEAPON_CHAINSAW)
+	{
+		self.skin = 1;
+		self.currentammo = 0;
+		self.weaponmodel = "progs/v_saw.mdl";
+		sound (self, 6, "weapons/sawidle.wav", 1, ATTN_NORM);
+		self.weaponframe = 0;
+	}
 	else if (self.weapon == IT_SHOTGUN)
 	{
 		self.currentammo = self.ammo_shells;
@@ -882,7 +941,7 @@ void() W_SetCurrentAmmo =
 	}
 };
 
-float(float items, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms =
+float(float items, float extra_items, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms =
 {
 
 	if (waterlevel <= 1 && cells >= 1 && (items & IT_LIGHTNING) )
@@ -897,6 +956,8 @@ float(float items, float shells, float nails, float cells, float waterlevel) W_B
 		return IT_NAILGUN;
 	if(shells >= 1 && (items & IT_SHOTGUN) )
 		return IT_SHOTGUN;
+	if(extra_items & IT_CHAINSAW)
+		return WEAPON_CHAINSAW;
 	if(items & IT_AXE)
 		return IT_AXE;
 	return IT_NO_WEAPON; //johnfitz
@@ -904,17 +965,19 @@ float(float items, float shells, float nails, float cells, float waterlevel) W_B
 
 float() W_BestWeapon =
 {
-	local	float	it;
+	local	float	it, eit;
 	
 	it = self.items;
+	eit = self.extra_items;
 
-	return W_BestWeaponParms(it, self.ammo_shells, self.ammo_nails, self.ammo_cells, self.waterlevel);
+	return W_BestWeaponParms(it, eit, self.ammo_shells, self.ammo_nails, self.ammo_cells, self.waterlevel);
 };
 
 float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms = {
 	if (
 		(currentweapon == IT_NO_WEAPON) ||
 		(currentweapon == IT_AXE) ||
+		(currentweapon == WEAPON_CHAINSAW) ||
 		(currentweapon == IT_SHOTGUN && shells >= 1) ||
 		(currentweapon == IT_SUPER_SHOTGUN && shells >= 2) ||
 		(currentweapon == IT_NAILGUN && nails >= 1) ||
@@ -933,6 +996,9 @@ float() W_CheckNoAmmo =
 		return TRUE;
 
 	if (self.weapon == IT_AXE)
+		return TRUE;
+	
+	if (self.weapon == WEAPON_CHAINSAW)
 		return TRUE;
 	
 	self.weapon = W_BestWeapon ();
@@ -1028,6 +1094,12 @@ void() W_Attack =
 	{
 		player_laser1();
 	}
+	else if (self.weapon == WEAPON_CHAINSAW)
+	{
+		player_chainsaw1();
+		self.attack_finished = time + 0.55;
+		sound (self, CHAN_AUTO, "weapons/sawatck.wav", 1, ATTN_NORM);
+	}
 };
 
 /*
@@ -1038,14 +1110,31 @@ W_ChangeWeapon
 */
 void() W_ChangeWeapon =
 {
-	local	float	it, am, fl;
+	local	float	am, fl;
 	
-	it = self.items;
 	am = 0;
 	
 	if (self.impulse == 1)
 	{
-		fl = IT_AXE;
+		if (self.weapon == IT_AXE)
+		{
+			fl = 0;
+			self.impulse = 0;
+			if (self.extra_items & IT_CHAINSAW)
+			{
+				sprint(self, "Chainsaw selected\n");
+				self.weapon = WEAPON_CHAINSAW;
+				W_SetCurrentAmmo ();
+			}
+			else
+			{
+				sprint (self, "No chainsaw available...\n");
+			}
+			
+			return;
+		}
+		else
+			fl = IT_AXE;
 	}
 	else if (self.impulse == 2)
 	{
@@ -1101,20 +1190,38 @@ void() W_ChangeWeapon =
 		if (self.ammo_cells < 1)
 			am = 1;
 	}
-
 	else if (self.impulse == 225)
 	{
 		fl = IT_LASER_CANNON;
 		if (self.ammo_cells < 1)
 			am = 1;
 	}
+	else if (self.impulse == 226)
+	{
+		fl = 0;
+		self.impulse = 0;
+		if (self.extra_items & IT_CHAINSAW)
+		{
+			self.weapon = WEAPON_CHAINSAW;
+			W_SetCurrentAmmo ();
+		}
+		else
+		{
+			sprint (self, "No chainsaw available...\n");
+		}
+		
+		return;
+	}
 	
 	self.impulse = 0;
 	
-	if (!(self.items & fl))
-	{	// don't have the weapon or the ammo
-		sprint (self, "no weapon.\n");
-		return;
+	if(fl)
+	{
+		if (!(self.items & fl))
+		{	// don't have the weapon or the ammo
+			sprint (self, "no weapon.\n");
+			return;
+		}
 	}
 	
 	if (am)
@@ -1126,7 +1233,7 @@ void() W_ChangeWeapon =
 //
 // set weapon, set ammo
 //
-	self.weapon = fl;		
+	self.weapon = fl;
 	W_SetCurrentAmmo ();
 };
 
@@ -1157,6 +1264,8 @@ void() CheatCommand =
 	self.items = self.items | IT_LIGHTNING;
 	self.items = self.items | IT_LASER_CANNON;
 	
+	self.extra_items = self.extra_items | IT_CHAINSAW;
+	
 	self.weapon = IT_ROCKET_LAUNCHER;
 	self.impulse = 0;
 	W_SetCurrentAmmo ();
@@ -1172,12 +1281,14 @@ Go to the next weapon with ammo
 void() CycleWeaponCommand =
 {
 	local	float	it, am;
+	//local	float	extraWeaponUsed, extraWeaponCheck;
 	
 	it = self.items;
 	self.impulse = 0;
 	
 	//johnfitz
-	if (!(it & (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON)))
+	if (!(it & (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON)) 
+		&& !(self.extra_items & IT_CHAINSAW))
 	{
 		self.weapon = IT_NO_WEAPON;
 		W_SetCurrentAmmo ();
@@ -1194,6 +1305,15 @@ void() CycleWeaponCommand =
 			self.weapon = IT_AXE;
 		}
 		else if (self.weapon == IT_AXE)
+		{
+			if ((self.extra_items & IT_CHAINSAW) && am == 0)
+			{
+				self.weapon = WEAPON_CHAINSAW;
+				W_SetCurrentAmmo ();
+				return;
+			}
+		}
+		else if (self.weapon == WEAPON_CHAINSAW)
 		{
 			self.weapon = IT_SHOTGUN;
 			if (self.ammo_shells < 1)
@@ -1242,13 +1362,12 @@ void() CycleWeaponCommand =
 				am = 1;
 		}
 		
-		if ( (it & self.weapon) && am == 0)
+		if ((it & self.weapon) && am == 0)
 		{
 			W_SetCurrentAmmo ();
 			return;
 		}
 	}
-
 };
 
 /*
@@ -1266,7 +1385,8 @@ void() CycleWeaponReverseCommand =
 	self.impulse = 0;
 
 	//johnfitz
-	if (!(it & (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON)))
+	if (!(it & (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON)) 
+		&& !(self.extra_items & IT_CHAINSAW))
 	{
 		self.weapon = IT_NO_WEAPON;
 		W_SetCurrentAmmo ();
@@ -1277,7 +1397,6 @@ void() CycleWeaponReverseCommand =
 	while (1)
 	{
 		am = 0;
-		
 		
 		if (self.weapon == IT_LASER_CANNON)
 		{
@@ -1323,6 +1442,15 @@ void() CycleWeaponReverseCommand =
 		}
 		else if (self.weapon == IT_SHOTGUN)
 		{
+			if ((self.extra_items & IT_CHAINSAW) && am == 0)
+			{
+				self.weapon = WEAPON_CHAINSAW;
+				W_SetCurrentAmmo ();
+				return;
+			}
+		}
+		else if (self.weapon == WEAPON_CHAINSAW)
+		{
 			self.weapon = IT_AXE;
 		}
 		else if (self.weapon == IT_AXE)
@@ -1331,8 +1459,8 @@ void() CycleWeaponReverseCommand =
 			if (self.ammo_cells < 1)
 				am = 1;
 		}
-	
-		if ( (it & self.weapon) && am == 0)
+		
+		if ((it & self.weapon) && am == 0)
 		{
 			W_SetCurrentAmmo ();
 			return;
@@ -1406,7 +1534,7 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 	
-	if (self.impulse == 225)
+	if (self.impulse >= 225 && self.impulse <= 226)
 		W_ChangeWeapon ();
 	
 	if (self.impulse == 9)

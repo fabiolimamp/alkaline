@@ -449,18 +449,20 @@ float(float w) RankForWeapon =
 {
 	if (w == IT_LIGHTNING)
 		return 1;
-	if (w == IT_ROCKET_LAUNCHER)
+	if (w == WEAPON_CHAINSAW)
 		return 2;
-	if (w == IT_LASER_CANNON)
+	if (w == IT_ROCKET_LAUNCHER)
 		return 3;
-	if (w == IT_SUPER_NAILGUN)
+	if (w == IT_LASER_CANNON)
 		return 4;
-	if (w == IT_GRENADE_LAUNCHER)
+	if (w == IT_SUPER_NAILGUN)
 		return 5;
-	if (w == IT_SUPER_SHOTGUN)
+	if (w == IT_GRENADE_LAUNCHER)
 		return 6;
-	if (w == IT_NAILGUN)
+	if (w == IT_SUPER_SHOTGUN)
 		return 7;
+	if (w == IT_NAILGUN)
+		return 8;
 	return 8;
 };
 
@@ -473,7 +475,7 @@ Deathmatch weapon change rules for picking up a weapon
 .float		ammo_shells, ammo_nails, ammo_rockets, ammo_cells;
 =============
 */
-void(float old, float new) Deathmatch_Weapon =
+void(float new) Deathmatch_Weapon =
 {
 	local float or, nr;
 
@@ -493,9 +495,10 @@ float() W_BestWeapon;
 
 void() weapon_touch =
 {
-	local	float	hadammo, best, new, old;
+	local	float	hadammo, best, new;
 	local	entity	stemp;
 	local	float	leave;
+	local	float	extra_weapon;
 
 	if (!(other.flags & FL_CLIENT))
 		return;
@@ -511,7 +514,9 @@ void() weapon_touch =
 	else
 		leave = 0;
 
-
+	
+	extra_weapon = FALSE;
+	
 	// johnfitz added for axe, shotgun items
 	if (self.classname == "weapon_axe")
 	{
@@ -585,6 +590,16 @@ void() weapon_touch =
 		new = IT_LASER_CANNON;
 		other.ammo_cells = other.ammo_cells + 30;
 	}
+	else if (self.classname == "weapon_chainsaw")
+	{
+		if (leave && (other.extra_items & IT_CHAINSAW) )
+			return;
+			
+		other.extra_items = other.extra_items | IT_CHAINSAW;
+		new = WEAPON_CHAINSAW;
+		extra_weapon = TRUE;
+		hadammo = other.ammo_rockets;
+	}
 	else
 		objerror ("weapon_touch: unknown classname");
 
@@ -597,9 +612,10 @@ void() weapon_touch =
 
 	bound_other_ammo ();
 
-// change to the weapon
-	old = other.items;
-	other.items = other.items | new;
+	if(!extra_weapon)
+	{
+		other.items = other.items | new;
+	}
 	
 	stemp = self;
 	self = other;
@@ -607,10 +623,11 @@ void() weapon_touch =
 	if (!deathmatch)
 		self.weapon = new;
 	else
-		Deathmatch_Weapon (old, new);
+		Deathmatch_Weapon (new);
 
-	W_SetCurrentAmmo();
-
+	if (hadammo != IT_CHAINSAW)
+		W_SetCurrentAmmo();
+	
 	self = stemp;
 
 	if (leave)
@@ -746,6 +763,19 @@ void() weapon_lightning =
 	StartItem ();
 };
 
+/*QUAKED weapon_chainsaw (0 .5 .8) (-16 -16 0) (16 16 32)
+*/
+void() weapon_chainsaw =
+{
+	precache_model ("progs/g_saw.mdl");
+	setmodel (self, "progs/g_saw.mdl");
+	self.weapon = 3;
+	self.netname = "Chainsaw";
+	self.touch = weapon_touch;
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+	//dprint("ERROR: change to weapon_nailgun with 'dmg' '1'\n");
+};
 
 /*
 ===============================================================================
@@ -815,19 +845,21 @@ local float		best;
 
 // change to a better weapon if appropriate
 
-	if ( other.weapon == best )
+	if ( other.weapon == best && (!(deathmatch)))
 	{
 		stemp = self;
 		self = other;
 		self.weapon = W_BestWeapon();
-		W_SetCurrentAmmo ();
+		if (self.weapon != WEAPON_CHAINSAW)
+		   W_SetCurrentAmmo ();
 		self = stemp;
 	}
 
 // if changed current ammo, update it
 	stemp = self;
 	self = other;
-	W_SetCurrentAmmo();
+	if (self.weapon != WEAPON_CHAINSAW)
+	   W_SetCurrentAmmo();
 	self = stemp;
 
 // remove it in single player, or setup for respawning in deathmatch
@@ -1282,7 +1314,7 @@ void() BackpackTouch =
 {
 	local string	s;
 	local	float	best, old, new;
-	local		entity	stemp;
+	local	entity	stemp;
 	local	float	acount;
 	
 	if (other.classname != "player")
@@ -1294,13 +1326,23 @@ void() BackpackTouch =
 	sprint (other, "You get ");
 
 	if (self.items)
+	{
 		if ((other.items & self.items) == 0)
 		{
 			acount = 1;
 			sprint (other, "the ");
 			sprint (other, self.netname);
 		}
-
+	}
+	else if (self.extra_items)
+	{
+		if ((other.extra_items & self.extra_items) == 0)
+		{
+			acount = 1;
+			sprint (other, "the ");
+			sprint (other, self.netname);
+		}
+	}
 // if the player was using his best weapon, change up to the new one if better		
 	stemp = self;
 	self = other;
@@ -1369,9 +1411,13 @@ void() BackpackTouch =
 
 // change to the weapon
 	if (!deathmatch)
+	{
 		self.weapon = new;
+		//if (self.weapon == WEAPON_CHAINSAW)
+			return;
+	}
 	else
-		Deathmatch_Weapon (old, new);
+		Deathmatch_Weapon (new);
 
 	W_SetCurrentAmmo ();
 };
@@ -1410,6 +1456,8 @@ void() DropBackpack =
 		item.netname = "Thunderbolt";
 	else if (item.items == IT_LASER_CANNON)
 		item.netname = "Laser Cannon";
+	else if (item.items == WEAPON_CHAINSAW)
+		item.netname = "Chainsaw";
 	else
 		item.netname = "";
 
