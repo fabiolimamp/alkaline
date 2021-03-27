@@ -198,3 +198,51 @@ void stuffcmd_float( entity client, float f) =
 }
 
 
+/*
+=============
+Door queue for linking
+===============
+*/
+
+void() clearDoorQ = {
+	while(currentdq <= lastdq) {
+		if(doorq[currentdq]) doorq[currentdq].dqplace = -1;
+		currentdq++;
+	}
+	currentdq = -1;
+	lastdq = -1;
+};
+
+void(entity e) addDoorQ = {
+	if(lastdq < _MAX_ENTITY_QUEUE - 1) {
+		lastdq++;
+		doorq[lastdq] = e;
+		e.dqplace = lastdq;
+	}
+	else {
+		error("doorq _MAX_ENTITY_QUEUE exceeded when adding\n");
+	}
+};
+
+entity() getNextDoorQ = {
+	local entity e;
+
+	if (currentdq < lastdq && lastdq >= 0 && currentdq < _MAX_ENTITY_QUEUE - 1) {
+		currentdq++;
+
+		e = doorq[currentdq];
+		
+		if(e)
+			e.dqplace = -1;
+
+		if (currentdq >= lastdq) clearDoorQ();
+	}
+	else if (currentdq >= _MAX_ENTITY_QUEUE - 1) {
+		error("doorq _MAX_ENTITY_QUEUE exceeded when getting\n");
+		break();
+	}
+	else e = world;
+
+
+	return e;
+};

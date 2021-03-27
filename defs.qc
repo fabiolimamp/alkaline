@@ -423,6 +423,13 @@ float START_OFF = 1;
 
 //================================================
 
+#define _MAX_ENTITY_QUEUE 256
+
+entity doorq[_MAX_ENTITY_QUEUE];
+float lastdq;
+float currentdq;
+
+
 //
 // globals
 //
@@ -924,6 +931,11 @@ void() setup_lightstyles; //lights.qc
 //
 // new door features
 //
-.float 		maxdelay, mindelay, lastclose, movingback;
+.float 		maxdelay, mindelay, lastclose, lastopen, movingback;
+.vector		cmins, cmaxs;
 .float 		groupstate;
 .string 	groupname;
+.entity 	lastenemy = oldenemy;
+.float  	doorlooped = count;
+.float 		dqplace = currentammo;
+void() LinkDoors2;
