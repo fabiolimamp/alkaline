@@ -368,3 +368,18 @@ void(entity ent, string mdl) SUB_ChangeModel =
 	else
 		setsize(ent, smin, smax);
 }
+
+/*
+=============
+SUB_CopyTargets
+===============
+*/
+void(entity to) SUB_CopyTargets =
+{
+	if (to == world) return;
+	to.target = self.target;
+	to.target2 = self.target2;
+	to.target3 = self.target3;
+	to.target4 = self.target4;
+	to.killtarget = self.killtarget;
+}

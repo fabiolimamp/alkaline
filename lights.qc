@@ -634,4 +634,156 @@ void() misc_shadowcontroller = {
 	self.use = misc_shadowcontroller_use;
 }
 
- 
+
+string() target_lightstyle_next =
+{
+	entity tls;
+	if (self.owner) tls = self.owner;
+	else tls = self;
+	
+	if (tls.state == 0)
+	{
+		if (tls.noise == string_null)
+			tls.state = 0;
+		else
+			tls.state += 1;
+		return tls.message;
+	}
+	else if (tls.state == 1)
+	{
+		if (tls.noise1 == string_null)
+			tls.state = 0;
+		else
+			tls.state += 1;
+		return tls.noise;
+	}
+	else if (tls.state == 2)
+	{
+		if (tls.noise2 == string_null)
+			tls.state = 0;
+		else
+			tls.state += 1;
+		return tls.noise1;
+	}
+	else if (tls.state == 3)
+	{
+		if (tls.noise3 == string_null)
+			tls.state = 0;
+		else
+			tls.state += 1;
+		return tls.noise2;
+	}
+	else if (tls.state == 4)
+	{
+		if (tls.noise4 == string_null)
+			tls.state = 0;
+		else
+			tls.state += 1;
+		return tls.noise3;
+	}
+	else if (tls.state == 5)
+	{
+		tls.state = 0;
+		return tls.noise4;
+	}
+	return tls.message;
+}
+
+void() target_lightstyle_go =
+{
+	float st;
+	string newstyle = target_lightstyle_next();
+	if (self.style)
+	{
+		st = zeroconvert(self.style);		
+		lightstyle(st, newstyle);
+		return;
+	}
+	
+	entity l;
+	if (self.target != string_null)
+	{
+		l = world;
+		while (l.style == 0)
+			l = find(l, targetname, self.target);		
+	}
+	if (l) lightstyle(l.style, newstyle);
+	
+	if (self.target2 != string_null)
+	{
+		l = world;
+		while (l.style == 0)
+			l = find(l, targetname, self.target2);		
+	}
+	if (l) lightstyle(l.style, newstyle);
+
+	if (self.target3 != string_null)
+	{
+		l = world;
+		while (l.style == 0)
+			l = find(l, targetname, self.target3);		
+	}
+	if (l) lightstyle(l.style, newstyle);
+
+	if (self.target4 != string_null)
+	{
+		l = world;
+		while (l.style == 0)
+			l = find(l, targetname, self.target4);		
+	}
+	if (l) lightstyle(l.style, newstyle);
+}
+
+void() target_lightstyle_use =
+{
+	entity tls;
+	if (self.delay)
+	{
+		tls = spawn();
+		tls.think = target_lightstyle_go;
+		tls.nextthink = time + self.delay;
+		SUB_CopyTargets(tls);
+		tls.style = self.style;
+		tls.owner = self;
+	}
+	else
+	{
+		target_lightstyle_go();
+	}
+
+	playercount_convert(count);
+	if (self.count > 0)
+	{
+		self.count -= 1;
+		if (self.count == 0)
+			remove(self);
+	}
+}
+
+
+/*QUAKED target_lightstyle (.5 .8 .5) (-8 -8 -8) (8 8 8)
+This entity changes a global lightstyle when triggered. Set "style" to the lightstyle you want to override, and set "message" to the brightness pattern you want to set it to. If style is not set, and this entity targets any triggerable lights, it sets the brightness pattern of those lights when triggered instead. Note that targeting anything at a light makes it a triggerable light with its own style automatically.
+
+Setting style to -1 will override lightstyle 0, which is all static lights in the entire level.
+
+"count" limit number of uses, 0 = infinite
+"delay" pause between trigger and activation
+*/
+/*FGD
+@PointClass base(Appearflags, Targetname, Target) color(128 210 128) = target_lightstyle : 
+"Target : Lightstyle
+Changes a global lightstyle when triggered."
+[
+	message(string) : "Brightness pattern"
+	style(integer) : "Lightstyle to change (0-63)" : 0
+	count(integer) : "Limit uses" : 0
+	delay(string) : "Delay before activation" : "0"
+]
+*/
+void() target_lightstyle =
+{
+		
+	if (self.message == string_null)
+		self.message = "azam";	// suitably garish accidental default
+	self.use = target_lightstyle_use;
+}
