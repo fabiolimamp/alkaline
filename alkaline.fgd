@@ -301,7 +301,7 @@ When player is touching this entity, he can climb by pushing 'jump'."
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname, Target) color(64 128 64) = func_rotate_door : 
+@PointClass base(Appearflags, Targetname, Target) color(64 128 64) = func_rotate_door : 
 "Creates a door that rotates between two positions around a point of rotation each time it's triggered.
 
 STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once door from closing again when it's blocked."
@@ -322,7 +322,7 @@ STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once d
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
+@PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
 "Creates an entity that continually rotates.  Can be toggled on and off if targeted."
 [
 	deathtype(string) : "Death message"
@@ -408,7 +408,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	event(string) : "Event target"
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = rotate_object :
+@SolidClass base(Appearflags, Targetname, Target) color(0 128 204) = rotate_object :
 "This defines an object to be rotated.  Used as the target of func_rotate_door." []
 
 
