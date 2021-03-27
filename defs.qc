@@ -597,6 +597,8 @@ float	AS_MISSILE		= 4;
 .float		count;			// for counting triggers
 .float 		is_waiting;		// delayed spawn triggerz
 
+.string	include = wad;		// for monsterjump filters
+.string exclude = map;
 
 //
 // plats / doors / buttons

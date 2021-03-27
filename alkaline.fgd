@@ -1684,12 +1684,20 @@ Other than that, this entity functions like a normal button.
 [
 ]
 @SolidClass base(Targetname) = trigger_monsterjump : "Trigger monster jump.
-Can be set an optional use limit." 
+
+Can be set an optional use limit.
+
+Also can have monster classname filters.
+By setting 'include', the monsterjump will trigger only the indicated monster's class and nothing else.
+The 'exclude' key works the other way around, all monsters are affected except this class.
+Note that they're mutually exclusive." 
 [
 	speed(integer) : "Jump Speed" : 200
 	height(integer) : "Jump Height" : 200
 	angle(integer) : "Angle"
 	count(integer) : "Triggering limit count"
+	include(string) : "Include filter" : : "Trigger only this monster classname"
+	exclude(string) : "Exclude filter" : : "Trigger all monster classes except this one"
 ]
 @PointClass base(Trigger, Target, Targetname) = trigger_counter : "Trigger counter" 
 [
