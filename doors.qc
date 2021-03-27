@@ -134,30 +134,27 @@ void() door_blocked =
 
 void() door_start_sound = {
 	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
-}
+};
 
 void() door_stop_sound = {
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-}
+};
 
 void() door_hit_top =
 {
 	local entity starte, oself;
-	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_stop_sound();
+	if (!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_stop_sound();
 
-
+	self.lastopen = time;
 	self.state = STATE_TOP;
 	
-	if(self.delay >= self.owner.maxdelay) { // this is the last door to open
+	if (self.delay >= self.owner.maxdelay) { // this is the last door to open
 		self.owner.groupstate = STATE_TOP; 
-		//dprint("Door finished opening!\n");
-
 
 		oself = self;
 		starte = self;
-		do
-		{
-			if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_stop_sound();
+		do {
+			if (self.spawnflags & DOOR_SOUND_DURING_DELAY) door_stop_sound();
 			self = self.enemy;
 		} while ( (self != starte) && (self != world) );
 		self = oself;
@@ -171,8 +168,7 @@ void() door_hit_top =
 	}
 };
 
-void() door_hit_bottom =
-{
+void() door_hit_bottom = {
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) {
 		self.think = door_stop_sound;
 		self.nextthink = self.ltime + 0.013 + (self.delay - self.owner.mindelay);
@@ -184,7 +180,6 @@ void() door_hit_bottom =
 
 	if(self.delay <= self.owner.mindelay) { //this is the last door to close
 		self.owner.groupstate = STATE_BOTTOM; 
-		//dprint("Door finished closing!\n");
 	}
 	
 };
@@ -195,13 +190,12 @@ void() door_move_up = {
 	entity oldself;
 
 	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_start_sound();
-	//if(self.owner.groupstate != STATE_UP) dprint("Door started opening!\n");
+
 	self.state = STATE_UP;
 	self.owner.groupstate = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
 
 	door_use_targets();
-
 
 	if(self.switchshadstyle) {
 		shadow = self.shadowcontroller;
@@ -218,7 +212,7 @@ void() door_move_up = {
 		
 		self = oldself;
 	}
-}
+};
 
 
 void() door_move_down = {
@@ -226,18 +220,15 @@ void() door_move_down = {
 	entity oldself;
 
 	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_start_sound();
+
 	if (self.max_health)
 	{
 		self.takedamage = DAMAGE_YES;
 		self.health = self.max_health;
 	}
-	
-	self.state = STATE_DOWN;
-	if(self.owner.groupstate != STATE_DOWN) {
-		//dprint("Door started closing!\n");
-		self.owner.groupstate = STATE_DOWN;
 		
-	}
+	self.state = STATE_DOWN;
+	self.owner.groupstate = STATE_DOWN;
 	
 	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
 
@@ -257,53 +248,61 @@ void() door_move_down = {
 		self = oldself;
 		
 	}
-}
+};
 
-void() door_go_down =
-{	
+void() door_go_down = {	
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
-	// all doors should pass through think for consistency
-	// otherwise some flags are set when they're not supposed to
-	self.think = door_move_down;
-	self.nextthink = self.ltime + 0.013 + (self.owner.maxdelay + self.owner.mindelay - self.delay);
+
+	// Door group is still moving the other way
+	if(self.owner.movingback){  
+
+		// If this door has already stopped opening, wait the same time passed since then before closing again
+		if(self.state == STATE_TOP){ 
+			self.think = door_move_down;
+			self.nextthink = self.ltime + 0.013 + (time - self.lastopen);
+		}
+		else { // If door is still moving, move the other way immediately
+			self.think = door_move_down;
+			self.nextthink = self.ltime + 0.013;
+		}
+	} else {
+		// Normal movement.
+		// All doors should pass through think for consistency,
+		// otherwise some flags are set when they're not supposed to
+		self.think = door_move_down;
+		self.nextthink = self.ltime + 0.013 + (self.owner.maxdelay + self.owner.mindelay - self.delay);
+	}
 
 };
 
-void() door_go_up =
-{
+void() door_go_up = {
 	if (self.owner.groupstate == STATE_UP)
 		return;		// already going up
 
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
-
+ 	
+ 	// door group is still moving the other way
 	if(self.owner.movingback){
 
+		// if this door has already stopped closing, wait the same time passed since that before opening 
 		if(self.state == STATE_BOTTOM){
 			self.think = door_move_up;
 			self.nextthink = self.ltime + 0.013 + (time - self.lastclose);
-			//dprint("------------ MOVING BACK - think move -------------------\n");
 
 		}
-		else {
+		else { // if door is still moving, move the other way immediately
 			self.think = door_move_up;
 			self.nextthink = self.ltime + 0.013;
-			//dprint("------------ MOVING BACK - instant move -------------------\n");
 		}
 	} else {
+		// Normal movement.
+		// All doors should pass through think for consistency,
+		// otherwise some flags are set when they're not supposed to
 		self.think = door_move_up;
 		self.nextthink = self.ltime + 0.013 + self.delay;
-		//dprint("---------------- OPENING -------------------\n");
 	}
-	
-	/*
-	dprint("self.ltime: ");dprint(ftos(self.ltime));dprint("\n");
-	dprint("self.nextthink: ");dprint(ftos(self.nextthink));dprint("\n");
-	dprint("time: ");dprint(ftos(time));dprint(";\n");
-	dprint("self.lastclose: ");dprint(ftos(self.lastclose));dprint("\n");
-	dprint("difference: ");dprint(ftos(time - self.lastclose));dprint("\n");
-	*/
-		
+			
 };
 
 void() door_group_go_up = {
@@ -314,11 +313,13 @@ void() door_group_go_up = {
 		self.owner.nextthink = self.owner.ltime + self.owner.wait;
 		return;
 	}
-
-	oself = self;
+	
+	// Door group is still moving the other way
 	if(self.owner.groupstate == STATE_DOWN) {
 		self.owner.movingback = TRUE;
 	}
+
+	oself = self;
 	starte = self;
 	do
 	{
@@ -328,10 +329,15 @@ void() door_group_go_up = {
 
 	self = oself;
 	self.owner.movingback = FALSE;
-}
+};
 
 void() door_group_go_down = {
 	local entity starte, oself;
+
+	// Door group is still moving the other way
+	if(self.owner.groupstate == STATE_UP) {
+		self.owner.movingback = TRUE;
+	}
 
 	oself = self;
 	starte = self;
@@ -342,7 +348,7 @@ void() door_group_go_down = {
 	} while ( (self != starte) && (self != world) );
 
 	self = oself;
-}
+};
 
 /*
 =============================================================================
@@ -483,6 +489,7 @@ SPAWNING FUNCTIONS
 */
 
 
+
 entity(vector fmins, vector fmaxs) spawn_field =
 {
 	local entity	trigger;
@@ -500,21 +507,47 @@ entity(vector fmins, vector fmaxs) spawn_field =
 	return (trigger);
 };
 
+void() spawn_field_think =
+{
+	self.trigger_field = spawn_field(self.cmins, self.cmaxs);
+};
+
+
+void(entity door) setupTriggerField = {
+	local entity oself;
+
+	oself = self;
+	self = door;
+
+	if (self.owner == self && self.targetname == "" && !keylock_has_key_set()) {
+		self.think = spawn_field_think;
+		self.nextthink = self.ltime + 0.1;
+	}
+
+	self = oself;
+}
 
 float (entity e1, entity e2) EntitiesTouching =
 {
-	if (e1.mins_x > e2.maxs_x)
+	if (e1.mins_x > e2.maxs_x) {
 		return FALSE;
-	if (e1.mins_y > e2.maxs_y)
+	}
+	if (e1.mins_y > e2.maxs_y){
 		return FALSE;
-	if (e1.mins_z > e2.maxs_z)
+	}
+	if (e1.mins_z > e2.maxs_z){
 		return FALSE;
-	if (e1.maxs_x < e2.mins_x)
+	}
+	if (e1.maxs_x < e2.mins_x){
 		return FALSE;
-	if (e1.maxs_y < e2.mins_y)
+	}
+	if (e1.maxs_y < e2.mins_y){
 		return FALSE;
-	if (e1.maxs_z < e2.mins_z)
+	}
+	if (e1.maxs_z < e2.mins_z){
 		return FALSE;
+	}
+
 	return TRUE;
 };
 
@@ -522,10 +555,128 @@ float (entity e1, entity e2) EntitiesTouching =
 /*
 =============
 LinkDoors
-
-
+New version by bmFbr
 =============
 */
+void(entity d1) LinkDoorsEntity;
+
+// Runs from a temporary entity created on worldspawn
+void() LinkDoors2 = {
+	local entity d1, next, lastfound;
+
+	d1 = find(world, classname, "func_door");
+ 	lastfound = d1;
+
+	while(d1) {
+		if (!d1.doorlooped) {
+			LinkDoorsEntity(d1);
+		}
+
+		next = getNextDoorQ();
+
+		if(next) d1 = next;
+		else {
+			d1 = find(lastfound, classname, "func_door");
+			lastfound = d1;
+		}
+	}
+
+	remove(self);
+};
+
+void(entity d1) LinkDoorsEntity = {
+	local entity d2, groupdoor, newdoor;
+	
+	if (d1.spawnflags & DOOR_DONT_LINK) {
+		d1.owner = d1;
+		d1.enemy = d1;
+		d1.lastenemy = d1;
+		d1.doorlooped = TRUE;
+		setupTriggerField(d1);
+		return;
+	}
+	
+	d2 = find(world, classname, d1.classname);
+	
+	while (d2) {
+		if (!(d1.owner && d2.owner) && !(d2.spawnflags & DOOR_DONT_LINK) && d2 != d1) {
+			if ((EntitiesTouching(d1,d2) && !d1.groupname && !d2.groupname) || (d1.groupname && d2.groupname == d1.groupname)) {
+				
+				if(!d1.owner && !d2.owner) { // if neither door has an owner then start a new group with d1 as master
+					d1.owner = d1;
+					d1.enemy = d1;
+					d1.lastenemy = d1;
+				}
+
+				if (d1.owner) { // d1 belongs to a group, d2 doesn't, so add d2 to d1's group
+					groupdoor = d1;
+					newdoor = d2;
+				}
+				else { // d2 belongs to a group, d1 doesn't, so add d1 to d2's group
+					groupdoor = d2;
+					newdoor = d1;
+				}
+
+				newdoor.owner = groupdoor.owner; 
+				newdoor.enemy = groupdoor.owner; // newdoor will be the last in the chain, so it should point to the beginning (master door)
+				groupdoor.owner.lastenemy.enemy = newdoor; // lastenemy will probably be groupdoor by this time, but not necessarily, so I reference the previous lastenemy
+				groupdoor.owner.lastenemy = newdoor; // newdoor is the last in the chain
+				
+				// min and max group delay for open/close timings calculation
+				if (newdoor.delay > groupdoor.owner.maxdelay) groupdoor.owner.maxdelay = newdoor.delay;
+				if (newdoor.delay < groupdoor.owner.mindelay) groupdoor.owner.mindelay = newdoor.delay;
+
+				// expand trigger field if necessary
+				if (newdoor.mins_x < groupdoor.owner.cmins_x)
+					groupdoor.owner.cmins_x = newdoor.mins_x;
+				if (newdoor.mins_y < groupdoor.owner.cmins_y)
+					groupdoor.owner.cmins_y = newdoor.mins_y;
+				if (newdoor.mins_z < groupdoor.owner.cmins_z)
+					groupdoor.owner.cmins_z = newdoor.mins_z;
+				if (newdoor.maxs_x > groupdoor.owner.cmaxs_x)
+					groupdoor.owner.cmaxs_x = newdoor.maxs_x;
+				if (newdoor.maxs_y > groupdoor.owner.cmaxs_y)
+					groupdoor.owner.cmaxs_y = newdoor.maxs_y;
+				if (newdoor.maxs_z > groupdoor.owner.cmaxs_z)
+					groupdoor.owner.cmaxs_z = newdoor.maxs_z;
+
+				// 
+				if (newdoor.health)
+					groupdoor.owner.health = newdoor.health;
+				if (newdoor.targetname != "")
+					groupdoor.owner.targetname = newdoor.targetname;
+				if (newdoor.message != "")
+					groupdoor.owner.message = newdoor.message;
+					
+				// Add newly linked door to the queue.
+				// Door queue creates a "path" between potentially linking doors from the group to prevent
+				// isolated ones (due to entity creation order) from starting a new group.
+				if(!newdoor.doorlooped && newdoor.dqplace == -1)
+					addDoorQ(newdoor);
+			}
+		}
+
+		d2 = find(d2, classname, d1.classname);
+	}
+
+	// if no other connecting door has been found, then create a group with itself
+	if (!d1.owner) {
+		d1.owner = d1;
+		d1.enemy = d1;
+		d1.lastenemy = d1;
+	}
+	
+	// Shootable, fired, or key doors just needed the owner/enemy links,
+	// they don't spawn a field
+	setupTriggerField(d1);
+
+	// Mark door as looped so it will never loop again.
+	d1.doorlooped = TRUE;
+};
+
+
+
+// Original LinkDoors function by ran by the door's think callback, not used anymore
 void() LinkDoors =
 {
 	local entity	t, starte;
@@ -544,7 +695,7 @@ void() LinkDoors =
 	
 	starte = self;
 	t = self;
-	
+
 	do
 	{
 		self.owner = starte;			// master door
@@ -578,7 +729,7 @@ void() LinkDoors =
 			return;
 		}
 
-		if ((EntitiesTouching(self,t) && !self.groupname) || (self.groupname && t.groupname == self.groupname))
+		if ((EntitiesTouching(self,t) && !self.groupname && !t.groupname) || (self.groupname && t.groupname == self.groupname))
 		{
 			if (t.enemy)
 				objerror ("cross connected doors");
@@ -587,8 +738,7 @@ void() LinkDoors =
 			if(t.delay < starte.mindelay) starte.mindelay = t.delay;
 
 
-			self.enemy = t;
-			self = t;
+			t.owner = self.owner;
 
 			if (t.mins_x < cmins_x)
 				cmins_x = t.mins_x;
@@ -686,7 +836,9 @@ void() func_door =
 	self.movetype = MOVETYPE_PUSH;
 	setorigin (self, self.origin);	
 	setmodel (self, self.model);
-	self.classname = "door";
+
+	// why is this needed?
+	//self.classname = "door";
 
 	self.blocked = door_blocked;
 	self.use = door_use;
@@ -772,10 +924,16 @@ void() func_door =
 	}	
 	self.touch = door_touch;
 
+	self.cmaxs = self.maxs;
+	self.cmins = self.mins;
+
 // LinkDoors can't be done until all of the doors have been spawned, so
 // the sizes can be detected properly.
-	self.think = LinkDoors;
-	self.nextthink = self.ltime + 0.1;
+	// LinkDoors is now run on worldspawn
+	//self.think = LinkDoors;
+	//self.nextthink = self.ltime + 0.1;
+
+	self.dqplace = -1;
 
 		// creates a shadow controller entity for the door if it has switchable shadows
 	if(self.switchshadstyle) {
@@ -1021,7 +1179,7 @@ void () func_door_secret =
 	self.angles = '0 0 0';
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
-	self.classname = "door";
+	//self.classname = "door";
 	setmodel (self, self.model);
 	setorigin (self, self.origin);	
 	

@@ -45,6 +45,7 @@
 
 	fog(string) : "Fog Command" :  : "ENGINE only 'console command' for setting fog parameters, Density/R/G/B example = (0.05 0.3 0.3 0.3)."
 	fog_density(float) : "Fog Density" :  : "Global fog density (def 0.1)."
+	skyfog_density(float) : "Skyfog Density" : "0.5" : "How much fog is applied to skybrushes (def 0.5)."
 	fog_colour(color1) : "Fog Colour" :  : "Initial global fog colour (def 0.1 0.1 0.1)."
 
 	take_weapons(flags) = [		
@@ -187,6 +188,16 @@
 	]
 ]
 
+@baseclass = Blood [
+	bloodtype(choices) : "Blood type" : : "Type of particle effect spawned when hit." = [
+		1 : "Blood"
+		2 : "Standard grey chunks"
+		3 : "Brown dirt"
+		4 : "Yellow sparks"
+		5 : "White sparks"
+	]
+]
+
 //
 // Rubicon 2 specific additions
 // New enemies have been added to the monster section
@@ -203,7 +214,7 @@
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname, Target) color(255 128 128) = func_breakable : 
+@SolidClass base(Appearflags, Targetname, Target, Blood) color(255 128 128) = func_breakable : 
 "A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable.
 
 NO_MONSTERS: object ignores damage from monsters" 
@@ -220,6 +231,7 @@ NO_MONSTERS: object ignores damage from monsters"
 	[
 		1 : "No monsters" : 0
 	]
+
 ]
 
 // FUNC_LASER
@@ -289,7 +301,7 @@ When player is touching this entity, he can climb by pushing 'jump'."
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname, Target) color(64 128 64) = func_rotate_door : 
+@PointClass base(Appearflags, Targetname, Target) color(64 128 64) = func_rotate_door : 
 "Creates a door that rotates between two positions around a point of rotation each time it's triggered.
 
 STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once door from closing again when it's blocked."
@@ -310,7 +322,7 @@ STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once d
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
+@PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
 "Creates an entity that continually rotates.  Can be toggled on and off if targeted."
 [
 	deathtype(string) : "Death message"
@@ -396,7 +408,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	event(string) : "Event target"
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = rotate_object :
+@SolidClass base(Appearflags, Targetname, Target) color(0 128 204) = rotate_object :
 "This defines an object to be rotated.  Used as the target of func_rotate_door." []
 
 
@@ -726,7 +738,7 @@ This ugly cyborg can penetrate your heart
 ...and not in a good way." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl"}) = monster_axegrunt :
-"Axe Grunt, 30 health points." []
+"Axe Grunt, 75 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/scor.mdl"}) = monster_scourge :
 "Centroid, 300 health points." []
@@ -755,7 +767,7 @@ Don't shake hands with this crazy bastard!" []
 "Banshee Mech, 1300 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ridlegs.mdl"}) = monster_rider :
-"Takahiro Raiders, 600 health points." []
+"Takahiro Raiders, 777 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/probebod.mdl"}) = monster_probe :
 "Probe, 200 health points." []

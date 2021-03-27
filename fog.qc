@@ -1,9 +1,7 @@
 /*
 ====================
 
-FOG
-
-adapted from similar things czg did in honey_fog.qc god bless him
+Fog controller from Copper
 	
 ====================
 */
@@ -35,6 +33,13 @@ void( entity client, float density, vector color ) fog_save =
 	// save whatever we set the client's fog to in case of saves/loads
 	client.fog_density = density;
 	client.fog_color = color;
+}
+
+void( entity client, float density) skyfog_save =
+{
+	if (client.classname != "player") return;
+	
+	client.skyfog_density = density;
 }
 
 /*
@@ -81,6 +86,21 @@ void( entity client, float density, vector color ) fog_set =
 	
 	
 	fog_save(client, density, color);
+}
+
+
+void( entity client, float density) skyfog_set =
+{
+	if (client.classname != "player") return;
+
+	//stuffcmd(client, "r_showtris 0\n"); return;
+	//dprint("Setting fog: ");dprint(ftos(density));dprint(" ");dprint(ftos(color_x));dprint(" ");dprint(ftos(color_y));dprint(" ");dprint(ftos(color_z));dprint("\n");
+
+	stuffcmd(client, "\nr_skyfog ");
+	stuffcmd_float(client, density);
+	stuffcmd(client, "\n");
+
+	skyfog_save(client, density);
 }
 
 /*
@@ -259,6 +279,7 @@ fog_blendTimeThink
 void() fog_blendTimeThink =
 {
 	float f, d;
+	//float s;
 	vector c;
 	
 	if (time >= self.pain_finished)
@@ -280,11 +301,13 @@ void() fog_blendTimeThink =
 	if (self.state)
 	{
 		d = lerpHermite(self.fog_density, self.fog_density2, f);
+		//s = lerpHermite(self.skyfog_density, self.skyfog_density2, f);
 		c = lerpVectorHermite(self.fog_color, self.fog_color2, f);
 	}
 	else
 	{
 		d = lerpHermite(self.fog_density2, self.fog_density, f);
+		//s = lerpHermite(self.skyfog_density2, self.skyfog_density, f);
 		c = lerpVectorHermite(self.fog_color2, self.fog_color, f);
 	}
 	//dprint("Trying fog: ");dprint(ftos(d));dprint(" ");dprint(ftos(c_x));dprint(" ");dprint(ftos(c_y));dprint(" ");dprint(ftos(c_z));dprint("\n");

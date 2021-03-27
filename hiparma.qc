@@ -759,7 +759,7 @@ void() armagon_repulse_attack =
          {
          if(!(head.flags & FL_NOTARGET) && (head.flags & FL_CLIENT))
             {
-            if (visible(head) && (head.health > 0))
+            if (visible(head) && (head.health > 0))  // originally "if (visible(head) && (head.health > 0))"
                {
                dir = head.origin - (self.origin - '0 0 24');
                dir = normalize(dir);
@@ -924,6 +924,8 @@ void() monster_armagon =
    body.movetype = MOVETYPE_STEP;
    self.trigger_field = body;
    body.trigger_field = self;
+   if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+   body.bloodtype = self.bloodtype;
 
    setmodel (body, "progs/armabody.mdl");
    setmodel (self, "progs/armalegs.mdl");

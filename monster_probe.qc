@@ -69,7 +69,7 @@ void() probe_pulsetouch =
 	org = self.origin - 8 * normalize(self.velocity);
 	if (other.health)
 	{
-		SpawnBlood(org, self.velocity * 0.2, 15);
+		ImpactSpawn(org, self.velocity * 0.2, 15, other.bloodtype);
 		T_Damage(other, self, self.owner, MAX_DROPS);
 	}
 	else
@@ -860,6 +860,8 @@ void() monster_probe =
 		body.movetype = MOVETYPE_STEP;
 		self.trigger_field = body;
 		body.trigger_field = self;
+		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+		body.bloodtype = self.bloodtype;
 		setmodel(self, "progs/probedom.mdl");
 		setmodel(body, "progs/probebod.mdl");
 		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);

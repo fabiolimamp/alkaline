@@ -601,7 +601,13 @@ void() PutClientInServer =
 	}
 
 	spawn_tdeath (self.origin, self);
-	
+
+	if(world.skyfog_density){
+		if(world.skyfog_density == -1)
+			skyfog_set(self, 0);
+		else
+			skyfog_set(self, world.skyfog_density);
+	}
 };
 
 
