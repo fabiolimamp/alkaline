@@ -624,6 +624,7 @@ The behavior of an item_key_custom should be as the player expects (based on the
 @PointClass base(Weapon) model({"path": "progs/g_rock2.mdl"}) = weapon_rocketlauncher : "Rocket launcher" []
 @PointClass base(Weapon) model({"path": "progs/g_light.mdl"}) = weapon_lightning : "Thunderbolt" []
 @PointClass base(Weapon) model({"path": "progs/g_laserg.mdl"}) = weapon_laser_gun : "Laser Cannon" []
+@PointClass base(Weapon) model({"path": "progs/g_saw.mdl"}) = weapon_chainsaw : "Chainsaw" []
 
 //
 // badasses
