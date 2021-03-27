@@ -589,6 +589,7 @@ float	AS_MISSILE		= 4;
 //
 .void()		think1;
 .vector		finaldest, finalangle;
+.string 	target2, target3, target4, targetname2;
 
 //
 // triggers

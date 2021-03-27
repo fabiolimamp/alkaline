@@ -99,9 +99,16 @@
 @baseclass = Targetname [ targetname(target_source) : "Name" ]
 @baseclass = Target [ 
 	target(target_destination) : "Target" 
+	target2(target_destination) : "Target" 
+	target3(target_destination) : "Target" 
+	target4(target_destination) : "Target" 
 	killtarget(target_destination) : "Killtarget"
 ]
 
+@baseclass = SingleTarget [ 
+	target(target_destination) : "Target" 
+	killtarget(target_destination) : "Killtarget"
+]
 
 @baseclass color(255 255 40) = Light [
 	light(integer) : "Brightness" : 300
@@ -1058,7 +1065,7 @@ If you want to make them angry at each other instantly, you can set the spawnfla
 	spawnflags(flags) = [ 1: "Mutual hate" : 0 ]
 ]
 
-@PointClass base(Target, Targetname, Appearflags) color(168 224 255) = misc_lightning_start :
+@PointClass base(SingleTarget, Targetname, Appearflags) color(168 224 255) = misc_lightning_start :
 "Starting point of a lightning trail effect.
 Requires the target to be a misc_lightning_end or a misc_lightning_relay.
 You can create a long, continuous effect by chaining one or more misc_lightning_relays between the start and the end entities.
@@ -1087,7 +1094,7 @@ Set the LT_START_ON spawnflag if you want the lightning to start in a fired stat
 	]
 ]
 
-@PointClass base(Target, Targetname, Appearflags) color(168 224 255) = misc_lightning_relay :
+@PointClass base(SingleTarget, Targetname, Appearflags) color(168 224 255) = misc_lightning_relay :
 "Mid-point of a lightning trail effect. Refer to misc_lightning_start for a more detailed explanation.
 Must target a misc_lightning_end or another misc_lightning_relay.
 
@@ -1109,7 +1116,7 @@ Set 'delay' to the delay before activating the next point in the chain. Default 
 	]
 ]
 
-@PointClass base(Targetname, Appearflags) color(168 224 255) = misc_lightning_end :
+@PointClass base(SingleTarget, Appearflags) color(168 224 255) = misc_lightning_end :
 "Endpoint of a lightning trail effect. Refer to misc_lightning_start for a more detailed explanation."
 []
 
@@ -1643,7 +1650,7 @@ Other than that, this entity functions like a normal button.
 	spawnflags(flags) = [ 1: "Entity only" : 0 ]
 ]
 
-@SolidClass base(Target, Targetname) = trigger_teleport : "Trigger teleport" 
+@SolidClass base(SingleTarget, Targetname) = trigger_teleport : "Trigger teleport" 
 [
 	spawnflags(Flags) =
 	[

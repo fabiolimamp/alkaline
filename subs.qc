@@ -229,9 +229,37 @@ match (string)self.target and call their .use function
 
 ==============================
 */
-void() SUB_UseTargets =
+void(string matchstring, .string matchfield) SUB_UseSpecificTarget =
 {
 	local entity t, stemp, otemp, act;
+
+	act = activator;
+	t = find (world, matchfield, matchstring);
+	while ( t != world )
+	{
+		stemp = self;
+		otemp = other;
+		self = t;
+		other = stemp;
+		if (self.use != SUB_Null)
+		{
+			if (self.use)
+			{
+				//lastnameused = matchstring;
+				self.use ();
+			}
+		}
+		self = stemp;
+		other = otemp;
+		activator = act;
+		t = find (t, matchfield, matchstring);
+	}
+};
+
+
+void() SUB_UseTargets =
+{
+	local entity t;
 
 //
 // check for a delay
@@ -247,6 +275,9 @@ void() SUB_UseTargets =
 		t.message = self.message;
 		t.killtarget = self.killtarget;
 		t.target = self.target;
+		t.target2 = self.target2;
+		t.target3 = self.target3;
+		t.target4 = self.target4;
 		return;
 	}
 	
@@ -280,32 +311,10 @@ void() SUB_UseTargets =
 //
 // fire targets
 //
-	if (self.target)
-	{
-		act = activator;
-		t = world;
-		do
-		{
-			t = find (t, targetname, self.target);
-			if (!t)
-			{
-				return;
-			}
-			stemp = self;
-			otemp = other;
-			self = t;
-			other = stemp;
-			if (self.use != SUB_Null)
-			{
-				if (self.use)
-					self.use ();
-			}
-			self = stemp;
-			other = otemp;
-			activator = act;
-		} while ( 1 );
-	}
-	
+	if (self.target && self.target != "") SUB_UseSpecificTarget(self.target, targetname);
+	if (self.target2 && self.target2 != "") SUB_UseSpecificTarget(self.target2, targetname);
+	if (self.target3 && self.target3 != "") SUB_UseSpecificTarget(self.target3, targetname);
+	if (self.target4 && self.target4 != "") SUB_UseSpecificTarget(self.target4, targetname);
 
 };
 

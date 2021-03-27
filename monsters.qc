@@ -98,7 +98,7 @@ void() walkmonster_start_go =
 	
 	self.flags = self.flags | FL_MONSTER;
 	
-	if (self.target)
+	if (self.target != "")
 	{
 		self.goalentity = self.movetarget = find(world, targetname, self.target);
 		self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
@@ -111,9 +111,10 @@ void() walkmonster_start_go =
 // this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
-		else
+		else {
 			self.pausetime = 99999999;
 			self.th_stand ();
+		}
 	}
 	else
 	{
@@ -223,9 +224,10 @@ void() flymonster_start_go =
 // this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
-		else
+		else {
 			self.pausetime = 99999999;
 			self.th_stand ();
+		}
 	}
 	else
 	{
