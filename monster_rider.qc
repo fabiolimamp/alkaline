@@ -436,7 +436,7 @@ void() rider_rail10 = [51, rider_rail11]{ai_face();rider_think();Rider_Push();ri
 void() rider_rail11 = [52, rider_rail12]{self.torsoframe = 36;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
 void() rider_rail12 = [52, rider_rail13]{self.torsoframe = 37;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
 void() rider_rail13 = [52, rider_rail14]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail14 = [52, rider_rail15]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();sound(self, CHAN_VOICE, "armagon/repel.wav", 1, ATTN_NORM);};
+void() rider_rail14 = [52, rider_rail15]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM);};
 void() rider_rail15 = [52, rider_rail16]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
 void() rider_rail16 = [52, rider_rail17]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
 void() rider_rail17 = [52, rider_rail18]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();rider_rail_shoot();self.attack_finished = time + 2;};
