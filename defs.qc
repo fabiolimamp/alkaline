@@ -950,4 +950,5 @@ void() setup_lightstyles; //lights.qc
 .entity 	lastenemy = oldenemy;
 .float  	doorlooped = count;
 .float 		dqplace = currentammo;
+.float 		activated = strength;
 void() LinkDoors2;

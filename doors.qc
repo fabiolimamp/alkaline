@@ -32,76 +32,7 @@ don't need to set "don't link" on toggling doors anymore.
 
 Door.enemy chains from the master door through all doors linked in the chain.
 
-
-
 */
-
-
-void() door_use_targets =
-{
-	local entity t, stemp, otemp, act;
-
-//
-// print the message
-//
-	if (activator.classname == "player" && self.message != "")
-	{
-		centerprint (activator, self.message);
-		if (!self.noise)
-			sound (activator, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
-	}
-
-//
-// kill the killtagets
-//
-	if (self.killtarget)
-	{
-		//johnfitz -- fix for "killtarget" prevents "target" from firing
-		t = find (world, targetname, self.killtarget);
-		while (t)
-		{
-			if(t.switchshadstyle) lightstyle(t.switchshadstyle, "m");
-			remove (t);
-			t = find (t, targetname, self.killtarget);
-		}
-		//johnfitz
-	}
-	
-//
-// fire targets
-//
-	if (self.target)
-	{
-		act = activator;
-		t = world;
-		do
-		{
-			t = find (t, targetname, self.target);
-			if (!t)
-			{
-				return;
-			}
-			stemp = self;
-			otemp = other;
-			self = t;
-			other = stemp;
-
-			// Don't fire the target if it's a door belonging to the same group.
-			// So now you don't need to set "don't link" on toggling doors anymore.
-			if (self.use != SUB_Null)// && !(self.classname == stemp.classname && self.owner == stemp.owner) ) 
-			{
-				if (self.use)
-					self.use ();
-			}
-			self = stemp;
-			other = otemp;
-			activator = act;
-		} while ( 1 );
-	}
-	
-
-};
-
 
 
 /*
@@ -140,29 +71,47 @@ void() door_stop_sound = {
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 };
 
-void() door_hit_top =
-{
-	local entity starte, oself;
+void() door_move_top = {
+	self.velocity = '0 0 0';
+	setorigin(self, self.pos2);
+	self.nextthink = -1;
+	
 	if (!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_stop_sound();
 
 	self.lastopen = time;
 	self.state = STATE_TOP;
+}
+
+void() door_hit_top =
+{
+	local entity starte, oself;
+
+	door_move_top();
 	
 	if (self.delay >= self.owner.maxdelay) { // this is the last door to open
-		self.owner.groupstate = STATE_TOP; 
+
 
 		oself = self;
 		starte = self;
 		do {
 			if (self.spawnflags & DOOR_SOUND_DURING_DELAY) door_stop_sound();
+
+			// Force all doors still moving to stop at their final top position and clear calcmove stuff.
+			// This should be a problem only with the master door, since its think function will be redefined now,
+			// but check on every door in the group just to be sure
+			if(self.state != STATE_TOP)
+				door_move_top();
+
 			self = self.enemy;
 		} while ( (self != starte) && (self != world) );
 		self = oself;
 
+		self.owner.groupstate = STATE_TOP;
 
 		if (self.spawnflags & DOOR_TOGGLE)
 			return;		// don't come down automatically
-
+		
+		
 		self.owner.think = door_group_go_down;
 		self.owner.nextthink = self.owner.ltime + self.owner.wait;
 	}
@@ -194,8 +143,9 @@ void() door_move_up = {
 	self.state = STATE_UP;
 	self.owner.groupstate = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
+	self.owner.activated = FALSE;
 
-	door_use_targets();
+	SUB_UseTargets();
 
 	if(self.switchshadstyle) {
 		shadow = self.shadowcontroller;
@@ -229,6 +179,7 @@ void() door_move_down = {
 		
 	self.state = STATE_DOWN;
 	self.owner.groupstate = STATE_DOWN;
+	self.owner.activated = FALSE;
 	
 	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
 
@@ -393,7 +344,14 @@ void() door_use =
 	self.enemy.message = "";
 	oself = self;
 	self = self.owner;
-	door_fire ();
+
+	// Prevents the group from being fired again on the same frame by other doors in the group.
+	// Can be more performant, but introduces a bug on reset top wait time.
+	// Might rethink this later --bmFbr
+	//if(!self.activated) {
+	//	self.activated = TRUE;
+		door_fire ();
+	//}
 	self = oself;
 };
 
@@ -875,16 +833,19 @@ void() func_door =
 		if(!self.distance) self.distance = 64;
 
 		makevectors (self.mangle);
-		self.movedir = v_forward * self.distance;
+		self.movedir = v_forward;
 
-		self.pos2 = self.pos1 + self.movedir;
+		self.pos2 = self.pos1 + self.movedir * self.distance;
 	}
-	else
-	{
+	else {
 		SetMovedir ();
-		if (!self.lip)
-			self.lip = 8;
-		self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+		if (self.distance) {
+			self.pos2 = self.pos1 + self.movedir * self.distance;
+		}
+		else {
+			if (!self.lip) self.lip = 8;
+			self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+		}
 	}
 
 
