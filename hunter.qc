@@ -817,8 +817,6 @@ void()	monster_hunter	=
 {
 	self.count = 0; //ijed use this value as a counter when killing it
 	
-	self.bloodtype = 1;	//sparks
-	
 	if (deathmatch)
 	{
 		remove(self);

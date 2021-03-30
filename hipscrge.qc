@@ -493,6 +493,8 @@ void() monster_scourge =
    setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
    self.health = 300;
 
+   if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+   
    self.th_stand = scourge_stand1;
    self.th_walk = scourge_walk1;
    self.th_run = scourge_run1;
