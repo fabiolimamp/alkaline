@@ -863,8 +863,8 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 @PointClass base(Appearflags, Targetname) = air_bubbles : "Air bubbles" []
 @PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning" []
 
-@PointClass size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" []
-@PointClass size(0 0 0, 32 32 32) model({"path":"maps/b_exbox2.bsp"}) = misc_explobox2 : "Small nuclear container" []
+@PointClass base(Appearflags, Targetname) size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" []
+@PointClass base(Appearflags, Targetname) size(0 0 0, 32 32 32) model({"path":"maps/b_exbox2.bsp"}) = misc_explobox2 : "Small nuclear container" []
 
 //@PointClass = func_illusionary2 : "Static model"  
 //[

@@ -215,6 +215,9 @@ void () func_explobox_explode =
 	self.takedamage = DAMAGE_NO;
 	self.origin = ((self.absmin + self.absmax) * 0.5);
 	self.classname = "explo_box";
+
+	SUB_UseTargets();
+
 	T_RadiusDamage (self, self, self.dmg, world);
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
