@@ -93,6 +93,25 @@ void() RefreshHull =
 };
 
 /*
+================================
+ItemSize
+jigger the origin and bounds of items with off-center origins so their models
+appear in the center of their bboxes using MATHS
+================================
+*/
+void() ItemSize =
+{
+	if (self.mins != '0 0 0')
+		return;	// not a silly corner-bbox item
+
+	vector offset;
+	offset = '16 16 0';
+	
+	setorigin(self, self.origin + offset);
+	setsize(self, self.mins - offset, self.maxs - offset);
+}
+
+/*
 ============
 PlaceItem
 
@@ -154,6 +173,7 @@ Sets the clipping size and plants the object on the floor
 */
 void() StartItem =
 {
+	if(self.itemstyle == ITEMSTYLE_MDL) ItemSize();
 	self.nextthink = time + 0.2;	// items start after other solids
 	self.think = PlaceItem;
 };
@@ -205,39 +225,41 @@ float	H_MEGA = 2;
 void() health_touch;
 void() item_megahealth_rot;
 
+
 void() item_health =
 {	
+	local string model;
 	self.touch = health_touch;
+	if(!self.itemstyle) self.itemstyle = world.itemstyle;
 
 	if (self.spawnflags & H_ROTTEN)
 	{
-		precache_model("maps/b_bh10.bsp");
-
-		precache_sound("items/r_item1.wav");
-		setmodel(self, "maps/b_bh10.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_h15.mdl";
+		else model = "maps/b_bh10.bsp";
 		self.noise = "items/r_item1.wav";
 		self.healamount = 15;
 		self.healtype = 0;
 	}
-	else
-	if (self.spawnflags & H_MEGA)
+	else if (self.spawnflags & H_MEGA)
 	{
-		precache_model("maps/b_bh100.bsp");
-		precache_sound("items/r_item2.wav");
-		setmodel(self, "maps/b_bh100.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL)	model = "progs/m_h100.mdl";
+		else model = "maps/b_bh100.bsp";
 		self.noise = "items/r_item2.wav";
 		self.healamount = 100;
 		self.healtype = 2;
 	}
 	else
 	{
-		precache_model("maps/b_bh25.bsp");
-		precache_sound("items/health1.wav");
-		setmodel(self, "maps/b_bh25.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_h25.mdl";
+		else model = "maps/b_bh25.bsp";
 		self.noise = "items/health1.wav";
 		self.healamount = 25;
 		self.healtype = 1;
 	}
+	precache_model(model);
+	setmodel(self, model);
+	precache_sound(self.noise);
+
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -886,20 +908,25 @@ float WEAPON_BIG2 = 1;
 
 void() item_shells =
 {
+	local string model;
 	self.touch = ammo_touch;
+	if(!self.itemstyle) self.itemstyle = world.itemstyle;
 
 	if (self.spawnflags & WEAPON_BIG2)
 	{
-		precache_model ("maps/b_shell1.bsp");
-		setmodel (self, "maps/b_shell1.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_shell2.mdl";
+		else model = "maps/b_shell1.bsp";
 		self.aflag = 40;
 	}
 	else
 	{
-		precache_model ("maps/b_shell0.bsp");
-		setmodel (self, "maps/b_shell0.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_shell1.mdl";
+		else model = "maps/b_shell0.bsp";
 		self.aflag = 20;
 	}
+
+	precache_model (model);
+	setmodel (self, model);
 	self.weapon = 1;
 	self.netname = "shells";
 	setsize (self, '0 0 0', '32 32 56');
@@ -911,20 +938,25 @@ void() item_shells =
 
 void() item_spikes =
 {
+	local string model;
 	self.touch = ammo_touch;
+	if(!self.itemstyle) self.itemstyle = world.itemstyle;
 
 	if (self.spawnflags & WEAPON_BIG2)
 	{
-		precache_model ("maps/b_nail1.bsp");
-		setmodel (self, "maps/b_nail1.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_nails2.mdl";
+		else model = "maps/b_nail1.bsp";
 		self.aflag = 50;
 	}
 	else
 	{
-		precache_model ("maps/b_nail0.bsp");
-		setmodel (self, "maps/b_nail0.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_nails1.mdl";
+		else model = "maps/b_nail0.bsp";
 		self.aflag = 25;
 	}
+
+	precache_model (model);
+	setmodel (self, model);
 	self.weapon = 2;
 	self.netname = "nails";
 	setsize (self, '0 0 0', '32 32 56');
@@ -936,20 +968,25 @@ void() item_spikes =
 
 void() item_rockets =
 {
+	local string model;
 	self.touch = ammo_touch;
+	if(!self.itemstyle) self.itemstyle = world.itemstyle;
 
 	if (self.spawnflags & WEAPON_BIG2)
 	{
-		precache_model ("maps/b_rock1.bsp");
-		setmodel (self, "maps/b_rock1.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_rock2.mdl";
+		else model = "maps/b_rock1.bsp";
 		self.aflag = 10;
 	}
 	else
 	{
-		precache_model ("maps/b_rock0.bsp");
-		setmodel (self, "maps/b_rock0.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_rock1.mdl";
+		else model = "maps/b_rock0.bsp";
 		self.aflag = 5;
 	}
+
+	precache_model (model);
+	setmodel (self, model);
 	self.weapon = 3;
 	self.netname = "rockets";
 	setsize (self, '0 0 0', '32 32 56');
@@ -962,20 +999,25 @@ void() item_rockets =
 
 void() item_cells =
 {
+	local string model;
 	self.touch = ammo_touch;
+	if(!self.itemstyle) self.itemstyle = world.itemstyle;
 
 	if (self.spawnflags & WEAPON_BIG2)
 	{
-		precache_model ("maps/b_batt1.bsp");
-		setmodel (self, "maps/b_batt1.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_cells2.mdl";
+		else model = "maps/b_batt1.bsp";
 		self.aflag = 12;
 	}
 	else
 	{
-		precache_model ("maps/b_batt0.bsp");
-		setmodel (self, "maps/b_batt0.bsp");
+		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_cells1.mdl";
+		else model = "maps/b_batt0.bsp";
 		self.aflag = 6;
 	}
+
+	precache_model (model);
+	setmodel (self, model);
 	self.weapon = 4;
 	self.netname = "cells";
 	setsize (self, '0 0 0', '32 32 56');

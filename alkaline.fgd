@@ -80,6 +80,10 @@
 	ammo_rockets(integer) : "Rockets on start" : : "Override the rockets amount on startup. Set to -1 to force it to 0."
 	ammo_cells(integer) : "Cells on start" : : "Override the cells amount on startup. Set to -1 to force it to 0."
 
+	itemstyle(choices) : "Item box style" : 1 : "Which style of item box model will be rendered in-game. Applies to health and ammo pickups." = [
+		1 : "BSP item boxes, from RRP"
+		2 : "MDL item boxes, from Copper"
+	]
 ]
 
 //
@@ -202,6 +206,14 @@
 		3 : "Brown dirt"
 		4 : "Yellow sparks"
 		5 : "White sparks"
+	]
+]
+
+@baseclass = ItemStyle [
+	itemstyle(choices) : "Item box style" : : "Which style of item box model will be rendered in-game." = [
+		0 : "Use worldspawn-defined value"
+		1 : "BSP item box, from RRP"
+		2 : "MDL item box, from Copper"
 	]
 ]
 
@@ -481,7 +493,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	respawncount(integer) : "How many respawns?"
 ]
 
-@baseclass size(0 0 0, 32 32 56) color(80 0 200) base(RespawnableItem, Appearflags) = Ammo
+@baseclass size(0 0 0, 32 32 56) color(80 0 200) base(RespawnableItem, Appearflags, ItemStyle) = Ammo
 [
 	spawnflags(flags) = 
 	[
@@ -514,9 +526,10 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
         }}
     ) = item_spikes : "Perforator/Nailgun ammo" []
 
-@PointClass size(0 0 0, 32 32 56) base(RespawnableItem, Appearflags) model(
+@PointClass size(0 0 0, 32 32 56) base(RespawnableItem, Appearflags, ItemStyle) model(
         {{
-            spawnflags & 2 ->   ":maps/b_bh100.bsp",
+			spawnflags & 2 ->   ":maps/b_bh100.bsp",
+            //spawnflags & 2 ->   ":progs/m_h100.mdl",
             spawnflags & 1 ->   ":maps/b_bh10.bsp",
                                 ":maps/b_bh25.bsp"
         }}

@@ -427,6 +427,10 @@ float   SPAWN_WHITESPARK	= 5;
 
 float START_OFF = 1;
 
+// item style
+float ITEMSTYLE_BSP = 1;
+float ITEMSTYLE_MDL = 2;
+
 //================================================
 
 #define _MAX_ENTITY_QUEUE 256
@@ -903,6 +907,8 @@ float() CheckValidTouch;
 .float customkeys;
 
 .float style2; //c0burn's switchable lights
+
+.float itemstyle = style;
 
 string(float num) lightstyle_fade_lookup; //addition by bmFbr for switchable shadows
 void() misc_shadowcontroller;
