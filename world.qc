@@ -326,6 +326,8 @@ void() worldspawn =
 
 	setup_lightstyles();
 
+	if(!self.itemstyle) self.itemstyle = ITEMSTYLE_BSP;
+
 	lastdq = -1;
 	currentdq = -1;
 
