@@ -90,3 +90,5 @@ fog.qc
 func_bob.qc
 
 gravity.qc
+
+plasma.qc

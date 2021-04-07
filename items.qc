@@ -1,5 +1,7 @@
 void (vector org) spawn_tfog;
 void() W_SetCurrentAmmo;
+void() weapon_plasmagun;
+
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
 
@@ -471,21 +473,23 @@ float(float w) RankForWeapon =
 {
 	if (w == IT_LIGHTNING)
 		return 1;
-	if (w == WEAPON_CHAINSAW)
+	if (w == WEAPON_PLASMA)
 		return 2;
-	if (w == IT_ROCKET_LAUNCHER)
+	if (w == WEAPON_CHAINSAW)
 		return 3;
-	if (w == IT_LASER_CANNON)
+	if (w == IT_ROCKET_LAUNCHER)
 		return 4;
-	if (w == IT_SUPER_NAILGUN)
+	if (w == IT_LASER_CANNON)
 		return 5;
-	if (w == IT_GRENADE_LAUNCHER)
+	if (w == IT_SUPER_NAILGUN)
 		return 6;
-	if (w == IT_SUPER_SHOTGUN)
+	if (w == IT_GRENADE_LAUNCHER)
 		return 7;
-	if (w == IT_NAILGUN)
+	if (w == IT_SUPER_SHOTGUN)
 		return 8;
-	return 8;
+	if (w == IT_NAILGUN)
+		return 9;
+	return 9;
 };
 
 /*
@@ -621,6 +625,17 @@ void() weapon_touch =
 		new = WEAPON_CHAINSAW;
 		extra_weapon = TRUE;
 		hadammo = other.ammo_rockets;
+	}
+	else if (self.classname == "weapon_plasmagun")     
+	{ 
+		if (leave && (other.extra_items & IT_PLASMA))
+			return;
+			
+		other.extra_items = other.extra_items | IT_PLASMA;
+		new = WEAPON_PLASMA;
+		extra_weapon = TRUE;
+		hadammo = other.ammo_rockets;
+		other.ammo_cells = other.ammo_cells + 15;
 	}
 	else
 		objerror ("weapon_touch: unknown classname");
@@ -1498,6 +1513,8 @@ void() DropBackpack =
 		item.netname = "Thunderbolt";
 	else if (item.items == IT_LASER_CANNON)
 		item.netname = "Laser Cannon";
+	else if (item.items == WEAPON_PLASMA)
+		item.netname = "Plasma Gun";
 	else if (item.items == WEAPON_CHAINSAW)
 		item.netname = "Chainsaw";
 	else

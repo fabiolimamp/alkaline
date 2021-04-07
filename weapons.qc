@@ -1,4 +1,6 @@
 void() player_chainsaw1;
+void() W_FirePlasma;
+void() Plasma_PreCache;
 
 // called by worldspawn
 void() W_Precache =
@@ -21,6 +23,8 @@ void() W_Precache =
 	
 	precache_sound ("hipweap/laserg.wav");		// laser cannon
 	precache_sound ("hipweap/laserric.wav");	// laser cannon ricochet
+	
+	Plasma_PreCache();
 };
 
 float() crandom =
@@ -915,6 +919,13 @@ void() W_SetCurrentAmmo =
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
 	}
+	else if (self.weapon == WEAPON_PLASMA)
+	{
+		self.currentammo = self.ammo_cells;
+		self.weaponmodel = "progs/v_plasma.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_CELLS;
+	}
 	else if (self.weapon == IT_GRENADE_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
@@ -951,6 +962,8 @@ float(float items, float extra_items, float shells, float nails, float cells, fl
 		return IT_LIGHTNING;
 	if(cells >= 1 && (items & IT_LASER_CANNON) )
 		return IT_LASER_CANNON;
+	if(cells >= 1 && extra_items & IT_PLASMA)
+		return WEAPON_PLASMA;
 	if(nails >= 2 && (items & IT_SUPER_NAILGUN) )
 		return IT_SUPER_NAILGUN;
 	if(shells >= 2 && (items & IT_SUPER_SHOTGUN) )
@@ -988,7 +1001,8 @@ float(float currentweapon, float shells, float nails, float rockets, float cells
 		(currentweapon == IT_GRENADE_LAUNCHER && rockets >= 1) ||
 		(currentweapon == IT_ROCKET_LAUNCHER && rockets >= 1) ||
 		(currentweapon == IT_LIGHTNING && cells >= 1) ||
-		(currentweapon == IT_LASER_CANNON && cells >= 1)
+		(currentweapon == IT_LASER_CANNON && cells >= 1) ||
+		(currentweapon == WEAPON_PLASMA && cells >= 1)
 	) return TRUE;
 	else return FALSE;
 };
@@ -1097,6 +1111,12 @@ void() W_Attack =
 	{
 		player_laser1();
 	}
+	else if (self.weapon == WEAPON_PLASMA)
+	{
+		player_shot1(); // Uses the same player animation as shotgun
+		W_FirePlasma();
+		self.attack_finished = time + 0.05;
+	}
 	else if (self.weapon == WEAPON_CHAINSAW)
 	{
 		player_chainsaw1();
@@ -1176,20 +1196,42 @@ void() W_ChangeWeapon =
 			am = 1;
 	}
 	else if (self.impulse == 8)
-
 	{
-		if (self.weapon & IT_LIGHTNING)
-	{
-		fl = IT_LASER_CANNON;
-	}
-	else if (self.weapon & IT_LASER_CANNON)
-	{
-		fl = IT_LIGHTNING;
-	}
-	else
-	{
-		fl = IT_LIGHTNING;
-	}
+		if (self.weapon == IT_LIGHTNING)
+		{
+			fl = IT_LASER_CANNON;
+		}
+		else if (self.weapon == IT_LASER_CANNON)
+		{
+			fl = 0;
+			self.impulse = 0;
+			if (self.extra_items & IT_PLASMA)
+			{
+				if (self.ammo_cells < 1)
+				{	// don't have the ammo
+					sprint (self, "not enough ammo.\n");
+					return;
+				}
+				
+				sprint(self, "Plasma gun selected\n");
+				self.weapon = WEAPON_PLASMA;
+				W_SetCurrentAmmo ();
+				return;
+			}
+			else
+			{
+				fl = IT_LIGHTNING;
+			}
+		}
+		
+		else if (self.weapon == WEAPON_PLASMA)
+		{
+			fl = IT_LIGHTNING;
+		}
+		else
+		{
+			fl = IT_LIGHTNING;
+		}
 		if (self.ammo_cells < 1)
 			am = 1;
 	}
@@ -1211,6 +1253,28 @@ void() W_ChangeWeapon =
 		else
 		{
 			sprint (self, "No chainsaw available...\n");
+		}
+		
+		return;
+	}
+	
+	else if (self.impulse == 227)
+	{
+		fl = 0;
+		self.impulse = 0;
+		if (self.extra_items & IT_PLASMA)
+		{
+			if (self.ammo_cells < 1)
+			{	// don't have the ammo
+				sprint (self, "not enough ammo.\n");
+				return;
+			}
+			self.weapon = WEAPON_PLASMA;
+			W_SetCurrentAmmo ();
+		}
+		else
+		{
+			sprint (self, "No Plasma Gun available...\n");
 		}
 		
 		return;
@@ -1268,6 +1332,7 @@ void() CheatCommand =
 	self.items = self.items | IT_LASER_CANNON;
 	
 	self.extra_items = self.extra_items | IT_CHAINSAW;
+	self.extra_items = self.extra_items | IT_PLASMA;
 	
 	self.weapon = IT_ROCKET_LAUNCHER;
 	self.impulse = 0;
@@ -1290,7 +1355,7 @@ void() CycleWeaponCommand =
 	
 	//johnfitz
 	if (!(it & (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON)) 
-		&& !(self.extra_items & IT_CHAINSAW))
+		&& !(self.extra_items & (IT_CHAINSAW | IT_PLASMA)))
 	{
 		self.weapon = IT_NO_WEAPON;
 		W_SetCurrentAmmo ();
@@ -1303,6 +1368,18 @@ void() CycleWeaponCommand =
 		am = 0;
 		
 		if (self.weapon == IT_LASER_CANNON)
+		{
+			if (self.ammo_cells < 1)
+				self.weapon = IT_AXE;
+				
+			if ((self.extra_items & IT_PLASMA) && am == 0)
+			{
+				self.weapon = WEAPON_PLASMA;
+				W_SetCurrentAmmo ();
+				return;
+			}
+		}
+		else if (self.weapon == WEAPON_PLASMA)
 		{
 			self.weapon = IT_AXE;
 		}
@@ -1388,7 +1465,7 @@ void() CycleWeaponReverseCommand =
 
 	//johnfitz
 	if (!(it & (IT_AXE | IT_SHOTGUN | IT_SUPER_SHOTGUN | IT_NAILGUN | IT_SUPER_NAILGUN | IT_GRENADE_LAUNCHER | IT_ROCKET_LAUNCHER | IT_LIGHTNING | IT_LASER_CANNON)) 
-		&& !(self.extra_items & IT_CHAINSAW))
+		&& !(self.extra_items & (IT_CHAINSAW | IT_PLASMA)))
 	{
 		self.weapon = IT_NO_WEAPON;
 		W_SetCurrentAmmo ();
@@ -1400,7 +1477,13 @@ void() CycleWeaponReverseCommand =
 	{
 		am = 0;
 		
-		if (self.weapon == IT_LASER_CANNON)
+		if (self.weapon == WEAPON_PLASMA)
+		{
+			self.weapon = IT_LASER_CANNON;
+			if (self.ammo_cells < 1)
+				am = 1;
+		}
+		else if (self.weapon == IT_LASER_CANNON)
 		{
 			self.weapon = IT_LIGHTNING;
 			if (self.ammo_cells < 1)
@@ -1457,9 +1540,12 @@ void() CycleWeaponReverseCommand =
 		}
 		else if (self.weapon == IT_AXE)
 		{
-			self.weapon = IT_LASER_CANNON;
-			if (self.ammo_cells < 1)
-				am = 1;
+			self.weapon = WEAPON_PLASMA;
+			if (self.ammo_cells >= 1)
+			{
+				W_SetCurrentAmmo ();
+				return;
+			}
 		}
 		
 		if ((it & self.weapon) && am == 0)
@@ -1536,7 +1622,7 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 	
-	if (self.impulse >= 225 && self.impulse <= 226)
+	if (self.impulse >= 225 && self.impulse <= 227)
 		W_ChangeWeapon ();
 	
 	if (self.impulse == 9)

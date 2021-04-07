@@ -314,9 +314,11 @@ float	IT_LASER_CANNON			= 8388608;
 
 ///	Extra Item Mask
 float	IT_CHAINSAW				= 1;
+float	IT_PLASMA				= 2;
 
 ///	extra .weapon number
 float	WEAPON_CHAINSAW			= 3;
+float	WEAPON_PLASMA			= 5;
 
 float   ALL_WEAPONS 			= IT_AXE + IT_SHOTGUN + IT_SUPER_SHOTGUN +
 									IT_NAILGUN + IT_SUPER_NAILGUN +

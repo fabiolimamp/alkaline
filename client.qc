@@ -1581,6 +1581,11 @@ void(entity targ, entity attacker) ClientObituary =
 					deathstring = " was chewed up by ";
 					deathstring2 = "'s bloody chainsaw\n";
 				}
+				if(rnum == IT_PLASMA)
+				{
+					deathstring = " was burned by ";
+					deathstring2 = "\n";
+				}
 				if (rnum == IT_SHOTGUN)
 				{
 					deathstring = " chewed on ";
