@@ -195,9 +195,6 @@ void() W_FireSaw =
 	
 	org = trace_endpos - v_forward*4;
 	
-	if(!trace_ent)
-		return;
-	
 	ent = trace_ent;
 	
 	if (ent.takedamage)
