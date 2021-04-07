@@ -549,7 +549,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 @PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/invulner.mdl" }) =
 	item_artifact_invulnerability : "Pentagram of Protection" []
 @PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/invisibl.mdl" }) =
-	item_artifact_invisibility : "Ring of Shadows" []
+	item_artifact_invisibility : "Invisibility Belt" []
 
 
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 2 }) =
@@ -638,6 +638,7 @@ The behavior of an item_key_custom should be as the player expects (based on the
 @PointClass base(Weapon) model({"path": "progs/g_light.mdl"}) = weapon_lightning : "Thunderbolt" []
 @PointClass base(Weapon) model({"path": "progs/g_laserg.mdl"}) = weapon_laser_gun : "Laser Cannon" []
 @PointClass base(Weapon) model({"path": "progs/g_saw.mdl"}) = weapon_chainsaw : "Chainsaw" []
+@PointClass base(Weapon) model({"path": "progs/g_plasma.mdl"}) = weapon_plasmagun : "Plasma rifle" []
 
 //
 // badasses
