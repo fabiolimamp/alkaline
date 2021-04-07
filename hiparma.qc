@@ -88,7 +88,7 @@ void(float ofs, float turn) armagon_launch_missile =
 // set missile speed
    missile.velocity = vec * 1000;
    missile.angles = vectoangles(vec);
-	missile.touch = T_MissileTouch;
+	missile.touch = T_MissileTouchArma; // changed from T_MissileTouch (less damage now)
 
 // set missile duration
 	missile.nextthink = time + 5;
