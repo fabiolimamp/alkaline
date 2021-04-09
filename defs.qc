@@ -436,11 +436,6 @@ float ITEMSTYLE_MDL = 2;
 
 //================================================
 
-#define _MAX_ENTITY_QUEUE 256
-
-entity doorq[_MAX_ENTITY_QUEUE];
-float lastdq;
-float currentdq;
 
 
 //
@@ -884,7 +879,8 @@ End Malice defs
 
 void(string gibname, float dm) ThrowGib; //meat.qc
 void(string gibname, float dm) ThrowHead; //meat.qc
-void(vector org, vector vel) SpawnMeatSpray;
+void(vector org, vector vel) SpawnMeatSpray; //meat.qc
+void(vector org, vector vel) SpawnBitSpray;
 
 
 
