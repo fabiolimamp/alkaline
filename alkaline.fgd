@@ -550,6 +550,8 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	item_artifact_invulnerability : "Pentagram of Protection" []
 @PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/invisibl.mdl" }) =
 	item_artifact_invisibility : "Invisibility Belt" []
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/trifecta.mdl" }) =
+	item_artifact_trifecta : "Trifecta of Alkaline" []
 
 
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 2 }) =

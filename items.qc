@@ -324,6 +324,7 @@ void() health_touch =
 	SUB_UseTargets();				// fire all targets / killtargets
 };	
 
+
 void() item_megahealth_rot =
 {
 	other = self.owner;
@@ -1273,6 +1274,17 @@ void() powerup_touch =
 		other.super_time = 1;
 		other.super_damage_finished = time + 30;
 	}	
+	
+	if (self.classname == "item_artifact_trifecta")
+	{
+		other.trif_time = 1;
+		other.trif_finished = time + 30;
+		self.nextthink = time + 30;
+		other.health = other.health + 100;
+		self.think = item_megahealth_rot;
+		self.owner = other;		
+		
+	}		
 
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
@@ -1298,6 +1310,27 @@ void() item_artifact_invulnerability =
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 };
+
+/*QUAKED item_artifact_trifecta (0 .5 .8) (-16 -16 -24) (16 16 32)
+Combine 3 powerups, probably invisibility, quad and pentagram
+*/
+void() item_artifact_trifecta =
+{
+	self.touch = powerup_touch;
+
+	precache_model ("progs/trifecta.mdl");
+	precache_sound ("items/damage.wav");
+	precache_sound ("items/damage2.wav");
+	precache_sound ("items/damage3.wav");
+	self.noise = "items/damage.wav";
+	setmodel (self, "progs/trifecta.mdl");
+	self.netname = "Trifecta";
+	self.items = IT_TRIFECTA;
+	setsize (self, '-16 -16 -24', '16 16 32');
+	StartItem ();
+};
+
+
 
 /*QUAKED item_artifact_envirosuit (0 .5 .8) (-16 -16 -24) (16 16 32)
 Player takes no damage from water or slime for 30 seconds

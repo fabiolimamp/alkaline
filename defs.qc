@@ -311,6 +311,7 @@ float	IT_INVULNERABILITY		= 1048576;
 float	IT_SUIT					= 2097152;
 float	IT_QUAD					= 4194304;
 float	IT_LASER_CANNON			= 8388608;
+float	IT_TRIFECTA				= 16777216;
 
 ///	Extra Item Mask
 float	IT_CHAINSAW				= 1;
@@ -526,11 +527,13 @@ float	AS_MISSILE		= 4;
 .float		invincible_finished;
 .float		invisible_finished;
 .float		super_damage_finished;
+.float		trif_finished;
 .float		radsuit_finished;
 
 .float		invincible_time, invincible_sound;
 .float		invisible_time, invisible_sound;
 .float		super_time, super_sound;
+.float		trif_time;
 .float		rad_time;
 .float		fly_sound;
 
@@ -575,7 +578,6 @@ float	AS_MISSILE		= 4;
 //
 .float 		pausetime;
 .entity 	movetarget;
-
 .entity		sibling;
 
 //

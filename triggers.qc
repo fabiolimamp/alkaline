@@ -356,7 +356,7 @@ void() tdeath_touch =
 // frag anyone who teleports in on top of an invincible player
 	if (other.classname == "player")
 	{
-		if (other.invincible_finished > time)
+		if ((other.invincible_finished > time) || (other.trif_finished > time))
 			self.classname = "teledeath2";
 		if (self.owner.classname != "player")
 		{	// other monsters explode themselves
@@ -735,6 +735,7 @@ void() trigger_void_touch =
 	if (other.takedamage)
 	{
 		other.invincible_finished = 0; // kills even with Pentagram, this took forever to figure out!! -- dumptruck_ds
+		other.trif_finished = 0;
 		T_Damage (other, self, self, other.health + 1000 /*, DTH_TRIGGER_VOID, 1, 1*/);
 
 		if (other.flags & FL_MONSTER)

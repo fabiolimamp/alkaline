@@ -129,7 +129,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	damage_attacker = attacker;
 
 // check for quad damage powerup on the attacker
-	if (attacker.super_damage_finished > time)
+	if ((attacker.super_damage_finished > time) || (attacker.trif_finished > time))
 		damage = damage * 4;
 		
 //johnfitz -- special rules for some damage types
@@ -140,7 +140,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 		blocked_by_biosuit = FALSE;
 
 	//don't deplete armor if drowning/burning, or protected by biosuit/pentagram/godmode (note: in ID1 pentagram/godmode doesn't actually protect your armor)
-	if (death_type == "burning" || death_type == "drowning" || blocked_by_biosuit || targ.invincible_finished >= time || targ.flags & FL_GODMODE)
+	if (death_type == "burning" || death_type == "drowning" || blocked_by_biosuit || targ.invincible_finished >= time || targ.trif_finished >= time || targ.flags & FL_GODMODE)
 		ignore_armor = TRUE;
 	else
 		ignore_armor = FALSE;
@@ -186,7 +186,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 // check for godmode or invincibility
 	if (targ.flags & FL_GODMODE)
 		return;
-	if (targ.invincible_finished >= time)
+	if ((targ.invincible_finished >= time) || (targ.trif_finished >= time))
 	{
 		if (targ.invincible_sound < time)//johnfitz -- note that this logic doesn't work because it says "self" instead of "targ" -- not sure if it makes sense to fix it though
 		{

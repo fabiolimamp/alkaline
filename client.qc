@@ -544,12 +544,15 @@ void() PutClientInServer =
 	self.flags = FL_CLIENT;
 	self.air_finished = time + 12;
 	self.dmg = 2;   		// initial water damage
+	self.trif_finished = 0;
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
 	self.gravity = 0;
 	self.wantedgravity = 0;
 	self.invincible_finished = 0;
+	self.trif_finished = 0;	
+	self.trif_time = 0;	
 	self.effects = 0;
 	self.invincible_time = 0;
 	self.customkeys = 0;  // support for item_key_custom -- iw
@@ -788,13 +791,16 @@ void() PlayerRessurect =
 	self.view_ofs = '0 0 22';
 	
 	//lose powerups
-	self.items = self.items - (self.items & (IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) ); 
+	self.items = self.items - (self.items & (IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA) ); 
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
 	self.invincible_finished = 0;
 	self.effects = 0;
 	self.invincible_time = 0;
+	self.trif_time = 0;
+	self.trif_finished = 0;	
+	
 	
 	StopBurning(self);
 
@@ -1176,6 +1182,45 @@ void() CheckPowerups =
 	else
 		self.modelindex = modelindex_player;	// don't use eyes
 
+
+// trifecta
+
+	if (self.trif_finished)
+	{
+	
+// sound and screen flash when items starts to run out
+
+		if (self.trif_finished < time + 3)
+		{
+			if (self.trif_time == 1)
+			{
+				sprint (self, "Trifecta is running out\n");
+				stuffcmd (self, "bf\n");
+				sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
+				self.trif_time = time + 1;
+			}	  
+			
+			if (self.trif_time < time)
+			{
+				self.trif_time = time + 1;
+				stuffcmd (self, "bf\n");
+			}
+		}
+
+		if (self.trif_finished < time)
+		{	// just stopped
+			self.items = self.items - IT_TRIFECTA;
+			self.trif_finished = 0;
+			self.trif_time = 0;
+		}
+		if (self.trif_finished > time)
+			self.effects = self.effects | EF_DIMLIGHT;
+		else
+			self.effects = self.effects - (self.effects & EF_DIMLIGHT);	
+	
+	}
+
+
 // invincibility
 	if (self.invincible_finished)
 	{
@@ -1296,6 +1341,9 @@ void(entity e, float dur) StartBurning =
 	if (e.invincible_finished > time)
 		return;
 		
+	if (e.trif_finished > time)
+		return;		
+		
 	e.burning_finished = time + dur;
 	e.effects = e.effects | EF_DIMLIGHT;
 };
@@ -1333,6 +1381,7 @@ void() CheckBurning = {
 			self.waterlevel >= 3 || 
 			self.radsuit_finished > time || 
 			self.invincible_finished > time || 
+			self.trif_finished > time || 			
 			self.deadflag || 
 			self.view_ofs == '0 0 0')
 		{
