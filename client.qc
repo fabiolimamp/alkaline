@@ -1780,7 +1780,7 @@ void(entity targ, entity attacker) ClientObituary =
             			if (attacker.classname == "monster_scourge")
                				bprint (" was stung by a Centroid\n");
 				if (attacker.classname == "monster_armagon")
-               				bprint (" was outgunned by Armagon\n");
+               				bprint (" was outgunned by Ogregon\n");
 
 				//johnfitz new obituaries
 				if (attacker.classname == "monster_floyd")
