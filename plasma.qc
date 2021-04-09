@@ -122,10 +122,10 @@ void() T_PlasmaTouch =
     remove(self);
     return;
   }
-  damg = 10+random()*50;   // Possibility of gibbing small enemies :)
+  damg = 10 + (self.dmg*50);   // Possibility of gibbing small enemies :)
 
   if (other.classname == "monster_zombie")
-    if (random() < 0.5)        // 50% change of gibbing a zombie...
+    if (self.dmg > 0.5)        // 50% change of gibbing a zombie...
       damg = 1000;             // Otherwise you could never kill them.
   
   if (other.health)
@@ -150,9 +150,14 @@ W_FirePlasma
 void() W_FirePlasma =
 {
   local entity missile;
+  local float rnd;
+
+  rnd = random(); // random multiplier for damage and cell usage
   
-  // Now it only shoots once per cell... Just to make it not so overpowered
-  self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+  // each shot can randomly use 1 to 3 cells
+  self.ammo_cells = clamp(self.ammo_cells - 1 - floor(rnd*2.99), 0, self.ammo_cells); 
+
+  self.currentammo = self.ammo_cells;
 
   // Taken from Doom...
   sound (self, CHAN_WEAPON, "weapons/dsplasma.wav", 1, ATTN_NORM);
@@ -175,6 +180,7 @@ void() W_FirePlasma =
   missile.angles = vectoangles(missile.velocity);
   missile.avelocity = '300 300 300';  
 
+  missile.dmg = rnd; // passes down random damage multiplier to T_PlasmaTouch
   missile.nextthink = time;
   missile.think = Plasma_Watercheck;        // If shot underwater -> razzp!
   missile.touch = T_PlasmaTouch;
