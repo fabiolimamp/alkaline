@@ -3,6 +3,7 @@ void() t_movetarget;
 void() knight_walk1;
 void() knight_bow6;
 void() knight_bow1;
+float() arfCheckAttack;
 void(entity etemp, entity stemp, entity stemp, float dmg) T_Damage;
 /*
 
@@ -399,6 +400,9 @@ else if (self.classname == "monster_banshee")
 //MED
    		else if (self.classname == "monster_armagon")
       			sound (self, CHAN_VOICE, "armagon/sight.wav", 1, 0.1);
+				
+   		else if (self.classname == "monster_arachnofloyd")
+      			sound (self, CHAN_VOICE, "arachnofloyd/sight.wav", 1, ATTN_NORM);				
 };
 
 void() FoundTarget =
@@ -681,6 +685,8 @@ float() CheckAnyAttack =
 		return OgreBCheckAttack ();		
 	if (self.classname == "monster_shambler")
 		return ShamCheckAttack ();
+	if (self.classname == "monster_arachnofloyd")
+		return arfCheckAttack ();		
 	if (self.classname == "monster_demon1")
 		return DemonCheckAttack ();
 	if (self.classname == "monster_dog")
