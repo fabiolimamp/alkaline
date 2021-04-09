@@ -124,15 +124,38 @@ void(vector org, vector vel) SpawnMeatSpray =
 	mvel = vel;
 	mvel_z += 250 + 50 * random();
 
+	
 	meat = toss_projectile(org, mvel, "gib");
 	//meat.solid = SOLID_NOT;
 	meat.type = "gib";
 	meat.avelocity = '3000 1000 2000';
 	meat.lifetime_finished = time + 1;
-	
+
 	SUB_ChangeModel(meat, "progs/zom_gib.mdl");
+	
 }
 
+/*
+================
+SpawnBitSpray
+================
+*/
+void(vector org, vector vel) SpawnBitSpray =
+{
+	entity bit;
+	vector mvel;
+	
+	mvel = vel;
+	mvel_z += 250 + 50 * random();
+
+	bit = toss_projectile(org, mvel, "gib");
+
+	bit.type = "gib";
+	bit.avelocity = '500 300 300';
+	bit.lifetime_finished = time + 1;
+
+	SUB_ChangeModel(bit, "progs/bit.mdl");
+}
 
 //============================================================================
 

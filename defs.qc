@@ -954,6 +954,12 @@ void() setup_lightstyles; //lights.qc
 //
 // new door features
 //
+#define _MAX_ENTITY_QUEUE 256
+
+entity doorq[_MAX_ENTITY_QUEUE];
+float lastdq;
+float currentdq;
+
 .float 		maxdelay, mindelay, lastclose, lastopen, movingback;
 .vector		cmins, cmaxs;
 .float 		groupstate;

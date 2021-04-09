@@ -204,9 +204,15 @@ void() W_FireSaw =
 	if (ent.takedamage)
 	{
 		ent.axhitme = 2;
-		SpawnBlood(trace_endpos, '0 0 5', 20);
-		SpawnMeatSpray (self.origin + v_forward*16, ((random()*300) - 150) * v_right + (100 * v_forward));
-		
+		ImpactSpawn(trace_endpos, '0 0 5', 20, ent.bloodtype);
+
+		if(ent.flags & FL_MONSTER || ent.flags & FL_CLIENT){ // only spawns gibs for monsters and players
+			if(!ent.bloodtype || ent.bloodtype == SPAWN_BLOOD) 
+				SpawnMeatSpray (self.origin + v_forward*16, ((random()*300) - 150) * v_right + (100 * v_forward));
+			else
+				SpawnBitSpray (self.origin + v_forward*16, ((random()*300) - 150) * v_right + (100 * v_forward));
+		}
+
 		if (deathmatch == 0)
 			T_Damage (ent, self, self, 24);
 		else
