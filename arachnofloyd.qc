@@ -517,6 +517,7 @@ void() monster_arachnofloyd =
 	setmodel (self, "progs/arachnofloyd.mdl");
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 600;
+	self.bloodtype = SPAWN_YELLOWSPARK;
 
 	self.th_stand = arf_stand1;
 	self.th_walk = arf_walk1;
