@@ -1175,174 +1175,138 @@ W_ChangeWeapon
 */
 void() W_ChangeWeapon =
 {
-	local	float	am, fl;
+	local float noammo;
+	local float weap;
+	local float item, itemextra;
 	
-	am = 0;
-	self.weaponframe = 0;	
-	
-	if (self.impulse == 1)
-	{
-		if (self.weapon == IT_AXE)
-		{
-			fl = 0;
-			self.impulse = 0;
-			if (self.extra_items & IT_CHAINSAW)
-			{
-				sprint(self, "Chainsaw selected\n");
-				self.weapon = WEAPON_CHAINSAW;
-				W_SetCurrentAmmo ();
+	noammo = 0;
+	self.weaponframe = 0;
+
+	if (self.impulse == 1) {
+		if (!(self.items & IT_AXE) && (self.extra_items & IT_CHAINSAW)) { // has the saw but not the axe
+			weap = WEAPON_CHAINSAW;
+			itemextra = IT_CHAINSAW;
+		}
+		else if (self.weapon == IT_AXE) {
+			if (self.extra_items & IT_CHAINSAW) {
+				weap = WEAPON_CHAINSAW;
+				itemextra = IT_CHAINSAW;
 			}
-			else
-			{
-				sprint (self, "No chainsaw available...\n");
-			}
-			
-			return;
+			else 
+				weap = item = IT_AXE;
 		}
 		else
-			fl = IT_AXE;
+			weap = item = IT_AXE; 
 	}
-	else if (self.impulse == 2)
-	{
-		fl = IT_SHOTGUN;
+	else if (self.impulse == 2)	{
+		weap = item = IT_SHOTGUN;
 		if (self.ammo_shells < 1)
-			am = 1;
+			noammo = 1;
 	}
-	else if (self.impulse == 3)
-	{
-		fl = IT_SUPER_SHOTGUN;
+	else if (self.impulse == 3)	{
+		weap = item = IT_SUPER_SHOTGUN;
 		if (self.ammo_shells < 2)
-			am = 1;
+			noammo = 1;
 	}		
-	else if (self.impulse == 4)
-	{
-		fl = IT_NAILGUN;
+	else if (self.impulse == 4)	{
+		weap = item = IT_NAILGUN;
 		if (self.ammo_nails < 1)
-			am = 1;
+			noammo = 1;
 	}
-	else if (self.impulse == 5)
-	{
-		fl = IT_SUPER_NAILGUN;
+	else if (self.impulse == 5)	{
+		weap = item =  IT_SUPER_NAILGUN;
 		if (self.ammo_nails < 2)
-			am = 1;
+			noammo = 1;
 	}
-	else if (self.impulse == 6)
-	{
-		fl = IT_GRENADE_LAUNCHER;
+	else if (self.impulse == 6)	{
+		weap = item = IT_GRENADE_LAUNCHER;
+		if (self.ammo_rockets < 1) 
+			noammo = 1;
+	}
+	else if (self.impulse == 7)	{
+		weap = item = IT_ROCKET_LAUNCHER;
 		if (self.ammo_rockets < 1)
-			am = 1;
+			noammo = 1;
 	}
-	else if (self.impulse == 7)
-	{
-		fl = IT_ROCKET_LAUNCHER;
-		if (self.ammo_rockets < 1)
-			am = 1;
-	}
-	else if (self.impulse == 8)
-	{
-		if (self.weapon == IT_LIGHTNING)
-		{
-			fl = IT_LASER_CANNON;
-		}
-	else if (self.weapon == IT_LASER_CANNON)
-		{
-			fl = 0;
-			self.impulse = 0;
-			if (self.extra_items & IT_PLASMA)
-			{
-				if (self.ammo_cells < 1)
-				{	// don't have the ammo
-					sprint (self, "not enough ammo.\n");
-					return;
-				}
-				
-				sprint(self, "Plasma gun selected\n");
-				self.weapon = WEAPON_PLASMA;
-				W_SetCurrentAmmo ();
-				return;
+	else if (self.impulse == 8)	{
+		if (self.weapon == IT_LIGHTNING) {
+			if(self.items & IT_LASER_CANNON)
+				weap = item = IT_LASER_CANNON;
+			else {
+				weap = WEAPON_PLASMA;
+				itemextra = IT_PLASMA;
 			}
+		}
+		else if (self.weapon == IT_LASER_CANNON) {
+			if (self.extra_items & IT_PLASMA) {
+				weap = WEAPON_PLASMA;
+				itemextra = IT_PLASMA;
+			}
+			else 
+				weap = item = IT_LIGHTNING;
+		}
+		else if(self.weapon == WEAPON_PLASMA) {
+			if(self.items & IT_LIGHTNING)
+				weap = item = IT_LIGHTNING;
 			else
-			{
-				fl = IT_LIGHTNING;
-			}
+				weap = item = IT_LASER_CANNON;
 		}
-	else if (self.weapon == WEAPON_PLASMA)
-		{
-			fl = IT_LIGHTNING;
+		else if(self.items & IT_LIGHTNING)
+			weap = item = IT_LIGHTNING;
+		else if(self.items & IT_LASER_CANNON)
+			weap = item = IT_LASER_CANNON;
+		else {
+			weap = WEAPON_PLASMA;
+			itemextra = IT_PLASMA;
 		}
-		else
-		{
-			fl = IT_LIGHTNING;
-		}
+
 		if (self.ammo_cells < 1)
-			am = 1;
+			noammo = 1;
 	}
-	else if (self.impulse == 225)
-	{
-		fl = IT_LASER_CANNON;
+	else if (self.impulse == 225) {
+		weap = item = IT_LASER_CANNON;
 		if (self.ammo_cells < 1)
-			am = 1;
+			noammo = 1;
 	}
-	else if (self.impulse == 226)
-	{
-		fl = 0;
-		self.impulse = 0;
-		if (self.extra_items & IT_CHAINSAW)
-		{
-			self.weapon = WEAPON_CHAINSAW;
-			W_SetCurrentAmmo ();
-		}
-		else
-		{
-			sprint (self, "No chainsaw available...\n");
-		}
-		
-		return;
+	else if (self.impulse == 226) {
+		weap = WEAPON_CHAINSAW;
+		itemextra = IT_CHAINSAW;
 	}
-	
-	else if (self.impulse == 227)
-	{
-		fl = 0;
-		self.impulse = 0;
-		if (self.extra_items & IT_PLASMA)
-		{
-			if (self.ammo_cells < 1)
-			{	// don't have the ammo
-				sprint (self, "not enough ammo.\n");
-				return;
-			}
-			self.weapon = WEAPON_PLASMA;
-			W_SetCurrentAmmo ();
-		}
-		else
-		{
-			sprint (self, "No Plasma Gun available...\n");
-		}
-		
-		return;
+	else if (self.impulse == 227) {
+		weap = WEAPON_PLASMA;
+		itemextra = IT_PLASMA;
+		if (self.ammo_cells < 1)
+			noammo = 1;
 	}
+	else 
+		weap = IT_NO_WEAPON; // doesn't work right but does no harm either
 	
 	self.impulse = 0;
 	
-	if(fl)
-	{
-		if (!(self.items & fl))
-		{	// don't have the weapon or the ammo
+
+	if(item) {
+		if (!(self.items & item)) {	// don't have the weapon or the ammo
+			sprint (self, "no weapon.\n");
+			return;
+		}
+	}
+	else if (itemextra) {
+		if (!(self.extra_items & itemextra)) {	// don't have the weapon or the ammo
 			sprint (self, "no weapon.\n");
 			return;
 		}
 	}
 	
-	if (am)
-	{	// don't have the ammo
+	if (noammo) {	// don't have the ammo
 		sprint (self, "not enough ammo.\n");
 		return;
 	}
-
+	
 //
 // set weapon, set ammo
 //
-	self.weapon = fl;
+	self.weapon = weap;
+
 	W_SetCurrentAmmo ();
 };
 
@@ -1684,7 +1648,7 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 	
-	if (self.impulse >= 225 && self.impulse <= 227)
+	if (self.impulse >= 224 && self.impulse <= 227)
 		W_ChangeWeapon ();
 	
 	if (self.impulse == 9)
