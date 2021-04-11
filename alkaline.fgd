@@ -480,6 +480,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 		32 : "Spawn silent" : 0
 		64 : "Trigger spawned" : 0
 		128 : "Suspended in air" : 0
+		32768: "Don't drop on spawn" : 0
 	]
 	// message(string) : "Message"
 	// delay(integer) : "Delay"

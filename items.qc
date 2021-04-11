@@ -9,8 +9,9 @@ BE .8 .3 .4 IN COLOR */
 
 float ITEM_SPAWNSILENT = 32;
 float ITEM_SPAWNED = 64;
-float ITEM_DONTDROP = 128;
+float ITEM_SUSPENDED = 128;
 float ITEM_RESPAWNDM = 16384;
+float ITEM_DONTDROP = 32768;
 
 void() SUB_regen =
 {
@@ -124,32 +125,31 @@ void() PlaceItem =
 {
 	// local float	oldz;
 
-	if ((self.spawnflags & ITEM_DONTDROP))  //ijed Don't drop spawnflag
+	self.mdl = self.model;		// so it can be restored on respawn
+	self.flags = FL_ITEM;
+	self.solid = SOLID_TRIGGER;
+
+	if ((self.spawnflags & ITEM_SUSPENDED)) 
 	{
-		self.mdl = self.model;		// so it can be restored on respawn
-		self.flags = FL_ITEM;		// make extra wide
-		self.solid = SOLID_TRIGGER;
 		self.movetype = MOVETYPE_FLY;
 		self.velocity = '0 0 0';
 	}
-	else
-	{
-		self.mdl = self.model;		// so it can be restored on respawn
-		self.flags = FL_ITEM;		// make extra wide
-		self.solid = SOLID_TRIGGER;
+	else {
 		self.movetype = MOVETYPE_TOSS;
-		self.velocity = '0 0 0';
 
-		setorigin (self, self.origin + '0 0 6');
+		if(!(self.spawnflags & ITEM_DONTDROP)) {	
+			self.velocity = '0 0 0';
+			setorigin (self, self.origin + '0 0 6');
 
-//		oldz = self.origin_z;
-		if (!droptofloor())
-		{
-			dprint ("Bonus item fell out of level at ");
-			dprint (vtos(self.origin));
-			dprint ("\n");
-			remove(self);
-			return;
+	//		oldz = self.origin_z;
+			if (!droptofloor())
+			{
+				dprint ("Bonus item fell out of level at ");
+				dprint (vtos(self.origin));
+				dprint ("\n");
+				remove(self);
+				return;
+			}
 		}
 	}
 
