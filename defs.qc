@@ -135,7 +135,7 @@ void		end_sys_globals;		// flag for structure dumping
 // stats
 .float		health;
 .float		frags;
-.float		weapon;			// one of the IT_SHOTGUN, etc flags
+.float		weapon;			// one of the WEAPON_SHOTGUN, etc flags
 .string		weaponmodel;
 .float		weaponframe;
 .float		currentammo;
@@ -282,16 +282,34 @@ float	DAMAGE_NO				= 0;
 float	DAMAGE_YES				= 1;
 float	DAMAGE_AIM				= 2;
 
+// weapons
+
+float	WEAPON_SHOTGUN				= 1;
+float	WEAPON_SUPER_SHOTGUN		= 2;
+float	WEAPON_NAILGUN				= 4;
+float	WEAPON_SUPER_NAILGUN		= 8;
+float	WEAPON_GRENADE_LAUNCHER		= 16;
+float	WEAPON_ROCKET_LAUNCHER		= 32;
+float	WEAPON_LIGHTNING			= 64;
+
+float	WEAPON_NO_WEAPON			= 128;
+float	WEAPON_CHAINSAW				= 256;
+float	WEAPON_PLASMA				= 512;
+float	WEAPON_LASER_CANNON			= 1024;
+float	WEAPON_AXE					= 4096;
+
+float   ALL_WEAPONS 				= WEAPON_AXE + WEAPON_SHOTGUN + WEAPON_SUPER_SHOTGUN +
+										WEAPON_NAILGUN + WEAPON_SUPER_NAILGUN +
+										WEAPON_GRENADE_LAUNCHER + WEAPON_ROCKET_LAUNCHER +
+										WEAPON_LIGHTNING + WEAPON_LASER_CANNON + WEAPON_PLASMA;
+
+// only the weapons shown in the vanilla HUD
+float 	HUD_WEAPONS					= WEAPON_SHOTGUN + WEAPON_SUPER_SHOTGUN +
+										WEAPON_NAILGUN + WEAPON_SUPER_NAILGUN +
+										WEAPON_GRENADE_LAUNCHER + WEAPON_ROCKET_LAUNCHER +
+										WEAPON_LIGHTNING;
 // items
-float	IT_AXE					= 4096;
-float	IT_SHOTGUN				= 1;
-float	IT_SUPER_SHOTGUN		= 2;
-float	IT_NAILGUN				= 4;
-float	IT_SUPER_NAILGUN		= 8;
-float	IT_GRENADE_LAUNCHER		= 16;
-float	IT_ROCKET_LAUNCHER		= 32;
-float	IT_LIGHTNING			= 64;
-float	IT_NO_WEAPON			= 128;
+// item flags below 128 are reserved for the HUD weapons, don't use them
 
 float	IT_SHELLS				= 256;
 float	IT_NAILS				= 512;
@@ -310,21 +328,9 @@ float	IT_INVISIBILITY			= 524288;
 float	IT_INVULNERABILITY		= 1048576;
 float	IT_SUIT					= 2097152;
 float	IT_QUAD					= 4194304;
-float	IT_LASER_CANNON			= 8388608;
 float	IT_TRIFECTA				= 16777216;
 
-///	Extra Item Mask
-float	IT_CHAINSAW				= 1;
-float	IT_PLASMA				= 2;
 
-///	extra .weapon number
-float	WEAPON_CHAINSAW			= 3;
-float	WEAPON_PLASMA			= 5;
-
-float   ALL_WEAPONS 			= IT_AXE + IT_SHOTGUN + IT_SUPER_SHOTGUN +
-									IT_NAILGUN + IT_SUPER_NAILGUN +
-									IT_GRENADE_LAUNCHER + IT_ROCKET_LAUNCHER +
-									IT_LIGHTNING + IT_LASER_CANNON;
 
 // point content values
 
@@ -481,7 +487,7 @@ nosave float gamestarted;
 .float		style;
 
 
-.float		extra_items;		// extra weapons
+.float		weapons;		// extra weapons
 
 //
 // monster ai

@@ -472,23 +472,23 @@ void() bound_other_ammo =
 
 float(float w) RankForWeapon =
 {
-	if (w == IT_LIGHTNING)
+	if (w == WEAPON_LIGHTNING)
 		return 1;
 	if (w == WEAPON_PLASMA)
 		return 2;
 	if (w == WEAPON_CHAINSAW)
 		return 3;
-	if (w == IT_ROCKET_LAUNCHER)
+	if (w == WEAPON_ROCKET_LAUNCHER)
 		return 4;
-	if (w == IT_LASER_CANNON)
+	if (w == WEAPON_LASER_CANNON)
 		return 5;
-	if (w == IT_SUPER_NAILGUN)
+	if (w == WEAPON_SUPER_NAILGUN)
 		return 6;
-	if (w == IT_GRENADE_LAUNCHER)
+	if (w == WEAPON_GRENADE_LAUNCHER)
 		return 7;
-	if (w == IT_SUPER_SHOTGUN)
+	if (w == WEAPON_SUPER_SHOTGUN)
 		return 8;
-	if (w == IT_NAILGUN)
+	if (w == WEAPON_NAILGUN)
 		return 9;
 	return 9;
 };
@@ -522,10 +522,9 @@ float() W_BestWeapon;
 
 void() weapon_touch =
 {
-	local	float	hadammo, best, new;
+	local	float	best, new;
 	local	entity	stemp;
 	local	float	leave;
-	local	float	extra_weapon;
 
 	if (!(other.flags & FL_CLIENT))
 		return;
@@ -541,105 +540,18 @@ void() weapon_touch =
 	else
 		leave = 0;
 
+	if(!self.weapon)
+		objerror ("weapon_touch: entity's weapon not set");
 	
-	extra_weapon = FALSE;
+	if (leave && (other.weapons & self.weapon) )
+		return;		
 	
-	// johnfitz added for axe, shotgun items
-	if (self.classname == "weapon_axe")
-	{
-		if (leave && (other.items & IT_AXE) )
-			return;		
-		new = IT_AXE;
-	}	
-	else if (self.classname == "weapon_shotgun")
-	{
-		if (leave && (other.items & IT_SHOTGUN) )
-			return;
-		hadammo = other.ammo_shells;			
-		new = IT_SHOTGUN;
-		other.ammo_shells = other.ammo_shells + 5;
-	}	
-	// johnfitz
-	
-	else if (self.classname == "weapon_nailgun")
-	{
-		if (leave && (other.items & IT_NAILGUN) )
-			return;
-		hadammo = other.ammo_nails;			
-		new = IT_NAILGUN;
-		other.ammo_nails = other.ammo_nails + 30;
-	}
-	else if (self.classname == "weapon_supernailgun")
-	{
-		if (leave && (other.items & IT_SUPER_NAILGUN) )
-			return;
-		hadammo = other.ammo_rockets;			
-		new = IT_SUPER_NAILGUN;
-		other.ammo_nails = other.ammo_nails + 30;
-	}
-	else if (self.classname == "weapon_supershotgun")
-	{
-		if (leave && (other.items & IT_SUPER_SHOTGUN) )
-			return;
-		hadammo = other.ammo_rockets;			
-		new = IT_SUPER_SHOTGUN;
-		other.ammo_shells = other.ammo_shells + 5;
-	}
-	else if (self.classname == "weapon_rocketlauncher")
-	{
-		if (leave && (other.items & IT_ROCKET_LAUNCHER) )
-			return;
-		hadammo = other.ammo_rockets;			
-		new = IT_ROCKET_LAUNCHER;
-		other.ammo_rockets = other.ammo_rockets + 5;
-	}
-	else if (self.classname == "weapon_grenadelauncher")
-	{
-		if (leave && (other.items & IT_GRENADE_LAUNCHER) )
-			return;
-		hadammo = other.ammo_rockets;			
-		new = IT_GRENADE_LAUNCHER;
-		other.ammo_rockets = other.ammo_rockets + 5;
-	}
-	else if (self.classname == "weapon_lightning")
-	{
-		if (leave && (other.items & IT_LIGHTNING) )
-			return;
-		hadammo = other.ammo_rockets;			
-		new = IT_LIGHTNING;
-		other.ammo_cells = other.ammo_cells + 15;
-	}
-	else if (self.classname == "weapon_laser_gun")
-	{
-		if (leave && (other.items & IT_LASER_CANNON) )
-			return;
-		hadammo = other.ammo_rockets;
-		new = IT_LASER_CANNON;
-		other.ammo_cells = other.ammo_cells + 30;
-	}
-	else if (self.classname == "weapon_chainsaw")
-	{
-		if (leave && (other.extra_items & IT_CHAINSAW) )
-			return;
-			
-		other.extra_items = other.extra_items | IT_CHAINSAW;
-		new = WEAPON_CHAINSAW;
-		extra_weapon = TRUE;
-		hadammo = other.ammo_rockets;
-	}
-	else if (self.classname == "weapon_plasmagun")     
-	{ 
-		if (leave && (other.extra_items & IT_PLASMA))
-			return;
-			
-		other.extra_items = other.extra_items | IT_PLASMA;
-		new = WEAPON_PLASMA;
-		extra_weapon = TRUE;
-		hadammo = other.ammo_rockets;
-		other.ammo_cells = other.ammo_cells + 15;
-	}
-	else
-		objerror ("weapon_touch: unknown classname");
+	new = self.weapon;
+
+	other.ammo_shells += self.ammo_shells;
+	other.ammo_nails += self.ammo_nails;
+	other.ammo_rockets += self.ammo_rockets;
+	other.ammo_cells += self.ammo_cells;
 
 	sprint (other, "You got the ");
 	sprint (other, self.netname);
@@ -650,11 +562,12 @@ void() weapon_touch =
 
 	bound_other_ammo ();
 
-	if(!extra_weapon)
-	{
+	if(HUD_WEAPONS & new) { // player.items still needed for weapons to show up in the HUD
 		other.items = other.items | new;
 	}
 	
+	other.weapons = other.weapons | new;
+
 	stemp = self;
 	self = other;
 
@@ -663,8 +576,8 @@ void() weapon_touch =
 	else
 		Deathmatch_Weapon (new);
 
-	if (hadammo != IT_CHAINSAW)
-		W_SetCurrentAmmo();
+
+	W_SetCurrentAmmo();
 	
 	self = stemp;
 
@@ -693,7 +606,7 @@ void() weapon_axe =
 {
 	precache_model ("progs/g_axe.mdl");
 	setmodel (self, "progs/g_axe.mdl");
-	self.weapon = IT_AXE;
+	self.weapon = WEAPON_AXE;
 	self.netname = "Axe";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
@@ -707,9 +620,10 @@ void() weapon_shotgun =
 {
 	precache_model ("progs/g_shotgn.mdl");
 	setmodel (self, "progs/g_shotgn.mdl");
-	self.weapon = IT_SHOTGUN;
+	self.weapon = WEAPON_SHOTGUN;
 	self.netname = "Shotgun";
 	self.touch = weapon_touch;
+	if(!self.ammo_shells) self.ammo_shells = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
@@ -723,9 +637,10 @@ void() weapon_supershotgun =
 {
 	precache_model ("progs/g_shot.mdl");
 	setmodel (self, "progs/g_shot.mdl");
-	self.weapon = IT_SUPER_SHOTGUN;
+	self.weapon = WEAPON_SUPER_SHOTGUN;
 	self.netname = "Double-barrelled Shotgun";
 	self.touch = weapon_touch;
+	if(!self.ammo_shells) self.ammo_shells = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
@@ -737,9 +652,10 @@ void() weapon_nailgun =
 {
 	precache_model ("progs/g_nail.mdl");
 	setmodel (self, "progs/g_nail.mdl");
-	self.weapon = IT_NAILGUN;
+	self.weapon = WEAPON_NAILGUN;
 	self.netname = "nailgun";
 	self.touch = weapon_touch;
+	if(!self.ammo_nails) self.ammo_nails = 30;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
@@ -751,9 +667,10 @@ void() weapon_supernailgun =
 {
 	precache_model ("progs/g_nail2.mdl");
 	setmodel (self, "progs/g_nail2.mdl");
-	self.weapon = IT_SUPER_NAILGUN;
+	self.weapon = WEAPON_SUPER_NAILGUN;
 	self.netname = "Super Nailgun";
 	self.touch = weapon_touch;
+	if(!self.ammo_nails) self.ammo_nails = 30;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
@@ -765,9 +682,10 @@ void() weapon_grenadelauncher =
 {
 	precache_model ("progs/g_rock.mdl");
 	setmodel (self, "progs/g_rock.mdl");
-	self.weapon = 3;
+	self.weapon = WEAPON_GRENADE_LAUNCHER;
 	self.netname = "Grenade Launcher";
 	self.touch = weapon_touch;
+	if(!self.ammo_rockets) self.ammo_rockets = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
@@ -779,9 +697,10 @@ void() weapon_rocketlauncher =
 {
 	precache_model ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
-	self.weapon = 3;
+	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.netname = "Rocket Launcher";
 	self.touch = weapon_touch;
+	if(!self.ammo_rockets) self.ammo_rockets = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
@@ -794,9 +713,10 @@ void() weapon_lightning =
 {
 	precache_model ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
-	self.weapon = 3;
+	self.weapon = WEAPON_LIGHTNING;
 	self.netname = "Thunderbolt";
 	self.touch = weapon_touch;
+	if(!self.ammo_cells) self.ammo_cells = 15;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
@@ -807,7 +727,7 @@ void() weapon_chainsaw =
 {
 	precache_model ("progs/g_saw.mdl");
 	setmodel (self, "progs/g_saw.mdl");
-	self.weapon = 3;
+	self.weapon = WEAPON_CHAINSAW;
 	self.netname = "Chainsaw";
 	self.touch = weapon_touch;
 	setsize (self, '-16 -16 0', '16 16 56');
@@ -815,6 +735,20 @@ void() weapon_chainsaw =
 	//dprint("ERROR: change to weapon_nailgun with 'dmg' '1'\n");
 };
 
+/*
+QUAKED weapon_laser_gun (0 .5 .8) (-16 -16 0) (16 16 32)
+*/
+void() weapon_laser_gun =
+{
+	precache_model ("progs/g_laserg.mdl");
+	setmodel (self, "progs/g_laserg.mdl");
+	self.weapon = WEAPON_LASER_CANNON;
+	self.netname = "Laser Cannon";
+	self.touch = weapon_touch;
+	if(!self.ammo_cells) self.ammo_cells = 30;
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+};
 /*
 ===============================================================================
 
@@ -1044,7 +978,7 @@ void() item_cells =
 /*QUAKED item_weapon (0 .5 .8) (0 0 0) (32 32 32) shotgun rocket spikes big
 DO NOT USE THIS!!!! IT WILL BE REMOVED!
 */
-
+/*
 float WEAPON_SHOTGUN = 1;
 float WEAPON_ROCKET = 2;
 float WEAPON_SPIKES = 4;
@@ -1111,7 +1045,7 @@ void() item_weapon =
 	StartItem ();
 };
 
-
+*/
 /*
 ===============================================================================
 
@@ -1424,9 +1358,9 @@ void() BackpackTouch =
 			sprint (other, self.netname);
 		}
 	}
-	else if (self.extra_items)
+	else if (self.weapons)
 	{
-		if ((other.extra_items & self.extra_items) == 0)
+		if ((other.weapons & self.weapons) == 0)
 		{
 			acount = 1;
 			sprint (other, "the ");
@@ -1448,8 +1382,8 @@ void() BackpackTouch =
 	new = self.items;
 	if (!new)
 		new = other.weapon;
-	old = other.items;
-	other.items = other.items | new;
+	old = other.weapons;
+	other.weapons = other.weapons | new;
 	
 	bound_other_ammo ();
 
@@ -1501,11 +1435,7 @@ void() BackpackTouch =
 
 // change to the weapon
 	if (!deathmatch)
-	{
 		self.weapon = new;
-		//if (self.weapon == WEAPON_CHAINSAW)
-			return;
-	}
 	else
 		Deathmatch_Weapon (new);
 
@@ -1527,28 +1457,28 @@ void() DropBackpack =
 	item = spawn();
 	item.origin = self.origin - '0 0 24';
 	
-	item.items = self.weapon;
-	if (item.items == IT_AXE)
+	item.weapons = self.weapon;
+	if (item.weapons == WEAPON_AXE)
 		item.netname = "Axe";
-	else if (item.items == IT_SHOTGUN)
+	else if (item.weapons == WEAPON_SHOTGUN)
 		item.netname = "Shotgun";
-	else if (item.items == IT_SUPER_SHOTGUN)
+	else if (item.weapons == WEAPON_SUPER_SHOTGUN)
 		item.netname = "Double-barrelled Shotgun";
-	else if (item.items == IT_NAILGUN)
+	else if (item.weapons == WEAPON_NAILGUN)
 		item.netname = "Nailgun";
-	else if (item.items == IT_SUPER_NAILGUN)
+	else if (item.weapons == WEAPON_SUPER_NAILGUN)
 		item.netname = "Super Nailgun";
-	else if (item.items == IT_GRENADE_LAUNCHER)
+	else if (item.weapons == WEAPON_GRENADE_LAUNCHER)
 		item.netname = "Grenade Launcher";
-	else if (item.items == IT_ROCKET_LAUNCHER)
+	else if (item.weapons == WEAPON_ROCKET_LAUNCHER)
 		item.netname = "Rocket Launcher";
-	else if (item.items == IT_LIGHTNING)
+	else if (item.weapons == WEAPON_LIGHTNING)
 		item.netname = "Thunderbolt";
-	else if (item.items == IT_LASER_CANNON)
+	else if (item.weapons == WEAPON_LASER_CANNON)
 		item.netname = "Laser Cannon";
-	else if (item.items == WEAPON_PLASMA)
+	else if (item.weapons == WEAPON_PLASMA)
 		item.netname = "Plasma Gun";
-	else if (item.items == WEAPON_CHAINSAW)
+	else if (item.weapons == WEAPON_CHAINSAW)
 		item.netname = "Chainsaw";
 	else
 		item.netname = "";

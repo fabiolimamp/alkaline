@@ -903,7 +903,7 @@ trigger_removeitems / target_removeitems
 =============================================================
 */
 
-void(entity plr, float removeditems) removeitems_go = {
+void(entity plr, float removeditems, float removedweapons) removeitems_go = {
 	local entity oself;
 
 	if(plr.classname != "player")
@@ -913,8 +913,10 @@ void(entity plr, float removeditems) removeitems_go = {
 	self = plr;
 
 	self.items -= self.items & removeditems;
+	self.items -= self.items & removedweapons & HUD_WEAPONS;
+	self.weapons -= self.weapons & removedweapons;
 
-	if(!(self.items & self.weapon)) { //if player is wielding a removed weapon
+	if(!(self.weapons & self.weapon)) { //if player is wielding a removed weapon
 		self.weapon = W_BestWeapon();
 	}
 
@@ -929,7 +931,7 @@ void() trigger_removeitems_touch = {
 	if(!self.count)
 		return;
 
-	removeitems_go (other, self.items);
+	removeitems_go (other, self.items, self.weapons);
 
 	if(self.count > 0)
 		self.count--;
@@ -950,7 +952,7 @@ void() target_removeitems_use = {
 	if(!self.count)
 		return;
 
-	removeitems_go (activator, self.items);
+	removeitems_go (activator, self.items, self.weapons);
 
 	if(self.count > 0)
 		self.count--;

@@ -202,10 +202,11 @@ void() weapon_plasmagun =
 {
 	precache_model ("progs/g_plasma.mdl");
 	setmodel (self, "progs/g_plasma.mdl");
-	self.weapon = 3;
+	self.weapon = WEAPON_PLASMA;
 	self.classname = "weapon_plasmagun";
 	self.netname = "Plasma Gun";
 	self.touch = weapon_touch;
+  if(!self.ammo_cells) self.ammo_cells = 15;
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };

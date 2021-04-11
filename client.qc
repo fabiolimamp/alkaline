@@ -28,7 +28,7 @@ void() info_intermission =
 {
 };
 
-float(float items, float extra_items, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
+float(float weapons, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
 float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms;
 
 void() SetChangeParms =
@@ -60,12 +60,12 @@ void() SetChangeParms =
 	parm7 = self.ammo_cells;
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
-	parm10 = self.extra_items;
+	parm10 = self.weapons;
 };
 
 void() SetNewParms =
 {
-	parm1 = IT_SHOTGUN | IT_AXE; 
+	parm1 = WEAPON_SHOTGUN | WEAPON_AXE;
 	parm2 = 100;
 	parm3 = 0;
 	parm4 = 25;
@@ -74,21 +74,24 @@ void() SetNewParms =
 	parm7 = 0;
 	parm8 = 1;
 	parm9 = 0;
-	parm10 = 0;
+	parm10 = WEAPON_SHOTGUN | WEAPON_AXE;
 	
 	if (world.model == "maps/test.bsp") // johnfitz start the player with nothing
 	{
-		parm1 = IT_NO_WEAPON; // no weapons
+		parm10 = WEAPON_NO_WEAPON; // no weapons
 		parm4 = 0; // no shells
-		parm8 = IT_NO_WEAPON; // no current weapon
+		parm8 = WEAPON_NO_WEAPON; // no current weapon
 	}
 
 	
 };
 
-void() TakeAndGiveItems = {
-	parm1 -= parm1 & world.take_weapons;
-	parm1 = parm1 | (world.give_weapons & ALL_WEAPONS);
+void() TakeAndGiveWeapons = {
+	parm10 -= parm10 & world.take_weapons;
+	parm10 = parm10 | (world.give_weapons & ALL_WEAPONS);
+
+	parm1 -= parm1 & world.take_weapons & HUD_WEAPONS;
+	parm1 = parm1 | (world.give_weapons & HUD_WEAPONS);
 
 	if (world.ammo_shells > 0) parm4 = world.ammo_shells;
 	else if(world.ammo_shells == -1) parm4 = 0;
@@ -103,8 +106,8 @@ void() TakeAndGiveItems = {
 	else if(world.ammo_cells == -1) parm7 = 0;
 
 	//if player is wielding a removed or ammo-less weapon
-	if(!(parm1 & parm8) || !W_CheckAmmoParms(parm8, parm4, parm5, parm6, parm7)) {
-		parm8 = W_BestWeaponParms(parm1, parm10, parm4, parm5, parm7, 0);
+	if(!(parm10 & parm8) || !W_CheckAmmoParms(parm8, parm4, parm5, parm6, parm7)) {
+		parm8 = W_BestWeaponParms(parm10, parm4, parm5, parm7, 0);
 	}
 };
 
@@ -115,10 +118,10 @@ void() DecodeLevelParms =
 	if ((serverflags && world.model == "maps/start.bsp") || world.reset_items)
 		SetNewParms ();
 	
-	TakeAndGiveItems();
+	TakeAndGiveWeapons();
 	
 	self.items = parm1;
-	self.extra_items = parm10;
+	self.weapons = parm10;
 	self.health = parm2;
 	self.armorvalue = parm3;
 	self.ammo_shells = parm4;
@@ -1120,7 +1123,7 @@ void() PlayerPreThink =
 
 	if(time > self.attack_finished && self.currentammo == 0)
 	{
-		if(self.weapon != IT_AXE && self.weapon != WEAPON_CHAINSAW)
+		if(self.weapon != WEAPON_AXE && self.weapon != WEAPON_CHAINSAW)
 		{
 			self.weapon = W_BestWeapon ();
 			W_SetCurrentAmmo ();
@@ -1594,7 +1597,7 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" discharges into the water.\n");
 					return;
 				}
-				if (targ.weapon == IT_GRENADE_LAUNCHER)
+				if (targ.weapon == WEAPON_GRENADE_LAUNCHER)
 					bprint (" tries to put the pin back in\n");
 				else
 					bprint (" becomes bored with life\n");
@@ -1620,42 +1623,42 @@ void(entity targ, entity attacker) ClientObituary =
 				attacker.frags = attacker.frags + 1;
 
 				rnum = attacker.weapon;
-				if (rnum == IT_AXE)
+				if (rnum == WEAPON_AXE)
 				{
 					deathstring = " was ax-murdered by ";
 					deathstring2 = "\n";
 				}
-				if (rnum == IT_CHAINSAW)
+				if (rnum == WEAPON_CHAINSAW)
 				{
 					deathstring = " was chewed up by ";
 					deathstring2 = "'s bloody chainsaw\n";
 				}
-				if(rnum == IT_PLASMA)
+				if(rnum == WEAPON_PLASMA)
 				{
 					deathstring = " was burned by ";
 					deathstring2 = "\n";
 				}
-				if (rnum == IT_SHOTGUN)
+				if (rnum == WEAPON_SHOTGUN)
 				{
 					deathstring = " chewed on ";
 					deathstring2 = "'s boomstick\n";
 				}
-				if (rnum == IT_SUPER_SHOTGUN)
+				if (rnum == WEAPON_SUPER_SHOTGUN)
 				{
 					deathstring = " ate 2 loads of ";
 					deathstring2 = "'s buckshot\n";
 				}
-				if (rnum == IT_NAILGUN)
+				if (rnum == WEAPON_NAILGUN)
 				{
 					deathstring = " was nailed by ";
 					deathstring2 = "\n";
 				}
-				if (rnum == IT_SUPER_NAILGUN)
+				if (rnum == WEAPON_SUPER_NAILGUN)
 				{
 					deathstring = " was punctured by ";
 					deathstring2 = "\n";
 				}
-				if (rnum == IT_GRENADE_LAUNCHER)
+				if (rnum == WEAPON_GRENADE_LAUNCHER)
 				{
 					deathstring = " eats ";
 					deathstring2 = "'s pineapple\n";
@@ -1665,7 +1668,7 @@ void(entity targ, entity attacker) ClientObituary =
 						deathstring2 = "'s grenade\n";
 					}
 				}
-				if (rnum == IT_ROCKET_LAUNCHER)
+				if (rnum == WEAPON_ROCKET_LAUNCHER)
 				{
 					deathstring = " rides ";
 					deathstring2 = "'s rocket\n";
@@ -1675,7 +1678,7 @@ void(entity targ, entity attacker) ClientObituary =
 						deathstring2 = "'s rocket\n" ;
 					}
 				}
-				if (rnum == IT_LIGHTNING)
+				if (rnum == WEAPON_LIGHTNING)
 				{
 					deathstring = " accepts ";
 					if (attacker.waterlevel > 1)
@@ -1683,7 +1686,7 @@ void(entity targ, entity attacker) ClientObituary =
 					else
 						deathstring2 = "'s shaft\n";
 				}
-				if (rnum == IT_LASER_CANNON)
+				if (rnum == WEAPON_LASER_CANNON)
 				{
 					if (random()<0.5)
 					{
