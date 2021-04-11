@@ -179,6 +179,8 @@ void()	lth_fdie11	=[	$fdeath11,	lth_fdie11	] {};
 
 void() super_enforcer_die =
 {
+	
+
 	if (self.health < -50)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
@@ -191,22 +193,23 @@ void() super_enforcer_die =
 
 	self.solid = SOLID_NOT;	
 
-	local entity item;	
+	local entity item;
+	local entity oself;
+
 	item = spawn();
 	item.classname = "weapon_supernailgun";
-	item.origin = self.origin - '0 0 24';	
-	item.weapon = WEAPON_SUPER_NAILGUN;
+	item.origin = self.origin - '0 0 24';
+	item.spawnflags = ITEM_DONTDROP;
+	
+	oself = self;
+	self = item;
+	weapon_supernailgun();
+	self = oself;
+	
+	item.movetype = MOVETYPE_TOSS;
 	item.velocity_z = 300;
 	item.velocity_x = -100 + (random() * 200);
 	item.velocity_y = -100 + (random() * 200);	
-	item.flags = FL_ITEM;
-	item.solid = SOLID_TRIGGER;
-	item.movetype = MOVETYPE_TOSS;
-	setmodel (item, "progs/g_nail2.mdl");
-	setsize (item, '-16 -16 0', '16 16 56');
-	item.touch = weapon_touch;
-	item.netname = "Super Nailgun";	
-	
 
 // regular death
 	sound (self, CHAN_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
