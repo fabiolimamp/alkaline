@@ -199,10 +199,9 @@ void() super_enforcer_die =
 	item = spawn();
 	item.classname = "weapon_supernailgun";
 	item.origin = self.origin - '0 0 24';
-	item.spawnflags = ITEM_DONTDROP;
+	item.spawnflags = ITEM_DONTDROP + ITEM_DONTPRECACHE; // mid-level precaches are bad
 	
-	oself = self;
-	self = item;
+	oself = self; self = item;
 	weapon_supernailgun();
 	self = oself;
 	
