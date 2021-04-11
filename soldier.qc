@@ -318,7 +318,7 @@ void() monster_army =
 	self.th_missile = army_atk1;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
-    self.ammo_shells = 10;
+    self.ammo_shells = 5;
 	
 	walkmonster_start ();
 };
