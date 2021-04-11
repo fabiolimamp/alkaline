@@ -920,11 +920,10 @@ void() W_SetCurrentAmmo =
 	}
 	else if (self.weapon == WEAPON_CHAINSAW)
 	{
-		self.skin = 1;
 		self.currentammo = 0;
 		self.weaponmodel = "progs/v_saw.mdl";
-		sound (self, 6, "weapons/sawidle.wav", 1, ATTN_NORM);
 		self.weaponframe = 0;
+		sound (self, 6, "weapons/sawidle.wav", 1, ATTN_NORM);
 	}
 	else if (self.weapon == WEAPON_SHOTGUN)
 	{
