@@ -1310,7 +1310,7 @@ void() CheatCommand =
 	self.ammo_nails = 200;
 	self.ammo_shells = 100;
 	self.weapons = self.weapons | ALL_WEAPONS;
-	self.items = self.items | IT_KEY1 | IT_KEY2;
+	self.items = self.items | HUD_WEAPONS | IT_KEY1 | IT_KEY2;
 
 	self.ammo_cells = 100;
 		
