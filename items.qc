@@ -13,6 +13,10 @@ float ITEM_SUSPENDED = 128;
 float ITEM_RESPAWNDM = 16384;
 float ITEM_DONTDROP = 32768;
 
+// internal use only! do not expose in the FGD
+// used to drop items from enemies
+float ITEM_DONTPRECACHE = 16777216; 
+
 void() SUB_regen =
 {
 	self.model = self.mdl;		// restore original model
@@ -604,7 +608,7 @@ Axe
 */
 void() weapon_axe =
 {
-	precache_model ("progs/g_axe.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_axe.mdl");
 	setmodel (self, "progs/g_axe.mdl");
 	self.weapon = WEAPON_AXE;
 	self.netname = "Axe";
@@ -618,7 +622,7 @@ Shotgun
 
 void() weapon_shotgun =
 {
-	precache_model ("progs/g_shotgn.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_shotgn.mdl");
 	setmodel (self, "progs/g_shotgn.mdl");
 	self.weapon = WEAPON_SHOTGUN;
 	self.netname = "Shotgun";
@@ -635,7 +639,7 @@ void() weapon_shotgun =
 
 void() weapon_supershotgun =
 {
-	precache_model ("progs/g_shot.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_shot.mdl");
 	setmodel (self, "progs/g_shot.mdl");
 	self.weapon = WEAPON_SUPER_SHOTGUN;
 	self.netname = "Double-barrelled Shotgun";
@@ -650,7 +654,7 @@ void() weapon_supershotgun =
 
 void() weapon_nailgun =
 {
-	precache_model ("progs/g_nail.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_nail.mdl");
 	setmodel (self, "progs/g_nail.mdl");
 	self.weapon = WEAPON_NAILGUN;
 	self.netname = "nailgun";
@@ -665,7 +669,7 @@ void() weapon_nailgun =
 
 void() weapon_supernailgun =
 {
-	precache_model ("progs/g_nail2.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_nail2.mdl");
 	setmodel (self, "progs/g_nail2.mdl");
 	self.weapon = WEAPON_SUPER_NAILGUN;
 	self.netname = "Super Nailgun";
@@ -680,7 +684,7 @@ void() weapon_supernailgun =
 
 void() weapon_grenadelauncher =
 {
-	precache_model ("progs/g_rock.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_rock.mdl");
 	setmodel (self, "progs/g_rock.mdl");
 	self.weapon = WEAPON_GRENADE_LAUNCHER;
 	self.netname = "Grenade Launcher";
@@ -695,7 +699,7 @@ void() weapon_grenadelauncher =
 
 void() weapon_rocketlauncher =
 {
-	precache_model ("progs/g_rock2.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
 	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.netname = "Rocket Launcher";
@@ -711,7 +715,7 @@ void() weapon_rocketlauncher =
 
 void() weapon_lightning =
 {
-	precache_model ("progs/g_light.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
 	self.weapon = WEAPON_LIGHTNING;
 	self.netname = "Thunderbolt";
@@ -725,7 +729,7 @@ void() weapon_lightning =
 */
 void() weapon_chainsaw =
 {
-	precache_model ("progs/g_saw.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_saw.mdl");
 	setmodel (self, "progs/g_saw.mdl");
 	self.weapon = WEAPON_CHAINSAW;
 	self.netname = "Chainsaw";
@@ -740,7 +744,7 @@ QUAKED weapon_laser_gun (0 .5 .8) (-16 -16 0) (16 16 32)
 */
 void() weapon_laser_gun =
 {
-	precache_model ("progs/g_laserg.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_laserg.mdl");
 	setmodel (self, "progs/g_laserg.mdl");
 	self.weapon = WEAPON_LASER_CANNON;
 	self.netname = "Laser Cannon";
@@ -875,7 +879,7 @@ void() item_shells =
 		self.aflag = 20;
 	}
 
-	precache_model (model);
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 1;
 	self.netname = "shells";
@@ -905,7 +909,7 @@ void() item_spikes =
 		self.aflag = 25;
 	}
 
-	precache_model (model);
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 2;
 	self.netname = "nails";
@@ -935,7 +939,7 @@ void() item_rockets =
 		self.aflag = 5;
 	}
 
-	precache_model (model);
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 3;
 	self.netname = "rockets";
@@ -966,7 +970,7 @@ void() item_cells =
 		self.aflag = 6;
 	}
 
-	precache_model (model);
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 4;
 	self.netname = "cells";
@@ -1090,26 +1094,13 @@ void() item_sigil =
 	precache_sound ("misc/runekey.wav");
 	self.noise = "misc/runekey.wav";
 
-	if (self.spawnflags & 1)
-	{
-		precache_model ("progs/end1.mdl");
-		setmodel (self, "progs/end1.mdl");
-	}
-	if (self.spawnflags & 2)
-	{
-		precache_model2 ("progs/end2.mdl");
-		setmodel (self, "progs/end2.mdl");
-	}
-	if (self.spawnflags & 4)
-	{
-		precache_model2 ("progs/end3.mdl");
-		setmodel (self, "progs/end3.mdl");
-	}
-	if (self.spawnflags & 8)
-	{
-		precache_model2 ("progs/end4.mdl");
-		setmodel (self, "progs/end4.mdl");
-	}
+	if (self.spawnflags & 1) self.model = "progs/end1.mdl";
+	if (self.spawnflags & 2) self.model = "progs/end2.mdl";
+	if (self.spawnflags & 4) self.model = "progs/end3.mdl";
+	if (self.spawnflags & 8) self.model = "progs/end4.mdl";
+	
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (self.model);
+	setmodel (self, self.model);
 	
 	self.touch = sigil_touch;
 	setsize (self, '-16 -16 -24', '16 16 32');
@@ -1233,10 +1224,12 @@ void() item_artifact_invulnerability =
 {
 	self.touch = powerup_touch;
 
-	precache_model ("progs/invulner.mdl");
-	precache_sound ("items/protect.wav");
-	precache_sound ("items/protect2.wav");
-	precache_sound ("items/protect3.wav");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
+		precache_model ("progs/invulner.mdl");
+		precache_sound ("items/protect.wav");
+		precache_sound ("items/protect2.wav");
+		precache_sound ("items/protect3.wav");
+	}
 	self.noise = "items/protect.wav";
 	setmodel (self, "progs/invulner.mdl");
 	self.netname = "Pentagram of Protection";
@@ -1251,11 +1244,12 @@ Combine 3 powerups, probably invisibility, quad and pentagram
 void() item_artifact_trifecta =
 {
 	self.touch = powerup_touch;
-
-	precache_model ("progs/trifecta.mdl");
-	precache_sound ("items/damage.wav");
-	precache_sound ("items/damage2.wav");
-	precache_sound ("items/damage3.wav");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
+		precache_model ("progs/trifecta.mdl");
+		precache_sound ("items/damage.wav");
+		precache_sound ("items/damage2.wav");
+		precache_sound ("items/damage3.wav");
+	}
 	self.noise = "items/damage.wav";
 	setmodel (self, "progs/trifecta.mdl");
 	self.netname = "Trifecta";
@@ -1272,10 +1266,11 @@ Player takes no damage from water or slime for 30 seconds
 void() item_artifact_envirosuit =
 {
 	self.touch = powerup_touch;
-
-	precache_model ("progs/suit.mdl");
-	precache_sound ("items/suit.wav");
-	precache_sound ("items/suit2.wav");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
+		precache_model ("progs/suit.mdl");
+		precache_sound ("items/suit.wav");
+		precache_sound ("items/suit2.wav");
+	}
 	self.noise = "items/suit.wav";
 	setmodel (self, "progs/suit.mdl");
 	self.netname = "Biosuit";
@@ -1291,11 +1286,12 @@ Player is invisible for 30 seconds
 void() item_artifact_invisibility =
 {
 	self.touch = powerup_touch;
-
-	precache_model ("progs/invisibl.mdl");
-	precache_sound ("items/inv1.wav");
-	precache_sound ("items/inv2.wav");
-	precache_sound ("items/inv3.wav");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
+		precache_model ("progs/invisibl.mdl");
+		precache_sound ("items/inv1.wav");
+		precache_sound ("items/inv2.wav");
+		precache_sound ("items/inv3.wav");
+	}
 	self.noise = "items/inv1.wav";
 	setmodel (self, "progs/invisibl.mdl");
 	self.netname = "Invisibility belt";
@@ -1311,11 +1307,12 @@ The next attack from the player will do 4x damage
 void() item_artifact_super_damage =
 {
 	self.touch = powerup_touch;
-
-	precache_model ("progs/quaddama.mdl");
-	precache_sound ("items/damage.wav");
-	precache_sound ("items/damage2.wav");
-	precache_sound ("items/damage3.wav");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
+		precache_model ("progs/quaddama.mdl");
+		precache_sound ("items/damage.wav");
+		precache_sound ("items/damage2.wav");
+		precache_sound ("items/damage3.wav");
+	}
 	self.noise = "items/damage.wav";
 	setmodel (self, "progs/quaddama.mdl");
 	self.netname = "Quad Damage";
