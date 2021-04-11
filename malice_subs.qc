@@ -33,9 +33,16 @@ void(vector org, vector dir) Fire_bomb =
 	newmis.movetype = MOVETYPE_NOCLIP;
 	newmis.solid = SOLID_BBOX;
 	newmis.touch = SUB_Remove;
-	setmodel(newmis, "progs/d_explod.spr");
+	
+
 	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(newmis, org);
+	//setmodel(newmis, "progs/d_explod.spr");
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord (MSG_BROADCAST, newmis.origin_x);
+	WriteCoord (MSG_BROADCAST, newmis.origin_y);
+	WriteCoord (MSG_BROADCAST, newmis.origin_z);
 	if (random() > 0.5)
 	{
 		x = CONTENT_EMPTY;
