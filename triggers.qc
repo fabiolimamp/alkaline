@@ -635,6 +635,7 @@ void() trigger_hurt =
 //============================================================================
 
 float PUSH_ONCE = 1;
+float PUSH_SILENT = 2;
 
 void() trigger_push_touch =
 {
@@ -643,12 +644,12 @@ void() trigger_push_touch =
 	else if (other.health > 0)
 	{
 		other.velocity = self.speed * self.movedir * 10;
-		if (other.classname == "player")
+		if (other.classname == "player" && !(self.spawnflags & PUSH_SILENT))
 		{
 			if (other.fly_sound < time)
 			{
-				other.fly_sound = time + 1.5;
-				sound (other, CHAN_AUTO, "ambience/windfly.wav", 1, ATTN_NORM);
+				other.fly_sound = time + self.delay;
+				sound (other, CHAN_AUTO, self.noise, 1, ATTN_NORM);
 			}
 		}
 	}
@@ -657,14 +658,23 @@ void() trigger_push_touch =
 };
 
 
-/*QUAKED trigger_push (.5 .5 .5) ? PUSH_ONCE
+/*QUAKED trigger_push (.5 .5 .5) ? PUSH_ONCE PUSH_SILENT
 Pushes the player
 */
 void() trigger_push =
 {
 	InitTrigger ();
-	precache_sound ("ambience/windfly.wav");
+	
+	if(!self.noise)
+		self.noise = "ambience/windfly.wav";
+
+	if(!self.delay)
+		self.delay = 1.5;
+
+	if(!(self.spawnflags & PUSH_SILENT)) precache_sound (self.noise);
+	
 	self.touch = trigger_push_touch;
+	
 	if (!self.speed)
 		self.speed = 1000;
 };

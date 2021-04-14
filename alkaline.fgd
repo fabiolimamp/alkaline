@@ -1745,8 +1745,13 @@ Note that they're mutually exclusive."
 @SolidClass base(Targetname) = trigger_push : "Trigger player push"
 [
 	angle(integer) : "Angle"
-	spawnflags(flags) = [ 1: "Once Only" : 0 ]
+	spawnflags(flags) = [
+		1: "Once Only" : 0 
+		2: "Silent" : 0
+	]
 	speed(integer) : "Speed of push" : 1000
+	noise(string) : "Sound" : "ambience/windfly.wav"
+	delay(float) : "Sound loop time" : "1.5"
 ]
 @SolidClass base(Targetname) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
 [
