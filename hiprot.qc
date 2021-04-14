@@ -66,42 +66,26 @@ void( entity ent, float amount ) hurt_setdamage =
    };
 //johnfitz
 
-float STATE_ACTIVE      = 0;
-float STATE_INACTIVE    = 1;
-float STATE_SPEEDINGUP  = 2;
-float STATE_SLOWINGDOWN = 3;
-
-float STATE_CLOSED   = 4;
-float STATE_OPEN     = 5;
-float STATE_OPENING  = 6;
-float STATE_CLOSING  = 7;
-
-float STATE_WAIT = 0;
-float STATE_MOVE = 1;
-float STATE_STOP = 2;
-float STATE_FIND = 3;
-float STATE_NEXT = 4;
-
 float OBJECT_ROTATE = 0;
 float OBJECT_MOVEWALL  = 1;
 float OBJECT_SETORIGIN = 2;
 
-float TOGGLE   = 1;
-float START_ON = 2;
+float ROTATE_TOGGLE   = 1;
+float ROTATE_START_ON = 2;
 
-float ROTATION = 1;
-float ANGLES   = 2;
-float STOP     = 4;
-float NO_ROTATE = 8;
-float DAMAGE   = 16;
-float MOVETIME = 32;
-float SET_DAMAGE = 64;
+float ROTATE_ROTATION = 1;
+float ROTATE_ANGLES   = 2;
+float ROTATE_STOP     = 4;
+float ROTATE_NO_ROTATE = 8;
+float ROTATE_DAMAGE   = 16;
+float ROTATE_MOVETIME = 32;
+float ROTATE_SET_DAMAGE = 64;
 
-float VISIBLE = 1;
-float TOUCH = 2;
-float NONBLOCKING = 4;
+float ROTATE_VISIBLE = 1;
+float ROTATE_TOUCH = 2;
+float ROTATE_NONBLOCKING = 4;
 
-float STAYOPEN = 1;
+float ROTATE_STAYOPEN = 1;
 
 /*QUAKED info_rotate (0 0.5 0) (-4 -4 -4) (4 4 4)
 Used as the point of rotation for rotatable objects.
@@ -305,7 +289,7 @@ void() rotate_entity_use =
 
    if ( self.state == STATE_ACTIVE )
       {
-      if ( self.spawnflags & TOGGLE )
+      if ( self.spawnflags & ROTATE_TOGGLE )
          {
          if ( self.speed )
             {
@@ -336,7 +320,7 @@ void() rotate_entity_use =
       }
    else if ( self.state == STATE_SPEEDINGUP )
       {
-      if ( self.spawnflags & TOGGLE )
+      if ( self.spawnflags & ROTATE_TOGGLE )
          {
          self.state = STATE_SLOWINGDOWN;
          }
@@ -350,7 +334,7 @@ void() rotate_entity_use =
 void() rotate_entity_firstthink =
    {
    LinkRotateTargets();
-   if ( self.spawnflags & START_ON )
+   if ( self.spawnflags & ROTATE_START_ON )
       {
       self.state = STATE_ACTIVE;
       self.think = rotate_entity_think;
@@ -365,13 +349,13 @@ void() rotate_entity_firstthink =
    self.use = rotate_entity_use;
    };
 
-/*QUAKED func_rotate_entity (0 .5 .8) (-8 -8 -8) (8 8 8) TOGGLE START_ON
+/*QUAKED func_rotate_entity (0 .5 .8) (-8 -8 -8) (8 8 8) ROTATE_TOGGLE ROTATE_START_ON
 Creates an entity that continually rotates.  Can be toggled on and
 off if targeted.
 
-TOGGLE = allows the rotation to be toggled on/off
+ROTATE_TOGGLE = allows the rotation to be toggled on/off
 
-START_ON = wether the entity is spinning when spawned.  If TOGGLE is 0, entity can be turned on, but not off.
+ROTATE_START_ON = wether the entity is spinning when spawned.  If ROTATE_TOGGLE is 0, entity can be turned on, but not off.
 
 If "deathtype" is set with a string, this is the message that will appear when a player is killed by the train.
 
@@ -404,22 +388,22 @@ void() func_rotate_entity =
 //
 //************************************************
 
-/*QUAKED path_rotate (0.5 0.3 0) (-8 -8 -8) (8 8 8) ROTATION ANGLES STOP NO_ROTATE DAMAGE MOVETIME SET_DAMAGE
+/*QUAKED path_rotate (0.5 0.3 0) (-8 -8 -8) (8 8 8) ROTATE_ROTATION ROTATE_ANGLES ROTATE_STOP ROTATE_NO_ROTATE ROTATE_DAMAGE ROTATE_MOVETIME ROTATE_SET_DAMAGE
  Path for rotate_train.
 
- ROTATION tells train to rotate at rate specified by "rotate".  Use '0 0 0' to stop rotation.
+ ROTATE_ROTATION tells train to rotate at rate specified by "rotate".  Use '0 0 0' to stop rotation.
 
- ANGLES tells train to rotate to the angles specified by "angles" while traveling to this path_rotate.  Use values < 0 or > 360 to guarantee that it turns in a certain direction.  Having this flag set automatically clears any rotation.
+ ROTATE_ANGLES tells train to rotate to the angles specified by "angles" while traveling to this path_rotate.  Use values < 0 or > 360 to guarantee that it turns in a certain direction.  Having this flag set automatically clears any rotation.
 
- STOP tells the train to stop and wait to be retriggered.
+ ROTATE_STOP tells the train to stop and wait to be retriggered.
 
- NO_ROTATE tells the train to stop rotating when waiting to be triggered.
+ ROTATE_NO_ROTATE tells the train to stop rotating when waiting to be triggered.
 
- DAMAGE tells the train to cause damage based on "dmg".
+ ROTATE_DAMAGE tells the train to cause damage based on "dmg".
 
- MOVETIME tells the train to interpret "speed" as the length of time to take moving from one corner to another.
+ ROTATE_MOVETIME tells the train to interpret "speed" as the length of time to take moving from one corner to another.
 
- SET_DAMAGE tells the train to set all targets damage to "dmg"
+ ROTATE_SET_DAMAGE tells the train to set all targets damage to "dmg"
 
  "noise" contains the name of the sound to play when train stops.
  "noise1" contains the name of the sound to play when train moves.
@@ -502,12 +486,12 @@ void() rotate_train_wait =
       {
       sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
       }
-   if ( self.goalentity.spawnflags & ANGLES )
+   if ( self.goalentity.spawnflags & ROTATE_ANGLES )
       {
       self.rotate = '0 0 0';
       self.angles = self.finalangle;
       }
-   if ( self.goalentity.spawnflags & NO_ROTATE )
+   if ( self.goalentity.spawnflags & ROTATE_NO_ROTATE )
       {
       self.rotate = '0 0 0';
       }
@@ -527,12 +511,12 @@ void() rotate_train_stop =
       {
       sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
       }
-   if ( self.goalentity.spawnflags & ANGLES )
+   if ( self.goalentity.spawnflags & ROTATE_ANGLES )
       {
       self.rotate = '0 0 0';
       self.angles = self.finalangle;
       }
-   if ( self.goalentity.spawnflags & NO_ROTATE )
+   if ( self.goalentity.spawnflags & ROTATE_NO_ROTATE )
       {
       self.rotate = '0 0 0';
       }
@@ -567,7 +551,7 @@ void() rotate_train_next =
    if (!self.path )
       objerror ("rotate_train_next: no next target");
 
-   if ( targ.spawnflags & STOP )
+   if ( targ.spawnflags & ROTATE_STOP )
       {
       self.think1 = rotate_train_stop;
       }
@@ -591,23 +575,23 @@ void() rotate_train_next =
       self.message = string_null;
       }
 
-   if ( current.spawnflags & ANGLES )
+   if ( current.spawnflags & ROTATE_ANGLES )
       {
       self.rotate = '0 0 0';
       self.angles = self.finalangle;
       }
 
-   if ( current.spawnflags & ROTATION )
+   if ( current.spawnflags & ROTATE_ROTATION )
       {
       self.rotate = current.rotate;
       }
 
-   if ( current.spawnflags & DAMAGE )
+   if ( current.spawnflags & ROTATE_DAMAGE )
       {
       self.dmg = current.dmg;
       }
 
-   if ( current.spawnflags & SET_DAMAGE )
+   if ( current.spawnflags & ROTATE_SET_DAMAGE )
       {
       SetDamageOnTargets( current.dmg );
       }
@@ -619,7 +603,7 @@ void() rotate_train_next =
       self.endtime = self.ltime + 0.01;
       SetTargetOrigin();
 
-      if ( targ.spawnflags & ANGLES )
+      if ( targ.spawnflags & ROTATE_ANGLES )
          {
          self.angles = targ.angles;
          }
@@ -653,7 +637,7 @@ void() rotate_train_next =
       // calculate length of vector
       len = vlen (vdestdelta);
 
-      if ( current.spawnflags & MOVETIME )
+      if ( current.spawnflags & ROTATE_MOVETIME )
          {
          traveltime = current.speed;
          }
@@ -674,7 +658,7 @@ void() rotate_train_next =
          {
          self.velocity = '0 0 0';
          self.endtime = self.ltime + 0.1;
-         if ( targ.spawnflags & ANGLES )
+         if ( targ.spawnflags & ROTATE_ANGLES )
             {
             self.angles = targ.angles;
             }
@@ -684,7 +668,7 @@ void() rotate_train_next =
       // qcc won't take vec/float
       div = 1 / traveltime;
 
-      if ( targ.spawnflags & ANGLES )
+      if ( targ.spawnflags & ROTATE_ANGLES )
          {
          self.finalangle = SUB_NormalizeAngles( targ.angles );
          self.rotate = ( targ.angles - self.angles ) * div;
@@ -720,7 +704,7 @@ void() rotate_train_find =
    // Save the current entity
    self.goalentity = targ;
 
-   if ( targ.spawnflags & ANGLES )
+   if ( targ.spawnflags & ROTATE_ANGLES )
       {
       self.angles = targ.angles;
       self.finalangle = SUB_NormalizeAngles( targ.angles );
@@ -750,7 +734,7 @@ void() rotate_train_find =
 /*QUAKED func_rotate_train (0 .5 .8) (-8 -8 -8) (8 8 8)
 In path_rotate, set speed to be the new speed of the train after it reaches
 the path change.  If speed is -1, the train will warp directly to the next
-path change after the specified wait time.  If MOVETIME is set on the
+path change after the specified wait time.  If ROTATE_MOVETIME is set on the
 path_rotate, the train to interprets "speed" as the length of time to
 take moving from one corner to another.
 
@@ -759,7 +743,7 @@ take moving from one corner to another.
 Both "noise" and "noise1" defaults depend upon "sounds" variable and
 can be overridden by the "noise" and "noise1" variable in path_rotate.
 
-Also in path_rotate, if STOP is set, the train will wait until it is
+Also in path_rotate, if ROTATE_STOP is set, the train will wait until it is
 retriggered before moving on to the next goal.
 
 Trains are moving platforms that players can ride.
@@ -902,14 +886,14 @@ void() movewall_think =
    self.nextthink = time + 0.02;
    };
 
-/*QUAKED func_movewall (0 .5 .8) ? VISIBLE TOUCH NONBLOCKING
+/*QUAKED func_movewall (0 .5 .8) ? ROTATE_VISIBLE ROTATE_TOUCH ROTATE_NONBLOCKING
 Used to emulate collision on rotating objects.
 
-VISIBLE causes brush to be displayed.
+ROTATE_VISIBLE causes brush to be displayed.
 
-TOUCH specifies whether to cause damage when touched by player.
+ROTATE_TOUCH specifies whether to cause damage when touched by player.
 
-NONBLOCKING makes the brush non-solid.  This is useless if VISIBLE is set.
+ROTATE_NONBLOCKING makes the brush non-solid.  This is useless if ROTATE_VISIBLE is set.
 
 "dmg" specifies the damage to cause when touched or blocked.
 */
@@ -917,7 +901,7 @@ void() func_movewall =
    {
    self.angles = '0 0 0';
    self.movetype = MOVETYPE_PUSH;
-   if ( self.spawnflags & NONBLOCKING )
+   if ( self.spawnflags & ROTATE_NONBLOCKING )
       {
       self.solid = SOLID_NOT;
       }
@@ -926,12 +910,12 @@ void() func_movewall =
       self.solid = SOLID_BSP;
       self.blocked = movewall_blocked;
       }
-   if ( self.spawnflags & TOUCH )
+   if ( self.spawnflags & ROTATE_TOUCH )
       {
       self.touch = movewall_touch;
       }
    setmodel (self,self.model);
-   if ( !( self.spawnflags & VISIBLE ) )
+   if ( !( self.spawnflags & ROTATE_VISIBLE ) )
       {
       self.model = string_null;
       }
@@ -977,7 +961,7 @@ void() rotate_door_think2 =
       }
    else
       {
-      if ( self.spawnflags & STAYOPEN )
+      if ( self.spawnflags & ROTATE_STAYOPEN )
          {
          rotate_door_group_reversedirection();
          return;
@@ -1103,11 +1087,11 @@ void() rotate_door_use =
    };
 
 
-/*QUAKED func_rotate_door (0 .5 .8) (-8 -8 -8) (8 8 8) STAYOPEN
+/*QUAKED func_rotate_door (0 .5 .8) (-8 -8 -8) (8 8 8) ROTATE_STAYOPEN
 Creates a door that rotates between two positions around a point of
 rotation each time it's triggered.
 
-STAYOPEN tells the door to reopen after closing.  This prevents a trigger-
+ROTATE_STAYOPEN tells the door to reopen after closing.  This prevents a trigger-
 once door from closing again when it's blocked.
 
 "dmg" specifies the damage to cause when blocked.  Defaults to 2.  Negative numbers indicate no damage.

@@ -346,6 +346,27 @@ float	STATE_BOTTOM	= 1;
 float	STATE_UP		= 2;
 float	STATE_DOWN		= 3;
 
+float 	STATE_INVISIBLE = 0;
+float 	STATE_VISIBLE 	= 1;
+
+// rotate states
+float STATE_ACTIVE      = 0;
+float STATE_INACTIVE    = 1;
+float STATE_SPEEDINGUP  = 2;
+float STATE_SLOWINGDOWN = 3;
+
+float STATE_CLOSED   = 4;
+float STATE_OPEN     = 5;
+float STATE_OPENING  = 6;
+float STATE_CLOSING  = 7;
+
+float STATE_WAIT = 0;
+float STATE_MOVE = 1;
+float STATE_STOP = 2;
+float STATE_FIND = 3;
+float STATE_NEXT = 4;
+// end rotate states
+
 vector	VEC_ORIGIN = '0 0 0';
 vector	VEC_HULL_MIN = '-16 -16 -24';
 vector	VEC_HULL_MAX = '16 16 32';
