@@ -23,6 +23,22 @@ last_frame: The last frame of the animation.
 
 float MISC_MODEL_GRAVITY = 1;
 float MISC_MODEL_SOLID = 2;
+float MISC_MODEL_STARTOFF = 4;
+
+void() misc_model_use = {
+	if(self.state == STATE_VISIBLE) {
+		self.solid = SOLID_NOT;
+		self.model = "";
+
+		self.state = STATE_INVISIBLE;
+	}
+	else {
+		if(self.spawnflags & MISC_MODEL_SOLID) self.solid = SOLID_BBOX;
+		self.model = self.mdl;
+
+		self.state = STATE_VISIBLE;
+	}
+};
 
 void() misc_model_think = {
     self.nextthink = time + fabs(self.speed);
@@ -31,7 +47,9 @@ void() misc_model_think = {
 };
 
 void() misc_model = {
-		
+	if(!self.mdl || self.mdl == "")
+		objerror("Model not defined");
+
 	if(!self.centeroffset) self.centeroffset = '0 0 0';
 	if(!self.mdlsz) self.mdlsz = '32 32 32';
 	
@@ -45,24 +63,28 @@ void() misc_model = {
 	vmax_y = self.centeroffset_y + (self.mdlsz_y / 2);
 	vmax_z = self.centeroffset_z + (self.mdlsz_z / 2);
 	
-	if(self.spawnflags & MISC_MODEL_SOLID) self.solid = SOLID_BBOX;
-	else self.solid = SOLID_NOT;
 	
-	if(self.spawnflags & MISC_MODEL_GRAVITY) self.movetype = MOVETYPE_TOSS;
-	else self.movetype = MOVETYPE_NONE;
+
 	
     precache_model(self.mdl);
     setmodel(self, self.mdl);
 
 	setsize(self, vmin, vmax);
-	
+
+	if(self.spawnflags & MISC_MODEL_GRAVITY) self.movetype = MOVETYPE_TOSS;
+	else self.movetype = MOVETYPE_NONE;
+
+	if(self.spawnflags & MISC_MODEL_SOLID) self.solid = SOLID_BBOX;
+	else self.solid = SOLID_NOT;
+
+	self.use = misc_model_use;
 	
     if (!self.frame) {
         self.frame = self.first_frame;
     }
 
     // Make static (not animate) if not given a frame range, and not affected by gravity
-    // also remains active if it has a targetname (so it can be killtargeted)
+    // also remains active if it has a targetname (so it can be killtargeted/toggled)
     if (!self.last_frame && !(self.spawnflags & MISC_MODEL_GRAVITY) && !self.targetname) {
         makestatic(self);
     }
@@ -76,5 +98,12 @@ void() misc_model = {
 	    self.nextthink = time + self.speed;
 	    self.think = misc_model_think;
 	}
+
+	if(self.spawnflags & MISC_MODEL_STARTOFF)
+		self.state = STATE_VISIBLE;
+	else
+		self.state = STATE_INVISIBLE;
+
+	misc_model_use();
 };
 
