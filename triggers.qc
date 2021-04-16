@@ -307,8 +307,8 @@ TELEPORT TRIGGERS
 
 float	PLAYER_ONLY	= 1;
 float	SILENT = 2;
+float TELE_STEALTH = 4;
 /*float RANDOM = 4;
-float TELE_STEALTH = 8;
 float MONSTER_ONLY = 16;
 float TELE_DD = 32;*/
 
@@ -430,7 +430,7 @@ local vector	org;
 	SUB_UseTargets ();
 
 // put a tfog where the player was
-	spawn_tfog (other.origin);
+	if(!(self.spawnflags & TELE_STEALTH)) spawn_tfog (other.origin);
 
 	t = find (world, targetname, self.target);
 	if (!t)
@@ -440,7 +440,7 @@ local vector	org;
 	makevectors (t.mangle);
 	org = t.origin + 32 * v_forward;
 
-	spawn_tfog (org);
+	if(!(t.spawnflags & TELE_STEALTH)) spawn_tfog (org);
 	spawn_tdeath(t.origin, other);
 
 // move the player and lock him down for a little while

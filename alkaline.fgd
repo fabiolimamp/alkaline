@@ -448,7 +448,11 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 @PointClass base(PlayerClass) = info_player_coop : "Player cooperative start" []
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
 @PointClass base(PlayerClass) = info_player_deathmatch : "DM start" []
-@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog) = info_teleport_destination : "Teleport destination" []
+@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog) = info_teleport_destination : "Teleport destination" [
+	spawnflags(flags) = [
+		4: "Stealth teleport in"
+	]
+]
 @PointClass = info_null : "info_null (spotlight target)"
 [
 	targetname(target_source) : "Name" 
@@ -1706,7 +1710,8 @@ Other than that, this entity functions like a normal button.
 	spawnflags(Flags) =
 	[
 		1 : "Player only" : 0
-		2 : "Silent" : 0
+		2 : "No portal sound" : 0
+		4 : "Stealth teleport out" : 0
 	]
 ]
 
