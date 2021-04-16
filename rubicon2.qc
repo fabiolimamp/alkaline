@@ -398,7 +398,7 @@ void () circuitboard_touch =
 		return;
 	}
 	stuffcmd (other, "bf\n");
-	centerprint (other, self.message);
+	if(!(self.spawnflags & 1)) centerprint (other, self.message);
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	activator = other;
 	SUB_UseTargets ();
@@ -415,7 +415,8 @@ void () item_circuitboard =
 	setmodel (self, self.mdl);
 
 	if(!self.message) self.message = "You got the 17-centimeter Fromitz board!";
-	if(!self.noise) self.noise = "items/protect.wav";
+	
+	if(!self.noise) self.noise = "misc/basekey.wav";//"items/protect.wav";
 
 	precache_sound (self.noise);
 
