@@ -625,7 +625,15 @@ The behavior of an item_key_custom should be as the player expects (based on the
 // ITEM_CIRCUITBOARD
 // Collectible circuit board thingie
 
-@PointClass base(Appearflags, Targetname, Target, RespawnableItem) color(255 255 32) = item_circuitboard : "Circuit board" []
+@PointClass size(-16 -16 -24, 16 16 32) base(Appearflags, Targetname, Target, RespawnableItem) color(255 255 32) model({ "path" : mdl}) =
+	item_circuitboard : "Circuit board"
+[
+	mdl(string) : "Model" : "progs/fromitz.mdl"
+	message(string) : "Pickup message" : "You got the 17-centimeter Fromitz board!"
+	spawnflags(flags) = [
+		1 : "No message" : 0
+	]
+]
 
 
 //

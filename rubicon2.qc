@@ -398,7 +398,7 @@ void () circuitboard_touch =
 		return;
 	}
 	stuffcmd (other, "bf\n");
-	centerprint (other, "You got the 17-centimeter Fromitz board!");
+	centerprint (other, self.message);
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	activator = other;
 	SUB_UseTargets ();
@@ -410,10 +410,15 @@ collectible circuit board thing
 */
 void () item_circuitboard =
 {
-	precache_model ("progs/fromitz.mdl");
-	setmodel (self, "progs/fromitz.mdl");
-	precache_sound ("items/protect.wav");
-	self.noise = "items/protect.wav";
+	if(!self.mdl) self.mdl = "progs/fromitz.mdl";
+	precache_model (self.mdl);
+	setmodel (self, self.mdl);
+
+	if(!self.message) self.message = "You got the 17-centimeter Fromitz board!";
+	if(!self.noise) self.noise = "items/protect.wav";
+
+	precache_sound (self.noise);
+
 	self.touch = circuitboard_touch;
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
