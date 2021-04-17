@@ -537,6 +537,8 @@ void() PutClientInServer =
 
 	spot = SelectSpawnPoint ();
 
+	if(!client_ent) client_ent = self; //client_ent will be the first player to enter
+	
 	self.classname = "player";
 	self.health = 100;
 	self.takedamage = DAMAGE_AIM;

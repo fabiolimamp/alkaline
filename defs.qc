@@ -379,13 +379,31 @@ vector	VEC_UP			= '0 0 1';
 vector	VEC_DOWN 		= '0 0 -1';
 
 // protocol bytes
+// god bless sock for this updated list --bmFbr
+float	SVC_DISCONNECT		= 2;	// Mainly used in client.qc
+float	SVC_UPDATESTAT		= 3;	// [byte] [long] - Force update of stats
+float	SVC_VERSION			= 4;	// [long] - Server version
+float	SVC_SETVIEW			= 5;	// [short] [entity] Set camera viewpoint 
+float	SVC_SOUND			= 6;	// 
+float	SVC_TIME			= 7;	// [long] server time
+float	SVC_PRINT			= 8;	// [string] null terminated string
+float	SVC_STUFFTXT		= 9;	// [string] stuffed into client's console buffer 
+float	SVC_SETANGLE		= 10;	// [vector] set view angle
+float	STAT_TOTALSECRETS 	= 11;	// [byte] [long] total secrets message
+float	STAT_TOTALMONSTERS 	= 12;
+float	SVC_UPDATENAME		= 13;
 float	SVC_TEMPENTITY		= 23;
+float	SVC_SETPAUSE		= 24;
+float	SVC_CENTERPRINT		= 26;
 float	SVC_KILLEDMONSTER	= 27;
 float	SVC_FOUNDSECRET		= 28;
+float	SVC_SPAWNSTATICSOUND= 29;
 float	SVC_INTERMISSION	= 30;
 float	SVC_FINALE			= 31;
 float	SVC_CDTRACK			= 32;
 float	SVC_SELLSCREEN		= 33;
+float	SVC_CUTSCENE		= 34;
+
 
 
 float	TE_SPIKE		= 0;
@@ -476,6 +494,7 @@ string	string_null;	// null string, nothing should be held here
 
 nosave float	clients;
 
+entity 	client_ent;
 entity	newmis;			// launch_spike sets this after spawning it
 
 entity	activator;		// the entity that activated a trigger or brush

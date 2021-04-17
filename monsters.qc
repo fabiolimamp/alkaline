@@ -70,6 +70,7 @@ void() monster_death_use =
 float SPAWN_ANGRY = 32;
 float SPAWN_TRIGGERED = 64;
 float SPAWN_SILENT = 128;
+float SPAWN_COUNTONSPAWN = 32768;
 //johnfitz
 
 void() walkmonster_start_go =
@@ -122,14 +123,15 @@ void() walkmonster_start_go =
 		self.th_stand ();
 	}
 
-//johnfitz -- added monster spawning code from Preach
-//http://www.inside3d.com/showtutorial.php?id=171
-if(!(self.spawnflags & SPAWN_TRIGGERED))
-	// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
-//johnfitz
+	//johnfitz -- added monster spawning code from Preach
+	//http://www.inside3d.com/showtutorial.php?id=171
+	if(!(self.spawnflags & SPAWN_TRIGGERED))
+		// spread think times so they don't all happen at same time
+		self.nextthink = self.nextthink + random()*0.5;
+	//johnfitz
 
-	if(self.spawnflags & SPAWN_ANGRY) monster_use();
+	if(self.spawnflags & SPAWN_ANGRY)
+		monster_use();
 };
 
 //johnfitz -- added monster spawning code from Preach
@@ -151,6 +153,13 @@ void() monster_teleport =
 	if(!(self.spawnflags & SPAWN_SILENT))
 		spawn_tfog (self.origin);	
 
+	self.flags = self.flags - FL_SPAWNMONSTER;
+
+	if(self.spawnflags & SPAWN_COUNTONSPAWN) {
+		total_monsters = total_monsters + 1;
+		update_hud_totals(HUD_MONSTERS);
+	}
+
 	self.think1();
 }
 //johnfitz
@@ -164,6 +173,7 @@ void() walkmonster_start =
 		//PREACH: This monster is to be teleported in
 
 		//store the important info in unused fields
+		self.flags = self.flags | FL_SPAWNMONSTER;
 		self.wad = self.model;
 		self.pos1 = self.mins;
 		self.pos2 = self.maxs;
@@ -178,7 +188,10 @@ void() walkmonster_start =
 		//set up the teleport functions
 		self.use = monster_teleport;
 		self.think1 = walkmonster_start_go;
-		total_monsters = total_monsters + 1;
+
+		if(!(self.spawnflags & SPAWN_COUNTONSPAWN))
+			total_monsters = total_monsters + 1;
+
 		return;
 		}
 //johnfitz
@@ -245,6 +258,8 @@ void() flymonster_start =
 	if(self.spawnflags & SPAWN_TRIGGERED)
 		{
 		//PREACH: This monster is to be teleported in, so hide it
+		self.flags = self.flags | FL_SPAWNMONSTER;
+
 		self.wad = self.model;
 		self.pos1 = self.mins;
 		self.pos2 = self.maxs;
@@ -256,7 +271,8 @@ void() flymonster_start =
 		self.movetype = MOVETYPE_NONE;
 		self.use = monster_teleport;
 		self.think1 = flymonster_start_go;
-		total_monsters = total_monsters + 1;
+		if(!(self.spawnflags & SPAWN_COUNTONSPAWN))
+			total_monsters = total_monsters + 1;
 		return;
 	}
 	//johnfitz
