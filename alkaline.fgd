@@ -631,14 +631,19 @@ The behavior of an item_key_custom should be as the player expects (based on the
 
 @PointClass size(-16 -16 -24, 16 16 32) base(Appearflags, Targetname, Target, NonRespawnableItem) color(255 255 32)
 model({{ mdl == "" -> "progs/fromitz.mdl", mdl}}) =
-	item_circuitboard : "Circuit board"
+	item_circuitboard : "
+Circuit board.
+
+Dummy item that can be used to various ends. Doesn't add anything to your inventory, it's meant to be used by triggering something when you pick it up, like a trigger_counter for a door.
+Can have a custom model ('mdl'), pickup sound ('noise'), and pickup name ('netname').
+If you want to centerprint a message instead of showing the usual screen-top pickup text, you can set the 'No pickup text' spawnflag, and set a centerprint message with the 'message' key."
 [
 	mdl(string) : "Model" : "progs/fromitz.mdl"
 	netname(string) : "Pickup name" : "the 17-centimeter Fromitz board!"
 	noise(string) : "Pickup sound" : "misc/basekey.wav"
 	message(string) : "Centerprint message"
 	spawnflags(flags) = [
-		1 : "No message" : 0
+		1 : "No pickup text" : 0
 	]
 ]
 
