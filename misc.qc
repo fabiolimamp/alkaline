@@ -287,6 +287,52 @@ void() target_autosave =
 
 /***********************************************
 
+target_move
+
+***********************************************/
+
+
+void() target_move_use = {
+	local entity t;
+	local vector neworigin;
+
+	t = find(world, targetname, self.target);
+
+	if(t) {
+		if(t.movetype == MOVETYPE_STEP) //monsters need to move off the ground, otherwise they'll lerp 
+			neworigin = self.origin + '0 0 1';
+		else
+			neworigin = self.origin;
+
+		setorigin(t, neworigin);
+		//t.origin = self.origin;
+		if(!(self.spawnflags & 1)) t.angles = self.mangle;
+		if(!(self.spawnflags & 2)) t.velocity = '0 0 0';
+		t.flags = t.flags - t.flags & FL_ONGROUND;
+	}
+
+};
+
+/*QUAKED target_move (1 .0 .5) (-8 -8 -8) (8 8 8) KEEP_ANGLE KEEP_VELOCITY
+Moves target entity to this spot and angle when triggered.
+Use spawnflag 1 to not change the entity's original angle.
+Spawnflag 2 keeps the entity's original velocity.
+*/
+void() target_move = {
+	if(!self.target)
+		objerror("No target set");
+
+	if(!self.targetname)
+		objerror("No targetname set");
+
+	self.use = target_move_use;
+	
+	if(!self.mangle) self.mangle = self.angles;
+};
+
+
+/***********************************************
+
 target_infight
 
 ***********************************************/
