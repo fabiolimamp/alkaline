@@ -87,6 +87,11 @@ func_breakable
 ===============================================================================
 */
 
+float BREAKABLE_GREENMETAL = 0;
+float BREAKABLE_REDMETAL = 1;
+float BREAKABLE_CONCRETE = 2;
+float BREAKABLE_GLASS = 3;
+
 void() make_breakable_debris =
 {
 	local float i;
@@ -99,7 +104,7 @@ void() make_breakable_debris =
 		new.origin_x = (self.maxs_x - self.mins_x)*random() + self.mins_x;
 		new.origin_y = (self.maxs_y - self.mins_y)*random() + self.mins_y;
 		new.origin_z = (self.maxs_z - self.mins_z)*random() + self.mins_z;
-		setmodel (new, "progs/debris.mdl");
+		setmodel (new, self.mdl);
 		setsize (new, '0 0 0', '0 0 0');
 		new.velocity = VelocityForDamage (self.health*2);
 		new.movetype = MOVETYPE_BOUNCE;
@@ -112,18 +117,32 @@ void() make_breakable_debris =
 		new.nextthink = time + 10 + random()*10;
 		new.flags = 0;
 
-		//randomly choose size
-		if (random() > 0.333)
-			new.frame = 1; //larger
-		else
-			new.frame = 2; //smaller
-
-		//choose skin based on "style" key
-		if (self.style == 1)
+		if(self.style == BREAKABLE_REDMETAL) {
 			new.skin = 1;
-		if (self.style == 2)
+			if (random() > 0.333)
+				new.frame = 1; //larger
+			else
+				new.frame = 2; //smaller
+		}
+		else if(self.style == BREAKABLE_CONCRETE) {
 			new.skin = 2;
-		
+			if (random() > 0.333)
+				new.frame = 1; //larger
+			else
+				new.frame = 2; //smaller
+		}
+		else if(self.style == BREAKABLE_GLASS) {
+			new.alpha = 0.6;
+			new.frame = 1;
+		}
+		else { // BREAKABLE_GREENMETAL
+			new.skin = 0;
+			if (random() > 0.333)
+				new.frame = 1; //larger
+			else
+				new.frame = 2; //smaller
+		}
+
 		i = i + 1;
 	}
 	
@@ -166,32 +185,44 @@ NO_MONSTERS: object ignores damage from monsters
 0 = green metal (default)
 1 = red metal
 2 = concrete
+3 = glass
 */
 void () func_breakable =
 {
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	setmodel (self, self.model);
-	precache_model ("progs/debris.mdl");
-	precache_sound ("misc/metal_impact.wav");
-	precache_sound ("misc/conc_impact.wav");	
-	
-	if(!self.bloodtype)
-		self.bloodtype = SPAWN_DIRT;
 
-	if (self.style == 2)
-		{
-		self.noise1 = "misc/conc_impact.wav";
-		}
-	else 
-		{
+	if (self.style == BREAKABLE_REDMETAL) {
 		self.noise1 = "misc/metal_impact.wav";
-		}
-		
+		self.mdl = "progs/debris.mdl";
+		if (!self.cnt) self.cnt = 6;
+		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
+	}
+	else if (self.style == BREAKABLE_CONCRETE) {
+		self.noise1 = "misc/conc_impact.wav";
+		self.mdl = "progs/debris.mdl";
+		if (!self.cnt) self.cnt = 6;
+		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
+	}
+	else if(self.style == BREAKABLE_GLASS) {
+		self.mdl = "maps/glass01.bsp";
+		self.noise1 = "misc/glass_impact.wav";
+		if (!self.cnt) self.cnt = 15;
+		if (!self.bloodtype) self.bloodtype = SPAWN_WHITESPARKS;
+	}
+	else { // BREAKABLE_GREENMETAL
+		self.noise1 = "misc/metal_impact.wav";
+		self.mdl = "progs/debris.mdl";
+		if (!self.cnt) self.cnt = 6;
+		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
+	}
+
+	precache_sound (self.noise1);
+	precache_model (self.mdl);
 	if (!self.health) 
 		self.health = 20;
-	if (!self.cnt) 
-		self.cnt = 6;
+	
 		
 	if (self.targetname)
 	{

@@ -242,13 +242,14 @@
 
 NO_MONSTERS: object ignores damage from monsters" 
 [
-	cnt(integer) : "Debris amount" : 6 : "Number of pieces of debris to spawn."
+	cnt(integer) : "Debris amount" :  : "Number of pieces of debris to spawn."
 	health(integer) : "Health" : 20
 	style(choices) : "Debris color" : 0 = 
 	[
         0: "Green metal"
 		1: "Red metal"
 		2: "Concrete"
+		3: "Glass"
 	]
 	spawnflags(flags) =
 	[
