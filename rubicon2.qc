@@ -209,7 +209,7 @@ void () func_breakable =
 		self.mdl = "maps/glass01.bsp";
 		self.noise1 = "misc/glass_impact.wav";
 		if (!self.cnt) self.cnt = 15;
-		if (!self.bloodtype) self.bloodtype = SPAWN_WHITESPARKS;
+		if (!self.bloodtype) self.bloodtype = SPAWN_WHITESPARK;
 	}
 	else { // BREAKABLE_GREENMETAL
 		self.noise1 = "misc/metal_impact.wav";
