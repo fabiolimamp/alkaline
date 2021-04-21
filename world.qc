@@ -318,6 +318,7 @@ void() worldspawn =
 	precache_model ("progs/bit.mdl");
 
 	precache_model ("progs/v_light.mdl");
+	precache_model ("progs/misc_empty.mdl");
 	
 
 //

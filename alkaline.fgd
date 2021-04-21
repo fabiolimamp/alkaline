@@ -1156,6 +1156,7 @@ Set the LT_START_ON spawnflag if you want the lightning to start in a fired stat
 	spawnflags(flags) = [
 		1 : "Togglable"
 		2 : "Start on"
+		4 : "Draw light effects"
 	]
 ]
 
@@ -1179,11 +1180,18 @@ Set 'delay' to the delay before activating the next point in the chain. Default 
 		1 : "Lightning noise"
 		2 : "Silent"
 	]
+	spawnflags(flags) = [
+		4 : "Draw light effects"
+	]
 ]
 
-@PointClass base(SingleTarget, Appearflags) color(168 224 255) = misc_lightning_end :
+@PointClass base(Targetname, Appearflags) color(168 224 255) = misc_lightning_end :
 "Endpoint of a lightning trail effect. Refer to misc_lightning_start for a more detailed explanation."
-[]
+[
+	spawnflags(flags) = [
+		4 : "Draw light effects"
+	]
+]
 
 @PointClass base(Appearflags, Targetname, Target) color(128 210 128) = target_lightstyle : 
 "Target : Lightstyle

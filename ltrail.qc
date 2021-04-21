@@ -5,6 +5,7 @@ Loosely based on DoE's ltrail_* entities
 
 float LT_TOGGLE =	1;
 float LT_START_ON = 2;
+float LT_CASTLIGHT = 4;
 
 float LT_SOUND_INHERIT	= 0;
 float LT_SOUND_ON		= 1;
@@ -42,17 +43,22 @@ void() misc_lightning_fire =
 		WriteCoord (MSG_BROADCAST, t.origin_z);
 		
 		LightningDamage (self.origin, t.origin, self, damage);
+		
+		if(t.spawnflags & LT_CASTLIGHT) t.effects = EF_MUZZLEFLASH;
+
 		t.enemy = self;
 
 		t = find(t, targetname, self.target);
 	}
 	
-	
+	if(self.spawnflags & LT_CASTLIGHT) self.effects = EF_MUZZLEFLASH;
 
 	if((self.owner.spawnflags & LT_TOGGLE) && self.owner.state == 0) {
 		if(self.pausetime > time + self.enemy.delay) self.pausetime = time + self.enemy.delay;
 	}
+
 	
+
 	if(self.pausetime > time) {
 		self.think = misc_lightning_fire;
 		self.nextthink = time + 0.05;
@@ -117,6 +123,9 @@ void() misc_lightning_start =
 	self.owner = self;
 	self.enemy = self;
 
+	// muzzleflash effects require a model
+	if(self.spawnflags & LT_CASTLIGHT) setmodel(self, "progs/misc_empty.mdl"); 
+
 	if(!self.target || self.target == "") objerror("Target point not set for lightning");
 	
 	self.use = misc_lightning_use;
@@ -153,6 +162,9 @@ void() misc_lightning_relay =
 	precache_sound ("weapons/lhit.wav");
 	if(!self.target || self.target == "") objerror("Target point not set for lightning");
 
+	// muzzleflash effects require a model
+	if(self.spawnflags & LT_CASTLIGHT) setmodel(self, "progs/misc_empty.mdl"); 
+
 	self.use = misc_lightning_use;
 };
 
@@ -164,6 +176,9 @@ Does not fire any lightning.
 void() misc_lightning_end =
 {
 	precache_sound ("weapons/lhit.wav");
+
+	// muzzleflash effects require a model
+	if(self.spawnflags & LT_CASTLIGHT) setmodel(self, "progs/misc_empty.mdl"); 
 
 	self.use = misc_lightning_end_use;
 };
