@@ -26,6 +26,8 @@ void() info_notnull =
 /*==========
 lightstyle_lookup
 ==========*/
+float LIGHTSTYLES_MAX = 17; // If new styles are added change this const
+
 string(float num) lightstyle_lookup =
 {
 	switch (num)
@@ -118,11 +120,14 @@ string(float num) lightstyle_lookup =
 setup_lightstyles
 
 Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
-Styles 32+ are assigned by the light program for switchable lights.
+Styles 32+ are assigned by the light program for switchable lights,
+but that value can be changed with the _compilerstyle_start worldspawn key.
+
 ==========*/
+
 void() setup_lightstyles =
 {
-	for (float i = 0; i <= 17; i++)
+	for (float i = 0; i <= LIGHTSTYLES_MAX; i++)
 	{
 		lightstyle(i, lightstyle_lookup(i));
 	}
@@ -369,7 +374,7 @@ void() light =
 	}
 
 	// switchable light
-	if (self.style >= 32)
+	if (self.style > LIGHTSTYLES_MAX)
 	{
 		self.use = light_use;
 		if (self.spawnflags & START_OFF)
@@ -701,35 +706,36 @@ void() target_lightstyle_go =
 	}
 	
 	entity l;
-	if (self.target != string_null)
-	{
-		l = world;
-		while (l.style == 0)
-			l = find(l, targetname, self.target);		
+	if (self.target != string_null) {
+		l = find(world, targetname, self.target);
+		while (l.style == 0 && l != world) {
+			l = find(l, targetname, self.target);
+		}
+		
 	}
 	if (l) lightstyle(l.style, newstyle);
 	
-	if (self.target2 != string_null)
-	{
-		l = world;
-		while (l.style == 0)
+	if (self.target2 != string_null) {
+		l = find(world, targetname, self.target2);
+		while (l.style == 0 && l != world) {
 			l = find(l, targetname, self.target2);		
+		}
 	}
 	if (l) lightstyle(l.style, newstyle);
 
-	if (self.target3 != string_null)
-	{
-		l = world;
-		while (l.style == 0)
+	if (self.target3 != string_null) {
+		l = find(world, targetname, self.target3);
+		while (l.style == 0 && l != world) {
 			l = find(l, targetname, self.target3);		
+		}
 	}
 	if (l) lightstyle(l.style, newstyle);
 
-	if (self.target4 != string_null)
-	{
-		l = world;
-		while (l.style == 0)
+	if (self.target4 != string_null) {
+		l = find(world, targetname, self.target4);
+		while (l.style == 0 && l != world) {
 			l = find(l, targetname, self.target4);		
+		}
 	}
 	if (l) lightstyle(l.style, newstyle);
 }
