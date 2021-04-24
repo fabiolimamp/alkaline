@@ -26,7 +26,7 @@ float MISC_MODEL_SOLID = 2;
 float MISC_MODEL_STARTOFF = 4;
 
 void() misc_model_use = {
-	if(self.state == STATE_VISIBLE) {
+	if(self.state == STATE_ACTIVE) {
 		self.solid = SOLID_NOT;
 		self.model = "";
 
@@ -36,7 +36,7 @@ void() misc_model_use = {
 		if(self.spawnflags & MISC_MODEL_SOLID) self.solid = SOLID_BBOX;
 		self.model = self.mdl;
 
-		self.state = STATE_VISIBLE;
+		self.state = STATE_ACTIVE;
 	}
 };
 
@@ -100,7 +100,7 @@ void() misc_model = {
 	}
 
 	if(self.spawnflags & MISC_MODEL_STARTOFF)
-		self.state = STATE_VISIBLE;
+		self.state = STATE_ACTIVE;
 	else
 		self.state = STATE_INVISIBLE;
 

@@ -342,15 +342,15 @@ float	CONTENT_SLIME			= -4;
 float	CONTENT_LAVA			= -5;
 float	CONTENT_SKY				= -6;
 
+
 float	STATE_TOP		= 0;
 float	STATE_BOTTOM	= 1;
 float	STATE_UP		= 2;
 float	STATE_DOWN		= 3;
 
-float 	STATE_INVISIBLE = 0;
-float 	STATE_VISIBLE 	= 1;
 
-// rotate states
+// general states
+// extends rotate entities states
 float STATE_ACTIVE      = 0;
 float STATE_INACTIVE    = 1;
 float STATE_SPEEDINGUP  = 2;
@@ -360,6 +360,9 @@ float STATE_CLOSED   = 4;
 float STATE_OPEN     = 5;
 float STATE_OPENING  = 6;
 float STATE_CLOSING  = 7;
+
+float STATE_INVISIBLE = 8;
+
 
 float STATE_WAIT = 0;
 float STATE_MOVE = 1;
@@ -1012,3 +1015,5 @@ float currentdq;
 .float 		dqplace = currentammo;
 .float 		activated = strength;
 void() LinkDoors2;
+
+.float estate; // entity state

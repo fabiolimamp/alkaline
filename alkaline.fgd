@@ -1811,6 +1811,24 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 	wait(integer) : "Repeat interval" : 2 
 ]
 
+@PointClass base(Targetname) = target_setstate : "Changes an entity's state.
+Entities in a disabled state won't fire its targets. Supported mostly on triggers.
+The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
+You can force the target entities to spawn disabled with spawnflag 1.
+" 
+[
+	target(target_destination) : "Target" 
+	target2(target_destination) : "Target" 
+	target3(target_destination) : "Target" 
+	target4(target_destination) : "Target" 
+	spawnflags(flags) = [ 1: "Targets start disabled" : 0 ]
+	style(choices) : "Setstate style" = [
+		0 : "Toggle current state"
+		1 : "Force active"
+		2 : "Force inactive"
+	]
+]
+
 @SolidClass base(Targetname) = trigger_push : "Trigger player push"
 [
 	angle(integer) : "Angle"

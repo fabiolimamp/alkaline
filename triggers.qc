@@ -1023,3 +1023,52 @@ void() trigger_repeat = {
 	self.state = STATE_INACTIVE;
 	self.use = trigger_repeat_use;
 };
+
+
+/*
+=============================================================
+
+target_setstate
+
+=============================================================
+*/
+
+void(string matchstring, .string matchfield, float state) target_setstate_set_target = {
+	local entity t;
+
+	t = find (world, matchfield, matchstring);
+	while (t != world) {
+		if(state == -1){
+			if(t.estate == STATE_ACTIVE) t.estate = STATE_INACTIVE;
+			else t.estate = STATE_INACTIVE;
+		}
+		else t.estate = state;
+
+		t = find (t, matchfield, matchstring);
+	}
+};
+
+void() target_setstate_use = {
+	local float state;
+
+	if (self.style == 1) state = STATE_ACTIVE;
+	else if (self.style == 2) state = STATE_INACTIVE;
+	else state = -1;
+
+	if (self.target && self.target != "") target_setstate_set_target(self.target, targetname, state);
+	if (self.target2 && self.target2 != "") target_setstate_set_target(self.target2, targetname, state);
+	if (self.target3 && self.target3 != "") target_setstate_set_target(self.target3, targetname, state);
+	if (self.target4 && self.target4 != "") target_setstate_set_target(self.target4, targetname, state);
+
+};
+
+void() target_setstate = {
+	self.use = target_setstate_use;
+
+	if(self.spawnflags & START_OFF) {
+		if (self.target && self.target != "") target_setstate_set_target(self.target, targetname, STATE_INACTIVE);
+		if (self.target2 && self.target2 != "") target_setstate_set_target(self.target2, targetname, STATE_INACTIVE);
+		if (self.target3 && self.target3 != "") target_setstate_set_target(self.target3, targetname, STATE_INACTIVE);
+		if (self.target4 && self.target4 != "") target_setstate_set_target(self.target4, targetname, STATE_INACTIVE);
+	}
+};

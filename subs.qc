@@ -261,6 +261,8 @@ void() SUB_UseTargets =
 {
 	local entity t;
 
+	if(self.estate != STATE_ACTIVE) return;
+
 //
 // check for a delay
 //
