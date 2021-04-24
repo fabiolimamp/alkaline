@@ -284,7 +284,7 @@ void() train_next =
 	local entity	targ;
 	
 	//johnfitz -- retriggerable trains
-	if (self.spawnflags & TRAIN_RETRIGGER) {
+	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
 		self.use = train_moving_use; //store up any premature triggerings until current movement is finished
 	}
 	//johnfitz
