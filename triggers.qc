@@ -975,3 +975,51 @@ void() target_removeitems = {
 	if(!self.count)
 		self.count = -1;
 };
+
+
+/*
+=============================================================
+
+trigger_repeat
+
+=============================================================
+*/
+
+void() trigger_repeat_think = {
+	if(self.count > 0 && self.cnt <= 0) // has limited uses and has reached 0
+		return;
+
+	SUB_UseTargets();
+
+	self.think = trigger_repeat_think;
+
+	if(self.count > 0) {
+		self.cnt--;
+		if(self.cnt <= 0) {
+			self.state = STATE_INACTIVE;
+			self.nextthink = -1;
+		}
+		else self.nextthink = time + self.wait;
+	}
+	else self.nextthink = time + self.wait;
+};
+
+void() trigger_repeat_use = {
+	if(self.state == STATE_INACTIVE) {
+		if(!(self.spawnflags & 1)) self.cnt = self.count;
+		trigger_repeat_think();
+		self.state = STATE_ACTIVE;
+	}
+	else {
+		self.nextthink = -1;
+		self.state = STATE_INACTIVE;
+	}
+};
+
+void() trigger_repeat = {
+	if(!self.wait) self.wait = 2;
+
+	self.cnt = self.count; //.cnt is the internal counter
+	self.state = STATE_INACTIVE;
+	self.use = trigger_repeat_use;
+};
