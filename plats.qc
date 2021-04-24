@@ -283,11 +283,7 @@ void() train_next =
 {
 	local entity	targ;
 	
-	//johnfitz -- retriggerable trains
-	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
-		self.use = train_moving_use; //store up any premature triggerings until current movement is finished
-	}
-	//johnfitz
+
 
 	targ = find (world, targetname, self.target);
 	self.target = targ.target;
@@ -298,6 +294,11 @@ void() train_next =
 	else
 		self.wait = 0;
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+
+	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
+		self.use = train_moving_use; //store up any premature triggerings until current movement is finished
+	}
+
 	SUB_CalcMove (targ.origin - self.mins, self.speed, train_wait);
 };
 
