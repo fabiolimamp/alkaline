@@ -215,6 +215,8 @@ void() func_plat =
 };
 
 //============================================================================
+// TRAINS
+//============================================================================
 
 void() train_next;
 void() func_train_find;
@@ -231,7 +233,7 @@ void() train_blocked =
 void() train_use =
 {
 	//johnfitz -- retriggerable trains
-	if (self.spawnflags & TRAIN_RETRIGGER) {
+	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
 		train_next();
 		return;
 	}
@@ -253,7 +255,7 @@ void() train_moving_use =
 void() train_wait =
 {
 	//johnfitz -- retriggerable trains
-	if (self.spawnflags & TRAIN_RETRIGGER) {
+	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
 		if (self.cnt > 0) { //triggered early, so continue now
 			self.cnt = self.cnt - 1;
 			self.nextthink = self.ltime + 0.1;
