@@ -155,11 +155,9 @@
 	spawnflags(Flags) = [ 1 : "Initially dark" : 0 ]
 ]
 
-@baseclass = ModelLight	[
+@baseclass = BrushLight [
 	_minlight(integer) : "Min light" :  : "Set the minimum light level for any surface of the brush model. Default 0"
 	_mincolor(color255) : "Min light color R G B" : "255 255 255" : "Specify red(r), green(g) and blue(b) components for the colour of the minlight. RGB component values are between 0 and 255 (between 0 and 1 is also accepted). Default is white light (255 255 255)"
-	_shadow(integer) : "Shadows" :  : "If n is 1, this model will cast shadows on other models and itself (i.e. '_shadow' implies '_shadowself'). Note that this doesn’t magically give Quake dynamic lighting powers, so the shadows will not move if the model moves. Func_detail ONLY - If set to -1, light will pass through this brush model. Default 0"
-	_shadowself(integer) : "Self Shadow" :  : "If n is 1, this model will cast shadows on itself if one part of the model blocks the light from another model surface. This can be a better compromise for moving models than full shadowing. Default 0"
 	_dirt(integer) : "Dirt mapping (override)" :  : "For brush models, -1 prevents dirtmapping on the brush model. Useful it the bmodel touches or sticks into the world, and you want to those ares from turning black. Default 0"
 	_phong(choices) : "Enable Phong shading" : 0 =
 	[
@@ -169,6 +167,21 @@
 	_phong_angle(integer) : "Phong shading angle" :  : "Enables phong shading on faces of this model with a custom angle. Adjacent faces with normals this many degrees apart (or less) will be smoothed. Consider setting '_anglescale' to '1' on lights or worldspawn to make the effect of phong shading more visible. Use the '-phongdebug' command-line flag to save the interpolated normals to the lightmap for previewing (use 'r_lightmap 1' or 'gl_lightmaps 1' in your engine to preview.)"
 ]
 
+@baseclass = Shadow [
+	_shadow(integer) : "Shadows" :  : "If n is 1, this model will cast shadows on other models and itself (i.e. '_shadow' implies '_shadowself'). Note that this doesn’t magically give Quake dynamic lighting powers, so the shadows will not move if the model moves. Func_detail ONLY - If set to -1, light will pass through this brush model. Default 0"
+	_shadowself(integer) : "Self Shadow" :  : "If n is 1, this model will cast shadows on itself if one part of the model blocks the light from another model surface. This can be a better compromise for moving models than full shadowing. Default 0"
+]
+
+@baseclass = SwitchShadow [
+	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables a switchable shadow that can be controlled with a targeting misc_shadowcontroller." = [
+		0: "No"
+		1: "Yes"
+	]
+]
+
+@baseclass base(BrushLight, Shadow) = ModelLight	[
+]
+
 @baseclass = Alpha [
 	alpha(float) : "Opacity" : "1.0" : "Controls entity opacity in the 0-1 range. 0: fully transparent, 1: fully opaque"
 ]
@@ -176,6 +189,7 @@
 @baseclass = Angle [
 	angle(integer) : "Angle"
 ]
+
 
 
 @baseclass = Fog [ 
@@ -191,17 +205,7 @@
      
 @baseclass = Deathtype [ deathtype(string) : "Obituary message" ]
 
-@baseclass = Shadow [
-	_shadow(integer) : "Shadows" :  : "If n is 1, this model will cast shadows on other models and itself (i.e. '_shadow' implies '_shadowself'). Note that this doesn’t magically give Quake dynamic lighting powers, so the shadows will not move if the model moves. Func_detail ONLY - If set to -1, light will pass through this brush model. Default 0"
-	_shadowself(integer) : "Self Shadow" :  : "If n is 1, this model will cast shadows on itself if one part of the model blocks the light from another model surface. This can be a better compromise for moving models than full shadowing. Default 0"
-]
 
-@baseclass = SwitchShadow [
-	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables a switchable shadow that can be controlled with a targeting misc_shadowcontroller." = [
-		0: "No"
-		1: "Yes"
-	]
-]
 
 @baseclass = Blood [
 	bloodtype(choices) : "Blood type" : : "Type of particle effect spawned when hit." = [
@@ -1467,36 +1471,50 @@ dmg is the amount of damage to cause when touched."
 	message(string) : "Message" 
 ]
 
-@SolidClass base(Targetname, ModelLight) = func_train :
+@SolidClass base(Targetname, BrushLight) = func_train :
 "Trains are moving platforms that players can ride. The target's origin specifies the min point of the train at each corner. The train spawns at the first target it is pointing at.
-
 Use path_corner as targets.
-To stop a train entity, make the the last path_corner Wait -1.
-If the train itself is the target of a button or trigger, it will not begin moving until activated.
+path_corners with a 'wait -1' value will stop the train. Trigger the func_train again to resume its path.
 
-Flags:
-RETRIGGER: stop at each path_corner and don't resume until triggered again (ignores wait time)
+'pausetime' sets a default waiting time when a value is not defined in path_corners.
+'speed' sets the initial moving speed. If the train encounters a path_corner with its 'speed' field set it will move at that speed afterwards.
+
+Spawnflags:
+- 'Move on trigger' will force the train to resume its path when triggered, even when temporarily waiting at a path_corner.
+- 'Stop on trigger' will stop the train at the next path_corner when triggered. Trigger it again to resume.
+The flags above are mutually exclusive and will cause an objerror when selected simultaneously.
 " 
 [
 	sounds(choices) : "Sound" : 1 =
 	[
 		0: "None"
 		1: "Ratchet Metal"
+		2: "Base door"
 	]
 	speed(integer) : "Speed (units per second)" : 100
+	pausetime(integer) : "Default wait time" : : "Wait time used when not defined in path_corner."
 	target(target_source) : "First stop target"
 	dmg(integer) : "Damage on crush" : 2
 	spawnflags(flags) =
 	[
-		1: "Retrigger" : 0
+		2: "Move on trigger" : 0
+		4: "Stop on trigger" : 0
 	]
 ]
 
 @PointClass base(Targetname) color(128 64 0) size(8 8 8) = path_corner :
-"Moving platform stop"
+"Moving platform waypoint.
+Check each field's description for more details.
+"
 [
 	target(target_source) : "Next stop target"
-	wait(float) : "Wait" : "0"
+	wait(float) : "Wait" : : "Waiting time at this point.
+- A positive value directly sets a waiting time in seconds.
+- A 0 value (or not defined) uses the 'pausetime' field value in the func_train (which defaults to 0s).
+- A -1 value makes the train to stop at this point.
+- A -2 value forces the train to not wait here even when 'pausetime' is set on the func_train.
+"
+	speed(integer) : "Speed" : : "Sets a new speed for the train to move from this point onwards."
 ]
 
 @SolidClass base(Targetname, ModelLight) = func_plat :

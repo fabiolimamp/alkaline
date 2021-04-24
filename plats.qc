@@ -221,95 +221,95 @@ void() func_plat =
 void() train_next;
 void() func_train_find;
 
-float TRAIN_RETRIGGER = 1; //johnfitz -- retriggerable trains
+float TRAIN_MOVEONTRIGGER = 2; 
+float TRAIN_STOPONTRIGGER = 4;
 
-void() train_blocked =
-{
-	if (time < self.attack_finished)
-		return;
+float TRAIN_NEXT_WAIT = 0; //normal movement
+float TRAIN_NEXT_STOP = 1; // force a stop on the next path_corner
+float TRAIN_NEXT_CONTINUE = 2; // force continue on the next path_corner (ignores wait time)
+
+void() train_blocked = {
+	if (time < self.attack_finished) return;
+
 	self.attack_finished = time + 0.5;
 	T_Damage (other, self, self, self.dmg);
 };
-void() train_use =
-{
-	//johnfitz -- retriggerable trains
-	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
+
+void() train_use = {
+	if (self.spawnflags & TRAIN_MOVEONTRIGGER || self.wait < 0) {
 		train_next();
 		return;
 	}
-	//johnfitz
 	
-	if (self.think != func_train_find)
+	if (self.think != func_train_find && self.cnt != TRAIN_NEXT_STOP)
 		return;		// already activated
+
 	train_next();
 };
 
-//johnfitz
-void() train_moving_use =
-{
-	//still moving, so save it for later
-	self.cnt = self.cnt + 1;
+void() train_moving_use = {
+	if (self.spawnflags & TRAIN_MOVEONTRIGGER || self.wait < 0)
+		self.cnt = TRAIN_NEXT_CONTINUE;
+	else if (self.spawnflags & TRAIN_STOPONTRIGGER)
+		self.cnt = TRAIN_NEXT_STOP;
 }
-//johnfitz
 
-void() train_wait =
-{
-	//johnfitz -- retriggerable trains
-	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
-		if (self.cnt > 0) { //triggered early, so continue now
-			self.cnt = self.cnt - 1;
-			self.nextthink = self.ltime + 0.1;
-			self.think = train_next;
-			return;
-		}
-		self.use = train_use; //ready to be re-triggered
-		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
-		return;
-	}
-	//johnfitz
-	
-	if (self.wait)
-	{
-		self.nextthink = self.ltime + self.wait;
-		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-	}
-	else
-		self.nextthink = self.ltime + 0.1;
+void() train_wait = {
+	self.use = train_use; //ready to be re-triggered
 	
 	self.think = train_next;
-};
-
-void() train_next =
-{
-	local entity	targ;
-	
-
-
-	targ = find (world, targetname, self.target);
-	self.target = targ.target;
-	if (!self.target)
-		objerror ("train_next: no next target");
-	if (targ.wait)
-		self.wait = targ.wait;
-	else
-		self.wait = 0;
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-
-	if (self.spawnflags & TRAIN_RETRIGGER || self.wait < 0) {
-		self.use = train_moving_use; //store up any premature triggerings until current movement is finished
+	dprint("wait: ");dprint(ftos(self.wait));dprint("\n");
+	dprint("cnt: ");dprint(ftos(self.cnt));dprint("\n");
+	if (self.wait && self.cnt == TRAIN_NEXT_WAIT) {
+		dprint("waiting move\n");
+		self.nextthink = self.ltime + self.wait;
+		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
 	}
+	else if (self.cnt != TRAIN_NEXT_STOP) {
+		//self.nextthink = self.ltime + 0.1;
+		dprint("move instantly\n");
+		self.nextthink = -1; // move instantly
+		train_next();
+	}
+	else
+		self.nextthink = -1;
 
-	SUB_CalcMove (targ.origin - self.mins, self.speed, train_wait);
+	
 };
 
-void() func_train_find =
-
-{
+void() train_next = {
 	local entity	targ;
 
-	targ = find (world, targetname, self.target);
+	targ = find(world, targetname, self.target);
 	self.target = targ.target;
-	setorigin (self, targ.origin - self.mins);
+	
+	if (!self.target)
+		objerror("train_next: no next target");
+
+	if (targ.wait){
+		if (targ.wait == -2) self.wait = 0;
+		else self.wait = targ.wait;
+	}
+	else
+		self.wait = self.pausetime;
+	
+	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	
+	if(!(!self.wait && self.cnt == TRAIN_NEXT_CONTINUE)) self.cnt = TRAIN_NEXT_WAIT;
+
+	if(targ.speed) self.speed2 = targ.speed;
+
+	self.use = train_moving_use; //store up any premature triggerings until current movement is finished
+
+	SUB_CalcMove(targ.origin - self.mins, self.speed2, train_wait);
+};
+
+void() func_train_find = {
+	local entity	targ;
+
+	targ = find(world, targetname, self.target);
+	self.target = targ.target;
+	setorigin(self, targ.origin - self.mins);
 	if (!self.targetname)
 	{	// not triggered, so start immediately
 		self.nextthink = self.ltime + 0.1;
@@ -341,6 +341,9 @@ void() func_train =
 	if (!self.dmg)
 		self.dmg = 2;
 
+	if(self.spawnflags & TRAIN_STOPONTRIGGER && self.spawnflags & TRAIN_MOVEONTRIGGER)
+		objerror("func_train: Stop and move on trigger set at the same time");
+
 	if (self.sounds == 0)
 	{
 		self.noise = ("misc/null.wav");
@@ -367,7 +370,7 @@ void() func_train =
 	}
 	//johnfitz
 
-	self.cnt = 0; //johnfitz -- used to store premature trigger events when TRAIN_RETRIGGER is set
+	self.cnt = TRAIN_NEXT_WAIT;
 	
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
@@ -383,6 +386,8 @@ void() func_train =
 // a chance to spawn
 	self.nextthink = self.ltime + 0.1;
 	self.think = func_train_find;
+
+	self.speed2 = self.speed;
 };
 
 /*QUAKED misc_teleporttrain (0 .5 .8) (-8 -8 -8) (8 8 8)
