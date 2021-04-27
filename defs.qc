@@ -614,7 +614,7 @@ float	AS_MISSILE		= 4;
 //
 .vector		dest, dest1, dest2;
 .float		wait;			// time from firing to restarting
-.float		delay;			// time from activation to firing
+.float		delay, delay2;			// time from activation to firing
 .entity		trigger_field;	// door's trigger entity
 .string		noise4;
 
@@ -986,8 +986,6 @@ void() setup_lightstyles; //lights.qc
 .float		plat2GoTime;
 .float		plat2GoTo;
 
-
-.string		target2;
 .string		targetname2;
 
 //
@@ -1014,6 +1012,7 @@ float currentdq;
 .float  	doorlooped = count;
 .float 		dqplace = currentammo;
 .float 		activated = strength;
+.string 	doortowait = wad;
 void() LinkDoors2;
 
 .float estate; // entity state

@@ -181,7 +181,7 @@ void() door_move_down = {
 	self.owner.groupstate = STATE_DOWN;
 	self.owner.activated = FALSE;
 	
-	SUB_CalcMove (self.pos1, self.speed, door_hit_bottom);
+	SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
 
 	if(self.switchshadstyle) {
 		shadow = self.shadowcontroller;
@@ -201,13 +201,15 @@ void() door_move_down = {
 	}
 };
 
-void() door_go_down = {	
+void() door_go_down = {
+	local float extradelay;
+	local entity otherdoor;
+
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
 
 	// Door group is still moving the other way
 	if(self.owner.movingback){  
-
 		// If this door has already stopped opening, wait the same time passed since then before closing again
 		if(self.state == STATE_TOP){ 
 			self.think = door_move_down;
@@ -218,11 +220,21 @@ void() door_go_down = {
 			self.nextthink = self.ltime + 0.013;
 		}
 	} else {
+		// extra delay time for closing.
+		// using "doortowait" is deprecated, use delay2 to set an extra time directly
+		if(self.doortowait) {
+			otherdoor = find (world, targetname2, self.doortowait);
+
+			if(otherdoor && otherdoor.classname == "func_door") {
+				extradelay = vlen(otherdoor.pos1 - otherdoor.pos2) / otherdoor.speed2;
+			}
+		} else extradelay = self.delay2;
+
 		// Normal movement.
 		// All doors should pass through think for consistency,
 		// otherwise some flags are set when they're not supposed to
 		self.think = door_move_down;
-		self.nextthink = self.ltime + 0.013 + (self.owner.maxdelay + self.owner.mindelay - self.delay);
+		self.nextthink = self.ltime + 0.013 + (self.owner.maxdelay + self.owner.mindelay - self.delay) + extradelay;
 	}
 
 };
@@ -638,91 +650,6 @@ void(entity d1) LinkDoorsEntity = {
 };
 
 
-
-// Original LinkDoors function by ran by the door's think callback, not used anymore
-void() LinkDoors =
-{
-	local entity	t, starte;
-	local vector	cmins, cmaxs;
-
-	if (self.enemy)
-		return;		// already linked by another door
-	if (self.spawnflags & DOOR_DONT_LINK)
-	{
-		self.owner = self.enemy = self;
-		return;		// don't want to link this door
-	}
-
-	cmins = self.mins;
-	cmaxs = self.maxs;
-	
-	starte = self;
-	t = self;
-
-	do
-	{
-		self.owner = starte;			// master door
-
-		if (self.health)
-			starte.health = self.health;
-		if (self.targetname != "")
-			starte.targetname = self.targetname;
-		if (self.message != "")
-			starte.message = self.message;
-
-		t = find (t, classname, self.classname);	
-		if (!t)
-		{
-			self.enemy = starte;		// make the chain a loop
-
-		// shootable, fired, or key doors just needed the owner/enemy links,
-		// they don't spawn a field
-	
-			self = self.owner;
-
-			if (self.health)
-				return;
-			if (self.targetname != "")
-				return;
-			if (keylock_has_key_set ())
-				return;
-
-			self.owner.trigger_field = spawn_field(cmins, cmaxs);
-
-			return;
-		}
-
-		if ((EntitiesTouching(self,t) && !self.groupname && !t.groupname) || (self.groupname && t.groupname == self.groupname))
-		{
-			if (t.enemy)
-				objerror ("cross connected doors");
-			
-			if(t.delay > starte.maxdelay) starte.maxdelay = t.delay;
-			if(t.delay < starte.mindelay) starte.mindelay = t.delay;
-
-
-			t.owner = self.owner;
-
-			if (t.mins_x < cmins_x)
-				cmins_x = t.mins_x;
-			if (t.mins_y < cmins_y)
-				cmins_y = t.mins_y;
-			if (t.mins_z < cmins_z)
-				cmins_z = t.mins_z;
-			if (t.maxs_x > cmaxs_x)
-				cmaxs_x = t.maxs_x;
-			if (t.maxs_y > cmaxs_y)
-				cmaxs_y = t.maxs_y;
-			if (t.maxs_z > cmaxs_z)
-				cmaxs_z = t.maxs_z;
-
-
-		}
-	} while (1 );
-
-};
-
-
 /*QUAKED func_door (0 .5 .8) ? START_OPEN x DOOR_DONT_LINK GOLD_KEY SILVER_KEY TOGGLE
 if two doors touch, they are assumed to be connected and operate as a unit.
 
@@ -825,6 +752,8 @@ void() func_door =
 		self.dmg = 2;
 	if (!self.speed)
 		self.speed = 100;
+	if (!self.speed2)
+		self.speed2 = self.speed;
 
 	self.pos1 = self.origin;
 
@@ -911,6 +840,7 @@ void() func_door =
 		shadow.classname = "misc_shadowcontroller";
 		shadow.switchshadstyle = self.switchshadstyle;
 		shadow.speed = vlen(self.pos2 - self.pos1) / self.speed;
+		shadow.speed2 = vlen(self.pos2 - self.pos1) / self.speed2;
 		
 		if(self.spawnflags & DOOR_START_OPEN) shadow.spawnflags = 1;
 		else shadow.spawnflags = 0;
