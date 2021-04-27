@@ -15,7 +15,7 @@ float ITEM_DONTDROP = 32768;
 
 // internal use only! do not expose in the FGD
 // used to drop items from enemies
-float ITEM_DONTPRECACHE = 16777216; 
+float ITEM_DONTPRECACHE = 8388608; 
 
 void() SUB_regen =
 {
