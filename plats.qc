@@ -258,8 +258,6 @@ void() train_wait = {
 	self.use = train_use; //ready to be re-triggered
 	
 	self.think = train_next;
-	dprint("wait: ");dprint(ftos(self.wait));dprint("\n");
-	dprint("cnt: ");dprint(ftos(self.cnt));dprint("\n");
 	if (self.wait && self.cnt == TRAIN_NEXT_WAIT) {
 		dprint("waiting move\n");
 		self.nextthink = self.ltime + self.wait;
