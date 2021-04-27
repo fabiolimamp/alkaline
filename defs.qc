@@ -962,6 +962,7 @@ float() CheckValidTouch;
 .float itemstyle = style;
 
 string(float num) lightstyle_fade_lookup; //addition by bmFbr for switchable shadows
+void(float speed) misc_shadowcontroller_setsteps;
 void() misc_shadowcontroller;
 void() misc_shadowcontroller_use;
 void() shadow_fade_in;

@@ -151,11 +151,13 @@ void() door_move_up = {
 		shadow = self.shadowcontroller;
 		oldself = self;
 		self = shadow;
-		
+
+		misc_shadowcontroller_setsteps(self.speed);
 		if(oldself.spawnflags & DOOR_START_OPEN) {
 			shadow_fade_in();
 			shadow.shadowoff = 0;
 		} else {
+			
 			shadow_fade_out();
 			shadow.shadowoff = 1;
 		}
@@ -188,10 +190,11 @@ void() door_move_down = {
 		oldself = self;
 		self = shadow;
 		
+		misc_shadowcontroller_setsteps(self.speed2);
 		if(oldself.spawnflags & DOOR_START_OPEN) {
 			shadow_fade_out();
 			shadow.shadowoff = 1;
-		} else {
+		} else {			
 			shadow_fade_in();
 			shadow.shadowoff = 0;
 		}
