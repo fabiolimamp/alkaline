@@ -1379,6 +1379,8 @@ The door now has built-in support for switchable shadows, that fade in/out autom
         32: "Toggle" : 0
         64: "Doom-style unlock" : 0
         128: "Sound during delay" : 0
+        65536: "Expanded trigger field X" : 0
+        131072: "Expanded trigger field Y" : 0
 	]
 	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables dynamic shadows that fade on/off when the door moves." = [
 		0: "No"
