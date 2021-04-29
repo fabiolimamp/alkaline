@@ -223,11 +223,12 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	if ( (self.flags & FL_MONSTER) && attacker != world)
 	{
 	// get mad unless of the same class (except for soldiers)
-		if (self != attacker && attacker != self.enemy)
+		if (self != attacker && attacker != self.enemy && !(self.spawnflags & NOINFIGHT))
 		{
-			if ( (self.classname != attacker.classname) 
-			|| (self.classname == "monster_army" ) )
-			{
+			if (
+				(self.classname != attacker.classname) 
+				|| (self.classname == "monster_army") 
+			) {
 				if (self.enemy.classname == "player")  
 					self.oldenemy = self.enemy;
 				self.enemy = attacker;

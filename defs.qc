@@ -483,6 +483,8 @@ float START_OFF = 1;
 float ITEMSTYLE_BSP = 1;
 float ITEMSTYLE_MDL = 2;
 
+float NOINFIGHT = 16384;
+
 //================================================
 
 
