@@ -1568,6 +1568,21 @@ void() QuadCheat =
 	dprint ("quad cheat\n");
 };
 
+void(float num) ImpulseTest = {
+	local string tgt;
+
+	activator = self;
+	if (num == 0) tgt = "impulsetest";
+	else if (num == 1) tgt = "impulsetest1";
+	else if (num == 2) tgt = "impulsetest2";
+	else if (num == 3) tgt = "impulsetest3";
+	else if (num == 4) tgt = "impulsetest4";
+	else return;
+
+	SUB_UseSpecificTarget(tgt, targetname);
+}
+
+
 /*
 ============
 ImpulseCommands
@@ -1590,6 +1605,9 @@ void() ImpulseCommands =
 		ServerflagsCommand ();
 	if (self.impulse == 12)
 		CycleWeaponReverseCommand ();
+
+	if (self.impulse >= 90 && self.impulse <= 94)
+		ImpulseTest(self.impulse - 90);
 	
 	//johnfitz -- new cheats
 	if (self.impulse == 252)
