@@ -1569,17 +1569,15 @@ void() QuadCheat =
 };
 
 void(float num) ImpulseTest = {
-	local string tgt;
+	local string tgt_impulse_num;
+	
+	if(num <= 0)
+		return;
+
+	tgt_impulse_num = ftos(num);
 
 	activator = self;
-	if (num == 0) tgt = "impulsetest";
-	else if (num == 1) tgt = "impulsetest1";
-	else if (num == 2) tgt = "impulsetest2";
-	else if (num == 3) tgt = "impulsetest3";
-	else if (num == 4) tgt = "impulsetest4";
-	else return;
-
-	SUB_UseSpecificTarget(tgt, targetname);
+	SUB_UseSpecificTarget(tgt_impulse_num, impulsetarget);
 }
 
 
@@ -1606,9 +1604,9 @@ void() ImpulseCommands =
 	if (self.impulse == 12)
 		CycleWeaponReverseCommand ();
 
-	if (self.impulse >= 90 && self.impulse <= 94)
+	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
-	
+
 	//johnfitz -- new cheats
 	if (self.impulse == 252)
 		RingCheat ();

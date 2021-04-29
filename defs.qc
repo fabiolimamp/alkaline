@@ -534,7 +534,7 @@ nosave float gamestarted;
 
 
 .float		weapons;		// extra weapons
-
+.string 	impulsetarget;
 //
 // monster ai
 //
