@@ -122,11 +122,7 @@ void() T_PlasmaTouch =
     remove(self);
     return;
   }
-  damg = 10 + (self.dmg*50);   // Possibility of gibbing small enemies :)
-
-  if (other.classname == "monster_zombie")
-    if (self.dmg > 0.5)        // 50% change of gibbing a zombie...
-      damg = 1000;             // Otherwise you could never kill them.
+  damg = 13;
   
   if (other.health)
   {
@@ -150,14 +146,9 @@ W_FirePlasma
 void() W_FirePlasma =
 {
   local entity missile;
-  local float rnd;
-
-  rnd = random(); // random multiplier for damage and cell usage
   
-  // each shot can randomly use 1 to 3 cells
-  self.ammo_cells = clamp(self.ammo_cells - 1 - floor(rnd*2.99), 0, self.ammo_cells); 
-
-  self.currentammo = self.ammo_cells;
+  // Now it only shoots once per cell... Just to make it not so overpowered
+  self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
   // Taken from Doom...
   sound (self, CHAN_WEAPON, "weapons/dsplasma.wav", 1, ATTN_NORM);
