@@ -360,7 +360,7 @@ void() monster_nailgrunt =
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
 	self.th_missile = army_natk1;
-    self.ammo_nails = 10;
+    self.ammo_nails = 5;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
 
