@@ -498,7 +498,7 @@ void() spawn_field_think =
 };
 
 
-void(entity door) setupTriggerField = {
+void(entity door, float ldcount) setupTriggerField = {
 	local entity oself;
 
 	oself = self;
@@ -506,7 +506,7 @@ void(entity door) setupTriggerField = {
 
 	if (self.owner == self && self.targetname == "" && !keylock_has_key_set()) {
 		self.think = spawn_field_think;
-		self.nextthink = self.ltime + 0.1;
+		self.nextthink = self.ltime + 1 - clamp(ldcount / 20, 0, 0.95);
 	}
 
 	self = oself;
@@ -543,23 +543,32 @@ LinkDoors
 New version by bmFbr
 =============
 */
-
+float doorloopcount;
 void() clearDoorQ;
 void(entity e) addDoorQ;
 entity() getNextDoorQ;
 
-void(entity d1) LinkDoorsEntity;
+void(entity d1, float ldcount) LinkDoorsEntity;
 
 // Runs from a temporary entity created on worldspawn
 void() LinkDoors2 = {
 	local entity d1, next, lastfound;
+	local entity nextld;
 
-	d1 = find(world, classname, "func_door");
- 	lastfound = d1;
+	if(self.count) {
+		d1 = self.ld_currentdoor;
+		next = self.ld_nextdoor;
+		lastfound = self.ld_lastfound;
+	} else {
+		d1 = find(world, classname, "func_door");
+	 	lastfound = d1;
+ 	}
 
+ 	//dprint("Linkdoors count: ");dprint(ftos(self.count));dprint("\n");
+	
 	while(d1) {
 		if (!d1.doorlooped) {
-			LinkDoorsEntity(d1);
+			LinkDoorsEntity(d1, self.count);
 		}
 
 		next = getNextDoorQ();
@@ -569,12 +578,27 @@ void() LinkDoors2 = {
 			d1 = find(lastfound, classname, "func_door");
 			lastfound = d1;
 		}
+
+		if (doorloopcount > 1800) {
+			nextld = spawn();
+
+			nextld.ld_currentdoor = d1;
+			nextld.ld_nextdoor = next;
+			nextld.ld_lastfound = lastfound;
+			nextld.count = self.count + 1;
+
+			nextld.think = LinkDoors2;
+			nextld.nextthink = time + 0.05;
+			doorloopcount = 0;
+			break;
+		}
+
 	}
 
 	remove(self);
 };
 
-void(entity d1) LinkDoorsEntity = {
+void(entity d1, float ldcount) LinkDoorsEntity = {
 	local entity d2, groupdoor, newdoor;
 	
 	if (d1.spawnflags & DOOR_DONT_LINK) {
@@ -582,7 +606,7 @@ void(entity d1) LinkDoorsEntity = {
 		d1.enemy = d1;
 		d1.lastenemy = d1;
 		d1.doorlooped = TRUE;
-		setupTriggerField(d1);
+		setupTriggerField(d1, ldcount);
 		return;
 	}
 	
@@ -651,9 +675,10 @@ void(entity d1) LinkDoorsEntity = {
 				// isolated ones (due to entity creation order) from starting a new group.
 				if(!newdoor.doorlooped && newdoor.dqplace == -1)
 					addDoorQ(newdoor);
+
 			}
 		}
-
+		doorloopcount++;
 		d2 = find(d2, classname, d1.classname);
 	}
 
@@ -666,7 +691,7 @@ void(entity d1) LinkDoorsEntity = {
 	
 	// Shootable, fired, or key doors just needed the owner/enemy links,
 	// they don't spawn a field
-	setupTriggerField(d1);
+	setupTriggerField(d1, ldcount);
 
 	// Mark door as looped so it will never loop again.
 	d1.doorlooped = TRUE;

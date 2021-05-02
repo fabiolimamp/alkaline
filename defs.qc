@@ -1016,6 +1016,10 @@ float currentdq;
 .float 		dqplace = currentammo;
 .float 		activated = strength;
 .string 	doortowait = wad;
+
+.entity ld_currentdoor = enemy;
+.entity ld_lastfound = oldenemy;
+.entity ld_nextdoor = owner;
 void() LinkDoors2;
 
 .float estate; // entity state
