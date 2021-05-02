@@ -171,7 +171,6 @@ void() W_FirePlasma =
   missile.angles = vectoangles(missile.velocity);
   missile.avelocity = '300 300 300';  
 
-  missile.dmg = rnd; // passes down random damage multiplier to T_PlasmaTouch
   missile.nextthink = time;
   missile.think = Plasma_Watercheck;        // If shot underwater -> razzp!
   missile.touch = T_PlasmaTouch;
