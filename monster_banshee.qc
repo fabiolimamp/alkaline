@@ -96,21 +96,21 @@ void(float ofs, float turn) b_fire_rocket =
 
 void(float angdelta, float delta) ban_rotate = 
 {
-	if (fabs(angdelta) < SVC_SETVIEWANGLES)
+	if (fabs(angdelta) < 10)
 	{
 		self.fixangle = delta;
 	}
 	else
 	{
-		if (angdelta > SVC_SETVIEWPORT)
+		if (angdelta > 5)
 		{
-			self.fixangle = self.fixangle + TE_LIGHTNING3;
+			self.fixangle = self.fixangle + 9;
 		}
 		else
 		{
-			if (angdelta < CONTENT_LAVA)
+			if (angdelta < -5)
 			{
-				self.fixangle = self.fixangle - TE_LIGHTNING3;
+				self.fixangle = self.fixangle - 9;
 			}
 			else
 			{
@@ -132,7 +132,7 @@ void() banshee_think =
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
-	self.cnt = MSG_BROADCAST;
+	self.cnt = 0;
 	if (delta > 180)
 	{
 		delta = delta - 360;
@@ -143,40 +143,40 @@ void() banshee_think =
 	}
 	if (fabs(delta) > 90)
 	{
-		delta = MSG_BROADCAST;
-		self.cnt = SPAWNFLAG_SUPERSPIKE;
+		delta = 0;
+		self.cnt = 1;
 	}
 	angdelta = delta - self.fixangle;
 	ban_rotate(angdelta, delta);
-	if (self.health < MSG_BROADCAST)
+	if (self.health < 0)
 	{
 		return;
 	}
-	if (time > self.super_time)
+	if (time > self.super_time && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
 	{
-		self.super_time = time + AS_MELEE;
-		if (random() < PROBE_VOLUME)
+		self.super_time = time + 3;
+		if (random() < 0.5)
 		{
 			r = random();
 			if (r < 0.25)
 			{
-				sound(self, CHAN_VOICE, "banshee/idle1.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+				sound(self, CHAN_VOICE, "banshee/idle1.wav", 1, ATTN_NORM);
 			}
 			else
 			{
 				if (r < PROBE_VOLUME)
 				{
-					sound(self, CHAN_VOICE, "banshee/idle2.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+					sound(self, CHAN_VOICE, "banshee/idle2.wav", 1, ATTN_NORM);
 				}
 				else
 				{
 					if (r < 0.75)
 					{
-						sound(self, CHAN_VOICE, "banshee/idle3.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+						sound(self, CHAN_VOICE, "banshee/idle3.wav", 1, ATTN_NORM);
 					}
 					else
 					{
-						sound(self, CHAN_VOICE, "banshee/idle4.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+						sound(self, CHAN_VOICE, "banshee/idle4.wav", 1, ATTN_NORM);
 					}
 				}
 			}
@@ -195,8 +195,8 @@ void() ban_thinkwalk =
 	self.trigger_field.frame = self.frame;
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 	ChangeYaw();
-	delta = MSG_BROADCAST;
-	self.cnt = MSG_BROADCAST;
+	delta = 0;
+	self.cnt = 0;
 	if (delta > 180)
 	{
 		delta = delta - 360;
@@ -207,40 +207,40 @@ void() ban_thinkwalk =
 	}
 	if (fabs(delta) > 90)
 	{
-		delta = MSG_BROADCAST;
-		self.cnt = SPAWNFLAG_SUPERSPIKE;
+		delta = 0;
+		self.cnt = 1;
 	}
 	angdelta = delta - self.fixangle;
 	ban_rotate(angdelta, delta);
-	if (self.health < MSG_BROADCAST)
+	if (self.health < 0)
 	{
 		return;
 	}
 	if (time > self.super_time)
 	{
-		self.super_time = time + AS_MELEE;
+		self.super_time = time + 3;
 		if (random() < PROBE_VOLUME)
 		{
 			r = random();
 			if (r < 0.25)
 			{
-				sound(self, CHAN_VOICE, "banshee/idle1.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+				sound(self, CHAN_VOICE, "banshee/idle1.wav", 1, ATTN_BANSHEE);
 			}
 			else
 			{
 				if (r < PROBE_VOLUME)
 				{
-					sound(self, CHAN_VOICE, "banshee/idle2.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+					sound(self, CHAN_VOICE, "banshee/idle2.wav", 1, ATTN_BANSHEE);
 				}
 				else
 				{
 					if (r < 0.75)
 					{
-						sound(self, CHAN_VOICE, "banshee/idle3.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+						sound(self, CHAN_VOICE, "banshee/idle3.wav", 1, ATTN_BANSHEE);
 					}
 					else
 					{
-						sound(self, CHAN_VOICE, "banshee/idle4.wav", SPAWNFLAG_SUPERSPIKE, ATTN_BANSHEE);
+						sound(self, CHAN_VOICE, "banshee/idle4.wav", 1, ATTN_BANSHEE);
 					}
 				}
 			}

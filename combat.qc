@@ -227,7 +227,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 		{
 			if (
 				(self.classname != attacker.classname || self.classname == "monster_army") &&
-				!(attacker.flags & FL_MONSTER && self.spawnflags & NOINFIGHT)
+				!(attacker.flags & FL_MONSTER && self.spawnflags & MONSTER_NOINFIGHT)
 			) {
 				if (self.enemy.classname == "player")  
 					self.oldenemy = self.enemy;

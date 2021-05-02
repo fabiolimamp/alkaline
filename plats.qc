@@ -259,7 +259,6 @@ void() train_wait = {
 	
 	self.think = train_next;
 	if (self.wait && self.cnt == TRAIN_NEXT_WAIT) {
-		dprint("waiting move\n");
 		self.nextthink = self.ltime + self.wait;
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
 	}

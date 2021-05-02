@@ -55,7 +55,7 @@ void() frogmen_fire =
 void() frogmen_stand1 = [19, frogmen_stand2]
 {
 	ai_stand();
-	if (random() < 0.2)
+	if (random() < 0.2 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
 	{
 		sound(self, CHAN_VOICE, "frogman/idle.wav", SPAWNFLAG_SUPERSPIKE, ATTN_IDLE);
 	}

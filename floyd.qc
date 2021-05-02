@@ -27,7 +27,7 @@ void () floyd_sleep = [$idle1, floyd_sleep] {ai_stand ();};
 
 void () floyd_idle1 = [$idle1, floyd_idle1]
 {
-	if (random () < 0.02)
+	if (random () < 0.02 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
 		sound (self, CHAN_VOICE, "floyd/idle.wav", 1, ATTN_IDLE);
 	ai_stand ();
 };

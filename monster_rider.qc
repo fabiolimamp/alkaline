@@ -168,16 +168,15 @@ void() rider_walkthink =
 
 void() idlesnd = 
 {
+	if(!(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
+		return;
+	
 	if (random() < 0.2)
 	{
-		if (random() < SERVO_VOLUME)
-		{
+		if (random() < 0.5)
 			sound(self, CHAN_WEAPON, "rider/idle.wav", 1, ATTN_NORM);
-		}
 		else
-		{
 			sound(self, CHAN_WEAPON, "rider/idle2.wav", 1, ATTN_NORM);
-		}
 	}
 };
 

@@ -59,9 +59,12 @@ void()	army_stand7	=[	$stand7,	army_stand8	] {ai_stand();};
 void()	army_stand8	=[	$stand8,	army_stand1	] {ai_stand();};
 
 void()	army_walk1	=[	$prowl_1,	army_walk2	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
-ai_walk(1);};
+    if(!(self.spawnflags & MONSTER_NOIDLESOUND)) {
+		if (random() < 0.2 )
+			sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
+	}
+	ai_walk(1);
+};
 void()	army_walk2	=[	$prowl_2,	army_walk3	] {ai_walk(1);};
 void()	army_walk3	=[	$prowl_3,	army_walk4	] {ai_walk(1);};
 void()	army_walk4	=[	$prowl_4,	army_walk5	] {ai_walk(1);};

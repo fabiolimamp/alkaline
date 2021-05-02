@@ -687,6 +687,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 		128 : "Silent Spawn" : 0
 		16384 : "No infight" : 0
 		32768 : "Count after spawn" : 0
+		65536 : "No idle sounds" : 0
 	]
 ]
 

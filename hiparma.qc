@@ -178,18 +178,20 @@ void() armagon_think =
 		local float r;
 
 		self.super_time = time + 3;
-		if (random() < 0.5)
-		{
-			r = random();
-			if (r < 0.25)
-				sound (self, CHAN_VOICE, "armagon/idle1.wav", 1, ATTN_ARMAGON);
-			else if (r < 0.5)
-				sound (self, CHAN_VOICE, "armagon/idle2.wav", 1, ATTN_ARMAGON);
-			else if (r < 0.75)
-				sound (self, CHAN_VOICE, "armagon/idle3.wav", 1, ATTN_ARMAGON);
-			else
-				sound (self, CHAN_VOICE, "armagon/idle4.wav", 1, ATTN_ARMAGON);
-		}
+      if(!(self.spawnflags & MONSTER_NOIDLESOUND)) {
+   		if (random() < 0.5)
+   		{
+   			r = random();
+   			if (r < 0.25)
+   				sound (self, CHAN_VOICE, "armagon/idle1.wav", 1, ATTN_ARMAGON);
+   			else if (r < 0.5)
+   				sound (self, CHAN_VOICE, "armagon/idle2.wav", 1, ATTN_ARMAGON);
+   			else if (r < 0.75)
+   				sound (self, CHAN_VOICE, "armagon/idle3.wav", 1, ATTN_ARMAGON);
+   			else
+   				sound (self, CHAN_VOICE, "armagon/idle4.wav", 1, ATTN_ARMAGON);
+   		}
+      }
 	}
 };
 

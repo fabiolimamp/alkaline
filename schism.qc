@@ -10,12 +10,12 @@ vector(float offset_amt) RandomOffset =
 	return offset;
 };
 
-void(string noise)	MonsterIdleSound =	//ijed, play idlesound only if not AMBUSH, can also play it while stood
+void(string noise) MonsterIdleSound =	//ijed, play idlesound only if not AMBUSH, can also play it while stood
 {
 	local float r;
 	r = random();
 	
-	if ((self.enemy == world) && (self.spawnflags & 3))
+	if ((self.enemy == world) && (self.spawnflags & MONSTER_NOIDLESOUND))
 		return;
 	
 	if (self.enemy == world)		//quieter if not angry at anyone

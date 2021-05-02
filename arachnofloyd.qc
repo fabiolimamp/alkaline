@@ -40,15 +40,15 @@ $frame death21 death22 death23
 
 
 void()	arf_stand1	=[	$idle1,	arf_stand2	] {
-local float r;
-r = random();
-	if (r < 0.1) 
-	{	
-		sound (self, CHAN_VOICE, "arachnofloyd/idle1.wav", 1, ATTN_IDLE);
-	}
-	else if (r > 0.9)
-	{
-		sound (self, CHAN_VOICE, "arachnofloyd/idle2.wav", 1, ATTN_IDLE);
+	local float r;
+	if(!(self.spawnflags & MONSTER_NOIDLESOUND)) {
+		r = random();
+		if (r < 0.1) {	
+			sound (self, CHAN_VOICE, "arachnofloyd/idle1.wav", 1, ATTN_IDLE);
+		}
+		else if (r > 0.9) {
+			sound (self, CHAN_VOICE, "arachnofloyd/idle2.wav", 1, ATTN_IDLE);
+		}
 	}
 ai_stand();	
 };

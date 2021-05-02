@@ -483,7 +483,14 @@ float START_OFF = 1;
 float ITEMSTYLE_BSP = 1;
 float ITEMSTYLE_MDL = 2;
 
-float NOINFIGHT = 16384;
+// monsters
+float MONSTER_SPAWNANGRY = 32;
+float MONSTER_SPAWNTRIGGERED = 64;
+float MONSTER_SPAWNSILENT = 128;
+float MONSTER_NOINFIGHT = 16384;
+float MONSTER_COUNTONSPAWN = 32768;
+float MONSTER_NOIDLESOUND = 65536;
+
 
 //================================================
 

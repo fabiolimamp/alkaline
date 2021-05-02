@@ -147,31 +147,12 @@ void() probe_think =
 	if (time > self.super_time)
 	{
 		self.super_time = time + AS_MELEE;
-		if (random() < 0.5)
-		{
+		if (random() < 0.5 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))	{
 			r = random();
-			if (r < 0.25)
-			{
-				sound(self, CHAN_VOICE, "probe/idle1.wav", 1, ATTN_PROBE);
-			}
-			else
-			{
-				if (r < 0.5)
-				{
-					sound(self, CHAN_VOICE, "probe/idle2.wav", 1, ATTN_PROBE);
-				}
-				else
-				{
-					if (r < 0.75)
-					{
-						sound(self, CHAN_VOICE, "probe/idle3.wav", 1, ATTN_PROBE);
-					}
-					else
-					{
-						sound(self, CHAN_VOICE, "probe/idle4.wav", 1, ATTN_PROBE);
-					}
-				}
-			}
+			if (r < 0.25)		sound(self, CHAN_VOICE, "probe/idle1.wav", 1, ATTN_PROBE);			
+			else if (r < 0.5)	sound(self, CHAN_VOICE, "probe/idle2.wav", 1, ATTN_PROBE);
+			else if (r < 0.75)	sound(self, CHAN_VOICE, "probe/idle3.wav", 1, ATTN_PROBE);
+			else				sound(self, CHAN_VOICE, "probe/idle4.wav", 1, ATTN_PROBE);
 		}
 	}
 };
@@ -211,31 +192,12 @@ void() probe_walkthink =
 	if (time > self.super_time)
 	{
 		self.super_time = time + AS_MELEE;
-		if (random() < 0.5)
-		{
+		if (random() < 0.5 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy)) {
 			r = random();
-			if (r < 0.25)
-			{
-				sound(self, CHAN_VOICE, "probe/idle1.wav", 1, ATTN_PROBE);
-			}
-			else
-			{
-				if (r < 0.5)
-				{
-					sound(self, CHAN_VOICE, "probe/idle2.wav", 1, ATTN_PROBE);
-				}
-				else
-				{
-					if (r < 0.75)
-					{
-						sound(self, CHAN_VOICE, "probe/idle3.wav", 1, ATTN_PROBE);
-					}
-					else
-					{
-						sound(self, CHAN_VOICE, "probe/idle4.wav", 1, ATTN_PROBE);
-					}
-				}
-			}
+			if (r < 0.25)		sound(self, CHAN_VOICE, "probe/idle1.wav", 1, ATTN_PROBE);			
+			else if (r < 0.5)	sound(self, CHAN_VOICE, "probe/idle2.wav", 1, ATTN_PROBE);
+			else if (r < 0.75)	sound(self, CHAN_VOICE, "probe/idle3.wav", 1, ATTN_PROBE);
+			else				sound(self, CHAN_VOICE, "probe/idle4.wav", 1, ATTN_PROBE);
 		}
 	}
 	client = checkclient();

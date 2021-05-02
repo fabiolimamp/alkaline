@@ -66,12 +66,7 @@ void() monster_death_use =
 
 //============================================================================
 
-//johnfitz -- delayed spawning
-float SPAWN_ANGRY = 32;
-float SPAWN_TRIGGERED = 64;
-float SPAWN_SILENT = 128;
-float SPAWN_COUNTONSPAWN = 32768;
-//johnfitz
+
 
 void() walkmonster_start_go =
 {
@@ -125,12 +120,12 @@ void() walkmonster_start_go =
 
 	//johnfitz -- added monster spawning code from Preach
 	//http://www.inside3d.com/showtutorial.php?id=171
-	if(!(self.spawnflags & SPAWN_TRIGGERED))
+	if(!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
 		self.nextthink = self.nextthink + random()*0.5;
 	//johnfitz
 
-	if(self.spawnflags & SPAWN_ANGRY)
+	if(self.spawnflags & MONSTER_SPAWNANGRY)
 		monster_use();
 };
 
@@ -150,12 +145,12 @@ void() monster_teleport =
 	spawn_tdeath (self.origin, self); 
 
 	//sound and particle effects	
-	if(!(self.spawnflags & SPAWN_SILENT))
+	if(!(self.spawnflags & MONSTER_SPAWNSILENT))
 		spawn_tfog (self.origin);	
 
 	self.flags = self.flags - FL_SPAWNMONSTER;
 
-	if(self.spawnflags & SPAWN_COUNTONSPAWN) {
+	if(self.spawnflags & MONSTER_COUNTONSPAWN) {
 		total_monsters = total_monsters + 1;
 		update_hud_totals(HUD_MONSTERS);
 	}
@@ -168,7 +163,7 @@ void() walkmonster_start =
 {
 //johnfitz -- added monster spawning code from Preach
 //http://www.inside3d.com/showtutorial.php?id=171
-	if(self.spawnflags & SPAWN_TRIGGERED)
+	if(self.spawnflags & MONSTER_SPAWNTRIGGERED)
 		{
 		//PREACH: This monster is to be teleported in
 
@@ -189,7 +184,7 @@ void() walkmonster_start =
 		self.use = monster_teleport;
 		self.think1 = walkmonster_start_go;
 
-		if(!(self.spawnflags & SPAWN_COUNTONSPAWN))
+		if(!(self.spawnflags & MONSTER_COUNTONSPAWN))
 			total_monsters = total_monsters + 1;
 
 		return;
@@ -248,14 +243,14 @@ void() flymonster_start_go =
 		self.th_stand ();
 	}
 
-	if(self.spawnflags & SPAWN_ANGRY) monster_use();
+	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };
 
 void() flymonster_start =
 {
 //johnfitz -- added monster spawning code from Preach
 //http://www.inside3d.com/showtutorial.php?id=171
-	if(self.spawnflags & SPAWN_TRIGGERED)
+	if(self.spawnflags & MONSTER_SPAWNTRIGGERED)
 		{
 		//PREACH: This monster is to be teleported in, so hide it
 		self.flags = self.flags | FL_SPAWNMONSTER;
@@ -271,7 +266,7 @@ void() flymonster_start =
 		self.movetype = MOVETYPE_NONE;
 		self.use = monster_teleport;
 		self.think1 = flymonster_start_go;
-		if(!(self.spawnflags & SPAWN_COUNTONSPAWN))
+		if(!(self.spawnflags & MONSTER_COUNTONSPAWN))
 			total_monsters = total_monsters + 1;
 		return;
 	}
@@ -327,7 +322,7 @@ void() swimmonster_start_go =
 // spread think times so they don't all happen at same time
 	self.nextthink = self.nextthink + random()*0.5;
 
-	if(self.spawnflags & SPAWN_ANGRY) monster_use();
+	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };
 
 void() swimmonster_start =
