@@ -14,6 +14,8 @@ float DOOR_DOOM_STYLE_UNLOCK = 64;
 float DOOR_SOUND_DURING_DELAY = 128;
 float DOOR_EXPANDED_TRIGGER_X = 65536;
 float DOOR_EXPANDED_TRIGGER_Y = 131072;
+float DOOR_REDUCED_TRIGGER_X = 262144;
+float DOOR_REDUCED_TRIGGER_Y = 524288;
 
 /*
 
@@ -480,8 +482,11 @@ entity(vector fmins, vector fmaxs) spawn_field =
 	t2 = fmaxs;
 
 	expfield = '60 60 8';
-	if (self.spawnflags & DOOR_EXPANDED_TRIGGER_X) expfield = expfield + '24 0 0';
-	if (self.spawnflags & DOOR_EXPANDED_TRIGGER_X) expfield = expfield + '0 24 0';
+	if (self.spawnflags & DOOR_EXPANDED_TRIGGER_X) expfield_x += 24;
+	if (self.spawnflags & DOOR_EXPANDED_TRIGGER_Y) expfield_y += 24;
+
+	if (self.spawnflags & DOOR_REDUCED_TRIGGER_X) expfield_x -= 52;
+	if (self.spawnflags & DOOR_REDUCED_TRIGGER_Y) expfield_y -= 52;
 
 	setsize (trigger, t1 - expfield, t2 + expfield);
 	return (trigger);
@@ -636,7 +641,11 @@ void(entity d1) LinkDoorsEntity = {
 				if(newdoor.spawnflags & DOOR_EXPANDED_TRIGGER_X)
 					groupdoor.owner.spawnflags = groupdoor.owner.spawnflags | DOOR_EXPANDED_TRIGGER_X;
 				if(newdoor.spawnflags & DOOR_EXPANDED_TRIGGER_Y)
-					groupdoor.owner.spawnflags = groupdoor.owner.spawnflags | DOOR_EXPANDED_TRIGGER_Y;					
+					groupdoor.owner.spawnflags = groupdoor.owner.spawnflags | DOOR_EXPANDED_TRIGGER_Y;
+				if(newdoor.spawnflags & DOOR_REDUCED_TRIGGER_X)
+					groupdoor.owner.spawnflags = groupdoor.owner.spawnflags | DOOR_REDUCED_TRIGGER_X;
+				if(newdoor.spawnflags & DOOR_REDUCED_TRIGGER_Y)
+					groupdoor.owner.spawnflags = groupdoor.owner.spawnflags | DOOR_REDUCED_TRIGGER_Y;				
 				// Add newly linked door to the queue.
 				// Door queue creates a "path" between potentially linking doors from the group to prevent
 				// isolated ones (due to entity creation order) from starting a new group.
