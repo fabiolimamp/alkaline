@@ -1033,16 +1033,24 @@ target_setstate
 =============================================================
 */
 
+void(entity e, float state) entity_set_state = {
+	if(e.classname == "func_button") {
+		if (state == STATE_ACTIVE) button_unlock(e);
+		else button_lock(e);
+	}
+	else e.estate = state;
+}
+
 void(string matchstring, .string matchfield, float state) target_setstate_set_target = {
 	local entity t;
 
 	t = find (world, matchfield, matchstring);
 	while (t != world) {
 		if(state == -1){
-			if(t.estate == STATE_ACTIVE) t.estate = STATE_INACTIVE;
-			else t.estate = STATE_INACTIVE;
+			if(t.estate == STATE_ACTIVE) entity_set_state(t, STATE_INACTIVE);
+			else entity_set_state(t, STATE_ACTIVE);
 		}
-		else t.estate = state;
+		else entity_set_state(t, state);
 
 		t = find (t, matchfield, matchstring);
 	}

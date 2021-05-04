@@ -9,8 +9,11 @@ void() button_wait =
 	self.nextthink = self.ltime + self.wait;
 	self.think = button_return;
 	activator = self.enemy;
-	SUB_UseTargets();
 	self.frame = 1;			// use alternate textures
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	SUB_UseTargets();
 };
 
 void() button_done =
@@ -20,6 +23,8 @@ void() button_done =
 
 void() button_return =
 {
+	if (self.estate != STATE_ACTIVE) return;
+
 	self.state = STATE_DOWN;
 	SUB_CalcMove (self.pos1, self.speed, button_done);
 	self.frame = 0;			// use normal textures
@@ -35,6 +40,8 @@ void() button_blocked =
 
 void() button_fire =
 {
+	if (self.estate != STATE_ACTIVE) return;
+
 	if (self.state == STATE_UP || self.state == STATE_TOP)
 		return;
 
@@ -53,6 +60,8 @@ void() button_use =
 
 void() button_touch =
 {
+	if (self.estate != STATE_ACTIVE) return;
+
 	if (other.classname != "player")
 		return;
 	self.enemy = other;
@@ -61,12 +70,44 @@ void() button_touch =
 
 void() button_killed =
 {
+	if (self.estate != STATE_ACTIVE) return;
+
 	self.enemy = damage_attacker;
 	self.health = self.max_health;
 	self.takedamage = DAMAGE_NO;	// wil be reset upon return
 	button_fire ();
 };
 
+
+// adapted from Copper, thanks Lunaran
+void(entity b) button_lock =
+{
+	entity oself;
+	b.estate = STATE_INACTIVE;
+	if (b.max_health)
+		b.takedamage = DAMAGE_NO;
+	b.state = STATE_UP;
+	oself = self;
+	self = b;
+	SUB_CalcMove (self.pos2, self.speed, button_wait);
+	self = oself;
+}
+void(entity b) button_unlock =
+{
+	entity oself;
+	b.estate = STATE_ACTIVE;
+	if (b.max_health)
+	{
+		b.takedamage = DAMAGE_YES;
+		b.health = b.max_health;
+	}
+	b.frame = 0;			// use normal textures
+	b.state = STATE_DOWN;
+	oself = self;
+	self = b;
+	SUB_CalcMove (self.pos1, self.speed, button_done);
+	self = oself;
+}
 
 /*QUAKED func_button (0 .5 .8) ?
 When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again.
