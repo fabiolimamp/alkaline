@@ -1,3 +1,13 @@
+void(string s, string ss) dprint2 = 
+	{ dprint(s); dprint(ss); }
+void(string s, string ss, string sss) dprint3 = 
+	{ dprint(s); dprint(ss); dprint(sss); }
+void(string s, string ss, string sss, string ssss) dprint4 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); }
+void(string s, string ss, string sss, string ssss, string sssss) dprint5 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); }
+
+
 /**********************************
  Sourced from utility.qc from smej2
  **********************************/

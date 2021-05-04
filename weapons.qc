@@ -1580,6 +1580,30 @@ void(float num) ImpulseTest = {
 	SUB_UseSpecificTarget(tgt_impulse_num, impulsetarget);
 }
 
+void() dev_reveal =
+{
+	dprint("dev\n");
+	local vector org;
+	makevectors(self.v_angle);
+	org = self.origin + self.view_ofs;
+	traceline (org, org + v_forward * 8192, FALSE, self);
+
+	if (trace_fraction < 1.0 && trace_ent)
+	//if (trace_ent)
+	{
+	//	trace_ent.developer = 1;
+		//bprint("hit entity:\n");
+		dprint3("time: ", ftos(time), "\n");
+		eprint(trace_ent);
+		//bprint("hit ent's enemy:\n");
+		//eprint(trace_ent.enemy);
+		if (trace_ent.flags & FL_ONGROUND) dprint("  entity is ONGROUND\n");
+		if (trace_ent.flags & FL_PARTIALGROUND) dprint("  entity is PARTIAL_GROUND\n");
+		if (checkbottom(trace_ent)) dprint("  checkbottom is true\n");
+		else dprint("  checkbottom is FALSE\n");
+	}
+	dprint("endpoint: ");dprint(vtos(trace_endpos));dprint("\n");
+}
 
 /*
 ============
@@ -1606,7 +1630,8 @@ void() ImpulseCommands =
 
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
-
+	if (self.impulse == 200)
+		dev_reveal ();
 	//johnfitz -- new cheats
 	if (self.impulse == 252)
 		RingCheat ();
