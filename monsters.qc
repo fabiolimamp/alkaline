@@ -10,7 +10,6 @@
 //		<code>
 // };
 
-
 /*
 ================
 monster_use
@@ -46,6 +45,7 @@ When a mosnter dies, it fires all of its targets with the current
 enemy as activator.
 ================
 */
+
 void() monster_death_use =
 {
 //	local entity 	ent, otemp, stemp;
@@ -66,13 +66,92 @@ void() monster_death_use =
 
 //============================================================================
 
+void(vector org) spawn_tfog;
+void(vector org, entity death_owner) spawn_tdeath;
 
+void(entity e) hide_spawned_monster_entity = {
+	//store the important info in unused fields
+	e.mdl = e.model;
+	e.pos1 = e.mins;
+	e.pos2 = e.maxs;
+	e.walkframe = e.solid;
+	e.fly_sound = e.movetype;
+
+	//hide the model and make it non-solid
+	e.model = "";
+	e.solid = SOLID_NOT;
+	e.movetype = MOVETYPE_NONE;
+}
+
+void(entity e) show_spawned_monster_entity = {
+	e.solid = e.walkframe;
+	e.movetype = e.fly_sound;
+	setmodel(e, e.mdl);
+	setsize (e, e.pos1, e.pos2);
+}
+
+void() spawn_monster = {
+
+	show_spawned_monster_entity(self);
+
+	if (self.trigger_field) show_spawned_monster_entity(self.trigger_field); // Double-entity monster
+
+	//telefrag any existing entities
+	spawn_tdeath (self.origin, self); 
+
+	//sound and particle effects	
+	if (!(self.spawnflags & MONSTER_SPAWNSILENT))
+		spawn_tfog (self.origin);	
+
+	self.flags = self.flags - FL_SPAWNMONSTER;
+
+	if (self.spawnflags & MONSTER_COUNTONSPAWN) {
+		total_monsters = total_monsters + 1;
+		update_hud_totals(HUD_MONSTERS);
+	}
+
+	self.think1();
+}
+//johnfitz
+
+void(entity e, void() go_function) init_spawned_monster = {
+
+	//PREACH: This monster is to be teleported in
+	e.flags = e.flags | FL_SPAWNMONSTER;
+	
+	hide_spawned_monster_entity(e);
+
+	// Double-entity Malice monsters must have both parts hidden.
+	// Secondary entity is always stored in the trigger_field field so we check that
+	if (e.trigger_field) hide_spawned_monster_entity(e.trigger_field);
+
+	//set up the teleport functions
+
+	e.use = spawn_monster;
+	e.think1 = go_function;
+}
+
+void(void() go_function) monster_start = {
+	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) {
+		init_spawned_monster(self, go_function);
+		if (!(self.spawnflags & MONSTER_COUNTONSPAWN)) total_monsters++;
+	}
+	else {
+		// delay drop to floor to make sure all doors have been spawned
+		// spread think times so they don't all happen at same time
+		self.nextthink = self.nextthink + random()*0.5;
+		self.think = go_function;
+		total_monsters++;
+	}
+}
+
+
+//============================================================================
+// go functions
+//============================================================================
 
 void() walkmonster_start_go =
 {
-//local string	stemp;
-//
-//local entity	etemp;
 
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 	droptofloor();
@@ -118,87 +197,13 @@ void() walkmonster_start_go =
 		self.th_stand ();
 	}
 
-	//johnfitz -- added monster spawning code from Preach
-	//http://www.inside3d.com/showtutorial.php?id=171
-	if(!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
+	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
 		self.nextthink = self.nextthink + random()*0.5;
-	//johnfitz
 
-	if(self.spawnflags & MONSTER_SPAWNANGRY)
+	if (self.spawnflags & MONSTER_SPAWNANGRY)
 		monster_use();
 };
-
-//johnfitz -- added monster spawning code from Preach
-//http://www.inside3d.com/showtutorial.php?id=171
-void(vector org) spawn_tfog;
-void(vector org, entity death_owner) spawn_tdeath;
-
-void() monster_teleport =
-{
-	self.solid = self.walkframe;
-	self.movetype = self.fly_sound;
-	setmodel(self, self.wad);
-	setsize (self, self.pos1, self.pos2);
-
-	//telefrag any existing entities
-	spawn_tdeath (self.origin, self); 
-
-	//sound and particle effects	
-	if(!(self.spawnflags & MONSTER_SPAWNSILENT))
-		spawn_tfog (self.origin);	
-
-	self.flags = self.flags - FL_SPAWNMONSTER;
-
-	if(self.spawnflags & MONSTER_COUNTONSPAWN) {
-		total_monsters = total_monsters + 1;
-		update_hud_totals(HUD_MONSTERS);
-	}
-
-	self.think1();
-}
-//johnfitz
-
-void() walkmonster_start =
-{
-//johnfitz -- added monster spawning code from Preach
-//http://www.inside3d.com/showtutorial.php?id=171
-	if(self.spawnflags & MONSTER_SPAWNTRIGGERED)
-		{
-		//PREACH: This monster is to be teleported in
-
-		//store the important info in unused fields
-		self.flags = self.flags | FL_SPAWNMONSTER;
-		self.wad = self.model;
-		self.pos1 = self.mins;
-		self.pos2 = self.maxs;
-		self.walkframe = self.solid;
-		self.fly_sound = self.movetype;
-
-		//hide the model and make it non-solid
-		self.model = "";
-		self.solid = SOLID_NOT;
-		self.movetype = MOVETYPE_NONE;
-
-		//set up the teleport functions
-		self.use = monster_teleport;
-		self.think1 = walkmonster_start_go;
-
-		if(!(self.spawnflags & MONSTER_COUNTONSPAWN))
-			total_monsters = total_monsters + 1;
-
-		return;
-		}
-//johnfitz
-
-// delay drop to floor to make sure all doors have been spawned
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
-	self.think = walkmonster_start_go;
-	total_monsters = total_monsters + 1;
-};
-
-
 
 void() flymonster_start_go =
 {
@@ -243,41 +248,12 @@ void() flymonster_start_go =
 		self.th_stand ();
 	}
 
+	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
+		// spread think times so they don't all happen at same time
+		self.nextthink = self.nextthink + random()*0.5;
+
 	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };
-
-void() flymonster_start =
-{
-//johnfitz -- added monster spawning code from Preach
-//http://www.inside3d.com/showtutorial.php?id=171
-	if(self.spawnflags & MONSTER_SPAWNTRIGGERED)
-		{
-		//PREACH: This monster is to be teleported in, so hide it
-		self.flags = self.flags | FL_SPAWNMONSTER;
-
-		self.wad = self.model;
-		self.pos1 = self.mins;
-		self.pos2 = self.maxs;
-		self.walkframe = self.solid;
-		self.fly_sound = self.movetype;
-
-		self.model = "";
-		self.solid = SOLID_NOT;
-		self.movetype = MOVETYPE_NONE;
-		self.use = monster_teleport;
-		self.think1 = flymonster_start_go;
-		if(!(self.spawnflags & MONSTER_COUNTONSPAWN))
-			total_monsters = total_monsters + 1;
-		return;
-	}
-	//johnfitz
-
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
-	self.think = flymonster_start_go;
-	total_monsters = total_monsters + 1;
-};
-
 
 void() swimmonster_start_go =
 {
@@ -289,8 +265,6 @@ void() swimmonster_start_go =
 
 	self.takedamage = DAMAGE_AIM;
 	
-	//total_monsters = total_monsters + 1; //johnfitz here's that damn fish monster count bug.
-
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
 		self.yaw_speed = 10;
@@ -309,7 +283,7 @@ void() swimmonster_start_go =
 			dprint (vtos(self.origin));
 			dprint ("\n");
 		}
-// this used to be an objerror
+		// this used to be an objerror
 		self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
 		self.th_walk ();
 	}
@@ -319,18 +293,19 @@ void() swimmonster_start_go =
 		self.th_stand ();
 	}
 
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
+	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
+		// spread think times so they don't all happen at same time
+		self.nextthink = self.nextthink + random()*0.5;
 
 	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };
 
-void() swimmonster_start =
-{
-// spread think times so they don't all happen at same time
-	self.nextthink = self.nextthink + random()*0.5;
-	self.think = swimmonster_start_go;
-	total_monsters = total_monsters + 1;
-};
+//============================================================================
+// start functions
+//============================================================================
 
+void() walkmonster_start = {monster_start(walkmonster_start_go);};
 
+void() flymonster_start = {monster_start(flymonster_start_go);};
+
+void() swimmonster_start = {monster_start(swimmonster_start_go);};
