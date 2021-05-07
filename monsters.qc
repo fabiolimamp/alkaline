@@ -132,6 +132,12 @@ void(entity e, void() go_function) init_spawned_monster = {
 }
 
 void(void() go_function) monster_start = {
+
+	if (cvar("nomonsters") != 0) {
+		remove(self);
+		return;
+	}
+
 	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) {
 		init_spawned_monster(self, go_function);
 		if (!(self.spawnflags & MONSTER_COUNTONSPAWN)) total_monsters++;
@@ -309,3 +315,46 @@ void() walkmonster_start = {monster_start(walkmonster_start_go);};
 void() flymonster_start = {monster_start(flymonster_start_go);};
 
 void() swimmonster_start = {monster_start(swimmonster_start_go);};
+
+
+/*
+void() nomonster_go =
+{
+	// a nomonster still has to be a solid so that it can be teleported out of teleboxes
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_FLY;
+	setsize(self, VEC_HULL_MIN, VEC_HULL_MAX);
+	self.think = SUB_Null;
+	self.view_ofs = '0 0 25';
+	self.nextthink = time + 0.2 + random();
+}
+
+float() nomonster =
+{
+	if (cvar("nomonsters") == 0)
+		return FALSE;
+	
+	if (self.target == string_null &&
+		self.target2 == string_null &&
+		self.target3 == string_null &&
+		self.target4 == string_null &&
+		self.killtarget == string_null)
+	{
+		remove(self);
+		return TRUE;
+	}
+	
+	// make teleports work:
+	self.health = 1;
+	self.flags += FL_MONSTER;
+	
+	if (self.targetname != string_null && self.spawnflags & SPAWN_TRIGGERED)
+		self.use = nomonster_go;
+	else
+		nomonster_go();
+	
+	//self.classname = "nomonster";
+	
+	return TRUE;
+}
+*/
