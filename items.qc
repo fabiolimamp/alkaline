@@ -1499,3 +1499,17 @@ void() DropBackpack =
 	item.nextthink = time + 120;	// remove after 2 minutes
 	item.think = SUB_Remove;
 };
+
+
+void() item_backpack = {
+	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells))
+		return;	// nothing in it
+
+	self.flags = FL_ITEM;
+	self.solid = SOLID_TRIGGER;
+	self.movetype = MOVETYPE_TOSS;
+	setmodel (self, "progs/backpack.mdl");
+	setsize (self, '-16 -16 0', '16 16 56');
+
+	self.touch = BackpackTouch;
+};
