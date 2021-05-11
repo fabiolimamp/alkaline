@@ -134,6 +134,7 @@ void(entity e, void() go_function) init_spawned_monster = {
 void(void() go_function) monster_start = {
 
 	if (cvar("nomonsters") != 0) {
+		if(self.trigger_field) remove(self.trigger_field);
 		remove(self);
 		return;
 	}
