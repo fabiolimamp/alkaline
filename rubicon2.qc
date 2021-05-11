@@ -885,6 +885,9 @@ Keys:
 */
 void() trigger_ladder =
 {
+	precache_sound("misc/ladder.wav");
+	precache_sound("misc/ladder2.wav");
+
 	InitTrigger ();
 	self.touch = ladder_touch;
 };

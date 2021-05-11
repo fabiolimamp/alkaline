@@ -1089,18 +1089,15 @@ void() PlayerPreThink =
 		{				
 			PlayerClimb ();
 			
-			/* no ladder footsteps for now
+			//ladder sounds
 			if (time > self.ladder_step_finished) {
-				r = random();
-				if (r > 0.66)
-					sound (self, CHAN_BODY, "ladder/metal1.wav", 0.5, ATTN_NORM);
-				else if (r > 0.33)
-					sound (self, CHAN_BODY, "ladder/metal2.wav", 0.5, ATTN_NORM);
+				if (random() > 0.5)
+					sound (self, CHAN_AUTO, "misc/ladder.wav", 0.5, ATTN_NORM);
 				else
-					sound (self, CHAN_BODY, "ladder/metal3.wav", 0.5, ATTN_NORM);
+					sound (self, CHAN_AUTO, "misc/ladder2.wav", 0.5, ATTN_NORM);
 				self.ladder_step_finished = time + 0.3;
 			}
-			*/
+			
 		}
 		else
 		{
