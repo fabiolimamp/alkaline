@@ -521,6 +521,25 @@ void() func_togglevisiblewall_use =
 
 };
 
+
+/*****************
+func_shadow
+
+An invisible bmodel that can be used to only cast shadows.
+
+******************/
+
+void() func_shadow = {
+
+	self.angles = '0 0 0';
+	self.movetype = MOVETYPE_NONE;
+	self.solid = SOLID_NOT;
+
+	self.modelindex = 0;
+	self.model = "";
+
+}
+
 /*QUAKED func_togglevisiblewall (0 .5 .8) ? TOGGLEVISWALL_STARTOFF TOGGLEVISWALL_NOTSOLID X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
 
 A bmodel which you can toggle its visibility. Behaves much like a traditional func_wall in any other way,
