@@ -1683,8 +1683,16 @@ void() SuperDamageSound =
 	{
 		if (self.super_sound < time)
 		{
-			self.super_sound = time + 1;
-			sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
+			
+			if(self.trif_finished > time) {
+				sound(self, CHAN_BODY, "items/trifecta3.wav", 1, ATTN_NORM);
+				self.super_sound = time + 0.7;
+			}
+			else{
+				sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
+				self.super_sound = time + 1;
+			}
+			
 		}
 	}
 	return;

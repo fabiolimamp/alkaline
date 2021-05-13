@@ -1246,11 +1246,11 @@ void() item_artifact_trifecta =
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/trifecta.mdl");
-		precache_sound ("items/damage.wav");
-		precache_sound ("items/damage2.wav");
-		precache_sound ("items/damage3.wav");
+		precache_sound ("items/trifecta.wav");
+		precache_sound ("items/trifecta2.wav");
+		precache_sound ("items/trifecta3.wav");
 	}
-	self.noise = "items/damage.wav";
+	self.noise = "items/trifecta.wav";
 	setmodel (self, "progs/trifecta.mdl");
 	self.netname = "Trifecta";
 	self.items = IT_TRIFECTA;

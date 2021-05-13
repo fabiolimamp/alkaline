@@ -1198,7 +1198,7 @@ void() CheckPowerups =
 			{
 				sprint (self, "Trifecta is running out\n");
 				stuffcmd (self, "bf\n");
-				sound (self, CHAN_AUTO, "items/damage2.wav", 1, ATTN_NORM);
+				sound (self, CHAN_AUTO, "items/trifecta2.wav", 1, ATTN_NORM);
 				self.trif_time = time + 1;
 			}	  
 			
@@ -1215,10 +1215,14 @@ void() CheckPowerups =
 			self.trif_finished = 0;
 			self.trif_time = 0;
 		}
-		if (self.trif_finished > time)
+		if (self.trif_finished > time) {
 			self.effects = self.effects | EF_DIMLIGHT;
-		else
+			stuffcmd(self, "v_cshift 96 192 224 32 \n");
+		}
+		else {
 			self.effects = self.effects - (self.effects & EF_DIMLIGHT);	
+			stuffcmd(self, "v_cshift\n");
+		}
 	
 	}
 
