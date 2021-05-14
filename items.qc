@@ -1153,10 +1153,10 @@ void() powerup_touch =
 	{
 		local float spawndelay;
 
-		if		(self.classname == "item_artifact_invulnerability"	||
-				 self.classname == "item_artifact_invisibility"		)	spawndelay = 300;
-		// else if (self.classname == "item_grappling_hook"			)	spawndelay = 30;
-		else															spawndelay = 60;
+		if (self.classname == "item_artifact_invulnerability" || self.classname == "item_artifact_invisibility")
+			spawndelay = 300;
+		else
+			spawndelay = 60;
 
 		CheckItemRespawn(self, spawndelay);
 	}
@@ -1502,8 +1502,10 @@ void() DropBackpack =
 
 
 void() item_backpack = {
-	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells))
+	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells)) {
+		objerror("Empty backpack");
 		return;	// nothing in it
+	}
 
 	self.flags = FL_ITEM;
 	self.solid = SOLID_TRIGGER;
