@@ -268,19 +268,22 @@ void() SUB_UseTargets =
 //
 	if (self.delay)
 	{
-	// create a temp object to fire at a later time
-		t = spawn();
-		t.classname = "DelayedUse";
-		t.nextthink = time + self.delay;
-		t.think = DelayThink;
-		t.enemy = activator;
-		t.message = self.message;
-		t.killtarget = self.killtarget;
-		t.target = self.target;
-		t.target2 = self.target2;
-		t.target3 = self.target3;
-		t.target4 = self.target4;
-		return;
+		// delay on doors is for opening, not for firing targets
+		if (self.classname != "func_door"){
+			// create a temp object to fire at a later time
+			t = spawn();
+			t.classname = "DelayedUse";
+			t.nextthink = time + self.delay;
+			t.think = DelayThink;
+			t.enemy = activator;
+			t.message = self.message;
+			t.killtarget = self.killtarget;
+			t.target = self.target;
+			t.target2 = self.target2;
+			t.target3 = self.target3;
+			t.target4 = self.target4;
+			return;
+		}
 	}
 	
 	
