@@ -1032,27 +1032,60 @@ target_setstate
 
 =============================================================
 */
+float SETSTATE_CLOSEALLDOORS = 2;
 
-void(entity e, float state) entity_set_state = {
+float(entity e) entity_get_state = {
+	if(e.classname == "func_button") return e.owner.estate;
+	else return e.estate;
+};
+
+void(entity e, float state, float flags) entity_set_state = {
+	float closealldoors;
+
 	if(e.classname == "func_button") {
 		if (state == STATE_ACTIVE) button_unlock(e);
 		else button_lock(e);
 	}
-	else e.estate = state;
-}
+	else if(e.classname == "func_door") {
+		if (flags & SETSTATE_CLOSEALLDOORS) closealldoors = 1;
 
-void(string matchstring, .string matchfield, float state) target_setstate_set_target = {
+		if (state == STATE_ACTIVE) door_estate_unlock(e, closealldoors);
+		else door_estate_lock(e, closealldoors);
+	}
+	else e.estate = state;
+};
+
+void(string matchstring, .string matchfield, float state, float flags) target_setstate_set_target = {
 	local entity t;
 
 	t = find (world, matchfield, matchstring);
 	while (t != world) {
 		if(state == -1){
-			if(t.estate == STATE_ACTIVE) entity_set_state(t, STATE_INACTIVE);
-			else entity_set_state(t, STATE_ACTIVE);
+			if(entity_get_state(t) == STATE_ACTIVE) entity_set_state(t, STATE_INACTIVE, flags);
+			else entity_set_state(t, STATE_ACTIVE, flags);
 		}
-		else entity_set_state(t, state);
+		else entity_set_state(t, state, flags);
 
 		t = find (t, matchfield, matchstring);
+	}
+};
+
+void(float state) target_setstate_set_alltargets = {
+	if (self.target && self.target != "") {
+		target_setstate_set_target(self.target, targetname, state, self.spawnflags);
+		target_setstate_set_target(self.target, targetname2, state, self.spawnflags);
+	}
+	if (self.target2 && self.target2 != "") {
+		target_setstate_set_target(self.target2, targetname, state, self.spawnflags);
+		target_setstate_set_target(self.target2, targetname2, state, self.spawnflags);
+	}
+	if (self.target3 && self.target3 != "") {
+		target_setstate_set_target(self.target3, targetname, state, self.spawnflags);
+		target_setstate_set_target(self.target3, targetname2, state, self.spawnflags);
+	}
+	if (self.target4 && self.target4 != "") {
+		target_setstate_set_target(self.target4, targetname, state, self.spawnflags);
+		target_setstate_set_target(self.target4, targetname2, state, self.spawnflags);
 	}
 };
 
@@ -1063,20 +1096,25 @@ void() target_setstate_use = {
 	else if (self.style == 2) state = STATE_INACTIVE;
 	else state = -1;
 
-	if (self.target && self.target != "") target_setstate_set_target(self.target, targetname, state);
-	if (self.target2 && self.target2 != "") target_setstate_set_target(self.target2, targetname, state);
-	if (self.target3 && self.target3 != "") target_setstate_set_target(self.target3, targetname, state);
-	if (self.target4 && self.target4 != "") target_setstate_set_target(self.target4, targetname, state);
+	target_setstate_set_alltargets(state);
 
+};
+
+void() target_setstate_startoff_think = {
+	if (door_setup_finished) target_setstate_set_alltargets(STATE_INACTIVE);
+	else {
+		// not finished yet? wait a bit longer
+		self.think = target_setstate_startoff_think;
+		self.nextthink = time + 0.1;
+	}
 };
 
 void() target_setstate = {
 	self.use = target_setstate_use;
 
 	if(self.spawnflags & START_OFF) {
-		if (self.target && self.target != "") target_setstate_set_target(self.target, targetname, STATE_INACTIVE);
-		if (self.target2 && self.target2 != "") target_setstate_set_target(self.target2, targetname, STATE_INACTIVE);
-		if (self.target3 && self.target3 != "") target_setstate_set_target(self.target3, targetname, STATE_INACTIVE);
-		if (self.target4 && self.target4 != "") target_setstate_set_target(self.target4, targetname, STATE_INACTIVE);
+		// wait a second while doors finish being set up
+		self.think = target_setstate_startoff_think;
+		self.nextthink = time + 1;
 	}
 };

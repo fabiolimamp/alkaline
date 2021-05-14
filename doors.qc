@@ -144,6 +144,8 @@ void() door_move_up = {
 
 	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_start_sound();
 
+	if (self.max_health) self.takedamage = DAMAGE_NO;
+
 	self.state = STATE_UP;
 	self.owner.groupstate = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
@@ -177,7 +179,7 @@ void() door_move_down = {
 
 	if(!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_start_sound();
 
-	if (self.max_health)
+	if (self.max_health && self.owner.estate == STATE_ACTIVE)
 	{
 		self.takedamage = DAMAGE_YES;
 		self.health = self.max_health;
@@ -335,6 +337,9 @@ void() door_fire =
 	if (self.owner != self)
 		objerror ("door_fire: self.owner != self");
 
+	if (self.estate != STATE_ACTIVE) 
+		return;
+	
 // self.noise4 is now played in keylock_try_to_unlock -- iw
 
 	self.message = string_null;		// no more message
@@ -403,6 +408,66 @@ void() door_killed =
 	self = oself;
 };
 
+void(entity e, float closealldoors) door_estate_lock = {
+	local entity oself, next;
+
+	if(e.owner.estate == STATE_INACTIVE) return;
+
+	oself = self;
+	self = e.owner;
+
+	self.estate = STATE_INACTIVE;
+
+	self.prevgroupstate = self.groupstate;
+
+	if (self.groupstate == STATE_UP || self.groupstate == STATE_TOP) {
+		if (
+			!(self.wait == -1 || (self.spawnflags & DOOR_TOGGLE))
+			|| closealldoors
+		) door_group_go_down();
+	}
+
+	if(self.max_health) {
+		next = self;
+		do {
+			//e.health = 0;
+			next.takedamage = DAMAGE_NO;
+			next = next.enemy;
+		} while ( (next != self) && (next != world) );
+	}
+	
+	self = oself;
+
+}
+
+void(entity e, float openalldoors) door_estate_unlock = {
+	local entity oself, next;
+	
+	if(e.owner.estate == STATE_ACTIVE) return;
+
+	oself = self;
+	self = e.owner;
+
+	if (self.prevgroupstate == STATE_UP || self.prevgroupstate == STATE_TOP) {
+		if (
+			(self.wait == -1 || (self.spawnflags & DOOR_TOGGLE))
+			&& openalldoors
+		) door_group_go_up();
+	}
+
+	if(self.max_health) {
+		next = self;
+		do {
+			next.health = next.max_health;
+			next.takedamage = DAMAGE_YES;
+			next = next.enemy;
+		} while ( (next != self) && (next != world) );
+	}
+
+	self.estate = STATE_ACTIVE;
+
+	self = oself;
+}
 
 /*
 ================
@@ -449,7 +514,10 @@ void() door_touch =
 		centerprint (other, self.owner.message);
 		sound (other, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
 	}
-	
+
+
+	if (self.owner.estate != STATE_ACTIVE)
+		return;
 // key door stuff
 	if (!keylock_has_key_set ())
 		return;
@@ -594,7 +662,7 @@ void() LinkDoors2 = {
 		}
 
 	}
-
+	if(!nextld) door_setup_finished = 1;
 	remove(self);
 };
 
@@ -654,7 +722,7 @@ void(entity d1, float ldcount) LinkDoorsEntity = {
 				if (newdoor.maxs_z > groupdoor.owner.cmaxs_z)
 					groupdoor.owner.cmaxs_z = newdoor.maxs_z;
 
-				// 
+				
 				if (newdoor.health)
 					groupdoor.owner.health = newdoor.health;
 				if (newdoor.targetname != "")

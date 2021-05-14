@@ -1404,6 +1404,7 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 	delay(integer) : "Delay" : : "Sets a delay before opening/closing. Useful to stagger movement of certain elements on complex, multi-part doors."
 	delay2(integer) : "Additional closing delay" : : "Extra delay time for the closing movement. Useful if you need to wait for another door part to set in position before moving."
 	groupname(string) : "Group name for linking" : : "Doors with the same groupname will be linked and always activate together. By setting this key, the touching check for linking is ignored."
+	targetname2(target_source) : "Secondary name" : : "Only works target_setstate. Setting this instead of targetname won't change default door's behaviour."
 ]
 
 @SolidClass base(Angle, Appearflags, Targetname, Target) = func_door_secret : "Triggered door" 
@@ -1848,16 +1849,20 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 ]
 
 @PointClass base(Targetname) = target_setstate : "Changes an entity's state.
-Entities in a disabled state won't fire its targets. Supported mostly on triggers.
+Entities in a disabled state won't execute its main function, depending on context.
+Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
 The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
-You can force the target entities to spawn disabled with spawnflag 1.
+You can force the target entities to spawn disabled/locked with spawnflag 1.
 " 
 [
 	target(target_destination) : "Target" 
 	target2(target_destination) : "Target" 
 	target3(target_destination) : "Target" 
 	target4(target_destination) : "Target" 
-	spawnflags(flags) = [ 1: "Targets start disabled" : 0 ]
+	spawnflags(flags) = [
+		1: "Targets start disabled" : 0
+		2: "Force all doors to close" : 0
+	]
 	style(choices) : "Setstate style" = [
 		0 : "Toggle current state"
 		1 : "Force active"

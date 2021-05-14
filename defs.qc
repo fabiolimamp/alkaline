@@ -1013,16 +1013,19 @@ void() setup_lightstyles; //lights.qc
 entity doorq[_MAX_ENTITY_QUEUE];
 float lastdq;
 float currentdq;
+float door_setup_finished;
 
 .float 		maxdelay, mindelay, lastclose, lastopen, movingback;
 .vector		cmins, cmaxs;
 .float 		groupstate;
+.float 		prevgroupstate = burning_time;
 .string 	groupname;
 .entity 	lastenemy = oldenemy;
 .float  	doorlooped = count;
 .float 		dqplace = currentammo;
 .float 		activated = strength;
 .string 	doortowait = wad;
+
 
 .entity ld_currentdoor = enemy;
 .entity ld_lastfound = oldenemy;
