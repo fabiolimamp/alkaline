@@ -85,9 +85,12 @@ void() misc_model = {
 
     // Make static (not animate) if not given a frame range, and not affected by gravity
     // also remains active if it has a targetname (so it can be killtargeted/toggled)
-    if (!self.last_frame && !(self.spawnflags & MISC_MODEL_GRAVITY) && !self.targetname) {
-        makestatic(self);
-    }
+    if (!self.last_frame
+    	&& !(self.spawnflags & MISC_MODEL_GRAVITY)
+    	&& !(self.spawnflags & MISC_MODEL_SOLID)
+    	&& !self.targetname
+    ) makestatic(self);
+    
 
     if(self.last_frame) { // if it as a custom animation range
     	// Default animation speed to 10 fps
