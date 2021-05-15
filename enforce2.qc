@@ -579,35 +579,6 @@ void() menf_die =
 	}
 };
 
-void() megaenforcer_start =
-{
-//local vector	org;
-//local entity	teldeath;
-
-//	if (self.style)
-//	{
-//		makevectors (self.angles);
-//		org = self.origin + 16 * v_forward;
-//		spawn_tfog (org);
-//		teldeath = spawn();
-//		teldeath.origin = org;
-//		teldeath.owner = self;
-//		teldeath.think = sf64_teledeath;
-//		teldeath.nextthink = time + 0.1;
-//	}
-
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/enforce2.mdl");
-
-	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 150;
-
-	walkmonster_start();
-	self.takedamage = DAMAGE_NO;
-};
-
 /*QUAKED monster_me (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
 */
@@ -647,13 +618,7 @@ void() monster_me =
 	self.th_die = menf_die;
 	self.th_missile = megaenforcer_fire;
 
-	if (self.spawnflags & TRIGGER_SPAWN)
-	{
-		self.use = megaenforcer_start;
-		total_monsters = total_monsters + 1;
-		return;
-	}
-	
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
