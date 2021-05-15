@@ -575,7 +575,7 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl" }) =
 	item_armor1 : "Green armor (100%)" []
 
-@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/backpack.mdl" }) =
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/supbkpack.mdl" }) =
 	item_backpack : "Backpack" [
 		ammo_shells(integer) : "Shells"
 		ammo_nails(integer) : "Nails"
