@@ -450,6 +450,41 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	]
 
 @PointClass base(PlayerClass) = info_player_start : "Player 1 start" []
+@PointClass base(PlayerClass) = info_player_start_test : "Player 1 developer start.
+Only works when developer mode is active. If there's more than one in the level, you'll always start at the last created one.
+You can override initial weapon/ammo loadout for this specific spot.
+" [
+	take_weapons(flags) = [		
+		1: "WEAPON_SHOTGUN"	
+		2: "WEAPON_SUPER_SHOTGUN"
+		4: "WEAPON_NAILGUN"
+		8: "WEAPON_SUPER_NAILGUN"
+		16: "WEAPON_GRENADE_LAUNCHER"
+		32: "WEAPON_ROCKET_LAUNCHER"
+		64: "WEAPON_LIGHTNING"
+		256: "WEAPON_CHAINSAW"
+		512: "WEAPON_PLASMA"
+		1024: "WEAPON_LASER_CANNON"
+		4096: "WEAPON_AXE"
+	]
+	give_weapons(flags) = [		
+		1: "WEAPON_SHOTGUN"	
+		2: "WEAPON_SUPER_SHOTGUN"
+		4: "WEAPON_NAILGUN"
+		8: "WEAPON_SUPER_NAILGUN"
+		16: "WEAPON_GRENADE_LAUNCHER"
+		32: "WEAPON_ROCKET_LAUNCHER"
+		64: "WEAPON_LIGHTNING"
+		256: "WEAPON_CHAINSAW"
+		512: "WEAPON_PLASMA"
+		1024: "WEAPON_LASER_CANNON"
+		4096: "WEAPON_AXE"
+	]
+	ammo_shells(integer) : "Shells on start" : : "Override the shells amount on startup. Set to -1 to force it to 0."
+	ammo_nails(integer) : "Nails on start" : : "Override the nails amount on startup. Set to -1 to force it to 0."
+	ammo_rockets(integer) : "Rockets on start" : : "Override the rockets amount on startup. Set to -1 to force it to 0."
+	ammo_cells(integer) : "Cells on start" : : "Override the cells amount on startup. Set to -1 to force it to 0."
+]
 @PointClass base(PlayerClass) = info_player_coop : "Player cooperative start" []
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
 @PointClass base(PlayerClass) = info_player_deathmatch : "DM start" []
