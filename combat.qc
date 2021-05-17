@@ -187,9 +187,9 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 // check for godmode or invincibility
 	if (targ.flags & FL_GODMODE)
 		return;
-	if (targ.invincible_finished >= time)
+	if ((targ.invincible_finished >= time) || (targ.trif_finished >= time))
 	{
-		if (targ.invincible_sound < time)//johnfitz -- note that this logic doesn't work because it says "self" instead of "targ" -- not sure if it makes sense to fix it though
+		if (targ.invincible_sound < time && targ.invincible_finished >= time)//johnfitz -- note that this logic doesn't work because it says "self" instead of "targ" -- not sure if it makes sense to fix it though
 		{
 			sound (self, CHAN_ITEM, "items/protect3.wav", 1, ATTN_NORM);
 			self.invincible_sound = time + 2;

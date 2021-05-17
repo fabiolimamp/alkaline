@@ -1466,11 +1466,11 @@ void() CheckBurning = {
 			
 		}
 	}
-	/*else
+	else
 	{
 		//stopgap in case something gets screwed up and the colorshift hasn't gone away
 		stuffcmd (self, "v_cshift\n");
-	}*/
+	}
 };
 
 
