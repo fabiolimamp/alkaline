@@ -85,7 +85,7 @@ void() SetNewParms =
 
 	
 };
-
+/*
 void() TakeAndGiveWeapons = {
 	parm10 -= parm10 & world.take_weapons;
 	parm10 = parm10 | (world.give_weapons & ALL_WEAPONS);
@@ -110,6 +110,31 @@ void() TakeAndGiveWeapons = {
 		parm8 = W_BestWeaponParms(parm10, parm4, parm5, parm7, 0);
 	}
 };
+*/
+void(entity cl, entity base) TakeAndGiveWeapons = {
+	cl.weapons -= cl.weapons & base.take_weapons;
+	cl.weapons = cl.weapons | (base.give_weapons & ALL_WEAPONS);
+
+	cl.items -= cl.items & base.take_weapons & HUD_WEAPONS;
+	cl.items = cl.items | (base.give_weapons & HUD_WEAPONS);
+
+	if (base.ammo_shells > 0) cl.ammo_shells = base.ammo_shells;
+	else if(base.ammo_shells == -1) cl.ammo_shells = 0;
+
+	if (base.ammo_nails > 0) cl.ammo_nails = base.ammo_nails;
+	else if(base.ammo_nails == -1) cl.ammo_nails = 0;
+
+	if (base.ammo_rockets > 0) cl.ammo_rockets = base.ammo_rockets;
+	else if(base.ammo_rockets == -1) cl.ammo_rockets = 0;
+
+	if (base.ammo_cells > 0) cl.ammo_cells = base.ammo_cells;
+	else if(base.ammo_cells == -1) cl.ammo_cells = 0;
+
+	//if player is wielding a removed or ammo-less weapon
+	if(!(cl.weapon & cl.weapons) || !W_CheckAmmoParms(cl.weapon, cl.ammo_shells, cl.ammo_nails, cl.ammo_rockets, cl.ammo_cells)) {
+		cl.weapon = W_BestWeaponParms(cl.weapons, cl.ammo_shells, cl.ammo_nails, cl.ammo_cells, 0);
+	}
+};
 
 void() DecodeLevelParms =
 {
@@ -117,8 +142,6 @@ void() DecodeLevelParms =
 	// or if set in worldspawn
 	if ((serverflags && world.model == "maps/start.bsp") || world.reset_items)
 		SetNewParms ();
-	
-	TakeAndGiveWeapons();
 	
 	self.items = parm1;
 	self.weapons = parm10;
@@ -130,6 +153,8 @@ void() DecodeLevelParms =
 	self.ammo_cells = parm7;
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
+
+	TakeAndGiveWeapons(self, world);
 };
 
 
@@ -463,13 +488,25 @@ entity() SelectSpawnPoint =
 {
 	local	entity spot;
 	local	entity thing;
+	local 	entity last_testplayerstart;
 	local	float  pcount;
 	
 // testinfo_player_start is only found in regioned levels
 	spot = find (world, classname, "testplayerstart");
 	if (spot)
 		return spot;
-		
+	
+	if (cvar("developer")) {
+		spot = find(world, classname, "info_player_start_test");
+		// returns the last one created in the map
+		while (spot) {
+			if (last_testplayerstart) remove(last_testplayerstart);
+			last_testplayerstart = spot;
+			spot = find(spot, classname, "info_player_start_test");
+		}
+		if (last_testplayerstart) return last_testplayerstart;
+	}
+
 // choose a info_player_deathmatch point
 	if (coop)
 	{
@@ -565,6 +602,8 @@ void() PutClientInServer =
 	StopBurning(self);//johnfitz -- reset burning	
 
 	DecodeLevelParms ();
+
+	if (spot.classname == "info_player_start_test") TakeAndGiveWeapons(self, spot);
 	
 	W_SetCurrentAmmo ();
 
@@ -633,6 +672,12 @@ The normal starting point for a level.
 */
 void() info_player_start =
 {
+};
+
+
+void() info_player_start_test =
+{
+	if (!cvar("developer")) remove(self);
 };
 
 
@@ -1421,11 +1466,11 @@ void() CheckBurning = {
 			
 		}
 	}
-	else
+	/*else
 	{
 		//stopgap in case something gets screwed up and the colorshift hasn't gone away
 		stuffcmd (self, "v_cshift\n");
-	}
+	}*/
 };
 
 

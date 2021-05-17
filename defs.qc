@@ -191,7 +191,6 @@ void		end_sys_globals;		// flag for structure dumping
 
 .string		target;
 .string		targetname;
-float 		TRIGGER_SPAWN = 64; // added for mega enforcer compatability
 
 // damage is accumulated through a frame. and sent as one single
 // message, so the super shotgun doesn't generate huge messages

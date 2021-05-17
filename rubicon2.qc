@@ -313,6 +313,9 @@ void() laser_helper_think =
 };
 
 void() func_laser_touch = {
+	if (!self.dmg)
+		return;
+
 	if (other.takedamage && self.attack_finished < time) {
 		T_Damage (other, self, self, self.dmg);
 		self.attack_finished = time + 0.1;

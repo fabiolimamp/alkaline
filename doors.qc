@@ -17,6 +17,8 @@ float DOOR_EXPANDED_TRIGGER_Y = 131072;
 float DOOR_REDUCED_TRIGGER_X = 262144;
 float DOOR_REDUCED_TRIGGER_Y = 524288;
 
+float DOOR_MIN_THINK_TIME = 0.013;
+
 /*
 
 Doors are similar to buttons, but can spawn a fat trigger field around them
@@ -124,7 +126,7 @@ void() door_hit_top =
 void() door_hit_bottom = {
 	if(self.spawnflags & DOOR_SOUND_DURING_DELAY) {
 		self.think = door_stop_sound;
-		self.nextthink = self.ltime + 0.013 + (self.delay - self.owner.mindelay);
+		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (self.delay - self.owner.mindelay);
 	}
 	else door_stop_sound();
 
@@ -222,11 +224,11 @@ void() door_go_down = {
 		// If this door has already stopped opening, wait the same time passed since then before closing again
 		if(self.state == STATE_TOP){ 
 			self.think = door_move_down;
-			self.nextthink = self.ltime + 0.013 + (time - self.lastopen);
+			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (time - self.lastopen);
 		}
 		else { // If door is still moving, move the other way immediately
 			self.think = door_move_down;
-			self.nextthink = self.ltime + 0.013;
+			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME;
 		}
 	} else {
 		// extra delay time for closing.
@@ -243,7 +245,7 @@ void() door_go_down = {
 		// All doors should pass through think for consistency,
 		// otherwise some flags are set when they're not supposed to
 		self.think = door_move_down;
-		self.nextthink = self.ltime + 0.013 + (self.owner.maxdelay + self.owner.mindelay - self.delay) + extradelay;
+		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + extradelay;
 	}
 
 };
@@ -260,19 +262,19 @@ void() door_go_up = {
 		// if this door has already stopped closing, wait the same time passed since that before opening 
 		if(self.state == STATE_BOTTOM){
 			self.think = door_move_up;
-			self.nextthink = self.ltime + 0.013 + (time - self.lastclose);
+			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (time - self.lastclose);
 
 		}
 		else { // if door is still moving, move the other way immediately
 			self.think = door_move_up;
-			self.nextthink = self.ltime + 0.013;
+			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME;
 		}
 	} else {
 		// Normal movement.
 		// All doors should pass through think for consistency,
 		// otherwise some flags are set when they're not supposed to
 		self.think = door_move_up;
-		self.nextthink = self.ltime + 0.013 + self.delay;
+		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + self.delay;
 	}
 			
 };
@@ -435,7 +437,7 @@ void(entity e, float closealldoors) door_estate_lock = {
 			next = next.enemy;
 		} while ( (next != self) && (next != world) );
 	}
-	
+
 	self = oself;
 
 }
