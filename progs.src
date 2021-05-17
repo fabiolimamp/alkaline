@@ -83,6 +83,8 @@ monster_banshee.qc // Malice
 monster_rider.qc // Malice
 monster_probe.qc // Malice
 
+misc_scientist.qc
+
 projectile.qc
 meat.qc
 fog.qc

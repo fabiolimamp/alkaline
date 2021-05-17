@@ -73,7 +73,8 @@ void(entity targ, entity attacker) Killed =
 	self.enemy = attacker;
 
 // bump the monster counter
-	if (self.flags & FL_MONSTER)
+	if ((self.flags & FL_MONSTER && !(self.flags & FL_PACIFIST)) 
+	|| (self.flags & FL_PACIFIST && self.spawnflags & MONSTER_COUNTONSPAWN))
 	{
 		killed_monsters = killed_monsters + 1;
 		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);

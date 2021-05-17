@@ -152,6 +152,32 @@ void(void() go_function) monster_start = {
 	}
 }
 
+void(void() go_function) pacifist_start = {
+
+	if (cvar("nomonsters") != 0) 
+	{
+		if(self.trigger_field) remove(self.trigger_field);
+		remove(self);
+		return;
+	}
+	
+	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) 
+	{
+		init_spawned_monster(self, go_function);
+	}
+	else 
+	{
+		if (self.spawnflags & MONSTER_COUNTONSPAWN)
+		{
+			total_monsters++;
+			update_hud_totals(HUD_MONSTERS);
+		}	
+		// delay drop to floor to make sure all doors have been spawned
+		// spread think times so they don't all happen at same time
+		self.nextthink = self.nextthink + random()*0.5;
+		self.think = go_function;
+	}
+};
 
 //============================================================================
 // go functions
@@ -317,6 +343,7 @@ void() flymonster_start = {monster_start(flymonster_start_go);};
 
 void() swimmonster_start = {monster_start(swimmonster_start_go);};
 
+void() walkpacifist_start = {pacifist_start(walkmonster_start_go);};
 
 /*
 void() nomonster_go =

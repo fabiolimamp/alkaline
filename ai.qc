@@ -128,6 +128,20 @@ local entity	temp;
 		self.th_stand ();
 		return;
 	}
+	
+	if(self.flags & FL_PACIFIST)
+	{
+		if(other.wait > 0)
+		{
+			self.pausetime = time + other.wait;
+			self.th_stand ();
+		}
+		
+		if(other.angles)
+		{
+			self.ideal_yaw = other.angles_y;
+		}
+	}
 };
 
 
@@ -490,6 +504,11 @@ float() FindTarget =
 	if (client.takedamage == DAMAGE_NO)
 		return FALSE;	
 	
+	if(self.spawnflags & MONSTER_IGNOREPLAYER)
+	{
+		return FALSE;
+	}
+	
 //
 // got one
 //
@@ -597,6 +616,11 @@ void() ai_stand =
 	{
 		self.th_walk ();
 		return;
+	}
+	
+	if(self.flags & FL_PACIFIST)
+	{
+		ChangeYaw ();
 	}
 	
 // change angle slightly
@@ -849,3 +873,68 @@ void(float dist) ai_run =
 	movetogoal (dist);		// done in C code...
 };
 
+/*
+=============
+ai_run_away
+=============
+*/
+void(float dist) ai_run_away =
+{
+	movedist = dist;
+	
+	// see if the enemy is dead
+	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
+	if (self.enemy.health <= 0 || self.enemy.takedamage == DAMAGE_NO)
+	{
+		self.enemy = world;
+		if (self.oldenemy.health > 0)
+		{
+			self.enemy = self.oldenemy;
+			//HuntTarget ();
+		}
+		else
+		{
+			if (self.movetarget)
+				self.th_walk ();
+			else
+				self.th_stand ();
+			return;
+		}
+	}
+
+	self.show_hostile = time + 1;		// wake up other monsters
+
+// check knowledge of enemy
+	enemy_vis = visible(self.enemy);
+	if (enemy_vis)
+		self.search_time = time + 5;
+
+// look for other coop players
+	if (coop && self.search_time < time)
+	{
+		if (FindTarget ())
+			return;
+	}
+
+	self.ideal_yaw = vectoyaw(self.origin - self.enemy.origin);
+		
+	//enemy_infront = infront(self.enemy);
+	enemy_range = range(self.enemy);
+	
+	if(enemy_range >= RANGE_MID)
+	{
+		self.enemy = world;
+		self.pausetime = time + 999999;
+		self.th_stand ();
+		return;
+	}
+	else if(enemy_range <= RANGE_MELEE)
+	{
+		self.angles_y = self.ideal_yaw;
+		walkmove(self.ideal_yaw, dist);
+		return;
+	}
+	
+// head straight in
+	movetogoal (dist);		// done in C code...
+};

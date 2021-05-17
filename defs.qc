@@ -242,6 +242,7 @@ float	FL_PARTIALGROUND		= 1024;	// not all corners are valid
 float	FL_WATERJUMP			= 2048;	// player jumping out of water
 float	FL_JUMPRELEASED			= 4096;	// for jump debouncing
 float 	FL_SPAWNMONSTER			= 8192; // triggered spawn monsters
+float 	FL_PACIFIST				= 16384;// monsters that don't fight (usually run away)
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves
@@ -490,7 +491,7 @@ float MONSTER_SPAWNSILENT = 128;
 float MONSTER_NOINFIGHT = 16384;
 float MONSTER_COUNTONSPAWN = 32768;
 float MONSTER_NOIDLESOUND = 65536;
-
+float MONSTER_IGNOREPLAYER	=	131072;
 
 //================================================
 
