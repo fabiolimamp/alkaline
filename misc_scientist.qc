@@ -392,7 +392,7 @@ void() misc_scientist =
 	self.th_walk = scientist_walk_01;
 	self.th_run = scientist_run_away_01;
 	self.th_melee = SUB_Null;
-	self.th_pain = SUB_Null;
+	self.th_pain = SUB_NullPain;
 	self.th_die = scientist_die;
 	
 	walkpacifist_start ();
