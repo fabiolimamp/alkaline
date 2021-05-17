@@ -90,41 +90,53 @@ void(float ofs, float turn) b_fire_rocket =
 	setorigin(missile, src);
 };
 
-
-
-
+void() banshee_set_yaw_speed = {
+	if (self.style == SKILL_EASY) {
+		self.yaw_speed = 5; //5
+	}
+	else if (self.style == SKILL_NORMAL) {
+		self.yaw_speed = 9; // 9
+	}
+	else {
+		self.yaw_speed = 12; //12
+	}
+}
 
 void(float angdelta, float delta) ban_rotate = 
 {
 	if (fabs(angdelta) < 10)
-	{
 		self.fixangle = delta;
-	}
+	else if (angdelta > 5)
+		self.fixangle = self.fixangle + 9;
+	else if (angdelta < -5)
+		self.fixangle = self.fixangle - 9;
 	else
-	{
-		if (angdelta > 5)
-		{
-			self.fixangle = self.fixangle + 9;
-		}
-		else
-		{
-			if (angdelta < -5)
-			{
-				self.fixangle = self.fixangle - 9;
-			}
-			else
-			{
-				self.fixangle = delta;
-			}
-		}
-	}
+		self.fixangle = delta;
 };
 
-void() banshee_think = 
-{
+void() banshee_sound_idle = {
+	local float r;
+
+	if(time > self.super_time)
+		return;
+	r = random();
+	self.super_time = time + 3;
+
+	if (r < 0.125)
+		sound(self, CHAN_VOICE, "banshee/idle1.wav", 0.5, ATTN_NORM);
+	else if (r < 0.25)
+		sound(self, CHAN_VOICE, "banshee/idle2.wav", 0.5, ATTN_NORM);
+	else if (r < 0.375)
+		sound(self, CHAN_VOICE, "banshee/idle3.wav", 0.5, ATTN_NORM);
+	else if (r < 0.5)
+		sound(self, CHAN_VOICE, "banshee/idle4.wav", 0.5, ATTN_NORM);
+
+}
+
+void() banshee_think = {
 	local float delta;
 	local float angdelta;
-	local float r;
+
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
@@ -148,114 +160,47 @@ void() banshee_think =
 	}
 	angdelta = delta - self.fixangle;
 	ban_rotate(angdelta, delta);
+	
 	if (self.health < 0)
-	{
 		return;
-	}
-	if (time > self.super_time && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
-	{
-		self.super_time = time + 3;
-		if (random() < 0.5)
-		{
-			r = random();
-			if (r < 0.25)
-			{
-				sound(self, CHAN_VOICE, "banshee/idle1.wav", 1, ATTN_NORM);
-			}
-			else
-			{
-				if (r < PROBE_VOLUME)
-				{
-					sound(self, CHAN_VOICE, "banshee/idle2.wav", 1, ATTN_NORM);
-				}
-				else
-				{
-					if (r < 0.75)
-					{
-						sound(self, CHAN_VOICE, "banshee/idle3.wav", 1, ATTN_NORM);
-					}
-					else
-					{
-						sound(self, CHAN_VOICE, "banshee/idle4.wav", 1, ATTN_NORM);
-					}
-				}
-			}
-		}
-	}
+	
+	if (!(self.spawnflags & MONSTER_NOIDLESOUND) && !self.enemy)
+		banshee_sound_idle();
+	
 };
 
 void() ban_thinkwalk = 
 {
 	local float delta;
 	local float angdelta;
-	local entity client;
-	local float r;
+
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
-	ChangeYaw();
+
+	//ChangeYaw();
+
 	delta = 0;
 	self.cnt = 0;
 	if (delta > 180)
-	{
 		delta = delta - 360;
-	}
 	if (delta < -180)
-	{
 		delta = delta + 360;
-	}
-	if (fabs(delta) > 90)
-	{
+	if (fabs(delta) > 90) {
 		delta = 0;
 		self.cnt = 1;
 	}
+
 	angdelta = delta - self.fixangle;
 	ban_rotate(angdelta, delta);
+
 	if (self.health < 0)
-	{
 		return;
-	}
-	if (time > self.super_time)
-	{
-		self.super_time = time + 3;
-		if (random() < PROBE_VOLUME)
-		{
-			r = random();
-			if (r < 0.25)
-			{
-				sound(self, CHAN_VOICE, "banshee/idle1.wav", 1, ATTN_BANSHEE);
-			}
-			else
-			{
-				if (r < PROBE_VOLUME)
-				{
-					sound(self, CHAN_VOICE, "banshee/idle2.wav", 1, ATTN_BANSHEE);
-				}
-				else
-				{
-					if (r < 0.75)
-					{
-						sound(self, CHAN_VOICE, "banshee/idle3.wav", 1, ATTN_BANSHEE);
-					}
-					else
-					{
-						sound(self, CHAN_VOICE, "banshee/idle4.wav", 1, ATTN_BANSHEE);
-					}
-				}
-			}
-		}
-	}
-	client = checkclient();
-	if (!client)
-	{
-		return;
-	}
-	if (visible(client))
-	{
-		self.enemy = client;
-		FoundTarget();
-	}
+
+	if (!(self.spawnflags & MONSTER_NOIDLESOUND) && !self.enemy)
+		banshee_sound_idle();
+		
 };
 
 void() banshee_stand1 = [0, banshee_stand2]
@@ -267,48 +212,56 @@ void() banshee_stand1 = [0, banshee_stand2]
 
 void() banshee_stand2 = [1, banshee_stand3]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand3 = [2, banshee_stand4]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.3;
 };
 
 void() banshee_stand4 = [3, banshee_stand5]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.3;
 };
 
 void() banshee_stand5 = [4, banshee_stand6]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.3;
 };
 
 void() banshee_stand6 = [5, banshee_stand7]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand7 = [6, banshee_stand8]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand8 = [7, banshee_stand9]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand9 = [8, banshee_stand10]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
@@ -322,54 +275,63 @@ void() banshee_stand10 = [9, banshee_stand11]
 
 void() banshee_stand11 = [10, banshee_stand12]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand12 = [11, banshee_stand13]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand13 = [12, banshee_stand14]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand14 = [13, banshee_stand15]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand15 = [14, banshee_stand16]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand16 = [15, banshee_stand17]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand17 = [16, banshee_stand18]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand18 = [17, banshee_stand19]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
 
 void() banshee_stand19 = [18, banshee_stand20]
 {
+	ai_stand();
 	banshee_think();
 	self.nextthink = time + 0.2;
 };
@@ -381,84 +343,90 @@ void() banshee_stand20 = [19, banshee_stand1]
 	self.nextthink = time + 0.2;
 };
 
+
+
 void() banshee_walk1 = [20, banshee_walk2]
 {
-	movetogoal(14);
+	self.yaw_speed = 15;
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk2 = [21, banshee_walk3]
 {
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk3 = [22, banshee_walk4]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
-	movetogoal(14);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk4 = [23, banshee_walk5]
 {
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk5 = [24, banshee_walk6]
 {
 	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk6 = [25, banshee_walk7]
 {
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk7 = [26, banshee_walk8]
 {
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk8 = [27, banshee_walk9]
 {
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk9 = [28, banshee_walk10]
 {
 	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk10 = [29, banshee_walk11]
 {
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk11 = [30, banshee_walk12]
 {
 	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
 void() banshee_walk12 = [31, banshee_walk1]
 {
-	movetogoal(14);
+	ai_walk(14);
 	ban_thinkwalk();
 };
 
+
+
 void() banshee_run1 = [20, banshee_run2]
 {
+	banshee_set_yaw_speed();
 	ChangeYaw();
 	
 	ai_run(14);
@@ -525,7 +493,7 @@ void() banshee_run8 = [27, banshee_run9]
 
 void() banshee_run9 = [28, banshee_run10]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
 	ChangeYaw();
 	
 	ai_run(14);
@@ -955,18 +923,10 @@ self.solid = SOLID_NOT;
 
 void(entity attacker, float damage) banshee_pain = 
 {
-	if (self.health <= 0)
-	{
-		return;
-	}
-	if (damage < 25)
-	{
-		return;
-	}
-	if (self.pain_finished > time)
-	{
-		return;
-	}
+	if (self.health <= 0) return;
+	if (damage < 25) return;
+	if (self.pain_finished > time) return;
+	
 	self.pain_finished = time + 2;
 	sound(self, CHAN_VOICE, "banshee/pain.wav", 1, ATTN_NORM);
 };
@@ -1096,13 +1056,14 @@ float() BansheeCheckAttack =
 	return 0;
 };
 
+
+
 void() monster_banshee = 
 {
 	local entity body;
-	local float sk;
 	if (!deathmatch) {
 		self.lefty = 0;
-		sk = cvar("skill");
+		self.style = cvar("skill");
 		precache_model("progs/banbody.mdl");
 		precache_model("progs/banlegs.mdl");
 		precache_model("progs/d_explod.spr");
@@ -1141,12 +1102,12 @@ void() monster_banshee =
 		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 		setorigin(self, self.origin);
 
-		if (sk == SKILL_EASY) {
+		if (self.style == SKILL_EASY) {
 			self.yaw_speed = 5; //5
 			self.health = 1300;
 			self.worldtype = 0.9;
 		}
-		else if (sk == SKILL_NORMAL) {
+		else if (self.style == SKILL_NORMAL) {
 			self.yaw_speed = 9; // 9
 			self.health = 1300;
 			self.worldtype = 0.85;
