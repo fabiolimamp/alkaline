@@ -1261,7 +1261,6 @@ void() CheckPowerups =
 			self.effects = self.effects - (self.effects & EF_DIMLIGHT);	
 			self.cshift_set = 0;
 			self.cshift_cleared = 0;
-			//stuffcmd(self, "v_cshift\n");
 		}
 	
 	}
@@ -1406,7 +1405,7 @@ void(entity e) StopBurning =
 	if (e.burning_finished) {
 		e.burning_finished = 0;
 		e.burning_time = 0;
-		//stuffcmd (e, "v_cshift\n");
+		// sets v_cshift to be cleared at the end of the frame
 		e.cshift_set = 0;
 		e.cshift_cleared = 0;
 		e.effects = (e.effects & EF_DIMLIGHT) - EF_DIMLIGHT;
@@ -1464,11 +1463,6 @@ void() CheckBurning = {
 			self.cshift_cleared = 0;
 		}
 	}
-	/*else
-	{
-		//stopgap in case something gets screwed up and the colorshift hasn't gone away
-		stuffcmd (self, "v_cshift\n");
-	}*/
 };
 
 
