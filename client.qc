@@ -635,7 +635,6 @@ void() PutClientInServer =
 			skyfog_set(self, world.skyfog_density);
 	}
 
-	stuffcmd (self, "v_cshift\n");
 	self.cshift_set = 0;
 	self.cshift_cleared = 0;
 };
@@ -832,8 +831,8 @@ void() PlayerRessurect =
 	self.effects = 0;
 	self.invincible_time = 0;
 	self.trif_time = 0;
-	self.trif_finished = 0;	
-	
+	self.trif_finished = 0;
+
 	
 	StopBurning(self);
 
@@ -844,6 +843,9 @@ void() PlayerRessurect =
 	bprint (" was ressurected\n");
 	stuffcmd (self, "bf\n");
 	sound (self, CHAN_VOICE, "items/protect.wav", 1, ATTN_NORM);
+
+	self.cshift_cleared = 0;
+	self.cshift_set = 0;
 }
 
 void() PlayerDeathThink =
@@ -1077,9 +1079,9 @@ void() PlayerPreThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
-	if ((!self.cshift_set && !self.cshift_cleared) || self.cshift_cleared == 1) {
+	if ((!self.cshift_set && !self.cshift_cleared)) {
 		stuffcmd(self, "v_cshift\n");
-		self.cshift_cleared = 2;
+		self.cshift_cleared = 1;
 	}
 
 	self.cshift_set = 0; //checked later in PlayerPostThink for cshift changes
