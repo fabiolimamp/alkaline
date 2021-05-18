@@ -341,8 +341,8 @@ void() door_fire =
 
 	if (self.estate != STATE_ACTIVE) 
 		return;
-	
-// self.noise4 is now played in keylock_try_to_unlock -- iw
+
+	// self.noise4 is now played in keylock_try_to_unlock -- iw
 
 	self.message = string_null;		// no more message
 	oself = self;
@@ -1261,4 +1261,52 @@ entity() getNextDoorQ = {
 
 
 	return e;
+};
+
+
+/*
+=============
+target_setdoor
+===============
+*/
+
+void(.string fld, string tgt) target_setdoor_set = {
+	local entity e, oself;
+
+	e = find(world, fld, tgt);
+	while (e) {
+		if (e.classname == "func_door") {
+			oself = self;
+			self = e.owner;
+			
+			if (oself.style == 0) door_group_go_up();
+			else door_group_go_down();
+			
+			self = oself;
+		}
+		e = find(e, fld, tgt);
+	}
+};
+
+void() target_setdoor_use = {
+	if (self.target != "") {
+		target_setdoor_set(targetname, self.target);
+		target_setdoor_set(targetname2, self.target);
+	}
+	if (self.target2 != "") {
+		target_setdoor_set(targetname, self.target2);
+		target_setdoor_set(targetname2, self.target2);
+	}
+	if (self.target3 != "") {
+		target_setdoor_set(targetname, self.target3);
+		target_setdoor_set(targetname2, self.target3);
+	}
+	if (self.target4 != "") {
+		target_setdoor_set(targetname, self.target4);
+		target_setdoor_set(targetname2, self.target4);
+	}
+};
+
+void() target_setdoor = {
+	self.use = target_setdoor_use;
 };

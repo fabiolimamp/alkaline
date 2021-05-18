@@ -1918,6 +1918,20 @@ You can force the target entities to spawn disabled/locked with spawnflag 1.
 	]
 ]
 
+@PointClass base(Targetname) = target_setdoor : "Moves a door to the specified position (open or closed).
+It respect the door's wait time and enabled/disabled state, but will move even if keylocked.
+" 
+[
+	target(target_destination) : "Target" 
+	target2(target_destination) : "Target" 
+	target3(target_destination) : "Target" 
+	target4(target_destination) : "Target" 
+	style(choices) : "Door action" : 0 = [
+		0 : "Open"
+		1 : "Close"
+	]
+]
+
 @SolidClass base(Targetname) = trigger_push : "Trigger player push"
 [
 	angle(integer) : "Angle"
