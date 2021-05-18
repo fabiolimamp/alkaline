@@ -299,6 +299,9 @@ func_laser
 ===============================================================================
 */
 
+float LASER_SOLID = 2;
+float LASER_SILENT = 4;
+
 void() laser_helper_think =
 {
 	if (!self.owner || self.owner.classname != "func_laser") {
@@ -331,7 +334,8 @@ void () func_laser_use = {
 		if (self.spawnflags & LASER_SOLID)
 			self.movetype = MOVETYPE_PUSH; //required becuase of SOLID_BSP
 
-		sound (activator, CHAN_VOICE, "misc/laser_on.wav", 1, ATTN_NORM);
+		if (!(self.spawnflags & LASER_SILENT))
+			sound (activator, CHAN_VOICE, "misc/laser_on.wav", 1, ATTN_NORM);
 
 		if (activator.classname == "player" && self.message != "")
 			centerprint (activator, self.message);
@@ -345,7 +349,8 @@ void () func_laser_use = {
 		if (self.spawnflags & LASER_SOLID)
 			self.movetype = MOVETYPE_NONE;
 
-		sound (activator, CHAN_VOICE, "misc/laseroff.wav", 1, ATTN_NORM);
+		if (!(self.spawnflags & LASER_SILENT))
+			sound (activator, CHAN_VOICE, "misc/laseroff.wav", 1, ATTN_NORM);
 		
 		if (activator.classname == "player" && self.message2 != "")
 			centerprint (activator, self.message2);
