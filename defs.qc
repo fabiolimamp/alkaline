@@ -590,6 +590,7 @@ float	AS_MISSILE		= 4;
 .float		trif_time;
 .float		rad_time;
 .float		fly_sound;
+.float 		cshift_set, cshift_cleared;
 
 .float		axhitme;
 

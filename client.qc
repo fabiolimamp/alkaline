@@ -85,32 +85,7 @@ void() SetNewParms =
 
 	
 };
-/*
-void() TakeAndGiveWeapons = {
-	parm10 -= parm10 & world.take_weapons;
-	parm10 = parm10 | (world.give_weapons & ALL_WEAPONS);
 
-	parm1 -= parm1 & world.take_weapons & HUD_WEAPONS;
-	parm1 = parm1 | (world.give_weapons & HUD_WEAPONS);
-
-	if (world.ammo_shells > 0) parm4 = world.ammo_shells;
-	else if(world.ammo_shells == -1) parm4 = 0;
-
-	if (world.ammo_nails > 0) parm5 = world.ammo_nails;
-	else if(world.ammo_nails == -1) parm5 = 0;
-
-	if (world.ammo_rockets > 0) parm6 = world.ammo_rockets;
-	else if(world.ammo_rockets == -1) parm6 = 0;
-
-	if (world.ammo_cells > 0) parm7 = world.ammo_cells;
-	else if(world.ammo_cells == -1) parm7 = 0;
-
-	//if player is wielding a removed or ammo-less weapon
-	if(!(parm10 & parm8) || !W_CheckAmmoParms(parm8, parm4, parm5, parm6, parm7)) {
-		parm8 = W_BestWeaponParms(parm10, parm4, parm5, parm7, 0);
-	}
-};
-*/
 void(entity cl, entity base) TakeAndGiveWeapons = {
 	cl.weapons -= cl.weapons & base.take_weapons;
 	cl.weapons = cl.weapons | (base.give_weapons & ALL_WEAPONS);
@@ -329,6 +304,7 @@ void() execute_changelevel =
 	local entity	pos;
 
 	intermission_running = 1;
+
 	
 // enforce a wait time before allowing changelevel
 	if (deathmatch)
@@ -355,6 +331,9 @@ void() execute_changelevel =
 		other.modelindex = 0;
 		setorigin (other, pos.origin);
 		fog_setFromEnt(other, pos);
+		// clear v_cshift on the next frame
+		other.cshift_set = 0;
+		other.cshift_cleared = 0;
 		other = find (other, classname, "player");
 	}	
 
@@ -655,6 +634,10 @@ void() PutClientInServer =
 		else
 			skyfog_set(self, world.skyfog_density);
 	}
+
+	stuffcmd (self, "v_cshift\n");
+	self.cshift_set = 0;
+	self.cshift_cleared = 0;
 };
 
 
@@ -1094,6 +1077,12 @@ void() PlayerPreThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
+	if ((!self.cshift_set && !self.cshift_cleared) || self.cshift_cleared == 1) {
+		stuffcmd(self, "v_cshift\n");
+		self.cshift_cleared = 2;
+	}
+
+	self.cshift_set = 0; //checked later in PlayerPostThink for cshift changes
 
 	if (cleanUpClientStuff)
 		fog_setFromEnt( self, self );
@@ -1263,10 +1252,14 @@ void() CheckPowerups =
 		if (self.trif_finished > time) {
 			self.effects = self.effects | EF_DIMLIGHT;
 			stuffcmd(self, "v_cshift 96 192 224 32 \n");
+			self.cshift_set = 1;
+			self.cshift_cleared = 0;
 		}
 		else {
 			self.effects = self.effects - (self.effects & EF_DIMLIGHT);	
-			stuffcmd(self, "v_cshift\n");
+			self.cshift_set = 0;
+			self.cshift_cleared = 0;
+			//stuffcmd(self, "v_cshift\n");
 		}
 	
 	}
@@ -1411,7 +1404,9 @@ void(entity e) StopBurning =
 	if (e.burning_finished) {
 		e.burning_finished = 0;
 		e.burning_time = 0;
-		stuffcmd (e, "v_cshift\n");
+		//stuffcmd (e, "v_cshift\n");
+		e.cshift_set = 0;
+		e.cshift_cleared = 0;
 		e.effects = (e.effects & EF_DIMLIGHT) - EF_DIMLIGHT;
 	}
 };
@@ -1463,14 +1458,15 @@ void() CheckBurning = {
 			stuffcmd (self, "v_cshift 200 50 0 ");
 			stuffcmd (self, ftos(a));
 			stuffcmd (self, "\n");
-			
+			self.cshift_set = 1;
+			self.cshift_cleared = 0;
 		}
 	}
-	else
+	/*else
 	{
 		//stopgap in case something gets screwed up and the colorshift hasn't gone away
 		stuffcmd (self, "v_cshift\n");
-	}
+	}*/
 };
 
 
@@ -1544,6 +1540,12 @@ void() PlayerPostThink =
 		self.jump_flag = self.velocity_z;
 
 	CheckPowerups ();
+
+	if (!self.cshift_set && !self.cshift_cleared) {
+		stuffcmd(self, "v_cshift\n");
+		self.cshift_cleared = 1;
+	}
+
 };
 
 
