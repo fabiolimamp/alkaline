@@ -308,6 +308,9 @@ void() door_group_go_up = {
 void() door_group_go_down = {
 	local entity starte, oself;
 
+	if (self.owner.groupstate == STATE_BOTTOM)
+		return;
+
 	// Door group is still moving the other way
 	if(self.owner.groupstate == STATE_UP) {
 		self.owner.movingback = TRUE;
