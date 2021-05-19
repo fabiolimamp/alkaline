@@ -1290,8 +1290,7 @@ void(.string fld, string tgt) target_setdoor_set = {
 		e = find(e, fld, tgt);
 	}
 };
-
-void() target_setdoor_use = {
+void() target_setdoor_usetargets = {
 	if (self.target != "") {
 		target_setdoor_set(targetname, self.target);
 		target_setdoor_set(targetname2, self.target);
@@ -1308,6 +1307,17 @@ void() target_setdoor_use = {
 		target_setdoor_set(targetname, self.target4);
 		target_setdoor_set(targetname2, self.target4);
 	}
+}
+
+void() target_setdoor_use = {
+	if (self.delay) {
+		if (time < self.nextthink) return;
+		else {
+			self.think = target_setdoor_usetargets;
+			self.nextthink = time + self.delay;
+		}
+	}
+	else target_setdoor_usetargets();
 };
 
 void() target_setdoor = {

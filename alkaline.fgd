@@ -1925,7 +1925,8 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	target(target_destination) : "Target" 
 	target2(target_destination) : "Target" 
 	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target" 
+	target4(target_destination) : "Target"
+	delay(integer) : "Delay before activation"
 	style(choices) : "Door action" : 0 = [
 		0 : "Open"
 		1 : "Close"
