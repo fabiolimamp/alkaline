@@ -11,6 +11,7 @@ void() trigger_reactivate =
 
 float	SPAWNFLAG_NOMESSAGE = 1;
 float	SPAWNFLAG_NOTOUCH = 1;
+float	TRIGGER_MONSTERTRIGGERABLE = 128;
 
 // the wait time has passed, so set back up for another activation
 void() multi_wait =
@@ -96,7 +97,7 @@ void() multi_use = //dumptruck_ds
 
 void() multi_touch =
 {
-	if (other.classname != "player")
+	if (other.classname != "player" && !(other.flags & FL_MONSTER && self.spawnflags & TRIGGER_MONSTERTRIGGERABLE))
 		return;
 
 	if (self.is_waiting)	// Supa, is this trigger waiting to be activated?

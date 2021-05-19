@@ -1843,6 +1843,10 @@ Other than that, this entity functions like a normal button.
 	]
 ]
 
+@SolidClass = trigger_doortriggerfield : "Custom door trigger field." [
+	target(target_destination) : "Target door"
+]
+
 @SolidClass base(Appearflags) = trigger_void : "Use this for a 'void' area. Removes monsters, gibs, ammo, etc... also kills player"
 [
 	spawnflags(Flags) =
