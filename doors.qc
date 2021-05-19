@@ -577,9 +577,15 @@ void(entity door, float ldcount) setupTriggerField = {
 	oself = self;
 	self = door;
 
-	if (self.owner == self && self.targetname == "" && !keylock_has_key_set()) {
-		self.think = spawn_field_think;
-		self.nextthink = self.ltime + 1 - clamp(ldcount / 20, 0, 0.95);
+	if (self.owner == self && !keylock_has_key_set()) {
+		if (self.trigger_field) { // external trigger_doortriggerfield set, so use it instead
+			self.trigger_field.owner = self;
+			self.trigger_field.touch = door_trigger_touch;
+		}
+		else if (self.targetname == "") {
+			self.think = spawn_field_think;
+			self.nextthink = self.ltime + 1 - clamp(ldcount / 20, 0, 0.95);
+		}
 	}
 
 	self = oself;
@@ -734,6 +740,8 @@ void(entity d1, float ldcount) LinkDoorsEntity = {
 					groupdoor.owner.targetname = newdoor.targetname;
 				if (newdoor.message != "")
 					groupdoor.owner.message = newdoor.message;
+				if (newdoor.trigger_field)
+					groupdoor.owner.trigger_field = newdoor.trigger_field;
 
 				if(newdoor.spawnflags & DOOR_EXPANDED_TRIGGER_X)
 					groupdoor.owner.spawnflags = groupdoor.owner.spawnflags | DOOR_EXPANDED_TRIGGER_X;
@@ -1322,4 +1330,31 @@ void() target_setdoor_use = {
 
 void() target_setdoor = {
 	self.use = target_setdoor_use;
+};
+
+
+/*
+=============
+trigger_doortriggerfield
+
+Sets a user-defined door's trigger field.
+===============
+*/
+
+void() trigger_doortriggerfield = {
+	local entity door;
+	if (!self.target || self.target == "") 
+		objerror("No target set");
+	
+	door = find(world, targetname, self.target);
+
+	if (door.classname != "func_door")
+		objerror("Target is not a door");
+
+	InitTrigger();
+
+	door.trigger_field = self;
+
+	// self.touch and self.owner are defined on the setupTriggerField func,
+	// so it only happens after the door groups are set
 };

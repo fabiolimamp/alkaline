@@ -1802,13 +1802,19 @@ Other than that, this entity functions like a normal button.
 @SolidClass base(Trigger, TriggerWait) = trigger_once : "Trigger: Activate once"
 [
 	health(integer) : "Health"
-	spawnflags(flags) = [ 1: "Entity only" : 0 ]
+	spawnflags(flags) = [
+		1: "Entity only" : 0
+		128: "Monster-triggerable" : 0
+	]
 ]
 @SolidClass base(Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple" 
 [
 	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health"
-	spawnflags(flags) = [ 1: "Entity only" : 0 ]
+	spawnflags(flags) = [
+		1: "Entity only" : 0
+		128: "Monster-triggerable" : 0
+	]
 ]
 @SolidClass base(Trigger) = trigger_onlyregistered : "Trigger: Registered only" 
 [
