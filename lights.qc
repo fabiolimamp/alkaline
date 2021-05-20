@@ -584,7 +584,7 @@ void() misc_shadowcontroller_use = {
 	}
 }
 
-void() misc_shadowcontroller = {
+void() misc_shadowcontroller_setup = {
 	entity t1;
 
 
@@ -637,8 +637,12 @@ void() misc_shadowcontroller = {
 	}
 
 	self.use = misc_shadowcontroller_use;
-}
+};
 
+void() misc_shadowcontroller = {
+	self.think = misc_shadowcontroller_setup;
+	self.nextthink = time + 0.1;
+};
 
 string() target_lightstyle_next =
 {
