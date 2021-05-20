@@ -572,17 +572,28 @@ void() spawn_field_think =
 
 
 void(entity door, float ldcount) setupTriggerField = {
-	local entity oself;
+	local entity oself, tfield;
 
 	oself = self;
 	self = door;
 
 	if (self.owner == self && !keylock_has_key_set()) {
-		if (self.trigger_field) { // external trigger_doortriggerfield set, so use it instead
-			self.trigger_field.owner = self;
-			self.trigger_field.touch = door_trigger_touch;
+		
+		if (self.targetname != "") { 
+			// search for trigger_doortriggerfield targeting it
+			do {
+				tfield = find(tfield, classname, "trigger_doortriggerfield");
+			}
+			while (tfield && tfield.target != self.targetname);
+			
+			if (tfield) {
+				self.trigger_field = tfield;
+				tfield.owner = self;
+				tfield.touch = door_trigger_touch;
+			}
 		}
-		else if (self.targetname == "") {
+
+		else if (self.targetname == "" && !self.trigger_field) {
 			self.think = spawn_field_think;
 			self.nextthink = self.ltime + 1 - clamp(ldcount / 20, 0, 0.95);
 		}
@@ -807,6 +818,7 @@ Key doors are allways wait -1.
 void() func_door =
 
 {
+	dprint("Starting func_door: ");dprint(self.targetname);dprint("\n");
 	local string default_noise1;
 	local string default_noise2;
 
@@ -982,6 +994,7 @@ void() func_door =
 		
 		self = oldself;
 	}
+	dprint("Finished func_door: ");dprint(self.targetname);dprint("\n");
 };
 
 /*
@@ -1342,18 +1355,13 @@ Sets a user-defined door's trigger field.
 */
 
 void() trigger_doortriggerfield = {
-	local entity door;
-	if (!self.target || self.target == "") 
-		objerror("No target set");
-	
-	door = find(world, targetname, self.target);
 
-	if (door.classname != "func_door")
-		objerror("Target is not a door");
+	if (!self.target || self.target == "") {
+		objerror("No target set");
+		return;
+	}
 
 	InitTrigger();
-
-	door.trigger_field = self;
 
 	// self.touch and self.owner are defined on the setupTriggerField func,
 	// so it only happens after the door groups are set
