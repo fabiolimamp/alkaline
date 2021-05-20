@@ -1114,8 +1114,8 @@ void() target_setstate = {
 	self.use = target_setstate_use;
 
 	if(self.spawnflags & START_OFF) {
-		// wait a second while doors finish being set up
+		// wait a bit while doors finish being set up
 		self.think = target_setstate_startoff_think;
-		self.nextthink = time + 1;
+		self.nextthink = time + 0.5;
 	}
 };
