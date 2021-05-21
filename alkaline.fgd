@@ -1920,6 +1920,7 @@ You can force the target entities to spawn disabled/locked with spawnflag 1.
 	spawnflags(flags) = [
 		1: "Targets start disabled" : 0
 		2: "Force all doors to close" : 0
+		4: "Don't reset button state" : 0
 	]
 	style(choices) : "Setstate style" = [
 		0 : "Toggle current state"

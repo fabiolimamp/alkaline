@@ -1034,6 +1034,7 @@ target_setstate
 =============================================================
 */
 float SETSTATE_CLOSEALLDOORS = 2;
+float SETSTATE_DONTRESETBUTTON = 4;
 
 float(entity e) entity_get_state = {
 	if(e.classname == "func_button") return e.owner.estate;
@@ -1044,7 +1045,7 @@ void(entity e, float state, float flags) entity_set_state = {
 	float closealldoors;
 
 	if(e.classname == "func_button") {
-		if (state == STATE_ACTIVE) button_unlock(e);
+		if (state == STATE_ACTIVE) button_unlock(e, flags & SETSTATE_DONTRESETBUTTON);
 		else button_lock(e);
 	}
 	else if(e.classname == "func_door") {

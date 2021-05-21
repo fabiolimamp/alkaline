@@ -83,29 +83,49 @@ void() button_killed =
 void(entity b) button_lock =
 {
 	entity oself;
-	b.estate = STATE_INACTIVE;
-	if (b.max_health)
-		b.takedamage = DAMAGE_NO;
-	b.state = STATE_UP;
+
+	if (b.estate == STATE_INACTIVE)
+		return;
+
 	oself = self;
 	self = b;
+
+	if (self.state == STATE_UP || self.state == STATE_TOP)
+		self.prevgroupstate = STATE_TOP;
+	else 
+		self.prevgroupstate = STATE_BOTTOM;
+
+	if (self.max_health)
+		self.takedamage = DAMAGE_NO;
+	self.state = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, button_wait);
+	self.estate = STATE_INACTIVE;
+
 	self = oself;
 }
-void(entity b) button_unlock =
+void(entity b, float dontresetstate) button_unlock =
 {
 	entity oself;
-	b.estate = STATE_ACTIVE;
-	if (b.max_health)
-	{
-		b.takedamage = DAMAGE_YES;
-		b.health = b.max_health;
-	}
-	b.frame = 0;			// use normal textures
-	b.state = STATE_DOWN;
+
+	if (b.estate == STATE_ACTIVE)
+		return;
+
 	oself = self;
 	self = b;
-	SUB_CalcMove (self.pos1, self.speed, button_done);
+
+	if (!dontresetstate || self.wait != -1 || self.prevgroupstate == STATE_BOTTOM) {
+		if (self.max_health)
+		{
+			self.takedamage = DAMAGE_YES;
+			self.health = self.max_health;
+		}
+		self.frame = 0;			// use normal textures
+		self.state = STATE_DOWN;
+		SUB_CalcMove (self.pos1, self.speed, button_done);
+	}
+
+	self.estate = STATE_ACTIVE;
+
 	self = oself;
 }
 
