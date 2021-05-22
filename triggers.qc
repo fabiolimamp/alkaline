@@ -747,10 +747,11 @@ void() trigger_void_touch =
 	{
 		other.invincible_finished = 0; // kills even with Pentagram, this took forever to figure out!! -- dumptruck_ds
 		other.trif_finished = 0;
-		T_Damage (other, self, self, other.health + 1000 /*, DTH_TRIGGER_VOID, 1, 1*/);
-
-		if (other.flags & FL_MONSTER)
-		remove(other);
+		T_Damage (other, self, self, other.health + 1000);
+		
+		// moved the following check to the Killed function
+		//if (other.flags & FL_MONSTER)
+		//	remove(other);
 	}
 
 	if (other.classname == "gib" ||

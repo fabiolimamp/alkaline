@@ -855,7 +855,6 @@ void() SUB_Remove;
 //
 void(entity targ, entity inflictor, entity attacker, float damage) T_Damage;
 
-
 float (entity e, float healamount, float ignore) T_Heal; // health function
 
 float(entity targ, entity inflictor) CanDamage;
@@ -879,6 +878,10 @@ void() SuperDamageSound;
 void() flame_touch;
 void() flame_fly;
 
+//
+//  player.qc
+//
+void(float deathbyvoid) PlayerDieGo;
 
 /*============================================================================
 johnfitz new defs
@@ -941,6 +944,7 @@ End Malice defs
 
 void(string gibname, float dm) ThrowGib; //meat.qc
 void(string gibname, float dm) ThrowHead; //meat.qc
+void() ThrowHeadVoid;
 void(vector org, vector vel) SpawnMeatSpray; //meat.qc
 void(vector org, vector vel) SpawnBitSpray;
 

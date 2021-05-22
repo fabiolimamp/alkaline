@@ -638,8 +638,20 @@ void() GibPlayer =
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
 };
 
-void() PlayerDie =
+void() VoidKillPlayer =
 {
+	ThrowHeadVoid ();
+	self.deadflag = DEAD_DEAD;
+	DeathSound();
+
+	/*if (random() < 0.5)
+		sound (self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
+	else
+		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
+		*/
+};
+
+void(float deathbyvoid) PlayerDieGo = {
 	local	float	i;
 	
 	StopBurning(self); //johnfitz
@@ -661,6 +673,12 @@ void() PlayerDie =
 	self.solid = SOLID_NOT;
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	self.movetype = MOVETYPE_TOSS;
+	
+	if (deathbyvoid) {
+		VoidKillPlayer();
+		return;
+	}
+
 	if (self.velocity_z < 10)
 		self.velocity_z = self.velocity_z + random()*300;
 
@@ -702,6 +720,10 @@ void() PlayerDie =
 	else
 		player_diee1();
 
+}
+
+void() PlayerDie = {
+	PlayerDieGo(FALSE);
 };
 
 void() set_suicide_frame =

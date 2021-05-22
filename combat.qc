@@ -94,6 +94,20 @@ void(entity targ, entity attacker) Killed =
 	self.touch = SUB_Null;
 
 	monster_death_use();
+
+	if (attacker.classname == "trigger_void") {
+		if (self.flags & FL_MONSTER) {
+			remove(self);
+			self = oself;
+			return;
+		}
+		else if (self.classname == "player") {
+			PlayerDieGo(TRUE);
+			self = oself;
+			return;
+		}
+	}
+
 	self.th_die ();
 	
 	self = oself;
@@ -185,7 +199,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	}
 
 // figure momentum add
-	if ( (inflictor != world) && (targ.movetype == MOVETYPE_WALK) )
+	if ( (inflictor != world) && (targ.movetype == MOVETYPE_WALK) && (inflictor.classname != "trigger_void"))
 	{
 		dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
 		dir = normalize(dir);

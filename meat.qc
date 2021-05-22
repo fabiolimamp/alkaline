@@ -83,6 +83,19 @@ void(string gibname, float dm) ThrowHead =
 	self.avelocity = crandom() * '0 600 0';
 }
 
+void() ThrowHeadVoid =
+{	
+	setmodel (self, "progs/misc_empty.mdl"); // so you don't see dead heads at the bottom of the pit
+	self.frame = 0;
+	self.nextthink = -1;
+	self.takedamage = DAMAGE_NO;
+	self.solid = SOLID_NOT;
+	self.view_ofs = '0 0 8';
+	setsize (self, '-16 -16 0', '16 16 56');
+	self.origin_z = self.absmax_z - 24;
+	self.flags = self.flags - (self.flags & FL_ONGROUND);
+	self.type = "head";
+}
 
 // Gib & GibSpray are split up since some monsters play special gib sounds (zombies/players) and
 // I want all monsters going through GibSpray for trigger_void tests
