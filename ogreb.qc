@@ -423,33 +423,13 @@ float()	OgreBCheckAttack =
 
 */
 
-void() ogreb_cache =
+void(entity e) monster_ogreb_start =
 {
-	precache_model ("progs/ogreb.mdl");
-	precache_model ("progs/h_ogreb.mdl");
-	precache_model ("progs/gib.mdl");
+	local entity oself;
 
-	precache_sound ("ogre/ogdrag.wav");
-	precache_sound ("ogre/ogdth.wav");
-	precache_sound ("ogre/ogidle.wav");
-	precache_sound ("ogre/ogidle2.wav");
-	precache_sound ("ogre/ogpain1.wav");
-	precache_sound ("ogre/ogsawatk.wav");
-	precache_sound ("ogre/ogwake.wav");
-	precache_sound ("ogre/ogleap.wav");
-};
+	oself = self;
+	self = e;
 
-void() monster_ogreb =
-{
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	
-	if (!self.spawned)	//ijed 
-		ogreb_cache();
-	
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -467,4 +447,41 @@ void() monster_ogreb =
 	self.th_pain = ogreb_pain;
 	
 	walkmonster_start();
+
+	self = oself;
 };
+
+void() monster_ogreb_spawner = {
+	monster_spawner(monster_ogreb_start);
+};
+
+void() monster_ogreb =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/ogreb.mdl");
+	precache_model ("progs/h_ogreb.mdl");
+	precache_model ("progs/gib.mdl");
+
+	precache_sound ("ogre/ogdrag.wav");
+	precache_sound ("ogre/ogdth.wav");
+	precache_sound ("ogre/ogidle.wav");
+	precache_sound ("ogre/ogidle2.wav");
+	precache_sound ("ogre/ogpain1.wav");
+	precache_sound ("ogre/ogsawatk.wav");
+	precache_sound ("ogre/ogwake.wav");
+	precache_sound ("ogre/ogleap.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_ogreb_spawner;
+	}
+	else {
+		monster_ogreb_start(self);
+	}
+};
+

@@ -732,7 +732,9 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 		16384 : "No infight" : 0
 		32768 : "Count after spawn" : 0
 		65536 : "No idle sounds" : 0
+		262144 : "Monster spawner" : 0
 	]
+	spawncount(integer) : "Maximum alive monsters" : 10 : "Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawns until they're killed."
 ]
 
 // Rubicon 2 monsters first

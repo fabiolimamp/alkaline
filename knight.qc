@@ -234,22 +234,12 @@ void() knight_die =
 
 /*QUAKED monster_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-void() monster_knight =
+void(entity e) monster_knight_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/knight.mdl");
-	precache_model ("progs/h_knight.mdl");
+	local entity oself;
 
-	precache_sound ("knight/kdeath.wav");
-	precache_sound ("knight/khurt.wav");
-	precache_sound ("knight/ksight.wav");
-	precache_sound ("knight/sword1.wav");
-	precache_sound ("knight/sword2.wav");
-	precache_sound ("knight/idle.wav");
+	oself = self;
+	self = e;
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -267,4 +257,37 @@ void() monster_knight =
 	self.th_die = knight_die;
 	
 	walkmonster_start ();
+
+	self = oself;
+};
+
+void() monster_knight_spawner = {
+	monster_spawner(monster_knight_start);
+};
+
+void() monster_knight =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/knight.mdl");
+	precache_model ("progs/h_knight.mdl");
+
+	precache_sound ("knight/kdeath.wav");
+	precache_sound ("knight/khurt.wav");
+	precache_sound ("knight/ksight.wav");
+	precache_sound ("knight/sword1.wav");
+	precache_sound ("knight/sword2.wav");
+	precache_sound ("knight/idle.wav");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_knight_spawner;
+	}
+	else {
+		monster_knight_start(self);
+	}
 };

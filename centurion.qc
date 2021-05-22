@@ -446,6 +446,40 @@ Centurion, 150 health points.
 AMBUSH: monster will only wake up on really seeing the player, not another monster getting angry.
 */
 
+void(entity e) monster_centurion_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/cent.mdl");
+
+	setsize (self, '-22 -22 -24', '22 22 48');
+	self.health = 150;
+
+	self.th_stand = cent_stand_random;
+	self.th_walk = cent_walk1;
+	self.th_run = cent_run1;
+	self.th_pain = cent_pain;
+	self.th_die = cent_die;
+	self.th_missile = cent_atk1;
+	
+	if (!self.yaw_speed)
+		self.yaw_speed = 20; //for some reason flymonsters default to 10 instead of 20
+
+	flymonster_start ();
+
+	self = oself;
+};
+
+void() monster_centurion_spawner = {
+	monster_spawner(monster_centurion_start);
+};
+
 void() monster_centurion =
 {
 	if (deathmatch)
@@ -470,24 +504,13 @@ void() monster_centurion =
 	//attack assets
 	precache_model2 ("progs/c_spike.mdl");
 	precache_sound2 ("weapons/rocket1i.wav");
-	
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/cent.mdl");
 
 	setsize (self, '-22 -22 -24', '22 22 48');
-	self.health = 150;
-
-	self.th_stand = cent_stand_random;
-	self.th_walk = cent_walk1;
-	self.th_run = cent_run1;
-	self.th_pain = cent_pain;
-	self.th_die = cent_die;
-	self.th_missile = cent_atk1;
 	
-	if (!self.yaw_speed)
-		self.yaw_speed = 20; //for some reason flymonsters default to 10 instead of 20
-
-	flymonster_start ();
-};
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_centurion_spawner;
+	}
+	else {
+		monster_centurion_start(self);
+	}
+}

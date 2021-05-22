@@ -257,6 +257,36 @@ void() bam_die =
 
 /*QUAKED monster_bambler (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
+void(entity e) monster_bambler_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+	setmodel (self, "progs/bambler.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.health = 500;
+
+	self.th_stand = bam_stand1;
+	self.th_walk = bam_walk1;
+	self.th_run = bam_run1;
+	self.th_die = bam_die;
+	self.th_melee = bam_melee;
+	self.th_pain = bam_pain;
+	
+	walkmonster_start();
+
+	self = oself;
+};
+
+void() monster_bambler_spawner = {
+	monster_spawner(monster_bambler_start);
+};
+
 void() monster_bambler =
 {
 	if (deathmatch)
@@ -277,19 +307,12 @@ void() monster_bambler =
 	precache_sound ("bambler/melee2.wav");
 	precache_sound ("bambler/smack.wav");
 
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-	setmodel (self, "progs/bambler.mdl");
-
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 500;
-
-	self.th_stand = bam_stand1;
-	self.th_walk = bam_walk1;
-	self.th_run = bam_run1;
-	self.th_die = bam_die;
-	self.th_melee = bam_melee;
-	self.th_pain = bam_pain;
 	
-	walkmonster_start();
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_bambler_spawner;
+	}
+	else {
+		monster_bambler_start(self);
+	}
 };

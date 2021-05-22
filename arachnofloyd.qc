@@ -482,6 +482,42 @@ float() arfCheckAttack =
 
 /*QUAKED monster_arachnofloyd (1 0 0) (-32 -32 -24) (32 32 48) Ambush
 */
+void(entity e) monster_arachnofloyd_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+	self.classname = "monster_arachnofloyd";
+	
+	setmodel (self, "progs/arachnofloyd.mdl");
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.health = 600;
+	self.bloodtype = SPAWN_YELLOWSPARK;
+
+	self.th_stand = arf_stand1;
+	self.th_walk = arf_walk1;
+	self.th_run = arf_run1;
+	self.th_die = arf_die;
+	self.th_pain = arf_pain;
+	self.th_missile = arf_light1;
+	self.th_melee = arf_leap1;
+
+
+	self.think = walkmonster_start;
+	self.nextthink = time + 0.1 + random ()*0.1;	
+
+	self = oself;
+};
+
+void() monster_arachnofloyd_spawner = {
+	monster_spawner(monster_arachnofloyd_start);
+};
+
+
 void() monster_arachnofloyd =
 {
 	if (deathmatch)
@@ -509,26 +545,14 @@ void() monster_arachnofloyd =
 	precache_sound2 ("arachnofloyd/pain1.wav");
 	precache_sound2 ("arachnofloyd/pain2.wav");	
 	precache_sound2 ("arachnofloyd/sight.wav");
-	
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-	self.classname = "monster_arachnofloyd";
-	
-	setmodel (self, "progs/arachnofloyd.mdl");
+
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 600;
-	self.bloodtype = SPAWN_YELLOWSPARK;
-
-	self.th_stand = arf_stand1;
-	self.th_walk = arf_walk1;
-	self.th_run = arf_run1;
-	self.th_die = arf_die;
-	self.th_pain = arf_pain;
-	self.th_missile = arf_light1;
-	self.th_melee = arf_leap1;
-
-
-	self.think = walkmonster_start;
-	self.nextthink = time + 0.1 + random ()*0.1;	
-
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_arachnofloyd_spawner;
+	}
+	else {
+		monster_arachnofloyd_start(self);
+	}
 };
+

@@ -476,83 +476,103 @@ float() RiderCheckAttack =
 	return FALSE;
 };
 
-void() monster_rider = 
+void(entity e) monster_rider_start = 
 {
+	local entity oself;
 	local entity body;
 	local float sk;
-	if (!deathmatch)
-	{
-		self.lefty = 0;
-		sk = cvar("skill");
-		
-		
-		precache_model ("progs/rail.mdl");
-		precache_model("progs/ridbody.mdl");
-		precache_model("progs/ridlegs.mdl");
-		precache_model("progs/laser.mdl");
 
-		// temp charge sound
-		precache_sound ("misc/power.wav");		
-		precache_sound("rider/down2.wav");
-		precache_sound("rider/step.wav");
-		precache_sound("rider/rail.wav");	
-		precache_sound("rider/step.wav");
-		precache_sound("rider/sight.wav");
-		precache_sound("rider/shoot.wav");
-		precache_sound("rider/pain1.wav");
-		precache_sound("rider/down.wav");
-		precache_sound("rider/death.wav");
-		precache_sound("rider/idle.wav");
-		precache_sound("rider/idle2.wav");
-		precache_sound("enforcer/enfstop.wav");
-		precache_sound("weapons/fuelexp.wav");
+	oself = self;
+	self = e;
 
-		self.solid = SOLID_SLIDEBOX;
-		self.movetype = MOVETYPE_STEP;
-		setmodel(self, "progs/ridlegs.mdl");
-		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-		setorigin(self, self.origin);
+	self.lefty = 0;
+	sk = cvar("skill");
+	
+	
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+	setmodel(self, "progs/ridlegs.mdl");
+	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setorigin(self, self.origin);
 
-		body = spawn();
-		body.solid = SOLID_NOT;
-		body.movetype = MOVETYPE_STEP;
-		setmodel(body, "progs/ridbody.mdl");
-		setorigin(body, self.origin - '0 0 64');
+	body = spawn();
+	body.solid = SOLID_NOT;
+	body.movetype = MOVETYPE_STEP;
+	setmodel(body, "progs/ridbody.mdl");
+	setorigin(body, self.origin - '0 0 64');
 
-		self.trigger_field = body;
-		body.trigger_field = self;
+	self.trigger_field = body;
+	body.trigger_field = self;
 
-		if (sk == 0) {
-			self.health = 600;
-			self.worldtype = 0.9;
-		}
-		else if (sk == 1) {
-			self.health = 777;
-			self.worldtype = 0.85;
-		}
-		else {
-			self.health = 777;
-			self.worldtype = 0.75;
-		}
-		
-		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
-
-		self.yaw_speed = 8;
-		self.fixangle = 0;
-		self.state = 0;
-		self.super_time = 0;
-		self.ltime = 0;
-		self.th_stand = rider_stand1;
-		self.th_walk = rider_walk1;
-		self.th_run = rider_run1;
-		self.th_die = rider_die1;
-		self.th_missile = rider_missile_attack;
-		self.th_pain = rider_pain;
-		walkmonster_start();
+	if (sk == 0) {
+		self.health = 600;
+		self.worldtype = 0.9;
 	}
-	else
-	{
-		remove(self);
+	else if (sk == 1) {
+		self.health = 777;
+		self.worldtype = 0.85;
 	}
+	else {
+		self.health = 777;
+		self.worldtype = 0.75;
+	}
+	
+	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+
+	self.yaw_speed = 8;
+	self.fixangle = 0;
+	self.state = 0;
+	self.super_time = 0;
+	self.ltime = 0;
+	self.th_stand = rider_stand1;
+	self.th_walk = rider_walk1;
+	self.th_run = rider_run1;
+	self.th_die = rider_die1;
+	self.th_missile = rider_missile_attack;
+	self.th_pain = rider_pain;
+	walkmonster_start();
+
+	self = oself;
 };
 
+void() monster_rider_spawner = {
+	monster_spawner(monster_rider_start);
+};
+
+void() monster_rider = 
+{
+	if (deathmatch)	{
+		remove(self);
+		return;
+	}
+	
+	precache_model ("progs/rail.mdl");
+	precache_model("progs/ridbody.mdl");
+	precache_model("progs/ridlegs.mdl");
+	precache_model("progs/laser.mdl");
+
+	// temp charge sound
+	precache_sound ("misc/power.wav");		
+	precache_sound("rider/down2.wav");
+	precache_sound("rider/step.wav");
+	precache_sound("rider/rail.wav");	
+	precache_sound("rider/step.wav");
+	precache_sound("rider/sight.wav");
+	precache_sound("rider/shoot.wav");
+	precache_sound("rider/pain1.wav");
+	precache_sound("rider/down.wav");
+	precache_sound("rider/death.wav");
+	precache_sound("rider/idle.wav");
+	precache_sound("rider/idle2.wav");
+	precache_sound("enforcer/enfstop.wav");
+	precache_sound("weapons/fuelexp.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_rider_spawner;
+	}
+	else {
+		monster_rider_start(self);
+	}
+};

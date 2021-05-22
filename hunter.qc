@@ -791,40 +791,15 @@ void()	hunter_check_fire	=
 
 /*QUAKED monster_hunter (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-	
-void()	hunter_cache =
-{
-	precache_model ("progs/hunter.mdl");
-	precache_model ("progs/hunter_gibs.mdl");
-	precache_model ("progs/h_hunter.mdl");
-	precache_model ("progs/big_bullet.mdl");
-	precache_model ("progs/big_bullet_blast.mdl");
 
-	precache_sound ("hunter/death.wav");
-    precache_sound ("hunter/fire.wav");
-	precache_sound ("hunter/hit.wav");
-	precache_sound ("hunter/idle.wav");
-	precache_sound ("hunter/melee.wav");
-	precache_sound ("hunter/pain1.wav");
-	precache_sound ("hunter/pain2.wav");
-	precache_sound ("hunter/sight.wav");
-	precache_sound ("hunter/step.wav");
-	precache_sound ("hunter/smash.wav");
-	precache_sound ("weapons/r_exp3.wav");
-};
-
-void()	monster_hunter	=
+void(entity e) monster_hunter_start =
 {
+	local entity oself;
+
+	oself = self;
+	self = e;
+
 	self.count = 0; //ijed use this value as a counter when killing it
-	
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	
-	if (!self.spawned)
-		hunter_cache();
 	
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -846,4 +821,46 @@ void()	monster_hunter	=
 	self.dismemberment = 0;	//starts off whole
 	
 	walkmonster_start ();
+
+	self = oself;
+};
+
+void() monster_hunter_spawner = {
+	monster_spawner(monster_hunter_start);
+};
+
+void()	monster_hunter	=
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+
+	precache_model ("progs/hunter.mdl");
+	precache_model ("progs/hunter_gibs.mdl");
+	precache_model ("progs/h_hunter.mdl");
+	precache_model ("progs/big_bullet.mdl");
+	precache_model ("progs/big_bullet_blast.mdl");
+
+	precache_sound ("hunter/death.wav");
+    precache_sound ("hunter/fire.wav");
+	precache_sound ("hunter/hit.wav");
+	precache_sound ("hunter/idle.wav");
+	precache_sound ("hunter/melee.wav");
+	precache_sound ("hunter/pain1.wav");
+	precache_sound ("hunter/pain2.wav");
+	precache_sound ("hunter/sight.wav");
+	precache_sound ("hunter/step.wav");
+	precache_sound ("hunter/smash.wav");
+	precache_sound ("weapons/r_exp3.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_hunter_spawner;
+	}
+	else {
+		monster_hunter_start(self);
+	}
 };

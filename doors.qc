@@ -818,7 +818,6 @@ Key doors are allways wait -1.
 void() func_door =
 
 {
-	dprint("Starting func_door: ");dprint(self.targetname);dprint("\n");
 	local string default_noise1;
 	local string default_noise2;
 
@@ -994,7 +993,6 @@ void() func_door =
 		
 		self = oldself;
 	}
-	dprint("Finished func_door: ");dprint(self.targetname);dprint("\n");
 };
 
 /*

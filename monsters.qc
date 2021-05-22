@@ -142,6 +142,7 @@ void(void() go_function) monster_start = {
 	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) {
 		init_spawned_monster(self, go_function);
 		if (!(self.spawnflags & MONSTER_COUNTONSPAWN)) total_monsters++;
+		update_hud_totals(HUD_MONSTERS);
 	}
 	else {
 		// delay drop to floor to make sure all doors have been spawned
@@ -149,6 +150,7 @@ void(void() go_function) monster_start = {
 		self.nextthink = self.nextthink + random()*0.5;
 		self.think = go_function;
 		total_monsters++;
+		update_hud_totals(HUD_MONSTERS);
 	}
 }
 
@@ -344,6 +346,85 @@ void() flymonster_start = {monster_start(flymonster_start_go);};
 void() swimmonster_start = {monster_start(swimmonster_start_go);};
 
 void() walkpacifist_start = {pacifist_start(walkmonster_start_go);};
+
+
+
+
+//============================================================================
+// Monster spawner by bmFbr
+//============================================================================
+
+
+void() monster_spawner_trytostart = {
+	local entity nearby;
+
+	if (self.cnt > 15) { // tries to spawn for a few seconds, if not successful remove itself
+		remove(self);
+		return;
+	}
+
+	 // telefrag check from progs_dump
+	nearby = findradius(self.origin, self.size_x * 2); // findradius (vector origin, float radius in Quake units)
+
+	while (nearby)	{
+		if (nearby.takedamage) {
+			dprint("Monster waiting to spawn\n");
+			self.nextthink = time + 1; //delay the spawn by 1 second and try again;
+			self.cnt++;
+			return;
+		}
+		nearby = nearby.chain;
+	}
+
+	self.cnt = 0; // reset cnt in case it's used by the spawned monster's start function
+
+	if (self.owner) self.owner.cnt++; // updates the spawner's alive count
+
+	self.start_function(self);
+
+	if (!(self.spawnflags & MONSTER_SPAWNSILENT)) // shows telefog by default
+		spawn_tfog (self.origin);
+};
+
+void(void(entity mon) start_function_parm) monster_spawner = {
+	local entity e;
+
+	
+	if (!self.respawncount) self.respawncount = 10;
+	// Spawner's "cnt" field stores how many monsters spawned by this entity are alive at the moment.
+	// It's increased on spawn and decreased on death (linked by the spawned entity's "owner" field)
+
+	if (self.cnt >= self.respawncount){
+		dprint(self.classname);dprint(" spawner: limit reached (");dprint(ftos(self.cnt));dprint(")\n");
+		return;
+	}
+
+	e = spawn();
+	e.classname = self.classname;
+	e.target = self.target;
+	e.target2 = self.target2;
+	e.target3 = self.target3;
+	e.target4 = self.target4;
+	setorigin(e, self.origin);
+	e.angles = self.angles;
+	e.spawnflags = self.spawnflags | MONSTER_SPAWNANGRY; // always spawn angry
+
+	e.owner = self;
+
+	e.start_function = start_function_parm; // stores the start function to be called later
+	setsize(e, self.mins, self.maxs); // size needs to be set now for the telefrag check
+
+	e.think = monster_spawner_trytostart;
+	e.nextthink = time + 0.02;
+
+}
+
+
+
+//============================================================================
+// unused nomonster code from Copper
+//============================================================================
+
 
 /*
 void() nomonster_go =

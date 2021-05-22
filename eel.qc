@@ -193,23 +193,13 @@ void() eel_pain7  =[	$eeldth1, eel_run1 ] {};
 
 /*QUAKED monster_eel (1 0 0) (-16 -16 -24) (16 16 32) Ambush
 */
-void() monster_eel =
+void(entity e) monster_eel_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/eel2.mdl");
-	precache_model ("progs/eelgib.mdl");
-	precache_model ("progs/gib1.mdl");
-	
-	precache_sound ("eel/edie3r.wav");
-	precache_sound ("eel/epain3.wav");
-	precache_sound ("eel/eactive1.wav");
-	precache_sound ("eel/eatt1.wav");
-	precache_sound ("eel/eelc5.wav");
-	
+	local entity oself;
+
+	oself = self;
+	self = e;
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
@@ -230,4 +220,37 @@ void() monster_eel =
     self.weapon = 0;
 
 	swimmonster_start ();
+
+	self = oself;
+};
+
+void() monster_eel_spawner = {
+	monster_spawner(monster_eel_start);
+};
+
+void() monster_eel =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/eel2.mdl");
+	precache_model ("progs/eelgib.mdl");
+	precache_model ("progs/gib1.mdl");
+	
+	precache_sound ("eel/edie3r.wav");
+	precache_sound ("eel/epain3.wav");
+	precache_sound ("eel/eactive1.wav");
+	precache_sound ("eel/eatt1.wav");
+	precache_sound ("eel/eelc5.wav");
+
+	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_eel_spawner;
+	}
+	else {
+		monster_eel_start(self);
+	}
 };

@@ -582,6 +582,40 @@ void() menf_die =
 /*QUAKED monster_me (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
 */
+void(entity e) monster_me_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.th_stand = menf_stand1;
+	self.th_walk = menf_walk1;
+	self.th_run = menf_shld1;
+	self.th_pain = menf_pain;
+	self.th_die = menf_die;
+	self.th_missile = megaenforcer_fire;
+
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/enforce2.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 150;
+
+	walkmonster_start();
+	self.takedamage = DAMAGE_NO;
+
+	self = oself;
+};
+
+void() monster_me_spawner = {
+	monster_spawner(monster_me_start);
+};
+
+
 void() monster_me =
 {
 	if (deathmatch)
@@ -611,22 +645,12 @@ void() monster_me =
 	precache_sound2 ("me/me_son.wav");
 	precache_sound2 ("me/me_soff.wav");
 
-	self.th_stand = menf_stand1;
-	self.th_walk = menf_walk1;
-	self.th_run = menf_shld1;
-	self.th_pain = menf_pain;
-	self.th_die = menf_die;
-	self.th_missile = megaenforcer_fire;
-
-
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/enforce2.mdl");
-
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 150;
-
-	walkmonster_start();
-	self.takedamage = DAMAGE_NO;
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_me_spawner;
+	}
+	else {
+		monster_me_start(self);
+	}
 };

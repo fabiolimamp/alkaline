@@ -294,42 +294,68 @@ void() frogmen_die =
 	}
 };
 
+void(entity e) monster_frogman_start = 
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel(self, "progs/frogman.mdl");
+	setsize(self, VEC_HULL_MIN, '16 16 40');
+
+	self.health = 100;
+
+	//dealwithskill(); // unkown Malice stuff, changes monster health depending on skill?
+	self.th_stand = frogmen_stand1;
+	self.th_walk = frogmen_walk1;
+	self.th_run = frogmen_run1;
+	self.th_die = frogmen_die;
+	self.th_pain = frogmen_pain;
+	self.th_missile = frogmen_fire;
+	self.th_melee = frogmen_fire1;
+
+	swimmonster_start();
+
+	self = oself;
+};
+
+void() monster_frogman_spawner = {
+	monster_spawner(monster_frogman_start);
+};
+
 void() monster_frogman = 
 {
-	if (!deathmatch)
-	{
-		precache_model("progs/frogman.mdl");
-		precache_model("progs/harpoon.mdl");
-		precache_model ("progs/h_guard.mdl");
-		precache_model ("progs/gib1.mdl");
-		precache_model ("progs/gib2.mdl");
-		precache_model ("progs/gib3.mdl");
-		precache_sound("frogman/sight.wav");
-		precache_sound("frogman/pain1.wav");
-		precache_sound("frogman/pain2.wav");
-		precache_sound("frogman/swim.wav");
-		precache_sound("frogman/idle.wav");
-		precache_sound("frogman/shot3.wav");
-		precache_sound("frogman/death.wav");
-		precache_sound("frogman/impact.wav");
-		self.solid = SOLID_SLIDEBOX;
-		self.movetype = MOVETYPE_STEP;
-		setmodel(self, "progs/frogman.mdl");
-		setsize(self, VEC_HULL_MIN, '16 16 40');
-		self.health = 100;
-		//dealwithskill(); // unkown Malice stuff, changes monster health depending on skill?
-		self.th_stand = frogmen_stand1;
-		self.th_walk = frogmen_walk1;
-		self.th_run = frogmen_run1;
-		self.th_die = frogmen_die;
-		self.th_pain = frogmen_pain;
-		self.th_missile = frogmen_fire;
-		self.th_melee = frogmen_fire1;
-		swimmonster_start();
-	}
-	else
-	{
+	if (deathmatch){
 		remove(self);
+		return;
+	}
+
+	precache_model("progs/frogman.mdl");
+	precache_model("progs/harpoon.mdl");
+	precache_model ("progs/h_guard.mdl");
+	precache_model ("progs/gib1.mdl");
+	precache_model ("progs/gib2.mdl");
+	precache_model ("progs/gib3.mdl");
+	precache_sound("frogman/sight.wav");
+	precache_sound("frogman/pain1.wav");
+	precache_sound("frogman/pain2.wav");
+	precache_sound("frogman/swim.wav");
+	precache_sound("frogman/idle.wav");
+	precache_sound("frogman/shot3.wav");
+	precache_sound("frogman/death.wav");
+	precache_sound("frogman/impact.wav");
+
+	setsize(self, VEC_HULL_MIN, '16 16 40');
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_frogman_spawner;
+	}
+	else {
+		monster_frogman_start(self);
 	}
 };
 

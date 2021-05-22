@@ -467,6 +467,42 @@ void(entity attacker, float take) zombie_pain =
 
 If crucified, stick the bounding box 12 pixels back into a wall to look right.
 */
+void(entity e) monster_zombie_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/zombie.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 60;
+
+	self.th_stand = zombie_stand1;
+	self.th_walk = zombie_walk1;
+	self.th_run = zombie_run1;
+	self.th_pain = zombie_pain;
+	self.th_die = zombie_die;
+	self.th_missile = zombie_missile;
+
+	if (self.spawnflags & SPAWN_CRUCIFIED)
+	{
+		self.movetype = MOVETYPE_NONE;
+		zombie_cruc1 ();
+	}
+	else
+		walkmonster_start();
+
+	self = oself;
+};
+
+void() monster_zombie_spawner = {
+	monster_spawner(monster_zombie_start);
+};
+
 void() monster_zombie =
 {
 	if (deathmatch)
@@ -490,26 +526,12 @@ void() monster_zombie =
 	precache_sound ("zombie/z_hit.wav");
 	precache_sound ("zombie/idle_w2.wav");
 
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/zombie.mdl");
-
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 60;
-
-	self.th_stand = zombie_stand1;
-	self.th_walk = zombie_walk1;
-	self.th_run = zombie_run1;
-	self.th_pain = zombie_pain;
-	self.th_die = zombie_die;
-	self.th_missile = zombie_missile;
-
-	if (self.spawnflags & SPAWN_CRUCIFIED)
-	{
-		self.movetype = MOVETYPE_NONE;
-		zombie_cruc1 ();
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_zombie_spawner;
 	}
-	else
-		walkmonster_start();
+	else {
+		monster_zombie_start(self);
+	}
 };

@@ -283,29 +283,12 @@ void() army_die =
 
 /*QUAKED monster_army (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-void() monster_army =
+void(entity e) monster_army_start =
 {	
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/soldier.mdl");
-	precache_model ("progs/h_guard.mdl");
-	precache_model ("progs/gib1.mdl");
-	precache_model ("progs/gib2.mdl");
-	precache_model ("progs/gib3.mdl");
-	precache_model ("progs/shelcase.mdl");
+	local entity oself;
 
-	precache_sound ("soldier/death1.wav");
-	precache_sound ("soldier/idle.wav");
-	precache_sound ("soldier/pain1.wav");
-	precache_sound ("soldier/pain2.wav");
-	precache_sound ("soldier/sattck1.wav");
-	precache_sound ("soldier/sight1.wav");
-
-	precache_sound ("player/udeath.wav");		// gib death
-
+	oself = self;
+	self = e;
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -324,31 +307,16 @@ void() monster_army =
     self.ammo_shells = 5;
 	
 	walkmonster_start ();
+
+	self = oself;
 };
 
-void() monster_nailgrunt =
+void(entity e) monster_nailgrunt_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/soldier.mdl");
-	precache_model ("progs/h_guard.mdl");
-	precache_model ("progs/gib1.mdl");
-	precache_model ("progs/gib2.mdl");
-	precache_model ("progs/gib3.mdl");
-	precache_model ("progs/shelcase.mdl");
+	local entity oself;
 
-	precache_sound ("soldier/death1.wav");
-	precache_sound ("soldier/idle.wav");
-	precache_sound ("soldier/pain1.wav");
-	precache_sound ("soldier/pain2.wav");
-	precache_sound ("soldier/sattck1.wav");
-	precache_sound ("soldier/sight1.wav");
-
-	precache_sound ("player/udeath.wav");		// gib death
-
+	oself = self;
+	self = e;
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -368,4 +336,79 @@ void() monster_nailgrunt =
 	self.th_die = army_die;
 
 	walkmonster_start ();
+
+	self = oself;
+};
+
+void() monster_nailgrunt_spawner = {
+	monster_spawner(monster_nailgrunt_start);
+};
+
+void() monster_nailgrunt = {
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/soldier.mdl");
+	precache_model ("progs/h_guard.mdl");
+	precache_model ("progs/gib1.mdl");
+	precache_model ("progs/gib2.mdl");
+	precache_model ("progs/gib3.mdl");
+	precache_model ("progs/shelcase.mdl");
+
+	precache_sound ("soldier/death1.wav");
+	precache_sound ("soldier/idle.wav");
+	precache_sound ("soldier/pain1.wav");
+	precache_sound ("soldier/pain2.wav");
+	precache_sound ("soldier/sattck1.wav");
+	precache_sound ("soldier/sight1.wav");
+
+	precache_sound ("player/udeath.wav");		// gib death
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_nailgrunt_spawner;
+	}
+	else {
+		monster_nailgrunt_start(self);
+	}
+};
+
+void() monster_army_spawner = {
+	monster_spawner(monster_army_start);
+};
+
+
+void() monster_army = {
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/soldier.mdl");
+	precache_model ("progs/h_guard.mdl");
+	precache_model ("progs/gib1.mdl");
+	precache_model ("progs/gib2.mdl");
+	precache_model ("progs/gib3.mdl");
+	precache_model ("progs/shelcase.mdl");
+
+	precache_sound ("soldier/death1.wav");
+	precache_sound ("soldier/idle.wav");
+	precache_sound ("soldier/pain1.wav");
+	precache_sound ("soldier/pain2.wav");
+	precache_sound ("soldier/sattck1.wav");
+	precache_sound ("soldier/sight1.wav");
+
+	precache_sound ("player/udeath.wav");		// gib death
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_army_spawner;
+	}
+	else {
+		monster_army_start(self);
+	}
 };

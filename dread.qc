@@ -314,6 +314,43 @@ Dreadnaught, 150 health points.
 
 AMBUSH: dreadnaught will only wake up on really seeing the player, not another monster getting angry.
 */
+void(entity e) monster_dreadnaught_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/dread.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 150;
+
+	self.th_stand = dread_stand1;
+	self.th_walk = dread_walk1;
+	self.th_run = dread_run1;
+	self.th_pain = dread_pain;
+	self.th_die = dread_die;
+	self.th_melee = dread_atk1;
+	
+	self.missle = world;
+	
+	if (!self.yaw_speed)
+		self.yaw_speed = 40; //make him turn faster than most monsters (harder to circle-strafe)
+
+	walkmonster_start();
+
+	self = oself;
+};
+
+void() monster_dreadnaught_spawner = {
+	monster_spawner(monster_dreadnaught_start);
+};
+
+
 void() monster_dreadnaught =
 {
 	if (deathmatch)
@@ -340,26 +377,13 @@ void() monster_dreadnaught =
 	precache_sound ("misc/null.wav");
 	
 	precache_model ("progs/s_flame.spr");
-	
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/dread.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 150;
-
-	self.th_stand = dread_stand1;
-	self.th_walk = dread_walk1;
-	self.th_run = dread_run1;
-	self.th_pain = dread_pain;
-	self.th_die = dread_die;
-	self.th_melee = dread_atk1;
 	
-	self.missle = world;
-	
-	if (!self.yaw_speed)
-		self.yaw_speed = 40; //make him turn faster than most monsters (harder to circle-strafe)
-
-	walkmonster_start();
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_dreadnaught_spawner;
+	}
+	else {
+		monster_dreadnaught_start(self);
+	}
 };

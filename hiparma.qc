@@ -878,41 +878,18 @@ float()  ArmagonCheckAttack =
 
 /*QUAKED monster_armagon (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
-void() monster_armagon =
+void(entity e) monster_armagon_start =
 {
    local entity body;
    local float sk;
-   if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
+   local entity oself;
+
+   oself = self;
+   self = e;
 
    self.lefty = 0;
 
    sk = cvar("skill");
-
-   precache_model ("progs/armabody.mdl");
-   precache_model ("progs/armalegs.mdl");
-   precache_model ("progs/lasrspik.mdl");	
-
-   precache_sound ("armagon/footfall.wav");
-   precache_sound ("armagon/servo.wav");
-//   precache_sound ("armagon/footfall2.wav");
-   precache_sound ("armagon/death.wav");
-//   precache_sound ("armagon/death2.wav");
-   precache_sound ("armagon/pain.wav");
-   precache_sound ("armagon/repel.wav");
-//   precache_sound ("armagon/idle.wav");
-   precache_sound ("armagon/sight.wav");
-   precache_sound ("armagon/idle1.wav");
-   precache_sound ("armagon/idle2.wav");
-   precache_sound ("armagon/idle3.wav");
-   precache_sound ("armagon/idle4.wav");
-   precache_sound ("hipweap/laserg.wav");
-   precache_sound ("hipweap/laserric.wav");
-   precache_sound ("misc/shortexp.wav");
-   precache_sound ("misc/longexpl.wav");
 
    body = spawn();
    body.origin = self.origin;
@@ -966,4 +943,51 @@ void() monster_armagon =
    self.th_melee = armagon_stop1;
    self.th_pain = armagon_pain;
    walkmonster_start();
+
+   self = oself;
 };
+
+void() monster_armagon_spawner = {
+   monster_spawner(monster_armagon_start);
+};
+
+void() monster_armagon =
+{
+   if (deathmatch)
+   {
+      remove(self);
+      return;
+   }
+
+   precache_model ("progs/armabody.mdl");
+   precache_model ("progs/armalegs.mdl");
+   precache_model ("progs/lasrspik.mdl"); 
+
+   precache_sound ("armagon/footfall.wav");
+   precache_sound ("armagon/servo.wav");
+//   precache_sound ("armagon/footfall2.wav");
+   precache_sound ("armagon/death.wav");
+//   precache_sound ("armagon/death2.wav");
+   precache_sound ("armagon/pain.wav");
+   precache_sound ("armagon/repel.wav");
+//   precache_sound ("armagon/idle.wav");
+   precache_sound ("armagon/sight.wav");
+   precache_sound ("armagon/idle1.wav");
+   precache_sound ("armagon/idle2.wav");
+   precache_sound ("armagon/idle3.wav");
+   precache_sound ("armagon/idle4.wav");
+   precache_sound ("hipweap/laserg.wav");
+   precache_sound ("hipweap/laserric.wav");
+   precache_sound ("misc/shortexp.wav");
+   precache_sound ("misc/longexpl.wav");
+
+   setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+   
+   if (self.spawnflags & MONSTER_SPAWNER) {
+      self.use = monster_armagon_spawner;
+   }
+   else {
+      monster_armagon_start(self);
+   }
+};
+

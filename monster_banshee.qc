@@ -1058,81 +1058,104 @@ float() BansheeCheckAttack =
 
 
 
-void() monster_banshee = 
+void(entity e) monster_banshee_start = 
 {
+	local entity oself;
 	local entity body;
-	if (!deathmatch) {
-		self.lefty = 0;
-		self.style = cvar("skill");
-		precache_model("progs/banbody.mdl");
-		precache_model("progs/banlegs.mdl");
-		precache_model("progs/d_explod.spr");
-		precache_sound("banshee/footfall.wav");
-		precache_sound("banshee/servo.wav");
-		precache_sound("banshee/death.wav");
-		precache_sound("banshee/pain.wav");
-		precache_sound("banshee/sight.wav");
-		precache_sound("banshee/sight2.wav");
-		precache_sound("banshee/idle1.wav");
-		precache_sound("banshee/idle2.wav");
-		precache_sound("banshee/idle3.wav");
-		precache_sound("banshee/idle4.wav");
-		precache_sound("doors/airdoor2.wav");
-		precache_sound("doors/drclos4.wav");
-		precache_sound("weapons/fuelexp.wav");
-		precache_sound("armagon/repel.wav");
 
-		body = spawn();
-		body.origin = self.origin;
-		body.origin = body.origin - '0 0 64';
-		body.solid = SOLID_NOT;
-		body.movetype = MOVETYPE_STEP;
-		body.trigger_field = self;
-		if(!self.bloodtype) body.bloodtype = SPAWN_YELLOWSPARK;
-		setmodel(body, "progs/banbody.mdl");
-		setorigin(body, body.origin);
+	oself = self;
+	self = e;
 
-		self.classname = "monster_banshee";
-		self.solid = SOLID_SLIDEBOX;
-		self.fixangle = 0;
-		self.movetype = MOVETYPE_STEP;
-		self.trigger_field = body;
-		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
-		setmodel(self, "progs/banlegs.mdl");
-		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-		setorigin(self, self.origin);
+	self.lefty = 0;
+	self.style = cvar("skill");
 
-		if (self.style == SKILL_EASY) {
-			self.yaw_speed = 5; //5
-			self.health = 1300;
-			self.worldtype = 0.9;
-		}
-		else if (self.style == SKILL_NORMAL) {
-			self.yaw_speed = 9; // 9
-			self.health = 1300;
-			self.worldtype = 0.85;
-		}
-		else {
-			self.yaw_speed = 12; //12
-			self.health = 1300;
-			self.worldtype = 0.75;
-		}
-		
-		//dealwithskill(); // Malice stuff, changes monster health depending on skill
-		self.state = 0;
-		self.super_time = 0;
-		self.ltime = 0;
-		self.th_stand = banshee_stand1;
-		self.th_walk = banshee_walk1;
-		self.th_run = banshee_run1;
-		self.th_die = banshee_die1;
-		self.th_missile = banshee_missile_attack;
-		self.th_melee = ban_stomp1;
-		self.th_pain = banshee_pain;
-		walkmonster_start();
+	body = spawn();
+	body.origin = self.origin;
+	body.origin = body.origin - '0 0 64';
+	body.solid = SOLID_NOT;
+	body.movetype = MOVETYPE_STEP;
+	body.trigger_field = self;
+	if(!self.bloodtype) body.bloodtype = SPAWN_YELLOWSPARK;
+	setmodel(body, "progs/banbody.mdl");
+	setorigin(body, body.origin);
+
+	self.classname = "monster_banshee";
+	self.solid = SOLID_SLIDEBOX;
+	self.fixangle = 0;
+	self.movetype = MOVETYPE_STEP;
+	self.trigger_field = body;
+	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+	setmodel(self, "progs/banlegs.mdl");
+	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setorigin(self, self.origin);
+
+	if (self.style == SKILL_EASY) {
+		self.yaw_speed = 5; //5
+		self.health = 1300;
+		self.worldtype = 0.9;
+	}
+	else if (self.style == SKILL_NORMAL) {
+		self.yaw_speed = 9; // 9
+		self.health = 1300;
+		self.worldtype = 0.85;
 	}
 	else {
-		remove(self);
+		self.yaw_speed = 12; //12
+		self.health = 1300;
+		self.worldtype = 0.75;
 	}
+	
+	//dealwithskill(); // Malice stuff, changes monster health depending on skill
+	self.state = 0;
+	self.super_time = 0;
+	self.ltime = 0;
+	self.th_stand = banshee_stand1;
+	self.th_walk = banshee_walk1;
+	self.th_run = banshee_run1;
+	self.th_die = banshee_die1;
+	self.th_missile = banshee_missile_attack;
+	self.th_melee = ban_stomp1;
+	self.th_pain = banshee_pain;
+	walkmonster_start();
+
+	self = oself;
 };
 
+void() monster_banshee_spawner = {
+	monster_spawner(monster_banshee_start);
+};
+
+void() monster_banshee = 
+{
+	if (deathmatch) {
+		remove(self);
+		return;
+	}
+
+	precache_model("progs/banbody.mdl");
+	precache_model("progs/banlegs.mdl");
+	precache_model("progs/d_explod.spr");
+	precache_sound("banshee/footfall.wav");
+	precache_sound("banshee/servo.wav");
+	precache_sound("banshee/death.wav");
+	precache_sound("banshee/pain.wav");
+	precache_sound("banshee/sight.wav");
+	precache_sound("banshee/sight2.wav");
+	precache_sound("banshee/idle1.wav");
+	precache_sound("banshee/idle2.wav");
+	precache_sound("banshee/idle3.wav");
+	precache_sound("banshee/idle4.wav");
+	precache_sound("doors/airdoor2.wav");
+	precache_sound("doors/drclos4.wav");
+	precache_sound("weapons/fuelexp.wav");
+	precache_sound("armagon/repel.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_banshee_spawner;
+	}
+	else {
+		monster_banshee_start(self);
+	}
+};

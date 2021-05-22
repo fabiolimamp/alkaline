@@ -491,6 +491,7 @@ float MONSTER_NOINFIGHT = 16384;
 float MONSTER_COUNTONSPAWN = 32768;
 float MONSTER_NOIDLESOUND = 65536;
 float MONSTER_IGNOREPLAYER	=	131072;
+float MONSTER_SPAWNER = 262144;
 
 //================================================
 
@@ -552,6 +553,8 @@ nosave float gamestarted;
 .void()		th_melee;
 .void(entity attacker, float damage)		th_pain;
 .void()		th_die;
+
+.void(entity mon)	start_function;
 
 .entity		oldenemy;		// mad at this player before taking damage
 

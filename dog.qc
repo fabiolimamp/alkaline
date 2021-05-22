@@ -327,21 +327,13 @@ float()	DogCheckAttack =
 /*QUAKED monster_dog (1 0 0) (-32 -32 -24) (32 32 40) Ambush
 
 */
-void() monster_dog =
+void(entity e) monster_dog_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/h_dog.mdl");
-	precache_model ("progs/dog.mdl");
+	local entity oself;
 
-	precache_sound ("dog/dattack1.wav");
-	precache_sound ("dog/ddeath.wav");
-	precache_sound ("dog/dpain1.wav");
-	precache_sound ("dog/dsight.wav");
-	precache_sound ("dog/idle.wav");
+	oself = self;
+	self = e;
+
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -360,4 +352,36 @@ void() monster_dog =
 	self.th_missile = dog_leap1;
 
 	walkmonster_start();
+
+	self = oself;
 };
+
+void() monster_dog_spawner = {
+	monster_spawner(monster_dog_start);
+};
+
+void() monster_dog =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/h_dog.mdl");
+	precache_model ("progs/dog.mdl");
+
+	precache_sound ("dog/dattack1.wav");
+	precache_sound ("dog/ddeath.wav");
+	precache_sound ("dog/dpain1.wav");
+	precache_sound ("dog/dsight.wav");
+	precache_sound ("dog/idle.wav");
+	
+	setsize (self, '-32 -32 -24', '32 32 40');
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_dog_spawner;
+	}
+	else {
+		monster_dog_start(self);
+	}
+}

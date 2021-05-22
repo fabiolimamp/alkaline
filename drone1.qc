@@ -352,6 +352,40 @@ void()  DroneTouch =
 Note ambushing Drone stays silent unless activated.
 */
 
+void(entity e) monster_drone_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+    setmodel (self, "progs/drone1.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 100;
+	self.touch = DroneTouch;
+		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+
+	self.th_stand = drn_stand1;
+	self.th_walk = drn_walk1;
+	self.th_run = drn_run;
+	self.th_missile = drn_atta1;
+	self.th_pain = drn_pain;
+	self.th_die = drn_die1;
+	self.ammo_shells = 0; // use to avoid misfiring too much
+		
+	flymonster_start ();
+
+	self = oself;
+};
+
+void() monster_drone_spawner = {
+	monster_spawner(monster_drone_start);
+};
+
 void() monster_drone =
 {
 	if (deathmatch)
@@ -359,44 +393,32 @@ void() monster_drone =
 		remove(self);
 		return;
 	}
-        precache_model ("progs/drone1.mdl");
+	precache_model ("progs/drone1.mdl");
 
-        precache_model ("progs/drngib1.mdl");
-        precache_model ("progs/drngib2.mdl");
-        precache_model ("progs/drngib3.mdl");
+	precache_model ("progs/drngib1.mdl");
+	precache_model ("progs/drngib2.mdl");
+	precache_model ("progs/drngib3.mdl");
 
-        precache_model ("progs/laser.mdl");
-		precache_sound2 ("drone/drnidle2.wav"); // standing by
-        precache_sound2 ("drone/drnidle.wav");
-		precache_sound2 ("drone/drnwake.wav");
-		precache_sound2 ("drone/drnhunt.wav"); // it's after you
-        precache_sound2 ("drone/enfire.wav"); // shot
-		precache_sound2 ("drone/drnpain.wav"); // pain sounds
-		precache_sound2 ("drone/drnpain2.wav");
-		precache_sound2 ("drone/drngasp.wav"); // sparking, misfiring
-		precache_sound2 ("drone/drngasp2.wav");
-        precache_sound2 ("drone/drndeth.wav"); // death sound
+	precache_model ("progs/laser.mdl");
+	precache_sound2 ("drone/drnidle2.wav"); // standing by
+	precache_sound2 ("drone/drnidle.wav");
+	precache_sound2 ("drone/drnwake.wav");
+	precache_sound2 ("drone/drnhunt.wav"); // it's after you
+	precache_sound2 ("drone/enfire.wav"); // shot
+	precache_sound2 ("drone/drnpain.wav"); // pain sounds
+	precache_sound2 ("drone/drnpain2.wav");
+	precache_sound2 ("drone/drngasp.wav"); // sparking, misfiring
+	precache_sound2 ("drone/drngasp2.wav");
+	precache_sound2 ("drone/drndeth.wav"); // death sound
 	precache_sound2 ("enforcer/enfstop.wav");
-        precache_model ("progs/spike.mdl");
-
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-        setmodel (self, "progs/drone1.mdl");
+	precache_model ("progs/spike.mdl");	
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-        self.health = 100;
-        self.touch = DroneTouch;
-     	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 
-        self.th_stand = drn_stand1;
-        self.th_walk = drn_walk1;
-        self.th_run = drn_run;
-        self.th_missile = drn_atta1;
-        self.th_pain = drn_pain;
-        self.th_die = drn_die1;
-		self.ammo_shells = 0; // use to avoid misfiring too much
-		
-	flymonster_start ();
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_drone_spawner;
+	}
+	else {
+		monster_drone_start(self);
+	}
 };
-

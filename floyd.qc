@@ -463,27 +463,13 @@ ROLLING: floyd is on his back and helpless. explodes after taking 50 damage.
 ASLEEP: floyd will not respond to anything unless he is shot or his targetname is triggered.
 */
 
-void() monster_floyd =
+void(entity e) monster_floyd_start =
 {
-	
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
+	local entity oself;
 
-	precache_model2("progs/floyd.mdl");
-	precache_model2("progs/flaser.mdl");
-	precache_model2("progs/h_floyd.mdl");
-	precache_model2("progs/fgib1.mdl");
-	
-	precache_sound2("floyd/idle.wav");
-	precache_sound2("floyd/sight.wav");
-	precache_sound2("floyd/pain.wav");
-	precache_sound2("floyd/fire.wav");
-	precache_sound2("floyd/death.wav");
-	precache_sound2("enforcer/enfstop.wav");
-	
+	oself = self;
+	self = e;
+
 	setmodel(self, "progs/floyd.mdl");
 
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
@@ -561,5 +547,42 @@ void() monster_floyd =
 		self.th_missile = floyd_ready1;
 
 		walkmonster_start();
+	}
+
+	self = oself;
+};
+
+void() monster_floyd_spawner = {
+	monster_spawner(monster_floyd_start);
+};
+
+void() monster_floyd =
+{
+	
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+
+	precache_model2("progs/floyd.mdl");
+	precache_model2("progs/flaser.mdl");
+	precache_model2("progs/h_floyd.mdl");
+	precache_model2("progs/fgib1.mdl");
+	
+	precache_sound2("floyd/idle.wav");
+	precache_sound2("floyd/sight.wav");
+	precache_sound2("floyd/pain.wav");
+	precache_sound2("floyd/fire.wav");
+	precache_sound2("floyd/death.wav");
+	precache_sound2("enforcer/enfstop.wav");
+
+	setsize(self, '-24 -24 -24', '24 24 64');
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_floyd_spawner;
+	}
+	else {
+		monster_floyd_start(self);
 	}
 };

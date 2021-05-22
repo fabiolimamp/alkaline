@@ -219,26 +219,12 @@ void() super_enforcer_die =
 /*QUAKED monster_enforcer (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
 */
-void() monster_super_enforcer =
+void(entity e) monster_super_enforcer_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model2 ("progs/enforce3.mdl");
-	precache_model2 ("progs/h_mega.mdl");
-	precache_model2 ("progs/s_spike.mdl");
-	precache_model ("progs/g_nail2.mdl");
-		
-	precache_sound2 ("enforcer/death1.wav");
-	precache_sound2 ("enforcer/idle1.wav");
-	precache_sound2 ("enforcer/pain1.wav");
-	precache_sound2 ("enforcer/pain2.wav");
-	precache_sound2 ("lieut/target.wav");
-	precache_sound2 ("lieut/objective.wav");
-	precache_sound2 ("lieut/alert.wav");
-	precache_sound2 ("lieut/you.wav");
+	local entity oself;
+
+	oself = self;
+	self = e;
 		
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -262,4 +248,45 @@ void() monster_super_enforcer =
 	self.th_missile = lth_atk1;
 
 	walkmonster_start();
+
+	self = oself;
 };
+
+void() monster_super_enforcer_spawner = {
+	monster_spawner(monster_super_enforcer_start);
+};
+
+
+void() monster_super_enforcer =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model2 ("progs/enforce3.mdl");
+	precache_model2 ("progs/h_mega.mdl");
+	precache_model2 ("progs/s_spike.mdl");
+	precache_model ("progs/g_nail2.mdl");
+		
+	precache_sound2 ("enforcer/death1.wav");
+	precache_sound2 ("enforcer/idle1.wav");
+	precache_sound2 ("enforcer/pain1.wav");
+	precache_sound2 ("enforcer/pain2.wav");
+	precache_sound2 ("lieut/target.wav");
+	precache_sound2 ("lieut/objective.wav");
+	precache_sound2 ("lieut/alert.wav");
+	precache_sound2 ("lieut/you.wav");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_super_enforcer_spawner;
+	}
+	else {
+		monster_super_enforcer_start(self);
+	}
+};
+
+
+

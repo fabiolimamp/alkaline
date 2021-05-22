@@ -164,18 +164,12 @@ void(entity attacker, float damage)	fish_pain =
 
 /*QUAKED monster_fish (1 0 0) (-16 -16 -24) (16 16 24) Ambush
 */
-void() monster_fish =
+void(entity e) monster_fish_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model2 ("progs/fish.mdl");
+	local entity oself;
 
-	precache_sound2 ("fish/death.wav");
-	precache_sound2 ("fish/bite.wav");
-	precache_sound2 ("fish/idle.wav");
+	oself = self;
+	self = e;
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -193,5 +187,34 @@ void() monster_fish =
 	self.th_melee = f_attack1;
 	
 	swimmonster_start ();
+
+	self = oself;
 };
 
+void() monster_fish_spawner = {
+	monster_spawner(monster_fish_start);
+};
+
+
+void() monster_fish =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model2 ("progs/fish.mdl");
+
+	precache_sound2 ("fish/death.wav");
+	precache_sound2 ("fish/bite.wav");
+	precache_sound2 ("fish/idle.wav");
+	
+	setsize (self, '-16 -16 -24', '16 16 24');
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_fish_spawner;
+	}
+	else {
+		monster_fish_start(self);
+	}
+};

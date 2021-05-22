@@ -396,6 +396,38 @@ void() hknight_melee =
 
 /*QUAKED monster_hell_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
+void(entity e) monster_hell_knight_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+	
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/hknight.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 250;
+
+	self.th_stand = hknight_stand1;
+	self.th_walk = hknight_walk1;
+	self.th_run = hknight_run1;
+	self.th_melee = hknight_melee;
+	self.th_missile = hknight_magicc1;
+	self.th_pain = hknight_pain;
+	self.th_die = hknight_die;
+	
+	walkmonster_start ();
+
+	self = oself;
+};
+
+void() monster_hell_knight_spawner = {
+	monster_spawner(monster_hell_knight_start);
+};
+
 void() monster_hell_knight =
 {
 	if (deathmatch)
@@ -419,22 +451,13 @@ void() monster_hell_knight =
 
 	precache_sound ("knight/sword1.wav");
 	precache_sound ("knight/sword2.wav");
-	
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/hknight.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 250;
-
-	self.th_stand = hknight_stand1;
-	self.th_walk = hknight_walk1;
-	self.th_run = hknight_run1;
-	self.th_melee = hknight_melee;
-	self.th_missile = hknight_magicc1;
-	self.th_pain = hknight_pain;
-	self.th_die = hknight_die;
 	
-	walkmonster_start ();
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_hell_knight_spawner;
+	}
+	else {
+		monster_hell_knight_start(self);
+	}
 };

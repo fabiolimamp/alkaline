@@ -372,6 +372,37 @@ void() Wiz_Missile =
 
 /*QUAKED monster_wizard (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
+void(entity e) monster_wizard_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/wizard.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 80;
+
+	self.th_stand = wiz_stand1;
+	self.th_walk = wiz_walk1;
+	self.th_run = wiz_run1;
+	self.th_missile = Wiz_Missile;
+	self.th_pain = Wiz_Pain;
+	self.th_die = wiz_die;
+		
+	flymonster_start ();
+
+	self = oself;
+};
+
+void() monster_wizard_spawner = {
+	monster_spawner(monster_wizard_start);
+};
+
 void() monster_wizard =
 {
 	if (deathmatch)
@@ -391,20 +422,12 @@ void() monster_wizard =
 	precache_sound ("wizard/wpain.wav");
 	precache_sound ("wizard/wsight.wav");
 
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/wizard.mdl");
-
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 80;
-
-	self.th_stand = wiz_stand1;
-	self.th_walk = wiz_walk1;
-	self.th_run = wiz_run1;
-	self.th_missile = Wiz_Missile;
-	self.th_pain = Wiz_Pain;
-	self.th_die = wiz_die;
-		
-	flymonster_start ();
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_wizard_spawner;
+	}
+	else {
+		monster_wizard_start(self);
+	}
 };

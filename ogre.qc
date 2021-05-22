@@ -584,24 +584,12 @@ void() ogre_melee =
 /*QUAKED monster_ogre (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
 */
-void() monster_ogre =
+void(entity e) monster_ogre_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/ogre.mdl");
-	precache_model ("progs/h_ogre.mdl");
-	precache_model ("progs/grenade.mdl");
+	local entity oself;
 
-	precache_sound ("ogre/ogdrag.wav");
-	precache_sound ("ogre/ogdth.wav");
-	precache_sound ("ogre/ogidle.wav");
-	precache_sound ("ogre/ogidle2.wav");
-	precache_sound ("ogre/ogpain1.wav");
-	precache_sound ("ogre/ogsawatk.wav");
-	precache_sound ("ogre/ogwake.wav");
+	oself = self;
+	self = e;
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -620,16 +608,22 @@ void() monster_ogre =
 	self.th_pain = ogre_pain;
 	
 	walkmonster_start();
+
+	self = oself;
 };
 
-void() monster_ogre_marksman =
-{
+void() monster_ogre_spawner = {
+	monster_spawner(monster_ogre_start);
+};
+
+
+void() monster_ogre = {
 	if (deathmatch)
 	{
 		remove(self);
 		return;
 	}
-	precache_model ("progs/ogrem.mdl");
+	precache_model ("progs/ogre.mdl");
 	precache_model ("progs/h_ogre.mdl");
 	precache_model ("progs/grenade.mdl");
 
@@ -640,6 +634,26 @@ void() monster_ogre_marksman =
 	precache_sound ("ogre/ogpain1.wav");
 	precache_sound ("ogre/ogsawatk.wav");
 	precache_sound ("ogre/ogwake.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_ogre_spawner;
+	}
+	else {
+		monster_ogre_start(self);
+	}
+};
+
+
+/****************************************************/
+
+void(entity e) monster_ogre_marksman_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -658,6 +672,39 @@ void() monster_ogre_marksman =
 	self.th_pain = ogre_pain;
 	
 	walkmonster_start();
+
+	self = oself;
+};
+
+void() monster_ogre_marksman_spawner = {
+	monster_spawner(monster_ogre_marksman_start);
 };
 
 
+void() monster_ogre_marksman = {
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/ogrem.mdl");
+	precache_model ("progs/h_ogre.mdl");
+	precache_model ("progs/grenade.mdl");
+
+	precache_sound ("ogre/ogdrag.wav");
+	precache_sound ("ogre/ogdth.wav");
+	precache_sound ("ogre/ogidle.wav");
+	precache_sound ("ogre/ogidle2.wav");
+	precache_sound ("ogre/ogpain1.wav");
+	precache_sound ("ogre/ogsawatk.wav");
+	precache_sound ("ogre/ogwake.wav");
+	
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_ogre_marksman_spawner;
+	}
+	else {
+		monster_ogre_marksman_start(self);
+	}
+};

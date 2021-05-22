@@ -641,73 +641,96 @@ float() ProbeCheckAttack =
 	return 0;
 };
 
-void() monster_probe = 
+void(entity e) monster_probe_start = 
 {
+	local entity oself;
+
 	local entity body;
-	//local float sk;
-	if (!deathmatch)
-	{
-		self.lefty = 0;
-		//sk = cvar("skill");
-		precache_model("progs/progib1.mdl");
-		precache_model("progs/progib2.mdl");
-		precache_model("progs/progib3.mdl");		
-		precache_model("progs/probebod.mdl");
-		precache_model("progs/probedom.mdl");
-		precache_model("progs/d_explod.spr");
-		precache_model("progs/laser.mdl");
-		precache_sound("probe/shoot.wav");
-		precache_sound("probe/footfall.wav");
-		precache_sound("probe/servo.wav");
-		precache_sound("probe/death.wav");
-		precache_sound("probe/pain.wav");
-		precache_sound("enforcer/enfstop.wav");
-		precache_sound("probe/sight.wav");
-		precache_sound("probe/idle1.wav");
-		precache_sound("probe/idle2.wav");
-		precache_sound("probe/idle3.wav");
-		precache_sound("probe/idle4.wav");
-		precache_sound("weapons/fuelexp.wav");
 
-		self.solid = SOLID_SLIDEBOX;
-		self.fixangle = 0;
-		self.movetype = MOVETYPE_STEP;
-		setmodel(self, "progs/probedom.mdl");
-		setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-		setorigin(self, self.origin);
+	oself = self;
+	self = e;
 
-		body = spawn();
-		body.origin = self.origin - '0 0 64';
-		body.solid = SOLID_NOT;
-		body.movetype = MOVETYPE_STEP;
-		body.trigger_field = self;
-		setmodel(body, "progs/probebod.mdl");
-		setorigin(body, body.origin);
 
-		self.trigger_field = body;
+	self.lefty = 0;
+	//sk = cvar("skill");
+	self.solid = SOLID_SLIDEBOX;
+	self.fixangle = 0;
+	self.movetype = MOVETYPE_STEP;
+	setmodel(self, "progs/probedom.mdl");
+	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setorigin(self, self.origin);
 
-		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
-		self.yaw_speed = 9;
-		self.health = 200;
-		//dealwithskill();
-		self.worldtype = 0.75;
-		self.state = 0;
-		self.super_time = 0;
-		self.ltime = 0;
+	body = spawn();
+	body.origin = self.origin - '0 0 64';
+	body.solid = SOLID_NOT;
+	body.movetype = MOVETYPE_STEP;
+	body.trigger_field = self;
+	setmodel(body, "progs/probebod.mdl");
+	setorigin(body, body.origin);
 
-		self.th_stand = probe_stand1;
-		self.th_walk = probe_walk1;
-		self.th_run = probe_run1;
-		self.th_die = probe_die1;
-		self.th_missile = probe_missile_attack;
-		self.th_melee = probe_missile_attack;
-		self.th_pain = probe_pain;
+	self.trigger_field = body;
 
-		flymonster_start();
-	}
-	else
-	{
-		remove(self);
-	}
+	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+	self.yaw_speed = 9;
+	self.health = 200;
+	//dealwithskill();
+	self.worldtype = 0.75;
+	self.state = 0;
+	self.super_time = 0;
+	self.ltime = 0;
+
+	self.th_stand = probe_stand1;
+	self.th_walk = probe_walk1;
+	self.th_run = probe_run1;
+	self.th_die = probe_die1;
+	self.th_missile = probe_missile_attack;
+	self.th_melee = probe_missile_attack;
+	self.th_pain = probe_pain;
+
+	flymonster_start();
+
+	self = oself;
 };
 
+void() monster_probe_spawner = {
+	monster_spawner(monster_probe_start);
+};
+
+
+void() monster_probe = 
+{
+	//local float sk;
+	if (deathmatch)	{
+		remove(self);
+		return;
+	}
+
+	precache_model("progs/progib1.mdl");
+	precache_model("progs/progib2.mdl");
+	precache_model("progs/progib3.mdl");		
+	precache_model("progs/probebod.mdl");
+	precache_model("progs/probedom.mdl");
+	precache_model("progs/d_explod.spr");
+	precache_model("progs/laser.mdl");
+	precache_sound("probe/shoot.wav");
+	precache_sound("probe/footfall.wav");
+	precache_sound("probe/servo.wav");
+	precache_sound("probe/death.wav");
+	precache_sound("probe/pain.wav");
+	precache_sound("enforcer/enfstop.wav");
+	precache_sound("probe/sight.wav");
+	precache_sound("probe/idle1.wav");
+	precache_sound("probe/idle2.wav");
+	precache_sound("probe/idle3.wav");
+	precache_sound("probe/idle4.wav");
+	precache_sound("weapons/fuelexp.wav");
+
+	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_probe_spawner;
+	}
+	else {
+		monster_probe_start(self);
+	}
+};

@@ -312,6 +312,37 @@ void() enf_die =
 
 */
 
+void(entity e) monster_enforcer_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/enforcer.mdl");
+
+	setsize (self, '-16 -16 -24', '16 16 40');
+	self.health = 80;
+
+	self.th_stand = enf_stand1;
+	self.th_walk = enf_walk1;
+	self.th_run = enf_run1;
+	self.th_pain = enf_pain;
+	self.th_die = enf_die;
+	self.th_missile = enf_atk1;
+
+	walkmonster_start();
+
+	self = oself;
+};
+
+void() monster_enforcer_spawner = {
+	monster_spawner(monster_enforcer_start);
+};
+
 void() monster_enforcer =
 {
 
@@ -336,23 +367,13 @@ void() monster_enforcer =
 	precache_sound2 ("enforcer/sight2.wav");
 	precache_sound2 ("enforcer/sight3.wav");
 	precache_sound2 ("enforcer/sight4.wav");
-	
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/enforcer.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
-	self.health = 80;
-
-	self.th_stand = enf_stand1;
-	self.th_walk = enf_walk1;
-	self.th_run = enf_run1;
-	self.th_pain = enf_pain;
-	self.th_die = enf_die;
-	self.th_missile = enf_atk1;
-
-	walkmonster_start();
 	
-
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_enforcer_spawner;
+	}
+	else {
+		monster_enforcer_start(self);
+	}
 };

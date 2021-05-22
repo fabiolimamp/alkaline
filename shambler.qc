@@ -326,6 +326,38 @@ void() sham_die =
 
 /*QUAKED monster_shambler (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
+void(entity e) monster_shambler_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+	setmodel (self, "progs/shambler.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.health = 600;
+
+	self.th_stand = sham_stand1;
+	self.th_walk = sham_walk1;
+	self.th_run = sham_run1;
+	self.th_die = sham_die;
+	self.th_melee = sham_melee;
+	self.th_missile = sham_magic1;
+	self.th_pain = sham_pain;
+	
+	walkmonster_start();
+
+	self = oself;
+};
+
+void() monster_shambler_spawner = {
+	monster_spawner(monster_shambler_start);
+};
+
+
 void() monster_shambler =
 {
 	if (deathmatch)
@@ -348,20 +380,13 @@ void() monster_shambler =
 	precache_sound ("shambler/melee2.wav");
 	precache_sound ("shambler/smack.wav");
 
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-	setmodel (self, "progs/shambler.mdl");
-
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 600;
-
-	self.th_stand = sham_stand1;
-	self.th_walk = sham_walk1;
-	self.th_run = sham_run1;
-	self.th_die = sham_die;
-	self.th_melee = sham_melee;
-	self.th_missile = sham_magic1;
-	self.th_pain = sham_pain;
 	
-	walkmonster_start();
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_shambler_spawner;
+	}
+	else {
+		monster_shambler_start(self);
+	}
 };
+

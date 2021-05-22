@@ -200,24 +200,13 @@ void() ShalMissileTouch =
 
 /*QUAKED monster_shalrath (1 0 0) (-32 -32 -24) (32 32 48) Ambush
 */
-void() monster_shalrath =
+void(entity e) monster_shalrath_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model2 ("progs/shalrath.mdl");
-	precache_model2 ("progs/h_shal.mdl");
-	precache_model2 ("progs/v_spike.mdl");
-	
-	precache_sound2 ("shalrath/attack.wav");
-	precache_sound2 ("shalrath/attack2.wav");
-	precache_sound2 ("shalrath/death.wav");
-	precache_sound2 ("shalrath/idle.wav");
-	precache_sound2 ("shalrath/pain.wav");
-	precache_sound2 ("shalrath/sight.wav");
-	
+	local entity oself;
+
+	oself = self;
+	self = e;
+
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	
@@ -235,4 +224,39 @@ void() monster_shalrath =
 	self.think = walkmonster_start;
 	self.nextthink = time + 0.1 + random ()*0.1;	
 
+	self = oself;
 };
+
+void() monster_shalrath_spawner = {
+	monster_spawner(monster_shalrath_start);
+};
+
+void() monster_shalrath =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model2 ("progs/shalrath.mdl");
+	precache_model2 ("progs/h_shal.mdl");
+	precache_model2 ("progs/v_spike.mdl");
+	
+	precache_sound2 ("shalrath/attack.wav");
+	precache_sound2 ("shalrath/attack2.wav");
+	precache_sound2 ("shalrath/death.wav");
+	precache_sound2 ("shalrath/idle.wav");
+	precache_sound2 ("shalrath/pain.wav");
+	precache_sound2 ("shalrath/sight.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_shalrath_spawner;
+	}
+	else {
+		monster_shalrath_start(self);
+	}
+};
+
+	

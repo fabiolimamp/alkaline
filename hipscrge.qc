@@ -462,28 +462,12 @@ void() ScourgeTriggerTouch =
 /*QUAKED monster_scourge (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
 */
-void() monster_scourge =
+void(entity e) monster_scourge_start =
 {
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-   precache_model2 ("progs/scor.mdl");
-   precache_model2 ("progs/h_scourg.mdl");
-   precache_model2 ("progs/laser.mdl");
-   precache_model2 ("progs/s_light.mdl");
-   precache_model2 ("progs/spike.mdl");
+   local entity oself;
 
-   precache_sound ("misc/null.wav");
-   precache_sound ("scourge/idle.wav");
-   precache_sound ("scourge/pain.wav");
-   precache_sound ("scourge/pain2.wav");
-   precache_sound ("scourge/sight.wav");
-   precache_sound ("scourge/tailswng.wav");
-   precache_sound ("scourge/walk.wav");
-   precache_sound2 ("shambler/smack.wav");
-   precache_sound2 ("weapons/rocket1i.wav");
+   oself = self;
+   self = e;
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
@@ -508,4 +492,43 @@ void() monster_scourge =
    self.state = 0;
 
 	walkmonster_start();
+
+   self = oself;
+};
+
+void() monster_scourge_spawner = {
+   monster_spawner(monster_scourge_start);
+};
+
+void() monster_scourge =
+{
+   if (deathmatch)
+   {
+      remove(self);
+      return;
+   }
+   precache_model2 ("progs/scor.mdl");
+   precache_model2 ("progs/h_scourg.mdl");
+   precache_model2 ("progs/laser.mdl");
+   precache_model2 ("progs/s_light.mdl");
+   precache_model2 ("progs/spike.mdl");
+
+   precache_sound ("misc/null.wav");
+   precache_sound ("scourge/idle.wav");
+   precache_sound ("scourge/pain.wav");
+   precache_sound ("scourge/pain2.wav");
+   precache_sound ("scourge/sight.wav");
+   precache_sound ("scourge/tailswng.wav");
+   precache_sound ("scourge/walk.wav");
+   precache_sound2 ("shambler/smack.wav");
+   precache_sound2 ("weapons/rocket1i.wav");
+
+   setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+   
+   if (self.spawnflags & MONSTER_SPAWNER) {
+      self.use = monster_scourge_spawner;
+   }
+   else {
+      monster_scourge_start(self);
+   }
 };
