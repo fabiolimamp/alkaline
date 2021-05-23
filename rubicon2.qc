@@ -316,6 +316,9 @@ void() laser_helper_think =
 };
 
 void() func_laser_touch = {
+	if (!self.state)
+		return;
+
 	if (!self.dmg)
 		return;
 
@@ -329,10 +332,11 @@ void() func_laser_touch = {
 void () func_laser_use = {
 	if (!self.state) {
 		setmodel (self, self.origmodel);
-		self.touch = func_laser_touch;
 
-		if (self.spawnflags & LASER_SOLID)
+		if (self.spawnflags & LASER_SOLID) {
+			//self.solid = SOLID_BSP;
 			self.movetype = MOVETYPE_PUSH; //required becuase of SOLID_BSP
+		}
 
 		if (!(self.spawnflags & LASER_SILENT))
 			sound (activator, CHAN_VOICE, "misc/laser_on.wav", 1, ATTN_NORM);
@@ -344,10 +348,11 @@ void () func_laser_use = {
 	}
 	else {
 		setmodel (self, "");
-		self.touch = SUB_Null;
 		
-		if (self.spawnflags & LASER_SOLID)
+		if (self.spawnflags & LASER_SOLID) {
+			//self.solid = SOLID_NOT;
 			self.movetype = MOVETYPE_NONE;
+		}
 
 		if (!(self.spawnflags & LASER_SILENT))
 			sound (activator, CHAN_VOICE, "misc/laseroff.wav", 1, ATTN_NORM);
@@ -378,18 +383,34 @@ Keys:
 
 */
 
+void() func_laser_start = {
+	if (self.state == 1) 
+		setmodel (self, self.origmodel);
+	else {
+		setmodel (self, "");
+		
+		if (self.spawnflags & LASER_SOLID) {
+			//self.solid = SOLID_NOT;
+			self.movetype = MOVETYPE_NONE;
+		}
+	}
+}
+
 void () func_laser =
 {
 	local entity helper;
 	
 	self.origmodel = self.model;
 	
-	if (self.spawnflags & LASER_SOLID)
+	if (self.spawnflags & LASER_SOLID) {
 		self.solid = SOLID_BSP; //so you can shoot between lasers in a single bmodel
-	else {
-		setmodel (self, self.origmodel);
-		self.solid = SOLID_TRIGGER;
+		self.movetype = MOVETYPE_PUSH;
 	}
+	else {
+		self.solid = SOLID_TRIGGER;
+		self.movetype = MOVETYPE_NONE;
+	}
+
 
 	precache_sound ("misc/laser_on.wav");
 	precache_sound ("misc/laseroff.wav");
@@ -404,12 +425,15 @@ void () func_laser =
 		
 	self.use = func_laser_use;
 
-	//inverted so the use function it can be run on init
 	if (self.spawnflags & START_OFF)
-		self.state = 1; 
-	else
 		self.state = 0;
-	
+	else
+		self.state = 1;
+
+	self.think = func_laser_start;
+	self.nextthink = self.ltime + 0.03;
+
+	self.touch = func_laser_touch;
 	//spawn a second entity to handle alpha changes, since MOVETYPE_PUSH doesn't support think functions
 	helper = spawn();
 	helper.alpha = self.alpha;
@@ -417,7 +441,7 @@ void () func_laser =
 	helper.nextthink = 0.05;
 	helper.think = laser_helper_think;
 
-	func_laser_use();
+
 };
 
 /*
