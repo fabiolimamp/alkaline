@@ -179,6 +179,12 @@
 	]
 ]
 
+@baseclass = Message [
+	spawnflags(flags) = [
+		1048576 : "Message all players" : 0
+	]
+]
+
 @baseclass base(BrushLight, Shadow) = ModelLight	[
 ]
 
@@ -265,7 +271,7 @@ NO_MONSTERS: object ignores damage from monsters"
 // FUNC_LASER
 // toggleable laser, damages on touch
 
-@SolidClass base(Appearflags, Targetname, Target) color(255 128 128) = func_laser : 
+@SolidClass base(Appearflags, Targetname, Target, Message) color(255 128 128) = func_laser : 
 "A togglable laser, hurts to touch, can be used to block players." 
 [
 	dmg(integer) : "Damage" : 1 : "Damage dealt. Set to -1 to do no damage."
@@ -1523,7 +1529,7 @@ dmg is the amount of damage to cause when touched."
 
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
-@SolidClass base(Angle, Targetname, Target, ModelLight) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
+@SolidClass base(Angle, Targetname, Target, ModelLight, Message) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
 [
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
@@ -1768,7 +1774,7 @@ Other than that, this entity functions like a normal button.
 // triggers
 //
 
-@baseclass color(128 0 128) base(Target, Targetname) = Trigger
+@baseclass color(128 0 128) base(Target, Targetname, Message) = Trigger
 [
 	sounds(choices) : "Sound style" : 0 =
 	[

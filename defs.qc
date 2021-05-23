@@ -493,6 +493,8 @@ float MONSTER_NOIDLESOUND = 65536;
 float MONSTER_IGNOREPLAYER	=	131072;
 float MONSTER_SPAWNER = 262144;
 
+float TRIGGER_CENTERPRINTALL = 1048576;
+
 //================================================
 
 
