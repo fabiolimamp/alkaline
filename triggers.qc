@@ -684,6 +684,9 @@ void() trigger_push =
 
 void() trigger_monsterjump_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	if(!self.count)
 		return;
 
