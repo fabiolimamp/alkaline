@@ -350,7 +350,7 @@ void () func_laser_use = {
 		setmodel (self, "");
 		
 		if (self.spawnflags & LASER_SOLID) {
-			//self.solid = SOLID_NOT;
+			//self.solid = SOLID_NOT; // if you change the solid type to SOLID_NOT you cannot change it back to BSP
 			self.movetype = MOVETYPE_NONE;
 		}
 

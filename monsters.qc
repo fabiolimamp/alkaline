@@ -390,11 +390,11 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	local entity e;
 
 	
-	if (!self.respawncount) self.respawncount = 10;
+	if (!self.spawncount) self.spawncount = 10;
 	// Spawner's "cnt" field stores how many monsters spawned by this entity are alive at the moment.
 	// It's increased on spawn and decreased on death (linked by the spawned entity's "owner" field)
 
-	if (self.cnt >= self.respawncount){
+	if (self.cnt >= self.spawncount){
 		dprint(self.classname);dprint(" spawner: limit reached (");dprint(ftos(self.cnt));dprint(")\n");
 		return;
 	}

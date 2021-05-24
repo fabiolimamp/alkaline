@@ -558,6 +558,8 @@ nosave float gamestarted;
 
 .void(entity mon)	start_function;
 
+.float spawncount;
+
 .entity		oldenemy;		// mad at this player before taking damage
 
 .float		speed;
