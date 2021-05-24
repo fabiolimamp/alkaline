@@ -256,7 +256,17 @@ void() train_moving_use = {
 
 void() train_wait = {
 	self.use = train_use; //ready to be re-triggered
-	
+
+	// from Copper
+	// trains now fire their pathcorners' targets on arrival
+	// if a player is riding the train, treat them as activator
+	activator = nextent(world);
+	while (!EntitiesTouching(self,activator) && activator.classname == "player")
+		activator = nextent(activator);
+	if (activator.classname != "player")
+		activator = nextent(world);	// default to player1 wherever they are
+	SUB_UseEntTargets(self.enemy);
+
 	self.think = train_next;
 	if (self.wait && self.cnt == TRAIN_NEXT_WAIT) {
 		self.nextthink = self.ltime + self.wait;
@@ -264,7 +274,7 @@ void() train_wait = {
 	}
 	else if (self.cnt != TRAIN_NEXT_STOP) {
 		//self.nextthink = self.ltime + 0.1;
-		dprint("move instantly\n");
+		//dprint("move instantly\n");
 		self.nextthink = -1; // move instantly
 		train_next();
 	}
@@ -289,6 +299,8 @@ void() train_next = {
 	}
 	else
 		self.wait = self.pausetime;
+
+	self.enemy = targ;
 	
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	
@@ -306,6 +318,8 @@ void() func_train_find = {
 
 	targ = find(world, targetname, self.target);
 	self.target = targ.target;
+
+	self.enemy = targ;
 	setorigin(self, targ.origin - self.mins);
 	if (!self.targetname)
 	{	// not triggered, so start immediately
