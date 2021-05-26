@@ -176,31 +176,31 @@ void() scientist_work_sounds =
 	rng = random();
 	if (rng < 0.125)
 	{
-		sound (self, CHAN_VOICE, "scientist/allnominal.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "scientist/allnominal.wav", 1, ATTN_IDLE);
 	}
 	else if(rng < 0.25)
 	{
-		sound (self, CHAN_VOICE, "scientist/alright.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "scientist/alright.wav", 1, ATTN_IDLE);
 	}
 	else if(rng < 0.375)
 	{
-		sound (self, CHAN_VOICE, "scientist/asexpected.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "scientist/asexpected.wav", 1, ATTN_IDLE);
 	}
 	else if(rng < 0.5)
 	{
-		sound (self, CHAN_VOICE, "scientist/c1a0_sci_crit2a.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "scientist/c1a0_sci_crit2a.wav", 1, ATTN_IDLE);
 	}
 	else if(rng < 0.625)
 	{
-		sound (self, CHAN_VOICE, "scientist/cough.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "scientist/cough.wav", 1, ATTN_IDLE);
 	}
 	else if(rng < 0.75)
 	{
-		sound (self, CHAN_VOICE, "scientist/cantbeserious.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "scientist/cantbeserious.wav", 1, ATTN_IDLE);
 	}
 	else
 	{
-		sound (self, CHAN_VOICE, "scientist/c1a0_sci_stall.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "scientist/c1a0_sci_stall.wav", 1, ATTN_IDLE);
 	}
 	self.aflag = time + 3;
 };
