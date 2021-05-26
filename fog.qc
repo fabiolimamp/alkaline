@@ -112,6 +112,9 @@ void() fog_blendTouch =
 {
 	if (!CheckValidTouch()) return;
 	
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	// fix for only first client getting a fog change when multiple coop clients are touching this at once
 	if (time != self.rad_time)	// because fog is rad
 		if (time < self.attack_finished)

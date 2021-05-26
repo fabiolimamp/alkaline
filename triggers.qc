@@ -35,6 +35,9 @@ void() multi_trigger =
 		return;		// allready been triggered
 	}
 
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	if (self.classname == "trigger_secret")
 	{
 		if (self.enemy.classname != "player")
@@ -102,6 +105,10 @@ void() multi_touch =
 
 	if (self.is_waiting)	// Supa, is this trigger waiting to be activated?
 		return;
+
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 // if the trigger has an angles field, check player's facing direction
 	if (self.movedir != '0 0 0')
 	{
@@ -395,8 +402,11 @@ local entity	death;
 
 void() teleport_touch =
 {
-local entity	t;
-local vector	org;
+	local entity	t;
+	local vector	org;
+
+	if (self.estate != STATE_ACTIVE)
+		return;
 
 	if (self.targetname)
 	{
@@ -608,6 +618,9 @@ void() hurt_on =
 
 void() hurt_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;
@@ -616,7 +629,6 @@ void() hurt_touch =
 		self.nextthink = time + self.wait;
 	}
 
-	return;
 };
 
 /*QUAKED trigger_hurt (.5 .5 .5) ?
@@ -640,6 +652,9 @@ float PUSH_SILENT = 2;
 
 void() trigger_push_touch =
 {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	if (other.classname == "grenade")
 		other.velocity = self.speed * self.movedir * 10;
 	else if (other.health > 0)
@@ -699,16 +714,25 @@ void() trigger_monsterjump_touch =
 	if (self.exclude && other.classname == self.exclude)
 		return;
 
-// set XY even if not on ground, so the jump will clear lips
+	// set XY even if not on ground, so the jump will clear lips
 	other.velocity_x = self.movedir_x * self.speed;
 	other.velocity_y = self.movedir_y * self.speed;
 	
+	/*if (other.trigger_field) {
+		other.trigger_field.velocity_x = self.movedir_x * self.speed;
+		other.trigger_field.velocity_y = self.movedir_y * self.speed;
+	}
+	*/
 	if ( !(other.flags & FL_ONGROUND) )
 		return;
 	
 	other.flags = other.flags - FL_ONGROUND;
 
 	other.velocity_z = self.height;
+
+	/*if (other.trigger_field) 
+		other.trigger_field.velocity_z = self.height;
+	*/
 
 	if(self.count > 0) self.count--;
 };
@@ -741,7 +765,10 @@ float 	PLAYER_SAFE = 2;
 void() trigger_void_touch =
 {
 	if (other.movetype == MOVETYPE_NOCLIP) // from Copper -- dumptruck_ds
-		return FALSE;
+		return;
+
+	if (self.estate != STATE_ACTIVE)
+		return;
 
 	if (self.spawnflags & MONSTER_SAFE && other.flags & FL_MONSTER) return; //ignore monsters
 	if (self.spawnflags & PLAYER_SAFE && other.flags & FL_CLIENT) return; // ignore players
@@ -945,6 +972,8 @@ void() trigger_removeitems_touch = {
 
 	if(!self.count)
 		return;
+	if (self.estate != STATE_ACTIVE)
+		return;
 
 	removeitems_go (other, self.items, self.weapons);
 
@@ -965,6 +994,9 @@ void() trigger_removeitems = {
 void() target_removeitems_use = {
 
 	if(!self.count)
+		return;
+
+	if (self.estate != STATE_ACTIVE)
 		return;
 
 	removeitems_go (activator, self.items, self.weapons);
@@ -1059,6 +1091,10 @@ void(entity e, float state, float flags) entity_set_state = {
 		else door_estate_lock(e, closealldoors);
 	}
 	else e.estate = state;
+
+	if (e.touch && e.touch != SUB_Null) {
+		force_retouch = 2;
+	}
 };
 
 void(string matchstring, .string matchfield, float state, float flags) target_setstate_set_target = {
