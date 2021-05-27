@@ -331,13 +331,13 @@ void() func_laser_touch = {
 
 void () func_laser_use = {
 	if (!self.state) {
-		setmodel (self, self.origmodel);
 
 		if (self.spawnflags & LASER_SOLID) {
 			//self.solid = SOLID_BSP;
 			self.movetype = MOVETYPE_PUSH; //required becuase of SOLID_BSP
 		}
 
+		setmodel (self, self.origmodel);
 		if (!(self.spawnflags & LASER_SILENT))
 			sound (activator, CHAN_VOICE, "misc/laser_on.wav", 1, ATTN_NORM);
 
@@ -347,12 +347,13 @@ void () func_laser_use = {
 		self.state = 1;
 	}
 	else {
-		setmodel (self, "");
-		
+
 		if (self.spawnflags & LASER_SOLID) {
 			//self.solid = SOLID_NOT; // if you change the solid type to SOLID_NOT you cannot change it back to BSP
 			self.movetype = MOVETYPE_NONE;
 		}
+
+		setmodel (self, "");
 
 		if (!(self.spawnflags & LASER_SILENT))
 			sound (activator, CHAN_VOICE, "misc/laseroff.wav", 1, ATTN_NORM);
@@ -384,15 +385,14 @@ Keys:
 */
 
 void() func_laser_start = {
-	if (self.state == 1) 
+	if (self.state == 1)
 		setmodel (self, self.origmodel);
+	
 	else {
-		setmodel (self, "");
-		
 		if (self.spawnflags & LASER_SOLID) {
-			//self.solid = SOLID_NOT;
 			self.movetype = MOVETYPE_NONE;
 		}
+		setmodel (self, "");
 	}
 }
 
