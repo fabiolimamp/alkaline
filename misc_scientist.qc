@@ -166,6 +166,9 @@ void() scientist_work_sounds =
 {
 	local float rng;
 	
+	if(self.spawnflags & MONSTER_NOIDLESOUND)
+		return;
+	
 	if(time < self.aflag)
 		return;
 	
