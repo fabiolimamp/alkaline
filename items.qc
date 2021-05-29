@@ -1426,6 +1426,8 @@ void() BackpackTouch =
 	sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
 	stuffcmd (other, "bf\n");
 
+	if (self.classname == "item_backpack") SUB_UseTargets();
+	
 // remove the backpack, change self to the player
 	remove(self);
 	self = other;
@@ -1437,6 +1439,8 @@ void() BackpackTouch =
 		Deathmatch_Weapon (new);
 
 	W_SetCurrentAmmo ();
+
+
 };
 
 /*
