@@ -520,6 +520,8 @@ float	framecount;
 
 float		skill;
 
+nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
+
 nosave float cleanUpClientStuff;
 nosave float gamestarted;
 

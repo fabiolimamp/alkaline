@@ -1372,7 +1372,11 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 	]
 
 
-
+@PointClass base(Targetname, Appearflags) = misc_changemusic : "Changes the current map's music track number to the one specified in the 'sounds' field.
+If you set the track to 1 the music will stop."
+[
+	sounds(integer) : "New track number"
+]
 
 
 // 

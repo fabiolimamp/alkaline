@@ -885,3 +885,39 @@ void() play_sound =
       t = self.delay;
    self.nextthink = time + t;
    };
+
+
+/*
+=============================================================
+
+misc_changemusic
+Adapted from progs_dump's trigger_changemusic/trigger_cdtrack
+
+Also, changing worldspawn fields through pointers? WHAT IS THIS WITCHERY
+--bmFbr
+
+=============================================================
+*/
+
+void(float newtrack) changemusic = {
+  *world_sounds = newtrack;  //changing the field via a pointer
+  //world.sounds has now been changed via our pointer, newly connecting players (like those connecting after the game is loaded) will get sent the new cd track's number.
+
+  //let everyone currently on the server know.
+  WriteByte(MSG_ALL, SVC_CDTRACK);
+  WriteByte(MSG_ALL, newtrack);  //initial track
+  WriteByte(MSG_ALL, newtrack);  //looped track... should generally be set the same as the initial track as most engines ignore it entirely so it might as well be sane for those that care.
+};
+
+void() misc_changemusic_use = {
+	changemusic(self.sounds);
+}
+
+void() misc_changemusic = {
+	if (!self.sounds) {
+		objerror("ERROR: misc_changemusic needs valid track number in sounds field");
+		return;
+	}
+
+	self.use = misc_changemusic_use;
+}
