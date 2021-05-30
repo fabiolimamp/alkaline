@@ -724,6 +724,7 @@ void() smoke_think =
 		smoke.movedir2 = self.movedir2;
 		smoke.frame = 0;
 		smoke.cnt = 0;
+		smoke.alpha = self.alpha;
 		setsize (smoke, '0 0 0', '0 0 0');
 		
 		self.think = smoke_think;
