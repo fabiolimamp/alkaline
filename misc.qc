@@ -412,8 +412,14 @@ This is just a solid wall if not inhibitted
 void() func_wall =
 {
 	self.angles = '0 0 0';
-	self.movetype = MOVETYPE_PUSH;	// so it doesn't get pushed by anything
-	self.solid = SOLID_BSP;
+	if (self.spawnflags & 2) {
+		self.movetype = MOVETYPE_NONE;
+		self.solid = SOLID_NOT;
+	}
+	else {
+		self.movetype = MOVETYPE_PUSH;	// so it doesn't get pushed by anything
+		self.solid = SOLID_BSP;
+	}
 	self.use = func_wall_use;
 	setmodel (self, self.model);
 };
@@ -445,8 +451,12 @@ void () blocker_touch =
 void () blocker_use = {
 	if ( !self.state ) {
 		self.state = 1;
-		self.solid = SOLID_BSP;
-		self.movetype = MOVETYPE_PUSH;
+
+		if (!(self.spawnflags & 2)) { //not solid
+			self.solid = SOLID_BSP;
+			self.movetype = MOVETYPE_PUSH;
+		}
+
 		setmodel(self, self.mdl);
 		self.model = "";
 		// sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);

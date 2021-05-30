@@ -1490,7 +1490,12 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 	]
 ]
 
-@SolidClass base(Targetname, Appearflags, ModelLight, Alpha, SwitchShadow) = func_wall : "Wall" []
+@SolidClass base(Targetname, Appearflags, ModelLight, Alpha, SwitchShadow) = func_wall : "Wall" [
+	spawnflags(flags) =
+	[
+		2 : "Non-solid" : 0
+	]
+]
 
 @SolidClass base(Appearflags, Targetname, ModelLight) = func_togglevisiblewall : "A bmodel which you can toggle its visibility. Behaves much like a traditional func_wall in any other way, but you can target it to toggle visible/invisible.
 If the entity has a switchable shadow it also toggles automatically (no need for a shadow controller)."
