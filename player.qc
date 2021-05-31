@@ -193,6 +193,11 @@ void()	player_shot4 =	[$shotatt4, player_shot5	] {self.weaponframe=4;};
 void()	player_shot5 =	[$shotatt5, player_shot6	] {self.weaponframe=5;};
 void()	player_shot6 =	[$shotatt6, player_run	] {self.weaponframe=6;};
 
+void()	player_plasma1 =	[$shotatt1, player_plasma2	] {self.weaponframe=1;
+self.effects = self.effects | EF_MUZZLEFLASH;};
+void()	player_plasma2 =	[$shotatt2, player_plasma3	] {self.weaponframe=2;};
+void()	player_plasma3 =	[$shotatt3, player_run	] {self.weaponframe=3;};
+
 void()	player_axe1 =	[$axatt1, player_axe2	] {self.weaponframe=1;};
 void()	player_axe2 =	[$axatt2, player_axe3	] {self.weaponframe=2;};
 void()	player_axe3 =	[$axatt3, player_axe4	] {self.weaponframe=3;W_FireAxe();};

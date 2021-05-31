@@ -1,4 +1,3 @@
-void() player_chainsaw1;
 void() W_FirePlasma;
 void() Plasma_PreCache;
 
@@ -1083,6 +1082,8 @@ void()	player_nail1;
 void()	player_light1;
 void()	player_rocket1;
 void()	player_laser1;
+void()	player_plasma1;
+void()	player_chainsaw1;
 
 void() W_Attack =
 {
@@ -1152,7 +1153,7 @@ void() W_Attack =
 	}
 	else if (self.weapon == WEAPON_PLASMA)
 	{
-		player_shot1(); // Uses the same player animation as shotgun
+		player_plasma1();
 		W_FirePlasma();
 		self.attack_finished = time + 0.05;
 	}
