@@ -757,32 +757,36 @@ void() trigger_monsterjump =
 };
 
 
-//This is necros' trigger_void from Lost Chapters pack, modified by dumptruck_ds
+/*
+==============================================================================
+
+trigger_void
+
+==============================================================================
+*/
 
 float 	MONSTER_SAFE = 1;
 float 	PLAYER_SAFE = 2;
 
 void() trigger_void_touch =
 {	
-	if ( other.solid == SOLID_BSP)
-		return;
-	
-	if (other.movetype == MOVETYPE_NOCLIP) // from Copper -- dumptruck_ds
-		return;
-
+	// back out if trigger is inactive
 	if (self.estate != STATE_ACTIVE)
 		return;
 
-	if (self.spawnflags & MONSTER_SAFE && other.flags & FL_MONSTER) return; //ignore monsters
-	if (self.spawnflags & PLAYER_SAFE && other.flags & FL_CLIENT) return; // ignore players
-	
-	// dead monster bodies
-	if ((other.flags & FL_MONSTER) && other.health <= 0){
-		remove(other);
-		//return;
-	}
+	// ignore monsters if spawnflag is set
+	if (self.spawnflags & MONSTER_SAFE && other.flags & FL_MONSTER)
+		return;
 
-	// projectiles and general gibs
+	// ignore players if spawnflag is set
+	if (self.spawnflags & PLAYER_SAFE && other.flags & FL_CLIENT)
+		return; 
+	
+	// ignore noclipping player
+	if (other.movetype == MOVETYPE_NOCLIP)
+		return;
+
+	// swallows weapon projectiles and general gibs
 	if (
 		other.classname == "gib" ||
 		other.classname == "grenade" ||
@@ -791,28 +795,33 @@ void() trigger_void_touch =
 		(other.flags & FL_PROJECTILE)
 	) {
 		remove(other);
-		//return;
+		return;
 	}
 
-	// items
+	// swallows items
 	if (other.flags & FL_ITEM){
 		remove(other);
-		//return;
+		return;
 	}
 
-	// anything that can be killed
-	if (other.takedamage)
-	{
-		other.invincible_finished = 0; // kills even with Pentagram, this took forever to figure out!! -- dumptruck_ds
-		other.trif_finished = 0;
+	// tries to kills anything that can be killed
+	if (other.takedamage) {
+		// don't try to damage shootable bmodels like doors, buttons or breakables
+		if (other.solid == SOLID_BSP)
+			return;
+
+		if (other.flags & FL_CLIENT) {
+			other.invincible_finished = 0; // kills even with Pentagram, this took forever to figure out!! -- dumptruck_ds
+			other.trif_finished = 0;
+		}
+
 		T_Damage (other, self, self, other.health + 1000);
 		
 		// moved the following check to the Killed function
 		//if (other.flags & FL_MONSTER)
 		//	remove(other);
 	}
-	eprint(other);
-	force_retouch = 2;
+
 };
 
 /*QUAKED trigger_void (.5 .5 .5) ? X X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
