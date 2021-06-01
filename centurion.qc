@@ -80,6 +80,7 @@ void(vector org, vector vec) centurion_launch_missle =
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 
 	setmodel (newmis, "progs/c_spike.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		

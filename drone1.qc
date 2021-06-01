@@ -73,6 +73,7 @@ void(vector org, vector vec) LaunchDLaser =
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 	newmis.origin = self.origin;
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 	
 
 	setmodel (newmis, "progs/laser.mdl");

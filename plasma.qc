@@ -160,6 +160,7 @@ void() W_FirePlasma =
   missile.movetype = MOVETYPE_FLYMISSILE;    // Like a rocket
   missile.solid = SOLID_BBOX;
   missile.classname = "plasma";
+  missile.flags = missile.flags | FL_PROJECTILE;
     
   // set plasma bullet speed. (Basically AIM with some random)  
 

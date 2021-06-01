@@ -228,6 +228,7 @@ entity(vector org, vector vel, string cname) launch_projectile =
 	prj.th_die = SUB_Remove;
 	prj.think = SUB_Remove;
 	prj.nextthink = time + 6;
+	prj.flags = prj.flags | FL_PROJECTILE;
 
 	setsize (prj, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin (prj, org);

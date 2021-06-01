@@ -89,6 +89,7 @@ void(vector org, vector vec) make_flame =
 	setorigin (newmis, org);
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 	variance = '-10 -10 -10' + random() * '20 20 20';
 	newmis.movedir = normalize(vec) * 250 + '0 0 -50' + variance;
 	newmis.velocity = newmis.movedir;

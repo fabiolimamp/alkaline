@@ -230,6 +230,7 @@ void() Wiz_StartFast =
 	missile.nextthink = time + 0.8;
 	missile.think = Wiz_FastFire;
 	missile.movedir = v_right;
+	missile.flags = missile.flags | FL_PROJECTILE;
 
 	missile = spawn ();
 	missile.owner = self;
@@ -240,6 +241,7 @@ void() Wiz_StartFast =
 	missile.nextthink = time + 0.3;
 	missile.think = Wiz_FastFire;
 	missile.movedir = VEC_ORIGIN - v_right;
+	missile.flags = missile.flags | FL_PROJECTILE;
 };
 
 

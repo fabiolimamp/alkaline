@@ -33,7 +33,7 @@ void(vector org, vector dir) Fire_bomb =
 	newmis.movetype = MOVETYPE_NOCLIP;
 	newmis.solid = SOLID_BBOX;
 	newmis.touch = SUB_Remove;
-	
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 
 	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(newmis, org);

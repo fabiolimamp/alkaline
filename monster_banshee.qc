@@ -85,6 +85,7 @@ void(float ofs, float turn) b_fire_rocket =
 	missile.touch = Projectile_Hit;
 	missile.nextthink = time + 5;
 	missile.think = SUB_Remove;
+	missile.flags = missile.flags | FL_PROJECTILE;
 	setmodel(missile, "progs/missile.mdl");
 	setsize(missile, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(missile, src);

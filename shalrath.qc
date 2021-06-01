@@ -145,7 +145,7 @@ void() ShalMissile =
 	setmodel (missile, "progs/v_spike.mdl");
 
 	setsize (missile, '0 0 0', '0 0 0');		
-
+	missile.flags = missile.flags | FL_PROJECTILE;
 	missile.origin = self.origin + '0 0 10';
 	missile.velocity = dir * 400;
 	missile.avelocity = '300 300 300';

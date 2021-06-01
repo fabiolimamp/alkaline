@@ -114,6 +114,7 @@ void(vector org, vector vec) FLaunchLaser =
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 	newmis.effects = EF_DIMLIGHT;
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 
 	setmodel (newmis, "progs/flaser.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
@@ -260,6 +261,7 @@ void(string gibname, float dm) ThrowFloydHead =
 	head.angles_y = self.angles_y;
 	head.flags = self.flags - (self.flags & FL_ONGROUND);
 	head.avelocity = crandom() * '0 600 0';
+	head.classname = "gib";
 };
 
 void(string gibname, float dm) ThrowFloydGib =
@@ -282,7 +284,8 @@ void(string gibname, float dm) ThrowFloydGib =
 	new.think = SUB_Remove;
 	new.ltime = time;
 	new.nextthink = time + 10 + random()*10;
-	new.flags = 0;		
+	new.flags = 0;	
+	new.classname = "gib";	
 };
 
 void () floyd_explode =

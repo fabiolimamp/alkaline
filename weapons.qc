@@ -505,7 +505,7 @@ void() W_FireRocket =
 	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_BBOX;
 	missile.classname = "missile";
-		
+	missile.flags = missile.flags | FL_PROJECTILE;
 // set missile speed	
 
 	makevectors (self.v_angle);
@@ -705,6 +705,7 @@ void() W_FireGrenade =
 	missile.movetype = MOVETYPE_BOUNCE;
 	missile.solid = SOLID_BBOX;
 	missile.classname = "grenade";
+	missile.flags = missile.flags | FL_PROJECTILE;
 		
 // set missile speed	
 
@@ -754,6 +755,7 @@ void(vector org, vector dir) launch_spike =
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 
 	newmis.angles = vectoangles(dir);
 	

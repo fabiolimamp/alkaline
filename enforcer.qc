@@ -85,6 +85,7 @@ void(vector org, vector vec) LaunchLaser =
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 	newmis.effects = EF_DIMLIGHT;
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 
 	setmodel (newmis, "progs/laser.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		

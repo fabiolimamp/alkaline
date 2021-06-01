@@ -170,6 +170,7 @@ void(vector st) ZombieFireGrenade =
 	missile.owner = self;
 	missile.movetype = MOVETYPE_BOUNCE;
 	missile.solid = SOLID_BBOX;
+	missile.flags = missile.flags | FL_PROJECTILE;
 
 // calc org
 	org = self.origin + st_x * v_forward + st_y * v_right + (st_z - 24) * v_up;

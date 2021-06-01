@@ -232,7 +232,8 @@ void() FireMissileSpiral =
 	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_BBOX;
 	missile.effects = EF_DIMLIGHT;
-	
+	missile.flags = missile.flags | FL_PROJECTILE;
+
 	setorigin (missile, org);
 
 	// set intial missile velocity	
@@ -285,6 +286,7 @@ local float go;
 	missile.solid = SOLID_BBOX;
 	missile.effects = EF_DIMLIGHT;     // it works now! - greenwood
 	missile.angles = self.angles;     // new projectile code 
+	missile.flags = missile.flags | FL_PROJECTILE;
 
 	setmodel (missile, "progs/flaser.mdl");
 	setorigin (missile, org);

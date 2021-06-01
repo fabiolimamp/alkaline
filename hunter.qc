@@ -104,6 +104,7 @@ void(vector org, vector vec) launch_hunter_blast =
 	newmis.solid = SOLID_BBOX;
 	newmis.effects = EF_DIMLIGHT;
 	newmis.classname = "huntershot";
+	newmis.flags = newmis.flags | FL_PROJECTILE;
 	
 	setmodel (newmis, "progs/big_bullet.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		

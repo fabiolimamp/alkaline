@@ -174,6 +174,7 @@ void() harpoon =
 	harp.touch = poon_bang;
 	harp.nextthink = time + SVC_SETVIEWPORT;
 	harp.think = SUB_Remove;
+	harp.flags = harp.flags | FL_PROJECTILE;
 	setmodel(harp, "progs/harpoon.mdl");
 	harp.skin = SPAWNFLAG_SUPERSPIKE;
 	setsize(harp, VEC_ORIGIN, VEC_ORIGIN);

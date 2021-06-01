@@ -763,7 +763,10 @@ float 	MONSTER_SAFE = 1;
 float 	PLAYER_SAFE = 2;
 
 void() trigger_void_touch =
-{
+{	
+	if ( other.solid == SOLID_BSP)
+		return;
+	
 	if (other.movetype == MOVETYPE_NOCLIP) // from Copper -- dumptruck_ds
 		return;
 
@@ -772,7 +775,32 @@ void() trigger_void_touch =
 
 	if (self.spawnflags & MONSTER_SAFE && other.flags & FL_MONSTER) return; //ignore monsters
 	if (self.spawnflags & PLAYER_SAFE && other.flags & FL_CLIENT) return; // ignore players
+	
+	// dead monster bodies
+	if ((other.flags & FL_MONSTER) && other.health <= 0){
+		remove(other);
+		//return;
+	}
 
+	// projectiles and general gibs
+	if (
+		other.classname == "gib" ||
+		other.classname == "grenade" ||
+		other.classname == "spike" ||
+		other.classname == "missile" ||
+		(other.flags & FL_PROJECTILE)
+	) {
+		remove(other);
+		//return;
+	}
+
+	// items
+	if (other.flags & FL_ITEM){
+		remove(other);
+		//return;
+	}
+
+	// anything that can be killed
 	if (other.takedamage)
 	{
 		other.invincible_finished = 0; // kills even with Pentagram, this took forever to figure out!! -- dumptruck_ds
@@ -783,16 +811,7 @@ void() trigger_void_touch =
 		//if (other.flags & FL_MONSTER)
 		//	remove(other);
 	}
-
-	if (other.classname == "gib" ||
-	other.classname == "grenade" ||
-	other.classname == "spike" ||
-	other.classname == "missile")
-	remove(other);
-
-	if (other.flags & FL_ITEM)
-	remove(other);
-
+	eprint(other);
 	force_retouch = 2;
 };
 

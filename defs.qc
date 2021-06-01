@@ -242,6 +242,7 @@ float	FL_WATERJUMP			= 2048;	// player jumping out of water
 float	FL_JUMPRELEASED			= 4096;	// for jump debouncing
 float 	FL_SPAWNMONSTER			= 8192; // triggered spawn monsters
 float 	FL_PACIFIST				= 16384;// monsters that don't fight (usually run away)
+float 	FL_PROJECTILE			= 32768;// projectile entities, like lasers, plasma, rockets, spikes, etc
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves

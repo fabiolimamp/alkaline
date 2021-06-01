@@ -201,6 +201,7 @@ void(vector org, vector rock_vec) OgreFireRocket =
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 	newmis.effects = EF_DIMLIGHT;
+	newmis.classname = "rocket";
 
 	setmodel (newmis, "progs/missile.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
@@ -243,9 +244,11 @@ void(float elevation) OgreFireGrenade =
   sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
  
   missile = spawn ();
+  missile.classname = "grenade";
   missile.owner = self;
   missile.movetype = MOVETYPE_BOUNCE;
   missile.solid = SOLID_BBOX;
+  missile.flags = missile.flags | FL_PROJECTILE;
  
 // set missile speed
   ang = self.angles;

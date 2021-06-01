@@ -91,6 +91,8 @@ void(vector org, vector vec, float light) HIP_LaunchLaser =
 	newmis.lastvictim = self;
 	newmis.movetype = MOVETYPE_FLYMISSILE;
 	newmis.solid = SOLID_BBOX;
+	newmis.flags = newmis.flags | FL_PROJECTILE;
+	
 	if (light)
 		newmis.effects = EF_DIMLIGHT;
 
