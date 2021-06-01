@@ -331,6 +331,12 @@ void() func_laser_touch = {
 
 void () func_laser_use = {
 	if (!self.state) {
+
+		if (self.spawnflags & LASER_SOLID) {
+			self.solid = SOLID_BSP;
+			self.movetype = MOVETYPE_PUSH;
+		}
+
 		setmodel (self, self.origmodel);
 		if (!(self.spawnflags & LASER_SILENT))
 			sound (activator, CHAN_VOICE, "misc/laser_on.wav", 1, ATTN_NORM);
@@ -341,6 +347,12 @@ void () func_laser_use = {
 		self.state = 1;
 	}
 	else {
+
+		if (self.spawnflags & LASER_SOLID) {
+			self.solid = SOLID_NOT;
+			self.movetype = MOVETYPE_NONE;
+		}
+
 		setmodel (self, "");
 
 		if (!(self.spawnflags & LASER_SILENT))
@@ -379,15 +391,28 @@ void () func_laser =
 	self.origmodel = self.model;
 	
 	if (self.spawnflags & LASER_SOLID) {
-		self.solid = SOLID_BSP; //so you can shoot between lasers in a single bmodel
-		self.movetype = MOVETYPE_PUSH;
+		if (self.spawnflags & START_OFF) {
+			self.solid = SOLID_NOT;
+			self.movetype = MOVETYPE_NONE;
+		}
+		else {
+			self.solid = SOLID_BSP; //so you can shoot between lasers in a single bmodel
+			self.movetype = MOVETYPE_PUSH;
+		}
 	}
 	else {
 		self.solid = SOLID_TRIGGER;
 		self.movetype = MOVETYPE_NONE;
 	}
 
-	setmodel (self, self.model);
+	if (self.spawnflags & START_OFF) {
+		self.state = 0;
+		setmodel(self, "");
+	}
+	else {
+		self.state = 1;
+		setmodel (self, self.model);
+	}
 
 	precache_sound ("misc/laser_on.wav");
 	precache_sound ("misc/laseroff.wav");
@@ -402,12 +427,7 @@ void () func_laser =
 		
 	self.use = func_laser_use;
 
-	if (self.spawnflags & START_OFF) {
-		self.state = 0;
-		setmodel(self, "");
-	}
-	else
-		self.state = 1;
+
 
 	self.touch = func_laser_touch;
 	//spawn a second entity to handle alpha changes, since MOVETYPE_PUSH doesn't support think functions
