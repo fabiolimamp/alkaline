@@ -627,7 +627,27 @@ void() func_bossgate =
 
 //============================================================================
 
- //johnfitz -- ambient_general
+
+
+void() FireAmbient =
+{
+	precache_sound ("ambience/fire1.wav");
+// attenuate fast
+	ambientsound (self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
+};
+
+void(string sound, float default_vol) ambient_entity = {
+	local float attn;
+	precache_sound (sound);
+
+	attn = ATTN_STATIC; // all ambients use ATTN_STATIC by default, no need to pass that as parameter
+	if (self.speed) attn = self.speed;
+	if (self.volume) default_vol = self.volume;
+
+	ambientsound (self.origin, sound, default_vol, attn);
+	remove(self);
+}
+
 /*QUAKED ambient_general (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
 Plays any looped sound
 
@@ -639,115 +659,28 @@ Keys:
 
 "speed" attenuation, default 3
 */
-void () ambient_general =
-{
-	precache_sound (self.noise);
-	if (!self.speed)
-	{
-		self.speed = ATTN_STATIC;
-	}
-	if (!self.volume)
-	{
-		self.volume = 0.5;
-	}
-	ambientsound (self.origin, self.noise, self.volume, self.speed);
-	remove(self);
-};
-//johnfitz
+void() ambient_general = 		{ ambient_entity(self.noise, 				0.5	); };
 
-/*QUAKED ambient_suck_wind (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-
-void() FireAmbient =
-{
-	precache_sound ("ambience/fire1.wav");
-// attenuate fast
-	ambientsound (self.origin, "ambience/fire1.wav", 0.5, ATTN_STATIC);
-};
-
-/*QUAKED ambient_fire (0.3 0.1 0.6) (-10 -10 -8) (10 10 8) X X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
-ambinet fire sound effects added for consistency
-same as FireAmbient
-*/
-
-void() ambient_fire =
-{
-	FireAmbient();
-};
-
-void() ambient_suck_wind =
-{
-	precache_sound ("ambience/suck1.wav");
-	ambientsound (self.origin, "ambience/suck1.wav", 1, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-
-/*QUAKED ambient_drone (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_drone =
-{
-	precache_sound ("ambience/drone6.wav");
-	ambientsound (self.origin, "ambience/drone6.wav", 0.5, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-
-/*QUAKED ambient_flouro_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_flouro_buzz =
-{
-	precache_sound ("ambience/buzz1.wav");
-	ambientsound (self.origin, "ambience/buzz1.wav", 1, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-/*QUAKED ambient_drip (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_drip =
-{
-	precache_sound ("ambience/drip1.wav");
-	ambientsound (self.origin, "ambience/drip1.wav", 0.5, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-/*QUAKED ambient_comp_hum (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_comp_hum =
-{
-	precache_sound ("ambience/comp1.wav");
-	ambientsound (self.origin, "ambience/comp1.wav", 1, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-/*QUAKED ambient_thunder (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_thunder =
-{
-	precache_sound ("ambience/thunder1.wav");
-	ambientsound (self.origin, "ambience/thunder1.wav", 0.5, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-/*QUAKED ambient_light_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_light_buzz =
-{
-	precache_sound ("ambience/fl_hum1.wav");
-	ambientsound (self.origin, "ambience/fl_hum1.wav", 0.5, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-/*QUAKED ambient_swamp1 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_swamp1 =
-{
-	precache_sound ("ambience/swamp1.wav");
-	ambientsound (self.origin, "ambience/swamp1.wav", 0.5, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-/*QUAKED ambient_swamp2 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)
-*/
-void() ambient_swamp2 =
-{
-	precache_sound ("ambience/swamp2.wav");
-	ambientsound (self.origin, "ambience/swamp2.wav", 0.5, ATTN_STATIC);
-	remove(self); //johnfitz -- reduce edict usage
-};
-
+/*QUAKED ambient_suck_wind (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_suck_wind = 		{ ambient_entity("ambience/suck1.wav", 		1	); };
+/*QUAKED ambient_drone (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_drone = 			{ ambient_entity("ambience/drone6.wav",		0.5	); };
+/*QUAKED ambient_flouro_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_flouro_buzz = 	{ ambient_entity("ambience/buzz1.wav",		1	); };
+/*QUAKED ambient_drip (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_drip =			{ ambient_entity("ambience/drip1.wav",		0.5	); };
+/*QUAKED ambient_comp_hum (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_comp_hum = 		{ ambient_entity("ambience/comp1.wav", 		1	); };
+/*QUAKED ambient_thunder (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_thunder =		{ ambient_entity("ambience/thunder1.wav", 	0.5	); };
+/*QUAKED ambient_light_buzz (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_light_buzz =		{ ambient_entity("ambience/fl_hum1.wav", 	0.5	); };
+/*QUAKED ambient_swamp1 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_swamp1 = 		{ ambient_entity("ambience/swamp1.wav", 	0.5	); };
+/*QUAKED ambient_swamp2 (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_swamp2 = 		{ ambient_entity("ambience/swamp2.wav", 	0.5	); };
+/*QUAKED ambient_fire (0.3 0.1 0.6) (-10 -10 -8) (10 10 8)*/
+void() ambient_fire = 			{ ambient_entity("ambience/fire1.wav", 		0.5	); };
 //============================================================================
 
 void() noise_think =

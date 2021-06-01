@@ -1302,32 +1302,30 @@ If the target entity changes its default behavior when 'targetname' is set (such
 // added Rubicon 2 ambient_general
 //
 
-@PointClass color(64 32 192) = ambient_general : "Ambient sounds.
-Attenuation values:
--1 ATTN_NONE heard everywhere
-1 ATTN_NORM fades to zero at 1000 units
-2 ATTN_IDLE fades to zero at 512 units
-3 ATTN_STATIC fades to zero at 341 units"
-[
-	noise(string) : "File to play"
+@baseclass color(64 32 192) = Ambient [
 	volume(float) : "Volume (0-1)" : "0.5"
 	speed(choices) : "Attenuation" : 3 =
-				[
+		[
 			-1 : "No attenuation (heard everywhere)"
-			1  : "Normal"
-			2  : "Idle"
-			3  : "Static"
+			1  : "Normal (1000u)"
+			2  : "Idle (512u)"
+			3  : "Static (341u)"
 		] 
 ]
-@PointClass color(64 32 192) = ambient_drip : "Dripping sound" []
-@PointClass color(64 32 192) = ambient_drone : "Engine/machinery sound" []
-@PointClass color(64 32 192) = ambient_comp_hum : "Computer background sounds" []
-@PointClass color(64 32 192) = ambient_flouro_buzz : "Fluorescent buzzing sound" []
-@PointClass color(64 32 192) = ambient_light_buzz : "Buzzing sound from light" []
-@PointClass color(64 32 192) = ambient_suck_wind : "Wind sound" []
-@PointClass color(64 32 192) = ambient_swamp1 : "Frogs croaking" []
-@PointClass color(64 32 192) = ambient_swamp2 : "Frogs croaking B" []
-@PointClass color(64 32 192) = ambient_thunder : "Thunder sound" []
+
+@PointClass base(Ambient) = ambient_general : "Custom ambient sound."
+[
+	noise(string) : "File to play"
+]
+@PointClass base(Ambient) = ambient_drip : "Dripping sound" []
+@PointClass base(Ambient) = ambient_drone : "Engine/machinery sound" []
+@PointClass base(Ambient) = ambient_comp_hum : "Computer background sounds" [volume(float) : "Volume (0-1)" : "1"]
+@PointClass base(Ambient) = ambient_flouro_buzz : "Fluorescent buzzing sound" []
+@PointClass base(Ambient) = ambient_light_buzz : "Buzzing sound from light" [volume(float) : "Volume (0-1)" : "1"]
+@PointClass base(Ambient) = ambient_suck_wind : "Wind sound" [volume(float) : "Volume (0-1)" : "1"]
+@PointClass base(Ambient) = ambient_swamp1 : "Frogs croaking" []
+@PointClass base(Ambient) = ambient_swamp2 : "Frogs croaking B" []
+@PointClass base(Ambient) = ambient_thunder : "Thunder sound" []
 
 
 
@@ -1340,22 +1338,17 @@ noise: path of sound to play
 wait: random time between sounds (default 20)
 delay: minimum delay between sounds (default 2)
 impulse: sound channel 0-7 (0 automatic is default)
-speed: attenuation factor:
--1 ATTN_NONE heard everywhere
-1 ATTN_NORM fades to zero at 1000 units
-2 ATTN_IDLE fades to zero at 512 units
-3 ATTN_STATIC fades to zero at 341 units
+speed: attenuation factor
 
 NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND folder.)"
 	[
 
 		noise(string) : "Sound file to play"
-		speed(choices) : "Attenuation of sound" : 1 =
-				[
+		speed(choices) : "Attenuation of sound" : 1 = [
 			-1 : "No attenuation (heard everywhere)"
-			1  : "Normal"
-			2  : "Idle"
-			3  : "Static"
+			1  : "Normal (1000u)"
+			2  : "Idle (512u)"
+			3  : "Static (341u)"
 		]
 		volume(integer) : "Volume (0 - 1)" : 1
 		impulse(integer) : "Channel (0 - 7) Automatic" : 0
@@ -1368,22 +1361,17 @@ toggle (spawnflags): stopped when triggered again
 volume: how loud (range is 0.1 to 1 default is 1 = full volume)
 noise: path of sound to play
 impulse: sound channel 0-7 (0 automatic is default)
-speed: attenuation factor:
--1 ATTN_NONE heard everywhere
-1 ATTN_NORM fades to zero at 1000 units
-2 ATTN_IDLE fades to zero at 512 units
-3 ATTN_STATIC fades to zero at 341 units
+speed: attenuation factor
 
 NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND folder.)"
 	[
 		spawnflags(flags) = [1 : "Toggle" : 0]
 		noise(string) : "Sound file to play"
-		speed(choices) : "Attenuation of sound" : 1 =
-		[
+		speed(choices) : "Attenuation of sound" : 1 =[
 			-1 : "No attenuation (heard everywhere)"
-			1  : "Normal"
-			2  : "Idle"
-			3  : "Static"
+			1  : "Normal (1000u)"
+			2  : "Idle (512u)"
+			3  : "Static (341u)"
 		]
 		volume(integer) : "Volume (0 - 1)" : 1
 		impulse(integer) : "Channel (0 - 7) Automatic" : 0
