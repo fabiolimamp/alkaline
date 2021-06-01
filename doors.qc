@@ -70,11 +70,11 @@ void() door_blocked =
 };
 
 void() door_start_sound = {
-	sound (self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, self.noise2, self.volume, ATTN_NORM);
 };
 
 void() door_stop_sound = {
-	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, self.noise1, self.volume, ATTN_NORM);
 };
 
 void() door_move_top = {
@@ -860,6 +860,8 @@ void() func_door =
 	precache_sound (self.noise1);
 	precache_sound (self.noise2);
 
+	if (!self.volume)
+		self.volume = 1;
 
 	self.max_health = self.health;
 	self.solid = SOLID_BSP;
