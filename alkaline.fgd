@@ -2010,7 +2010,6 @@ Activator's fog will be blended over time from start to end values.
 		1 : "One-Way Only" : 0
 		2 : "Reverse Start/End" : 0
 		4 : "All clients" : 0
-		8 : "Blend from current fog" : 0
 	]
 	delay(string) : "Pause before starting blend"
 	speed(string) : "Time to blend (-1 for instant)"
