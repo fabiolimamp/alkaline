@@ -35,6 +35,23 @@ void( entity client, float density, vector color ) fog_save =
 	client.fog_color = color;
 }
 
+void( entity client, float density, vector color ) fog_save2 =
+{
+	if (client.classname != "player") return;
+	
+	client.fog_density2 = density;
+	client.fog_color2 = color;
+}
+
+void( entity client ) fog_save_to_previous =
+{
+	if (client.classname != "player") return;
+	
+	// copies the current fog to the secondary fields to transition from the current fog
+	client.fog_density2 = client.fog_density;
+	client.fog_color2 = client.fog_color;
+}
+
 void( entity client, float density) skyfog_save =
 {
 	if (client.classname != "player") return;
@@ -58,6 +75,7 @@ void( entity client, entity fogger ) fog_setFromEnt =
 			return;
 	
 	fog_set(client, fogger.fog_density, fogger.fog_color);
+	fog_save(client, fogger.fog_density, fogger.fog_color);
 }
 
 /*
@@ -65,7 +83,7 @@ void( entity client, entity fogger ) fog_setFromEnt =
 fog_set
 ================
 */
-void( entity client, float density, vector color ) fog_set =
+void( entity client, float density, vector color) fog_set =
 {
 	if (client.classname != "player") return;
 
@@ -83,9 +101,7 @@ void( entity client, float density, vector color ) fog_set =
 	stuffcmd(client, "\n");
 
 
-	
-	
-	fog_save(client, density, color);
+	//fog_save(client, density, color);
 }
 
 
@@ -211,7 +227,12 @@ void() trigger_fogblend =
 
 // ================================
 
-void(float density, vector color) target_fogblend_save =
+float FOGBLEND_ONEWAY = 1;
+float FOGBLEND_REVERSE = 2;
+float FOGBLEND_ALLCLIENTS = 4;
+float FOGBLEND_BLENDTO = 8;
+
+void(float densityTo, vector colorTo, float densityFrom, vector colorFrom) target_fogblend_save =
 {
 	if (self.spawnflags & 4)
 	{
@@ -219,29 +240,21 @@ void(float density, vector color) target_fogblend_save =
 		pl = nextent(world);
 		while (pl.flags & FL_CLIENT)
 		{
-			fog_save(pl, density, color);
+			if (self.spawnflags & FOGBLEND_BLENDTO) fog_save_to_previous(pl);
+			else fog_save2(pl, densityFrom, colorFrom);
+				
+			fog_save(pl, densityTo, colorTo);
 			pl = nextent(pl);
 		}
 	}
-	else
-		fog_save(self.enemy, density, color);
+	else {
+		if (self.spawnflags & FOGBLEND_BLENDTO) fog_save_to_previous(self.enemy);
+		else fog_save2(self.enemy, densityFrom, colorFrom);
+			
+		fog_save(self.enemy, densityTo, colorTo);
+	}
 }
 
-void(float density, vector color) target_fogblend_set =
-{
-	if (self.spawnflags & 4)
-	{
-		entity pl;
-		pl = nextent(world);
-		while (pl.flags & FL_CLIENT)
-		{
-			fog_set(pl, density, color);
-			pl = nextent(pl);
-		}
-	}
-	else
-		fog_set(self.enemy, density, color);
-}
 
 /*
 ================
@@ -250,29 +263,52 @@ target_fogblend_use
 */
 void() target_fogblend_use =
 {
-	float d;
-	vector c;
+	float dTo, dFrom;
+	vector cTo, cFrom;
 	self.enemy = activator;
 	if (self.enemy.classname != "player") return;
-	if (!(self.spawnflags & 1))
+	
+	if (!(self.spawnflags & FOGBLEND_ONEWAY) && !(self.spawnflags & FOGBLEND_BLENDTO))
 		self.state = 1 - self.state;
 	
-	self.nextthink = time + self.delay;
-	if (self.state)
+	if (self.state && !(self.spawnflags & FOGBLEND_BLENDTO))
 	{
 		self.pain_finished = time + self.delay + self.speed;
-		d = self.fog_density2;
-		c = self.fog_color2;
+		dFrom = self.fog_density;
+		cFrom = self.fog_color;
+		dTo = self.fog_density2;
+		cTo = self.fog_color2;
 	}
 	else
 	{
 		self.pain_finished = time + self.delay + self.speed2;
-		d = self.fog_density;
-		c = self.fog_color;
+		dFrom = self.fog_density2;
+		cFrom = self.fog_color2;
+		dTo = self.fog_density;
+		cTo = self.fog_color;
 	}
-	target_fogblend_save(d, c);
+	target_fogblend_save(dTo, cTo, dFrom, cFrom);
+
+	self.nextthink = time + self.delay;
 	self.use = SUB_Null;	// don't allow retriggering before the blend is done or it looks super duper wacky
 }
+
+void(entity cl, float f) fog_blendSetFraction = {
+	float d;
+	//float s;
+	vector c;
+
+	d = lerpHermite(cl.fog_density2, cl.fog_density, f);
+	//s = lerpHermite(cl.skyfog_density2, cl.skyfog_density, f);
+	c = lerpVectorHermite(cl.fog_color2, cl.fog_color, f);
+
+	eprint(cl);
+	dprint("density: ");dprint(ftos(d));dprint("\n");
+	dprint("color: ");dprint(vtos(c));dprint("\n");
+	dprint("fraction: ");dprint(ftos(f));dprint("\n");
+
+	fog_set(cl, d, c);
+};
 
 /*
 ================
@@ -281,9 +317,8 @@ fog_blendTimeThink
 */
 void() fog_blendTimeThink =
 {
-	float f, d;
-	//float s;
-	vector c;
+	float f;
+	//vector c;
 	
 	if (time >= self.pain_finished)
 	{
@@ -300,21 +335,22 @@ void() fog_blendTimeThink =
 		else
 			f = 1;
 	}
+
 	
-	if (self.state)
-	{
-		d = lerpHermite(self.fog_density, self.fog_density2, f);
-		//s = lerpHermite(self.skyfog_density, self.skyfog_density2, f);
-		c = lerpVectorHermite(self.fog_color, self.fog_color2, f);
+
+	if (self.spawnflags & FOGBLEND_ALLCLIENTS) {
+		entity pl;
+		pl = nextent(world);
+		while (pl.flags & FL_CLIENT)
+		{
+			fog_blendSetFraction(pl, f);
+			pl = nextent(pl);
+		}
 	}
-	else
-	{
-		d = lerpHermite(self.fog_density2, self.fog_density, f);
-		//s = lerpHermite(self.skyfog_density2, self.skyfog_density, f);
-		c = lerpVectorHermite(self.fog_color2, self.fog_color, f);
+	else {
+		fog_blendSetFraction(self.enemy, f);
 	}
-	//dprint("Trying fog: ");dprint(ftos(d));dprint(" ");dprint(ftos(c_x));dprint(" ");dprint(ftos(c_y));dprint(" ");dprint(ftos(c_z));dprint("\n");
-	target_fogblend_set(d, c);
+
 }
 
 /*QUAKED target_fogblend (.5 .5 .2) (-8 -8 -8) (8 8 8) ONE_WAY REVERSE GLOBAL
@@ -354,11 +390,13 @@ void() target_fogblend =
 	//if (!SUB_ShouldSpawn()) return;
 	self.use = target_fogblend_use;
 	self.think = fog_blendTimeThink;
-	if (self.spawnflags & 2)
+
+	if (self.spawnflags & FOGBLEND_REVERSE)
 		self.state = 1;
 	else
 		self.state = 0;
-	if (self.spawnflags & 1)
+
+	if (self.spawnflags & FOGBLEND_ONEWAY)
 		self.state = 1 - self.state;
 	
 	if (!self.speed) self.speed = 1;
