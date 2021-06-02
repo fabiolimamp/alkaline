@@ -1,8 +1,8 @@
 /*
 ====================
 
-Fog controller originally from Copper
-Updated by bmFbr
+Fog controllers by bmFbr
+Based on Copper's fog by Lunaran
 
 ====================
 */
@@ -34,14 +34,6 @@ void( entity client, float density, vector color ) fog_save =
 	// save whatever we set the client's fog to in case of saves/loads
 	client.fog_density = density;
 	client.fog_color = color;
-}
-
-void( entity client, float density, vector color ) fog_save2 =
-{
-	if (client.classname != "player") return;
-	
-	client.fog_density2 = density;
-	client.fog_color2 = color;
 }
 
 void( entity client ) fog_save_to_previous =
@@ -76,7 +68,6 @@ void( entity client, entity fogger ) fog_setFromEnt =
 			return;
 	
 	fog_set(client, fogger.fog_density, fogger.fog_color);
-	fog_save(client, fogger.fog_density, fogger.fog_color);
 }
 
 /*
@@ -88,7 +79,6 @@ void( entity client, float density, vector color) fog_set =
 {
 	if (client.classname != "player") return;
 
-	//stuffcmd(client, "r_showtris 0\n"); return;
 	//dprint("Setting fog: ");dprint(ftos(density));dprint(" ");dprint(ftos(color_x));dprint(" ");dprint(ftos(color_y));dprint(" ");dprint(ftos(color_z));dprint("\n");
 
 	stuffcmd(client, "\nfog ");
@@ -101,7 +91,6 @@ void( entity client, float density, vector color) fog_set =
 	stuffcmd_float(client, color_z);
 	stuffcmd(client, "\n");
 
-
 	fog_save(client, density, color);
 }
 
@@ -109,9 +98,6 @@ void( entity client, float density, vector color) fog_set =
 void( entity client, float density) skyfog_set =
 {
 	if (client.classname != "player") return;
-
-	//stuffcmd(client, "r_showtris 0\n"); return;
-	//dprint("Setting fog: ");dprint(ftos(density));dprint(" ");dprint(ftos(color_x));dprint(" ");dprint(ftos(color_y));dprint(" ");dprint(ftos(color_z));dprint("\n");
 
 	stuffcmd(client, "\nr_skyfog ");
 	stuffcmd_float(client, density);
@@ -179,14 +165,15 @@ void() fog_blendTouch =
 		ldensity = lerp(self.fog_density, self.fog_density2, f);
 		lcolor = lerpVector(self.fog_color, self.fog_color2, f);
 	}
+
 	fog_set(other, ldensity, lcolor);
-	//fog_save(other, ldensity, lcolor);
+	
 	
 	self.rad_time = time;
 	self.attack_finished = time + FOG_INTERVAL;
 	
-//	bprint(ftos(f*1000));
-//	bprint("\n");
+	// reset client's fogblend_entity in case it's currently being transitioned by another entity
+	other.fogblend_entity = world;
 }
 
 
@@ -225,23 +212,109 @@ void() trigger_fogblend =
 }
 
 
-
-// ================================
+/*
+================
+fog_blendTimeThink
+used by both trigger_fog and target_fogblend
+================
+*/
 
 float FOGBLEND_ONEWAY = 1;
 float FOGBLEND_REVERSE = 2;
 float FOGBLEND_ALLCLIENTS = 4;
 float FOGBLEND_BLENDTO = 8;
 
+void(entity cl, vector cTo, float dTo, float f) fog_blendSetFraction = {
+	float d;
+	//float s;
+	vector c;
 
-/*
-================
-target_fogblend_use
-================
-*/
+	d = lerpHermite(cl.fog_density2, dTo, f);
+	//s = lerpHermite(cl.skyfog_density2, cl.skyfog_density, f);
+	c = lerpVectorHermite(cl.fog_color2, cTo, f);
+
+	/*
+	eprint(cl);
+	dprint("density: ");dprint(ftos(d));dprint("\n");
+	dprint("color: ");dprint(vtos(c));dprint("\n");
+	dprint("fraction: ");dprint(ftos(f));dprint("\n");
+	*/
+
+	fog_set(cl, d, c);
+};
+
+void() fog_blendTimeThink = {
+	float f;
+	float dTo;
+	vector cTo;
+	
+	if (time >= self.pain_finished)	{
+		f = 1;
+	}
+	else {
+		self.nextthink = time + FOG_INTERVAL;
+		if (self.state && self.speed)
+			f = 1 - (self.pain_finished - time) / self.speed;
+		else if (self.speed2)
+			f = 1 - (self.pain_finished - time) / self.speed2;
+		else
+			f = 1;
+	}
+
+	if (self.state) {
+		dTo = self.fog_density2;
+		cTo = self.fog_color2;
+	}
+	else {
+		dTo = self.fog_density;
+		cTo = self.fog_color;
+	}
+
+	if (self.spawnflags & FOGBLEND_ALLCLIENTS) {
+		entity pl;
+		pl = nextent(world);
+		while (pl.flags & FL_CLIENT) {
+			if (pl.fogblend_entity == self) {
+				if (!(pl.fog_density2 == dTo && pl.fog_color2 == cTo))
+					fog_blendSetFraction(pl, cTo, dTo, f);
+
+				if (time >= self.pain_finished) 
+					pl.fogblend_entity = world;
+			}
+
+			pl = nextent(pl);
+		}
+	}
+	else {
+		if (self.enemy.fogblend_entity == self) {
+			if (!(self.enemy.fog_density2 == dTo && self.enemy.fog_color2 == cTo))
+				fog_blendSetFraction(self.enemy, cTo, dTo, f);
+
+			if (time >= self.pain_finished) {
+				self.enemy.fogblend_entity = world;
+
+			}
+		}
+	}
+
+	if (self.classname == "fog_controller"){
+		if (self.enemy.fogblend_entity != self || time >= self.pain_finished) {
+			remove(self);
+			return;
+		}
+	}
+};
+
+
+
+/**************************************
+
+target_fogblend
+
+**************************************/
+
 void() target_fogblend_use = {
-	float dTo, dFrom;
-	vector cTo, cFrom;
+
 	self.enemy = activator;
 	if (self.enemy.classname != "player") return;
 
@@ -274,91 +347,8 @@ void() target_fogblend_use = {
 	self.nextthink = time + self.delay;
 };
 
-void(entity cl, vector cTo, float dTo, float f) fog_blendSetFraction = {
-	float d;
-	//float s;
-	vector c;
 
-	d = lerpHermite(cl.fog_density2, dTo, f);
-	//s = lerpHermite(cl.skyfog_density2, cl.skyfog_density, f);
-	c = lerpVectorHermite(cl.fog_color2, cTo, f);
 
-	eprint(cl);
-	dprint("density: ");dprint(ftos(d));dprint("\n");
-	dprint("color: ");dprint(vtos(c));dprint("\n");
-	dprint("fraction: ");dprint(ftos(f));dprint("\n");
-
-	fog_set(cl, d, c);
-};
-
-/*
-================
-fog_blendTimeThink
-================
-*/
-
-vector(entity fblend) fog_blendGetColorByState = {
-	if (fblend.state)
-		return fblend.fog_color2;
-	else
-		return fblend.fog_color;
-};
-
-float(entity fblend) fog_blendGetDensityByState = {
-	if (fblend.state)
-		return fblend.fog_density2;
-	else
-		return fblend.fog_density;
-};
-
-void() fog_blendTimeThink = {
-	float f;
-	float dTo;
-	vector cTo;
-	
-	if (time >= self.pain_finished)	{
-		f = 1;
-	}
-	else {
-		self.nextthink = time + FOG_INTERVAL;
-		if (self.state && self.speed)
-			f = 1 - (self.pain_finished - time) / self.speed;
-		else if (self.speed2)
-			f = 1 - (self.pain_finished - time) / self.speed2;
-		else
-			f = 1;
-	}
-
-	dTo = fog_blendGetDensityByState(self);
-	cTo = fog_blendGetColorByState(self);
-
-	if (self.spawnflags & FOGBLEND_ALLCLIENTS) {
-		entity pl;
-		pl = nextent(world);
-		while (pl.flags & FL_CLIENT) {
-			if (pl.fogblend_entity == self) {
-				if (!(pl.fog_density2 == dTo && pl.fog_color2 == cTo))
-					fog_blendSetFraction(pl, cTo, dTo, f);
-
-				if (time >= self.pain_finished) 
-					pl.fogblend_entity = world;
-			}
-
-			pl = nextent(pl);
-		}
-	}
-	else {
-		if (self.enemy.fogblend_entity == self) {
-			if (!(self.enemy.fog_density2 == dTo && self.enemy.fog_color2 == cTo))
-				fog_blendSetFraction(self.enemy, cTo, dTo, f);
-
-			if (time >= self.pain_finished) 
-				self.enemy.fogblend_entity = 0;
-		}
-		
-	}
-
-};
 
 /*QUAKED target_fogblend (.5 .5 .2) (-8 -8 -8) (8 8 8) ONE_WAY REVERSE GLOBAL BLENDTO
 Blends the fog for a client.  activator's fog will be blended from "fog_color" and "fog_density"
@@ -394,7 +384,6 @@ Activator's fog will be blended over time from start to end values.
 */
 void() target_fogblend =
 {
-	//if (!SUB_ShouldSpawn()) return;
 	self.use = target_fogblend_use;
 	self.think = fog_blendTimeThink;
 
@@ -412,3 +401,64 @@ void() target_fogblend =
 	if (self.speed == -1) self.speed = 0;
 	if (self.speed2 == -1) self.speed2 = 0;
 }
+
+
+
+/**************************************
+
+trigger_fog
+
+**************************************/
+
+void() trigger_fog_touch = {
+	if(self.estate != STATE_ACTIVE)
+		return;
+
+	if (!(other.flags & FL_CLIENT))
+		return;
+
+	// fog already set to this value
+	if (other.fog_color == self.fog_color && other.fog_density == self.fog_density)
+		return;
+
+	// transition already occurring from this trigger
+	if (other.fogblend_entity.owner == self)
+		return;
+
+	fog_save_to_previous(other);
+	
+	// spawn a temp entity to control the transition for this client
+	entity controller;
+
+	controller = spawn();
+	controller.classname = "fog_controller";
+	controller.owner = self;
+	controller.enemy = other;
+	controller.speed2 = self.speed; // speed2 is used when state is 0
+	controller.fog_color = self.fog_color;
+	controller.fog_density = self.fog_density;
+
+	controller.pain_finished = time + self.delay + self.speed;
+
+	controller.think = fog_blendTimeThink;
+	controller.nextthink = time + controller.delay;
+
+	other.fogblend_entity = controller;
+};
+
+/*QUAKED trigger_fog (.5 .5 .2) ?
+Smoothly blends touching client's currently applied fog to "fog_color" and "fog_density" over time.
+
+"delay" - pause before beginning to blend.
+"speed" - time to spend blending, -1 for an instant change.
+
+CAVEATS:
+- will 'stuffcmd' 2 dozen times per frame so try not to make these huge
+- a bug in most quake engine ports will reset the eye position smoothing that happens when climbing stairs or riding a plat on every frame that a 'stuffcmd' is sent, so fog transitions during upwards motion will cause noticeable stuttering.
+*/
+
+void() trigger_fog = {
+	InitTrigger ();
+	self.touch = trigger_fog_touch;
+	if (!self.speed) self.speed = 1;
+};
