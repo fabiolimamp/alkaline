@@ -329,6 +329,7 @@ void() execute_changelevel =
 		other.solid = SOLID_NOT;
 		other.movetype = MOVETYPE_NONE;
 		other.modelindex = 0;
+		other.punchangle = '0 0 0';
 		setorigin (other, pos.origin);
 		fog_setFromEnt(other, pos);
 		// clear v_cshift on the next frame
