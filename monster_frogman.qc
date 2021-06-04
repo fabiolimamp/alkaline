@@ -28,7 +28,7 @@ void() frogmen_fire7 = [18, frogmen_fire8]{ai_face();};
 void() frogmen_fire8 = [17, frogmen_fire9]{harpoon();};
 void() frogmen_fire9 = [16, frogmen_fire10]{ai_face();};
 void() frogmen_fire10 = [15, frogmen_fire11]{ai_face();};
-void() frogmen_fire11 = [16, frogmen_fire12]{ai_face();sound(self, CHAN_VOICE, "frogman/shot3.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);};
+void() frogmen_fire11 = [16, frogmen_fire12]{ai_face();sound(self, CHAN_VOICE, "frogman/shot3.wav", 1, ATTN_NORM);};
 void() frogmen_fire12 = [17, frogmen_fire13]{ai_face();};
 void() frogmen_fire13 = [18, frogmen_fire14]{ai_face();};
 void() frogmen_fire14 = [19, frogman_down1]{ai_face();};
@@ -57,7 +57,7 @@ void() frogmen_stand1 = [19, frogmen_stand2]
 	ai_stand();
 	if (random() < 0.2 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
 	{
-		sound(self, CHAN_VOICE, "frogman/idle.wav", SPAWNFLAG_SUPERSPIKE, ATTN_IDLE);
+		sound(self, CHAN_VOICE, "frogman/idle.wav", 1, ATTN_IDLE);
 	}
 };
 void() frogmen_stand2 = [20, frogmen_stand3]{ai_stand();};
@@ -74,7 +74,7 @@ void() frogmen_walk1 = [0, frogmen_walk2]
 	ai_walk(SECRET_NO_SHOOT);
 	if (random() < 0.2)
 	{
-		sound(self, CHAN_VOICE, "frogman/idle.wav", SPAWNFLAG_SUPERSPIKE, ATTN_IDLE);
+		sound(self, CHAN_VOICE, "frogman/idle.wav", 1, ATTN_IDLE);
 	}
 };
 void() frogmen_walk2 = [1, frogmen_walk3]{ai_walk(SECRET_NO_SHOOT);};
@@ -91,10 +91,10 @@ void() frogmen_run1 = [0, frogmen_run2]
 	ai_face();
 	if (random() < 0.5)
 	{
-		sound(self, CHAN_VOICE, "frogman/swim.wav", SPAWNFLAG_SUPERSPIKE, ATTN_IDLE);
+		sound(self, CHAN_VOICE, "frogman/swim.wav", 1, ATTN_IDLE);
 	}
 };
-void() frogmen_run2 = [1, frogmen_run3]{ai_forward(20);sound(self, CHAN_VOICE, "frogman/swim.wav", SPAWNFLAG_SUPERSPIKE, ATTN_IDLE);};
+void() frogmen_run2 = [1, frogmen_run3]{ai_forward(20);sound(self, CHAN_VOICE, "frogman/swim.wav", 1, ATTN_IDLE);};
 void() frogmen_run3 = [2, frogmen_run4]{ai_forward(20);};
 void() frogmen_run4 = [3, frogmen_run5]{ai_forward(18);};
 void() frogmen_run5 = [4, frogmen_run6]{ai_run(22);};
@@ -102,7 +102,7 @@ void() frogmen_run6 = [5, frogmen_run7]{ai_run(19);};
 void() frogmen_run7 = [6, frogmen_run8]{ai_run(20);};
 void() frogmen_run8 = [7, frogmen_run1]{ai_run(19);};
 
-void() frogmen_death1 = [39, frogmen_death2]{sound(self, CHAN_VOICE, "frogman/death.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);};
+void() frogmen_death1 = [39, frogmen_death2]{sound(self, CHAN_VOICE, "frogman/death.wav", 1, ATTN_NORM);};
 void() frogmen_death2 = [40, frogmen_death3]{self.solid = SOLID_NOT;};
 void() frogmen_death3 = [41, frogmen_death4]{};
 void() frogmen_death4 = [42, frogmen_death5]{};
@@ -115,8 +115,8 @@ void() frogmen_death10 = [48, frogmen_death11]{};
 void() frogmen_death11 = [49, frogmen_death11]{};
 
 void() frogmen_pain1 = [28, frogmen_pain2]{};
-void() frogmen_pain2 = [29, frogmen_pain3]{ai_pain(SPAWNFLAG_SUPERSPIKE);};
-void() frogmen_pain3 = [30, frogmen_pain4]{ai_pain(SPAWNFLAG_SUPERSPIKE);};
+void() frogmen_pain2 = [29, frogmen_pain3]{ai_pain(1);};
+void() frogmen_pain3 = [30, frogmen_pain4]{ai_pain(1);};
 void() frogmen_pain4 = [31, frogmen_pain5]{};
 void() frogmen_pain5 = [32, frogmen_run1]{};
 
@@ -129,11 +129,11 @@ void(entity attacker, float damage) frogmen_pain =
 	self.pain_finished = time + AS_MELEE;
 	if (random() < 0.5)
 	{
-		sound(self, CHAN_VOICE, "frogman/pain1.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+		sound(self, CHAN_VOICE, "frogman/pain1.wav", 1, ATTN_NORM);
 	}
 	else
 	{
-		sound(self, CHAN_VOICE, "frogman/pain2.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+		sound(self, CHAN_VOICE, "frogman/pain2.wav", 1, ATTN_NORM);
 	}
 	frogmen_pain1();
 };
@@ -152,7 +152,7 @@ void() poon_bang =
 		remove(self);
 		return;
 	}
-	sound(self, CHAN_WEAPON, "frogman/impact.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+	sound(self, CHAN_WEAPON, "frogman/impact.wav", 1, ATTN_NORM);
 	if (other.health)
 	{
 		T_Damage(other, self, self.owner, SVC_INTERMISSION);
@@ -265,7 +265,7 @@ void() frogmen_die =
 	local float r;
 	if (self.health < -50)
 	{
-		sound(self, CHAN_VOICE, "player/udeath.wav", SPAWNFLAG_SUPERSPIKE, ATTN_NORM);
+		sound(self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead("progs/h_guard.mdl", self.health);
 		ThrowGib("progs/gib1.mdl", self.health);
 		ThrowGib("progs/gib2.mdl", self.health);

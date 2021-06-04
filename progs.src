@@ -60,7 +60,6 @@ turret.qc		// johnfitz
 
 hiprot.qc		// hipnotic
 
-rrp_defs.qc		// ijed (RRP)
 rrp_weapons.qc 		// ijed (RRP)
 schism.qc		// ijed (RRP)
 hunter.qc		// ijed (RRP)

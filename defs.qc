@@ -1049,3 +1049,5 @@ float door_setup_finished;
 void() LinkDoors2;
 
 .float estate; // entity state
+
+.float		dismemberment;	//used by hunter.qc
