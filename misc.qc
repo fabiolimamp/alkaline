@@ -251,7 +251,7 @@ void() target_autosave_use =
 		self.nextthink = 2;
 		return;
 	}
-	sound(activator, CHAN_VOICE, "misc/sav.wav", 1.0, ATTN_NORM);
+	sound(activator, CHAN_VOICE, "misc/sav.wav", 0.3, ATTN_NORM);
 	autosave(activator, self.message);
 }
 
