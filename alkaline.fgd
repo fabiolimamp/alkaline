@@ -2013,7 +2013,9 @@ Smoothly blends client's currently applied fog to this value over time.
 
 @PointClass base(Appearflags, Targetname, Target, FogShift) color(128 128 50) = target_fogblend : 
 "Target: Fog Blend
-Activator's fog will be blended over time from start to end values.
+Activator's fog will toggle between fog_color/fog_density and fog_color2/fog_density2 values, smoothly blending it over time.
+If you check the 'one-way' spawnflag, it'll only blend over to fog_color2/fog_density2 - unless you check the 'reverse' flag as well, which will make it blend only to fog_color/fog_density.
+Checking 'All clients' will affect all connected players.
 
 - will 'stuffcmd' 2 dozen times per frame so try not to make this take too long
 - a bug in most quake engine ports will reset the eye position smoothing that happens when climbing stairs or riding a plat on every frame that a 'stuffcmd' is sent, so fog transitions during upwards motion will cause noticeable stuttering." 
