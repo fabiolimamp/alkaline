@@ -321,6 +321,10 @@ void() sham_die =
 	sham_death1 ();
 };
 
+void() sham_sight = {
+	sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
+};
+
 //============================================================================
 
 
@@ -347,6 +351,7 @@ void(entity e) monster_shambler_start =
 	self.th_melee = sham_melee;
 	self.th_missile = sham_magic1;
 	self.th_pain = sham_pain;
+	self.th_sight = sham_sight;
 	
 	walkmonster_start();
 

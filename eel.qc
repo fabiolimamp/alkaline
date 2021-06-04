@@ -191,6 +191,10 @@ void() eel_pain5  =[	$eeldth3, eel_pain6 ] {};
 void() eel_pain6  =[	$eeldth2, eel_pain7 ] {};
 void() eel_pain7  =[	$eeldth1, eel_run1 ] {};
 
+void() eel_sight = {
+	sound (self, CHAN_VOICE, "eel/eelc5.wav", 1, ATTN_NORM);
+};
+
 /*QUAKED monster_eel (1 0 0) (-16 -16 -24) (16 16 32) Ambush
 */
 void(entity e) monster_eel_start =
@@ -215,6 +219,7 @@ void(entity e) monster_eel_start =
 	self.th_pain = eel_pain1;
 	self.th_melee = eel_attack1;
 	self.effects = EF_DIMLIGHT;
+	self.th_sight = eel_sight;
 
     self.delay = time + random() * 6;
     self.weapon = 0;

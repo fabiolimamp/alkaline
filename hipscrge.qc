@@ -459,6 +459,10 @@ void() ScourgeTriggerTouch =
 //   dprint("ouch\n");
    };
 
+void() scourge_sight = {
+   sound (self, CHAN_VOICE, "scourge/sight.wav", 1, ATTN_NORM);
+};
+
 /*QUAKED monster_scourge (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
 */
@@ -486,6 +490,7 @@ void(entity e) monster_scourge_start =
    self.th_die = scourge_die;
    self.th_melee = scourge_melee;
    self.th_missile = scourge_atk1;
+   self.th_sight = scourge_sight;
 //   self.th_turn = scourge_turn1;
    self.yaw_speed = 60;
    self.attack_state = AS_DODGING;

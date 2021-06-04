@@ -254,6 +254,9 @@ void() bam_die =
 
 //============================================================================
 
+void() bam_sight = {
+	sound (self, CHAN_VOICE, "bambler/ssight.wav", 1, ATTN_NORM);
+};
 
 /*QUAKED monster_bambler (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
@@ -277,6 +280,7 @@ void(entity e) monster_bambler_start =
 	self.th_die = bam_die;
 	self.th_melee = bam_melee;
 	self.th_pain = bam_pain;
+	self.th_sight = bam_sight;
 	
 	walkmonster_start();
 

@@ -265,6 +265,10 @@ void() axe_die =
 	axe_die1 ();
 };
 
+void() axe_sight = {
+	sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+};
+
 /*QUAKED monster_axegrunt (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
 void(entity e) monster_axegrunt_start =
@@ -288,6 +292,7 @@ void(entity e) monster_axegrunt_start =
 	self.th_melee = axe_atk;
 	self.th_pain = axe_pain;
 	self.th_die = axe_die;
+	self.th_sight = axe_sight;
 	
 	walkmonster_start ();
 

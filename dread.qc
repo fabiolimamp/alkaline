@@ -309,6 +309,18 @@ void() dread_die =
 	}
 };
 
+void() dread_sight = {
+	local float rsnd;
+	rsnd = rint(random() * 3);			
+	if (rsnd == 1)
+		sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
+	else if (rsnd == 2)
+		sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
+	else if (rsnd == 0)
+		sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
+}
 
 /*QUAKED monster_dreadnaught (1 0 0) (-16 -16 -24) (16 16 40) AMBUSH
 Dreadnaught, 150 health points.
@@ -336,6 +348,7 @@ void(entity e) monster_dreadnaught_start =
 	self.th_pain = dread_pain;
 	self.th_die = dread_die;
 	self.th_melee = dread_atk1;
+	self.th_sight = dread_sight;
 	
 	self.missle = world;
 	

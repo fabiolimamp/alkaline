@@ -1805,7 +1805,7 @@ void(entity targ, entity attacker) ClientObituary =
 				if (attacker.classname == "monster_zombie")
 					bprint (" joins the Zombies\n");
 				if (attacker.classname == "monster_arachnofloyd")
-					bprint (" was disintegrated by arachnofloyd\n");
+					bprint (" was disintegrated by an Arachnofloyd\n");
 
 				// new Zerstörer monster
 				if (attacker.classname == "monster_me")

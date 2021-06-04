@@ -476,6 +476,11 @@ float() RiderCheckAttack =
 	return FALSE;
 };
 
+
+void() rider_sight = {
+	sound (self, CHAN_VOICE, "rider/sight.wav", 1, ATTN_NORM);
+};
+
 void(entity e) monster_rider_start = 
 {
 	local entity oself;
@@ -530,6 +535,7 @@ void(entity e) monster_rider_start =
 	self.th_die = rider_die1;
 	self.th_missile = rider_missile_attack;
 	self.th_pain = rider_pain;
+	self.th_sight = rider_sight;
 	walkmonster_start();
 
 	self = oself;

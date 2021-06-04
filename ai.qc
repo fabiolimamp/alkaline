@@ -291,133 +291,6 @@ void() HuntTarget =
 	SUB_AttackFinished (1);	// wait a while before first attack
 };
 
-void() SightSound =
-{
-local float	rsnd;
-
-	if (self.classname == "monster_ogre")	
-		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_ogre_marksman")	
-		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
-	else if	(self.classname == "monster_ogreb")	//ijed
-		sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_knight" || self.classname == "monster_axegrunt")
-		sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM); //lunaran
-	else if (self.classname == "monster_super_enforcer")
-	{
-		rsnd = rint(random() * 3);			
-		if (rsnd == 1)
-			sound (self, CHAN_BODY, "lieut/target.wav", 1, ATTN_NORM);
-		else if (rsnd == 2)
-			sound (self, CHAN_BODY, "lieut/alert.wav", 1, ATTN_NORM);
-		else if (rsnd == 0)
-			sound (self, CHAN_BODY, "lieut/you.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_BODY, "lieut/objective.wav", 1, ATTN_NORM);
-	}
-	else if (self.classname == "monster_shambler")
-		sound (self, CHAN_VOICE, "shambler/ssight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_bambler")
-		sound (self, CHAN_VOICE, "bambler/ssight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_demon1")
-		sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_wizard")
-		sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_zombie")
-		sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_NORM);
-
-else if (self.classname == "monster_rider")
-		sound (self, CHAN_VOICE, "rider/sight.wav", 1, ATTN_NORM);
-else if (self.classname == "monster_frogman")
-		sound(self, CHAN_VOICE, "frogman/sight.wav", AS_STRAIGHT, ATTN_NORM);
-else if (self.classname == "monster_banshee")
-		if (random() < 0.5)
-		sound(self, CHAN_VOICE, "banshee/sight.wav", AS_STRAIGHT, ATTN_NORM);
-		else
-		sound(self, CHAN_VOICE, "banshee/sight2.wav", AS_STRAIGHT, ATTN_NORM);
-
-	else if (self.classname == "monster_dog")
-		sound (self, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_hell_knight")
-		sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_tarbaby")
-		sound (self, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_vomit")
-		sound (self, CHAN_VOICE, "vomitus/v_sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_eel")
-		sound (self, CHAN_VOICE, "eel/eelc5.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_enforcer")
-	{
-		rsnd = rint(random() * 3);			
-		if (rsnd == 1)
-			sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
-		else if (rsnd == 2)
-			sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
-		else if (rsnd == 0)
-			sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
-	}
-	else if (self.classname == "monster_army")
-		sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_nailgrunt")
-		sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_shalrath")
-		sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_me")
-	{
-		rsnd = rint(random() * 2);			
-		if (rsnd == 1)
-			sound (self, CHAN_VOICE, "me/mesight1.wav", 1, ATTN_NORM);
-		else if (rsnd == 2)
-			sound (self, CHAN_VOICE, "me/mesight2.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "me/mesight3.wav", 1, ATTN_NORM);
-	}
-
-	else if (self.classname == "monster_drone")
-		sound (self, CHAN_VOICE, "drone/drnwake.wav", 1, ATTN_NORM);
-
-	//johnfitz
-	else if (self.classname == "monster_floyd" && !(self.spawnflags & FLOYD_ASLEEP || self.spawnflags & FLOYD_ROLLING))
-		sound (self, CHAN_VOICE, "floyd/sight.wav", 1, ATTN_NORM);
-	else if (self.classname == "monster_dreadnaught")
-	{
-		rsnd = rint(random() * 3);			
-		if (rsnd == 1)
-			sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
-		else if (rsnd == 2)
-			sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
-		else if (rsnd == 0)
-			sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
-	}
-	else if (self.classname == "monster_centurion")
-	{
-		rsnd = rint(random() * 3);			
-		if (rsnd == 1)
-			sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
-		else if (rsnd == 2)
-			sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
-		else if (rsnd == 0)
-			sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
-	}
-	//johnfitz
-		else if (self.classname == "monster_hunter")
-			sound (self, CHAN_VOICE, "hunter/sight.wav", 1, ATTN_NORM);			//ijed
-//MED
-   		else if (self.classname == "monster_scourge")
-      			sound (self, CHAN_VOICE, "scourge/sight.wav", 1, ATTN_NORM);
-//MED
-   		else if (self.classname == "monster_armagon")
-      			sound (self, CHAN_VOICE, "armagon/sight.wav", 1, 0.1);
-				
-   		else if (self.classname == "monster_arachnofloyd")
-      			sound (self, CHAN_VOICE, "arachnofloyd/sight.wav", 1, ATTN_NORM);				
-};
 
 void() FoundTarget =
 {
@@ -429,7 +302,11 @@ void() FoundTarget =
 	
 	self.show_hostile = time + 1;		// wake up other monsters
 
-	SightSound ();
+	// If you're looking for the bizarre SightSound function,
+	// it was removed in favor of each monster having its own
+	// sight function, stored in the monster's "th_sight" field,
+	// and called here.
+	if (self.th_sight) self.th_sight();
 	HuntTarget ();
 };
 

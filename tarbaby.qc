@@ -183,6 +183,10 @@ void()	tbaby_die2	=[	$exp,		tbaby_run1	]
 	BecomeExplosion ();
 };
 
+void() tbaby_sight = {
+	sound (self, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
+};
+
 //=============================================================================
 
 
@@ -209,6 +213,7 @@ void(entity e) monster_tarbaby_start =
 	self.th_missile = tbaby_jump1;
 	self.th_melee = tbaby_jump1;
 	self.th_die = tbaby_die1;
+	self.th_sight = tbaby_sight;
 	
 	walkmonster_start ();
 

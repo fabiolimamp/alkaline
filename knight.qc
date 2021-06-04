@@ -231,6 +231,9 @@ void() knight_die =
 		knight_dieb1 ();
 };
 
+void() knight_sight = {
+	sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM); //lunaran
+};
 
 /*QUAKED monster_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
@@ -255,6 +258,7 @@ void(entity e) monster_knight_start =
 	self.th_melee = knight_atk1;
 	self.th_pain = knight_pain;
 	self.th_die = knight_die;
+	self.th_sight = knight_sight;
 	
 	walkmonster_start ();
 

@@ -876,6 +876,9 @@ float()  ArmagonCheckAttack =
 	return FALSE;
 };
 
+void() armagon_sight = {
+   sound (self, CHAN_VOICE, "armagon/sight.wav", 1, 0.1);
+}
 
 /*QUAKED monster_armagon (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
@@ -943,6 +946,7 @@ void(entity e) monster_armagon_start =
    self.th_missile = armagon_missile_attack;
    self.th_melee = armagon_stop1;
    self.th_pain = armagon_pain;
+   self.th_sight = armagon_sight;
    walkmonster_start();
 
    self = oself;

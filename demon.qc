@@ -173,7 +173,9 @@ void() Demon_MeleeAttack =
 	demon1_atta1 ();
 };
 
-
+void() demon1_sight = {
+	sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
+};
 /*QUAKED monster_demon1 (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
 */
@@ -199,6 +201,7 @@ void(entity e) monster_demon1_start =
 	self.th_melee = Demon_MeleeAttack;		// one of two attacks
 	self.th_missile = demon1_jump1;			// jump attack
 	self.th_pain = demon1_pain;
+	self.th_sight = demon1_sight;
 		
 	walkmonster_start();
 

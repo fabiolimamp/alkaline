@@ -419,6 +419,11 @@ float()	OgreBCheckAttack =
 };
 
 
+
+void() ogreb_sight = {
+	sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
+};
+
 /*QUAKED monster_ogreb (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
 */
@@ -445,6 +450,7 @@ void(entity e) monster_ogreb_start =
 	self.th_melee = ogreb_swing1;
 	self.th_missile = ogreb_smash1; 
 	self.th_pain = ogreb_pain;
+	self.th_sight = ogreb_sight;
 	
 	walkmonster_start();
 

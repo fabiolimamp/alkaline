@@ -581,6 +581,17 @@ void() menf_die =
 	}
 };
 
+void() menf_sight = {
+	local float rsnd;
+	rsnd = rint(random() * 2);			
+	if (rsnd == 1)
+		sound (self, CHAN_VOICE, "me/mesight1.wav", 1, ATTN_NORM);
+	else if (rsnd == 2)
+		sound (self, CHAN_VOICE, "me/mesight2.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_VOICE, "me/mesight3.wav", 1, ATTN_NORM);
+};
+
 /*QUAKED monster_me (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
 */
@@ -597,6 +608,7 @@ void(entity e) monster_me_start =
 	self.th_pain = menf_pain;
 	self.th_die = menf_die;
 	self.th_missile = megaenforcer_fire;
+	self.th_sight = menf_sight;
 
 
 	self.solid = SOLID_SLIDEBOX;

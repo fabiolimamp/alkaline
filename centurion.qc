@@ -441,6 +441,20 @@ void() cent_die =
 };
 
 
+void() cent_sight = {
+	local float rsnd;
+	rsnd = rint(random() * 3);			
+	if (rsnd == 1)
+		sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
+	else if (rsnd == 2)
+		sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
+	else if (rsnd == 0)
+		sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
+	
+};
+
 /*QUAKED monster_centurion (1 0 0) (-32 -32 -24) (32 32 64) AMBUSH
 Centurion, 150 health points.
 
@@ -468,6 +482,7 @@ void(entity e) monster_centurion_start =
 	self.th_pain = cent_pain;
 	self.th_die = cent_die;
 	self.th_missile = cent_atk1;
+	self.th_sight = cent_sight;
 	
 	if (!self.yaw_speed)
 		self.yaw_speed = 20; //for some reason flymonsters default to 10 instead of 20

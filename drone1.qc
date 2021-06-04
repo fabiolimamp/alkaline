@@ -347,7 +347,9 @@ void()  DroneTouch =
 
 };
 
-
+void() drn_sight = {
+	sound (self, CHAN_VOICE, "drone/drnwake.wav", 1, ATTN_NORM);
+};
 
 /*QUAKED monster_drone (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 Note ambushing Drone stays silent unless activated.
@@ -376,6 +378,7 @@ void(entity e) monster_drone_start =
 	self.th_missile = drn_atta1;
 	self.th_pain = drn_pain;
 	self.th_die = drn_die1;
+	self.th_sight = drn_sight;
 	self.ammo_shells = 0; // use to avoid misfiring too much
 		
 	flymonster_start ();

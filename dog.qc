@@ -321,6 +321,9 @@ float()	DogCheckAttack =
 	return FALSE;
 };
 
+void() dog_sight = {
+	sound (self, CHAN_VOICE, "dog/dsight.wav", 1, ATTN_NORM);
+};
 
 //===========================================================================
 
@@ -350,6 +353,7 @@ void(entity e) monster_dog_start =
 	self.th_die = dog_die;
 	self.th_melee = dog_atta1;
 	self.th_missile = dog_leap1;
+	self.th_sight = dog_sight;
 
 	walkmonster_start();
 

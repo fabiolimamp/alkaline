@@ -1058,6 +1058,13 @@ float() BansheeCheckAttack =
 };
 
 
+void() banshee_sight = {
+	if (random() < 0.5)
+		sound(self, CHAN_VOICE, "banshee/sight.wav", AS_STRAIGHT, ATTN_NORM);
+	else
+		sound(self, CHAN_VOICE, "banshee/sight2.wav", AS_STRAIGHT, ATTN_NORM);
+};
+
 
 void(entity e) monster_banshee_start = 
 {
@@ -1117,6 +1124,7 @@ void(entity e) monster_banshee_start =
 	self.th_missile = banshee_missile_attack;
 	self.th_melee = ban_stomp1;
 	self.th_pain = banshee_pain;
+	self.th_sight = banshee_sight;
 	walkmonster_start();
 
 	self = oself;

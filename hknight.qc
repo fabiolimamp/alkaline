@@ -394,6 +394,10 @@ void() hknight_melee =
 	}
 };
 
+void() hknight_sight = {
+	sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+};
+
 /*QUAKED monster_hell_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
 void(entity e) monster_hell_knight_start =
@@ -418,6 +422,7 @@ void(entity e) monster_hell_knight_start =
 	self.th_missile = hknight_magicc1;
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
+	self.th_sight = hknight_sight;
 	
 	walkmonster_start ();
 

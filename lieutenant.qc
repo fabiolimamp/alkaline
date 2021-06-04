@@ -215,7 +215,18 @@ void() super_enforcer_die =
 	lth_fdie1 ();
 };
 
-
+void() lth_sight = {
+	local float rsnd;
+	rsnd = rint(random() * 3);			
+	if (rsnd == 1)
+		sound (self, CHAN_BODY, "lieut/target.wav", 1, ATTN_NORM);
+	else if (rsnd == 2)
+		sound (self, CHAN_BODY, "lieut/alert.wav", 1, ATTN_NORM);
+	else if (rsnd == 0)
+		sound (self, CHAN_BODY, "lieut/you.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_BODY, "lieut/objective.wav", 1, ATTN_NORM);
+};
 /*QUAKED monster_enforcer (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 
 */
@@ -246,6 +257,7 @@ void(entity e) monster_super_enforcer_start =
 	self.th_pain 	= super_enforcer_pain;
 	self.th_die 	= super_enforcer_die;
 	self.th_missile = lth_atk1;
+	self.th_sight 	= lth_sight;
 
 	walkmonster_start();
 

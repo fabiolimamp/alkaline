@@ -790,6 +790,10 @@ void()	hunter_check_fire	=
 		hunter_fire1();
 };
 
+void() hunter_sight = {
+	sound (self, CHAN_VOICE, "hunter/sight.wav", 1, ATTN_NORM);
+};
+
 /*QUAKED monster_hunter (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
 
@@ -818,6 +822,7 @@ void(entity e) monster_hunter_start =
 	self.th_pain = hunter_pain;
 	self.th_die = hunter_death;
     self.th_missile = hunter_check_fire;	
+    self.th_sight = hunter_sight;
 	
 	self.dismemberment = 0;	//starts off whole
 	

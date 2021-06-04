@@ -295,6 +295,11 @@ void() frogmen_die =
 	}
 };
 
+
+void() frogmen_sight = {
+	sound(self, CHAN_VOICE, "frogman/sight.wav", AS_STRAIGHT, ATTN_NORM);
+};
+
 void(entity e) monster_frogman_start = 
 {
 	local entity oself;
@@ -318,6 +323,7 @@ void(entity e) monster_frogman_start =
 	self.th_pain = frogmen_pain;
 	self.th_missile = frogmen_fire;
 	self.th_melee = frogmen_fire1;
+	self.th_sight = frogmen_sight;
 
 	swimmonster_start();
 

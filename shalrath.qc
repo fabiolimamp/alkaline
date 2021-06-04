@@ -196,6 +196,11 @@ void() ShalMissileTouch =
 	s_explode1 ();
 };
 
+void() shal_sight = {
+	sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
+};
+
+
 //=================================================================
 
 /*QUAKED monster_shalrath (1 0 0) (-32 -32 -24) (32 32 48) Ambush
@@ -220,6 +225,7 @@ void(entity e) monster_shalrath_start =
 	self.th_die = shalrath_die;
 	self.th_pain = shalrath_pain;
 	self.th_missile = shal_attack1;
+	self.th_sight = shal_sight;
 
 	self.think = walkmonster_start;
 	self.nextthink = time + 0.1 + random ()*0.1;	

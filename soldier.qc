@@ -280,6 +280,9 @@ void() army_die =
 		army_cdie1 ();
 };
 
+void() army_sight = {
+	sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
+}
 
 /*QUAKED monster_army (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
@@ -305,6 +308,7 @@ void(entity e) monster_army_start =
 	self.th_pain = army_pain;
 	self.th_die = army_die;
     self.ammo_shells = 5;
+    self.th_sight = army_sight;
 	
 	walkmonster_start ();
 
@@ -334,7 +338,8 @@ void(entity e) monster_nailgrunt_start =
     self.ammo_nails = 5;
 	self.th_pain = army_pain;
 	self.th_die = army_die;
-
+	self.th_sight = army_sight;
+	
 	walkmonster_start ();
 
 	self = oself;

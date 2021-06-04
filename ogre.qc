@@ -583,6 +583,9 @@ void() ogre_melee =
 		ogre_swing1 ();
 };
 
+void() ogre_sight = {
+	sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
+};
 
 /*QUAKED monster_ogre (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
@@ -609,6 +612,7 @@ void(entity e) monster_ogre_start =
 	self.th_melee = ogre_melee;
 	self.th_missile = ogre_nail1;
 	self.th_pain = ogre_pain;
+	self.th_sight = ogre_sight;
 	
 	walkmonster_start();
 
@@ -673,6 +677,7 @@ void(entity e) monster_ogre_marksman_start =
 	self.th_melee = ogre_melee;
 	self.th_missile = ogre_rock1;
 	self.th_pain = ogre_pain;
+	self.th_sight = ogre_sight;
 	
 	walkmonster_start();
 

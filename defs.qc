@@ -558,6 +558,7 @@ nosave float gamestarted;
 .void()		th_melee;
 .void(entity attacker, float damage)		th_pain;
 .void()		th_die;
+.void()		th_sight;
 
 .void(entity mon)	start_function;
 

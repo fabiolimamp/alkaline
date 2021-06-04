@@ -475,9 +475,9 @@ float() arfCheckAttack =
 	return TRUE;
 };
 
-
-
-
+void() arf_sight = {
+	sound (self, CHAN_VOICE, "arachnofloyd/sight.wav", 1, ATTN_NORM);
+};
 
 
 /*QUAKED monster_arachnofloyd (1 0 0) (-32 -32 -24) (32 32 48) Ambush
@@ -505,6 +505,7 @@ void(entity e) monster_arachnofloyd_start =
 	self.th_pain = arf_pain;
 	self.th_missile = arf_light1;
 	self.th_melee = arf_leap1;
+	self.th_sight = arf_sight;
 
 
 	self.think = walkmonster_start;
