@@ -1,44 +1,43 @@
 void() probe_pulsetouch;
 void() probe_stand_attack;
-void(float ofs, float turn) Probe_laser_fire = 
-{
+
+void(float ofs, float turn) Probe_laser_fire = {
 	local vector src;
 	local vector vec;
 	local vector targ;
 	local vector ang;
 	local entity missile;
 	local float dist;
+
 	ang = self.angles;
 	ang_y = ang_y + self.fixangle;
+	
 	if (turn == 1)
-	{
 		ang_y = ang_y + 165;
-	}
-	else
-	{
-		if (turn == 2)
-		{
-			ang_y = ang_y - 165;
-		}
-	}
+	else if (turn == 2)
+		ang_y = ang_y - 165;
+
 	makevectors(ang);
 	src = self.origin + '0 0 -10' + v_right * ofs + v_forward;
 	targ = self.enemy.origin + self.enemy.view_ofs;
-	if (skill != 0)
-	{
+	
+	if (skill != 0)	{
 		dist = vlen(targ - src);
 		targ = targ + self.enemy.velocity * (dist / 1000);
 	}
+
 	vec = targ - src;
 	vec = normalize(vec);
 	dist = vec * v_forward;
-	if (dist < self.worldtype)
-	{
+
+	if (dist < self.worldtype) {
 		vec = v_forward;
 	}
+
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	sound(self, CHAN_WEAPON, "probe/shoot.wav", 1, ATTN_NORM);
 	self.punchangle_x = -2;
+
 	missile = spawn();
 	missile.owner = self;
 	missile.movetype = MOVETYPE_FLYMISSILE;
@@ -49,6 +48,7 @@ void(float ofs, float turn) Probe_laser_fire =
 	missile.touch = probe_pulsetouch;
 	missile.nextthink = time + 5;
 	missile.think = SUB_Remove;
+	missile.flags = missile.flags | FL_PROJECTILE;
 	setmodel(missile, "progs/laser.mdl");
 	setsize(missile, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(missile, src);
@@ -97,27 +97,52 @@ void(float angdelta, float delta) probe_turn =
 		self.fixangle = delta;
 };
 
-void() probe_sound = {sound(self, 6, "probe/footfall.wav", 1, ATTN_PROBE);};
-void() probe_servo = {sound(self, 7, "probe/servo.wav", 0.5, ATTN_PROBE);};
+/************************
+ Sound functions
+ ************************/
+
+void() probe_sound = {sound(self, 6, "probe/footfall.wav", 1, ATTN_NORM);};
+void() probe_servo = {sound(self, 7, "probe/servo.wav", 0.5, ATTN_NORM);};
+
+void() probe_idle_sound = {
+	if (!(self.spawnflags & MONSTER_NOIDLESOUND)) return;
+
+	local float r;
+	r = random();
+	if (r < 0.5)		sound(self, CHAN_VOICE, "probe/idle1.wav", 1, ATTN_IDLE);			
+	else				sound(self, CHAN_VOICE, "probe/idle2.wav", 1, ATTN_IDLE);
+	
+}
 
 void() probe_walk_sound = {
-		if (self.bubble_count == 0) probe_servo();
-		self.bubble_count++;
-		if (self.bubble_count > 18) self.bubble_count = 0;
+	if (self.bubble_count == 0) probe_servo();
+	self.bubble_count++;
+	if (self.bubble_count > 18) self.bubble_count = 0;
 };
 
 void() probe_angry_sound = {
-		if (self.bubble_count == 1) probe_sound();
-		else if (self.bubble_count == 3) probe_servo();
+	
+	//if (self.bubble_count == 1) probe_sound();
+	//else if (self.bubble_count == 3) probe_servo();
+	if (self.bubble_count == 18) {
+		if (random() < 0.5)
+			sound(self, CHAN_VOICE, "probe/idle3.wav", 1, ATTN_NORM);
+		else
+			sound(self, CHAN_VOICE, "probe/idle4.wav", 1, ATTN_NORM);
+	}
 
-		self.bubble_count++;
-		if (self.bubble_count > 3) self.bubble_count = 0;
+	self.bubble_count++;
+	if (self.bubble_count > 18) self.bubble_count = 0;
 };
+
+/************************
+ Think functions
+ ************************/
+
 
 void() probe_think = {
 	local float delta;
 	local float angdelta;
-	local float r;
 
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.angles = self.angles;
@@ -146,20 +171,14 @@ void() probe_think = {
 
 	if (time > self.super_time && !self.enemy)	{
 		self.super_time = time + 3;
-		if (random() < 0.5 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))	{
-			r = random();
-			if (r < 0.25)		sound(self, CHAN_VOICE, "probe/idle1.wav", 1, ATTN_PROBE);			
-			else if (r < 0.5)	sound(self, CHAN_VOICE, "probe/idle2.wav", 1, ATTN_PROBE);
-			else if (r < 0.75)	sound(self, CHAN_VOICE, "probe/idle3.wav", 1, ATTN_PROBE);
-			else				sound(self, CHAN_VOICE, "probe/idle4.wav", 1, ATTN_PROBE);
-		}
+		if (random() < 0.5 && !self.enemy)
+			probe_idle_sound();
 	}
 };
 
 void() probe_walkthink = {
 	local float delta;
 	local float angdelta;
-	local float r;
 
 	probe_walk_sound();
 
@@ -178,18 +197,15 @@ void() probe_walkthink = {
 
 	if (time > self.super_time)	{
 		self.super_time = time + 3;
-		if (random() < 0.5 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy)) {
-			r = random();
-			if (r < 0.25)		sound(self, CHAN_VOICE, "probe/idle1.wav", 1, ATTN_PROBE);			
-			else if (r < 0.5)	sound(self, CHAN_VOICE, "probe/idle2.wav", 1, ATTN_PROBE);
-			else if (r < 0.75)	sound(self, CHAN_VOICE, "probe/idle3.wav", 1, ATTN_PROBE);
-			else				sound(self, CHAN_VOICE, "probe/idle4.wav", 1, ATTN_PROBE);
-		}
+		if (random() < 0.5 && !self.enemy) 
+			probe_idle_sound();	
 	}
 
 };
 
-
+/************************
+ Animation
+ ************************/
 
 void() probe_stand1 = 	[0, probe_stand2] 	{ai_stand(); probe_think(); };
 void() probe_stand2 = 	[1, probe_stand3] 	{ai_stand(); probe_think(); };
@@ -204,6 +220,8 @@ void() probe_stand10 =	[9, probe_stand11] 	{ai_stand(); probe_think(); };
 void() probe_stand11 = 	[10, probe_stand12] {ai_stand(); probe_think(); };
 void() probe_stand12 = 	[11, probe_stand13] {ai_stand(); probe_think(); };
 void() probe_stand13 = 	[12, probe_stand1] 	{ai_stand(); probe_think(); };
+
+
 
 
 void() probe_walk1 = 	[0, probe_walk2]	{
@@ -225,9 +243,8 @@ void() probe_walk12 =	[11, probe_walk13]	{ai_walk(10); probe_walkthink(); };
 void() probe_walk13 =	[12, probe_walk1]	{ai_walk(10); probe_walkthink(); };
 
 
-void() probe_run1 = [0, probe_run2]
-{
-	self.yaw_speed = 8;
+
+void() probe_run_frame = {
 	probe_angry_sound();
 	ChangeYaw();
 	
@@ -235,113 +252,22 @@ void() probe_run1 = [0, probe_run2]
 	probe_think();
 };
 
-void() probe_run2 = [1, probe_run3]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	ai_run(10);
-	probe_think();
-};
+void() probe_run1 = 	[0, probe_run2] 	{self.yaw_speed = 8; probe_run_frame();};
+void() probe_run2 =		[1, probe_run3] 	{probe_run_frame();};
+void() probe_run3 = 	[2, probe_run4] 	{probe_run_frame();};
+void() probe_run4 = 	[3, probe_run5] 	{probe_run_frame();};
+void() probe_run5 = 	[4, probe_run6] 	{probe_run_frame();};
+void() probe_run6 = 	[5, probe_run7]		{probe_run_frame();};
+void() probe_run7 = 	[6, probe_run8] 	{probe_run_frame();};
+void() probe_run8 = 	[7, probe_run9] 	{probe_run_frame();};
+void() probe_run9 = 	[8, probe_run10] 	{probe_run_frame();};
+void() probe_run10 = 	[9, probe_run11] 	{probe_run_frame();};
+void() probe_run11 = 	[10, probe_run12] 	{probe_run_frame();};
+void() probe_run12 = 	[11, probe_run13] 	{probe_run_frame();};
+void() probe_run13 = 	[12, probe_run1] 	{probe_run_frame();
 
-void() probe_run3 = [2, probe_run4]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run4 = [3, probe_run5]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run5 = [4, probe_run6]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run6 = [5, probe_run7]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run7 = [6, probe_run8]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run8 = [7, probe_run9]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run9 = [8, probe_run10]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run10 = [9, probe_run11]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run11 = [10, probe_run12]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run12 = [11, probe_run13]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	
-	ai_run(10);
-	probe_think();
-};
-
-void() probe_run13 = [12, probe_run1]
-{
 	local float delta;
-
-	probe_angry_sound();
-	ChangeYaw();
 	
-	ai_run(10);
-	probe_think();
 	if (self.cnt == 1 && time > self.attack_finished)
 	{
 		delta = self.ideal_yaw - self.angles_y;
@@ -365,138 +291,45 @@ void() probe_run13 = [12, probe_run1]
 
 
 
-void() probe_watk1 = [13, probe_watk2]
-{
+void() probe_watk_frame = {
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	probe_think();
-};
+}
 
-void() probe_watk2 = [14, probe_watk3]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-	Probe_laser_fire(-30, 0);
-};
+void() probe_watk1 = 	[13, probe_watk2] 	{probe_watk_frame(); probe_servo();};
+void() probe_watk2 = 	[14, probe_watk3] 	{probe_watk_frame(); Probe_laser_fire(-30, 0);};
+void() probe_watk3 = 	[15, probe_watk4] 	{probe_watk_frame(); };
+void() probe_watk4 = 	[16, probe_watk5] 	{probe_watk_frame();};
+void() probe_watk5 = 	[17, probe_watk6] 	{probe_watk_frame(); Probe_laser_fire(30, 0); };
+void() probe_watk6 = 	[18, probe_watk7] 	{probe_watk_frame(); probe_sound();};
+void() probe_watk7 = 	[19, probe_watk8] 	{probe_watk_frame();};
+void() probe_watk8 = 	[20, probe_watk9] 	{probe_watk_frame();};
+void() probe_watk9 = 	[21, probe_watk10] 	{probe_watk_frame();};
+void() probe_watk10 = 	[22, probe_run1] 	{probe_watk_frame(); SUB_AttackFinished(1);};
 
-void() probe_watk3 = [15, probe_watk4]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-};
 
-void() probe_watk4 = [16, probe_watk5]
-{
-	probe_angry_sound();
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-};
 
-void() probe_watk5 = [17, probe_watk6]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-	Probe_laser_fire(30, 0);
-};
+void() probe_plant1 = [0, probe_plant1] {probe_stand_attack(); probe_think();};
 
-void() probe_watk6 = [18, probe_watk7]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-};
 
-void() probe_watk7 = [19, probe_watk8]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-};
 
-void() probe_watk8 = [20, probe_watk9]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-};
+void() probe_stop1 = [20, probe_stop2] {probe_think();};
+void() probe_stop2 = [21, probe_stop3] {probe_think();};
+void() probe_stop3 = [22, probe_plant1] {probe_sound();	probe_think();};
 
-void() probe_watk9 = [21, probe_watk10]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-};
 
-void() probe_watk10 = [22, probe_run1]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	probe_think();
-	SUB_AttackFinished(1);
-};
 
-void() probe_plant1 = [0, probe_plant1]
-{
-	probe_stand_attack();
-	probe_think();
-};
+void() probe_satk1 = [23, probe_satk2] {probe_think(); probe_servo();};
+void() probe_satk2 = [24, probe_satk3] {probe_think(); Probe_laser_fire(-18, 0); Probe_laser_fire(18, 0);};
+void() probe_satk3 = [25, probe_satk4] {probe_think(); probe_sound();};
+void() probe_satk4 = [26, probe_satk5] {probe_think();};
+void() probe_satk5 = [27, probe_satk6] {probe_think();};
+void() probe_satk6 = [28, probe_plant1] {probe_think(); SUB_AttackFinished(0.3);};
 
-void() probe_stop1 = [20, probe_stop2]
-{
-	probe_think();
-};
 
-void() probe_stop2 = [21, probe_stop3]
-{
-	probe_think();
-};
 
-void() probe_stop3 = [22, probe_plant1]
-{
-	probe_sound();
-	probe_think();
-};
-
-void() probe_satk1 = [23, probe_satk2]
-{
-	probe_think();
-};
-
-void() probe_satk2 = [24, probe_satk3]
-{
-	probe_think();
-	Probe_laser_fire(-18, 0);
-	Probe_laser_fire(18, 0);
-};
-
-void() probe_satk3 = [25, probe_satk4]
-{
-	probe_think();
-};
-
-void() probe_satk4 = [26, probe_satk5]
-{
-	probe_think();
-};
-
-void() probe_satk5 = [27, probe_satk6]
-{
-	probe_think();
-};
-
-void() probe_satk6 = [28, probe_plant1]
-{
-	probe_think();
-	SUB_AttackFinished(0.3);
-};
-
-void() bodydie =
-{
+void() bodydie = {
 	self.health = self.trigger_field.health;
 	self.origin = self.origin + '0 0 -32';
 	FuelTankExplode();
@@ -504,12 +337,10 @@ void() bodydie =
 	ThrowGib ("progs/progib2.mdl", self.health);
 	ThrowGib ("progs/progib3.mdl", self.health);
 	SUB_Remove();
-
 };
 
 
-void() probe_die1 = [13, probe_die2]
-{
+void() probe_die1 = [13, probe_die2] {
 	probe_think();
 	ai_run_slide();
 	ai_run_slide();
@@ -517,76 +348,58 @@ void() probe_die1 = [13, probe_die2]
 		
 };
 
-void() probe_die2 = [14, probe_die3]
-{
+void() probe_die2 = [14, probe_die3] {
 	probe_think();
 	sound(self, CHAN_AUTO, "probe/death.wav", 1, ATTN_NORM);
 	self.nextthink = time + 0.2;
 	ai_run_slide();
 };
 
-void() probe_die3 = [15, SUB_Remove]
-
-{	self.trigger_field.trigger_field = self;
+void() probe_die3 = [15, SUB_Remove] {
+	self.trigger_field.trigger_field = self;
 	self.trigger_field.think = bodydie;
 	self.trigger_field.nextthink = time + 0.1;
 	self.trigger_field.frame = self.frame;
 	FuelTankExplode();	
 };
 
-void(entity attacker, float damage) probe_pain = 
-{
+void(entity attacker, float damage) probe_pain = {
 	if (self.health <= 0)
-	{
 		return;
-	}
 	if (damage < 25)
-	{
 		return;
-	}
 	if (self.pain_finished > time)
-	{
 		return;
-	}
 	self.pain_finished = time + 2;
-	sound(self, CHAN_VOICE, "probe/pain.wav", 1, ATTN_NORM);
+	sound(self, CHAN_AUTO, "probe/pain.wav", 1, ATTN_NORM);
 };
 
-void() probe_missile_attack = 
-{
-	
-	local float n;
-	n = random();
-	if (n < PROBE_VOLUME)
-	{
+void() probe_missile_attack = {
+	if (random() < 0.5)
 		probe_watk1();
-	}
 	else
-	{
 		probe_satk1();
-	}
 };
 
-void() probe_stand_attack = 
-{
+void() probe_stand_attack = {
 	
-	local vector spot1;
-	local vector spot2;
+	local vector spot1, spot2;
+
 	spot1 = self.origin + self.view_ofs;
 	spot2 = self.enemy.origin + self.enemy.view_ofs;
 	traceline(spot1, spot2, 0, self);
-	if (trace_ent != self.enemy)
-	{
+
+	if (trace_ent != self.enemy) {
 		probe_run1();
 		return;
 	}
-	if (trace_inopen && trace_inwater)
-	{
+	
+	if (trace_inopen && trace_inwater) {
 		probe_run1();
 		return;
 	}
-	if (time < self.attack_finished)
-	{
+
+	if (time < self.attack_finished) {
 		return;
 	}
 	self.state = 0;
@@ -597,52 +410,55 @@ void() probe_stand_attack =
 	}
 	
 	probe_satk1();
-	if (self.cnt == 1)
-	{
+	if (self.cnt == 1) {
 		probe_run1();
 		return;
 	}
 };
 
-float() ProbeCheckAttack = 
-{
+float() ProbeCheckAttack = {
 	local vector spot1;
 	local vector spot2;
 	local entity targ;
 	local float ang;
 	local float delta;
 	local float dist;
+	
 	self.lefty = 0;
 	targ = self.enemy;
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
+
 	traceline(spot1, spot2, 0, self);
+
 	if (trace_inopen && trace_inwater)
-	{
 		return 0;
-	}
+
 	if (time < self.attack_finished)
-	{
 		return 0;
-	}
+
 	ang = self.angles_y + self.fixangle;
 	delta = self.ideal_yaw - ang;
 	dist = vlen(spot2 - spot1);
+
 	if (fabs(delta) > 10 && dist > 200 || self.enemy.classname != "player")
-	{
 		return 0;
-	}
-	if (dist < 400)
-	{
+	
+	if (dist < 400)	{
 		self.th_melee();
 		return 1;
 	}
+
 	self.lefty = 1;
+
 	return 0;
 };
 
-void(entity e) monster_probe_start = 
-{
+void() probe_sight = {
+	sound (self, CHAN_AUTO, "probe/sight.wav", 1, ATTN_NORM);
+}
+
+void(entity e) monster_probe_start = {
 	local entity oself;
 
 	local entity body;
@@ -686,6 +502,7 @@ void(entity e) monster_probe_start =
 	self.th_missile = probe_missile_attack;
 	self.th_melee = probe_missile_attack;
 	self.th_pain = probe_pain;
+	self.th_sight = probe_sight;
 
 	flymonster_start();
 
@@ -697,8 +514,7 @@ void() monster_probe_spawner = {
 };
 
 
-void() monster_probe = 
-{
+void() monster_probe = {
 	//local float sk;
 	if (deathmatch)	{
 		remove(self);
@@ -712,6 +528,7 @@ void() monster_probe =
 	precache_model("progs/probedom.mdl");
 	precache_model("progs/d_explod.spr");
 	precache_model("progs/laser.mdl");
+	
 	precache_sound("probe/shoot.wav");
 	precache_sound("probe/footfall.wav");
 	precache_sound("probe/servo.wav");
