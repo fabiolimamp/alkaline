@@ -167,9 +167,9 @@ void() rider_sound_idle =
 	if (random() < 0.2)
 	{
 		if (random() < 0.5)
-			sound(self, CHAN_WEAPON, "rider/idle.wav", 1, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "rider/idle.wav", 1, ATTN_IDLE);
 		else
-			sound(self, CHAN_WEAPON, "rider/idle2.wav", 1, ATTN_NORM);
+			sound(self, CHAN_WEAPON, "rider/idle2.wav", 1, ATTN_IDLE);
 	}
 };
 

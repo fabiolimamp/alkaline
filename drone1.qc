@@ -129,7 +129,7 @@ void()  drn_stand4      =[      $idl4,                drn_stand5      ]
 	if (self.spawnflags & 1)
 		drn_stand5();
 	if (random() < 0.1 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
-		sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_NORM);
+		sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_IDLE);
 };
 void()  drn_stand5      =[      $idl5,                drn_stand6      ] {ai_stand();};
 void()  drn_stand6      =[      $idl6,                drn_stand7      ] {ai_stand();};
@@ -144,9 +144,9 @@ void()  drn_stand10     =[      $idl1,                drn_stand1      ]
 	if (random() < 0.1 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
 	{
 		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "drone/drnidle2.wav", 0.6, ATTN_NORM);
+			sound (self, CHAN_VOICE, "drone/drnidle2.wav", 0.6, ATTN_IDLE);
 		else
-			sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_NORM);
+			sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_IDLE);
 	}
 };
 
@@ -160,7 +160,7 @@ void()  drn_walk5       =[      $idl5,                drn_walk6       ]
 	if (self.spawnflags & 1)
 		drn_walk6();
 	if (random() < 0.1)
-		sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_NORM);
+		sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_IDLE);
 };
 void()  drn_walk6       =[      $idl6,                drn_walk7       ] {ai_walk(8);};
 void()  drn_walk7       =[      $idl7,                drn_walk8       ] {ai_walk(8);};
@@ -174,9 +174,9 @@ void()  drn_walk10      =[      $idl1,                drn_walk1       ]
 	if (random() < 0.1)
 	{
 		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "drone/drnidle2.wav", 0.6, ATTN_NORM);
+			sound (self, CHAN_VOICE, "drone/drnidle2.wav", 0.6, ATTN_IDLE);
 		else
-			sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_NORM);
+			sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_IDLE);
 	}
 };
 
