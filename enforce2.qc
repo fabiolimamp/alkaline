@@ -77,92 +77,77 @@ void() DrunkExplode =
 };
 
 
-void() spiralthink =
-{
+void() spiralthink = {
 //	if (!infront(self.enemy))
 //		return;
 
-local entity pointer;
-local vector vel;
+	local entity pointer;
+	local vector vel;
 
-pointer = self.sibling;
+	pointer = self.sibling;
 
-	if (time > self.attack_finished)
-		{
+	if (time > self.attack_finished) {
 		DrunkExplode();
 		remove(pointer);
 		return;
-		}
-		
-		
-	if (vlen(self.enemy.origin - self.origin) < 256) 
-		{
+	}
+	
+	if (vlen(self.enemy.origin - self.origin) < 256) {
 		vel = normalize(self.enemy.origin - self.origin);
 		self.velocity = vel * 250;
 		self.angles = vectoangles(self.velocity);
 		self.nextthink = time + 0.1;
 		return;		
-		}
-		
+	}
 
-local float voffs, hoffs;
+	local float voffs, hoffs;
 
-	if (self.cnt == 0)
-		{
+	if (self.cnt == 0) {
 		voffs = 24;
 		hoffs = 0;		
-		}
-	else if (self.cnt == 1)
-		{
+	}
+	else if (self.cnt == 1) {
 		voffs = 16;
 		hoffs = 16;		
-		} 	
-	else if (self.cnt == 2)
-		{
+	}
+	else if (self.cnt == 2) {
 		voffs = 0;
 		hoffs = 24;			
-		} 	
-	else if (self.cnt == 3)
-		{
+	}
+	else if (self.cnt == 3) {
 		voffs = -16;
 		hoffs = 16;	
-		} 			
-	else if (self.cnt == 4)
-		{
+	} 			
+	else if (self.cnt == 4) {
 		voffs = -24;
 		hoffs = 0;	
-		} 	
-	else if (self.cnt == 5)
-		{
+	} 
+	else if (self.cnt == 5) {
 		voffs = -16;
 		hoffs = -16;	
-		} 			
-	else if (self.cnt == 6)
-		{
+	} 			
+	else if (self.cnt == 6)	{
 		voffs = 0;
 		hoffs = -24;	
-		} 	
-	else
-		{
+	} 
+	else {
 		voffs = 16;
 		hoffs = -16;		
-		} 
+	} 
 		
-	if (vlen(self.origin - pointer.origin) < 16)	
-		{
-//			dprint(ftos(vlen(self.origin - pointer.origin)));
-//			dprint("\n");
-			self.nextthink = time + 0.1;
-			return;
-		}
-		else
-		{
-			self.cnt = self.cnt + 1;
-		}
+	if (vlen(self.origin - pointer.origin) < 16) {
+//		dprint(ftos(vlen(self.origin - pointer.origin)));
+//		dprint("\n");
+		self.nextthink = time + 0.1;
+		return;
+	}
+	else {
+		self.cnt = self.cnt + 1;
+	}
 	
 
 	if (self.cnt > 7)
-		{self.cnt = 0;}
+		self.cnt = 0;
 
 	self.velocity = '0 0 0';
 	makevectors(pointer.velocity);
@@ -177,8 +162,7 @@ local float voffs, hoffs;
 
 
 
-void() changemovetype =
-{
+void() changemovetype = {
 	self.movetype = MOVETYPE_FLYMISSILE;
 	self.think = ShalHome;
 	self.nextthink = time + 0.1;
@@ -193,8 +177,7 @@ void() changemovetype =
 
 
 
-void() FireMissileSpiral =
-{
+void() FireMissileSpiral = {
 	local	entity missile, pointer;
 	local	vector org, vel, vel2;
 	
@@ -258,19 +241,17 @@ void() FireMissileSpiral =
 }
 
 
-void() particlethink =
-{
+void() particlethink = {
 	particle (self.origin, self.oldorigin, 10, 30);
 	particle (self.origin, self.oldorigin, 40, 30);
 	self.nextthink = time + 0.05;
 };
 
-void() FireParticleBeam =
-{
-local vector org,mep;
-local	entity missile;
-local vector lead, spot;
-local float go;
+void() FireParticleBeam = {
+	local vector org,mep;
+	local	entity missile;
+	local vector lead, spot;
+	local float go;
 
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	makevectors (self.angles);
@@ -312,7 +293,7 @@ local float go;
 
 	missile.velocity = lead * 620;
 	missile.angles = '0 0 0';			// more new projectile code
-    	missile.angles = vectoangles(missile.velocity); // end of more new projectile code
+	missile.angles = vectoangles(missile.velocity); // end of more new projectile code
 	missile.touch = Laser_Touch;
 	missile.cnt = 1;
 	
@@ -324,34 +305,29 @@ local float go;
 	setorigin (missile, org);
 };
 
-void() megaenforcer_fire =
-{
-local float edist;
+void() megaenforcer_fire = {
+	local float edist;
 
 	edist = vlen(self.enemy.origin - self.origin);
-	if(edist < 200)
-		menf_atk1 ();
-	else
-	{
-		if (random() < 0.65 || edist > 700)
-			{
-			if (time > self.attack_finished)
-				{
-				menf_satck1 ();
-				}
-			else
-				{
-				menf_atk1 ();
-				}
-			}
-		else
-			{
-			menf_atk1 ();
-			}
+	if (edist < 200) menf_atk1();
+	else {
+		if (random() < 0.65 || edist > 700)	{
+			if (time > self.attack_finished) menf_satck1();
+			else menf_atk1();
+		}
+		else menf_atk1();
 	}
 };
 
+void(float play_sound) menf_shield_on = {
+	self.takedamage = DAMAGE_NO;
+	if (play_sound) sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); 
+};
 
+void(float play_sound) menf_shield_off = {
+	self.takedamage = DAMAGE_AIM;
+	if (play_sound) sound (self, CHAN_AUTO, "me/me_soff.wav", 1, ATTN_NORM);
+};
 
 //============================================================================
 
@@ -363,10 +339,9 @@ void()	menf_stand5	=[	$stand5,	menf_stand6	] {ai_stand();};
 void()	menf_stand6	=[	$stand6,	menf_stand7	] {ai_stand();};
 void()	menf_stand7	=[	$stand7,	menf_stand1	] {ai_stand();};
 
-void()	menf_walk1	=[	$walk1 ,	menf_walk2	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "me/meidle.wav", 1, ATTN_IDLE);
-ai_walk(2);};
+void()	menf_walk1	=[	$walk1 ,	menf_walk2	] {ai_walk(2);
+	if (random() < 0.2) sound (self, CHAN_VOICE, "me/meidle.wav", 1, ATTN_IDLE);
+};
 void()	menf_walk2	=[	$walk2 ,	menf_walk3	] {ai_walk(4);};
 void()	menf_walk3	=[	$walk3 ,	menf_walk4	] {ai_walk(4);};
 void()	menf_walk4	=[	$walk4 ,	menf_walk5	] {ai_walk(3);};
@@ -385,58 +360,68 @@ void()	menf_walk16	=[	$walk16,	menf_walk1	] {ai_walk(2);};
 
 void()	menf_shld1	=[	$fieldon1 ,	menf_shld2	] {};
 void()	menf_shld2	=[	$fieldon2 ,	menf_shld3	] {};
-void()	menf_shld3	=[	$fieldon3 ,	menf_shld4  ] {self.takedamage = DAMAGE_NO; sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
+void()	menf_shld3	=[	$fieldon3 ,	menf_shld4  ] {menf_shield_on(TRUE);};
 void()	menf_shld4	=[	$fieldon4 ,	menf_shld5	] {};
 void()	menf_shld5	=[	$fieldon5 ,	menf_shld6	] {};
 void()	menf_shld6	=[	$fieldon6 ,	menf_shld7	] {};
 void()	menf_shld7	=[	$fieldon7 ,	menf_run1	] {};
 
-void()	menf_run1	=[	$run1  ,	menf_run2	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "me/meidle.wav", 1, ATTN_IDLE);
-ai_run(18);self.takedamage = DAMAGE_NO;};
-void()	menf_run2	=[	$run2  ,	menf_run3	] {ai_run(14);};
-void()	menf_run3	=[	$run3  ,	menf_run4	] {ai_run(7); };
-void()	menf_run4	=[	$run4  ,	menf_run5	] {ai_run(12);};
-void()	menf_run5	=[	$run5  ,	menf_run6	] {ai_run(14);};
-void()	menf_run6	=[	$run6  ,	menf_run7	] {ai_run(14);};
-void()	menf_run7	=[	$run7  ,	menf_run8	] {ai_run(7);};
-void()	menf_run8	=[	$run8  ,	menf_run1	] {ai_run(11);};
 
-void()	menf_atk1	=[	$attack1,	menf_atk2	] {ai_face(); 
-if (random() < 0.3)
-{
-	self.think = menf_run1;
-	return;
-}
-self.takedamage = DAMAGE_AIM; sound (self, CHAN_AUTO, "me/me_soff.wav", 1, ATTN_NORM); };
-void()	menf_atk2	=[	$attack2,	menf_atk3	] {ai_face();};
-void()	menf_atk3	=[	$attack3,	menf_atk4	] {ai_face();};
-void()	menf_atk4	=[	$attack4,	menf_atk7	] {ai_face();};
-void()	menf_atk5	=[	$attack5,	menf_atk6	] {ai_face();};
-void()	menf_atk6	=[	$attack6,	menf_atk7	] {/* skip */};
-void()	menf_atk7	=[	$attack7,	menf_atk8	] {ai_face();};
-void()	menf_atk8	=[	$attack8,	menf_atk9	] {ai_face();};
-void()	menf_atk9	=[	$attack5,	menf_atk10	] {ai_face(); self.oldorigin = self.enemy.origin; };
-void()	menf_atk10	=[	$attack6,	menf_atk11	] 
-{
-	FireParticleBeam ();
+
+void()	menf_run1	=[	$run1  ,	menf_run2	] {ai_run(18);
+	if (random() < 0.2)	sound (self, CHAN_VOICE, "me/meidle.wav", 1, ATTN_IDLE);
+	menf_shield_on(TRUE);
 };
-void()	menf_atk11	=[	$attack7,	menf_atk12	] {ai_face();};
-void()	menf_atk12	=[	$attack8,	menf_atk13	] {ai_face(); sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
-void()	menf_atk13	=[	$attack9,	menf_atk14	] {ai_face();};
-void()	menf_atk14	=[	$attack10,	menf_run1	] {ai_face();
-SUB_CheckRefire (menf_atk1); self.takedamage = DAMAGE_NO; };
+void()	menf_run2	=[	$run2  ,	menf_run3	] {ai_run(14); menf_shield_on(FALSE);};
+void()	menf_run3	=[	$run3  ,	menf_run4	] {ai_run(7);  menf_shield_on(FALSE);};
+void()	menf_run4	=[	$run4  ,	menf_run5	] {ai_run(12); menf_shield_on(FALSE);};
+void()	menf_run5	=[	$run5  ,	menf_run6	] {ai_run(14); menf_shield_on(FALSE);};
+void()	menf_run6	=[	$run6  ,	menf_run7	] {ai_run(14); menf_shield_on(FALSE);};
+void()	menf_run7	=[	$run7  ,	menf_run8	] {ai_run(7);  menf_shield_on(FALSE);};
+void()	menf_run8	=[	$run8  ,	menf_run1	] {ai_run(11); menf_shield_on(FALSE);};
 
-void()	menf_satck1 =[	$attackp1,  menf_satck2 ] {ai_face(); self.takedamage = DAMAGE_AIM; sound (self, CHAN_AUTO, "me/me_soff.wav", 1, ATTN_NORM); };
-void()	menf_satck2 =[	$attackp2,  menf_satck3 ] {ai_face();};
-void()	menf_satck3 =[	$attackp2,  menf_satck4 ] {ai_face();};
-void()	menf_satck4 =[	$attackp3,  menf_satck5 ] {ai_face();};
-void()	menf_satck5 =[	$attackp4,  menf_satck6 ] {ai_face();};
-void()	menf_satck6 =[	$attackp4,  menf_satck7 ] {ai_face();};
-void()	menf_satck7 =[	$attackp5,  menf_satck8 ] {ai_face(); FireMissileSpiral (); self.attack_finished = time + 1.5;};
-void()	menf_satck8 =[	$attackp6,  menf_satck9 ] {ai_face(); sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
-void()	menf_satck9 =[	$attackp7,  menf_run1   ] {ai_face(); self.takedamage = DAMAGE_NO; };
+
+
+void()	menf_atk1	=[	$attack1,	menf_atk2	] {ai_face();
+	
+	if (random() < 0.3)	{
+		self.think = menf_run1;
+		self.movingback = 1;
+		return;
+	}
+
+	//self.lastclose = 1;
+	menf_shield_off(TRUE);
+};
+void()	menf_atk2	=[	$attack2,	menf_atk3	] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_atk3	=[	$attack3,	menf_atk4	] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_atk4	=[	$attack4,	menf_atk7	] {ai_face(); menf_shield_off(FALSE);};
+/*
+void()	menf_atk5	=[	$attack5,	menf_atk6	] {ai_face();};
+void()	menf_atk6	=[	$attack6,	menf_atk7	] { skip};
+*/
+void()	menf_atk7	=[	$attack7,	menf_atk8	] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_atk8	=[	$attack8,	menf_atk9	] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_atk9	=[	$attack5,	menf_atk10	] {ai_face(); self.oldorigin = self.enemy.origin; menf_shield_off(FALSE);};
+void()	menf_atk10	=[	$attack6,	menf_atk11	] {FireParticleBeam(); menf_shield_off(FALSE);};
+void()	menf_atk11	=[	$attack7,	menf_atk12	] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_atk12	=[	$attack8,	menf_atk13	] {ai_face(); menf_shield_off(FALSE); sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
+void()	menf_atk13	=[	$attack9,	menf_atk14	] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_atk14	=[	$attack10,	menf_run1	] {ai_face(); SUB_CheckRefire (menf_atk1); menf_shield_on(FALSE);};
+
+
+
+void()	menf_satck1 =[	$attackp1,  menf_satck2 ] {ai_face(); menf_shield_off(TRUE);};
+void()	menf_satck2 =[	$attackp2,  menf_satck3 ] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_satck3 =[	$attackp2,  menf_satck4 ] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_satck4 =[	$attackp3,  menf_satck5 ] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_satck5 =[	$attackp4,  menf_satck6 ] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_satck6 =[	$attackp4,  menf_satck7 ] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_satck7 =[	$attackp5,  menf_satck8 ] {ai_face(); FireMissileSpiral (); self.attack_finished = time + 1.5; menf_shield_off(FALSE);};
+void()	menf_satck8 =[	$attackp6,  menf_satck9 ] {ai_face(); menf_shield_off(FALSE); sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
+void()	menf_satck9 =[	$attackp7,  menf_run1   ] {ai_face(); menf_shield_on(FALSE);};
+
+
 
 void()	menf_paina1	=[	$paina1,	menf_paina2	] {};
 void()	menf_paina2	=[	$paina2,	menf_paina3	] {};
@@ -482,6 +467,8 @@ void(entity attacker, float damage)	menf_pain =
 {
 	local float r;
 
+	dprint(ftos(time));
+	dprint(": pain!\n");
 	if (self.pain_finished > time || self.health > 120)
 		return;
 
@@ -525,8 +512,7 @@ void(entity attacker, float damage)	menf_pain =
 
 void()	menf_die1	=[	$death1,	menf_die2	] {};
 void()	menf_die2	=[	$death2,	menf_die3	] {};
-void()	menf_die3	=[	$death3,	menf_die4	]
-{self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
+void()	menf_die3	=[	$death3,	menf_die4	] {self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
 void()	menf_die4	=[	$death4,	menf_die5	] {ai_forward(14);};
 void()	menf_die5	=[	$death5,	menf_die6	] {ai_forward(2);};
 void()	menf_die6	=[	$death6,	menf_die7	] {};
@@ -539,12 +525,9 @@ void()	menf_die12	=[	$death12,	menf_die13	] {ai_forward(5);};
 void()	menf_die13	=[	$death13,	menf_die14	] {};
 void()	menf_die14	=[	$death14,	menf_die14	] {};
 
-void()	menf_fdie1	=[	$fdeath1,	menf_fdie2	] {
-
-};
+void()	menf_fdie1	=[	$fdeath1,	menf_fdie2	] {};
 void()	menf_fdie2	=[	$fdeath2,	menf_fdie3	] {};
-void()	menf_fdie3	=[	$fdeath3,	menf_fdie4	] 
-{self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
+void()	menf_fdie3	=[	$fdeath3,	menf_fdie4	] {self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
 void()	menf_fdie4	=[	$fdeath4,	menf_fdie5	] {};
 void()	menf_fdie5	=[	$fdeath5,	menf_fdie6	] {};
 void()	menf_fdie6	=[	$fdeath6,	menf_fdie7	] {};
@@ -621,6 +604,7 @@ void(entity e) monster_me_start =
 
 	walkmonster_start();
 	self.takedamage = DAMAGE_NO;
+	dprint("shield on\n");
 
 	self = oself;
 };
