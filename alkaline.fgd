@@ -1586,6 +1586,8 @@ The flags above are mutually exclusive and will cause an objerror when selected 
 	pausetime(integer) : "Default wait time" : : "Wait time used when not defined in path_corner."
 	target(target_source) : "First stop target"
 	dmg(integer) : "Damage on crush" : 2
+	noise(string) : "Custom moving loop sound (if set, overrides 'sounds')"
+	noise1(string) : "Custom corner sound, plays when the train reaches a path_corner (if set, overrides 'sounds')"
 	spawnflags(flags) =
 	[
 		2: "Move on trigger" : 0
@@ -1622,11 +1624,14 @@ low_trigger: plat will only be triggered when in lowered position"
 	]
 	speed(integer) : "Speed" : 150
 	height(integer) : "Travel altitude (can be negative)" : 0
-	sounds(choices) : "Sound group" : 1 =
+	noise(string) : "Custom starting/loop sound (if set, overrides 'sounds')"
+	noise1(string) : "Custom stop sound (if set, overrides 'sounds')"
+	sounds(choices) : "Sound group" : 2 =
 	[
-		0: "None"
+		-1: "No sound"
 		1: "Base fast"
 		2: "Chain Slow"
+		3: "Base door"
 	]
 ]	
 
@@ -1681,10 +1686,14 @@ Set 'sounds' to one of the following:
 	health(integer) : "Seconds to wait at bottom if using Start at Top": 5
 	delay(integer) : "Seconds to wait if using Plat2" : 3
 	wait(integer) : "Seconds to retrigger Elevator" : 0
-	sounds(choices) : "Sound" : 1 =
+	noise(string) : "Custom starting/loop sound"
+	noise1(string) : "Custom stop sound"
+	sounds(choices) : "Sound" : 2 =
 	[
+		-1: "No sound"
 		1: "Base fast"
 		2: "Chain Slow"
+		3: "Base door"
 	]
 	cnt(integer) : "Number of floors"
 ]
