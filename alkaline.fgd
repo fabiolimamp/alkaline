@@ -131,6 +131,8 @@
 		1 : "Inverse distance falloff"
 		2 : "Inverse distance squared"
 		3 : "No falloff"
+ 		4 : "Local minlight"
+ 		5 : "Inverse distance squared B"
 	]
 	style(choices) : "Animated light style" : 0 =
 	[
@@ -505,7 +507,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 	targetname(target_source) : "Name" 
 ]
 
-@PointClass base(Target, Targetname) = info_notnull : "info_notnull" // I <3 you
+@PointClass base(Target, Targetname) = info_notnull : "info_notnull"
 [
 	use(string) : "self.use"
 	think(string) : "self.think"
@@ -1546,7 +1548,7 @@ dmg is the amount of damage to cause when touched."
 
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
-@SolidClass base(Angle, Targetname, Target, ModelLight, Message) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
+@SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
 [
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
