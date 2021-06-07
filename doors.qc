@@ -577,7 +577,10 @@ void(entity door, float ldcount) setupTriggerField = {
 	oself = self;
 	self = door;
 
-	if (self.owner == self && !keylock_has_key_set()) {
+	// Shootable, fired, or key doors just needed the owner/enemy links,
+	// they don't spawn a field
+
+	if (self.owner == self && !keylock_has_key_set() && !self.health) {
 		
 		if (self.targetname != "") { 
 			// search for trigger_doortriggerfield targeting it
