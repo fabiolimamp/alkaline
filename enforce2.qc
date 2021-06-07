@@ -320,13 +320,13 @@ void() megaenforcer_fire = {
 };
 
 void(float play_sound) menf_shield_on = {
+	if (play_sound && self.takedamage != DAMAGE_NO) sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); 
 	self.takedamage = DAMAGE_NO;
-	if (play_sound) sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); 
 };
 
 void(float play_sound) menf_shield_off = {
+	if (play_sound && self.takedamage != DAMAGE_AIM) sound (self, 6, "me/me_soff.wav", 1, ATTN_NORM);
 	self.takedamage = DAMAGE_AIM;
-	if (play_sound) sound (self, CHAN_AUTO, "me/me_soff.wav", 1, ATTN_NORM);
 };
 
 //============================================================================
@@ -405,7 +405,7 @@ void()	menf_atk8	=[	$attack8,	menf_atk9	] {ai_face(); menf_shield_off(FALSE);};
 void()	menf_atk9	=[	$attack5,	menf_atk10	] {ai_face(); self.oldorigin = self.enemy.origin; menf_shield_off(FALSE);};
 void()	menf_atk10	=[	$attack6,	menf_atk11	] {FireParticleBeam(); menf_shield_off(FALSE);};
 void()	menf_atk11	=[	$attack7,	menf_atk12	] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_atk12	=[	$attack8,	menf_atk13	] {ai_face(); menf_shield_off(FALSE); sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
+void()	menf_atk12	=[	$attack8,	menf_atk13	] {ai_face(); menf_shield_off(FALSE); sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); };
 void()	menf_atk13	=[	$attack9,	menf_atk14	] {ai_face(); menf_shield_off(FALSE);};
 void()	menf_atk14	=[	$attack10,	menf_run1	] {ai_face(); SUB_CheckRefire (menf_atk1); menf_shield_on(FALSE);};
 
@@ -418,7 +418,7 @@ void()	menf_satck4 =[	$attackp3,  menf_satck5 ] {ai_face(); menf_shield_off(FALS
 void()	menf_satck5 =[	$attackp4,  menf_satck6 ] {ai_face(); menf_shield_off(FALSE);};
 void()	menf_satck6 =[	$attackp4,  menf_satck7 ] {ai_face(); menf_shield_off(FALSE);};
 void()	menf_satck7 =[	$attackp5,  menf_satck8 ] {ai_face(); FireMissileSpiral (); self.attack_finished = time + 1.5; menf_shield_off(FALSE);};
-void()	menf_satck8 =[	$attackp6,  menf_satck9 ] {ai_face(); menf_shield_off(FALSE); sound (self, CHAN_AUTO, "me/me_son.wav", 1, ATTN_NORM); };
+void()	menf_satck8 =[	$attackp6,  menf_satck9 ] {ai_face(); menf_shield_off(FALSE); sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); };
 void()	menf_satck9 =[	$attackp7,  menf_run1   ] {ai_face(); menf_shield_on(FALSE);};
 
 
@@ -467,8 +467,7 @@ void(entity attacker, float damage)	menf_pain =
 {
 	local float r;
 
-	dprint(ftos(time));
-	dprint(": pain!\n");
+
 	if (self.pain_finished > time || self.health > 120)
 		return;
 
