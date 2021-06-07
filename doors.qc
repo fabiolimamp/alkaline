@@ -851,6 +851,10 @@ void() func_door =
 		default_noise1 = "doors/ddoor2.wav";
 		default_noise2 = "doors/ddoor1.wav";
 	}
+	if (self.sounds == 6) {
+		default_noise1 = "doors/q2door2.wav";
+		default_noise2 = "doors/q2door1.wav";
+	}
 
 	if (self.noise1 == "")
 		self.noise1 = default_noise1;
