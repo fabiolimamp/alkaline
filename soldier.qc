@@ -325,7 +325,7 @@ void(entity e) monster_nailgrunt_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/soldier.mdl");
+	setmodel (self, "progs/nsoldier.mdl");
 	self.skin = 1;
 
 	setsize (self, '-16 -16 -24', '16 16 40');
