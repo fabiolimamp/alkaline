@@ -843,7 +843,7 @@ if you are not careful!" []
 With a force field, plasma gun, and shoulder
 cannon, look out for this cold-blooded killer." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier.mdl", "skin": 1}) = monster_nailgrunt :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier.mdl"}) = monster_nailgrunt :
 "Nail Grunt, 30 health points.
 This ugly cyborg can penetrate your heart
 ...and not in a good way." []
