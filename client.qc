@@ -1088,6 +1088,7 @@ void() PlayerPreThink =
 		self.cshift_cleared = 1;
 	}
 
+	self.light_lev = 0; // resets dimlight flags for powerups/status effects
 	self.cshift_set = 0; //checked later in PlayerPostThink for cshift changes
 
 	if (cleanUpClientStuff)
@@ -1177,6 +1178,12 @@ CheckPowerups
 Check for turning off powerups
 ================
 */
+
+float DIMLIGHT_SUPER_DAMAGE = 1;
+float DIMLIGHT_TRIF = 2;
+float DIMLIGHT_INVINCIBLE = 4;
+float DIMLIGHT_BURNING = 8;
+
 void() CheckPowerups =
 {
 	if (self.health <= 0)
@@ -1256,13 +1263,14 @@ void() CheckPowerups =
 			self.trif_time = 0;
 		}
 		if (self.trif_finished > time) {
-			self.effects = self.effects | EF_DIMLIGHT;
+
+			self.light_lev = self.light_lev | DIMLIGHT_TRIF;
 			stuffcmd(self, "v_cshift 96 192 224 32 \n");
 			self.cshift_set = 1;
 			self.cshift_cleared = 0;
 		}
 		else {
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);	
+			//self.light_lev = self.light_lev - (self.light_lev & DIMLIGHT_TRIF);	
 			self.cshift_set = 0;
 			self.cshift_cleared = 0;
 		}
@@ -1298,9 +1306,7 @@ void() CheckPowerups =
 			self.invincible_finished = 0;
 		}
 		if (self.invincible_finished > time)
-			self.effects = self.effects | EF_DIMLIGHT;
-		else
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+			self.light_lev = self.light_lev | DIMLIGHT_INVINCIBLE;
 	}
 
 // super damage
@@ -1333,9 +1339,7 @@ void() CheckPowerups =
 			self.super_time = 0;
 		}
 		if (self.super_damage_finished > time)
-			self.effects = self.effects | EF_DIMLIGHT;
-		else
-			self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+			self.light_lev = self.light_lev | DIMLIGHT_SUPER_DAMAGE;
 	}	
 
 // suit	
@@ -1376,8 +1380,7 @@ void() CheckPowerups =
 StartBurning -- johnfitz
 ================
 */
-void(entity e, float dur) StartBurning = 
-{
+void(entity e, float dur) StartBurning = {
 	if (e.classname != "player")
 		return;
 
@@ -1394,7 +1397,6 @@ void(entity e, float dur) StartBurning =
 		return;		
 		
 	e.burning_finished = time + dur;
-	e.effects = e.effects | EF_DIMLIGHT;
 };
 
 /*
@@ -1404,15 +1406,13 @@ StopBurning -- johnfitz
 clean up after burning state has ended
 ================
 */
-void(entity e) StopBurning = 
-{
+void(entity e) StopBurning = {
 	if (e.burning_finished) {
 		e.burning_finished = 0;
 		e.burning_time = 0;
 		// sets v_cshift to be cleared at the end of the frame
 		e.cshift_set = 0;
 		e.cshift_cleared = 0;
-		e.effects = (e.effects & EF_DIMLIGHT) - EF_DIMLIGHT;
 	}
 };
 
@@ -1426,23 +1426,20 @@ apply damage from being on fire
 void() CheckBurning = {
 	local float a;
 	
-	if (self.burning_finished)
-	{
+	if (self.burning_finished) {
 		if (self.burning_finished <= time || 
 			self.waterlevel >= 3 || 
 			self.radsuit_finished > time || 
 			self.invincible_finished > time || 
 			self.trif_finished > time || 			
 			self.deadflag || 
-			self.view_ofs == '0 0 0')
-		{
+			self.view_ofs == '0 0 0'
+		) {
 			StopBurning(self);
 		}
-		else
-		{		
+		else {		
 			//apply damage
-			if (self.burning_time < time)
-			{
+			if (self.burning_time < time) {
 				self.deathtype = "burning";
 				T_Damage (self, world, world, 1);
 				self.burning_time = time + 1;
@@ -1465,6 +1462,7 @@ void() CheckBurning = {
 			stuffcmd (self, "\n");
 			self.cshift_set = 1;
 			self.cshift_cleared = 0;
+			self.light_lev = self.light_lev | DIMLIGHT_BURNING;
 		}
 	}
 };
@@ -1546,6 +1544,10 @@ void() PlayerPostThink =
 		self.cshift_cleared = 1;
 	}
 
+	if (self.light_lev)
+		self.effects = self.effects | EF_DIMLIGHT;
+	else
+		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
 };
 
 
