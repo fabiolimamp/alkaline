@@ -118,20 +118,20 @@ void(float angdelta, float delta) ban_rotate =
 void() banshee_sound_idle = {
 	local float r;
 
-	if(time > self.super_time)
+	if(self.super_time > time && self.super_time)
 		return;
+
 	r = random();
 	self.super_time = time + 3;
 
 	if (r < 0.125)
-		sound(self, CHAN_VOICE, "banshee/idle1.wav", 0.5, ATTN_NORM);
+		sound(self, CHAN_VOICE, "banshee/idle1.wav", 0.5, ATTN_IDLE);
 	else if (r < 0.25)
-		sound(self, CHAN_VOICE, "banshee/idle2.wav", 0.5, ATTN_NORM);
+		sound(self, CHAN_VOICE, "banshee/idle2.wav", 0.5, ATTN_IDLE);
 	else if (r < 0.375)
-		sound(self, CHAN_VOICE, "banshee/idle3.wav", 0.5, ATTN_NORM);
+		sound(self, CHAN_VOICE, "banshee/idle3.wav", 0.5, ATTN_IDLE);
 	else if (r < 0.5)
-		sound(self, CHAN_VOICE, "banshee/idle4.wav", 0.5, ATTN_NORM);
-
+		sound(self, CHAN_VOICE, "banshee/idle4.wav", 0.5, ATTN_IDLE);
 }
 
 void() banshee_think = {
@@ -167,7 +167,7 @@ void() banshee_think = {
 	
 	if (!(self.spawnflags & MONSTER_NOIDLESOUND) && !self.enemy)
 		banshee_sound_idle();
-	
+
 };
 
 void() ban_thinkwalk = 
@@ -361,7 +361,7 @@ void() banshee_walk2 = [21, banshee_walk3]
 
 void() banshee_walk3 = [22, banshee_walk4]
 {
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_IDLE);
 	ai_walk(14);
 	ban_thinkwalk();
 };
@@ -374,7 +374,7 @@ void() banshee_walk4 = [23, banshee_walk5]
 
 void() banshee_walk5 = [24, banshee_walk6]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_IDLE);
 	ai_walk(14);
 	ban_thinkwalk();
 };
@@ -399,7 +399,7 @@ void() banshee_walk8 = [27, banshee_walk9]
 
 void() banshee_walk9 = [28, banshee_walk10]
 {
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_IDLE);
 	ai_walk(14);
 	ban_thinkwalk();
 };
@@ -412,7 +412,7 @@ void() banshee_walk10 = [29, banshee_walk11]
 
 void() banshee_walk11 = [30, banshee_walk12]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_IDLE);
 	ai_walk(14);
 	ban_thinkwalk();
 };
@@ -444,7 +444,7 @@ void() banshee_run2 = [21, banshee_run3]
 
 void() banshee_run3 = [22, banshee_run4]
 {
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
 	ChangeYaw();
 	
 	ai_run(14);
@@ -461,7 +461,7 @@ void() banshee_run4 = [23, banshee_run5]
 
 void() banshee_run5 = [24, banshee_run6]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	ChangeYaw();
 	
 	ai_run(14);
@@ -494,7 +494,7 @@ void() banshee_run8 = [27, banshee_run9]
 
 void() banshee_run9 = [28, banshee_run10]
 {
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
 	ChangeYaw();
 	
 	ai_run(14);
@@ -511,7 +511,7 @@ void() banshee_run10 = [29, banshee_run11]
 
 void() banshee_run11 = [30, banshee_run12]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	ChangeYaw();
 	
 	ai_run(14);
@@ -540,7 +540,7 @@ void() ban_fire_walk1 = [44, ban_fire_walk2]
 
 void() ban_fire_walk2 = [45, ban_fire_walk3]
 {
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -555,7 +555,7 @@ void() ban_fire_walk3 = [46, ban_fire_walk4]
 
 void() ban_fire_walk4 = [47, ban_fire_walk5]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -585,7 +585,7 @@ void() ban_fire_walk7 = [50, ban_fire_walk8]
 
 void() ban_fire_walk8 = [51, ban_fire_walk9]
 {
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -600,7 +600,7 @@ void() ban_fire_walk9 = [52, ban_fire_walk10]
 
 void() ban_fire_walk10 = [53, ban_fire_walk11]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -631,7 +631,7 @@ void() ban_stomp1 = [75, ban_stomp2]
 
 void() ban_stomp2 = [76, ban_stomp3]
 {
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -659,7 +659,7 @@ void() ban_stomp6 = [80, ban_stomp7]
 {
 	ChangeYaw();
 	ChangeYaw();
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	banshee_think();
 	FuelTankExplode();
 	T_RadiusDamage(self, self, 100, self);
@@ -682,7 +682,7 @@ void() ban_stomp9 = [83, ban_stomp10]
 
 void() ban_stomp10 = [84, ban_stomp11]
 {
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_BANSHEE);
+	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -697,7 +697,7 @@ void() ban_stomp11 = [85, ban_stomp12]
 
 void() ban_stomp12 = [86, ban_stomp13]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
@@ -737,7 +737,7 @@ void() banshee_stop1 = [57, banshee_stop2]
 
 void() banshee_stop2 = [58, banshee_plant1]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	banshee_think();
 };
 
@@ -768,7 +768,7 @@ void() ban_launch_field5 = [36, ban_launch_field6]
 
 void() ban_launch_field6 = [37, ban_launch_field7]
 {
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_BANSHEE);
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	banshee_think();
 };
 
