@@ -1608,6 +1608,86 @@ void() dev_reveal =
 	dprint("endpoint: ");dprint(vtos(trace_endpos));dprint("\n");
 }
 
+void(entity targ, float ammoqty, string zero10, string zero100, string zero1000, string zero10000, string zero100000) zerofill_number =
+{
+	// Cap number based on strings
+	if (ammoqty > 99999 && zero100000 == "") ammoqty = 99999;
+	if (ammoqty > 9999 && zero10000 == "") ammoqty = 9999;
+	if (ammoqty > 999 && zero1000 == "") ammoqty = 999;
+	if (ammoqty > 99 && zero100 == "") ammoqty = 99;
+	// Zero fill based on strings existing
+	if (ammoqty < 100000 && zero100000 != "") sprint(targ, zero100000);
+	if (ammoqty < 10000 && zero10000 != "") sprint(targ, zero10000);
+	if (ammoqty < 1000 && zero1000 != "") sprint(targ, zero1000);
+	if (ammoqty < 100 && zero100 != "") sprint(targ, zero100);
+	if (ammoqty < 10 && zero10 != "") sprint(targ, zero10);
+	sprint(targ, ftos(ammoqty));	
+};
+
+void() display_monsleft =
+{
+	local float entcount, montotal, monalive, mondead;
+	local entity entlist;
+	
+
+	// flush keyboard buffer
+	self.impulse = 0;
+	// Reset counters
+	entcount = montotal = monalive = mondead = 0;
+
+	sprint(self, "\b[-- Monsters Alive and Kicking --]\b\n"); 
+	sprint(self, "--------------------------------------\n");
+	sprint(self, " No   HP D Classname + XYZ location\n");
+	//            xxx xxxx x x------------------------------x
+	// Start from beginning of entity list, world!
+	entlist = nextent(world);
+
+	// Keep looping through entity list
+	while (entlist) {
+		// Found another entity
+		entcount = entcount + 1;
+		// Only interested in monsters (regular + boss)
+		if (entlist.flags & FL_MONSTER || entlist.flags & FL_SPAWNMONSTER) {
+			// Keep counting up monsters
+			montotal = montotal + 1;
+			
+			if (entlist.health > 0) {
+				monalive = monalive + 1;
+				if (monalive <= 400) {
+					// Update console display
+					zerofill_number(self, monalive, "0", "0", "", "", "");
+					sprint(self, " ");
+					zerofill_number(self, entlist.health, " ", " ", " ", "", "");
+					// Check for monster spawn delay (flag)
+					if (entlist.flags & FL_SPAWNMONSTER) sprint(self, " Y ");
+					else sprint(self, " - ");
+					// Print monster class and position
+					sprint(self, entlist.classname); sprint(self, " ");
+					sprint(self, vtos(entlist.origin)); sprint(self, "\n");
+				}
+				// Only report the first xxx monsters
+				// Otherwise will get SZ_GETSPACE : OVERFLOW error
+				if (monalive == (401)) {
+					sprint(self, " * Can only list ");
+					sprint(self, ftos(400));
+					sprint(self, "monsters!\n");
+				}
+			}
+			// Monster found is dead
+			else mondead = mondead + 1;			
+		}		
+		// Keep search through ALL of the entity list
+		entlist = nextent(entlist);
+	}
+	sprint(self, "--------------------------------------\n");
+	sprint(self, "Monster Total ("); sprint(self, ftos(montotal));
+	sprint(self, ") Alive ("); sprint(self, ftos(monalive));
+	sprint(self, ") Dead ("); sprint(self, ftos(mondead));
+	sprint(self, ")\n");
+	sprint(self, "Player location "); sprint(self, vtos(self.origin));
+	sprint(self, "\n\n");
+};
+
 /*
 ============
 ImpulseCommands
@@ -1633,6 +1713,8 @@ void() ImpulseCommands =
 
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
+	if (self.impulse == 184)
+		display_monsleft();
 	if (self.impulse == 200)
 		dev_reveal ();
 	//johnfitz -- new cheats
