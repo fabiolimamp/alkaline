@@ -672,7 +672,7 @@ void() LinkDoors2 = {
 			nextld.count = self.count + 1; // sequential number for each LinkDoor entity
 
 			nextld.think = LinkDoors2;
-			nextld.nextthink = time + 0.05;
+			nextld.nextthink = time + 0.02;
 			doorloopcount = 0;
 			break;
 		}
