@@ -1119,7 +1119,7 @@ float SETSTATE_CLOSEALLDOORS = 2;
 float SETSTATE_DONTRESETBUTTON = 4;
 
 float(entity e) entity_get_state = {
-	if(e.classname == "func_button") return e.owner.estate;
+	if(e.classname == "func_door") return e.owner.estate;
 	else return e.estate;
 };
 
