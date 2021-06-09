@@ -8,6 +8,7 @@ void (vector org) spawn_tfog;
 void (vector org, entity death_owner) spawn_tdeath;
 
 float	modelindex_eyes, modelindex_player;
+nosave float 	gameloaded;
 
 /*
 =============================================================================
@@ -639,6 +640,8 @@ void() PutClientInServer =
 			skyfog_set(self, world.skyfog_density);
 	}
 
+
+
 	self.cshift_set = 0;
 	self.cshift_cleared = 0;
 };
@@ -1083,11 +1086,11 @@ void() PlayerPreThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
-	if ((!self.cshift_set && !self.cshift_cleared)) {
+	if ((!self.cshift_set && !self.cshift_cleared) || !gameloaded) {
 		stuffcmd(self, "v_cshift\n");
 		self.cshift_cleared = 1;
 	}
-
+	gameloaded = 1;
 	self.light_lev = 0; // resets dimlight flags for powerups/status effects
 	self.cshift_set = 0; //checked later in PlayerPostThink for cshift changes
 
