@@ -556,7 +556,8 @@ void() monster_rider =
 	precache_model("progs/ridbody.mdl");
 	precache_model("progs/ridlegs.mdl");
 	precache_model("progs/laser.mdl");
-
+	precache_model("progs/d_explod.spr");
+	
 	// temp charge sound
 	precache_sound ("misc/power.wav");		
 	precache_sound("rider/down2.wav");
