@@ -84,7 +84,7 @@ void(float ofs, float turn) armagon_launch_missile =
 	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_BBOX;
 	missile.classname = "missile";
-   newmis.flags = newmis.flags | FL_PROJECTILE;
+   missile.flags = missile.flags | FL_PROJECTILE;
 
 // set missile speed
    missile.velocity = vec * 1000;
