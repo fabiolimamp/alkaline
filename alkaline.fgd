@@ -125,6 +125,7 @@
 	mangle(string) : "Spotlight angle"
 	angle(integer) : "Spotlight angle width" : 40
 	_softangle(float) : "Inner spotlight angle width" : "0"
+	style2(integer) : ""
 	delay(choices) : "Attenuation" =
 	[
 		0 : "Linear falloff (Default)"
@@ -153,8 +154,29 @@
 		14 : "Strobe-Pulse combo (second variety)"
 		17 : "Blink (syncs with animations)"
 	]
-
-	spawnflags(Flags) = [ 1 : "Initially dark" : 0 ]
+	style2(choices) : "Switchable animated light style" : 0 =
+	[
+		0 : "Normal"
+		10: "Fluorescent flicker"
+		2 : "Slow, strong pulse"
+		11: "Slow pulse, noblack"
+		5 : "Gentle pulse"
+		1 : "Flicker A"
+		6 : "Flicker B"
+		3 : "Candle A"
+		7 : "Candle B"
+		8 : "Candle C"
+		4 : "Fast strobe"
+		9 : "Slow strobe"
+		12 : "Alarm Pulse"
+		13 : "Strobe-Pulse combo (first variety)"
+		14 : "Strobe-Pulse combo (second variety)"
+		17 : "Blink (syncs with animations)"
+	]
+	spawnflags(Flags) = [
+		1 : "Initially dark" : 0 
+		2 : "Fade in/out"
+	]
 ]
 
 @baseclass = BrushLight [
