@@ -61,6 +61,7 @@ void() barrel_explode =
 
 	self.origin_z = self.origin_z + 32;
 	
+	activator = damage_attacker;
 	SUB_UseTargets();
 	BecomeExplosion ();
 };

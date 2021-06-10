@@ -247,6 +247,7 @@ void () func_explobox_explode =
 	self.origin = ((self.absmin + self.absmax) * 0.5);
 	self.classname = "explo_box";
 
+	activator = self.enemy;
 	SUB_UseTargets();
 
 	T_RadiusDamage (self, self, self.dmg, world);
@@ -261,10 +262,18 @@ void () func_explobox_explode =
 
 void () func_explobox_die =
 {
-	self.nextthink = 0.2; //for some reason, time + 0.2 doesn't work
+	self.enemy = damage_attacker;
+	self.nextthink = self.ltime + 0.1; // why not instantly?
 	self.think = func_explobox_explode;
 };
 
+
+void () func_explobox_use =
+{
+	self.enemy = activator;
+	self.nextthink = self.ltime + 0.1;
+	self.think = func_explobox_explode;
+};
 /*QUAKED func_explobox (0 .5 .8) ? START_OFF
 An exploding brush entity.  Works just like misc_explobox.
 
@@ -282,13 +291,12 @@ void () func_explobox =
 	setmodel (self, self.model);
 	precache_sound ("weapons/r_exp3.wav");
 	if (!self.health)
-	{
 		self.health = 20;
-	}
+
 	if (!self.dmg)
-	{
 		self.dmg = 100;
-	}
+
+	self.use = func_explobox_use;
 	self.th_die = func_explobox_die;
 	self.takedamage = DAMAGE_AIM;
 };
