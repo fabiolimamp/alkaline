@@ -247,7 +247,7 @@ death
 void(string gibname, float dm) ThrowFloydHead =
 {
 	local entity head;
-	head = spawn();
+	head = self; //spawn();
 	head.origin = self.origin;
 	setmodel (head, gibname);
 	head.frame = 0;
@@ -294,9 +294,7 @@ void () floyd_explode =
 
 	T_RadiusDamage (self, self, 100, world);
 	if (self.health > -50) self.health = -50;
-	if (!(self.spawnflags & FLOYD_ROLLING)) //don't throw head if you're on your back, cuz it looks funny
-		ThrowFloydHead ("progs/h_floyd.mdl", self.health);
-		
+
 	//gibs
 	gibs = 8;
 	while (gibs > 0)
@@ -312,8 +310,12 @@ void () floyd_explode =
 	WriteCoord (MSG_BROADCAST, self.origin_z);
 
 	//BecomeExplosion ();
-	fx_explode();
-	SUB_Hide();
+	//fx_explode();
+
+	if (!(self.spawnflags & FLOYD_ROLLING)) //don't throw head if you're on your back, cuz it looks funny
+		ThrowFloydHead ("progs/h_floyd.mdl", self.health);
+	else
+		SUB_Hide();
 }
 
 void () floyd_death2 =  [$death2,  floyd_death3]  {ai_painforward(-3.33);};
@@ -329,7 +331,7 @@ void () floyd_death11 = [$death11, floyd_death12] {};
 void () floyd_death12 = [$death12, floyd_death13] {};
 void () floyd_death13 = [$death13, floyd_death14] {};
 void () floyd_death14 = [$death14, floyd_death15] {};
-void () floyd_death15 = [$death15, floyd_explode] {self.spawnflags = FLOYD_ROLLING; self.takedamage = DAMAGE_NO;};
+void () floyd_death15 = [$death15, floyd_explode] {self.spawnflags = self.spawnflags | FLOYD_ROLLING; self.takedamage = DAMAGE_NO;};
 
 void() floyd_die =
 {
