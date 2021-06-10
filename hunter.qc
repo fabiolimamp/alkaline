@@ -563,7 +563,11 @@ void() hunter_explode =
 	WriteCoord (MSG_BROADCAST, self.origin_x);
 	WriteCoord (MSG_BROADCAST, self.origin_y);
 	WriteCoord (MSG_BROADCAST, self.origin_z);
-	BecomeExplosion ();
+	//BecomeExplosion ();
+
+	fx_explode();
+	SUB_Hide();
+
 };
 
 void() hunter_death =

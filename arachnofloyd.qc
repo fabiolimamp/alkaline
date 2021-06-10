@@ -225,7 +225,8 @@ void() arf_die =
 		ThrowGib ("progs/fgib1.mdl", self.health);
 		ThrowGib ("progs/fgib1.mdl", self.health);
 
-		BecomeExplosion ();		
+		//BecomeExplosion ();
+		fx_explode();
 
 	}
 	else

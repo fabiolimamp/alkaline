@@ -97,7 +97,7 @@ void(entity targ, entity attacker) Killed =
 
 	if (attacker.classname == "trigger_void") {
 		if (self.flags & FL_MONSTER) {
-			remove(self);
+			entity_hide(self);
 			self = oself;
 			return;
 		}

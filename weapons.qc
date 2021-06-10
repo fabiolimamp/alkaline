@@ -1626,7 +1626,7 @@ void(entity targ, float ammoqty, string zero10, string zero100, string zero1000,
 
 void() display_monsleft =
 {
-	local float entcount, montotal, monalive, mondead;
+	local float entcount, montotal, monalive, mondead, counted;
 	local entity entlist;
 	
 
@@ -1637,7 +1637,7 @@ void() display_monsleft =
 
 	sprint(self, "\b[-- Monsters Alive and Kicking --]\b\n"); 
 	sprint(self, "--------------------------------------\n");
-	sprint(self, " No   HP D Classname + XYZ location\n");
+	sprint(self, " No   HP D C Classname + XYZ location\n");
 	//            xxx xxxx x x------------------------------x
 	// Start from beginning of entity list, world!
 	entlist = nextent(world);
@@ -1647,7 +1647,10 @@ void() display_monsleft =
 		// Found another entity
 		entcount = entcount + 1;
 		// Only interested in monsters (regular + boss)
-		if (entlist.flags & FL_MONSTER || entlist.flags & FL_SPAWNMONSTER) {
+		if (
+			(entlist.flags & FL_MONSTER || entlist.flags & FL_SPAWNMONSTER)
+			&& !(entlist.flags & FL_PACIFIST && !(entlist.spawnflags & MONSTER_COUNTONSPAWN))
+		) {
 			// Keep counting up monsters
 			montotal = montotal + 1;
 			
@@ -1661,6 +1664,15 @@ void() display_monsleft =
 					// Check for monster spawn delay (flag)
 					if (entlist.flags & FL_SPAWNMONSTER) sprint(self, " Y ");
 					else sprint(self, " - ");
+
+					if (entlist.spawnflags & MONSTER_COUNTONSPAWN && !(entlist.flags & FL_PACIFIST)) {
+						sprint(self, "Y ");
+						if(entlist.flags & FL_MONSTER) counted = counted + 1;
+					}
+					else {
+						sprint(self, "- ");
+						counted = counted + 1;
+					}
 					// Print monster class and position
 					sprint(self, entlist.classname); sprint(self, " ");
 					sprint(self, vtos(entlist.origin)); sprint(self, "\n");
@@ -1684,6 +1696,7 @@ void() display_monsleft =
 	sprint(self, ") Alive ("); sprint(self, ftos(monalive));
 	sprint(self, ") Dead ("); sprint(self, ftos(mondead));
 	sprint(self, ")\n");
+	sprint(self, "Total counted ("); sprint(self, ftos(counted));sprint(self, ")\n");
 	sprint(self, "Player location "); sprint(self, vtos(self.origin));
 	sprint(self, "\n\n");
 };

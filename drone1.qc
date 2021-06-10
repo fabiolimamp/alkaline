@@ -322,19 +322,23 @@ void()  drn_die7         =[      $base1,        drn_die7       ]
         ThrowGib ("progs/spike.mdl", -100, self.dest);
         ThrowGib ("progs/spike.mdl", -100, self.dest);
 */
-        ThrowGib ("progs/drngib1.mdl", -65);
-        ThrowGib ("progs/drngib2.mdl", -65);
-        ThrowGib ("progs/drngib3.mdl", -65);
+	ThrowGib ("progs/drngib1.mdl", -65);
+	ThrowGib ("progs/drngib2.mdl", -65);
+	ThrowGib ("progs/drngib3.mdl", -65);
 
 	self.nextthink = time + 2.5; // OUM - gives time to play death sound before going bang
-        T_RadiusDamage (self, self, 80, world); // reduced (Speedy)
+    T_RadiusDamage (self, self, 80, world); // reduced (Speedy)
 	self.origin = self.origin - 8*normalize(self.velocity);
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-        WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+    WriteByte (MSG_BROADCAST, TE_EXPLOSION);
 	WriteCoord (MSG_BROADCAST, self.origin_x);
 	WriteCoord (MSG_BROADCAST, self.origin_y);
 	WriteCoord (MSG_BROADCAST, self.origin_z);
-	BecomeExplosion ();
+
+	//BecomeExplosion ();
+	fx_explode();
+	SUB_Hide();
+	
 };
 
 

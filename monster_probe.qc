@@ -355,7 +355,7 @@ void() probe_die2 = [14, probe_die3] {
 	ai_run_slide();
 };
 
-void() probe_die3 = [15, SUB_Remove] {
+void() probe_die3 = [15, SUB_Hide] {
 	self.trigger_field.trigger_field = self;
 	self.trigger_field.think = bodydie;
 	self.trigger_field.nextthink = time + 0.1;
