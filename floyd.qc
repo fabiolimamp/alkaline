@@ -310,7 +310,10 @@ void () floyd_explode =
 	WriteCoord (MSG_BROADCAST, self.origin_x);
 	WriteCoord (MSG_BROADCAST, self.origin_y);
 	WriteCoord (MSG_BROADCAST, self.origin_z);
-	BecomeExplosion ();
+
+	//BecomeExplosion ();
+	fx_explode();
+	SUB_Hide();
 }
 
 void () floyd_death2 =  [$death2,  floyd_death3]  {ai_painforward(-3.33);};
