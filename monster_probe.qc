@@ -147,6 +147,7 @@ void() probe_think = {
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
+	if(self.frame > 22) self.frame = 0;
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
@@ -185,6 +186,7 @@ void() probe_walkthink = {
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
+	if(self.frame > 22) self.frame = 0;
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 
 	delta = 0;
