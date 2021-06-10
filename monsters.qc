@@ -56,8 +56,8 @@ void() monster_death_use =
 	if (self.flags & FL_SWIM)
 		self.flags = self.flags - FL_SWIM;
 
-	if (!self.target)
-		return;
+	//if (!self.target)
+	//	return;
 
 	activator = self.enemy;
 	SUB_UseTargets ();
