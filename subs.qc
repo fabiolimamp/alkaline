@@ -318,7 +318,18 @@ void() SUB_UseTargets =
 		t = find (world, targetname, self.killtarget);
 		while (t)
 		{
-			if(t.switchshadstyle) lightstyle(t.switchshadstyle, "m");
+			if(t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
+
+			if (t.flags & FL_MONSTER || t.flags & FL_SPAWNMONSTER) { // increase the kill counter if it's a monster
+				if (
+					self.health > 0
+					&& !(t.flags & FL_SPAWNMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
+					&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
+				){
+					killed_monsters = killed_monsters + 1;
+					WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+				}
+			}
 			remove (t);
 			t = find (t, targetname, self.killtarget);
 		}
