@@ -324,6 +324,7 @@ void() scientist_die =
 	if (self.health < -15 || random() < 0.2)
 	{
 		sound (self, CHAN_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
+		self.skin = 0;
 		ThrowHead ("progs/h_zombie.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
