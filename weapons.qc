@@ -1626,7 +1626,7 @@ void(entity targ, float ammoqty, string zero10, string zero100, string zero1000,
 
 void() display_monsleft =
 {
-	local float entcount, montotal, monalive, mondead, counted;
+	local float entcount, montotal, monalive, mondead, counted, countedalive;
 	local entity entlist;
 	
 
@@ -1653,7 +1653,10 @@ void() display_monsleft =
 		) {
 			// Keep counting up monsters
 			montotal = montotal + 1;
-			
+			if (entlist.spawnflags & MONSTER_COUNTONSPAWN && !(entlist.flags & FL_PACIFIST)) {
+				if(!(entlist.flags & FL_SPAWNMONSTER)) counted = counted + 1;
+			}
+			else counted = counted + 1;
 			if (entlist.health > 0) {
 				monalive = monalive + 1;
 				if (monalive <= 400) {
@@ -1667,11 +1670,11 @@ void() display_monsleft =
 
 					if (entlist.spawnflags & MONSTER_COUNTONSPAWN && !(entlist.flags & FL_PACIFIST)) {
 						sprint(self, "Y ");
-						if(entlist.flags & FL_MONSTER) counted = counted + 1;
+						//if (!(entlist.flags & FL_PACIFIST)) countedalive++;
 					}
 					else {
 						sprint(self, "- ");
-						counted = counted + 1;
+						countedalive++;
 					}
 					// Print monster class and position
 					sprint(self, entlist.classname); sprint(self, " ");
@@ -1696,7 +1699,7 @@ void() display_monsleft =
 	sprint(self, ") Alive ("); sprint(self, ftos(monalive));
 	sprint(self, ") Dead ("); sprint(self, ftos(mondead));
 	sprint(self, ")\n");
-	sprint(self, "Total counted ("); sprint(self, ftos(counted));sprint(self, ")\n");
+	sprint(self, "Total counted ("); sprint(self, ftos(counted));sprint(self, ") Alive counted ("); sprint(self, ftos(countedalive));sprint(self, ")\n");
 	sprint(self, "Player location "); sprint(self, vtos(self.origin));
 	sprint(self, "\n\n");
 };
