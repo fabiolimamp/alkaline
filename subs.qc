@@ -335,7 +335,7 @@ void() SUB_UseTargets =
 		}
 		//johnfitz
 	}
-	
+
 //
 // fire targets
 //
@@ -346,6 +346,32 @@ void() SUB_UseTargets =
 
 };
 
+void(entity targ) entity_stop =
+{
+	if (targ == world) return;			// Targ is wrong
+	targ.use = targ.touch = SUB_Null;	// No more touchy
+	targ.think = SUB_Null;				// No more thinking/animation
+	targ.nextthink = -1;				// Never fire think
+	targ.takedamage = DAMAGE_NO;		// No pain/death triggers
+	targ.movetype = MOVETYPE_NONE;		// Stationary
+	targ.solid = SOLID_NOT;				// no world interaction
+	setsize (targ, VEC_ORIGIN, VEC_ORIGIN);		// No size, no impact
+	targ.velocity = targ.avelocity = '0 0 0';	// Frozen velocity
+	targ.effects = 0;					// reset effects
+	targ.attack_finished = time + 9999999;	// Block all functions
+};
+
+void(entity targ) entity_hide =
+{
+	if (targ == world) return;			// Targ is wrong
+	entity_stop(targ);					// No world interaction
+	targ.modelindex = 0;				// Make sure no model
+	setmodel (targ, "");				// invisible
+};
+
+void() SUB_Hide = {
+	entity_hide(self);
+};
 /*
 =============
 SUB_UseEntTargets
