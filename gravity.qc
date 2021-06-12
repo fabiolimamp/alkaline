@@ -7,17 +7,18 @@ trigger_setgravity (per entity)
 */
 
 .float return_gravity;
+entity current_gravity_ent;
 
 void(float g) SetGlobalGravity =
 {
-	localcmd("sv_gravity ");
-	localcmd(ftos(g));
-	localcmd("\n");
-	//bprint("\n\n\n\n");
+	cvar_set ("sv_gravity", ftos(g)); 
+	bprint("\n\n\n\n");
 };
 
 void() SetGlobalGravity_Use =
 {
+	current_gravity_ent = self;
+	
 	if(self.state)
 	{
 		SetGlobalGravity(self.return_gravity);
@@ -50,19 +51,12 @@ void() trigger_globalgravity =
 
 void() FindAndReadGlobalGravity =
 {
-	entity	ent;
-
-	ent = find (world, classname, "gravity_global");
-	
-	if(ent && ent.gravity)
+	if(current_gravity_ent.state)
 	{
-		if(ent.state)
-		{
-			SetGlobalGravity(ent.gravity);
-		}
-		else
-		{
-			SetGlobalGravity(ent.return_gravity);
-		}
+		SetGlobalGravity(current_gravity_ent.gravity);
+	}
+	else
+	{
+		SetGlobalGravity(current_gravity_ent.return_gravity);
 	}
 };
