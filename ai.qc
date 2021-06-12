@@ -461,7 +461,8 @@ The monster is walking it's beat
 void(float dist) ai_walk =
 {
 //	local vector		mtemp;
-	
+	local vector vertdiff;
+
 	movedist = dist;
 	
 	if (self.classname == "monster_dragon")
@@ -473,6 +474,23 @@ void(float dist) ai_walk =
 	if (FindTarget ())
 		return;
 
+	if (self.flags & FL_FLY) {
+		// Allow for some Z axis tolerance
+		if (fabs(self.origin_z - self.goalentity.origin_z) > 16) {
+			//if (self.move_elev == 0) self.move_elev = 8;
+			if (self.origin_z < self.goalentity.origin_z) 
+				self.origin_z = self.origin_z + 8;
+			else
+				self.origin_z = self.origin_z - 8;
+
+			vertdiff = '0 0 0';
+			vertdiff_x = fabs(self.goalentity.origin_x - self.origin_x);
+			vertdiff_y = fabs(self.goalentity.origin_y - self.origin_y);
+			// Are the path corners stacked on top of each other?
+			if (vertdiff_x < 16 && vertdiff_y < 16) dist = 0;
+		}
+	}
+	
 	movetogoal (dist);
 };
 
