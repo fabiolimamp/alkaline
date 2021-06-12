@@ -51,12 +51,15 @@ void() trigger_globalgravity =
 
 void() FindAndReadGlobalGravity =
 {
-	if(current_gravity_ent.state)
+	if(current_gravity_ent != world && current_gravity_ent.classname == "gravity_global")
 	{
-		SetGlobalGravity(current_gravity_ent.gravity);
-	}
-	else
-	{
-		SetGlobalGravity(current_gravity_ent.return_gravity);
+		if(current_gravity_ent.state)
+		{
+			SetGlobalGravity(current_gravity_ent.gravity);
+		}
+		else
+		{
+			SetGlobalGravity(current_gravity_ent.return_gravity);
+		}
 	}
 };
