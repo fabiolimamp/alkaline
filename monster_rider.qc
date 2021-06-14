@@ -453,7 +453,7 @@ void(entity e) monster_rider_start =
 	body.movetype = MOVETYPE_STEP;
 	setmodel(body, "progs/ridbody.mdl");
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	setorigin(body, self.origin - '0 0 64');
+	setorigin(body, self.origin);
 
 	self.trigger_field = body;
 	body.trigger_field = self;
