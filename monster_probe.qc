@@ -21,7 +21,7 @@ void(float ofs, float turn) Probe_laser_fire = {
 	src = self.origin + '0 0 -10' + v_right * ofs + v_forward;
 	targ = self.enemy.origin + self.enemy.view_ofs;
 	
-	if (skill != 0)	{
+	if (startskill != 0)	{
 		dist = vlen(targ - src);
 		targ = targ + self.enemy.velocity * (dist / 1000);
 	}
@@ -148,7 +148,8 @@ void() probe_think = {
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
 	if(self.frame > 22) self.frame = 0;
-	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+	if(self.enemy)
+		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
@@ -187,7 +188,8 @@ void() probe_walkthink = {
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
 	if(self.frame > 22) self.frame = 0;
-	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+	if(self.enemy)
+		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 
 	delta = 0;
 	angdelta = delta - self.fixangle;
@@ -479,11 +481,12 @@ void(entity e) monster_probe_start = {
 	setorigin(self, self.origin);
 
 	body = spawn();
-	body.origin = self.origin - '0 0 64';
+	body.origin = self.origin;// - '0 0 64';
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
 	body.trigger_field = self;
 	setmodel(body, "progs/probebod.mdl");
+	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(body, body.origin);
 
 	self.trigger_field = body;

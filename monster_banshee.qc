@@ -6,71 +6,62 @@ void() Projectile_Hit =
 {
 	local vector org;
 	if (other == self.owner)
-	{
 		return;
-	}
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
+
+	if (pointcontents(self.origin) == CONTENT_SKY)	{
 		remove(self);
 		return;
 	}
+
 	org = self.origin - 8 * normalize(self.velocity);
-	if(other.health) {
+
+	if (other.health) {
 		ImpactSpawn(org, self.velocity * 0.2, 15, other.bloodtype);
 		T_Damage(other, self, self.owner, 10);
 	}
 	T_RadiusDamage(self, self, 20, self);
+
 	self.origin = self.origin - 8 * normalize(self.velocity);
+
 	WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte(MSG_BROADCAST, TE_EXPLOSION);
 	WriteCoord(MSG_BROADCAST, self.origin_x);
 	WriteCoord(MSG_BROADCAST, self.origin_y);
 	WriteCoord(MSG_BROADCAST, self.origin_z);
 	if (!(other.health))
-	{
 		BecomeExplosion();
-	}
 	else
-	{
 		remove(self);
-	}
 };
 
 
-void(float ofs, float turn) b_fire_rocket = 
-{
+void(float ofs, float turn) b_fire_rocket = {
 	local vector src;
 	local vector vec;
 	local vector targ;
 	local vector ang;
 	local entity missile;
 	local float dist;
+
 	ang = self.angles;
 	ang_y = ang_y + self.fixangle;
 	if (turn == 1)
-	{
 		ang_y = ang_y + 165;
-	}
-	else
-	{
-		if (turn == 2)
-		{
-			ang_y = ang_y - 165;
-		}
-	}
+	else if (turn == 2)	
+		ang_y = ang_y - 165;
+		
+
 	makevectors(ang);
 	src = self.origin + '0 0 66' + v_right * ofs + v_forward * 84;
 	targ = self.enemy.origin + self.enemy.view_ofs;
-	if (skill != SKILL_EASY)
-	{
+	if (self.style != SKILL_EASY) {
 		dist = vlen(targ - src);
 		targ = targ + self.enemy.velocity * (dist / 1000);
 	}
 	vec = targ - src;
 	vec = normalize(vec);
 	dist = vec * v_forward;
-	if (dist < self.worldtype)
-	{
+	if (dist < self.worldtype) {
 		vec = v_forward;
 	}
 	//self.effects = self.effects | EF_MUZZLEFLASH; //b_fire_rocket is a ported, more general-purpose function, so this wasn't needed for the banshee
@@ -87,7 +78,7 @@ void(float ofs, float turn) b_fire_rocket =
 	missile.think = SUB_Remove;
 	missile.flags = missile.flags | FL_PROJECTILE;
 	setmodel(missile, "progs/missile.mdl");
-	setsize(missile, VEC_ORIGIN, VEC_ORIGIN);
+	setsize(missile, '0 0 0', '0 0 0');
 	setorigin(missile, src);
 };
 
@@ -103,16 +94,11 @@ void() banshee_set_yaw_speed = {
 	}
 }
 
-void(float angdelta, float delta) ban_rotate = 
-{
-	if (fabs(angdelta) < 10)
-		self.fixangle = delta;
-	else if (angdelta > 5)
-		self.fixangle = self.fixangle + 9;
-	else if (angdelta < -5)
-		self.fixangle = self.fixangle - 9;
-	else
-		self.fixangle = delta;
+void(float angdelta, float delta) ban_rotate = {
+	if (fabs(angdelta) < 10)	self.fixangle = delta;
+	else if (angdelta > 5)		self.fixangle = self.fixangle + 9;
+	else if (angdelta < -5)		self.fixangle = self.fixangle - 9;
+	else						self.fixangle = delta;
 };
 
 void() banshee_sound_idle = {
@@ -134,34 +120,45 @@ void() banshee_sound_idle = {
 		sound(self, CHAN_VOICE, "banshee/idle4.wav", 0.5, ATTN_IDLE);
 }
 
+void() ban_servo = {
+	sound(self, 7, "banshee/servo.wav", 0.5, ATTN_NORM); 
+};
+
+void() ban_footfall = {
+	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
+};
+
 void() banshee_think = {
-	local float delta;
-	local float angdelta;
+	local float delta; // delta Y angle between the enemy and the legs
+	local float angdelta; // wiggle room at the middle or something
 
 	setorigin(self.trigger_field, self.origin);
-	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
-	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+
+	self.trigger_field.angles = self.angles;
+	if(self.enemy) // avoids weird torso angle when standing
+		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle; // makes torso always track the enemy
+	
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
+
+	//keeps delta within -/+180deg
+	if (delta > 180) delta = delta - 360;
+	if (delta < -180) delta = delta + 360;
+
+	// When the legs are more than 90deg from the enemy,
+	// never start a possible standing attack and start running instead
+	// (checked on banshee_plant1/banshee_fire_still).
 	self.cnt = 0;
-	if (delta > 180)
-	{
-		delta = delta - 360;
-	}
-	if (delta < -180)
-	{
-		delta = delta + 360;
-	}
-	if (fabs(delta) > 90)
-	{
+	if (fabs(delta) > 90) {
 		delta = 0;
-		self.cnt = 1;
+		self.cnt = 1; 
 	}
+
 	angdelta = delta - self.fixangle;
 	ban_rotate(angdelta, delta);
-	
+
 	if (self.health < 0)
 		return;
 	
@@ -170,8 +167,7 @@ void() banshee_think = {
 
 };
 
-void() ban_thinkwalk = 
-{
+void() ban_thinkwalk = {
 	local float delta;
 	local float angdelta;
 
@@ -181,13 +177,10 @@ void() ban_thinkwalk =
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 
 	//ChangeYaw();
-
-	delta = 0;
 	self.cnt = 0;
-	if (delta > 180)
-		delta = delta - 360;
-	if (delta < -180)
-		delta = delta + 360;
+	if (delta > 180) delta = delta - 360;
+	if (delta < -180) delta = delta + 360;
+
 	if (fabs(delta) > 90) {
 		delta = 0;
 		self.cnt = 1;
@@ -201,729 +194,177 @@ void() ban_thinkwalk =
 
 	if (!(self.spawnflags & MONSTER_NOIDLESOUND) && !self.enemy)
 		banshee_sound_idle();
-		
 };
 
-void() banshee_stand1 = [0, banshee_stand2]
-{
+
+
+void(float next) banshee_stand_frame = {
 	ai_stand();
 	banshee_think();
-	self.nextthink = time + 0.1;
+	self.nextthink = time + next;
 };
 
-void() banshee_stand2 = [1, banshee_stand3]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand3 = [2, banshee_stand4]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.3;
-};
-
-void() banshee_stand4 = [3, banshee_stand5]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.3;
-};
-
-void() banshee_stand5 = [4, banshee_stand6]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.3;
-};
-
-void() banshee_stand6 = [5, banshee_stand7]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand7 = [6, banshee_stand8]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand8 = [7, banshee_stand9]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand9 = [8, banshee_stand10]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand10 = [9, banshee_stand11]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand11 = [10, banshee_stand12]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand12 = [11, banshee_stand13]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand13 = [12, banshee_stand14]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand14 = [13, banshee_stand15]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand15 = [14, banshee_stand16]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand16 = [15, banshee_stand17]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand17 = [16, banshee_stand18]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand18 = [17, banshee_stand19]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand19 = [18, banshee_stand20]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_stand20 = [19, banshee_stand1]
-{
-	ai_stand();
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
+void() banshee_stand1 = 	[0, banshee_stand2]		{banshee_stand_frame(0.1); };
+void() banshee_stand2 = 	[1, banshee_stand3]		{banshee_stand_frame(0.2); };
+void() banshee_stand3 = 	[2, banshee_stand4]		{banshee_stand_frame(0.3); };
+void() banshee_stand4 = 	[3, banshee_stand5]		{banshee_stand_frame(0.3); };
+void() banshee_stand5 = 	[4, banshee_stand6]		{banshee_stand_frame(0.3); };
+void() banshee_stand6 = 	[5, banshee_stand7]		{banshee_stand_frame(0.2); };
+void() banshee_stand7 = 	[6, banshee_stand8]		{banshee_stand_frame(0.2); };
+void() banshee_stand8 = 	[7, banshee_stand9]		{banshee_stand_frame(0.2); };
+void() banshee_stand9 = 	[8, banshee_stand10]	{banshee_stand_frame(0.2); };
+void() banshee_stand10 = 	[9, banshee_stand11]	{banshee_stand_frame(0.2); };
+void() banshee_stand11 = 	[10, banshee_stand12]	{banshee_stand_frame(0.2); };
+void() banshee_stand12 = 	[11, banshee_stand13]	{banshee_stand_frame(0.2); };
+void() banshee_stand13 = 	[12, banshee_stand14]	{banshee_stand_frame(0.2); };
+void() banshee_stand14 = 	[13, banshee_stand15]	{banshee_stand_frame(0.2); };
+void() banshee_stand15 = 	[14, banshee_stand16]	{banshee_stand_frame(0.2); };
+void() banshee_stand16 = 	[15, banshee_stand17]	{banshee_stand_frame(0.2); };
+void() banshee_stand17 = 	[16, banshee_stand18]	{banshee_stand_frame(0.2); };
+void() banshee_stand18 = 	[17, banshee_stand19]	{banshee_stand_frame(0.2); };
+void() banshee_stand19 = 	[18, banshee_stand20]	{banshee_stand_frame(0.2); };
+void() banshee_stand20 = 	[19, banshee_stand1]	{banshee_stand_frame(0.2); };
 
 
 
-void() banshee_walk1 = [20, banshee_walk2]
-{
-	self.yaw_speed = 15;
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk2 = [21, banshee_walk3]
-{
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk3 = [22, banshee_walk4]
-{
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_IDLE);
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk4 = [23, banshee_walk5]
-{
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk5 = [24, banshee_walk6]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_IDLE);
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk6 = [25, banshee_walk7]
-{
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk7 = [26, banshee_walk8]
-{
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk8 = [27, banshee_walk9]
-{
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk9 = [28, banshee_walk10]
-{
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_IDLE);
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk10 = [29, banshee_walk11]
-{
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk11 = [30, banshee_walk12]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_IDLE);
-	ai_walk(14);
-	ban_thinkwalk();
-};
-
-void() banshee_walk12 = [31, banshee_walk1]
-{
-	ai_walk(14);
-	ban_thinkwalk();
-};
+void() banshee_walk1 = 		[20, banshee_walk2]		{self.yaw_speed = 15; ai_walk(14); ban_thinkwalk(); };
+void() banshee_walk2 = 		[21, banshee_walk3]		{ai_walk(14); ban_thinkwalk(); };
+void() banshee_walk3 = 		[22, banshee_walk4]		{ai_walk(14); ban_thinkwalk(); sound(self, 7, "banshee/servo.wav", 0.5, ATTN_IDLE); };
+void() banshee_walk4 = 		[23, banshee_walk5]		{ai_walk(14); ban_thinkwalk(); };
+void() banshee_walk5 = 		[24, banshee_walk6]		{ai_walk(14); ban_thinkwalk(); sound(self, 6, "banshee/footfall.wav", 1, ATTN_IDLE); };
+void() banshee_walk6 = 		[25, banshee_walk7]		{ai_walk(14); ban_thinkwalk(); };
+void() banshee_walk7 = 		[26, banshee_walk8]		{ai_walk(14); ban_thinkwalk(); };
+void() banshee_walk8 = 		[27, banshee_walk9]		{ai_walk(14); ban_thinkwalk(); };
+void() banshee_walk9 = 		[28, banshee_walk10]	{ai_walk(14); ban_thinkwalk(); sound(self, 7, "banshee/servo.wav", 0.5, ATTN_IDLE); };
+void() banshee_walk10 = 	[29, banshee_walk11]	{ai_walk(14); ban_thinkwalk(); };
+void() banshee_walk11 = 	[30, banshee_walk12]	{ai_walk(14); ban_thinkwalk(); sound(self, 6, "banshee/footfall.wav", 1, ATTN_IDLE); };
+void() banshee_walk12 = 	[31, banshee_walk1]		{ai_walk(14); ban_thinkwalk(); };
 
 
 
-void() banshee_run1 = [20, banshee_run2]
-{
-	banshee_set_yaw_speed();
+void() banshee_run_frame = {
 	ChangeYaw();
-	
 	ai_run(14);
 	banshee_think();
 };
 
-void() banshee_run2 = [21, banshee_run3]
-{
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run3 = [22, banshee_run4]
-{
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run4 = [23, banshee_run5]
-{
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run5 = [24, banshee_run6]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run6 = [25, banshee_run7]
-{
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run7 = [26, banshee_run8]
-{
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run8 = [27, banshee_run9]
-{
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run9 = [28, banshee_run10]
-{
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run10 = [29, banshee_run11]
-{
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run11 = [30, banshee_run12]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-};
-
-void() banshee_run12 = [31, banshee_run1]
-{
-	ChangeYaw();
-	
-	ai_run(14);
-	banshee_think();
-	if (self.lefty == 1)
-	{
+void() banshee_run1 = 	[20, banshee_run2]	{banshee_set_yaw_speed(); banshee_run_frame(); };
+void() banshee_run2 = 	[21, banshee_run3]	{banshee_run_frame(); };
+void() banshee_run3 = 	[22, banshee_run4]	{banshee_run_frame(); ban_servo(); };
+void() banshee_run4 = 	[23, banshee_run5]	{banshee_run_frame(); };
+void() banshee_run5 = 	[24, banshee_run6]	{banshee_run_frame(); ban_footfall(); };
+void() banshee_run6 = 	[25, banshee_run7]	{banshee_run_frame(); };
+void() banshee_run7 = 	[26, banshee_run8]	{banshee_run_frame(); };
+void() banshee_run8 = 	[27, banshee_run9]	{banshee_run_frame(); };
+void() banshee_run9 = 	[28, banshee_run10]	{banshee_run_frame(); ban_servo(); };
+void() banshee_run10 = 	[29, banshee_run11]	{banshee_run_frame(); };
+void() banshee_run11 = 	[30, banshee_run12]	{banshee_run_frame(); ban_footfall(); };
+void() banshee_run12 = 	[31, banshee_run1]	{banshee_run_frame();
+	if (self.lefty == 1) {
 		self.lefty = 0;
 		self.think = self.th_missile;
 	}
 };
 
-void() ban_fire_walk1 = [44, ban_fire_walk2]
-{
+
+
+void() ban_fire_walk_frame = {
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
 };
 
-void() ban_fire_walk2 = [45, ban_fire_walk3]
-{
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
+void() ban_fire_walk1 = 	[44, ban_fire_walk2]	{ban_fire_walk_frame(); };
+void() ban_fire_walk2 = 	[45, ban_fire_walk3]	{ban_fire_walk_frame(); ban_servo(); };
+void() ban_fire_walk3 = 	[46, ban_fire_walk4]	{ban_fire_walk_frame(); };
+void() ban_fire_walk4 = 	[47, ban_fire_walk5]	{ban_fire_walk_frame(); ban_footfall(); };
+void() ban_fire_walk5 = 	[48, ban_fire_walk6]	{ban_fire_walk_frame(); };
+void() ban_fire_walk6 = 	[49, ban_fire_walk7]	{ban_fire_walk_frame(); b_fire_rocket(40, 0); };
+void() ban_fire_walk7 = 	[50, ban_fire_walk8]	{ban_fire_walk_frame(); };
+void() ban_fire_walk8 = 	[51, ban_fire_walk9]	{ban_fire_walk_frame(); ban_servo(); };
+void() ban_fire_walk9 = 	[52, ban_fire_walk10]	{ban_fire_walk_frame(); };
+void() ban_fire_walk10 = 	[53, ban_fire_walk11]	{ban_fire_walk_frame(); ban_footfall(); };
+void() ban_fire_walk11 = 	[54, ban_fire_walk13]	{ban_fire_walk_frame(); b_fire_rocket(-40, 0); };
+void() ban_fire_walk13 = 	[55, banshee_run1]		{ban_fire_walk_frame(); SUB_AttackFinished(1); };
+
+
+
+void() ban_stomp_walk = {
 	ChangeYaw();
 	walkmove(self.angles_y, 14);
 	banshee_think();
 };
 
-void() ban_fire_walk3 = [46, ban_fire_walk4]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_fire_walk4 = [47, ban_fire_walk5]
-{
+void() ban_stomp1 = 	[75, ban_stomp2]	{ban_stomp_walk();};
+void() ban_stomp2 = 	[76, ban_stomp3]	{ban_stomp_walk(); ban_servo(); };
+void() ban_stomp3 = 	[77, ban_stomp4]	{ban_stomp_walk(); };
+void() ban_stomp4 = 	[78, ban_stomp5]	{ChangeYaw(); banshee_think(); };
+void() ban_stomp5 = 	[79, ban_stomp6]	{banshee_think(); };
+void() ban_stomp6 = 	[80, ban_stomp7]	{ChangeYaw(); banshee_think();
 	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_fire_walk5 = [48, ban_fire_walk6]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_fire_walk6 = [49, ban_fire_walk7]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-	b_fire_rocket(40, 0);
-};
-
-void() ban_fire_walk7 = [50, ban_fire_walk8]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_fire_walk8 = [51, ban_fire_walk9]
-{
-	sound(self, TE_WIZSPIKE, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_fire_walk9 = [52, ban_fire_walk10]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_fire_walk10 = [53, ban_fire_walk11]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_fire_walk11 = [54, ban_fire_walk13]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-	b_fire_rocket(-40, 0);
-};
-
-void() ban_fire_walk13 = [55, banshee_run1]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-	SUB_AttackFinished(1);
-};
-
-void() ban_stomp1 = [75, ban_stomp2]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_stomp2 = [76, ban_stomp3]
-{
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
-
-void() ban_stomp3 = [77, ban_stomp4]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 10);
-	banshee_think();
-};
-
-void() ban_stomp4 = [78, ban_stomp5]
-{
-	banshee_think();
-	ChangeYaw();
-};
-
-void() ban_stomp5 = [79, ban_stomp6]
-{
-	banshee_think();
-};
-
-void() ban_stomp6 = [80, ban_stomp7]
-{
-	ChangeYaw();
-	ChangeYaw();
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	banshee_think();
 	FuelTankExplode();
 	T_RadiusDamage(self, self, 100, self);
 };
+void() ban_stomp7 = 	[81, ban_stomp8]	{banshee_think(); };
+void() ban_stomp8 = 	[82, ban_stomp9]	{banshee_think(); };
+void() ban_stomp9 = 	[83, ban_stomp10]	{banshee_think(); };
+void() ban_stomp10 = 	[84, ban_stomp11]	{ban_stomp_walk(); ban_servo(); };
+void() ban_stomp11 = 	[85, ban_stomp12]	{ban_stomp_walk(); };
+void() ban_stomp12 = 	[86, ban_stomp13]	{ban_stomp_walk(); ban_footfall(); };
+void() ban_stomp13 = 	[87, ban_stomp14]	{ban_stomp_walk(); };
+void() ban_stomp14 = 	[88, ban_stomp15]	{ban_stomp_walk(); };
+void() ban_stomp15 = 	[89, banshee_run1]	{ban_stomp_walk(); };
 
-void() ban_stomp7 = [81, ban_stomp8]
-{
-	banshee_think();
-};
 
-void() ban_stomp8 = [82, ban_stomp9]
-{
-	banshee_think();
-};
 
-void() ban_stomp9 = [83, ban_stomp10]
-{
-	banshee_think();
-};
+void() banshee_plant1 = [0, banshee_plant1]	{ban_fire_still(); banshee_think(); };
 
-void() ban_stomp10 = [84, ban_stomp11]
-{
-	sound(self, 7, "banshee/servo.wav", SERVO_VOLUME, ATTN_NORM);
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
 
-void() ban_stomp11 = [85, ban_stomp12]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
+void() banshee_stop1 = 	[57, banshee_stop2]		{banshee_think(); };
+void() banshee_stop2 = 	[58, banshee_plant1]	{banshee_think(); ban_footfall(); };
 
-void() ban_stomp12 = [86, ban_stomp13]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
 
-void() ban_stomp13 = [87, ban_stomp14]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
 
-void() ban_stomp14 = [88, ban_stomp15]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
+void() ban_launch_field1 = 	[32, ban_launch_field2]		{banshee_think(); };
+void() ban_launch_field2 = 	[33, ban_launch_field3]		{banshee_think(); };
+void() ban_launch_field3 = 	[34, ban_launch_field4]		{banshee_think(); };
+void() ban_launch_field4 = 	[35, ban_launch_field5]		{banshee_think(); };
+void() ban_launch_field5 = 	[36, ban_launch_field6]		{banshee_think(); };
+void() ban_launch_field6 = 	[37, ban_launch_field7]		{banshee_think(); ban_footfall(); };
+void() ban_launch_field7 = 	[38, ban_launch_field8]		{banshee_think(); };
+void() ban_launch_field8 = 	[39, ban_launch_field9]		{banshee_think(); };
+void() ban_launch_field9 = 	[40, ban_launch_field10]	{banshee_think(); b_fire_rocket(40, 0); b_fire_rocket(-40, 0); };
+void() ban_launch_field10 = [41, ban_launch_field11]	{banshee_think(); };
+void() ban_launch_field11 = [42, ban_launch_field12]	{banshee_think();};
+void() ban_launch_field12 = [43, banshee_plant1]		{banshee_think(); SUB_AttackFinished(0.3); };
 
-void() ban_stomp15 = [89, banshee_run1]
-{
-	ChangeYaw();
-	walkmove(self.angles_y, 14);
-	banshee_think();
-};
 
-void() banshee_plant1 = [0, banshee_plant1]
-{
-	ban_fire_still();
-	banshee_think();
-};
 
-void() banshee_stop1 = [57, banshee_stop2]
-{
-	banshee_think();
-};
-
-void() banshee_stop2 = [58, banshee_plant1]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	banshee_think();
-};
-
-void() ban_launch_field1 = [32, ban_launch_field2]
-{
-	banshee_think();
-};
-
-void() ban_launch_field2 = [33, ban_launch_field3]
-{
-	banshee_think();
-};
-
-void() ban_launch_field3 = [34, ban_launch_field4]
-{
-	banshee_think();
-};
-
-void() ban_launch_field4 = [35, ban_launch_field5]
-{
-	banshee_think();
-};
-
-void() ban_launch_field5 = [36, ban_launch_field6]
-{
-	banshee_think();
-};
-
-void() ban_launch_field6 = [37, ban_launch_field7]
-{
-	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
-	banshee_think();
-};
-
-void() ban_launch_field7 = [38, ban_launch_field8]
-{
-	banshee_think();
-};
-
-void() ban_launch_field8 = [39, ban_launch_field9]
-{
-	banshee_think();
-};
-
-void() ban_launch_field9 = [40, ban_launch_field10]
-{
-	banshee_think();
-	b_fire_rocket(40, 0);
-	b_fire_rocket(-40, 0);
-};
-
-void() ban_launch_field10 = [41, ban_launch_field11]
-{
-	banshee_think();
-};
-
-void() ban_launch_field11 = [42, ban_launch_field12]
-{
-	banshee_think();
-};
-
-void() ban_launch_field12 = [43, banshee_plant1]
-{
-	banshee_think();
-	SUB_AttackFinished(0.3);
-};
-
-void() banshee_die1 = [57, banshee_die2]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-	sound(self, CHAN_AUTO, "banshee/death.wav", 1, ATTN_NORM);
-};
-
-void() banshee_die2 = [58, banshee_die3]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die3 = [59, banshee_die4]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die4 = [60, banshee_die5]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die5 = [61, banshee_die6]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die6 = [62, banshee_die7]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die7 = [63, banshee_die8]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die8 = [64, banshee_die9]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die9 = [65, banshee_die10]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die10 = [66, banshee_die11]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die11 = [67, banshee_die12]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die12 = [68, banshee_die13]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die13 = [69, banshee_die14]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die14 = [70, banshee_die15]
-{
-	banshee_think();
-	self.nextthink = time + 0.2;
-};
-
-void() banshee_die15 = [71, banshee_die16]
-{
-	banshee_think();
-	self.nextthink = time + 0.1;
+void() banshee_die1 = 	[57, banshee_die2]		{banshee_think(); self.nextthink = time + 0.2; sound(self, CHAN_AUTO, "banshee/death.wav", 1, ATTN_NORM); };
+void() banshee_die2 = 	[58, banshee_die3]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die3 = 	[59, banshee_die4]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die4 = 	[60, banshee_die5]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die5 = 	[61, banshee_die6]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die6 = 	[62, banshee_die7]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die7 = 	[63, banshee_die8]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die8 = 	[64, banshee_die9]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die9 = 	[65, banshee_die10]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die10 = 	[66, banshee_die11]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die11 = 	[67, banshee_die12]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die12 = 	[68, banshee_die13]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die13 = 	[69, banshee_die14]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die14 = 	[70, banshee_die15]		{banshee_think(); self.nextthink = time + 0.2; };
+void() banshee_die15 = 	[71, banshee_die16]		{banshee_think(); self.nextthink = time + 0.1;
 	sound(self, CHAN_WEAPON, "doors/airdoor2.wav", 1, ATTN_NORM);
 	sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE);
 };
+void() banshee_die16 = 	[72, banshee_die17]		{banshee_think(); self.nextthink = time + 0.1; };
+void() banshee_die17 = 	[73, banshee_die18]		{banshee_think(); self.nextthink = time + 0.1; };
+void() banshee_die18 = 	[74, banshee_die19]		{banshee_think(); self.nextthink = time + 0.1; sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE); };
+void() banshee_die19 = 	[74, banshee_die19]		{self.solid = SOLID_NOT;};
 
-void() banshee_die16 = [72, banshee_die17]
-{
-	banshee_think();
-	self.nextthink = time + 0.1;
-};
 
-void() banshee_die17 = [73, banshee_die18]
-{
-	banshee_think();
-	self.nextthink = time + 0.1;
-};
-
-void() banshee_die18 = [74, banshee_die19]
-{
-	sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE);
-	banshee_think();
-	self.nextthink = time + 0.1;
-};
-
-void() banshee_die19 = [74, banshee_die19]
-{
-self.solid = SOLID_NOT;
-};
-
-void(entity attacker, float damage) banshee_pain = 
-{
+void(entity attacker, float damage) banshee_pain = {
 	if (self.health <= 0) return;
 	if (damage < 25) return;
 	if (self.pain_finished > time) return;
@@ -932,29 +373,15 @@ void(entity attacker, float damage) banshee_pain =
 	sound(self, CHAN_VOICE, "banshee/pain.wav", 1, ATTN_NORM);
 };
 
-void() banshee_missile_attack = 
-{
+void() banshee_missile_attack = {
 	local float n;
 	n = random();
-	if (n < 0.8)
-	{
-		ban_fire_walk1();
-	}
-	else
-	{
-		if (n < 1)
-		{
-			ban_launch_field1();
-		}
-		else
-		{
-			banshee_stop1();
-		}
-	}
+	if 		(n < 0.8) 	ban_fire_walk1();
+	else if (n < 1)		ban_launch_field1();
+	else 				banshee_stop1();
 };
 
-void() banshee_repulse_attack = 
-{
+void() banshee_repulse_attack = {
 	local entity head;
 	local vector dir;
 	banshee_think();
@@ -983,46 +410,40 @@ void() banshee_repulse_attack =
 	
 };
 
-void() ban_fire_still = 
-{
+void() ban_fire_still = {
 	local vector spot1;
 	local vector spot2;
 	spot1 = self.origin + self.view_ofs;
 	spot2 = self.enemy.origin + self.enemy.view_ofs;
 	traceline(spot1, spot2, 0, self);
-	if (trace_ent != self.enemy)
-	{
+	if (trace_ent != self.enemy) {
 		banshee_run1();
 		return;
 	}
-	if (trace_inopen && trace_inwater)
-	{
+	if (trace_inopen && trace_inwater) {
 		banshee_run1();
 		return;
 	}
-	if (time < self.attack_finished)
-	{
+	if (time < self.attack_finished) {
 		return;
 	}
-	if (vlen(spot2 - spot1) < 200 && self.enemy.classname == "player")
-	{
+	if (vlen(spot2 - spot1) < 200 && self.enemy.classname == "player") {
 		ban_stomp1();
 		return;
 	}
 	self.state = STATE_TOP;
-	if (vlen(spot2 - spot1) > 450)
-	{
+	if (vlen(spot2 - spot1) > 450) {
 		banshee_run1();
 		return;
 	}
 	ban_launch_field1();
-	if (self.cnt == 1)
-	{
+	if (self.cnt == 1) {
 		banshee_run1();
 		return;
 	}
 	return;
 };
+
 
 float() BansheeCheckAttack = 
 {
@@ -1075,17 +496,9 @@ void(entity e) monster_banshee_start =
 	self = e;
 
 	self.lefty = 0;
-	self.style = cvar("skill");
+	self.style = startskill;
 
-	body = spawn();
-	body.origin = self.origin;
-	body.origin = body.origin - '0 0 64';
-	body.solid = SOLID_NOT;
-	body.movetype = MOVETYPE_STEP;
-	body.trigger_field = self;
-	if(!self.bloodtype) body.bloodtype = SPAWN_YELLOWSPARK;
-	setmodel(body, "progs/banbody.mdl");
-	setorigin(body, body.origin);
+
 
 	self.classname = "monster_banshee";
 	self.solid = SOLID_SLIDEBOX;
@@ -1096,6 +509,15 @@ void(entity e) monster_banshee_start =
 	setmodel(self, "progs/banlegs.mdl");
 	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(self, self.origin);
+
+	body = spawn();
+	body.origin = body.origin;// - '0 0 64';
+	body.solid = SOLID_NOT;
+	body.movetype = MOVETYPE_STEP;
+	body.trigger_field = self;
+	setmodel(body, "progs/banbody.mdl");
+	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setorigin(body, body.origin);
 
 	if (self.style == SKILL_EASY) {
 		self.yaw_speed = 5; //5
@@ -1113,7 +535,6 @@ void(entity e) monster_banshee_start =
 		self.worldtype = 0.75;
 	}
 	
-	//dealwithskill(); // Malice stuff, changes monster health depending on skill
 	self.state = 0;
 	self.super_time = 0;
 	self.ltime = 0;

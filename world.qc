@@ -184,6 +184,8 @@ void() worldspawn =
 	else
 		cvar_set ("sv_gravity", "800");
 
+	startskill = cvar("skill");
+
 	world_sounds = &world.sounds;
 // the area based ambient sounds MUST be the first precache_sounds
 

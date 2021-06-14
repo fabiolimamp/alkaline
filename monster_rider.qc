@@ -1,129 +1,83 @@
 void() rider_pppain1;
-.float torsoframe;
-.vector heightofs;
-.float takedam;
 
-void() Rider_Push =
-{
+
+void() Rider_Push = {
 	local	vector	dir;
 	local	entity	pushtarg;
 	
 	pushtarg = findradius(self.origin, 128);
 	
-	while (pushtarg)
-	{
-		if ((pushtarg.classname == "player") || (pushtarg == self.enemy))
-			{
+	while (pushtarg) {
+		if ((pushtarg.classname == "player") || (pushtarg == self.enemy)) {
 			dir = normalize (pushtarg.origin - self.origin);
 			pushtarg.flags = pushtarg.flags - FL_ONGROUND;
 			pushtarg.velocity = dir*400;
 			pushtarg.velocity_z = 0;
 			pushtarg.velocity_z = 200;		
-			}
-	
-	pushtarg = pushtarg.chain;
-	}
-	
-	
-};
-
-
-void(float angdelta, float delta) rider_turn = 
-{
-	if (fabs(angdelta) < 10)
-	{
-		self.fixangle = delta;
-	}
-	else
-	{
-		if (angdelta > 5)
-		{
-			self.fixangle = self.fixangle + 9;
 		}
-		else
-		{
-			if (angdelta < CONTENT_LAVA)
-			{
-				self.fixangle = self.fixangle - 9;
-			}
-			else
-			{
-				self.fixangle = delta;
-			}
-		}
+	
+		pushtarg = pushtarg.chain;
 	}
 };
 
-void() rider_think = 
-{
-	local float delta;
-	local float angdelta;
+void(float angdelta, float delta) rider_turn = {
+	if (fabs(angdelta) < 10)	self.fixangle = delta;
+	else if (angdelta > 5)		self.fixangle = self.fixangle + 9;
+	else if (angdelta < -5)		self.fixangle = self.fixangle - 9;
+	else 						self.fixangle = delta;
+};
+
+void() rider_think = {
+	local float delta; // delta Y angle between the enemy and the legs
+	local float angdelta; // wiggle room at the middle or something
+
 	setorigin(self.trigger_field, self.origin);
-	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
-	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
+
+	//keeps delta within -/+180deg
+	if (delta > 180) delta = delta - 360;
+	if (delta < -180) delta = delta + 360;
+
+	// When the legs are more than 90deg from the enemy,
+	// never start a possible standing attack and start running instead
 	self.cnt = 0;
-	if (delta > 180)
-	{
-		delta = delta - 360;
-	}
-	if (delta < -180)
-	{
-		delta = delta + 360;
-	}
-	if (fabs(delta) > 90)
-	{
+	if (fabs(delta) > 90) {
 		delta = 0;
 		self.cnt = 1;
 	}
+
 	angdelta = delta - self.fixangle;
 	rider_turn(angdelta, delta);
-	if (self.health < 0)
-	{
-		return;
-	}
+
+	self.trigger_field.angles = self.angles;
+	if (self.enemy) // avoids weird torso angle when standing
+		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle; // makes torso always track the enemy
 };
 
-void() rider_think_rail = 
-{
+void(float torsoframe, float heightoffset) rider_think_rail = {
+	local vector torsoorigin;
 	local float delta;
 	local float angdelta;
 
-	setorigin(self.trigger_field, self.origin + self.heightofs);
-	self.trigger_field.angles = self.angles;
-	self.trigger_field.frame = self.torsoframe;
-	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+	torsoorigin = [self.origin_x, self.origin_y, self.origin_z + heightoffset];
+	setorigin(self.trigger_field, torsoorigin);
+	self.trigger_field.frame = torsoframe;
 
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
-	self.cnt = 0;
-	if (delta > 180)
-	{
-		delta = delta - 360;
-	}
-	if (delta < -180)
-	{
-		delta = delta + 360;
-	}
-	if (fabs(delta) > 90)
-	{
-		delta = 0;
-		self.cnt = 1;
-	}
+
 	angdelta = delta - self.fixangle;
 	rider_turn(angdelta, delta);
-
-	if (self.health < 0)
-	{
-		return;
-	}
 	
+	self.trigger_field.angles = self.angles;
+	// +10deg angle offset correction so the model's weapon points straight to the enemy
+	self.trigger_field.angles_y = self.trigger_field.angles_y + delta + 10; 
 };
-
 
 
 void() rider_walkthink = 
@@ -327,15 +281,14 @@ void() rider_pppain7 = [21, rider_pppain8]{rider_think();};
 void() rider_pppain8 = [22, rider_pppain9]{rider_think();};
 void() rider_pppain9 = [23, rider_run1]{rider_think();};
 
-void() rider_charge =
-{
-makevectors(self.trigger_field.angles);
-sound (self, CHAN_VOICE, "misc/power.wav", 1, ATTN_NORM);
+void() rider_charge = {
+	makevectors(self.trigger_field.angles);
+	sound (self, CHAN_VOICE, "misc/power.wav", 1, ATTN_NORM);
 
-particle (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *28  ,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *28 * -5), 111, 30);
-particle (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *28 ,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *28 * -5), 111, 30);
-particle (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *-28 ,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *-28 * -5), 111, 30);
-particle (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *-28,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *-28 * -5), 111, 30);
+	particle (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *28  ,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *28 * -5), 111, 30);
+	particle (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *28 ,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *28 * -5), 111, 30);
+	particle (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *-28 ,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * 28 + v_right *-28 * -5), 111, 30);
+	particle (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *-28,  self.trigger_field.origin + '0 0 28' - (self.trigger_field.origin + '0 0 28' + v_forward * -28 + v_right *-28 * -5), 111, 30);
 
 }
 
@@ -407,27 +360,27 @@ void() rider_rail_shoot =
 };
 
 
-void() rider_rail1 = [42, rider_rail2]{ai_face();rider_think();self.yaw_speed = 40;rider_charge();};
-void() rider_rail2 = [43, rider_rail3]{ai_face();rider_think();};
-void() rider_rail3 = [44, rider_rail4]{ai_face();rider_think();rider_charge();};
-void() rider_rail4 = [45, rider_rail5]{ai_face();rider_think();};
-void() rider_rail5 = [46, rider_rail6]{ai_face();rider_think();rider_charge();};
-void() rider_rail6 = [47, rider_rail7]{ai_face();rider_think();};
-void() rider_rail7 = [48, rider_rail8]{ai_face();rider_think();sound (self, CHAN_VOICE, "rider/step.wav", 1, ATTN_NORM);rider_charge();};
-void() rider_rail8 = [49, rider_rail9]{ai_face();rider_think();rider_charge();};
-void() rider_rail9 = [50, rider_rail10]{ai_face();rider_think();};
-void() rider_rail10 = [51, rider_rail11]{ai_face();rider_think();Rider_Push();rider_charge();};
-void() rider_rail11 = [52, rider_rail12]{self.torsoframe = 36;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail12 = [52, rider_rail13]{self.torsoframe = 37;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail13 = [52, rider_rail14]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail14 = [52, rider_rail15]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM);};
-void() rider_rail15 = [52, rider_rail16]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail16 = [52, rider_rail17]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail17 = [52, rider_rail18]{self.torsoframe = 38;self.heightofs = '0 0 -12';ai_face();rider_think_rail();rider_rail_shoot();self.attack_finished = time + 2;};
-void() rider_rail18 = [52, rider_rail19]{self.torsoframe = 39;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail19 = [52, rider_rail20]{self.torsoframe = 40;self.heightofs = '0 0 -12';ai_face();rider_think_rail();};
-void() rider_rail20 = [53, rider_rail21]{self.torsoframe = 41;self.heightofs = '0 0 -8';ai_face();rider_think_rail();};
-void() rider_rail21 = [54, rider_run1]{self.torsoframe = 0;self.heightofs = '0 0 -4'; ai_face();rider_think_rail();self.yaw_speed = 8;};
+void() rider_rail1 = 	[42, rider_rail2]	{ai_face(); rider_think(); self.yaw_speed = 40; rider_charge(); };
+void() rider_rail2 = 	[43, rider_rail3]	{ai_face(); rider_think(); };
+void() rider_rail3 = 	[44, rider_rail4]	{ai_face(); rider_think(); rider_charge(); };
+void() rider_rail4 = 	[45, rider_rail5]	{ai_face(); rider_think(); };
+void() rider_rail5 = 	[46, rider_rail6]	{ai_face(); rider_think(); rider_charge(); };
+void() rider_rail6 = 	[47, rider_rail7]	{ai_face(); rider_think(); };
+void() rider_rail7 = 	[48, rider_rail8]	{ai_face(); rider_think(); rider_charge(); sound (self, CHAN_VOICE, "rider/step.wav", 1, ATTN_NORM); };
+void() rider_rail8 = 	[49, rider_rail9]	{ai_face(); rider_think(); rider_charge(); };
+void() rider_rail9 = 	[50, rider_rail10]	{ai_face(); rider_think();};
+void() rider_rail10 = 	[51, rider_rail11]	{ai_face(); rider_think(); Rider_Push(); rider_charge(); };
+void() rider_rail11 = 	[52, rider_rail12]	{rider_think_rail(36, -12); };
+void() rider_rail12 = 	[52, rider_rail13]	{rider_think_rail(37, -12); };
+void() rider_rail13 = 	[52, rider_rail14]	{rider_think_rail(38, -12); };
+void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM); };
+void() rider_rail15 = 	[52, rider_rail16]	{rider_think_rail(38, -12); };
+void() rider_rail16 = 	[52, rider_rail17]	{rider_think_rail(38, -12); };
+void() rider_rail17 = 	[52, rider_rail18]	{rider_think_rail(38, -12); rider_rail_shoot(); self.attack_finished = time + 2; };
+void() rider_rail18 = 	[52, rider_rail19]	{rider_think_rail(39, -12); };
+void() rider_rail19 = 	[52, rider_rail20]	{rider_think_rail(40, -12); };
+void() rider_rail20 = 	[53, rider_rail21]	{rider_think_rail(41, -8); };
+void() rider_rail21 = 	[54, rider_run1]	{rider_think_rail(0, -4); self.yaw_speed = 8; };
 
 
 
@@ -452,27 +405,24 @@ float() RiderCheckAttack =
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	traceline(spot1, spot2, 0, self);
+
 	if (trace_inopen && trace_inwater)
-	{
 		return 0;
-	}
 	if (time < self.attack_finished)
-	{
 		return 0;
-	}
+	
 	ang = self.angles_y + self.fixangle;
 	delta = self.ideal_yaw - ang;
 	dist = vlen(spot2 - spot1);
 	
 	if (self.enemy.classname != "player")
-	{
-	return FALSE;
-	}
+		return FALSE;
 	
 	if (self.attack_finished < time)
 		return TRUE;
 
 	self.lefty = 1;
+
 	return FALSE;
 };
 
@@ -485,13 +435,11 @@ void(entity e) monster_rider_start =
 {
 	local entity oself;
 	local entity body;
-	local float sk;
 
 	oself = self;
 	self = e;
 
 	self.lefty = 0;
-	sk = cvar("skill");
 	
 	
 	self.solid = SOLID_SLIDEBOX;
@@ -504,17 +452,17 @@ void(entity e) monster_rider_start =
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
 	setmodel(body, "progs/ridbody.mdl");
-	setorigin(body, self.origin - '0 0 64');
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setorigin(body, self.origin - '0 0 64');
 
 	self.trigger_field = body;
 	body.trigger_field = self;
 
-	if (sk == 0) {
+	if (startskill == SKILL_EASY) {
 		self.health = 600;
 		self.worldtype = 0.9;
 	}
-	else if (sk == 1) {
+	else if (startskill == SKILL_NORMAL) {
 		self.health = 777;
 		self.worldtype = 0.85;
 	}

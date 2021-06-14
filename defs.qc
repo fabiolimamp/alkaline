@@ -520,6 +520,7 @@ entity	damage_attacker;	// set by T_Damage
 float	framecount;
 
 float		skill;
+float 		startskill;
 
 nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
 

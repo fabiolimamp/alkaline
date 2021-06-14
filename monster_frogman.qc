@@ -1,16 +1,15 @@
 void() harpoon;
-void() OutControl;
+void() frogmen_outcontrol;
 
 
-void(vector where) make_bub = 
-{
+void(vector where) make_bub = {
 	local entity bubble;
 	bubble = spawn();
 	setmodel(bubble, "progs/s_bubble.spr");
 	setorigin(bubble, where);
 	bubble.movetype = MOVETYPE_NOCLIP;
 	bubble.solid = SOLID_NOT;
-	bubble.velocity_z = SVC_SETVIEWANGLES + random() * SVC_SETVIEWANGLES;
+	bubble.velocity_z = 10 + random() * 10;
 	bubble.touch = bubble_remove;
 	bubble.classname = "bubble";
 	setsize(bubble, '-8 -8 -8', '8 8 8');
@@ -40,16 +39,9 @@ void() frogman_down3 = [36, frogman_down4]{};
 void() frogman_down4 = [37, frogman_down5]{};
 void() frogman_down5 = [38, frogmen_run1]{};
 
-void() frogmen_fire = 
-{
-	if (random() < 0.8)
-	{
-		frogmen_fire1();
-	}
-	else
-	{
-		frogmen_run1();
-	}
+void() frogmen_fire = {
+	if (random() < 0.8)	frogmen_fire1();
+	else frogmen_run1();
 };
 
 void() frogmen_stand1 = [19, frogmen_stand2]
@@ -71,19 +63,19 @@ void() frogmen_stand9 = [27, frogmen_stand1]{ai_stand();};
 
 void() frogmen_walk1 = [0, frogmen_walk2]
 {
-	ai_walk(SECRET_NO_SHOOT);
+	ai_walk(8);
 	if (random() < 0.2)
 	{
 		sound(self, CHAN_VOICE, "frogman/idle.wav", 1, ATTN_IDLE);
 	}
 };
-void() frogmen_walk2 = [1, frogmen_walk3]{ai_walk(SECRET_NO_SHOOT);};
-void() frogmen_walk3 = [2, frogmen_walk4]{ai_walk(SECRET_NO_SHOOT);};
-void() frogmen_walk4 = [3, frogmen_walk5]{ai_walk(SECRET_NO_SHOOT);};
-void() frogmen_walk5 = [4, frogmen_walk6]{ai_walk(SECRET_NO_SHOOT);};
-void() frogmen_walk6 = [5, frogmen_walk7]{ai_walk(SECRET_NO_SHOOT);};
-void() frogmen_walk7 = [6, frogmen_walk8]{ai_walk(SECRET_NO_SHOOT);};
-void() frogmen_walk8 = [7, frogmen_walk1]{ai_walk(SECRET_NO_SHOOT);};
+void() frogmen_walk2 = [1, frogmen_walk3]{ai_walk(8);};
+void() frogmen_walk3 = [2, frogmen_walk4]{ai_walk(8);};
+void() frogmen_walk4 = [3, frogmen_walk5]{ai_walk(8);};
+void() frogmen_walk5 = [4, frogmen_walk6]{ai_walk(8);};
+void() frogmen_walk6 = [5, frogmen_walk7]{ai_walk(8);};
+void() frogmen_walk7 = [6, frogmen_walk8]{ai_walk(8);};
+void() frogmen_walk8 = [7, frogmen_walk1]{ai_walk(8);};
 
 void() frogmen_run1 = [0, frogmen_run2]
 {
@@ -123,45 +115,39 @@ void() frogmen_pain5 = [32, frogmen_run1]{};
 void(entity attacker, float damage) frogmen_pain = 
 {
 	if (self.pain_finished > time)
-	{
 		return;
-	}
-	self.pain_finished = time + AS_MELEE;
+
+	self.pain_finished = time + 3;
+	
 	if (random() < 0.5)
-	{
 		sound(self, CHAN_VOICE, "frogman/pain1.wav", 1, ATTN_NORM);
-	}
 	else
-	{
 		sound(self, CHAN_VOICE, "frogman/pain2.wav", 1, ATTN_NORM);
-	}
+
 	frogmen_pain1();
 };
 
 void() poon_bang = 
 {
 	if (other == self.owner)
-	{
 		return;
-	}
-	self.velocity = VEC_ORIGIN;
+
+	self.velocity = '0 0 0';
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_NOT;
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
+	if (pointcontents(self.origin) == CONTENT_SKY) {
 		remove(self);
 		return;
 	}
 	sound(self, CHAN_WEAPON, "frogman/impact.wav", 1, ATTN_NORM);
 	if (other.health)
 	{
-		T_Damage(other, self, self.owner, SVC_INTERMISSION);
+		T_Damage(other, self, self.owner, 30);
 		remove(self);
 	}
 };
 
-void() harpoon = 
-{
+void() harpoon = {
 	local vector trace1;
 	local entity harp;
 	harp = spawn();
@@ -170,13 +156,13 @@ void() harpoon =
 	harp.solid = SOLID_BBOX;
 	trace1 = normalize(self.origin - self.enemy.origin);
 	harp.velocity = trace1 * -1000;
-	harp.angles = vectoangles(trace1 * CONTENT_EMPTY);
+	harp.angles = vectoangles(trace1 * -1);
 	harp.touch = poon_bang;
-	harp.nextthink = time + SVC_SETVIEWPORT;
+	harp.nextthink = time + 5;
 	harp.think = SUB_Remove;
 	harp.flags = harp.flags | FL_PROJECTILE;
 	setmodel(harp, "progs/harpoon.mdl");
-	harp.skin = SPAWNFLAG_SUPERSPIKE;
+	harp.skin = 1;
 	setsize(harp, VEC_ORIGIN, VEC_ORIGIN);
 	setorigin(harp, self.origin + + v_right * -8 + v_forward * 14 + '0 0 14');
 };
@@ -184,7 +170,7 @@ void() harpoon =
 void() spinup1 = [56, spinup2]
 {
 	self.velocity_z = 400;
-	self.touch = OutControl;
+	self.touch = frogmen_outcontrol;
 	make_bub(self.origin);
 };
 
@@ -209,7 +195,7 @@ void() spinup4 = [59, spinup1]
 void() spinover1 = [50, spinover2]
 {
 	self.velocity = self.old_angles;
-	self.touch = OutControl;
+	self.touch = frogmen_outcontrol;
 	make_bub(self.origin);
 };
 
@@ -243,8 +229,7 @@ void() spinover6 = [55, spinover1]
 	make_bub(self.origin);
 };
 
-void() EndAll = 
-{
+void() frogmen_end_all = {
 	if (other == world)
 	{
 		self.movetype = MOVETYPE_NONE;
@@ -252,19 +237,18 @@ void() EndAll =
 	}
 };
 
-void() OutControl = 
+void() frogmen_outcontrol = 
 {
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_BOUNCE;
-	self.touch = EndAll;
+	self.touch = frogmen_end_all;
 	frogmen_death1();
 };
 
 void() frogmen_die = 
 {
 	local float r;
-	if (self.health < -50)
-	{
+	if (self.health < -50) {
 		sound(self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead("progs/h_guard.mdl", self.health);
 		ThrowGib("progs/gib1.mdl", self.health);
@@ -272,22 +256,19 @@ void() frogmen_die =
 		ThrowGib("progs/gib3.mdl", self.health);
 		return;
 	}
-	if (self.health > -30)
-	{
+
+	if (self.health > -30) {
 		frogmen_death1();
 	}
-	else
-	{
+	else {
 		r = random();
-		if (r < 0.5)
-		{
+		if (r < 0.5) {
 			spinup1();
 		}
-		else
-		{
+		else {
 			self.angles_y = (0.5 - random()) * 360;
-			self.angles_x = MSG_BROADCAST;
-			self.angles_z = MSG_BROADCAST;
+			self.angles_x = 0;
+			self.angles_z = 0;
 			makevectors(self.angles);
 			self.old_angles = v_forward * 400 + v_forward * random() * 200;
 			spinover1();
@@ -297,7 +278,7 @@ void() frogmen_die =
 
 
 void() frogmen_sight = {
-	sound(self, CHAN_VOICE, "frogman/sight.wav", AS_STRAIGHT, ATTN_NORM);
+	sound(self, CHAN_VOICE, "frogman/sight.wav", 1, ATTN_NORM);
 };
 
 void(entity e) monster_frogman_start = 
@@ -315,7 +296,6 @@ void(entity e) monster_frogman_start =
 
 	self.health = 100;
 
-	//dealwithskill(); // unkown Malice stuff, changes monster health depending on skill?
 	self.th_stand = frogmen_stand1;
 	self.th_walk = frogmen_walk1;
 	self.th_run = frogmen_run1;
