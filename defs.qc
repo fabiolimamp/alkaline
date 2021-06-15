@@ -243,6 +243,7 @@ float	FL_JUMPRELEASED			= 4096;	// for jump debouncing
 float 	FL_SPAWNMONSTER			= 8192; // triggered spawn monsters
 float 	FL_PACIFIST				= 16384;// monsters that don't fight (usually run away)
 float 	FL_PROJECTILE			= 32768;// projectile entities, like lasers, plasma, rockets, spikes, etc
+float 	FL_NOCENTERPRINT		= 65536;// don't centerprint entity's message field when its targets are used
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves
@@ -563,8 +564,6 @@ nosave float gamestarted;
 
 .void(entity mon)	start_function;
 
-.float spawncount;
-
 .entity		oldenemy;		// mad at this player before taking damage
 
 .float		speed;
@@ -708,6 +707,10 @@ float	AS_MISSILE		= 4;
 .entity shadowcontroller;
 .float speed2;
 .string targetname2;
+
+
+.float spawncount; // spawner's maximum monsters alive at the same time allowed
+.float totalspawncount = count; // total spawn count limit
 //===========================================================================
 	
 

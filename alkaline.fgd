@@ -1847,10 +1847,14 @@ Other than that, this entity functions like a normal button.
 	]
 ]
 
-@SolidClass = trigger_changelevel : "Trigger: Change level"
+@SolidClass = trigger_changelevel : "Trigger: Change level
+
+If you set the 'message' field, an episode-ending screen will be show with the defined text.
+Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text."
 [
 	map(string) : "New map name"
 	target(target_destination) : "Target"
+	message(string) : "End-of-episode text"
 	spawnflags(flags) =
 	[
 		1: "No Intermission" : 0
