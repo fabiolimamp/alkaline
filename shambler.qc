@@ -91,8 +91,8 @@ void() sham_smash7     =[      $smash7,       sham_smash8    ] {ai_charge(0);};
 void() sham_smash8     =[      $smash8,       sham_smash9    ] {ai_charge(0);};
 void() sham_smash9     =[      $smash9,       sham_smash10   ] {ai_charge(0);};
 void() sham_smash10    =[      $smash10,      sham_smash11   ] {
-local vector	delta;
-local float 	ldmg;
+	local vector	delta;
+	local float 	ldmg;
 
 	if (!self.enemy)
 		return;
@@ -119,8 +119,8 @@ void() sham_swingr1;
 
 void(float side) ShamClaw =
 {
-local vector	delta;
-local float 	ldmg;
+	local vector	delta;
+	local float 	ldmg;
 
 	if (!self.enemy)
 		return;
@@ -135,8 +135,7 @@ local float 	ldmg;
 	T_Damage (self.enemy, self, self, ldmg);
 	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
 
-	if (side)
-	{
+	if (side) {
 		makevectors (self.angles);
 		SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
 	}
@@ -218,49 +217,38 @@ void() CastLightning =
 	LightningDamage (org, trace_endpos, self, 10);
 };
 
-void() sham_magic1     =[      $magic1,       sham_magic2    ] {ai_face();
-	sound (self, CHAN_WEAPON, "shambler/sattck1.wav", 1, ATTN_NORM);
-};
+void() sham_magic1     =[      $magic1,       sham_magic2    ] {ai_face(); sound (self, CHAN_WEAPON, "shambler/sattck1.wav", 1, ATTN_NORM);};
 void() sham_magic2     =[      $magic2,       sham_magic3    ] {ai_face();};
 void() sham_magic3     =[      $magic3,       sham_magic4    ] {ai_face();self.nextthink = self.nextthink + 0.2;
-local entity o;
+	local entity o;
 
-self.effects = self.effects | EF_MUZZLEFLASH;
-ai_face();
-self.owner = spawn();
-o = self.owner;
-setmodel (o, "progs/s_light.mdl");
-setorigin (o, self.origin);
-o.angles = self.angles;
-o.nextthink = time + 0.7;
-o.think = SUB_Remove;
+	self.effects = self.effects | EF_MUZZLEFLASH;
+	ai_face();
+	self.owner = spawn();
+	o = self.owner;
+	setmodel (o, "progs/s_light.mdl");
+	setorigin (o, self.origin);
+	o.angles = self.angles;
+	o.nextthink = time + 0.7;
+	o.think = SUB_Remove;
 };
-void() sham_magic4     =[      $magic4,       sham_magic5    ]
-{
-self.effects = self.effects | EF_MUZZLEFLASH;
-self.owner.frame = 1;
+void() sham_magic4     =[      $magic4,       sham_magic5    ]{
+	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.owner.frame = 1;
 };
-void() sham_magic5     =[      $magic5,       sham_magic6    ]
-{
-self.effects = self.effects | EF_MUZZLEFLASH;
-self.owner.frame = 2;
+void() sham_magic5     =[      $magic5,       sham_magic6    ]{
+	self.effects = self.effects | EF_MUZZLEFLASH;
+	self.owner.frame = 2;
 };
-void() sham_magic6     =[      $magic6,       sham_magic9    ]
-{
-remove (self.owner);
-CastLightning();
-sound (self, CHAN_WEAPON, "shambler/sboom.wav", 1, ATTN_NORM);
-};
-void() sham_magic9     =[      $magic9,       sham_magic10   ]
-{CastLightning();};
-void() sham_magic10    =[      $magic10,      sham_magic11   ]
-{CastLightning();};
-void() sham_magic11    =[      $magic11,      sham_magic12   ]
-{
-if (skill == 3)
+void() sham_magic6     =[      $magic6,       sham_magic9    ]{
+	remove (self.owner);
 	CastLightning();
+	sound (self, CHAN_WEAPON, "shambler/sboom.wav", 1, ATTN_NORM);
 };
-void() sham_magic12    =[      $magic12,      sham_run1	   ] {};
+void() sham_magic9     =[      $magic9,       sham_magic10   ]{CastLightning();};
+void() sham_magic10    =[      $magic10,      sham_magic11   ]{CastLightning();};
+void() sham_magic11    =[      $magic11,      sham_magic12   ]{if (skill == 3)	CastLightning();};
+void() sham_magic12    =[      $magic12,      sham_run1	   	] {};
 
 
 
