@@ -1,4 +1,5 @@
 void() rider_pppain1;
+void() rider_run1;
 
 
 void() Rider_Push = {
@@ -42,12 +43,8 @@ void() rider_think = {
 	if (delta > 180) delta = delta - 360;
 	if (delta < -180) delta = delta + 360;
 
-	// When the legs are more than 90deg from the enemy,
-	// never start a possible standing attack and start running instead
-	self.cnt = 0;
 	if (fabs(delta) > 90) {
 		delta = 0;
-		self.cnt = 1;
 	}
 
 	angdelta = delta - self.fixangle;
@@ -71,6 +68,11 @@ void(float torsoframe, float heightoffset) rider_think_rail = {
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
 
+	if (fabs(delta) > 100) {
+		self.think = rider_run1;
+		return;
+	}
+
 	angdelta = delta - self.fixangle;
 	rider_turn(angdelta, delta);
 	
@@ -80,8 +82,7 @@ void(float torsoframe, float heightoffset) rider_think_rail = {
 };
 
 
-void() rider_walkthink = 
-{
+void() rider_walkthink = {
 	local float delta;
 	local float angdelta;
 
@@ -92,25 +93,16 @@ void() rider_walkthink =
 	//ChangeYaw();
 	delta = 0;
 	self.cnt = 0;
-	if (delta > 180)
-	{
-		delta = delta - 360;
-	}
-	if (delta < -180)
-	{
-		delta = delta + 360;
-	}
-	if (fabs(delta) > 90)
-	{
+	if (delta > 180) delta = delta - 360;
+	if (delta < -180) delta = delta + 360;
+
+	if (fabs(delta) > 90) {
 		delta = 0;
 		self.cnt = 1;
 	}
+
 	angdelta = delta - self.fixangle;
 	rider_turn(angdelta, delta);
-	if (self.health < 0)
-	{
-		return;
-	}
 };
 
 void() rider_sound_idle = 
@@ -363,7 +355,7 @@ void() rider_rail_shoot =
 void() rider_rail1 = 	[42, rider_rail2]	{ai_face(); rider_think(); self.yaw_speed = 40; rider_charge(); };
 void() rider_rail2 = 	[43, rider_rail3]	{ai_face(); rider_think(); };
 void() rider_rail3 = 	[44, rider_rail4]	{ai_face(); rider_think(); rider_charge(); };
-void() rider_rail4 = 	[45, rider_rail5]	{ai_face(); rider_think(); };
+void() rider_rail4 = 	[45, rider_rail5]	{ai_face(); rider_think(); self.attack_finished = time + 3.4; };
 void() rider_rail5 = 	[46, rider_rail6]	{ai_face(); rider_think(); rider_charge(); };
 void() rider_rail6 = 	[47, rider_rail7]	{ai_face(); rider_think(); };
 void() rider_rail7 = 	[48, rider_rail8]	{ai_face(); rider_think(); rider_charge(); sound (self, CHAN_VOICE, "rider/step.wav", 1, ATTN_NORM); };
@@ -376,20 +368,12 @@ void() rider_rail13 = 	[52, rider_rail14]	{rider_think_rail(38, -12); };
 void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM); };
 void() rider_rail15 = 	[52, rider_rail16]	{rider_think_rail(38, -12); };
 void() rider_rail16 = 	[52, rider_rail17]	{rider_think_rail(38, -12); };
-void() rider_rail17 = 	[52, rider_rail18]	{rider_think_rail(38, -12); rider_rail_shoot(); self.attack_finished = time + 2; };
+void() rider_rail17 = 	[52, rider_rail18]	{rider_think_rail(38, -12); rider_rail_shoot();};
 void() rider_rail18 = 	[52, rider_rail19]	{rider_think_rail(39, -12); };
 void() rider_rail19 = 	[52, rider_rail20]	{rider_think_rail(40, -12); };
 void() rider_rail20 = 	[53, rider_rail21]	{rider_think_rail(41, -8); };
 void() rider_rail21 = 	[54, rider_run1]	{rider_think_rail(0, -4); self.yaw_speed = 8; };
 
-
-
-void() rider_missile_attack = 
-{
-
-	rider_rail1();
-
-};
 
 
 float() RiderCheckAttack = 
@@ -452,7 +436,7 @@ void(entity e) monster_rider_start =
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
 	setmodel(body, "progs/ridbody.mdl");
-	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setsize(body, 0, 0);
 	setorigin(body, self.origin);
 
 	self.trigger_field = body;
@@ -482,7 +466,7 @@ void(entity e) monster_rider_start =
 	self.th_walk = rider_walk1;
 	self.th_run = rider_run1;
 	self.th_die = rider_die1;
-	self.th_missile = rider_missile_attack;
+	self.th_missile = rider_rail1;
 	self.th_pain = rider_pain;
 	self.th_sight = rider_sight;
 	walkmonster_start();
