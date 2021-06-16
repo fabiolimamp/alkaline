@@ -349,6 +349,7 @@ void() probe_die1 = [13, probe_die2] {
 	ai_run_slide();
 	ai_run_slide();
 	FuelTankExplode();
+	self.trigger_field.flags = self.trigger_field.flags - FL_FLY;
 		
 };
 
@@ -494,7 +495,7 @@ void(entity e) monster_probe_start = {
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	self.yaw_speed = 9;
 	self.health = 200;
-	
+
 	self.worldtype = 0.75;
 	self.state = 0;
 	self.super_time = 0;
