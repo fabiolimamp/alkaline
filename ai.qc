@@ -588,36 +588,15 @@ float() FacingIdeal =
 
 //=============================================================================
 
-float()	WizardCheckAttack;
-float()	DogCheckAttack;
-float()	OgreBCheckAttack;		//ijed
-
 float() CheckAnyAttack =
 {
 	if (!enemy_vis)
 		return FALSE; //was just return;
-	if (self.classname == "monster_army")
-		return SoldierCheckAttack ();
-	if (self.classname == "monster_ogre")
-		return OgreCheckAttack ();
-	if (self.classname == "monster_ogreb")		//ijed
-		return OgreBCheckAttack ();		
-	if (self.classname == "monster_shambler")
-		return ShamCheckAttack ();
-	if (self.classname == "monster_arachnofloyd")
-		return arfCheckAttack ();		
-	if (self.classname == "monster_demon1")
-		return DemonCheckAttack ();
-	if (self.classname == "monster_dog")
-		return DogCheckAttack ();
-	if (self.classname == "monster_wizard")
-		return WizardCheckAttack ();
 
-	//johnfitz -- centurion
-	if (self.classname == "monster_centurion")
+	if (self.th_checkattack)
+		return self.th_checkattack();
+	else
 		return CheckAttack ();
-	//johnfitz
-	return CheckAttack ();
 };
 
 

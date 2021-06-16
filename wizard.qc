@@ -400,6 +400,7 @@ void(entity e) monster_wizard_start =
 	self.th_pain = Wiz_Pain;
 	self.th_die = wiz_die;
 	self.th_sight = wiz_sight;
+	self.th_checkattack = WizardCheckAttack;
 		
 	flymonster_start ();
 

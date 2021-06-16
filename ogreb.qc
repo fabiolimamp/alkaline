@@ -451,6 +451,7 @@ void(entity e) monster_ogreb_start =
 	self.th_missile = ogreb_smash1; 
 	self.th_pain = ogreb_pain;
 	self.th_sight = ogreb_sight;
+	self.th_checkattack = OgreBCheckAttack;
 	
 	walkmonster_start();
 

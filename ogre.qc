@@ -587,6 +587,73 @@ void() ogre_sight = {
 	sound (self, CHAN_VOICE, "ogre/ogwake.wav", 1, ATTN_NORM);
 };
 
+
+
+/*
+===========
+OgreCheckAttack
+
+The player is in view, so decide to move or launch an attack
+Returns FALSE if movement should continue
+============
+*/
+float() OgreCheckAttack =
+{
+	local vector	spot1, spot2;	
+	local entity	targ;
+	local float		chance;
+
+	if (enemy_range == RANGE_MELEE)
+	{
+		if (CanDamage (self.enemy, self))
+		{
+			self.attack_state = AS_MELEE;
+			return TRUE;
+		}
+	}
+
+	if (time < self.attack_finished)
+		return FALSE;
+	
+	if (!enemy_vis)
+		return FALSE;
+		
+	targ = self.enemy;
+	
+// see if any entities are in the way of the shot
+	spot1 = self.origin + self.view_ofs;
+	spot2 = targ.origin + targ.view_ofs;
+
+	traceline (spot1, spot2, FALSE, self);
+
+	if (trace_inopen && trace_inwater)
+		return FALSE;			// sight line crossed contents
+
+	if (trace_ent != targ)
+	{
+		return FALSE;	// don't have a clear shot
+	}
+			
+// missile attack
+	if (time < self.attack_finished)
+		return FALSE;
+		
+	if (enemy_range == RANGE_FAR)
+		return FALSE;
+		
+	else if (enemy_range == RANGE_NEAR)
+		chance = 0.10;
+	else if (enemy_range == RANGE_MID)
+		chance = 0.05;
+	else
+		chance = 0;
+
+	self.attack_state = AS_MISSILE;
+	SUB_AttackFinished (1 + 2*random());
+	return TRUE;
+};
+
+
 /*QUAKED monster_ogre (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
 */
@@ -613,6 +680,7 @@ void(entity e) monster_ogre_start =
 	self.th_missile = ogre_nail1;
 	self.th_pain = ogre_pain;
 	self.th_sight = ogre_sight;
+	self.th_checkattack = OgreCheckAttack;
 	
 	walkmonster_start();
 
@@ -678,6 +746,7 @@ void(entity e) monster_ogre_marksman_start =
 	self.th_missile = ogre_rock1;
 	self.th_pain = ogre_pain;
 	self.th_sight = ogre_sight;
+	self.th_checkattack = OgreCheckAttack;
 	
 	walkmonster_start();
 

@@ -354,6 +354,7 @@ void(entity e) monster_dog_start =
 	self.th_melee = dog_atta1;
 	self.th_missile = dog_leap1;
 	self.th_sight = dog_sight;
+	self.th_checkattack = DogCheckAttack;
 
 	walkmonster_start();
 

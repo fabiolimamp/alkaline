@@ -284,6 +284,65 @@ void() army_sight = {
 	sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
 }
 
+
+/*
+===========
+SoldierCheckAttack
+
+The player is in view, so decide to move or launch an attack
+Returns FALSE if movement should continue
+============
+*/
+float() SoldierCheckAttack =
+{
+	local vector	spot1, spot2;	
+	local entity	targ;
+	local float		chance;
+
+	targ = self.enemy;
+	
+// see if any entities are in the way of the shot
+	spot1 = self.origin + self.view_ofs;
+	spot2 = targ.origin + targ.view_ofs;
+
+	traceline (spot1, spot2, FALSE, self);
+
+	if (trace_inopen && trace_inwater)
+		return FALSE;			// sight line crossed contents
+
+	if (trace_ent != targ)
+		return FALSE;	// don't have a clear shot
+			
+	
+// missile attack
+	if (time < self.attack_finished)
+		return FALSE;
+		
+	if (enemy_range == RANGE_FAR)
+		return FALSE;
+		
+	if (enemy_range == RANGE_MELEE)
+		chance = 0.9;
+	else if (enemy_range == RANGE_NEAR)
+		chance = 0.4;
+	else if (enemy_range == RANGE_MID)
+		chance = 0.05;
+	else
+		chance = 0;
+
+	if (random () < chance)
+	{
+		self.th_missile ();
+		SUB_AttackFinished (1 + random());
+		if (random() < 0.3)
+			self.lefty = !self.lefty;
+
+		return TRUE;
+	}
+
+	return FALSE;
+};
+
 /*QUAKED monster_army (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
 void(entity e) monster_army_start =
@@ -309,6 +368,7 @@ void(entity e) monster_army_start =
 	self.th_die = army_die;
     self.ammo_shells = 5;
     self.th_sight = army_sight;
+    self.th_checkattack = SoldierCheckAttack;
 	
 	walkmonster_start ();
 
@@ -338,7 +398,8 @@ void(entity e) monster_nailgrunt_start =
 	self.th_pain = army_pain;
 	self.th_die = army_die;
 	self.th_sight = army_sight;
-	
+    //self.th_checkattack = SoldierCheckAttack;
+
 	walkmonster_start ();
 
 	self = oself;

@@ -32,6 +32,8 @@ $frame attacka9 attacka10 attacka11 attacka12 attacka13 attacka14 attacka15
 //============================================================================
 
 void()	Demon_JumpTouch;
+void(float side)	Demon_Melee;
+float()	DemonCheckAttack;
 
 void()	demon1_stand1	=[	$stand1,	demon1_stand2	] {ai_stand();};
 void()	demon1_stand2	=[	$stand2,	demon1_stand3	] {ai_stand();};
@@ -202,6 +204,7 @@ void(entity e) monster_demon1_start =
 	self.th_missile = demon1_jump1;			// jump attack
 	self.th_pain = demon1_pain;
 	self.th_sight = demon1_sight;
+	self.th_checkattack = DemonCheckAttack;
 		
 	walkmonster_start();
 

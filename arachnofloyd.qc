@@ -507,6 +507,7 @@ void(entity e) monster_arachnofloyd_start =
 	self.th_missile = arf_light1;
 	self.th_melee = arf_leap1;
 	self.th_sight = arf_sight;
+	self.th_checkattack = arfCheckAttack;
 
 
 	self.think = walkmonster_start;

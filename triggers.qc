@@ -736,22 +736,12 @@ void() trigger_monsterjump_touch =
 	other.velocity_x = self.movedir_x * self.speed;
 	other.velocity_y = self.movedir_y * self.speed;
 	
-	/*if (other.trigger_field) {
-		other.trigger_field.velocity_x = self.movedir_x * self.speed;
-		other.trigger_field.velocity_y = self.movedir_y * self.speed;
-	}
-	*/
 	if ( !(other.flags & FL_ONGROUND) )
 		return;
 	
 	other.flags = other.flags - FL_ONGROUND;
-
 	other.velocity_z = self.height;
-
-	/*if (other.trigger_field) 
-		other.trigger_field.velocity_z = self.height;
-	*/
-
+	
 	if(self.count > 0) self.count--;
 };
 
