@@ -7,7 +7,6 @@ utility.qc
 
 
 subs.qc
-fight.qc
 ai.qc
 combat.qc
 items.qc

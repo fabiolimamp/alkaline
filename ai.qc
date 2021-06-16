@@ -1,10 +1,11 @@
 void() movetarget_f;
 void() t_movetarget;
-void() knight_walk1;
-void() knight_bow6;
-void() knight_bow1;
-float() arfCheckAttack;
+void() knight_attack;
+
 void(entity etemp, entity stemp, entity stemp, float dmg) T_Damage;
+
+float	enemy_vis, enemy_infront, enemy_range;
+float	enemy_yaw;
 /*
 
 .enemy
@@ -588,6 +589,93 @@ float() FacingIdeal =
 
 //=============================================================================
 
+
+/*
+===========
+CheckAttack
+
+Default check-attack function
+The player is in view, so decide to move or launch an attack
+Returns FALSE if movement should continue
+============
+*/
+float() CheckAttack =
+{
+	local vector	spot1, spot2;	
+	local entity	targ;
+	local float		chance;
+
+	targ = self.enemy;
+	
+// see if any entities are in the way of the shot
+	spot1 = self.origin + self.view_ofs;
+	spot2 = targ.origin + targ.view_ofs;
+
+	traceline (spot1, spot2, FALSE, self);
+
+	if (trace_ent != targ)
+		return FALSE;		// don't have a clear shot
+			
+	if (trace_inopen && trace_inwater)
+		return FALSE;			// sight line crossed contents
+
+	if (enemy_range == RANGE_MELEE)
+	{	// melee attack
+		if (self.th_melee)
+		{
+			if (self.classname == "monster_knight")
+				knight_attack ();
+			else
+				self.th_melee ();
+			return TRUE;
+		}
+	}
+	
+// missile attack
+	if (!self.th_missile)
+		return FALSE;
+		
+	if (time < self.attack_finished)
+		return FALSE;
+		
+	if (enemy_range == RANGE_FAR)
+		return FALSE;
+		
+	if (enemy_range == RANGE_MELEE)
+	{
+		chance = 0.9;
+		self.attack_finished = 0;
+	}
+	else if (enemy_range == RANGE_NEAR)
+	{
+		if (self.th_melee)
+			chance = 0.2;
+		else
+			chance = 0.4;
+	}
+	else if (enemy_range == RANGE_MID)
+	{
+		if (self.th_melee)
+			chance = 0.05;
+		else
+			chance = 0.1;
+	}
+	else
+		chance = 0;
+
+	if (random () < chance)
+	{
+		self.th_missile ();
+		SUB_AttackFinished (2*random());
+		return TRUE;
+	}
+
+	return FALSE;
+};
+
+// monsters can have their own custom CheckAttack implementation
+// if not, runs the default one
+
 float() CheckAnyAttack =
 {
 	if (!enemy_vis)
@@ -811,4 +899,97 @@ void(float dist) ai_run_away =
 	
 // head straight in
 	movetogoal (dist);		// done in C code...
+};
+
+
+/*
+=============
+ai_face
+
+Stay facing the enemy
+=============
+*/
+void() ai_face =
+{
+	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
+	ChangeYaw ();
+};
+
+/*
+=============
+ai_charge
+
+The monster is in a melee attack, so get as close as possible to .enemy
+=============
+*/
+float (entity targ) visible;
+float(entity targ) infront;
+float(entity targ) range;
+
+void(float d) ai_charge =
+{
+	ai_face ();	
+	movetogoal (d);		// done in C code...
+};
+
+void() ai_charge_side =
+{
+	local	vector	dtemp;
+	local	float	heading;
+	
+// aim to the left of the enemy for a flyby
+
+	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
+	ChangeYaw ();
+
+	makevectors (self.angles);
+	dtemp = self.enemy.origin - 30*v_right;
+	heading = vectoyaw(dtemp - self.origin);
+	
+	walkmove(heading, 20);
+};
+
+
+/*
+=============
+ai_melee
+
+=============
+*/
+void() ai_melee =
+{
+	local vector	delta;
+	local float 	ldmg;
+
+	if (!self.enemy)
+		return;		// removed before stroke
+		
+	delta = self.enemy.origin - self.origin;
+
+	if (vlen(delta) > 60)
+		return;
+		
+	ldmg = (random() + random() + random()) * 3;
+	T_Damage (self.enemy, self, self, ldmg);
+};
+
+
+void() ai_melee_side =
+{
+	local vector	delta;
+	local float 	ldmg;
+
+	if (!self.enemy)
+		return;		// removed before stroke
+		
+	ai_charge_side();
+	
+	delta = self.enemy.origin - self.origin;
+
+	if (vlen(delta) > 60)
+		return;
+	if (!CanDamage (self.enemy, self))
+		return;
+	ldmg = (random() + random() + random()) * 3;
+	T_Damage (self.enemy, self, self, ldmg);
 };

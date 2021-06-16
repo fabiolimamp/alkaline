@@ -235,6 +235,21 @@ void() knight_sight = {
 	sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM); //lunaran
 };
 
+
+void() knight_attack =
+{
+	local float		len;
+	
+// decide if now is a good swing time
+	len = vlen(self.enemy.origin+self.enemy.view_ofs - (self.origin+self.view_ofs));
+	
+	if (len<80)
+		knight_atk1 ();
+	else
+		knight_runatk1 ();
+};
+
+
 /*QUAKED monster_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
 void(entity e) monster_knight_start =
