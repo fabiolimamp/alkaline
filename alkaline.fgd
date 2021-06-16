@@ -1641,11 +1641,14 @@ Check each field's description for more details.
 If the plat is the target of another trigger or button, it will start out disabled in the extended position until it is triggered, when it will lower and become a normal plat.
 
 Flags:
-low_trigger: plat will only be triggered when in lowered position" 
+Low trigger: plat will only be triggered at the lower position. For when you need the player to be able to jump down onto the plat from above without it coming back up instantly.
+Deep trigger: trigger field goes all the way to the bottom of the entity's lower position. For when you need to ride INSIDE the plat entity's volume, not on top of it.
+" 
 [	
 	spawnflags(Flags) =
 	[
 		1 : "Low trigger" : 0
+		2 : "Deep trigger" : 0
 	]
 	speed(integer) : "Speed" : 150
 	height(integer) : "Travel altitude (can be negative)" : 0
@@ -1705,6 +1708,8 @@ Set 'sounds' to one of the following:
 		8 : "Elevator Start at Top" : 0
 		16 : "Plat2" : 0
 		//32 : "Plat2 Bottom" : 0
+		64: "Low Trigger"
+		128: "Deep Trigger"
 	]
 	speed(integer) : "Speed" : 150
 	height(integer) : "Travel altitude (can be negative)" : 0

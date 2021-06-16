@@ -7,6 +7,7 @@ void() plat_go_up;
 void() plat_go_down;
 void() plat_crush;
 float PLAT_LOW_TRIGGER = 1;
+float PLAT_DEEP_TRIGGER = 2;
 
 void() plat_spawn_inside_trigger =
 {
@@ -24,19 +25,27 @@ void() plat_spawn_inside_trigger =
 	
 	tmin = self.mins + '25 25 0';
 	tmax = self.maxs - '25 25 -8';
-	tmin_z = tmin_z - (self.pos1_z - self.pos2_z - 8); // now the trigger field goes all the way to the bottom of the lower position --bmFbr
 
-	if (self.spawnflags & PLAT_LOW_TRIGGER) {
-		tmax_z = tmin_z + self.size_z + 8;
+	if (self.spawnflags & PLAT_DEEP_TRIGGER) {
+		// makes the trigger field go all the way to the bottom of the lower position
+		tmin_z = tmin_z - (self.pos1_z - self.pos2_z - 8);
+
+		if (self.spawnflags & PLAT_LOW_TRIGGER) {
+			tmax_z = tmin_z + self.size_z + 8;
+		}
 	}
-	
-	if (self.size_x <= 50)
-	{
+	else {
+		tmin_z = tmax_z - (self.pos1_z - self.pos2_z + 8);
+
+		if (self.spawnflags & PLAT_LOW_TRIGGER)
+		tmax_z = tmin_z + 8;
+	}
+
+	if (self.size_x <= 50) {
 		tmin_x = (self.mins_x + self.maxs_x) / 2;
 		tmax_x = tmin_x + 1;
 	}
-	if (self.size_y <= 50)
-	{
+	if (self.size_y <= 50) {
 		tmin_y = (self.mins_y + self.maxs_y) / 2;
 		tmax_y = tmin_y + 1;
 	}

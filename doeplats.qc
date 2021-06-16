@@ -10,6 +10,8 @@ float ELEVATOR		= 4;
 float START_AT_TOP  = 8;
 float PLAT2			= 16;
 float PLAT2_BOTTOM  = 32;
+float PLAT2_LOW_TRIGGER = 64;
+float PLAT2_DEEP_TRIGGER = 128;
 
 float elv_butn_dir;
 
@@ -256,10 +258,21 @@ void() plat2_spawn_inside_trigger =
 
 	tmin = self.mins + '25 25 0';
 	tmax = self.maxs - '25 25 -8';
-	tmin_z = tmax_z - (self.pos1_z - self.pos2_z + 8);
 
-	if (self.spawnflags & PLAT_LOW_TRIGGER)
+	if (self.spawnflags & PLAT2_DEEP_TRIGGER) {
+		// makes the trigger field go all the way to the bottom of the lower position
+		tmin_z = tmin_z - (self.pos1_z - self.pos2_z - 8);
+
+		if (self.spawnflags & PLAT2_LOW_TRIGGER) {
+			tmax_z = tmin_z + self.size_z + 8;
+		}
+	}
+	else {
+		tmin_z = tmax_z - (self.pos1_z - self.pos2_z + 8);
+
+		if (self.spawnflags & PLAT_LOW_TRIGGER)
 		tmax_z = tmin_z + 8;
+	}
 
 	if (self.size_x <= 50)
 	{
