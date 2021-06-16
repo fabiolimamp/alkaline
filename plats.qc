@@ -24,12 +24,12 @@ void() plat_spawn_inside_trigger =
 	
 	tmin = self.mins + '25 25 0';
 	tmax = self.maxs - '25 25 -8';
-	if (self.spawnflags & PLAT_LOW_TRIGGER) {
-		tmin_z = tmax_z - (self.pos1_z - self.pos2_z + 8); //maintain original behaviour for low trigger
-		tmax_z = tmin_z + 8;
-	}
-	else tmin_z = tmin_z - (self.pos1_z - self.pos2_z - 8); // now the trigger field goes all the way to the bottom of the lower position --bmFbr
+	tmin_z = tmin_z - (self.pos1_z - self.pos2_z - 8); // now the trigger field goes all the way to the bottom of the lower position --bmFbr
 
+	if (self.spawnflags & PLAT_LOW_TRIGGER) {
+		tmax_z = tmin_z + self.size_z + 8;
+	}
+	
 	if (self.size_x <= 50)
 	{
 		tmin_x = (self.mins_x + self.maxs_x) / 2;
