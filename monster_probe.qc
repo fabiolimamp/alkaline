@@ -470,9 +470,7 @@ void(entity e) monster_probe_start = {
 	oself = self;
 	self = e;
 
-
 	self.lefty = 0;
-	//sk = cvar("skill");
 	self.solid = SOLID_SLIDEBOX;
 	self.fixangle = 0;
 	self.movetype = MOVETYPE_STEP;
@@ -484,17 +482,19 @@ void(entity e) monster_probe_start = {
 	body.origin = self.origin;// - '0 0 64';
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
-	body.trigger_field = self;
+	body.flags = body.flags | FL_FLY;
+	
 	setmodel(body, "progs/probebod.mdl");
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(body, body.origin);
 
 	self.trigger_field = body;
+	body.trigger_field = self;
 
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	self.yaw_speed = 9;
 	self.health = 200;
-	//dealwithskill();
+	
 	self.worldtype = 0.75;
 	self.state = 0;
 	self.super_time = 0;

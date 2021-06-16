@@ -45,6 +45,8 @@ void() rider_think = {
 
 	if (fabs(delta) > 90) {
 		delta = 0;
+		//self.think = rider_run1;
+		//return;
 	}
 
 	angdelta = delta - self.fixangle;
@@ -56,17 +58,18 @@ void() rider_think = {
 };
 
 void(float torsoframe, float heightoffset) rider_think_rail = {
-	local vector torsoorigin;
 	local float delta;
 	local float angdelta;
 
-	torsoorigin = [self.origin_x, self.origin_y, self.origin_z + heightoffset];
-	setorigin(self.trigger_field, torsoorigin);
+	setorigin(self.trigger_field, self.origin + [0, 0, heightoffset]);
 	self.trigger_field.frame = torsoframe;
 
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
+
+	if (delta > 180) delta = delta - 360;
+	if (delta < -180) delta = delta + 360;
 
 	if (fabs(delta) > 100) {
 		self.think = rider_run1;
@@ -435,8 +438,10 @@ void(entity e) monster_rider_start =
 	body = spawn();
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
+	body.flags = body.flags | FL_FLY; // so it doesn't fall through the ground
+
 	setmodel(body, "progs/ridbody.mdl");
-	setsize(body, 0, 0);
+	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(body, self.origin);
 
 	self.trigger_field = body;

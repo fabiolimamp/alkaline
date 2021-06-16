@@ -1,4 +1,3 @@
-void() Projectile_Hit;
 void() ban_fire_still;
 
 
@@ -386,7 +385,7 @@ void() banshee_repulse_attack = {
 	local vector dir;
 	banshee_think();
 	if (self.state == STATE_TOP) {
-		SUB_AttackFinished(SERVO_VOLUME);
+		SUB_AttackFinished(0.5);
 		sound(self, CHAN_BODY, "armagon/repel.wav", 1, ATTN_NORM);
 		self.state = 1;
 		return;
@@ -481,9 +480,9 @@ float() BansheeCheckAttack =
 
 void() banshee_sight = {
 	if (random() < 0.5)
-		sound(self, CHAN_VOICE, "banshee/sight.wav", AS_STRAIGHT, ATTN_NORM);
+		sound(self, CHAN_VOICE, "banshee/sight.wav", 1, ATTN_NORM);
 	else
-		sound(self, CHAN_VOICE, "banshee/sight2.wav", AS_STRAIGHT, ATTN_NORM);
+		sound(self, CHAN_VOICE, "banshee/sight2.wav", 1, ATTN_NORM);
 };
 
 
@@ -498,27 +497,26 @@ void(entity e) monster_banshee_start =
 	self.lefty = 0;
 	self.style = startskill;
 
-
-
-	self.classname = "monster_banshee";
 	self.solid = SOLID_SLIDEBOX;
 	self.fixangle = 0;
 	self.movetype = MOVETYPE_STEP;
-	self.trigger_field = body;
+	
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	setmodel(self, "progs/banlegs.mdl");
 	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(self, self.origin);
 
 	body = spawn();
-	body.origin = body.origin;// - '0 0 64';
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
-	body.trigger_field = self;
+	body.flags = body.flags | FL_FLY;
 	setmodel(body, "progs/banbody.mdl");
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	setorigin(body, body.origin);
-
+	setorigin(body, self.origin);
+	
+	self.trigger_field = body;
+	body.trigger_field = self;
+	
 	if (self.style == SKILL_EASY) {
 		self.yaw_speed = 5; //5
 		self.health = 1300;
