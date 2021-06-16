@@ -375,15 +375,21 @@ void() door_use = {
 
 
 void() door_trigger_touch = {
-	if (other.health <= 0)
-		return;
+	// dead things won't open doors
+	if (other.health <= 0) return; 
+ 	
+ 	// ignore shootable brushes standing in it, like buttons or breakables
+	if (other.solid == SOLID_BSP) return;
 
-	if (time < self.attack_finished)
-		return;
+	// silly fix for sleeping monsters standing behind doors inside their touch fields causing them to open
+	// thanks Lunaran
+	if (other.flags & FL_MONSTER && other.enemy == world && other.goalentity == world) return;
+
+	// wait a bit before trying to open again
+	if (time < self.attack_finished) return;
 	self.attack_finished = time + 1;
 
 	activator = other;
-
 	self = self.owner;
 	door_use ();
 };
@@ -864,6 +870,8 @@ void() func_door = {
 	self.movetype = MOVETYPE_PUSH;
 	setorigin (self, self.origin);	
 	setmodel (self, self.model);
+
+	
 
 	// why is this needed?
 	//self.classname = "door";
