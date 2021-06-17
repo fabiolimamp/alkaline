@@ -152,6 +152,7 @@
 		12 : "Alarm Pulse"
 		13 : "Strobe-Pulse combo (first variety)"
 		14 : "Strobe-Pulse combo (second variety)"
+		16 : "Blink (syncs with animations, inverted)"
 		17 : "Blink (syncs with animations)"
 	]
 	style2(choices) : "Switchable animated light style" : 0 =
@@ -171,6 +172,7 @@
 		12 : "Alarm Pulse"
 		13 : "Strobe-Pulse combo (first variety)"
 		14 : "Strobe-Pulse combo (second variety)"
+		16 : "Blink (syncs with animations, inverted)"
 		17 : "Blink (syncs with animations)"
 	]
 	spawnflags(Flags) = [
@@ -765,7 +767,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 		65536 : "No idle sounds" : 0
 		262144 : "Monster spawner" : 0
 	]
-	spawncount(integer) : "Maximum alive monsters" : 10 : "For monster spawners. Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawn in until they're killed."
+	spawncount(integer) : "Maximum alive monsters" : 10 : "For monster spawners. Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawn in from this entity until they're killed."
 	totalspawncount(integer) : "Total spawn count" : : "For monster spawners. Maximum total spawns. When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this maximum already counted, unless you set the 'Count on spawn' flag as well."
 ]
 
@@ -950,7 +952,7 @@ Doesn't count into total monster count, unless you set 'Count After Spawn' flag.
 @PointClass base(Appearflags, Targetname, LightTarget, Light) size(-8 -8 -8, 8 8 24) model({"path":"progs/fixture1.mdl"})= light_fixture1 :
 "Wall-mounted light fixture."
 [
-	angle2(string) : "Angle" : : "The angle the model should be facing; set it to face away from the wall"
+	angle2(string) : "Angle" : : "The angle the model should be facing; set it to face away from the wall. Note that the angle set won't be shown in the editor, only in-game."
 ]
 
 
@@ -959,26 +961,6 @@ Doesn't count into total monster count, unless you set 'Count After Spawn' flag.
 Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to match the skin animation.)"
 [
 	angle2(string) : "Angle" : : "The angle the model should be facing; set it to face away from the wall"
-	style(choices) : "Appearance" : 0 =
-	[
-		0 : "Normal"
-		10: "Fluorescent flicker"
-		2 : "Slow, strong pulse"
-		11: "Slow pulse, noblack"
-		5 : "Gentle pulse"
-		1 : "Flicker A"
-		6 : "Flicker B"
-		3 : "Candle A"
-		7 : "Candle B"
-		8 : "Candle C"
-		4 : "Fast strobe"
-		9 : "Slow strobe"
-		12 : "Alarm Pulse"
-		13 : "Strobe-Pulse combo (first variety)"
-		14 : "Strobe-Pulse combo (second variety)"
-		17 : "Blink (syncs with animations)"
-		16 : "Match blinking animation"
-	]
 	spawnflags(flags) =
 	[
 		1 : "Blinking (also set style 16)" : 0
