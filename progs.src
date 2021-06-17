@@ -77,7 +77,6 @@ monster_frogman.qc // Malice
 monster_banshee.qc // Malice
 monster_rider.qc // Malice
 monster_probe.qc // Malice
-//monster_probe_old.qc
 
 misc_scientist.qc
 
