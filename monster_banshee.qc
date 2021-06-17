@@ -506,7 +506,7 @@ void(entity e) monster_banshee_start =
 	
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	setmodel(self, "progs/banlegs.mdl");
-	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setsize(self, '-40 -40 -24', '40 40 88');
 
 	body = spawn();
 	body.solid = SOLID_NOT;
@@ -581,7 +581,7 @@ void() monster_banshee =
 	precache_sound("weapons/fuelexp.wav");
 	precache_sound("armagon/repel.wav");
 
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	setsize (self, '-40 -40 -24', '40 40 88');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_banshee_spawner;

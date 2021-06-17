@@ -458,7 +458,6 @@ void(entity e) monster_rider_start =
 	self.movetype = MOVETYPE_STEP;
 	setmodel(self, "progs/ridlegs.mdl");
 	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	//setorigin(self, self.origin);
 
 	body = spawn();
 	body.solid = SOLID_NOT;
