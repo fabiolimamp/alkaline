@@ -28,6 +28,7 @@ void(float angdelta, float delta) rider_turn = {
 	else 						self.fixangle = delta;
 };
 
+
 void() rider_think = {
 	local float delta; // delta Y angle between the enemy and the legs
 	local float angdelta; // wiggle room at the middle or something
@@ -35,6 +36,8 @@ void() rider_think = {
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.frame = self.frame;
 
+	SUB_Copyonground();
+	
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
@@ -61,8 +64,12 @@ void(float torsoframe, float heightoffset) rider_think_rail = {
 	local float delta;
 	local float angdelta;
 
-	setorigin(self.trigger_field, self.origin + [0, 0, heightoffset]);
+	setorigin(self.trigger_field, self.origin);
+	SUB_Copyonground();
+	self.trigger_field.origin += [0, 0, heightoffset];
 	self.trigger_field.frame = torsoframe;
+
+	//rider_copyonground();
 
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
@@ -93,6 +100,9 @@ void() rider_walkthink = {
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+
+	SUB_Copyonground();
+
 	//ChangeYaw();
 	delta = 0;
 	self.cnt = 0;
@@ -126,21 +136,36 @@ void() rider_sound = {
 	sound(self, 7, "rider/down2.wav", SERV_VOL, ATTN_NORM);
 }
 
-void() rider_stand1 = [0, rider_stand2]		{ai_stand(); rider_think(); self.nextthink = time + 0.2; rider_sound_idle();};
-void() rider_stand2 = [1, rider_stand3]		{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand3 = [2, rider_stand4]		{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand4 = [3, rider_stand5]		{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand5 = [4, rider_stand6]		{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand6 = [5, rider_stand7]		{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand7 = [6, rider_stand8]		{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand8 = [7, rider_stand9]		{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand9 = [8, rider_stand10]	{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand10 = [9, rider_stand11]	{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand11 = [10, rider_stand12]	{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand12 = [11, rider_stand13]	{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand13 = [12, rider_stand14]	{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand14 = [13, rider_stand15]	{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
-void() rider_stand15 = [14, rider_stand1]	{ai_stand(); rider_think(); self.nextthink = time + 0.2;};
+void() rider_stand1 = [0, rider_stand2]		{ai_stand(); rider_think(); rider_sound_idle();};
+void() rider_stand2 = [0, rider_stand3]		{ai_stand(); rider_think(); };
+void() rider_stand3 = [1, rider_stand4]		{ai_stand(); rider_think(); };
+void() rider_stand4 = [1, rider_stand5]		{ai_stand(); rider_think(); };
+void() rider_stand5 = [2, rider_stand6]		{ai_stand(); rider_think(); };
+void() rider_stand6 = [2, rider_stand7]		{ai_stand(); rider_think(); };
+void() rider_stand7 = [3, rider_stand8]		{ai_stand(); rider_think(); };
+void() rider_stand8 = [3, rider_stand9]		{ai_stand(); rider_think(); };
+void() rider_stand9 = [4, rider_stand10]	{ai_stand(); rider_think(); };
+void() rider_stand10 = [4, rider_stand11]	{ai_stand(); rider_think(); };
+void() rider_stand11 = [5, rider_stand12]	{ai_stand(); rider_think(); };
+void() rider_stand12 = [5, rider_stand13]	{ai_stand(); rider_think(); };
+void() rider_stand13 = [6, rider_stand14]	{ai_stand(); rider_think(); };
+void() rider_stand14 = [6, rider_stand15]	{ai_stand(); rider_think(); };
+void() rider_stand15 = [7, rider_stand16]	{ai_stand(); rider_think(); };
+void() rider_stand16 = [7, rider_stand17]	{ai_stand(); rider_think(); };
+void() rider_stand17 = [8, rider_stand18]	{ai_stand(); rider_think(); };
+void() rider_stand18 = [8, rider_stand19]	{ai_stand(); rider_think(); };
+void() rider_stand19 = [9, rider_stand20]	{ai_stand(); rider_think(); };
+void() rider_stand20 = [9, rider_stand21]	{ai_stand(); rider_think(); };
+void() rider_stand21 = [10, rider_stand22]	{ai_stand(); rider_think(); };
+void() rider_stand22 = [10, rider_stand23]	{ai_stand(); rider_think(); };
+void() rider_stand23 = [11, rider_stand24]	{ai_stand(); rider_think(); };
+void() rider_stand24 = [11, rider_stand25]	{ai_stand(); rider_think(); };
+void() rider_stand25 = [12, rider_stand26]	{ai_stand(); rider_think(); };
+void() rider_stand26 = [12, rider_stand27]	{ai_stand(); rider_think(); };
+void() rider_stand27 = [13, rider_stand28]	{ai_stand(); rider_think(); };
+void() rider_stand28 = [13, rider_stand29]	{ai_stand(); rider_think(); };
+void() rider_stand29 = [14, rider_stand30]	{ai_stand(); rider_think(); };
+void() rider_stand30 = [14, rider_stand1]	{ai_stand(); rider_think(); };
 
 void() rider_walk1 = [24, rider_walk2]		{ai_walk(20); rider_walkthink(); self.yaw_speed = 15;};
 void() rider_walk2 = [25, rider_walk3]		{ai_walk(20); rider_walkthink();};
@@ -433,12 +458,11 @@ void(entity e) monster_rider_start =
 	self.movetype = MOVETYPE_STEP;
 	setmodel(self, "progs/ridlegs.mdl");
 	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	setorigin(self, self.origin);
+	//setorigin(self, self.origin);
 
 	body = spawn();
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
-	body.flags = body.flags | FL_FLY; // so it doesn't fall through the ground
 
 	setmodel(body, "progs/ridbody.mdl");
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
@@ -446,6 +470,8 @@ void(entity e) monster_rider_start =
 
 	self.trigger_field = body;
 	body.trigger_field = self;
+
+	SUB_Copyonground();
 
 	if (startskill == SKILL_EASY) {
 		self.health = 600;

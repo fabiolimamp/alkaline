@@ -62,3 +62,8 @@ void(vector org, vector dir) Fire_bomb =
 	newmis.velocity_y = crandom() * 400;
 	newmis.velocity_z = random() * 200;
 };
+
+void() SUB_Copyonground = {
+	if (self.flags & FL_ONGROUND) self.trigger_field.flags = self.trigger_field.flags | FL_ONGROUND;
+	else self.trigger_field.flags = self.trigger_field.flags - (self.trigger_field.flags & FL_ONGROUND);
+};

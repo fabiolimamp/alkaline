@@ -134,6 +134,8 @@ void() banshee_think = {
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.frame = self.frame;
 
+	SUB_Copyonground();
+
 	self.trigger_field.angles = self.angles;
 	if(self.enemy) // avoids weird torso angle when standing
 		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle; // makes torso always track the enemy
@@ -171,6 +173,7 @@ void() ban_thinkwalk = {
 	local float angdelta;
 
 	setorigin(self.trigger_field, self.origin);
+	SUB_Copyonground();
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
 	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
@@ -504,18 +507,18 @@ void(entity e) monster_banshee_start =
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	setmodel(self, "progs/banlegs.mdl");
 	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	setorigin(self, self.origin);
 
 	body = spawn();
 	body.solid = SOLID_NOT;
 	body.movetype = MOVETYPE_STEP;
-	body.flags = body.flags | FL_FLY;
 	setmodel(body, "progs/banbody.mdl");
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(body, self.origin);
 	
 	self.trigger_field = body;
 	body.trigger_field = self;
+
+	SUB_Copyonground();
 	
 	if (self.style == SKILL_EASY) {
 		self.yaw_speed = 5; //5
