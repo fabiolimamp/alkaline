@@ -155,33 +155,37 @@ void() armagon_think =
 	local float angdelta;
 	
 	setorigin (self.trigger_field, self.origin);
-	self.trigger_field.angles = self.angles;
-	self.trigger_field.frame = self.frame;
-	self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+   self.trigger_field.frame = self.frame;
+
+   SUB_Copyonground();
+
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
 	self.cnt = 0;
 	if (delta > 180) delta = delta - 360;
 	if (delta < -180) delta = delta + 360;
-	if (fabs(delta) > 90)
-	{
+	if (fabs(delta) > 90) {
       delta = 0;
       self.cnt = 1;
 	}
-	angdelta = delta-self.fixangle;
+
+	angdelta = delta - self.fixangle;
 	armagon_turn(angdelta,delta);
 //   self.nextthink = time + 0.1;
 	if (self.health < 0)
       return;
-	if (time > self.super_time)
-    {
+
+   self.trigger_field.angles = self.angles;
+   if (self.enemy) // avoids weird torso angle when standing
+      self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+
+	if (time > self.super_time) {
 		local float r;
 
 		self.super_time = time + 3;
       if(!(self.spawnflags & MONSTER_NOIDLESOUND)) {
-   		if (random() < 0.5)
-   		{
+   		if (random() < 0.5) {
    			r = random();
    			if (r < 0.25)
    				sound (self, CHAN_VOICE, "armagon/idle1.wav", 1, ATTN_ARMAGON);
@@ -202,9 +206,10 @@ void() armagon_walkthink =
    local float angdelta;
    local entity client;
    setorigin (self.trigger_field, self.origin);
+   SUB_Copyonground();
    self.trigger_field.angles = self.angles;
    self.trigger_field.frame = self.frame;
-   self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
+   //self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
    ChangeYaw();
    delta = 0;
    self.cnt = 0;
@@ -255,6 +260,7 @@ void() armagon_overleft_think =
    ChangeYaw();
    walkmove (self.angles_y, 14);
    setorigin (self.trigger_field, self.origin);
+   SUB_Copyonground();
    self.trigger_field.angles = self.angles;
    self.trigger_field.frame = self.frame;
    self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
@@ -289,6 +295,7 @@ void() armagon_overright_think =
    ChangeYaw();
    walkmove (self.angles_y, 14);
    setorigin (self.trigger_field, self.origin);
+   SUB_Copyonground();
    self.trigger_field.angles = self.angles;
    self.trigger_field.frame = self.frame;
    self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
@@ -885,7 +892,6 @@ void() armagon_sight = {
 void(entity e) monster_armagon_start =
 {
    local entity body;
-   local float sk;
    local entity oself;
 
    oself = self;
@@ -893,51 +899,44 @@ void(entity e) monster_armagon_start =
 
    self.lefty = 0;
 
-   sk = cvar("skill");
-
-   body = spawn();
-   body.origin = self.origin;
-   body.origin = body.origin - '0 0 64';
-//  SUB_CopyEntity(self,body);
 
    self.solid = SOLID_SLIDEBOX;
    self.fixangle = 0;
 	self.movetype = MOVETYPE_STEP;
+   setmodel (self, "progs/armalegs.mdl");
+   setsize (self, '-48 -48 -24', '48 48 108' );
+   //setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+   body = spawn();
    body.solid = SOLID_NOT;
    body.movetype = MOVETYPE_STEP;
+   setmodel (body, "progs/armabody.mdl");
+   setsize (body, VEC_HULL2_MIN, VEC_HULL2_MAX);
+   setorigin (body, self.origin);
+
    self.trigger_field = body;
    body.trigger_field = self;
-   if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
-   body.bloodtype = self.bloodtype;
 
-   setmodel (body, "progs/armabody.mdl");
-   setmodel (self, "progs/armalegs.mdl");
-
-   setsize (self, '-48 -48 -24', '48 48 84' );
-   setorigin (self, self.origin);
-   setorigin (body, body.origin);
-   
-   if (sk==0)
-      {
+   if (startskill == SKILL_EASY) {
       self.yaw_speed = 5;
       self.health = 2000;
       self.worldtype = 0.9;
-      }
-   else if (sk==1)
-      {
+   }
+   else if (startskill == SKILL_NORMAL) {
       self.yaw_speed = 9;
       self.health = 2500;
       self.worldtype = 0.85;
-      }
-   else
-      {
+   }
+   else {
       self.yaw_speed = 12;
       self.health = 3500;
       self.worldtype = 0.75;
-      }
+   }
    self.state = 0;
    self.super_time = 0;
    self.endtime = 0;
+
+   if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 
    self.th_stand = armagon_stand1;
    self.th_walk = armagon_walk1;
@@ -947,6 +946,7 @@ void(entity e) monster_armagon_start =
    self.th_melee = armagon_stop1;
    self.th_pain = armagon_pain;
    self.th_sight = armagon_sight;
+   self.th_checkattack = ArmagonCheckAttack;
    walkmonster_start();
 
    self = oself;
@@ -986,7 +986,7 @@ void() monster_armagon =
    precache_sound ("misc/shortexp.wav");
    precache_sound ("misc/longexpl.wav");
 
-   setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+   setsize (self, '-48 -48 -24', '48 48 108' );
    
    if (self.spawnflags & MONSTER_SPAWNER) {
       self.use = monster_armagon_spawner;
