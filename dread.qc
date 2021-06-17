@@ -396,6 +396,7 @@ void() monster_dreadnaught =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_dreadnaught_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_dreadnaught_start(self);

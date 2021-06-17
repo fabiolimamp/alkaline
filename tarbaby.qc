@@ -244,6 +244,7 @@ void() monster_tarbaby =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_tarbaby_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_tarbaby_start(self);

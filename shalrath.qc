@@ -259,6 +259,7 @@ void() monster_shalrath =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_shalrath_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_shalrath_start(self);

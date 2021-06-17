@@ -532,6 +532,7 @@ void() monster_scourge =
    
    if (self.spawnflags & MONSTER_SPAWNER) {
       self.use = monster_scourge_spawner;
+      monster_spawner_updatecounter();
    }
    else {
       monster_scourge_start(self);

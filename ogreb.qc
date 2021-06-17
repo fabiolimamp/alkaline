@@ -507,6 +507,7 @@ void() monster_ogreb =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_ogreb_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_ogreb_start(self);

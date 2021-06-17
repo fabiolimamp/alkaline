@@ -461,6 +461,7 @@ void() monster_hell_knight =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_hell_knight_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_hell_knight_start(self);

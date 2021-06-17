@@ -90,6 +90,7 @@ void(entity e) show_spawned_monster_entity = {
 	setsize (e, e.pos1, e.pos2);
 }
 
+// spawn trigger-spawned monster
 void() spawn_monster = {
 
 	show_spawned_monster_entity(self);
@@ -116,7 +117,6 @@ void() spawn_monster = {
 
 void(entity e, void() go_function) init_spawned_monster = {
 
-	//PREACH: This monster is to be teleported in
 	e.flags = e.flags | FL_SPAWNMONSTER;
 	
 	hide_spawned_monster_entity(e);
@@ -149,7 +149,9 @@ void(void() go_function) monster_start = {
 		// spread think times so they don't all happen at same time
 		self.nextthink = self.nextthink + random()*0.5;
 		self.think = go_function;
-		total_monsters++;
+
+		if (!(self.spawnflags & MONSTER_SPAWNER && !(self.spawnflags & MONSTER_COUNTONSPAWN)))
+			total_monsters++;
 		update_hud_totals(HUD_MONSTERS);
 	}
 }
@@ -355,7 +357,7 @@ void() walkpacifist_start = {pacifist_start(walkmonster_start_go);};
 //============================================================================
 
 
-void() monster_spawner_trytostart = {
+void() monster_spawned_trytostart = {
 	local entity nearby;
 
 	if (self.cnt > 15) { // tries to spawn for a few seconds, if not successful remove itself
@@ -363,12 +365,14 @@ void() monster_spawner_trytostart = {
 		return;
 	}
 
+
+
 	 // telefrag check from progs_dump
 	nearby = findradius(self.origin, self.size_x * 2); // findradius (vector origin, float radius in Quake units)
 
 	while (nearby)	{
 		if (nearby.takedamage) {
-			dprint("Monster waiting to spawn\n");
+			dprint(self.classname);dprint(" spawner: Monster waiting to spawn\n");
 			self.nextthink = time + 1; //delay the spawn by 1 second and try again;
 			self.cnt++;
 			return;
@@ -378,7 +382,15 @@ void() monster_spawner_trytostart = {
 
 	self.cnt = 0; // reset cnt in case it's used by the spawned monster's start function
 
-	if (self.owner) self.owner.cnt++; // updates the spawner's alive count
+	if (self.owner) {// updates the spawner's counters
+
+		if (self.owner.count >= self.owner.totalspawncount && self.owner.totalspawncount > 0) {
+			remove(self);
+			return;
+		}
+		self.owner.cnt++; // monsters alive count (decreased after death)
+		self.owner.count++; // total monsters spawned
+	}
 
 	self.start_function(self);
 
@@ -395,7 +407,12 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	// It's increased on spawn and decreased on death (linked by the spawned entity's "owner" field)
 
 	if (self.cnt >= self.spawncount){
-		dprint(self.classname);dprint(" spawner: limit reached (");dprint(ftos(self.cnt));dprint(")\n");
+		dprint(self.classname);dprint(" spawner: alive limit reached (");dprint(ftos(self.cnt));dprint(")\n");
+		return;
+	}
+
+	if (self.count >= self.totalspawncount){
+		dprint(self.classname);dprint(" spawner: total limit reached (");dprint(ftos(self.count));dprint(")\n");
 		return;
 	}
 
@@ -409,16 +426,29 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	e.angles = self.angles;
 	e.spawnflags = self.spawnflags | MONSTER_SPAWNANGRY; // always spawn angry
 
+
+	if (self.totalspawncount > 0 && !(self.spawnflags & MONSTER_COUNTONSPAWN)) 
+		// spawner has a total spawn count set and the "count on spawn" flag is disabled, so its total was already counted
+		e.spawnflags = e.spawnflags - (e.spawnflags & MONSTER_COUNTONSPAWN);
+	else 
+		e.spawnflags = e.spawnflags | MONSTER_COUNTONSPAWN;
+
 	e.owner = self;
 
 	e.start_function = start_function_parm; // stores the start function to be called later
 	setsize(e, self.mins, self.maxs); // size needs to be set now for the telefrag check
 
-	e.think = monster_spawner_trytostart;
+	e.think = monster_spawned_trytostart;
 	e.nextthink = time + 0.02;
 
 }
 
+void() monster_spawner_updatecounter = {
+	if (self.totalspawncount > 0 && !(self.spawnflags & MONSTER_COUNTONSPAWN)) {
+		total_monsters+= self.totalspawncount;
+		update_hud_totals(HUD_MONSTERS);
+	}
+};
 
 
 //============================================================================

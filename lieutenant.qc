@@ -294,6 +294,7 @@ void() monster_super_enforcer =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_super_enforcer_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_super_enforcer_start(self);

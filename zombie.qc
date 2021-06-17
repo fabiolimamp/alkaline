@@ -536,6 +536,7 @@ void() monster_zombie =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_zombie_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_zombie_start(self);

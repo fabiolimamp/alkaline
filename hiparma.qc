@@ -990,6 +990,7 @@ void() monster_armagon =
    
    if (self.spawnflags & MONSTER_SPAWNER) {
       self.use = monster_armagon_spawner;
+      monster_spawner_updatecounter();
    }
    else {
       monster_armagon_start(self);

@@ -585,6 +585,7 @@ void() monster_banshee =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_banshee_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_banshee_start(self);

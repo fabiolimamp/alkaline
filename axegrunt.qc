@@ -325,6 +325,7 @@ void() monster_axegrunt =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_axegrunt_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_axegrunt_start(self);

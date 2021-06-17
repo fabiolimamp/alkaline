@@ -525,6 +525,7 @@ void() monster_centurion =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_centurion_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_centurion_start(self);

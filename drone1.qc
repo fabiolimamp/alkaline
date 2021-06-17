@@ -425,6 +425,7 @@ void() monster_drone =
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_drone_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_drone_start(self);

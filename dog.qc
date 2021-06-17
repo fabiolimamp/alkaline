@@ -385,6 +385,7 @@ void() monster_dog =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_dog_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_dog_start(self);

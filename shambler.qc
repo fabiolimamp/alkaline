@@ -438,6 +438,7 @@ void() monster_shambler =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_shambler_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_shambler_start(self);

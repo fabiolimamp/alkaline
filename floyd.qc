@@ -598,6 +598,7 @@ void() monster_floyd =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_floyd_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_floyd_start(self);

@@ -340,6 +340,7 @@ void() monster_frogman =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_frogman_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_frogman_start(self);

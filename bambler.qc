@@ -315,6 +315,7 @@ void() monster_bambler =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_bambler_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_bambler_start(self);

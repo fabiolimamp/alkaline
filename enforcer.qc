@@ -387,6 +387,7 @@ void() monster_enforcer =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_enforcer_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_enforcer_start(self);

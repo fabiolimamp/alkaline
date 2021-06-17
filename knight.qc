@@ -305,6 +305,7 @@ void() monster_knight =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_knight_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_knight_start(self);

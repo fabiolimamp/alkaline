@@ -213,6 +213,7 @@ void() monster_fish =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_fish_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_fish_start(self);

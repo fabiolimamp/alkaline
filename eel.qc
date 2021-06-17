@@ -254,6 +254,7 @@ void() monster_eel =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_eel_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_eel_start(self);

@@ -764,7 +764,8 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 		65536 : "No idle sounds" : 0
 		262144 : "Monster spawner" : 0
 	]
-	spawncount(integer) : "Maximum alive monsters" : 10 : "Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawns until they're killed."
+	spawncount(integer) : "Maximum alive monsters" : 10 : "For monster spawners. Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawn in until they're killed."
+	totalspawncount(integer) : "Total spawn count" : : "For monster spawners. Maximum total spawns. When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this maximum already counted, unless you set the 'Count on spawn' flag as well."
 ]
 
 // Rubicon 2 monsters first

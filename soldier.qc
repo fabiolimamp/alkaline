@@ -435,6 +435,7 @@ void() monster_nailgrunt = {
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_nailgrunt_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_nailgrunt_start(self);
@@ -472,6 +473,7 @@ void() monster_army = {
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_army_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_army_start(self);

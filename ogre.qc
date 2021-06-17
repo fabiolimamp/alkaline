@@ -714,6 +714,7 @@ void() monster_ogre = {
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_ogre_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_ogre_start(self);
@@ -780,6 +781,7 @@ void() monster_ogre_marksman = {
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_ogre_marksman_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_ogre_marksman_start(self);

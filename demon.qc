@@ -237,6 +237,7 @@ void() monster_demon1 =
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_demon1_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_demon1_start(self);

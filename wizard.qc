@@ -434,6 +434,7 @@ void() monster_wizard =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_wizard_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_wizard_start(self);

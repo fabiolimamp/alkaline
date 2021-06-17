@@ -553,6 +553,7 @@ void() monster_arachnofloyd =
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_arachnofloyd_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_arachnofloyd_start(self);

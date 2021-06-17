@@ -552,6 +552,7 @@ void() monster_probe = {
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_probe_spawner;
+		monster_spawner_updatecounter();
 	}
 	else {
 		monster_probe_start(self);
