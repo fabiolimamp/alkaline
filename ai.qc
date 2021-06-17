@@ -307,7 +307,7 @@ void() FoundTarget =
 	// it was removed in favor of each monster having its own
 	// sight function, stored in the monster's "th_sight" field,
 	// and called here.
-	if (self.th_sight) self.th_sight();
+	if (self.th_sight && !(self.spawnflags & MONSTER_NOSIGHTSOUND)) self.th_sight();
 	HuntTarget ();
 };
 

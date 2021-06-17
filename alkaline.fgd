@@ -756,6 +756,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 	spawnflags(Flags) = 
 	[
 		1 : "Ambush" : 0
+		16 : "No sight sound" : 0
 		32 : "Spawn Angry" : 0
 		64 : "Trigger Spawned" : 0
 		128 : "Silent Spawn" : 0
