@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<title>Alkaline</title>
+<style>
+body {
+	font-family: 'Helvetica', 'Arial', sans-serif;
+	font-size: 1rem;
+}
+</style>
+<head>
+</head>
+
+<body>
+
+<h1>Alkaline Technical Documentation</h1>
+<h2>Contents</h2>
+<nav>
+<ul>
+	<li></li>
+</ul>
+</nav>
+
+<h2>Philosophy</h2>
+
+<p>
+	Alkaline was originally built upon Rubicon 2 codebase. But over our development period, a great deal of code ended up being changed. Lots of new features, monsters, items, powerups, bug corrections... So it grew up into its own thing. We've borrowed ideas (or entire features altogether) from all the great mods and mod frameworks of our time. Copper, Arcane Dimensions, progs_dump, Zerstorer, Malice, Rubicon Rumble Pack, Honey, Quoth... you name it. Also we've got a bunch of exclusive features. Our main focus was on things that we felt would be nice to have in all kinds of base-themed maps.
+</p>
+<p>
+	We've decided to not change anything gameplay-related. All original weapons, monsters and items behave almost exactly the way you've known and loved for the last 25 years. We think it's laudable what mods like Copper or AD have done to improve balance and gameplay, but our intention was to expand over the solid gameplay foundations that vanilla Quake laid, and add a load of new features and mapping quality-of-life enhancements.
+</p>
+<p>
+	We'll do a more in-depth walkthrough into Alkaline's features, so any mapper can take it as a framework for their own map or mod. We've decided to go through everything that's been changed from vanilla instead of pure Rubicon 2, for an easier understanding.
+<p>
+
+<hr>
+
+<h2>Monsters</h2>
+
+<p>Monsters have a multitude of new features now.</p>
+<h3>Triggered spawning</h3>
+<p>By setting the "Trigger Spawned" spawnflag, the monster will only show up after it's been triggered. No need for complex teleport setups. The following spawnflags can be used together with it:
+</p>
+<ul><li>"Silent spawn": makes it spawn without making the teleport effect & sound, for when you need to repopulate an area out of the player's view.</li>
+<li>"Spawn angry": spawns the monster already in alert state.</li>
+<li>"Count after spawn": the monster adds to the map's total monster count only after it's been spawned in.</li>
+</ul>
+
+<h3>Monster spawner</h3>
+<p>
+	Turns this entity into a monster spawner, that creates a new instance of the monster whenever it's triggered. They always spawn angry, and have a telefrag check, so they'll wait for a few seconds until they have room to spawn. The spawned monsters inherit all of the spawner entity's <strong>target*</strong> fields, so you can use it to add to a counter when they're killed for example.
+	If you want it to spawn monsters in a defined time interval, you can set it up in conjunction with a <strong>trigger_repeat</strong>.
+</p>
+<p>The following keys are related to it:</p>
+
+<ul><li><strong>totalspawncount</strong>: When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this value already counted in, unless you set the "Count on spawn" flag as well.</li>
+<li><strong>spawncount</strong>: Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached, the monsters will stop spawning in from this entity until they're killed. Good for not overwhelming the player with infinite spawns.</li>
+</ul>
+
+<h3>Other features</h3>
+<ul><li><strong>No infight</strong> flag: The monster won't be angry at another when hit. Note that it doesn't prevent another monster from getting angry at it, thus it'll never have a chance to fight it back.</li>
+<li><strong>No idle sounds</strong> flag: The monster won't make any idle sounds when standing still. It'll still make sounds if walking/following path_corners though.</li>
+</ul>
+
+<hr>
+
+<h2>Items</h2>
+
+<p>
+
+</p>
+
+<hr>
+
+<h2>Switchable Shadows</h2>
+<p>
+	Alkaline has full-on support for switchable shadows if your compiling tools can handle it. Every brush entity, except triggers and <strong>func_detail_*</strong> entities, can cast togglable shadows, controllable by the <strong>misc_shadowcontroller</strong> point entity. That's how you need to set it up:
+	<ul>
+		<li>Create a <strong>_switchableshadow</strong> key in the desired entity and set it to 1;</li>
+		<li>Give it a targetname - if the entity changes behaviour when adding a targetname, you can use the special <strong>targetname2</strong> key instead, which will work only for the shadow controller.</li>
+		<li>Create a <strong>misc_shadowcontroller</strong> entity targeting the bmodel, and give it a different targetname.</li>
+		<li>Triggering the shadow controller toggles the shadow on/off with a fading animation.</li>
+	</ul>
+	<strong>func_door</strong> and <strong>toggle_visiblewall</strong> don't need to have a controlling misc_shadowcontroler, just setting _switchableshadow to 1 makes it work automatically.
+</p>
+	
+<h3>misc_shadowcontroller</h3>
+<ul>
+	<li><strong>speed</strong>: Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading.</li>
+	<li><strong>speed2</strong>: Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'.</li>
+	<li><strong>spawnflags</strong>:
+		<ul>
+			<li>
+				1. Shadow start off: target entity's switchable shadow start as disabled.
+			</li>
+		</ul>
+	</li>
+</ul>
+	
+<hr>
+
+<h2>Lights</h2>
+
+<p>
+	Lights in Alkaline have two new features.
+</p>
+<ul>
+	<li>Styled lights can be toggled by giving it a targetname as usual, but setting the light style into the <strong>style2</strong> key. You can make it fade it in/out by setting a spawnflag.</li>
+	<li>You can control a light's style directly with the <strong>target_lightstyle</strong> point entity.</li>
+</ul>
+<p>Also, there are 2 new decorative light entities.</p>
+<ul>
+	<li><strong>light_fixture1</strong>: wall-mounted light fixture. Control the model's angle with the <strong>angle2</strong> field. Note that the angle set won't be shown in the editor, only in-game.</li>
+	<li><strong>light_beacon</strong>: Floor-mounted flashing red beacon. Has an optional blinking animation, that syncs with light style 16.</li>
+</ul>
+
+<h2>State System</h2>
+
+<h2>Doors</h2>
+
+<h2>Plats</h2>
+
+<h2>Buttons</h2>
+
+<h2>Trains</h2>
+
+<h2>Triggers</h2>
+
+
+<h2>Environmental Effects</h2>
+
+<h2>Gravity</h2>
+
+<h2>Fog</h2>
+
+<h2>Other Quality-of-Life enhancements</h2>
+
+</body>
+</html>
