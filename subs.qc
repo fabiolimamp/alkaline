@@ -453,6 +453,18 @@ void(entity to) SUB_CopyTargets =
 }
 
 
+/*
+=============
+SUB_ChangeModel
+For double-entity monsters, copies the onground flag from the main entity to the secondary 
+===============
+*/
+void() SUB_Copyonground = {
+	if (self.flags & FL_ONGROUND) self.trigger_field.flags = self.trigger_field.flags | FL_ONGROUND;
+	else self.trigger_field.flags = self.trigger_field.flags - (self.trigger_field.flags & FL_ONGROUND);
+};
+
+
 
 //======================================================================
 // Updates totals on the HUD (checks for client to exist)

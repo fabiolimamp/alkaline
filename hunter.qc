@@ -52,6 +52,7 @@ void()	hunter_check_refire;
 void()	hunter_detonate;
 void()	hunter_explode;
 void()	ThrowExplosion;
+void()  HunterIdleSound;
 
 //==========================================================
 
@@ -179,7 +180,7 @@ local float 	ldmg;
 //==========================================================
 
 //idle
-void()	hunter_idle1	=[	$idle1,		hunter_idle2	]	{ai_stand();  MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_idle1	=[	$idle1,		hunter_idle2	]	{ai_stand();  HunterIdleSound();};
 void()	hunter_idle2	=[	$idle2,		hunter_idle3	]	{ai_stand();};
 void()	hunter_idle3	=[	$idle3,		hunter_idle4	]	{ai_stand();};
 void()	hunter_idle4	=[	$idle4,		hunter_idle5	]	{ai_stand();};
@@ -199,7 +200,7 @@ void()	hunter_idle17	=[	$idle17,	hunter_idle18	]	{ai_stand();};
 void()	hunter_idle18	=[	$idle18,	hunter_idle1	]	{ai_stand();};
 
 //idle no left arm
-void()	hunter_idle_loff1	=[	$idle_loff1,	hunter_idle_loff2	]	{ai_stand(); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_idle_loff1	=[	$idle_loff1,	hunter_idle_loff2	]	{ai_stand(); HunterIdleSound();};
 void()	hunter_idle_loff2	=[	$idle_loff2,	hunter_idle_loff3	]	{ai_stand();};
 void()	hunter_idle_loff3	=[	$idle_loff3,	hunter_idle_loff4	]	{ai_stand();};
 void()	hunter_idle_loff4	=[	$idle_loff4,	hunter_idle_loff5	]	{ai_stand();};
@@ -219,7 +220,7 @@ void()	hunter_idle_loff17	=[	$idle_loff17,	hunter_idle_loff18	]	{ai_stand();};
 void()	hunter_idle_loff18	=[	$idle_loff18,	hunter_idle_loff1	]	{ai_stand();};
 
 //idle no right arm
-void()	hunter_idle_roff1	=[	$idle_roff1,	hunter_idle_roff2	]	{ai_stand(); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_idle_roff1	=[	$idle_roff1,	hunter_idle_roff2	]	{ai_stand(); HunterIdleSound();};
 void()	hunter_idle_roff2	=[	$idle_roff2,	hunter_idle_roff3	]	{ai_stand();};
 void()	hunter_idle_roff3	=[	$idle_roff3,	hunter_idle_roff4	]	{ai_stand();};
 void()	hunter_idle_roff4	=[	$idle_roff4,	hunter_idle_roff5	]	{ai_stand();};
@@ -239,7 +240,7 @@ void()	hunter_idle_roff17	=[	$idle_roff17,	hunter_idle_roff18	]	{ai_stand();};
 void()	hunter_idle_roff18	=[	$idle_roff18,	hunter_idle_roff1	]	{ai_stand();};
 
 //walk
-void()	hunter_walk1	=[	$run1,	hunter_walk2	] {ai_walk(3); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_walk1	=[	$run1,	hunter_walk2	] {ai_walk(3); HunterIdleSound();};
 void()	hunter_walk2	=[	$run2,	hunter_walk3	] {ai_walk(4);};
 void()	hunter_walk3	=[	$run3,	hunter_walk4	] {ai_walk(5);};
 void()	hunter_walk4	=[	$run4,	hunter_walk5	] {ai_walk(6);};
@@ -260,7 +261,7 @@ void()	hunter_walk18	=[	$run18,	hunter_walk19	] {ai_walk(4);};
 void()	hunter_walk19	=[	$run19,	hunter_walk1	] {ai_walk(3);};
 
 //walk no left arm
-void()	hunter_walk_loff1	=[	$run_loff1,		hunter_walk_loff2	] {ai_walk(3); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_walk_loff1	=[	$run_loff1,		hunter_walk_loff2	] {ai_walk(3); HunterIdleSound();};
 void()	hunter_walk_loff2	=[	$run_loff2,		hunter_walk_loff3	] {ai_walk(4);};
 void()	hunter_walk_loff3	=[	$run_loff3,		hunter_walk_loff4	] {ai_walk(5);};
 void()	hunter_walk_loff4	=[	$run_loff4,		hunter_walk_loff5	] {ai_walk(6);};
@@ -280,7 +281,7 @@ void()	hunter_walk_loff17	=[	$run_loff17,	hunter_walk_loff18	] {ai_walk(5);};
 void()	hunter_walk_loff18	=[	$run_loff18,	hunter_walk_loff1	] {ai_walk(4);};
 
 //walk no right arm
-void()	hunter_walk_roff1	=[	$run_roff1,		hunter_walk_roff2	] {ai_walk(3); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_walk_roff1	=[	$run_roff1,		hunter_walk_roff2	] {ai_walk(3); HunterIdleSound();};
 void()	hunter_walk_roff2	=[	$run_roff2,		hunter_walk_roff3	] {ai_walk(4);};
 void()	hunter_walk_roff3	=[	$run_roff3,		hunter_walk_roff4	] {ai_walk(5);};
 void()	hunter_walk_roff4	=[	$run_roff4,		hunter_walk_roff5	] {ai_walk(6);};
@@ -300,7 +301,7 @@ void()	hunter_walk_roff17	=[	$run_roff17,	hunter_walk_roff18	] {ai_walk(5);};
 void()	hunter_walk_roff18	=[	$run_roff18,	hunter_walk_roff1	] {ai_walk(4);};
 
 //run
-void()	hunter_run1		=[	$run1,	hunter_run2		] {ai_run(3); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_run1		=[	$run1,	hunter_run2		] {ai_run(3); HunterIdleSound();};
 void()	hunter_run2		=[	$run2,	hunter_run3		] {ai_run(4);};
 void()	hunter_run3		=[	$run3,	hunter_run4		] {ai_run(5);};
 void()	hunter_run4		=[	$run4,	hunter_run5		] {ai_run(6);};
@@ -321,7 +322,7 @@ void()	hunter_run18	=[	$run18,	hunter_run19	] {ai_run(4);};
 void()	hunter_run19	=[	$run19,	hunter_run1		] {ai_run(3);};
 
 //run no left arm
-void()	hunter_run_loff1	=[	$run_loff1,		hunter_run_loff2	] {ai_run(3); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_run_loff1	=[	$run_loff1,		hunter_run_loff2	] {ai_run(3); HunterIdleSound();};
 void()	hunter_run_loff2	=[	$run_loff2,		hunter_run_loff3	] {ai_run(4);};
 void()	hunter_run_loff3	=[	$run_loff3,		hunter_run_loff4	] {ai_run(5);};
 void()	hunter_run_loff4	=[	$run_loff4,		hunter_run_loff5	] {ai_run(6);};
@@ -341,7 +342,7 @@ void()	hunter_run_loff17	=[	$run_loff17,	hunter_run_loff18	] {ai_run(5);};
 void()	hunter_run_loff18	=[	$run_loff18,	hunter_run_loff1	] {ai_run(4);};
 
 //run no right arm
-void()	hunter_run_roff1	=[	$run_roff1,		hunter_run_roff2	] {ai_run(3); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_run_roff1	=[	$run_roff1,		hunter_run_roff2	] {ai_run(3); HunterIdleSound();};
 void()	hunter_run_roff2	=[	$run_roff2,		hunter_run_roff3	] {ai_run(4);};
 void()	hunter_run_roff3	=[	$run_roff3,		hunter_run_roff4	] {ai_run(5);};
 void()	hunter_run_roff4	=[	$run_roff4,		hunter_run_roff5	] {ai_run(6);};
@@ -361,7 +362,7 @@ void()	hunter_run_roff17	=[	$run_roff17,	hunter_run_roff18	] {ai_run(5);};
 void()	hunter_run_roff18	=[	$run_roff18,	hunter_run_roff1	] {ai_run(4);};
 
 //fire
-void()	hunter_fire1	=[	$fire1,		hunter_fire2	]	{ai_face(); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_fire1	=[	$fire1,		hunter_fire2	]	{ai_face(); HunterIdleSound();};
 void()	hunter_fire2	=[	$fire2,		hunter_fire3	]	{ai_face();};
 void()	hunter_fire3	=[	$fire3,		hunter_fire4	]	{ai_face();};
 void()	hunter_fire4	=[	$fire4,		hunter_fire5	]	{ai_face();};
@@ -374,7 +375,7 @@ void()	hunter_fire10	=[	$fire20,	hunter_fire11	]	{ai_face(); hunter_shoot();};
 void()	hunter_fire11	=[	$fire21,	hunter_fire1	]	{ai_face();	hunter_check_refire();};
 
 //fire no left arm
-void()	hunter_fire_loff1	=[	$fire_loff1,	hunter_fire_loff2	]	{ai_face(); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_fire_loff1	=[	$fire_loff1,	hunter_fire_loff2	]	{ai_face(); HunterIdleSound();};
 void()	hunter_fire_loff2	=[	$fire_loff2,	hunter_fire_loff3	]	{ai_face();};
 void()	hunter_fire_loff3	=[	$fire_loff3,	hunter_fire_loff4	]	{ai_face();};
 void()	hunter_fire_loff4	=[	$fire_loff4,	hunter_fire_loff5	]	{ai_face();};
@@ -387,7 +388,7 @@ void()	hunter_fire_loff10	=[	$fire_loff10,	hunter_fire_loff11	]	{ai_face(); hunt
 void()	hunter_fire_loff11	=[	$fire_loff11,	hunter_fire_loff1	]	{ai_face();	hunter_check_refire();};
 
 //fire no right arm
-void()	hunter_fire_roff1	=[	$fire_roff1,	hunter_fire_roff2	]	{ai_face(); MonsterIdleSound("hunter/idle.wav");};
+void()	hunter_fire_roff1	=[	$fire_roff1,	hunter_fire_roff2	]	{ai_face(); HunterIdleSound();};
 void()	hunter_fire_roff2	=[	$fire_roff2,	hunter_fire_roff3	]	{ai_face();};
 void()	hunter_fire_roff3	=[	$fire_roff3,	hunter_fire_roff4	]	{ai_face();};
 void()	hunter_fire_roff4	=[	$fire_roff4,	hunter_fire_roff5	]	{ai_face();};
@@ -630,6 +631,27 @@ void() hunter_death =
 				hunter_die1 ();	
 	}
 };
+
+void() HunterIdleSound =	//ijed, play idlesound only if not AMBUSH, can also play it while stood
+{
+	local float r;
+	local string noise;
+
+	noise = "hunter/idle.wav";
+	r = random();
+	
+	if ((self.enemy == world) && (self.spawnflags & MONSTER_NOIDLESOUND))
+		return;
+	
+	if (self.enemy == world)		//quieter if not angry at anyone
+	{
+		if (r < 0.1)
+			sound (self, CHAN_VOICE, noise, 1, ATTN_IDLE);
+	}
+	else if (r < 0.2)
+		sound (self, CHAN_VOICE, noise, 1, ATTN_IDLE);
+};
+
 
 void()	hunter_pain_sound	=
 {

@@ -26,10 +26,6 @@ void() W_Precache =
 	Plasma_PreCache();
 };
 
-float() crandom =
-{
-	return 2*(random() - 0.5);
-};
 
 /*
 ================

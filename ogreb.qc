@@ -50,6 +50,7 @@ void() ogreb_smash1;
 void() ogreb_run1;
 void() ogreb_taunt1;
 float()	CheckOgreBMelee;
+void() OgreBIdleSound;
 
 //=============================================================================
 
@@ -149,7 +150,7 @@ void() ogreb_stand1	=[	$stand1,	ogreb_stand2	] {ai_stand();};
 void() ogreb_stand2	=[	$stand2,	ogreb_stand3	] {ai_stand();};
 void() ogreb_stand3	=[	$stand3,	ogreb_stand4	] {ai_stand();};
 void() ogreb_stand4	=[	$stand4,	ogreb_stand5	] {ai_stand();};
-void() ogreb_stand5	=[	$stand5,	ogreb_stand6	] {ai_stand(); MonsterIdleSound("ogre/ogidle.wav");};
+void() ogreb_stand5	=[	$stand5,	ogreb_stand6	] {ai_stand(); OgreBIdleSound();};
 void() ogreb_stand6	=[	$stand6,	ogreb_stand7	] {ai_stand();};
 void() ogreb_stand7	=[	$stand7,	ogreb_stand8	] {ai_stand();};
 void() ogreb_stand8	=[	$stand8,	ogreb_stand9	] {ai_stand();};
@@ -157,7 +158,7 @@ void() ogreb_stand9	=[	$stand9,	ogreb_stand1	] {ai_stand();};
 
 void() ogreb_walk1	=[	$walk1,		ogreb_walk2	] {ai_walk(3);};
 void() ogreb_walk2	=[	$walk2,		ogreb_walk3	] {ai_walk(2);};
-void() ogreb_walk3	=[	$walk3,		ogreb_walk4	] {ai_walk(2); MonsterIdleSound("ogre/ogidle.wav");};
+void() ogreb_walk3	=[	$walk3,		ogreb_walk4	] {ai_walk(2); OgreBIdleSound();};
 void() ogreb_walk4	=[	$walk4,		ogreb_walk5	] {ai_walk(2);};
 void() ogreb_walk5	=[	$walk5,		ogreb_walk6	] {ai_walk(2);};
 void() ogreb_walk6	=[	$walk6,		ogreb_walk7	] {
@@ -418,6 +419,26 @@ float()	OgreBCheckAttack =
 	return FALSE;
 };
 
+
+void() OgreBIdleSound =	//ijed, play idlesound only if not AMBUSH, can also play it while stood
+{
+	local float r;
+	local string noise;
+
+	noise = "ogre/ogidle.wav";
+	r = random();
+	
+	if ((self.enemy == world) && (self.spawnflags & MONSTER_NOIDLESOUND))
+		return;
+	
+	if (self.enemy == world)		//quieter if not angry at anyone
+	{
+		if (r < 0.1)
+			sound (self, CHAN_VOICE, noise, 1, ATTN_IDLE);
+	}
+	else if (r < 0.2)
+		sound (self, CHAN_VOICE, noise, 1, ATTN_IDLE);
+};
 
 
 void() ogreb_sight = {

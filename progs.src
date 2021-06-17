@@ -29,8 +29,6 @@ forcefield.qc
 misc_model.qc
 ltrail.qc
 
-malice_subs.qc
-
 ogre.qc
 demon.qc
 shambler.qc
@@ -60,7 +58,6 @@ turret.qc		// johnfitz
 hiprot.qc		// hipnotic
 
 rrp_weapons.qc 		// ijed (RRP)
-schism.qc		// ijed (RRP)
 hunter.qc		// ijed (RRP)
 ogreb.qc		// ijed (RRP)
 

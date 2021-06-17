@@ -201,3 +201,20 @@ vector(vector a, vector b, float mix) lerpVectorHermite =
     
     return (b * h01 + a * ( 1 - h01 ) );
 }
+
+
+float() crandom = {
+    return 2*(random() - 0.5);
+};
+
+//Supa's random offset function
+vector(float offset_amt) RandomOffset =
+{
+    local vector offset;
+
+    offset_x = crandom() * offset_amt;
+    offset_y = crandom() * offset_amt;
+    offset_z = crandom() * offset_amt;
+    
+    return offset;
+};
