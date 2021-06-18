@@ -24,6 +24,23 @@ void() SUB_RemoveSoon =
 }
 
 
+/*
+=============
+SUB_CallAsSelf
+
+wrap the self/oself shuffle for code cleanliness elsewhere
+===============
+*/
+void(void() fun, entity newself) SUB_CallAsSelf =
+{
+	local entity oself;
+	
+	oself = self;
+	self = newself;
+	fun();
+	self = oself;	
+}
+
 
 /*
 ================
@@ -205,8 +222,11 @@ void() SUB_CalcAngleMoveDone =
 
 void() DelayThink =
 {
-	activator = self.enemy;
-	SUB_UseTargets ();
+	// only fires if the original entity still exists and is active
+	if (self.owner && self.owner.estate == STATE_ACTIVE){
+		activator = self.enemy;
+		SUB_UseTargets ();
+	}
 	remove(self);
 };
 
@@ -282,6 +302,7 @@ void() SUB_UseTargets =
 			t.target2 = self.target2;
 			t.target3 = self.target3;
 			t.target4 = self.target4;
+			t.owner = self;
 			return;
 		}
 	}
@@ -346,6 +367,11 @@ void() SUB_UseTargets =
 
 };
 
+/*
+===============
+entity_stop/entity_hide from AD
+===============
+*/
 void(entity targ) entity_stop =
 {
 	if (targ == world) return;			// Targ is wrong

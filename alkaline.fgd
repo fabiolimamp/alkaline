@@ -337,7 +337,7 @@ See Rubicon 2 for examples of use."
 ]
 
 
-@SolidClass base(Appearflags, Targetname, Target) color(128 128 64) = trigger_ladder :
+@SolidClass base(Appearflags, Targetname, Target, TriggerWait) color(128 128 64) = trigger_ladder :
 "Invisible ladder entity.
 When player is touching this entity, he can climb by pushing 'jump'."
 [
@@ -549,8 +549,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 //
 
 
-@baseclass base(Appearflags, Target, Targetname) =
-	NonRespawnableItem
+@baseclass base(Appearflags, Target, Targetname) = NonRespawnableItem
 [
 	spawnflags(flags) =
 	[
@@ -563,8 +562,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 	// delay(integer) : "Delay"
 ]
 
-@baseclass base(NonRespawnableItem) =
-	RespawnableItem
+@baseclass base(NonRespawnableItem) = RespawnableItem
 [
 	spawnflags(flags) =
 	[
@@ -1836,7 +1834,7 @@ Other than that, this entity functions like a normal button.
 	]
 ]
 
-@SolidClass = trigger_changelevel : "Trigger: Change level
+@SolidClass base(Targetname, TriggerWait) = trigger_changelevel : "Trigger: Change level
 
 If you set the 'message' field, an episode-ending screen will be show with the defined text.
 Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text."
@@ -1850,7 +1848,7 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 	]
 ]
 
-@SolidClass base(Trigger, TriggerWait) = trigger_once : "Trigger: Activate once"
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once"
 [
 	health(integer) : "Health"
 	spawnflags(flags) = [
@@ -1858,7 +1856,7 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 		128: "Monster-triggerable" : 0
 	]
 ]
-@SolidClass base(Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple" 
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple" 
 [
 	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health"
@@ -1867,7 +1865,7 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 		128: "Monster-triggerable" : 0
 	]
 ]
-@SolidClass base(Trigger) = trigger_onlyregistered : "Trigger: Registered only" 
+@SolidClass base(Trigger, TriggerWait) = trigger_onlyregistered : "Trigger: Registered only" 
 [
 	spawnflags(flags) = [ 1: "Entity only" : 0 ]
 ]
@@ -1884,7 +1882,7 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 	spawnflags(flags) = [ 1: "Entity only" : 0 ]
 ]
 
-@SolidClass base(SingleTarget, Targetname) = trigger_teleport : "Trigger teleport" 
+@SolidClass base(SingleTarget, Targetname, TriggerWait) = trigger_teleport : "Trigger teleport" 
 [
 	spawnflags(Flags) =
 	[
@@ -1898,7 +1896,7 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 	target(target_destination) : "Target door"
 ]
 
-@SolidClass base(Appearflags) = trigger_void : "Use this for a 'void' area. Removes monsters, gibs, ammo, etc... also kills player"
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_void : "Use this for a 'void' area. Removes monsters, gibs, ammo, etc... also kills player"
 [
 	spawnflags(Flags) =
 	[
@@ -1909,7 +1907,7 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 
 // need updates:
 
-@SolidClass = trigger_setskill : "Trigger set skill" 
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_setskill : "Trigger set skill" 
 [
 	message(choices) : "Skill to change to" : 1 =
 	[
@@ -1919,10 +1917,10 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
         3 : "Nightmare!"
 	]
 ]
-@PointClass base(Trigger) = trigger_relay : "Trigger relay"
+@PointClass base(Appearflags, Trigger) = trigger_relay : "Trigger relay"
 [
 ]
-@SolidClass base(Targetname) = trigger_monsterjump : "Trigger monster jump.
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_monsterjump : "Trigger monster jump.
 
 Can be set an optional use limit.
 
@@ -1939,13 +1937,13 @@ Note that they're mutually exclusive."
 	exclude(string) : "Exclude filter" : : "Trigger all monster classes except this one"
 ]
 
-@PointClass base(Trigger, Target, Targetname) = trigger_counter : "Trigger counter" 
+@PointClass base(Appearflags, Trigger) = trigger_counter : "Trigger counter" 
 [
 	spawnflags(flags) = [ 1: "No Message" : 0 ]
 	count(integer) : "Count before activation" : 2
 ]
 
-@PointClass base(Trigger, Target, Targetname) = trigger_repeat : "Trigger repeat.
+@PointClass base(Appearflags, Trigger) = trigger_repeat : "Trigger repeat.
 
 Fires its targets repeatedly after activated. Can keep firing indefinitely or for a limited number of times.
 Targeting it again stops the firing.
@@ -1957,7 +1955,7 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 	wait(integer) : "Repeat interval" : 2 
 ]
 
-@PointClass base(Targetname) = target_setstate : "Changes an entity's state.
+@PointClass base(Appearflags, Targetname) = target_setstate : "Changes an entity's state.
 Entities in a disabled state won't execute its main function, depending on context.
 Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
 The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
@@ -1980,7 +1978,7 @@ You can force the target entities to spawn disabled/locked with spawnflag 1.
 	]
 ]
 
-@PointClass base(Targetname) = target_setdoor : "Moves a door to the specified position (open or closed).
+@PointClass base(Appearflags, Targetname) = target_setdoor : "Moves a door to the specified position (open or closed).
 It respect the door's wait time and enabled/disabled state, but will move even if keylocked.
 " 
 [
@@ -1995,7 +1993,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	]
 ]
 
-@SolidClass base(Targetname) = trigger_push : "Trigger player push"
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_push : "Trigger player push"
 [
 	angle(integer) : "Angle"
 	spawnflags(flags) = [
@@ -2006,7 +2004,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	noise(string) : "Sound" : "ambience/windfly.wav"
 	delay(float) : "Sound loop time" : "1.5"
 ]
-@SolidClass base(Targetname) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
 [
 	dmg(integer) : "Damage" : 5
 	wait(float) : "Damage interval" : "1"
@@ -2014,7 +2012,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 
 
 
-@SolidClass base(Appearflags, Targetname, Target, FogShift) = trigger_fogblend : 
+@SolidClass base(Appearflags, Targetname, FogShift, TriggerWait) = trigger_fogblend : 
 "Trigger: Fog Blend
 Acts as a smoothly blending portal between two zones of different fog. Sets the fog for any client passing through it, blending their global fog settings between start and end values proportional to their position within the trigger.
 
@@ -2025,7 +2023,7 @@ Acts as a smoothly blending portal between two zones of different fog. Sets the 
 	angle(integer) : "Axis of motion of blend (points toward end values)"
 ]
 
-@SolidClass base(Appearflags, Targetname, FogShift) = trigger_fog : 
+@SolidClass base(Appearflags, Targetname, FogShift, TriggerWait) = trigger_fog : 
 "Trigger: Sets a fog.
 Smoothly blends client's currently applied fog to this value over time.
 
@@ -2084,7 +2082,7 @@ If using multiple triggers, do not have them touching. Leave a 'buffer' between 
 
 
 //dumptruck_ds added from Hipnotic Mission Pack
-@SolidClass base(Appearflags, Target, Targetname) = trigger_usekey :
+@SolidClass base(Appearflags, Target, Targetname, TriggerWait) = trigger_usekey :
 "Trigger: Requires a Key
 
 NOTE: You must specify either the silver or gold key by setting the relevant spawnflag, or specify an item_key_custom by setting the 'keyname' value so that it matches the 'keyname' value of the item_key_custom."
@@ -2128,7 +2126,7 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 	]
 ]
 
-@SolidClass base(Appearflags, Targetname, ItemsList) = trigger_removeitems :
+@SolidClass base(Appearflags, Targetname, ItemsList, TriggerWait) = trigger_removeitems :
 "Removes the selected items from the inventory."
 [
 	count(integer) : "Use count" : 1 : "Maximum usage count. Set to -1 for infinite uses. Defaults to 1."

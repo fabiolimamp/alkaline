@@ -373,6 +373,8 @@ void() trigger_changelevel =
 	InitTrigger ();
 	self.flags = self.flags | FL_NOCENTERPRINT;
 	self.touch = changelevel_touch;
+
+	SUB_CheckWaiting();
 };
 
 

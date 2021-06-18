@@ -496,12 +496,6 @@ void() keytrigger_use =
   	// from Copper -- dumptruck_ds
   	if (!CheckValidTouch()) return;
 
-  	if(self.is_waiting) {
-  		self.is_waiting = 0;
-  		return;
-  	}
-
-
 	if (self.attack_finished > time)
 		return;
 
@@ -511,7 +505,7 @@ void() keytrigger_use =
 
 void() keytrigger_touch =
 {
-	if(self.is_waiting)
+	if(self.estate != STATE_ACTIVE)
 		return;
 
 	activator = other;
@@ -567,6 +561,8 @@ void() trigger_usekey =
 	self.touch = keytrigger_touch;
 
 	InitTrigger ();
+
+	SUB_CheckWaiting();
 };
 
 // void() remove_touch =

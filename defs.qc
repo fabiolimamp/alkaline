@@ -678,6 +678,8 @@ float	AS_MISSILE		= 4;
 .string	include = wad;		// for monsterjump filters
 .string exclude = map;
 
+.void()		dormant_use;
+
 //
 // plats / doors / buttons
 //
@@ -896,6 +898,11 @@ void() flame_fly;
 //  player.qc
 //
 void(float deathbyvoid) PlayerDieGo;
+
+
+// trigger.qc
+
+void() SUB_CheckWaiting;
 
 /*============================================================================
 johnfitz new defs

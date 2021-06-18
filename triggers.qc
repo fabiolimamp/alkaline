@@ -13,6 +13,33 @@ float	SPAWNFLAG_NOMESSAGE = 1;
 float	SPAWNFLAG_NOTOUCH = 1;
 float	TRIGGER_MONSTERTRIGGERABLE = 128;
 
+void() SUB_EndWaiting = {
+	self.is_waiting = 0;
+	self.estate = STATE_ACTIVE;
+	if (self.use == SUB_EndWaiting) self.use = self.dormant_use;
+
+	// special case for teleports, makes it ignore the fact that it has a targetname when touched
+	if (self.classname == "trigger_teleport") {
+		self.is_waiting = -1;
+	}
+};
+
+void() SUB_CheckWaiting = {
+	if (self.is_waiting > 0) {
+		self.dormant_use = self.use;
+		self.use = SUB_EndWaiting;
+		self.estate = STATE_INACTIVE;
+
+		dprint("Spawned a waiting ");
+		dprint(self.classname);
+		dprint(" with targetname ");
+		dprint(self.targetname);
+		dprint(" and target ");
+		dprint(self.target);
+		dprint("\n");
+	}
+};
+
 // the wait time has passed, so set back up for another activation
 void() multi_wait =
 {
@@ -32,7 +59,7 @@ void() multi_trigger =
 {
 	if (self.nextthink > time)
 	{
-		return;		// allready been triggered
+		return;		// already been triggered
 	}
 
 	if (self.estate != STATE_ACTIVE)
@@ -72,7 +99,7 @@ void() multi_trigger =
 
 void() multi_killed = //dumptruck_ds
 {
-	if (self.is_waiting)	// Supa, restore health and do nothing if we're still waiting to be activated
+	if (self.estate != STATE_ACTIVE)	//restore health and do nothing if trigger is disabled
 	{
 		self.health		= self.max_health;	// nyah nyah~!
 		self.takedamage	= DAMAGE_YES;
@@ -87,13 +114,6 @@ void() multi_killed = //dumptruck_ds
 
 void() multi_use = //dumptruck_ds
 {
-	if (self.is_waiting)	// Supa, if this trigger is waiting to be activated we'll tell it to get ready!
-	{
-		self.is_waiting = FALSE;	// Get ready!
-
-		return;	// Must be used or triggered again to do anything
-	}
-
 	self.enemy = activator;
 	multi_trigger();
 };
@@ -101,9 +121,6 @@ void() multi_use = //dumptruck_ds
 void() multi_touch =
 {
 	if (other.classname != "player" && !(other.flags & FL_MONSTER && self.spawnflags & TRIGGER_MONSTERTRIGGERABLE))
-		return;
-
-	if (self.is_waiting)	// Supa, is this trigger waiting to be activated?
 		return;
 
 	if (self.estate != STATE_ACTIVE)
@@ -136,16 +153,7 @@ set "message" to text string
 */
 void() trigger_multiple =
 {
-	if (self.is_waiting)
-	{
-		dprint("Spawned a waiting ");
-		dprint(self.classname);
-		dprint(" with targetname ");
-		dprint(self.targetname);
-		dprint(" and target ");
-		dprint(self.target);
-		dprint("\n");
-	}
+	
 
 	if (self.sounds == 1)
 	{
@@ -186,6 +194,8 @@ void() trigger_multiple =
 			self.touch = multi_touch;
 		}
 	}
+
+	SUB_CheckWaiting();
 };
 
 
@@ -259,6 +269,8 @@ void() trigger_secret =
 void() counter_use =
 {
 //	local string junk;
+
+	if (self.estate != STATE_ACTIVE) return;
 
 	self.count = self.count - 1;
 	if (self.count < 0)
@@ -422,16 +434,9 @@ void() teleport_touch =
 			return;
 	}
 
-	if (self.is_waiting == TRUE)	// Supa, is this trigger waiting to be activated?
-		return;
-
-	if (self.is_waiting != -1)	// Special case
-	if (self.targetname != "")
-	{
+	if (self.targetname != "" && self.is_waiting != -1)	{
 		if (self.nextthink < time)
-		{
 			return;		// not fired yet
-		}
 	}
 
 // only teleport living creatures
@@ -492,13 +497,6 @@ void() info_teleport_destination =
 
 void() teleport_use =
 {
-	if (self.is_waiting)	// Supa, if this trigger is waiting to be activated we'll tell it to get ready!
-	{
-		self.is_waiting = -1;	// Special case to tell teleport_touch to ignore the usual targetname->nextthink check
-
-		return;	// Must be used or triggered again to do anything
-	}
-
 	self.nextthink = time + 0.2;
 	force_retouch = 2;		// make sure even still objects get hit
 	self.think = SUB_Null;
@@ -526,6 +524,8 @@ void() trigger_teleport =
 		o = (self.mins + self.maxs)*0.5;
 		ambientsound (o, "ambience/hum1.wav",0.5 , ATTN_STATIC);
 	}
+
+	SUB_CheckWaiting();
 };
 
 /*
@@ -538,6 +538,8 @@ trigger_setskill
 
 void() trigger_skill_touch =
 {
+	if (self.estate != STATE_ACTIVE) return;
+
 	if (other.classname != "player")
 		return;
 		
@@ -550,7 +552,7 @@ void() trigger_skill_use =
 	if (activator.classname != "player")
 		return;
 		
-	cvar_set ("skill", self.message);
+	trigger_skill_touch();
 };
 //johnfitz
 
@@ -563,6 +565,8 @@ void() trigger_setskill =
 	InitTrigger ();
 	self.touch = trigger_skill_touch;
 	self.use = trigger_skill_use; //johnfitz -- make it targetable
+
+	SUB_CheckWaiting();
 };
 
 
@@ -579,6 +583,9 @@ void() trigger_onlyregistered_touch =
 	if (other.classname != "player")
 		return;
 	if (self.attack_finished > time)
+		return;
+
+	if (self.estate != STATE_ACTIVE)
 		return;
 
 	self.attack_finished = time + 2;
@@ -606,6 +613,8 @@ void() trigger_onlyregistered =
 	precache_sound ("misc/talk.wav");
 	InitTrigger ();
 	self.touch = trigger_onlyregistered_touch;
+
+	SUB_CheckWaiting();
 };
 
 /*
@@ -649,6 +658,8 @@ void() trigger_hurt =
 	if(!self.wait) self.wait = 1;
 	if (!self.dmg)
 		self.dmg = 5;
+
+	SUB_CheckWaiting();
 };
 
 /*
@@ -705,6 +716,8 @@ void() trigger_push =
 	
 	if (!self.speed)
 		self.speed = 1000;
+
+	SUB_CheckWaiting();
 };
 
 /*
@@ -762,6 +775,8 @@ void() trigger_monsterjump =
 		self.count = -1;
 	InitTrigger ();
 	self.touch = trigger_monsterjump_touch;
+
+	SUB_CheckWaiting();
 };
 
 
@@ -839,6 +854,8 @@ void() trigger_void =
 {
 	InitTrigger ();
 	self.touch = trigger_void_touch;
+
+	SUB_CheckWaiting();
 };
 
 
@@ -895,6 +912,7 @@ void() grav_toggle =
 void() trigger_gravity_touch = {
   // from Copper -- dumptruck_ds
   // if (!CheckValidTouch()) return;
+	if (self.estate != STATE_ACTIVE) return;
 
 	local float grav;
 
@@ -944,6 +962,8 @@ void() trigger_gravity_late_init =
 	self.solid = SOLID_NOT;
 	self.use = grav_toggle;
 	self.touch = trigger_gravity_touch;
+
+	SUB_CheckWaiting();
 };
 
 void() trigger_setgravity = {
@@ -1024,6 +1044,8 @@ void() trigger_removeitems = {
 	
 	if(!self.count)
 		self.count = 1;
+
+	SUB_CheckWaiting();
 };
 
 
@@ -1128,9 +1150,13 @@ void(entity e, float state, float flags) entity_set_state = {
 	}
 	else e.estate = state;
 
-	if (e.touch && e.touch != SUB_Null) {
-		force_retouch = 2;
+	if (e.is_waiting > 0 && state == STATE_ACTIVE) {
+		SUB_CallAsSelf(SUB_EndWaiting, e);
 	}
+
+	//if (e.touch && e.touch != SUB_Null) {
+	//	force_retouch = 2;
+	//}
 };
 
 void(string matchstring, .string matchfield, float state, float flags) target_setstate_set_target = {

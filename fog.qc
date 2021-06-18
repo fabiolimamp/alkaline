@@ -209,6 +209,8 @@ void() trigger_fogblend =
 	InitTrigger ();
 	self.touch = fog_blendTouch;
 	self.distance = zeroconvertdefault(self.distance, BoundsAngleSize(self.movedir, self.size));
+
+	SUB_CheckWaiting();
 }
 
 
@@ -461,4 +463,5 @@ void() trigger_fog = {
 	InitTrigger ();
 	self.touch = trigger_fog_touch;
 	if (!self.speed) self.speed = 1;
+	SUB_CheckWaiting();
 };

@@ -930,4 +930,6 @@ void() trigger_ladder =
 
 	InitTrigger ();
 	self.touch = ladder_touch;
+
+	SUB_CheckWaiting();
 };
