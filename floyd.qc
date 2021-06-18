@@ -465,6 +465,38 @@ void() floyd_sight = {
 		sound (self, CHAN_VOICE, "floyd/sight.wav", 1, ATTN_NORM);
 };
 
+
+void() floyd_rolling_start = {
+	self.flags = self.flags | FL_MONSTER;
+	add_monster_total(1);
+	self.pausetime = 99999999;
+	self.th_stand ();
+};
+
+void() floyd_asleep_start = {
+	self.origin_z = self.origin_z + 1;	// raise off floor a bit
+	droptofloor();
+
+	self.ideal_yaw = self.angles * '0 1 0';
+	if (!self.yaw_speed)
+		self.yaw_speed = 20;
+	self.view_ofs = '0 0 25';
+
+	self.flags = self.flags | FL_MONSTER;
+
+	if (!walkmove(0,0))
+	{
+		dprint ("walkmonster in wall at: ");
+		dprint (vtos(self.origin));
+		dprint ("\n");
+	}
+	
+	add_monster_total(1);
+	
+	self.pausetime = 99999999;
+	self.th_stand ();
+};
+
 //=============================================================================
 
 /*QUAKED monster_floyd (1 0 0) (-32 -32 -24) (32 32 64) AMBUSH ROLLING ASLEEP
@@ -503,11 +535,10 @@ void(entity e) monster_floyd_start =
 		self.th_pain = floyd_pain;
 		self.th_die = floyd_die;
 		self.th_sight = floyd_sight;
+
+		self.think = floyd_rolling_start;
+		self.nextthink = time + random() * 0.2;
 		
-		self.flags = self.flags | FL_MONSTER;		
-		total_monsters = total_monsters + 1;
-		self.pausetime = 99999999;
-		self.th_stand ();
 	}
 	else if (self.spawnflags & FLOYD_ASLEEP)
 	{
@@ -525,27 +556,9 @@ void(entity e) monster_floyd_start =
 		self.use = floyd_awake;
 		self.th_sight = floyd_sight;
 
-		self.origin_z = self.origin_z + 1;	// raise off floor a bit
-		droptofloor();
+		self.think = floyd_asleep_start;
+		self.nextthink = time + random() * 0.2;
 
-		self.ideal_yaw = self.angles * '0 1 0';
-		if (!self.yaw_speed)
-			self.yaw_speed = 20;
-		self.view_ofs = '0 0 25';
-
-		self.flags = self.flags | FL_MONSTER;
-
-		if (!walkmove(0,0))
-		{
-			dprint ("walkmonster in wall at: ");
-			dprint (vtos(self.origin));
-			dprint ("\n");
-		}
-		
-		total_monsters = total_monsters + 1;
-		
-		self.pausetime = 99999999;
-		self.th_stand ();
 	}
 	else //normal operation
 	{
