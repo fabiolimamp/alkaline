@@ -122,10 +122,10 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 
 <p>Alkaline borrows the custom key system from progs_dump. You can create a key using the <strong>item_key_custom</strong> entity, and define a custom model, skin, sound and name. Then on any door you can set the name of the key that will open it. For more details, please refer to the in-editor documentation.</p>
 
-<p>Also from progs_dump comes the <strong>item_key_custom</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event, like a door would, but with no need for a door.
+<p>Also from progs_dump comes the <strong>item_key_custom</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event. Like a door would, but with no need for a door.
 
 <h3>Item respawning</h3>
-<p>By setting an item's <strong>ritem</strong> key to 1, it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.
+<p>Setting an item's <strong>ritem</strong> key to 1 makes it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.
 </p>
 <p>By default, the item makes the traditional teleport sound/fog effect when respawning, but you can change it to the more discreet deathmatch-style respawn effect, through the spawnflag <strong>Spawn with DM effects</strong>.
 </p>
@@ -146,20 +146,56 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 
 <h3>Item box model style</h3>
 <p>
-	By default, Alkaline uses the higher-detail BSP item box models from Rubicon Rumble Pack. But you also have the option to use MDL item boxes from Copper. You can select it through the <strong>itemstyle</strong> key, either on worldspawn to set it globally, or directly on the entity.
+	By default, Alkaline uses the higher-detail BSP item box models from Rubicon Rumble Pack, but you also have the option to use MDL item boxes from Copper. You can select it through the <strong>itemstyle</strong> key, either on worldspawn to set it globally, or directly on the entity.
 </p>
-
-
-
 
 <hr>
 
 <h2>Weapons</h2>
 
+<p>In your arsenal, some old acquaintances have made a return in Alkaline, but there's new stuff too.
+
+<h3>New weapons</h3>
+
+<ul>
+	<li><strong>Laser Cannon:</strong> The good-old laser-ricochet chaos-inducing weapon from Scourge of Armagon makes a comeback in Alkaline.</li>
+	<li><strong>Chainsaw:</strong> The chainsaw from Zerstörer, with a cool new model, animation and effects, if you like to get up close and personal with your foes.</li>
+	<li><strong>Plasma Rifle:</strong> A completely new weapon! Great for mowing down large groups of enemies as quickly as it mows down your cells.</li>
+</ul>
+
+<h3>Custom loadout</h3>
+<p>You can define a completely custom loadout at map start using the <strong>take_weapons</strong> and <strong>give_weapons</strong> worldspawn keys, as well as each of the ammo types.</p>
+<p>First, Alkaline will remove the ones checked in <strong>take_weapons</strong>, then give the ones selected in <strong>give_weapons</strong>. So, if your map would begin with a "shotgun start" (I.E. default inventory), taking away the axe and the shotgun will make the player start with no weapons at all.</p>
+<p>Setting any of the <strong>ammo_*</strong> keys will override the current amount with the defined one.</p>
+<p>Also, setting the <strong>reset_items</strong> worldspawn key to 1 will force a "shotgun start" on your map regardless of inventory/stats coming from a previous map. Note that the inventory reset is made before applying take/give weapons.</p>
+
+<h3>Axe and shotgun pickups</h3>
+<p>Since you have the option to remove the axe and the shotgun from your inventory, we've added them as traditional weapon pickups as well. Deploy them through the <strong>weapon_axe</strong> and <strong>weapon_shotgun</strong> point entities.
+</p>
+
+<h3>target_removeitems entity</h3>
+<p>Acts the same way as the <strong>take_weapons</strong> worldspawn key, but can be used mid-level. Trigger it to remove the selected weapons from the activating player.
+
+<hr>
+<h2>Triggers</h2>
 <hr>
 
+<h2>Doors</h2>
+<hr>
 
-<h2>Switchable Shadows</h2>
+<h2>Plats</h2>
+<hr>
+
+<h2>Buttons</h2>
+<hr>
+
+<h2>Trains</h2>
+<hr>
+
+<h2>State System</h2>
+<hr>
+
+<h2>Shadows</h2>
 <p>
 	Alkaline has full-on support for switchable shadows if your compiling tools can handle it. Every brush entity, except triggers and <strong>func_detail_*</strong> entities, can cast togglable shadows, controllable by the <strong>misc_shadowcontroller</strong> point entity. That's how you need to set it up:
 	<ul>
@@ -171,7 +207,7 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 	<strong>func_door</strong> and <strong>toggle_visiblewall</strong> don't need to have a controlling misc_shadowcontroler, just setting _switchableshadow to 1 makes it work automatically.
 </p>
 	
-<h3>Entity misc_shadowcontroller</h3>
+<h3>misc_shadowcontroller entity</h3>
 <ul>
 	<li><strong>speed</strong>: Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading.</li>
 	<li><strong>speed2</strong>: Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'.</li>
@@ -198,21 +234,8 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 <p>Also, there are 2 new decorative light entities.</p>
 <ul>
 	<li><strong>light_fixture1</strong>: wall-mounted light fixture. Control the model's angle with the <strong>angle2</strong> field. Note that the angle set won't be shown in the editor, only in-game.</li>
-	<li><strong>light_beacon</strong>: Floor-mounted flashing red beacon. Has an optional blinking animation, that syncs with light style 16.</li>
+	<li><strong>light_beacon</strong>: Floor-mounted red beacon. Has an optional blinking animation, that syncs with light style 16.</li>
 </ul>
-
-<h2>State System</h2>
-
-<h2>Doors</h2>
-
-<h2>Plats</h2>
-
-<h2>Buttons</h2>
-
-<h2>Trains</h2>
-
-<h2>Triggers</h2>
-
 
 <h2>Environmental Effects</h2>
 
