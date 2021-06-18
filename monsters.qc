@@ -10,6 +10,11 @@
 //		<code>
 // };
 
+void(float qt) add_monster_total = {
+	total_monsters += qt;
+	update_hud_totals(HUD_MONSTERS);
+}
+
 /*
 ================
 monster_use
@@ -107,8 +112,7 @@ void() spawn_monster = {
 	self.flags = self.flags - FL_SPAWNMONSTER;
 
 	if (self.spawnflags & MONSTER_COUNTONSPAWN) {
-		total_monsters = total_monsters + 1;
-		update_hud_totals(HUD_MONSTERS);
+		add_monster_total(1);
 	}
 
 	self.think1();
@@ -141,8 +145,7 @@ void(void() go_function) monster_start = {
 
 	if (self.spawnflags & MONSTER_SPAWNTRIGGERED) {
 		init_spawned_monster(self, go_function);
-		if (!(self.spawnflags & MONSTER_COUNTONSPAWN)) total_monsters++;
-		update_hud_totals(HUD_MONSTERS);
+		if (!(self.spawnflags & MONSTER_COUNTONSPAWN)) add_monster_total(1);
 	}
 	else {
 		// delay drop to floor to make sure all doors have been spawned
@@ -150,9 +153,7 @@ void(void() go_function) monster_start = {
 		self.nextthink = self.nextthink + random()*0.5;
 		self.think = go_function;
 
-		if (!(self.spawnflags & MONSTER_SPAWNER && !(self.spawnflags & MONSTER_COUNTONSPAWN)))
-			total_monsters++;
-		update_hud_totals(HUD_MONSTERS);
+		if (!(self.spawnflags & MONSTER_SPAWNER && !(self.spawnflags & MONSTER_COUNTONSPAWN))) add_monster_total(1);
 	}
 }
 
@@ -171,11 +172,7 @@ void(void() go_function) pacifist_start = {
 	}
 	else 
 	{
-		if (self.spawnflags & MONSTER_COUNTONSPAWN)
-		{
-			total_monsters++;
-			update_hud_totals(HUD_MONSTERS);
-		}	
+		if (self.spawnflags & MONSTER_COUNTONSPAWN) add_monster_total(1);
 		// delay drop to floor to make sure all doors have been spawned
 		// spread think times so they don't all happen at same time
 		self.nextthink = self.nextthink + random()*0.5;
@@ -445,8 +442,7 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 
 void() monster_spawner_updatecounter = {
 	if (self.totalspawncount > 0 && !(self.spawnflags & MONSTER_COUNTONSPAWN)) {
-		total_monsters+= self.totalspawncount;
-		update_hud_totals(HUD_MONSTERS);
+		 add_monster_total(self.totalspawncount);
 	}
 };
 
