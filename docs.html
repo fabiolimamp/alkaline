@@ -178,9 +178,30 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 
 <hr>
 <h2>Triggers</h2>
+
+<p>In Alkaline we've gone great lengths to allow advanced scripting and events.</p>
+
+<h3>Multiple targets</h3>
+<p>Following Copper's fashion, Alkaline also supports the <strong>target2/target3/target4</strong> keys but not multiple targetnames, as it increases code complexity and stack usage multi-fold. Having only multiple targets is usually enough to cover most cases, and you can always set up some relays if necessary.</p>
+
+<h3>Dormant triggers</h3>
+<p>One of the first changes to triggers that every mod usually do is allow them to be trigger spawned, and with Alkaline that wouldn't be different. Set <strong>is_waiting</strong> to 1, and the trigger won't be active until you target it. It works with all touchable trigger brush entities.</p>
+
+<h3>Monster-triggerable</h3>
+<p><strong>trigger_once</strong> and <strong>trigger_multiple</strong> can be set to be activated by monsters as well as players, so you can set them to fall into traps for example.</p>
+
+<h3>Message all players</h3>
+<p>Every entity that can centerprint a message may be set to broadcast it to all connected players. Good for when you have some map-wide event that you want to communicate in a co-op game for example. Just set the spawnflag <strong>message all players</strong> on the messaging entity.</p>
+
+<h3>trigger_repeat entity</h3>
+<p>A point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.
+The counter can be optionally not be reset after triggering it again (spawnflag 1), so it functions more like a pause/unpause.</p>
+
 <hr>
 
 <h2>Doors</h2>
+<p>Doors in Alkaline have been completely revamped.
+
 <hr>
 
 <h2>Plats</h2>
