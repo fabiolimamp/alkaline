@@ -39,38 +39,125 @@ body {
 
 <p>Monsters have a multitude of new features now.</p>
 <h3>Triggered spawning</h3>
-<p>By setting the "Trigger Spawned" spawnflag, the monster will only show up after it's been triggered. No need for complex teleport setups. The following spawnflags can be used together with it:
+<p>By setting the <strong>Trigger Spawned</strong> spawnflag, the monster will only show up after it's been triggered. No need for complex teleport setups. The following spawnflags can be used together with it:
 </p>
-<ul><li>"Silent spawn": makes it spawn without making the teleport effect & sound, for when you need to repopulate an area out of the player's view.</li>
-<li>"Spawn angry": spawns the monster already in alert state.</li>
-<li>"Count after spawn": the monster adds to the map's total monster count only after it's been spawned in.</li>
+<ul><li><strong>Silent spawn</strong>: makes it spawn without making the teleport effect & sound, for when you need to repopulate an area out of the player's view.</li>
+<li><strong>Spawn angry</strong>: spawns the monster already in alert state.</li>
+<li><strong>Count after spawn</strong>: the monster adds to the map's total monster count only after it's been spawned in.</li>
 </ul>
 
 <h3>Monster spawner</h3>
 <p>
-	Turns this entity into a monster spawner, that creates a new instance of the monster whenever it's triggered. They always spawn angry, and have a telefrag check, so they'll wait for a few seconds until they have room to spawn. The spawned monsters inherit all of the spawner entity's <strong>target*</strong> fields, so you can use it to add to a counter when they're killed for example.
+	Checking the <strong>Monster spawner</strong> flag turns this entity into a monster spawner, that creates a new instance of the monster whenever it's triggered. They always spawn angry, and have a telefrag check, so they may wait for a few seconds until they have room to spawn. The spawned monsters inherit all of the spawner entity's <strong>target*</strong> fields, so you can use it to add to a counter when they're killed for example.
 	If you want it to spawn monsters in a defined time interval, you can set it up in conjunction with a <strong>trigger_repeat</strong>.
 </p>
 <p>The following keys are related to it:</p>
 
-<ul><li><strong>totalspawncount</strong>: When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this value already counted in, unless you set the "Count on spawn" flag as well.</li>
-<li><strong>spawncount</strong>: Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached, the monsters will stop spawning in from this entity until they're killed. Good for not overwhelming the player with infinite spawns.</li>
+<ul><li><strong>totalspawncount</strong>: When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this value already counted in, unless you set the <strong>Count after spawn</strong> flag as well. By default, it'll spawn monsters indefinitely.</li>
+<li><strong>spawncount</strong>: Maximum amount of monsters spawned by this entity that can be alive at the same time (defaults to 10 monsters). If this value is reached, the monsters will stop spawning in from this entity until they're killed. Good for not overwhelming the player with a ludicrous amount of monsters in the same arena. Set to -1 if you want to disable this limit.</li>
 </ul>
 
 <h3>Other features</h3>
-<ul><li><strong>No infight</strong> flag: The monster won't be angry at another when hit. Note that it doesn't prevent another monster from getting angry at it, thus it'll never have a chance to fight it back.</li>
+<ul><li><strong>No sight sound</strong> flag: The monster won't make its sight sound when angry at something.</li>
+<li><strong>No infight</strong> flag: The monster won't be angry at another when hit, only at players. Note that it doesn't prevent some other monster from getting angry at it, thus never giving it a chance to fight back.</li>
 <li><strong>No idle sounds</strong> flag: The monster won't make any idle sounds when standing still. It'll still make sounds if walking/following path_corners though.</li>
 </ul>
 
+<h3>Entity target_infight</h3>
+<p>Point entity that makes <strong>target</strong> monster angry at <strong>target2</strong> when triggered.</p>
+<p>
+By default, the infighting doesn't start mutually, that is, <strong>target2</strong> monster will only get mad back at <strong>target</strong> after it's been attacked. If you want to make them angry at each other instantly, you can set the spawnflag <strong>Mutual hate</strong>.
+</p>
+
+<h3>Monsters</h3>
+<p>Last, but not least, here's the list of the baddies that come with Alkaline. The other non-base vanilla monsters not mentioned here behave and look the same, but they're all still available to use.
+
+<ul>
+	<li><strong>Grunt (monster_army):</strong> 30 HP</li>
+	<li><strong>Nail Grunt (monster_nailgrunt):</strong> 30 HP</li>
+	<li><strong>Rottweiler (monster_dog):</strong> 25 HP</li>
+	<li><strong>Enforcer (monster_enforcer):</strong> 80 HP</li>
+	<li><strong>Ogre (monster_ogre):</strong> 200 HP</li>
+	<li><strong>Ogre Marksman (monster_ogre_marksman):</strong> 200 HP</li>
+	<li><strong>Ogre Berserker (monster_ogreb):</strong> 200 HP</li>
+	<li><strong>Axe Grunt (monster_axegrunt):</strong> 75 HP</li>
+	<li><strong>Saber Knight (monster_hell_knight):</strong> 250 HP</li>
+	<li><strong>Dreadnaught (monster_dreadnaught):</strong> 150 HP</li>
+	<li><strong>Centroid (monster_scourge):</strong> 300 HP</li>
+	<li><strong>Eel (monster_eel):</strong> 25 HP</li>
+	<li><strong>Frogman (monster_frogman):</strong> 100 HP</li>
+	<li><strong>Drone (monster_drone):</strong> 100 HP</li>
+	<li><strong>Centurion (monster_centurion):</strong> 150 HP</li>
+	<li><strong>Probe (monster_probe):</strong> 200 HP</li>
+	<li><strong>Floyd Automaton (monster_floyd):</strong> 200 HP</li>
+	<li><strong>Mega Enforcer (monster_me):</strong> 150 HP</li>
+	<li><strong>Bambler (monster_bambler):</strong> 500 HP</li>
+	<li><strong>Hunter (monster_hunter):</strong> 600 HP</li>
+	<li><strong>Arachnofloyd (monster_arachnofloyd):</strong> 600 HP</li>
+	<li><strong>Lieutenant (monster_super_enforcer):</strong> 120 HP + 1000 armor</li>
+	<li><strong>Prowler (monster_rider):</strong> 600-777 HP</li>
+	<li><strong>Annihilator (monster_banshee):</strong> 1300 HP</li>
+	<li><strong>Armagon (monster_armagon):</strong> 2000-3500 HP</li>
+</ul>
 <hr>
 
 <h2>Items</h2>
 
 <p>
-
+Alkaline has some new items and item features.
 </p>
 
+<h3>Circuitboard</h3>
+<p>Deployed through the point entity <strong>item_circuitboard</strong>, the circuitboard (or rather the "17-centimeter Fromitz board") is a completely customizable dummy item that does nothing on its own, nor adds anything to your inventory. It merely fires its targets when picked up. But don't be fooled by its simplicity, because it's where lies all its power. You can use it to trigger any event, say, spreading various circuitboards throughout your map, all targeting the same trigger_counter, that unlocks a door or a super secret for example. Almost every map in Alkaline used it in some way.
+</p>
+You can set a custom model (<strong>mdl</strong> key), pickup sound file (<strong>noise</strong> key), and pickup name (<strong>netname</strong> key). By default the pickup text will be shown at the top of the screen like any other item, but if you want to suppress that and just centerprint a message instead, you can set the <strong>No pickup text</strong> flag and define the message in the <strong>message</strong> field.
+<p>
+
+<h3>Trifecta</h3>
+<p>
+	The new awesome powerup in Alkaline. Gives you quad-damage, invincibility, and a mega health boost, all in one.
+</p>
+
+<h3>Keys</h3>
+
+<p>Alkaline borrows the custom key system from progs_dump. You can create a key using the <strong>item_key_custom</strong> entity, and define a custom model, skin, sound and name. Then on any door you can set the name of the key that will open it. For more details, please refer to the in-editor documentation.</p>
+
+<p>Also from progs_dump comes the <strong>item_key_custom</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event, like a door would, but with no need for a door.
+
+<h3>Item respawning</h3>
+<p>By setting an item's <strong>ritem</strong> key to 1, it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.
+</p>
+<p>By default, the item makes the traditional teleport sound/fog effect when respawning, but you can change it to the more discreet deathmatch-style respawn effect, through the spawnflag <strong>Spawn with DM effects</strong>.
+</p>
+
+<h3>Trigger spawning</h3>
+<p>Like monsters, items also support trigger-spawning. Just set the <strong>Trigger spawned</strong> flag and it'll only show up after triggered. You can make it spawn silently using the <strong>Spawn silent</strong> flag.
+</p>
+
+<h3>Item positioning</h3>
+<p>
+	The <strong>Suspended in air</strong> spawnflag makes the item stay in place and never drop to the floor, so it hovers in midair. Quoting Lunaran in a similar Copper feature:
+	<blockquote>It's a useful hackaround for items that insist on falling out of the world and vanishing because they don't like where you placed them. This also provides a handy solution to the irritating problem that a monster and an item cannot overlap without pushing the item out of the world.
+    Even if items don't fall out of the world when you test your map in your Quake engine port of choice, inconsistent droptofloor() results are not unheard of across ports. Consider it best practice to always mark as SUSPENDED any progression-critical items like keys, or any other item that fires a necessary targetname, even when placed on the ground.</blockquote>
+</p>
+<p>
+	The <strong>Don't start dropped</strong> flag, on the other hand, makes the item to still be affected by gravity, but it will not spawn already dropped the floor directly below it (I.E. it won't run droptofloor() upon spawn). This way the item will fall to the floor only after it has been spawned.
+</p>
+
+<h3>Item box model style</h3>
+<p>
+	By default, Alkaline uses the higher-detail BSP item box models from Rubicon Rumble Pack. But you also have the option to use MDL item boxes from Copper. You can select it through the <strong>itemstyle</strong> key, either on worldspawn to set it globally, or directly on the entity.
+</p>
+
+
+
+
 <hr>
+
+<h2>Weapons</h2>
+
+<hr>
+
 
 <h2>Switchable Shadows</h2>
 <p>
@@ -84,7 +171,7 @@ body {
 	<strong>func_door</strong> and <strong>toggle_visiblewall</strong> don't need to have a controlling misc_shadowcontroler, just setting _switchableshadow to 1 makes it work automatically.
 </p>
 	
-<h3>misc_shadowcontroller</h3>
+<h3>Entity misc_shadowcontroller</h3>
 <ul>
 	<li><strong>speed</strong>: Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading.</li>
 	<li><strong>speed2</strong>: Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'.</li>
