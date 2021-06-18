@@ -365,6 +365,8 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 				//johnfitz -- make floyd death less dangerous without shrinking the range of it
 				if (attacker.classname == "monster_floyd")
 					points = points * 0.5;
+				else if (attacker.classname == "monster_drone")
+					points = points * 0.625;
 				//johnfitz
 				if (points > 0)
 				{
