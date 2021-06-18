@@ -24,10 +24,10 @@ body {
 <h2>Philosophy</h2>
 
 <p>
-	Alkaline was originally built upon Rubicon 2 codebase. But over our development period, a great deal of code ended up being changed. Lots of new features, monsters, items, powerups, bug corrections... So it grew up into its own thing. We've borrowed ideas (or entire features altogether) from all the great mods and mod frameworks of our time. Copper, Arcane Dimensions, progs_dump, Zerstorer, Malice, Rubicon Rumble Pack, Honey, Quoth... you name it. Also we've got a bunch of exclusive features. Our main focus was on things that we felt would be nice to have in all kinds of base-themed maps.
+	Alkaline was originally built upon Rubicon 2 codebase. But over our development period, a great deal of code ended up being changed. Lots of new features, monsters, items, powerups, bug corrections... So it grew up into its own thing. We've borrowed ideas (or entire features altogether) from all the great mods and mod frameworks of our time. Copper, Arcane Dimensions, progs_dump, Zerstorer, Malice, Rubicon Rumble Pack, Quoth... you name it. Also we've got a bunch of exclusive features. Our main focus was on things that we felt would be nice to have in all kinds of base-themed maps.
 </p>
 <p>
-	We've decided to not change anything gameplay-related. All original weapons, monsters and items behave almost exactly the way you've known and loved for the last 25 years. We think it's laudable what mods like Copper or AD have done to improve balance and gameplay, but our intention was to expand over the solid gameplay foundations that vanilla Quake laid, and add a load of new features and mapping quality-of-life enhancements.
+	We've decided to not change anything gameplay-related. All original weapons, monsters and items behave almost exactly the way you've known and loved for the last 25 years. We think it's laudable what mods like Copper or AD have done to improve balance and gameplay, but our intention was to expand over the solid gameplay foundations that vanilla Quake laid, and add a load of new features and mapping quality-of-life enhancements on top of it.
 </p>
 <p>
 	We'll do a more in-depth walkthrough into Alkaline's features, so any mapper can take it as a framework for their own map or mod. We've decided to go through everything that's been changed from vanilla instead of pure Rubicon 2, for an easier understanding.
@@ -37,9 +37,9 @@ body {
 
 <h2>Monsters</h2>
 
-<p>Monsters have a multitude of new features now.</p>
+<p>Monsters have a multitude of new features.</p>
 <h3>Triggered spawning</h3>
-<p>By setting the <strong>Trigger Spawned</strong> spawnflag, the monster will only show up after it's been triggered. No need for complex teleport setups. The following spawnflags can be used together with it:
+<p>By setting the <strong>Trigger Spawned</strong> spawnflag, the monster will only show up after it's been triggered. The following spawnflags can be used together with it:
 </p>
 <ul><li><strong>Silent spawn</strong>: makes it spawn without making the teleport effect & sound, for when you need to repopulate an area out of the player's view.</li>
 <li><strong>Spawn angry</strong>: spawns the monster already in alert state.</li>
@@ -183,6 +183,12 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 
 <h3>Multiple targets</h3>
 <p>Following Copper's fashion, Alkaline also supports the <strong>target2/target3/target4</strong> keys but not multiple targetnames, as it increases code complexity and stack usage multi-fold. Having only multiple targets is usually enough to cover most cases, and you can always set up some relays if necessary.</p>
+<p>An exception is made for some entities that must control or modify other entities that could have their behavior changed when set a targetname, so they can also target a <strong>targetname2</strong> field. Note that the targetname2 field isn't displayed on any entity by default, so you must add it manually when needed. The following entities have that ability:
+	<ul>
+		<li><strong>target_setstate</strong></li>
+		<li><strong>target_setdoor</strong></li>
+		<li><strong>misc_shadowcontroller</strong></li>
+	</ul>
 
 <h3>Dormant triggers</h3>
 <p>One of the first changes to triggers that every mod usually do is allow them to be trigger spawned, and with Alkaline that wouldn't be different. Set <strong>is_waiting</strong> to 1, and the trigger won't be active until you target it. It works with all touchable trigger brush entities.</p>
@@ -193,17 +199,73 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 <h3>Message all players</h3>
 <p>Every entity that can centerprint a message may be set to broadcast it to all connected players. Good for when you have some map-wide event that you want to communicate in a co-op game for example. Just set the spawnflag <strong>message all players</strong> on the messaging entity.</p>
 
-<h3>trigger_repeat entity</h3>
-<p>A point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.
+<h3>Repeater/timer trigger</h3>
+<p>The <strong>trigger_repeat</strong> entity is a point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.
 The counter can be optionally not be reset after triggering it again (spawnflag 1), so it functions more like a pause/unpause.</p>
 
 <hr>
 
 <h2>Doors</h2>
-<p>Doors in Alkaline have been completely revamped.
+<p>The good old <strong>func_door</strong> in Alkaline has been completely revamped.
+
+<h3>Distance and angle</h3>
+<p>You have various ways of setting the door's movement:</p>
+<ul>
+<li>using the traditional <strong>angle</strong> and <strong>lip</strong> keys</li>
+<li>using <strong>angle</strong>, but with <strong>distance</strong> instead of lip, to specify a travel distance directly</li>
+<li>setting <strong>movedir</strong> as a direct x/y/z distance vector relative to its initial position</li>
+<li>setting <strong>mangle</strong> and <strong>distance</strong> to make it move in an arbitrary "pitch yaw 0" angle and linear distance</li>
+</ul>
+
+<p>Note that those methods are mutually exclusive, so if you use one of those, remember to remove the keys relative to the others, or else you might have some unexpected behaviour.</p>
+
+<p>You can now set a different closing speed for the door with the <strong>speed2</strong> key. If unset, it'll use the same value as <strong>speed</strong>.
+</p>
+
+<h3>Delayed movement</h3>
+<p>With this feature you can create more complex multi-entity doors with parts that move independently, but still act like a single door. You can set delayed movement for a door part with the <strong>delay</strong> key, and the timings are automatically reverted when closing, which means that the first door entity to open will be the last to close.</p>
+
+<p><strong>delay2</strong> sets an additional delay for when the door closes. Useful if you need to wait for another door part to set in position before moving.</p>
+
+<h3>Door grouping/linking</h3>
+<p>For the delayed movement feature to work as intended, a great deal of work was put into making sure they'll link correctly. By default, all doors whose bounding boxes touch or intersect will belong to a single group, and will always move at the same time. But now you also have the option to manually group them through the <strong>groupname</strong> key. Doors with this field set will ignore the touching algorithm for linking, and will only group with other doors that have the same groupname, regardless of where they're positioned in the map.</p>
+
+<p>That also means that the old-time bug with toggling dual-doors was corrected, so you don't need to set "don't link" anymore for toggling doors.</p>
+
+<p>It's recommended that you set the same key values on all doors in the group, like targets, wait, messages, keys, except those specific for each door part, like angle, distance, speed, delay, sound, etc.</p>
+
+<h3>Sounds</h3>
+<p>You can set completely custom sounds to doors. They'll override the default sounds selected through the <strong>sounds</strong> key (either on the door itself or on worldspawn).</p>
+<ul>
+	<li><strong>noise1</strong>: Sound file for the 'stop moving' sound</li>
+	<li><strong>noise2</strong>: Sound file for the 'moving' sound (a looping file is recommended)</li>
+	<li><strong>noise3</strong>: Sound file for the 'key required' sound</li>
+	<li><strong>noise4</strong>: Sound file for the 'key used' sound</li>
+</ul>
+<p>
+	Due to the new delayed movement features, the new spawnflag <strong>Sound during delay</strong> was added. When set, it'll make this specific door part to start its move sound at the instant the whole group starts moving, and only play the stop sound when all doors finished moving. This way you're able to set a single door in the group to sound during the whole movement sequence, and avoid multiple start/stop sounds overlapping for each entity.
+</p>
+
+<h3>Keys</h3>
+<p>You can set a door to demand a custom key through the <strong>keyname</strong> field. The keyname must match the one in a <strong>item_key_custom</strong> entity. Refer to the item_key_custom documentation in-editor for more details.</p>
+
+<p>There are two other key-related options:</p>
+<ul>
+	<li><strong>cnt</strong> key: If set to 1, the player won't have the key removed from their inventory when unlocking, but the door will stay open as usual.</li>
+	<li><strong>Doom style unlock</strong> spawnflag: Setting this allows the door to function like a conventional door (opens and closes) after it's been unlocked. Checking it also makes players retain the key in their inventory.</li>
+</ul>
+
+
+<h3>Setting a door position directly</h3>
+<p>The <strong>target_setdoor</strong> point entity can directly command a door to open or close, regardless of which state it's in. The <strong>style</strong> key sets the command issued to the targeted door when this entity is triggered. Note that doors with a wait time set will still close again normally afterwards.</p>
+<p>If you need to command a door and still want it to retain its "touch to open" behavior, you can make the setdoor entity target the door's <strong>targetname2</strong> field..</p>
+
+<h3>Trigger field</h3>
+<p>The door's trigger field is the built-in trigger that makes the door open when something gets close to it. Alkaline lets you have some more control how it's created, or make a completely custom one.</p> 
+<p>The default door trigger field size in Quake extends 60 units beyond the whole door's bounding box, in either X/Y directions. Through the spawnflags <strong>Expanded/reduced trigger field</strong>, you can set the trigger field to be expanded by another 24u, or reduced by 52u, in either X or Y direction. If you set both expand and reduce at the same time, they'll sum up, so you'll get a smaller reduction of 28u.</p>
+<p>With the <strong>trigger_doortriggerfield</strong> brush entity, you can also define a custom trigger field. Just make it target a door, and it'll override the built-in one.</p>
 
 <hr>
-
 <h2>Plats</h2>
 <hr>
 
@@ -258,12 +320,16 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 	<li><strong>light_beacon</strong>: Floor-mounted red beacon. Has an optional blinking animation, that syncs with light style 16.</li>
 </ul>
 
+<hr>
 <h2>Environmental Effects</h2>
 
+<hr>
 <h2>Gravity</h2>
 
+<hr>
 <h2>Fog</h2>
 
+<hr>
 <h2>Other Quality-of-Life enhancements</h2>
 
 </body>
