@@ -5,7 +5,7 @@ BOSS ENFORCER (original mod from "The Lieutenant," fixed aim by khreathor)
 
 ==============================================================================
 */
-
+float lth_max_volley, lth_min_volley, lth_attackfinished, lth_shootahead;
 $cd /raid/quake/id1/models/enforcer
 $origin 0 -6 24
 $base base		
@@ -36,40 +36,31 @@ void() super_enforcer_fire =
 	makevectors (self.angles);
 	
 	org = self.origin + v_forward * 30 + v_right * 8.5 + '0 0 16';
-if (skill == 0)
-    dir = self.enemy.origin - org;
-else if (skill == 1)
-	{
-	liut_ofs_x = (self.enemy.velocity_x * 0.1);
-	liut_ofs_y = (self.enemy.velocity_y * 0.1);
-	liut_ofs_z = (self.enemy.velocity_z * 0.1 * -1);
-    dir = (self.enemy.origin + liut_ofs) - org;
-   	}
-else if (skill == 2)
-	{
-	liut_ofs_x = (self.enemy.velocity_x * 0.2);
-	liut_ofs_y = (self.enemy.velocity_y * 0.2);
-	liut_ofs_z = (self.enemy.velocity_z * 0.2 * -1);	
-   dir = (self.enemy.origin + liut_ofs) - org;
-   	}
-else
-	{
-	liut_ofs_x = (self.enemy.velocity_x * 0.3);
-	liut_ofs_y = (self.enemy.velocity_y * 0.3);
-	liut_ofs_z = (self.enemy.velocity_z * 0.3 * -1);
-   dir = (self.enemy.origin + liut_ofs) - org;
-   	}
+
+	liut_ofs_x = (self.enemy.velocity_x * lth_shootahead);
+	liut_ofs_y = (self.enemy.velocity_y * lth_shootahead);
+	liut_ofs_z = (self.enemy.velocity_z * lth_shootahead * -1);
+
+   	dir = (self.enemy.origin + liut_ofs) - org;
 	dir = normalize(dir);
+
 	launch_spike (org, dir);
 	//launch_spike (org, self.enemy.origin - self.origin);
 	// setmodel(newmis, "progs/s_spike.mdl");
 	newmis.touch = superspike_touch;
 	newmis.velocity = newmis.velocity * 0.8;
 
-	sound (self, self.cnt, "weapons/spike2.wav", 1, ATTN_NORM);
-	self.cnt++;
-	if (self.cnt >= 7)
-		self.cnt = 0;
+	if (!self.super_sound) self.super_sound = 3;
+	sound (self, self.super_sound, "weapons/spike2.wav", 1, ATTN_NORM);
+	self.super_sound++; // cycles sound through channels so it can overlap
+	if (self.super_sound >= 7) self.super_sound = 3;
+
+	if (!canshoot(self.enemy)) self.count = lth_max_volley;
+	else self.count++;
+
+	self.attack_finished = time + lth_attackfinished + random();
+
+	dprint("shot ");dprint(ftos(self.count));dprint("\n");
 };
 
 //============================================================================
@@ -109,25 +100,23 @@ void()	lth_run4	=[	$run4  ,	lth_run5	] {ai_run(12);};
 void()	lth_run5	=[	$run5  ,	lth_run6	] {ai_run(14);};
 void()	lth_run6	=[	$run6  ,	lth_run7	] {ai_run(14);};
 void()	lth_run7	=[	$run7  ,	lth_run8	] {ai_run(7);};
-void()	lth_run8	=[	$run8  ,	lth_run1	] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);ai_run(11);};
+void()	lth_run8	=[	$run8  ,	lth_run1	] {ai_run(11);
+	if (random() < 0.2)	sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+};
 
-void()	lth_atk1	=[	$attack1,	lth_atk2	] {ai_face();};
+void()	lth_atk1	=[	$attack1,	lth_atk2	] {ai_face(); self.count = 0; dprint("restart\n");};
 void()	lth_atk2	=[	$attack2,	lth_atk3	] {ai_face();};
 void()	lth_atk3	=[	$attack3,	lth_atk4	] {ai_face();};
 void()	lth_atk4	=[	$attack4,	lth_atk5	] {ai_face();};
 void()	lth_atk5	=[	$attack5,	lth_atk6	] {ai_face();};
-void()	lth_atk6	=[	$attack6,	lth_atk7	]
-{
+void()	lth_atk6	=[	$attack6,	lth_atk7	] {
 	super_enforcer_fire();
 	self.effects = self.effects | EF_MUZZLEFLASH;
 };
-void()	lth_atk7	=[	$attack7,	lth_atk8	]
-{
+void()	lth_atk7	=[	$attack7,	lth_atk8	] {
 	super_enforcer_fire();
-	if (random() < 0.9)
-	{
+
+	if ((random() < 0.75 && self.count < lth_max_volley) || self.count < lth_min_volley) {
 		self.think = lth_atk6;
 		self.nextthink = time + 0.1;
 	}
@@ -291,6 +280,31 @@ void() monster_super_enforcer =
 	precache_sound2 ("lieut/you.wav");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
+
+	if (startskill == SKILL_EASY) {
+		lth_min_volley = 4;
+		lth_max_volley = 8;
+		lth_attackfinished = 1.2;
+		lth_shootahead = 0;
+	}
+	else if (startskill == SKILL_NORMAL) {
+		lth_min_volley = 6;
+		lth_max_volley = 12;
+		lth_attackfinished = 0.8;
+		lth_shootahead = 0.1;
+	}
+	else if (startskill == SKILL_HARD) {
+		lth_min_volley = 8;
+		lth_max_volley = 16;
+		lth_attackfinished = 0.4;
+		lth_shootahead = 0.2;
+	}
+	else {
+		lth_min_volley = 10;
+		lth_max_volley = 20;
+		lth_attackfinished = 0.4;
+		lth_shootahead = 0.3;
+	}
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_super_enforcer_spawner;

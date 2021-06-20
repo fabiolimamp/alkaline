@@ -200,6 +200,29 @@ float (entity targ) visible =
 	return FALSE;
 };
 
+/*
+=============
+canshoot
+
+returns 1 if there are no entities in the way of the shot
+=============
+*/
+float (entity targ) canshoot =
+{
+	local vector	spot1, spot2;
+	
+	spot1 = self.origin + self.view_ofs;
+	spot2 = targ.origin + targ.view_ofs;
+	traceline (spot1, spot2, FALSE, self);  // don't see through other monsters
+
+	if (trace_ent != targ)
+		return FALSE;		// don't have a clear shot
+			
+	if (trace_inopen && trace_inwater)
+		return FALSE;			// sight line crossed contents
+
+	return TRUE;
+};
 
 /*
 =============
@@ -601,23 +624,15 @@ Returns FALSE if movement should continue
 */
 float() CheckAttack =
 {
-	local vector	spot1, spot2;	
+	//local vector	spot1, spot2;	
 	local entity	targ;
 	local float		chance;
 
 	targ = self.enemy;
 	
-// see if any entities are in the way of the shot
-	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
 
-	traceline (spot1, spot2, FALSE, self);
-
-	if (trace_ent != targ)
-		return FALSE;		// don't have a clear shot
-			
-	if (trace_inopen && trace_inwater)
-		return FALSE;			// sight line crossed contents
+	if (!canshoot(targ))
+		return FALSE;
 
 	if (enemy_range == RANGE_MELEE)
 	{	// melee attack
