@@ -279,6 +279,8 @@ void() train_wait = {
 		activator = nextent(world);	// default to player1 wherever they are
 	SUB_UseEntTargets(self.enemy);
 
+	if (self.enemy.speed) self.speed2 = self.enemy.speed; // sets the speed from the current path_corner
+
 	self.think = train_next;
 	if (self.wait && self.cnt == TRAIN_NEXT_WAIT) {
 		self.nextthink = self.ltime + self.wait;
@@ -318,8 +320,6 @@ void() train_next = {
 	
 	if(!(!self.wait && self.cnt == TRAIN_NEXT_CONTINUE)) self.cnt = TRAIN_NEXT_WAIT;
 
-	if(targ.speed) self.speed2 = targ.speed;
-
 	self.use = train_moving_use; //store up any premature triggerings until current movement is finished
 
 	SUB_CalcMove(targ.origin - self.mins, self.speed2, train_wait);
@@ -333,6 +333,8 @@ void() func_train_find = {
 
 	self.enemy = targ;
 	setorigin(self, targ.origin - self.mins);
+	if (targ.speed) self.speed2 = targ.speed; // uses speed from the 1st path corner if set
+
 	if (!self.targetname)
 	{	// not triggered, so start immediately
 		self.nextthink = self.ltime + 0.1;
