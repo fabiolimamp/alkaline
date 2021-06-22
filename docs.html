@@ -31,7 +31,7 @@ body {
 </p>
 <p>
 	We'll do a more in-depth walkthrough into Alkaline's features, so any mapper can take it as a framework for their own map or mod. We've decided to go through everything that's been changed from vanilla instead of pure Rubicon 2, for an easier understanding.
-<p>
+</p>
 
 <hr>
 
@@ -39,9 +39,10 @@ body {
 
 <p>Monsters have a multitude of new features.</p>
 <h3>Triggered spawning</h3>
-<p>By setting the <strong>Trigger Spawned</strong> spawnflag, the monster will only show up after it's been triggered. The following spawnflags can be used together with it:
-</p>
-<ul><li><strong>Silent spawn</strong>: makes it spawn without making the teleport effect & sound, for when you need to repopulate an area out of the player's view.</li>
+<p>By setting the <strong>Trigger Spawned</strong> spawnflag, the monster will only show up after it's been triggered. The following spawnflags can be used together with it:</p>
+
+<ul>
+<li><strong>Silent spawn</strong>: makes it spawn without making the teleport effect & sound, for when you need to repopulate an area out of the player's view.</li>
 <li><strong>Spawn angry</strong>: spawns the monster already in alert state.</li>
 <li><strong>Count after spawn</strong>: the monster adds to the map's total monster count only after it's been spawned in.</li>
 </ul>
@@ -70,7 +71,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 </p>
 
 <h3>Monsters</h3>
-<p>Last, but not least, here's the list of the baddies that come with Alkaline. The other non-base vanilla monsters not mentioned here behave and look the same, but they're all still available to use.
+<p>Last, but not least, here's the list of the baddies that come with Alkaline. The other non-base vanilla monsters not mentioned here behave and look the same, but they're all still available to use.</p>
 
 <ul>
 	<li><strong>Grunt (monster_army):</strong> 30 HP</li>
@@ -103,15 +104,12 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <h2>Items</h2>
 
-<p>
-Alkaline has some new items and item features.
-</p>
+<p>Alkaline has some new items and item features.</p>
 
 <h3>Circuitboard</h3>
-<p>Deployed through the point entity <strong>item_circuitboard</strong>, the circuitboard (or rather the "17-centimeter Fromitz board") is a completely customizable dummy item that does nothing on its own, nor adds anything to your inventory. It merely fires its targets when picked up. But don't be fooled by its simplicity, because it's where lies all its power. You can use it to trigger any event, say, spreading various circuitboards throughout your map, all targeting the same trigger_counter, that unlocks a door or a super secret for example. Almost every map in Alkaline used it in some way.
+<p>Deployed through the point entity <strong>item_circuitboard</strong>, the circuitboard (or rather the "17-centimeter Fromitz board") is a completely customizable dummy item that does nothing on its own, nor adds anything to your inventory. It merely fires its targets when picked up. But don't be fooled by its simplicity, because it's where lies all its power. You can use it to trigger any event, say, spreading various circuitboards throughout your map, all targeting the same trigger_counter, that unlocks a door or a super secret for example. Almost every map in Alkaline used it in some way.</p>
+<p>You can set a custom model (<strong>mdl</strong> key), pickup sound file (<strong>noise</strong> key), and pickup name (<strong>netname</strong> key). By default the pickup text will be shown at the top of the screen like any other item, but if you want to suppress that and just centerprint a message instead, you can set the <strong>No pickup text</strong> flag and define the message in the <strong>message</strong> field.
 </p>
-You can set a custom model (<strong>mdl</strong> key), pickup sound file (<strong>noise</strong> key), and pickup name (<strong>netname</strong> key). By default the pickup text will be shown at the top of the screen like any other item, but if you want to suppress that and just centerprint a message instead, you can set the <strong>No pickup text</strong> flag and define the message in the <strong>message</strong> field.
-<p>
 
 <h3>Trifecta</h3>
 <p>
@@ -122,7 +120,7 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 
 <p>Alkaline borrows the custom key system from progs_dump. You can create a key using the <strong>item_key_custom</strong> entity, and define a custom model, skin, sound and name. Then on any door you can set the name of the key that will open it. For more details, please refer to the in-editor documentation.</p>
 
-<p>Also from progs_dump comes the <strong>item_key_custom</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event. Like a door would, but with no need for a door.
+<p>Also from progs_dump comes the <strong>item_key_custom</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event. Like a door would, but with no need for a door.</p>
 
 <h3>Item respawning</h3>
 <p>Setting an item's <strong>ritem</strong> key to 1 makes it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.
@@ -153,7 +151,7 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 
 <h2>Weapons</h2>
 
-<p>In your arsenal, some old acquaintances have made a return in Alkaline, but there's new stuff too.
+<p>In your arsenal, some old acquaintances have made a return in Alkaline, but there's new stuff too.</p>
 
 <h3>New weapons</h3>
 
@@ -174,7 +172,7 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 </p>
 
 <h3>target_removeitems entity</h3>
-<p>Acts the same way as the <strong>take_weapons</strong> worldspawn key, but can be used mid-level. Trigger it to remove the selected weapons from the activating player.
+<p>Acts the same way as the <strong>take_weapons</strong> worldspawn key, but can be used mid-level. Trigger it to remove the selected weapons from the activating player.</p>
 
 <hr>
 <h2>Triggers</h2>
@@ -183,7 +181,9 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 
 <h3>Multiple targets</h3>
 <p>Following Copper's fashion, Alkaline also supports the <strong>target2/target3/target4</strong> keys but not multiple targetnames, as it increases code complexity and stack usage multi-fold. Having only multiple targets is usually enough to cover most cases, and you can always set up some relays if necessary.</p>
+
 <p>An exception is made for some entities that must control or modify other entities that could have their behavior changed when set a targetname, so they can also target a <strong>targetname2</strong> field. Note that the targetname2 field isn't displayed on any entity by default, so you must add it manually when needed. The following entities have that ability:
+</p>
 	<ul>
 		<li><strong>target_setstate</strong></li>
 		<li><strong>target_setdoor</strong></li>
@@ -200,21 +200,21 @@ You can set a custom model (<strong>mdl</strong> key), pickup sound file (<stron
 <p>Every entity that can centerprint a message may be set to broadcast it to all connected players. Good for when you have some map-wide event that you want to communicate in a co-op game for example. Just set the spawnflag <strong>message all players</strong> on the messaging entity.</p>
 
 <h3>Repeater/timer trigger</h3>
-<p>The <strong>trigger_repeat</strong> entity is a point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.
-The counter can be optionally not be reset after triggering it again (spawnflag 1), so it functions more like a pause/unpause.</p>
+<p>The <strong>trigger_repeat</strong> entity is a point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.</p>
+<p>The counter can be optionally not be reset after triggering it again (spawnflag 1), so it functions more like a pause/unpause.</p>
 
 <hr>
 
 <h2>Doors</h2>
-<p>The good old <strong>func_door</strong> in Alkaline has been completely revamped.
+<p>The good old <strong>func_door</strong> in Alkaline has been completely revamped.</p>
 
 <h3>Distance and angle</h3>
 <p>You have various ways of setting the door's movement:</p>
 <ul>
 <li>using the traditional <strong>angle</strong> and <strong>lip</strong> keys</li>
 <li>using <strong>angle</strong>, but with <strong>distance</strong> instead of lip, to specify a travel distance directly</li>
-<li>setting <strong>movedir</strong> as a direct x/y/z distance vector relative to its initial position</li>
-<li>setting <strong>mangle</strong> and <strong>distance</strong> to make it move in an arbitrary "pitch yaw 0" angle and linear distance</li>
+<li>setting <strong>movedir</strong> as a direct distance vector ("x y z") relative to its initial position</li>
+<li>setting <strong>mangle</strong> and <strong>distance</strong> to make it move in any arbitrary angle ("pitch yaw 0") and linear distance</li>
 </ul>
 
 <p>Note that those methods are mutually exclusive, so if you use one of those, remember to remove the keys relative to the others, or else you might have some unexpected behaviour.</p>
@@ -256,26 +256,89 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 </ul>
 
 
-<h3>Setting a door position directly</h3>
+<h3>Setting a door state directly</h3>
 <p>The <strong>target_setdoor</strong> point entity can directly command a door to open or close, regardless of which state it's in. The <strong>style</strong> key sets the command issued to the targeted door when this entity is triggered. Note that doors with a wait time set will still close again normally afterwards.</p>
 <p>If you need to command a door and still want it to retain its "touch to open" behavior, you can make the setdoor entity target the door's <strong>targetname2</strong> field..</p>
 
 <h3>Trigger field</h3>
-<p>The door's trigger field is the built-in trigger that makes the door open when something gets close to it. Alkaline lets you have some more control how it's created, or make a completely custom one.</p> 
-<p>The default door trigger field size in Quake extends 60 units beyond the whole door's bounding box, in either X/Y directions. Through the spawnflags <strong>Expanded/reduced trigger field</strong>, you can set the trigger field to be expanded by another 24u, or reduced by 52u, in either X or Y direction. If you set both expand and reduce at the same time, they'll sum up, so you'll get a smaller reduction of 28u.</p>
-<p>With the <strong>trigger_doortriggerfield</strong> brush entity, you can also define a custom trigger field. Just make it target a door, and it'll override the built-in one.</p>
+<p>The door's trigger field is the built-in trigger that makes the door open when something gets close to it. Alkaline gives you some more control over how it's created, or allows to make a completely custom one.</p> 
+<p>The default door trigger field size in Quake extends 60 units beyond the whole door's bounding box in both X and Y directions. Through the spawnflags <strong>Expanded/reduced trigger field</strong>, you can set the trigger field to be expanded by another 24u, or reduced by 52u, in either X or Y direction. If you set both expand and reduce at the same time, they'll sum up, so you'll get a smaller reduction of 28u.</p>
+<p>Also, you have the option of using the <strong>trigger_doortriggerfield</strong> brush entity. With it you can define a custom trigger field. Just make it target a door, and it'll override the built-in one.</p>
+<p>Last but not least, standing monsters won't open doors anymore, so you can safely put an enemy ambushing behind one without it staying open.</p>
 
 <hr>
 <h2>Plats</h2>
-<hr>
 
-<h2>Buttons</h2>
+<p>Besides the traditional func_plat, we've added DoE's <strong>func_new_plat</strong> entity, which is a lot more flexible and feature-packed.</p>
+<p>You can select between multiple plat modes through its spawn flags:</p>
+
+
+<h3>Plat start at top</h3>
+<p>It's a plat that starts at the top and when triggered, goes down, waits, then comes back up. The <strong>health</strong> field sets the number of seconds to wait (default 5)</p>
+
+<h3>Plat Toggle</h3>
+<p>Creates a plat that will change between the top and bottom each time it is triggered.</p>
+
+<h3>Elevator</h3>
+<p>Makes an elevator plat. You can have as many levels as you want but they must be all the same distance away. Use the <strong>func_elvtr_button</strong> entity as the trigger. Each floor must have its own panel with func_elvtr_buttons for the elevator to move correctly.</p>
+
+<p><strong>"Elevator Start at Top"</strong> is an optional flag for elevators. It just tells the elevator that it's position is the top floor. (Default is the bottom floor) USE THIS ONLY WITH ELEVATORS!</p>
+
+<h3>Plat2</h3>
+<p>'Plat2' is a fixed version of the original plat. If you want the plat to start at the bottom and move to the top on demand, use a negative height. That will tell Quake to lower the plat at spawn time. Always place this plat type in the top position when making the map. This will ensure correct lighting, hopefully. If a plat2 is the target of a trigger, it will be disabled until it has been triggered. Delay is the wait before the plat returns to original position.</p>
+
+<h3>Other new features</h3>
+
+<p>The following features are present in both <strong>func_plat</strong> and <strong>func_new_plat</strong>:</p>
+<ul>
+	<li><strong>Custom sounds</strong>: can be set through the <strong>noise/noise1</strong> keys.</li>
+	<li><strong>Deep trigger</strong> spawnflag: makes its trigger field go all the way to the bottom of the entity's lower position, instead of starting at the top of the lower position. For when you need to ride INSIDE of the plat entity's volume, not on top of it.</li>
+</ul>
+
 <hr>
 
 <h2>Trains</h2>
+
+<p><strong>func_train</strong> have got some more tricks.</p>
+
+<ul>
+<li>Giving a <strong>path_corner</strong> a <strong>wait -1</strong> value will stop the train, and triggering the train again makes it resume its path.</li>
+
+<li><strong>path_corner</strong> can change the train speed upon arriving at it.</li>
+
+<li><strong>path_corner</strong> will have its targets fired when the train passes by.</li>
+
+<li>Setting <strong>pausetime</strong> on the train sets a default waiting time when a value is not defined in path_corners.</li>
+
+<li><strong>Move on trigger</strong> spawnflag will force the train to resume its path when triggered, even when temporarily waiting at a path_corner.</li>
+
+<li><strong>Stop on trigger</strong> spawnflag will stop the train at the next path_corner when triggered. Trigger it again to resume.</li>
+</ul>
+<p>The flags above are mutually exclusive and will cause an objerror when selected simultaneously.</p>
+
 <hr>
 
 <h2>State System</h2>
+
+<p>Alkaline has a state system somewhat similar to AD's "estate" system and Copper's target_lock entity. With it you can be disable/enable entities at will, giving you greater control over complex map scripting and events. Entity behaviour when disabled is class-dependant.</p>
+<p>You set an entity's state using the <strong>target_setstate</strong> point entity. You can directly disable, enable, or toggle the state. Target entities can start the map already disabled through the spawnflag <strong>Targets start disabled</strong>.</p>
+<p>If you need to target an entity that has its behaviour changed when given a targetname (like <strong>func_door</strong> or <strong>trigger_teleport</strong>), you can make the <strong>target_setstate</strong> target the entity's <strong>targetname2</strong> field.</p>
+<p>This system is integrated with the dormant trigger system (<strong>is_waiting</strong> key), meaning that you can "wake" a trigger not only by triggering it, but also by using a <strong>target_setstate</strong> on it.</p>
+<p>A lot of entities support enabling/disabling:</p>
+
+<h3>Triggers of any type</h3>
+<p>When disabled, all <strong>trigger_*</strong> brush entities get their touch action turned off. This includes self-sufficient entities that don't need to target anything, like fog triggers, ladders, monsterjumps, changelevels, etc.</p>
+<p>Also, any entity that fire their targets won't do it while disabled (like <strong>trigger_relay</strong>), and a <strong>trigger_counter</strong> won't get its use count increased.</p>
+
+<h3>Doors</h3>
+<p>Like in Copper, disabling a door makes it not respond to touches or triggers, and disables its trigger field.</p>
+<p>Doors will also close immediately when disabled. Toggling doors or with <strong>wait -1</strong> set won't close by default, but you can change that behaviour using the spawnflag <strong>Close all doors</strong>. In this case, if re-enabled, the door will return to the position it was before disabling.</p>
+
+<h3>Buttons</h3>
+
+<p>Also similar to Copper, buttons depress themselves when disabled and cannot be activated.</p>
+<p>If the button have a <strong>wait -1</strong> value (that is, it's a press-once button), when re-enabled it'll reset back to its un-pressed state regardless if it had been activated before. You can change that using the spawnflag <strong>Don't reset button state</strong>, in which case it'll revert to its previous state when re-enabled.</p>
+
 <hr>
 
 <h2>Shadows</h2>
