@@ -323,10 +323,10 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>Alkaline has a state system somewhat similar to AD's "estate" system and Copper's target_lock entity. With it you can disable/enable entities at will, giving you greater control over complex map scripting and events. Entity behaviour when disabled is class-dependant.</p>
 <p>You set an entity's state using the <strong>target_setstate</strong> point entity. You can directly disable, enable, or toggle the state. Target entities can start the map already disabled through the spawnflag <strong>Targets start disabled</strong>.</p>
 <p>If you need to target an entity that has its behaviour changed when given a targetname (like <strong>func_door</strong> or <strong>trigger_teleport</strong>), you can make the <strong>target_setstate</strong> target the entity's <strong>targetname2</strong> field.</p>
-<p>This system is integrated with the dormant trigger system (<strong>is_waiting</strong> key), meaning that you can "wake" a trigger not only by triggering it, but also by using a <strong>target_setstate</strong> on it.</p>
+<p>This system is integrated with dormant triggers (<strong>is_waiting</strong> key), meaning that you can "wake" a trigger not only by triggering it, but also by using a <strong>target_setstate</strong> on it.</p>
 <p>A lot of entities support enabling/disabling:</p>
 
-<h3>Triggers of any type</h3>
+<h3>Trigger brushes of any class</h3>
 <p>When disabled, all <strong>trigger_*</strong> brush entities get their touch action turned off. This includes self-sufficient entities that don't need to target anything, like fog triggers, ladders, monsterjumps, changelevels, etc.</p>
 <p>Also, any entity that fire their targets won't do it while disabled (like <strong>trigger_relay</strong>), and a <strong>trigger_counter</strong> won't get its use count increased.</p>
 
@@ -342,19 +342,24 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <hr>
 
 <h2>Shadows</h2>
-<p>
-	Alkaline has full-on support for switchable shadows if your compiling tools can handle it. Every brush entity, except triggers and <strong>func_detail_*</strong> entities, can cast togglable shadows, controllable by the <strong>misc_shadowcontroller</strong> point entity. That's how you need to set it up:
-	<ul>
-		<li>Create a <strong>_switchableshadow</strong> key in the desired entity and set it to 1;</li>
-		<li>Give it a targetname - if the entity changes behaviour when adding a targetname, you can use the special <strong>targetname2</strong> key instead, which will work only for the shadow controller.</li>
-		<li>Create a <strong>misc_shadowcontroller</strong> entity targeting the bmodel, and give it a different targetname.</li>
-		<li>Triggering the shadow controller toggles the shadow on/off with a fading animation.</li>
-	</ul>
-	<strong>func_door</strong> and <strong>toggle_visiblewall</strong> don't need to have a controlling misc_shadowcontroler, just setting _switchableshadow to 1 makes it work automatically. Also, any killtargeted entity (like <strong>func_wall</strong>) will have its switchable shadow removed automatically without the need for a misc_shadowcontroler.
 
-</p>
-	
+<h3>func_shadow entity</h3>
+<p><strong>func_shadow</strong> is a brush entity with a simple function: cast shadows. It's not visible nor clips nor does anything else ingame. In order for it to work correctly you need to either set a <strong>_shadow 1</strong> or a <strong>_switchableshadow 1</strong> key in it.</p>
+<p>It's useful if you need to simulate a shadow being cast by a misc_model for example, or create more complex lighting schemes using switchable shadows (more on that below).</p>
 
+<h3>Switchable shadows</h3>
+<p>Alkaline has full-on support for switchable shadows if your compiling tools can handle it. Every brush entity, except triggers and <strong>func_detail_*</strong> ones, can have togglable shadows by adding a <strong>_switchableshadow 1</strong> key to it.</p>
+<p><strong>func_door</strong>, <strong>func_breakable</strong> and <strong>toggle_visiblewall</strong> already have built-in support for that, so all you need to do is add the key for it to work automatically. Also, any killtargeted entity (like <strong>func_wall</strong>) with a switchable shadow will have it removed automatically.</p>
+
+<p>For other entity classes, like <strong>func_shadow</strong>, you need to set up a <strong>misc_shadowcontroller</strong> point entity to control their switchable shadows. That's how you do it:</p>
+<ul>
+	<li>Create a <strong>_switchableshadow</strong> key in the desired entity and set it to 1;</li>
+	<li>Give it a targetname - if the entity changes behaviour when adding a targetname, you can use the special <strong>targetname2</strong> key instead, which will work only for the shadow controller.</li>
+	<li>Create a <strong>misc_shadowcontroller</strong> entity targeting the bmodel, and give it a different targetname.</li>
+	<li>Triggering the shadow controller toggles the shadow on/off with a fading animation.</li>
+</ul>
+
+<p>Currently, ericw's LIGHT tool supports switchable shadows only when the map isn't using bounce lighting. That's been already corrected in development versions however, and should be out in its next release.</p>
 	
 <hr>
 
