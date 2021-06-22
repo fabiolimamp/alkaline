@@ -154,6 +154,8 @@ void () func_breakable_die =
 	self.origin = ((self.absmin + self.absmax) * 0.5);
 	setorigin (self, self.origin);	
 	make_breakable_debris ();
+
+	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
 	
 	remove (self);
 };
@@ -233,6 +235,8 @@ void () func_breakable =
 		self.takedamage = DAMAGE_YES;
 		self.th_die = func_breakable_killed;
 	}
+
+	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "a");
 	
 };
 

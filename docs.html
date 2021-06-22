@@ -320,7 +320,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <h2>State System</h2>
 
-<p>Alkaline has a state system somewhat similar to AD's "estate" system and Copper's target_lock entity. With it you can be disable/enable entities at will, giving you greater control over complex map scripting and events. Entity behaviour when disabled is class-dependant.</p>
+<p>Alkaline has a state system somewhat similar to AD's "estate" system and Copper's target_lock entity. With it you can disable/enable entities at will, giving you greater control over complex map scripting and events. Entity behaviour when disabled is class-dependant.</p>
 <p>You set an entity's state using the <strong>target_setstate</strong> point entity. You can directly disable, enable, or toggle the state. Target entities can start the map already disabled through the spawnflag <strong>Targets start disabled</strong>.</p>
 <p>If you need to target an entity that has its behaviour changed when given a targetname (like <strong>func_door</strong> or <strong>trigger_teleport</strong>), you can make the <strong>target_setstate</strong> target the entity's <strong>targetname2</strong> field.</p>
 <p>This system is integrated with the dormant trigger system (<strong>is_waiting</strong> key), meaning that you can "wake" a trigger not only by triggering it, but also by using a <strong>target_setstate</strong> on it.</p>
@@ -350,28 +350,18 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 		<li>Create a <strong>misc_shadowcontroller</strong> entity targeting the bmodel, and give it a different targetname.</li>
 		<li>Triggering the shadow controller toggles the shadow on/off with a fading animation.</li>
 	</ul>
-	<strong>func_door</strong> and <strong>toggle_visiblewall</strong> don't need to have a controlling misc_shadowcontroler, just setting _switchableshadow to 1 makes it work automatically.
+	<strong>func_door</strong> and <strong>toggle_visiblewall</strong> don't need to have a controlling misc_shadowcontroler, just setting _switchableshadow to 1 makes it work automatically. Also, any killtargeted entity (like <strong>func_wall</strong>) will have its switchable shadow removed automatically without the need for a misc_shadowcontroler.
+
 </p>
 	
-<h3>misc_shadowcontroller entity</h3>
-<ul>
-	<li><strong>speed</strong>: Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading.</li>
-	<li><strong>speed2</strong>: Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'.</li>
-	<li><strong>spawnflags</strong>:
-		<ul>
-			<li>
-				1. Shadow start off: target entity's switchable shadow start as disabled.
-			</li>
-		</ul>
-	</li>
-</ul>
+
 	
 <hr>
 
 <h2>Lights</h2>
 
 <p>
-	Lights in Alkaline have two new features.
+	Lights in Alkaline have two new notable features.
 </p>
 <ul>
 	<li>Styled lights can be toggled by giving it a targetname as usual, but setting the light style into the <strong>style2</strong> key. You can make it fade it in/out by setting a spawnflag.</li>
