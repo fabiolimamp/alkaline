@@ -70,10 +70,11 @@ void(string gibname, float dm) ThrowGib =
 void(string gibname, float dm) ThrowHead =
 {	setmodel (self, gibname);
 	self.frame = 0;
-	self.nextthink = -1;
 	self.movetype = MOVETYPE_BOUNCE;
 	self.takedamage = DAMAGE_NO;
-	self.solid = SOLID_NOT;
+	self.solid = SOLID_TRIGGER; //make them SOLID_TRIGGER so they can be caught by a trigger_void
+	setorigin(self, self.origin);
+	self.touch = SUB_Null;
 	self.view_ofs = '0 0 8';
 	setsize (self, '-16 -16 0', '16 16 56');
 	self.velocity += GibVelocityForHealth(dm);
@@ -81,8 +82,11 @@ void(string gibname, float dm) ThrowHead =
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	self.type = "head";
 	self.avelocity = crandom() * '0 600 0';
+	self.nextthink = time + 5;
+	self.think = SUB_MakeNotSolid;
 }
 
+// for player heads that fall into a trigger_void
 void() ThrowHeadVoid =
 {	
 	setmodel (self, "progs/misc_empty.mdl"); // so you don't see dead heads at the bottom of the pit

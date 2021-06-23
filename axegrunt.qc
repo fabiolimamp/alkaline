@@ -237,13 +237,13 @@ void(entity attacker, float damage)	axe_pain =
 void()	axe_die1	=[	$axdeth1,	axe_die2	] {};
 void()	axe_die2	=[	$axdeth2,	axe_die3	] {};
 void()	axe_die3	=[	$axdeth3,	axe_die4	] 
-{self.solid = SOLID_NOT;};
+{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	axe_die4	=[	$axdeth4,	axe_die5	] {};
 void()	axe_die5	=[	$axdeth5,	axe_die6	] {};
 void()	axe_die6	=[	$axdeth6,	axe_die7	] {};
 void()	axe_die7	=[	$axdeth7,	axe_die8	] {};
 void()	axe_die8	=[	$axdeth8,	axe_die9	] {};
-void()	axe_die9	=[	$axdeth9,	axe_die9] {};
+void()	axe_die9	=[	$axdeth9,	axe_die9] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 
 

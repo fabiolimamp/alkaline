@@ -95,7 +95,7 @@ void() frogmen_run7 = [6, frogmen_run8]{ai_run(20);};
 void() frogmen_run8 = [7, frogmen_run1]{ai_run(19);};
 
 void() frogmen_death1 = [39, frogmen_death2]{sound(self, CHAN_VOICE, "frogman/death.wav", 1, ATTN_NORM);};
-void() frogmen_death2 = [40, frogmen_death3]{self.solid = SOLID_NOT;};
+void() frogmen_death2 = [40, frogmen_death3]{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void() frogmen_death3 = [41, frogmen_death4]{};
 void() frogmen_death4 = [42, frogmen_death5]{};
 void() frogmen_death5 = [43, frogmen_death6]{};
@@ -104,7 +104,7 @@ void() frogmen_death7 = [45, frogmen_death8]{};
 void() frogmen_death8 = [46, frogmen_death9]{};
 void() frogmen_death9 = [47, frogmen_death10]{};
 void() frogmen_death10 = [48, frogmen_death11]{};
-void() frogmen_death11 = [49, frogmen_death11]{};
+void() frogmen_death11 = [49, frogmen_death11]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void() frogmen_pain1 = [28, frogmen_pain2]{};
 void() frogmen_pain2 = [29, frogmen_pain3]{ai_pain(1);};

@@ -798,7 +798,7 @@ void() trigger_void_touch =
 		return;
 
 	// ignore monsters if spawnflag is set
-	if (self.spawnflags & MONSTER_SAFE && other.flags & FL_MONSTER)
+	if (self.spawnflags & MONSTER_SAFE && other.flags & FL_MONSTER && other.health > 0)
 		return;
 
 	// ignore players if spawnflag is set
@@ -827,6 +827,10 @@ void() trigger_void_touch =
 		return;
 	}
 
+	if (other.flags & FL_MONSTER && other.health <= 0){
+		entity_hide(other);
+		return;
+	}
 	// tries to kills anything that can be killed
 	if (other.takedamage) {
 		// don't try to damage shootable bmodels like doors, buttons or breakables

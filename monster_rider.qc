@@ -265,7 +265,7 @@ void() rider_run12 = [35, rider_run1]{ChangeYaw();
 };
 
 void() rider_die1 = [67, rider_die2]{rider_think();FuelTankExplode();};
-void() rider_die2 = [68, rider_die3]{rider_think();self.solid = SOLID_NOT;};
+void() rider_die2 = [68, rider_die3]{rider_think();self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void() rider_die3 = [69, rider_die4]{rider_think();};
 void() rider_die4 = [70, rider_die5]{rider_think();};
 void() rider_die5 = [71, rider_die6]{rider_think();sound(self, CHAN_WEAPON, "rider/death.wav", 1, ATTN_NORM);};
@@ -274,7 +274,7 @@ void() rider_die7 = [73, rider_die8]{rider_think();};
 void() rider_die8 = [74, rider_die9]{rider_think();};
 void() rider_die9 = [75, rider_die10]{rider_think();};
 void() rider_die10 = [76, rider_die11]{rider_think();};
-void() rider_die11 = [76, SUB_Null]{};
+void() rider_die11 = [76, SUB_Null]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void(entity attacker, float damage) rider_pain = 
 {

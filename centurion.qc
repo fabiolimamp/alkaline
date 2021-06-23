@@ -385,7 +385,8 @@ void() cent_death = {
 	self.angles_z = 0;
 	
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	self.solid = SOLID_NOT;
+	self.solid = SOLID_TRIGGER;
+	setorigin(self, self.origin);
 	
 	self.ammo_nails = 5;
 	DropBackpack();
@@ -404,7 +405,7 @@ void()	cent_die10	=[	$death10,	cent_die11	] {};
 void()	cent_die11	=[	$death11,	cent_die12	] {};
 void()	cent_die12	=[	$death12,	cent_die13	] {};
 void()	cent_die13	=[	$death13,	cent_die14	] {};
-void()	cent_die14	=[	$death14,	cent_die14	] {};
+void()	cent_die14	=[	$death14,	cent_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void()	cent_fdie1	=[	$fdeath1,	cent_fdie2	] {cent_death();};
 void()	cent_fdie2	=[	$fdeath2,	cent_fdie3	] {};
@@ -416,7 +417,7 @@ void()	cent_fdie7	=[	$fdeath7,	cent_fdie8	] {};
 void()	cent_fdie8	=[	$fdeath8,	cent_fdie9	] {};
 void()	cent_fdie9	=[	$fdeath9,	cent_fdie10	] {};
 void()	cent_fdie10	=[	$fdeath10,	cent_fdie11	] {};
-void()	cent_fdie11	=[	$fdeath11,	cent_fdie11	] {};
+void()	cent_fdie11	=[	$fdeath11,	cent_fdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 
 void() cent_die =

@@ -272,7 +272,7 @@ void(entity attacker, float damage)	ogreb_pain =	//ijed Only has a single short 
 
 void()	ogreb_die1	=[	$death1,	ogreb_die2	] {};
 void()	ogreb_die2	=[	$death2,	ogreb_die3	] {};
-void()	ogreb_die3	=[	$death3,	ogreb_die4	] {self.solid = SOLID_NOT;};
+void()	ogreb_die3	=[	$death3,	ogreb_die4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	ogreb_die4	=[	$death4,	ogreb_die5	] {};
 void()	ogreb_die5	=[	$death5,	ogreb_die6	] {};
 void()	ogreb_die6	=[	$death6,	ogreb_die7	] {};
@@ -290,26 +290,26 @@ void()	ogreb_die17	=[	$death17,	ogreb_die18	] {SpawnMeatSpray (self.origin + v_f
 void()	ogreb_die18	=[	$death18,	ogreb_die19	] {SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);};
 void()	ogreb_die19	=[	$death19,	ogreb_die20	] {SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);};
 void()	ogreb_die20	=[	$death20,	ogreb_die21	] {};
-void()	ogreb_die21	=[	$death21,	ogreb_die21	] {};
+void()	ogreb_die21	=[	$death21,	ogreb_die21	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 // Death B
 
 void()	ogreb_bdie1	=[	$bdeath1,	ogreb_bdie2	] {};
 void()	ogreb_bdie2	=[	$bdeath2,	ogreb_bdie3	] {};
-void()	ogreb_bdie3	=[	$bdeath3,	ogreb_bdie4	] {self.solid = SOLID_NOT;};
+void()	ogreb_bdie3	=[	$bdeath3,	ogreb_bdie4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	ogreb_bdie4	=[	$bdeath4,	ogreb_bdie5	] {};
 void()	ogreb_bdie5	=[	$bdeath5,	ogreb_bdie6	] {};
 void()	ogreb_bdie6	=[	$bdeath6,	ogreb_bdie7	] {};
 void()	ogreb_bdie7	=[	$bdeath7,	ogreb_bdie8	] {};
 void()	ogreb_bdie8	=[	$bdeath8,	ogreb_bdie9	] {};
 void()	ogreb_bdie9	=[	$bdeath9,	ogreb_bdie10	] {};
-void()	ogreb_bdie10	=[	$bdeath10,	ogreb_bdie10	] {};
+void()	ogreb_bdie10	=[	$bdeath10,	ogreb_bdie10	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 // Death C
 
 void()	ogreb_cdie1		=[	$cdeath1,	ogreb_cdie2		] {};
 void()	ogreb_cdie2		=[	$cdeath2,	ogreb_cdie3		] {};
-void()	ogreb_cdie3		=[	$cdeath3,	ogreb_cdie4		] {self.solid = SOLID_NOT;};
+void()	ogreb_cdie3		=[	$cdeath3,	ogreb_cdie4		] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	ogreb_cdie4		=[	$cdeath4,	ogreb_cdie5		] {};
 void()	ogreb_cdie5		=[	$cdeath5,	ogreb_cdie6		] {};
 void()	ogreb_cdie6		=[	$cdeath6,	ogreb_cdie7		] {};
@@ -320,7 +320,7 @@ void()	ogreb_cdie10	=[	$cdeath10,	ogreb_cdie11	] {};
 void()	ogreb_cdie11	=[	$cdeath11,	ogreb_cdie12	] {};
 void()	ogreb_cdie12	=[	$cdeath12,	ogreb_cdie13	] {};
 void()	ogreb_cdie13	=[	$cdeath13,	ogreb_cdie14	] {};
-void()	ogreb_cdie14	=[	$cdeath14,	ogreb_cdie14	] {};
+void()	ogreb_cdie14	=[	$cdeath14,	ogreb_cdie14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void() ogreb_die =
 {

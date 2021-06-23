@@ -24,6 +24,10 @@ void() SUB_RemoveSoon =
 }
 
 
+void() SUB_MakeNotSolid = {
+	self.solid = SOLID_NOT;
+};
+
 /*
 =============
 SUB_CallAsSelf

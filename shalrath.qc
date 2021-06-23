@@ -83,7 +83,7 @@ void() shal_death3      =[      $death3,        shal_death4     ] {};
 void() shal_death4      =[      $death4,        shal_death5     ] {};
 void() shal_death5      =[      $death5,        shal_death6     ] {};
 void() shal_death6      =[      $death6,        shal_death7     ] {};
-void() shal_death7      =[      $death7,        shal_death7    ] {};
+void() shal_death7      =[      $death7,        shal_death7    ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 
 void(entity attacker, float damage) shalrath_pain =
@@ -111,7 +111,7 @@ void() shalrath_die =
 
 	sound (self, CHAN_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
 	shal_death1();
-	self.solid = SOLID_NOT;
+	self.solid = SOLID_TRIGGER; setorigin(self, self.origin);
 	// insert death sounds here
 };
 

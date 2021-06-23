@@ -128,7 +128,7 @@ void() f_death17 =[      $death17,       f_death18       ] {};
 void() f_death18 =[      $death18,       f_death19       ] {};
 void() f_death19 =[      $death19,       f_death20       ] {};
 void() f_death20 =[      $death20,       f_death21       ] {};
-void() f_death21 =[      $death21,       f_death21       ] {};
+void() f_death21 =[      $death21,       f_death21       ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void() fish_die =
 {
@@ -140,7 +140,7 @@ void() fish_die =
         return;
 	}
 	
-	self.solid = SOLID_NOT;
+	self.solid = SOLID_TRIGGER; setorigin(self, self.origin);
 	sound (self, CHAN_VOICE, "fish/death.wav", 1, ATTN_NORM);
 	f_death1();
 };

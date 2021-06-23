@@ -151,7 +151,7 @@ void() eel_death12 =[	$eeldth6,	eel_death13	] {};
 void() eel_death13 =[	$eeldth7,	eel_death14	] {};
 void() eel_death14 =[	$eeldth8,	eel_death15	] {};
 void() eel_death15 =[	$eeldth9,	eel_death16	] {droptofloor();};
-void() eel_death16 =[	$eeldth10,	eel_death16	] {self.solid = SOLID_NOT;};
+void() eel_death16 =[	$eeldth10,	eel_death16	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void() eel_death =
 {

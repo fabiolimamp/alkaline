@@ -254,7 +254,7 @@ void(entity attacker, float damage)	dread_pain =
 
 void()	dread_die1		=[	$death1,	dread_die2	] {};
 void()	dread_die2		=[	$death2,	dread_die3	] {};
-void()	dread_die3		=[	$death3,	dread_die4	] {self.solid = SOLID_NOT;};
+void()	dread_die3		=[	$death3,	dread_die4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	dread_die4		=[	$death4,	dread_die5	] {ai_forward(14);};
 void()	dread_die5		=[	$death5,	dread_die6	] {ai_forward(2);};
 void()	dread_die6		=[	$death6,	dread_die7	] {};
@@ -265,11 +265,11 @@ void()	dread_die10		=[	$death10,	dread_die11	] {ai_forward(5);};
 void()	dread_die11		=[	$death11,	dread_die12	] {ai_forward(5);};
 void()	dread_die12		=[	$death12,	dread_die13	] {ai_forward(5);};
 void()	dread_die13		=[	$death13,	dread_die14	] {};
-void()	dread_die14		=[	$death14,	dread_die14	] {};
+void()	dread_die14		=[	$death14,	dread_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void()	dread_fdie1		=[	$fdeath1,	dread_fdie2	] {};
 void()	dread_fdie2		=[	$fdeath2,	dread_fdie3	] {};
-void()	dread_fdie3		=[	$fdeath3,	dread_fdie4	] {self.solid = SOLID_NOT;};
+void()	dread_fdie3		=[	$fdeath3,	dread_fdie4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	dread_fdie4		=[	$fdeath4,	dread_fdie5	] {};
 void()	dread_fdie5		=[	$fdeath5,	dread_fdie6	] {};
 void()	dread_fdie6		=[	$fdeath6,	dread_fdie7	] {};
@@ -277,7 +277,7 @@ void()	dread_fdie7		=[	$fdeath7,	dread_fdie8	] {};
 void()	dread_fdie8		=[	$fdeath8,	dread_fdie9	] {};
 void()	dread_fdie9		=[	$fdeath9,	dread_fdie10	] {};
 void()	dread_fdie10	=[	$fdeath10,	dread_fdie11	] {};
-void()	dread_fdie11	=[	$fdeath11,	dread_fdie11	] {};
+void()	dread_fdie11	=[	$fdeath11,	dread_fdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 
 void() dread_die =

@@ -352,9 +352,9 @@ void(entity attacker, float damage) scourge_pain =
 
 void()   scourge_die1 =[ $death1.asc, scourge_die2 ] {self.spawnsilent = 0;scourge_think();};
 void()   scourge_die2 =[ $death2.asc, scourge_die3 ] {};
-void()   scourge_die3 =[ $death3.asc, scourge_die4 ] {self.solid = SOLID_NOT;};
+void()   scourge_die3 =[ $death3.asc, scourge_die4 ] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()   scourge_die4 =[ $death4.asc, scourge_die5 ] {};
-void()   scourge_die5 =[ $death5.asc, scourge_die5 ] {};
+void()   scourge_die5 =[ $death5.asc, scourge_die5 ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void() scourge_die =
 {

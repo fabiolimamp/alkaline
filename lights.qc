@@ -10,8 +10,7 @@ float SILENT_TORCH = 4; // for silent torch -- dumptruck_ds
 
 Used as a positional target for spotlights, etc.
 */
-void() info_null =
-{
+void() info_null = {
 	remove(self);
 };
 
@@ -19,9 +18,7 @@ void() info_null =
 
 Never used in the or
 */
-void() info_notnull =
-{
-};
+void() info_notnull = {};
 
 /*==========
 lightstyle_lookup
@@ -125,10 +122,8 @@ but that value can be changed with the _compilerstyle_start worldspawn key.
 
 ==========*/
 
-void() setup_lightstyles =
-{
-	for (float i = 0; i <= LIGHTSTYLES_MAX; i++)
-	{
+void() setup_lightstyles = {
+	for (float i = 0; i <= LIGHTSTYLES_MAX; i++) {
 		lightstyle(i, lightstyle_lookup(i));
 	}
 };
@@ -188,8 +183,7 @@ string(float num) lightstyle_fade_lookup =
 /*==========
 light_fade_in
 ==========*/
-void() light_fade_in =
-{
+void() light_fade_in = {
 	if (self.count < 0)
 		self.count = 0;
 	if (self.count > 12)
@@ -207,8 +201,7 @@ void() light_fade_in =
 /*==========
 light_fade_out
 ==========*/
-void() light_fade_out =
-{
+void() light_fade_out = {
 	if (self.count < 0)
 		self.count = 0;
 	if (self.count > 12)
@@ -230,16 +223,14 @@ using a light will turn it on and off
 ==========*/
 void() light_use =
 {
-	if (self.spawnflags & START_OFF)
-	{
+	if (self.spawnflags & START_OFF) {
 		self.spawnflags = self.spawnflags - START_OFF;
 		if (self.spawnflags & FADE_IN_OUT && !self.style2)
 			light_fade_in();
 		else
 			lightstyle(self.style, lightstyle_lookup(self.style2));
 	}
-	else
-	{
+	else {
 		self.spawnflags = self.spawnflags + START_OFF;
 		if (self.spawnflags & FADE_IN_OUT && !self.style2)
 			light_fade_out();
@@ -359,31 +350,26 @@ _color => _sunlight_color
 _dirt => _sunlight_dirt
 _anglescale => _anglescale
 */
-void() light =
-{
+void() light = {
 
 	// default speed for fading in/out
 	if (self.speed <= 0)
 		self.speed = 0.1;
 
 	// non-switchable light
-	if (!self.targetname)
-	{
+	if (!self.targetname) {
 		remove(self);
 		return;
 	}
 
 	// switchable light
-	if (self.style > LIGHTSTYLES_MAX)
-	{
+	if (self.style > LIGHTSTYLES_MAX) {
 		self.use = light_use;
-		if (self.spawnflags & START_OFF)
-		{
+		if (self.spawnflags & START_OFF) {
 			self.count = 0;
 			lightstyle(self.style, "a");
 		}
-		else
-		{
+		else {
 			self.count = 12;
 			lightstyle(self.style, lightstyle_lookup(self.style2));
 		}
@@ -396,8 +382,7 @@ Non-displayed light.
 Makes steady fluorescent humming sound.
 See the "light" entity for a full description.
 */
-void() light_fluoro =
-{
+void() light_fluoro = {
 	ambient_light_buzz();
 	light();
 };
@@ -410,8 +395,7 @@ Can't be toggled.
 Default style is 10.
 See the "light" entity for a full description.
 */
-void() light_fluorospark =
-{
+void() light_fluorospark = {
 	if (!self.style)
 		self.style = 10;
 	ambient_flouro_buzz();
@@ -423,8 +407,7 @@ Sphere globe light.
 Can't be toggled.
 See the "light" entity for a full description.
 */
-void() light_globe =
-{
+void() light_globe = {
 	precache_model("progs/s_light.spr");
 	setmodel(self, "progs/s_light.spr");
 	makestatic(self);
@@ -435,14 +418,13 @@ void() light_globe =
 Short wall torch
 See the "light" entity for a full description.
 */
-void() light_torch_small_walltorch =
-{
+void() light_torch_small_walltorch = {
 	precache_model("progs/flame.mdl");
 	//precache_body_model("progs/flame.mdl");
 	setmodel(self, "progs/flame.mdl");
 	//body_model("progs/flame.mdl");
 	if !(self.spawnflags && SILENT_TORCH) // for silent torch -- dumptruck_ds
-	FireAmbient ();
+	FireAmbient();
 	makestatic(self);
 };
 
@@ -451,12 +433,11 @@ void() light_torch_small_walltorch =
 Large yellow flame
 See the "light" entity for a full description.
 */
-void() light_flame_large_yellow =
-{
+void() light_flame_large_yellow = {
 	precache_model("progs/flame2.mdl");
 	setmodel (self, "progs/flame2.mdl");
 	self.frame = 1;
-	FireAmbient ();
+	FireAmbient();
 	makestatic(self);
 };
 
@@ -465,11 +446,10 @@ void() light_flame_large_yellow =
 Small yellow flame
 See the "light" entity for a full description.
 */
-void() light_flame_small_yellow =
-{
+void() light_flame_small_yellow = {
 	precache_model("progs/flame2.mdl");
 	setmodel(self, "progs/flame2.mdl");
-	FireAmbient ();
+	FireAmbient();
 	makestatic(self);
 };
 
@@ -478,8 +458,7 @@ void() light_flame_small_yellow =
 Left for compatability
 Identical to "light_flame_small_yellow"
 */
-void() light_flame_small_white =
-{
+void() light_flame_small_white = {
 	light_flame_small_yellow();
 };
 
@@ -500,8 +479,7 @@ spawnflag 1: target shadow starts as disabled
 
 float SHADOWCONTROLLER_STARTOFF = 1;
 
-void() shadow_fade_out =
-{
+void() shadow_fade_out = {
 	if (self.count < 0)
 		self.count = 0;
 	if (self.count > 12)
@@ -518,8 +496,7 @@ void() shadow_fade_out =
 	self.nextthink = time + self.delay;
 };
 
-void() shadow_fade_in =
-{
+void() shadow_fade_in = {
 	if (self.count < 0)
 		self.count = 0;
 	if (self.count > 12)
@@ -540,19 +517,21 @@ void() shadow_fade_in =
 void(float speed) misc_shadowcontroller_setsteps = {
 	// self.delay -> time between steps
 	// self.dmg -> step size
-	if(speed >= 0.24) {
+
+	// yeah that's bad, I know
+	if (speed >= 0.24) {
 		self.delay = (speed/12);
 		self.dmg = 1;
 	}
-	else if(speed >= 0.12) {
+	else if (speed >= 0.12) {
 		self.delay = (speed/6);
 		self.dmg = 2;
 	}
-	else if(speed >= 0.06) {
+	else if (speed >= 0.06) {
 		self.delay = (speed/3);
 		self.dmg = 4;
 	}
-	else if(speed >= 0.04) {
+	else if (speed >= 0.04) {
 		self.delay = (speed/2);
 		self.dmg = 6;
 	}
@@ -565,7 +544,7 @@ void(float speed) misc_shadowcontroller_setsteps = {
 
 void() misc_shadowcontroller_use = {
 
-	if(self.shadowoff) {
+	if (self.shadowoff) {
 		dprint("Fade in:\n");
 
 		misc_shadowcontroller_setsteps(self.speed);
@@ -587,30 +566,28 @@ void() misc_shadowcontroller_use = {
 void() misc_shadowcontroller_setup = {
 	entity t1;
 
-
 	// doesn't search for a target if switchshadstyle is already set
 	// used for built-in shadow controllers
-	if(!self.switchshadstyle) {
+	if (!self.switchshadstyle) {
 
 		// we need to find only the first target entity with switchable shadows set, since shadow lightstyles are bound by targetname
 		
-		
 		t1 = find(world, targetname2, self.target);
 		
-		while(t1 != world && !t1.switchshadstyle) {
+		while (t1 != world && !t1.switchshadstyle) {
 			t1 = find(t1, targetname2, self.target);
 		}
 		
-		if(t1 == world) {
+		if (t1 == world) {
 			t1 = find(world, targetname, self.target);
 			
-			while(t1 != world && !t1.switchshadstyle) {
+			while (t1 != world && !t1.switchshadstyle) {
 				t1 = find(t1, targetname, self.target);
 			}
 		}
 
 
-		if(t1 == world) {
+		if (t1 == world) {
 			dprint("\b[misc_shadowcontroller]\b _switchableshadow not set in target ");dprint(self.target);dprint("\n");
 			return;
 		}
@@ -618,10 +595,10 @@ void() misc_shadowcontroller_setup = {
 		self.switchshadstyle = t1.switchshadstyle;
 	}
 
-	if(!self.speed) self.speed = 0.5;
-	if(!self.speed2) self.speed2 = self.speed;
+	if (!self.speed) self.speed = 0.5;
+	if (!self.speed2) self.speed2 = self.speed;
 
-	if(self.spawnflags & SHADOWCONTROLLER_STARTOFF) {
+	if (self.spawnflags & SHADOWCONTROLLER_STARTOFF) {
 		lightstyle(self.switchshadstyle, "m");
 
 		self.shadowoff = 1;
@@ -644,62 +621,61 @@ void() misc_shadowcontroller = {
 	self.nextthink = time + 0.1;
 };
 
-string() target_lightstyle_next =
-{
+/*
+================
+target_lightstyle
+from Copper
+================
+*/
+
+string() target_lightstyle_next = {
 	entity tls;
 	if (self.owner) tls = self.owner;
 	else tls = self;
 	
-	if (tls.state == 0)
-	{
+	if (tls.state == 0) {
 		if (tls.noise == string_null)
 			tls.state = 0;
 		else
 			tls.state += 1;
 		return tls.message;
 	}
-	else if (tls.state == 1)
-	{
+	else if (tls.state == 1) {
 		if (tls.noise1 == string_null)
 			tls.state = 0;
 		else
 			tls.state += 1;
 		return tls.noise;
 	}
-	else if (tls.state == 2)
-	{
+	else if (tls.state == 2) {
 		if (tls.noise2 == string_null)
 			tls.state = 0;
 		else
 			tls.state += 1;
 		return tls.noise1;
 	}
-	else if (tls.state == 3)
-	{
+	else if (tls.state == 3) {
 		if (tls.noise3 == string_null)
 			tls.state = 0;
 		else
 			tls.state += 1;
 		return tls.noise2;
 	}
-	else if (tls.state == 4)
-	{
+	else if (tls.state == 4) {
 		if (tls.noise4 == string_null)
 			tls.state = 0;
 		else
 			tls.state += 1;
 		return tls.noise3;
 	}
-	else if (tls.state == 5)
-	{
+	else if (tls.state == 5) {
 		tls.state = 0;
 		return tls.noise4;
 	}
 	return tls.message;
 }
 
-void() target_lightstyle_go =
-{
+void() target_lightstyle_go = {
 	float st;
 	string newstyle = target_lightstyle_next();
 	if (self.style)
@@ -744,11 +720,9 @@ void() target_lightstyle_go =
 	if (l) lightstyle(l.style, newstyle);
 }
 
-void() target_lightstyle_use =
-{
+void() target_lightstyle_use = {
 	entity tls;
-	if (self.delay)
-	{
+	if (self.delay) {
 		tls = spawn();
 		tls.think = target_lightstyle_go;
 		tls.nextthink = time + self.delay;
@@ -756,14 +730,12 @@ void() target_lightstyle_use =
 		tls.style = self.style;
 		tls.owner = self;
 	}
-	else
-	{
+	else {
 		target_lightstyle_go();
 	}
 
 	playercount_convert(count);
-	if (self.count > 0)
-	{
+	if (self.count > 0) {
 		self.count -= 1;
 		if (self.count == 0)
 			remove(self);
@@ -790,9 +762,7 @@ Changes a global lightstyle when triggered."
 	delay(string) : "Delay before activation" : "0"
 ]
 */
-void() target_lightstyle =
-{
-		
+void() target_lightstyle = {
 	if (self.message == string_null)
 		self.message = "azam";	// suitably garish accidental default
 	self.use = target_lightstyle_use;

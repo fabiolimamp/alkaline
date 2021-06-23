@@ -224,7 +224,7 @@ void(entity attacker, float damage)	bam_pain =
 
 void() bam_death1      =[      $death1,       bam_death2     ] {};
 void() bam_death2      =[      $death2,       bam_death3     ] {};
-void() bam_death3      =[      $death3,       bam_death4     ] {self.solid = SOLID_NOT;};
+void() bam_death3      =[      $death3,       bam_death4     ] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void() bam_death4      =[      $death4,       bam_death5     ] {};
 void() bam_death5      =[      $death5,       bam_death6     ] {};
 void() bam_death6      =[      $death6,       bam_death7     ] {};
@@ -232,7 +232,7 @@ void() bam_death7      =[      $death7,       bam_death8     ] {};
 void() bam_death8      =[      $death8,       bam_death9     ] {};
 void() bam_death9      =[      $death9,       bam_death10    ] {};
 void() bam_death10     =[      $death10,      bam_death11    ] {};
-void() bam_death11     =[      $death11,      bam_death11    ] {};
+void() bam_death11     =[      $death11,      bam_death11    ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void() bam_die =
 {

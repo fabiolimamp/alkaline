@@ -527,7 +527,7 @@ void(entity attacker, float damage)	ogre_pain =
 void()	ogre_die1	=[	$death1,	ogre_die2	] {};
 void()	ogre_die2	=[	$death2,	ogre_die3	] {};
 void()	ogre_die3	=[	$death3,	ogre_die4	]
-{self.solid = SOLID_NOT;
+{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);
 self.ammo_rockets = 2;DropBackpack();};
 void()	ogre_die4	=[	$death4,	ogre_die5	] {};
 void()	ogre_die5	=[	$death5,	ogre_die6	] {};
@@ -539,12 +539,12 @@ void()	ogre_die10	=[	$death10,	ogre_die11	] {};
 void()	ogre_die11	=[	$death11,	ogre_die12	] {};
 void()	ogre_die12	=[	$death12,	ogre_die13	] {};
 void()	ogre_die13	=[	$death13,	ogre_die14	] {};
-void()	ogre_die14	=[	$death14,	ogre_die14	] {};
+void()	ogre_die14	=[	$death14,	ogre_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void()	ogre_bdie1	=[	$bdeath1,	ogre_bdie2	] {};
 void()	ogre_bdie2	=[	$bdeath2,	ogre_bdie3	] {ai_forward(5);};
 void()	ogre_bdie3	=[	$bdeath3,	ogre_bdie4	]
-{self.solid = SOLID_NOT;
+{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);
 self.ammo_rockets = 2;DropBackpack();};
 void()	ogre_bdie4	=[	$bdeath4,	ogre_bdie5	] {ai_forward(1);};
 void()	ogre_bdie5	=[	$bdeath5,	ogre_bdie6	] {ai_forward(3);};
@@ -552,7 +552,7 @@ void()	ogre_bdie6	=[	$bdeath6,	ogre_bdie7	] {ai_forward(7);};
 void()	ogre_bdie7	=[	$bdeath7,	ogre_bdie8	] {ai_forward(25);};
 void()	ogre_bdie8	=[	$bdeath8,	ogre_bdie9	] {};
 void()	ogre_bdie9	=[	$bdeath9,	ogre_bdie10	] {};
-void()	ogre_bdie10	=[	$bdeath10,	ogre_bdie10	] {};
+void()	ogre_bdie10	=[	$bdeath10,	ogre_bdie10	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void() ogre_die =
 {

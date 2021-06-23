@@ -254,7 +254,8 @@ void(string gibname, float dm) ThrowFloydHead =
 	head.nextthink = -1;
 	head.movetype = MOVETYPE_BOUNCE;
 	head.takedamage = DAMAGE_NO;
-	head.solid = SOLID_NOT;
+	head.solid = SOLID_TRIGGER;
+	setorigin(head, head.origin);
 	setsize (head, '-16 -16 0', '16 16 32');
 	head.velocity = VelocityForDamage (dm);
 	head.origin_z = self.origin_z + 32;
@@ -277,7 +278,8 @@ void(string gibname, float dm) ThrowFloydGib =
 	new.velocity_y = crandom() * 400;
 	new.velocity_z = 200 + random() * 400;
 	new.movetype = MOVETYPE_BOUNCE;
-	new.solid = SOLID_NOT;
+	new.solid = SOLID_TRIGGER;
+	setorigin(new, new.origin);
 	new.avelocity_x = random()*600;
 	new.avelocity_y = random()*600;
 	new.avelocity_z = random()*600;

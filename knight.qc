@@ -199,7 +199,7 @@ void()	knight_die10=[	$death10,	knight_die10] {};
 void()	knight_dieb1	=[	$deathb1,	knight_dieb2	] {};
 void()	knight_dieb2	=[	$deathb2,	knight_dieb3	] {};
 void()	knight_dieb3	=[	$deathb3,	knight_dieb4	] 	
-{self.solid = SOLID_NOT;};
+{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	knight_dieb4	=[	$deathb4,	knight_dieb5	] {};
 void()	knight_dieb5	=[	$deathb5,	knight_dieb6	] {};
 void()	knight_dieb6	=[	$deathb6,	knight_dieb7	] {};
@@ -207,7 +207,7 @@ void()	knight_dieb7	=[	$deathb7,	knight_dieb8	] {};
 void()	knight_dieb8	=[	$deathb8,	knight_dieb9	] {};
 void()	knight_dieb9	=[	$deathb9,	knight_dieb10] {};
 void()	knight_dieb10 = [	$deathb10,	knight_dieb11] {};
-void()	knight_dieb11 = [	$deathb11,	knight_dieb11] {};
+void()	knight_dieb11 = [	$deathb11,	knight_dieb11] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 
 void() knight_die =

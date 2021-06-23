@@ -511,7 +511,7 @@ void(entity attacker, float damage)	menf_pain =
 
 void()	menf_die1	=[	$death1,	menf_die2	] {};
 void()	menf_die2	=[	$death2,	menf_die3	] {};
-void()	menf_die3	=[	$death3,	menf_die4	] {self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
+void()	menf_die3	=[	$death3,	menf_die4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);self.ammo_cells = 5;DropBackpack();};
 void()	menf_die4	=[	$death4,	menf_die5	] {ai_forward(14);};
 void()	menf_die5	=[	$death5,	menf_die6	] {ai_forward(2);};
 void()	menf_die6	=[	$death6,	menf_die7	] {};
@@ -522,11 +522,11 @@ void()	menf_die10	=[	$death10,	menf_die11	] {ai_forward(5);};
 void()	menf_die11	=[	$death11,	menf_die12	] {ai_forward(5);};
 void()	menf_die12	=[	$death12,	menf_die13	] {ai_forward(5);};
 void()	menf_die13	=[	$death13,	menf_die14	] {};
-void()	menf_die14	=[	$death14,	menf_die14	] {};
+void()	menf_die14	=[	$death14,	menf_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 void()	menf_fdie1	=[	$fdeath1,	menf_fdie2	] {};
 void()	menf_fdie2	=[	$fdeath2,	menf_fdie3	] {};
-void()	menf_fdie3	=[	$fdeath3,	menf_fdie4	] {self.solid = SOLID_NOT;self.ammo_cells = 5;DropBackpack();};
+void()	menf_fdie3	=[	$fdeath3,	menf_fdie4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);self.ammo_cells = 5;DropBackpack();};
 void()	menf_fdie4	=[	$fdeath4,	menf_fdie5	] {};
 void()	menf_fdie5	=[	$fdeath5,	menf_fdie6	] {};
 void()	menf_fdie6	=[	$fdeath6,	menf_fdie7	] {};
@@ -534,7 +534,7 @@ void()	menf_fdie7	=[	$fdeath7,	menf_fdie8	] {};
 void()	menf_fdie8	=[	$fdeath8,	menf_fdie9	] {};
 void()	menf_fdie9	=[	$fdeath9,	menf_fdie10	] {};
 void()	menf_fdie10	=[	$fdeath10,	menf_fdie11	] {};
-void()	menf_fdie11	=[	$fdeath11,	menf_fdie11	] {};
+void()	menf_fdie11	=[	$fdeath11,	menf_fdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 
 void() menf_die =
