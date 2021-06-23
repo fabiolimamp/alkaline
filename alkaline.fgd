@@ -125,6 +125,7 @@
 	mangle(string) : "Spotlight angle"
 	angle(integer) : "Spotlight angle width" : 40
 	_softangle(float) : "Inner spotlight angle width" : "0"
+	speed(float) : "Speed when fading in/out" : "0.1"
 	style2(integer) : ""
 	delay(choices) : "Attenuation" =
 	[
@@ -2083,7 +2084,8 @@ If using multiple triggers, do not have them touching. Leave a 'buffer' between 
 
 //dumptruck_ds added from Hipnotic Mission Pack
 @SolidClass base(Appearflags, Target, Targetname, TriggerWait) = trigger_usekey :
-"Trigger: Requires a Key
+"Trigger: Requires a Key.
+Can either be touched or triggered to use.
 
 NOTE: You must specify either the silver or gold key by setting the relevant spawnflag, or specify an item_key_custom by setting the 'keyname' value so that it matches the 'keyname' value of the item_key_custom."
 [
