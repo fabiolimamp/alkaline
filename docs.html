@@ -80,9 +80,9 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<li><strong>Enforcer (monster_enforcer):</strong> 80 HP</li>
 	<li><strong>Ogre (monster_ogre):</strong> 200 HP</li>
 	<li><strong>Ogre Marksman (monster_ogre_marksman):</strong> 200 HP</li>
-	<li><strong>Ogre Berserker (monster_ogreb):</strong> 200 HP</li>
+	<li><strong>Berserker (monster_ogreb):</strong> 200 HP</li>
 	<li><strong>Axe Grunt (monster_axegrunt):</strong> 75 HP</li>
-	<li><strong>Saber Knight (monster_hell_knight):</strong> 250 HP</li>
+	<li><strong>Death Knight (monster_hell_knight):</strong> 250 HP</li>
 	<li><strong>Dreadnaught (monster_dreadnaught):</strong> 150 HP</li>
 	<li><strong>Centroid (monster_scourge):</strong> 300 HP</li>
 	<li><strong>Eel (monster_eel):</strong> 25 HP</li>
@@ -98,7 +98,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<li><strong>Lieutenant (monster_super_enforcer):</strong> 120 HP + 1000 armor</li>
 	<li><strong>Prowler (monster_rider):</strong> 600-777 HP</li>
 	<li><strong>Annihilator (monster_banshee):</strong> 1300 HP</li>
-	<li><strong>Armagon (monster_armagon):</strong> 2000-3500 HP</li>
+	<li><strong>Ogregon (monster_armagon):</strong> 2000-3500 HP</li>
 </ul>
 <hr>
 
@@ -120,7 +120,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <p>Alkaline borrows the custom key system from progs_dump. You can create a key using the <strong>item_key_custom</strong> entity, and define a custom model, skin, sound and name. Then on any door you can set the name of the key that will open it. For more details, please refer to the in-editor documentation.</p>
 
-<p>Also from progs_dump comes the <strong>item_key_custom</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event. Like a door would, but with no need for a door.</p>
+<p>Also from progs_dump comes the <strong>trigger_usekey</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event - like a door would, but with no need for a door. It can be used by a player touching it, or by triggering.</p>
 
 <h3>Item respawning</h3>
 <p>Setting an item's <strong>ritem</strong> key to 1 makes it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.
@@ -252,11 +252,11 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>There are two other key-related options:</p>
 <ul>
 	<li><strong>cnt</strong> key: If set to 1, the player won't have the key removed from their inventory when unlocking, but the door will stay open as usual.</li>
-	<li><strong>Doom style unlock</strong> spawnflag: Setting this allows the door to function like a conventional door (opens and closes) after it's been unlocked. Checking it also makes players retain the key in their inventory.</li>
+	<li><strong>Doom style unlock</strong> spawnflag: Setting this allows the door to function like a conventional door (opens and closes) after it's been unlocked. It also makes players retain the key in their inventory.</li>
 </ul>
 
 
-<h3>Setting a door state directly</h3>
+<h3>Setting a door position directly</h3>
 <p>The <strong>target_setdoor</strong> point entity can directly command a door to open or close, regardless of which state it's in. The <strong>style</strong> key sets the command issued to the targeted door when this entity is triggered. Note that doors with a wait time set will still close again normally afterwards.</p>
 <p>If you need to command a door and still want it to retain its "touch to open" behavior, you can make the setdoor entity target the door's <strong>targetname2</strong> field..</p>
 
@@ -366,13 +366,29 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <h2>Lights</h2>
 
 <p>
-	Lights in Alkaline have two new notable features.
+	Lights in Alkaline have some new notable features.
 </p>
-<ul>
-	<li>Styled lights can be toggled by giving it a targetname as usual, but setting the light style into the <strong>style2</strong> key. You can make it fade it in/out by setting a spawnflag.</li>
-	<li>You can control a light's style directly with the <strong>target_lightstyle</strong> point entity.</li>
-</ul>
-<p>Also, there are 2 new decorative light entities.</p>
+
+<h3>Enhanced Toggling</h3>
+<p>In vanilla, lights could only be used once, either to activate or deactivate it. Now it can be toggled indefinitely.</p>
+<p>Styled lights (flickering/fading) can now be toggled as well. Give it a targetname as usual, but set the light style into the <strong>style2</strong> key. Then it'll toggle like any other light.</p>
+<p>You can set the light to fade it in/out when toggling by setting the spawnflag <strong>Fade in/out</strong>, and control the fading time with the <strong>speed</strong> key.</p>
+
+<h3>Setting a light's style directly</h3>
+<p>The <strong>target_lightstyle</strong> point entity can modify a light's style. It works the same way as the one from Copper:</p>
+<blockquote>
+	<p>target_lightstyle gives the mapper direct control over the pattern of any of the 64 lightstyles when triggered. Styles 1-31 are the preset lightstyles, and 32-64 are assigned by the compiler to triggered lights, and both can be overridden. Set style to the lightstyle you want to override, and set message to the brightness pattern you want to set it to. If style is not set, and this entity targets any triggerable lights, it sets the brightness pattern of those lights when triggered instead. (Note that targeting anything at a light makes it a triggerable light with its own style automatically.) This is compatible with any Quake map compiler, because light.exe only cares about the style number - the pattern is only applied in-game.</p>
+
+	<p>Setting style to -1 will override the style of all static, unstyled lights in the level (style 0).</p>
+
+	<p>Multiple additional stylestrings can be specified in order using the noise and noise1-noise4 keyvalues. The target_lightstyle will cycle to the next unused one each time it is triggered.</p>
+
+	<p>Quake's light patterns are sequences of characters where each letter represents a brightness from 0-200% lasting 0.1 seconds, allowing long animations to be packed into an editable string. a represents total darkness, m is normal brightness, and z is double brightness. For example, the painful disco strobe in the Fiend-filled corridor in E3M5, The Wind Tunnels, is "mamamamamama". Implementing a standard on/off toggle would use a message of "a" and a noise of "m" or "z".</p>
+</blockquote>
+
+<h3>New light fixtures</h3>
+
+<p>There are 2 new decorative light entities.</p>
 <ul>
 	<li><strong>light_fixture1</strong>: wall-mounted light fixture. Control the model's angle with the <strong>angle2</strong> field. Note that the angle set won't be shown in the editor, only in-game.</li>
 	<li><strong>light_beacon</strong>: Floor-mounted red beacon. Has an optional blinking animation, that syncs with light style 16.</li>
