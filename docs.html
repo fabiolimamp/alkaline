@@ -189,7 +189,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <li>4: Yellow sparks</li>
 <li>5: White sparks</li>
 </ul>
-
+<
 <hr>
 <h2>Triggers</h2>
 
@@ -223,7 +223,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>The <strong>trigger_monsterjump</strong> entity comes with some new features. You have now a simple monster-class-based filter, so you can let only a single monster class to be affected by it, or exclude a specific one from it.</p>
 
 <h3>Stealth teleport</h3>
-<p>Stealth mode can be set on both <strong>trigger_teleport</strong> (when teleporting out) and <strong>info_teleport_destination</strong> (when teleporting in).
+<p>Stealth mode can be set on both <strong>trigger_teleport</strong> (when teleporting out) and <strong>info_teleport_destination</strong> (when teleporting in).</p>
 
 <hr>
 
@@ -514,7 +514,20 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <hr>
 <h2>Fog</h2>
 
-<p>Alkaline comes with an improved version of Copper's fog system.</p>
+<p>Alkaline comes with an improved version of Copper's dynamic fog system.</p>
+<p>You can set a fog value into all player start entities, teleport destinations, and intermission cameras. In this case, the fog will change instantly to the set value when a player makes use of them.</p>
+<p>This way, the player's view can move to a different fog zone without having to pass through a fog trigger.</p>
+<p>An important note from Copper about this fog system:</p>
+<blockquote>The fog keyvalue that goes on Worldspawn doesn't interact with this system. It is a feature of various engines (such as those in the Fitzquake family) and isn't interpreted by game code. The reason for this is that it's interpreted as four values (one for density and three for color) and set by the engine at load time. The numeric fields that are passed on to the game code (ie Copper), however, can only be one value (a float) or three (a vector). If you set fog in your world with a fog parameter on worldspawn, and never bother with fog_color and fog_density on any entities, you'll get the usual static global fog the way it's always worked. Color and density on a player start will be evaluated on the first frame of gameplay, and will override any fog set by the engine.</blockquote>
+
+<h3>Blending fog between two areas</h3>
+<p>Using the <strong>trigger_fogblend</strong> brush entity, you can smoothly blend between two fog values as the player moves across the trigger. It's not temporal-based, instead it's based on how far the player moved within it.</p>
+<p>This way, you can place one along a corridor for example, and the fog will seamlessly change as the player walks.</p>
+
+<h3>Time-based fog blending</h3>
+<p>The <strong>trigger_fog</strong> brush entity blends the player's current fog into another when touched, within a customizable transition time.</p>
+<p>And the <strong>target_fogblend</strong> point entity toggles the activating player's fog between two different settings, also with a custom transition time. The first activation makes it blend in from the current fog, and the subsequent ones make it toggle between two values. You can optionally set the fog to be applied to all players.</p>
+
 
 <hr>
 <h2>Other Quality-of-Life enhancements</h2>
