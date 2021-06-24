@@ -1265,6 +1265,11 @@ void() W_ChangeWeapon =
 		weap = WEAPON_PLASMA;
 		if (self.ammo_cells < 1)
 			noammo = 1;
+	} 
+	else if (self.impulse == 228) {
+		weap = WEAPON_LIGHTNING;
+		if (self.ammo_cells < 1)
+			noammo = 1;
 	}
 	else 
 		weap = WEAPON_NO_WEAPON; // doesn't work right but does no harm either
@@ -1710,7 +1715,7 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon ();
 	
-	if (self.impulse >= 224 && self.impulse <= 227)
+	if (self.impulse >= 224 && self.impulse <= 228)
 		W_ChangeWeapon ();
 	
 	if (self.impulse == 9)
