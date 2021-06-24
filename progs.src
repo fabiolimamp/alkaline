@@ -1,6 +1,9 @@
 ../progs.dat
 
-defs.qc
+defs_sysglobals.qc
+defs_fields.qc
+defs_consts.qc
+defs_prototypes.qc
 
 math.qc
 utility.qc

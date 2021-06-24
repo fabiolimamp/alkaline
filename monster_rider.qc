@@ -133,7 +133,7 @@ void() rider_sound_idle =
 };
 
 void() rider_sound = {
-	sound(self, 7, "rider/down2.wav", SERV_VOL, ATTN_NORM);
+	sound(self, 7, "rider/down2.wav", 0.5, ATTN_NORM);
 }
 
 void() rider_stand1 = [0, rider_stand2]		{ai_stand(); rider_think(); rider_sound_idle();};
