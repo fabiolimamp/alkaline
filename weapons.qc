@@ -813,7 +813,6 @@ void(float ox) W_FireSpikes =
 
 
 
-.float hit_z;
 void() spike_touch =
 {
 //local float rand;

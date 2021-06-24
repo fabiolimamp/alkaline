@@ -50,7 +50,6 @@ void() menf_satck1;
 //where does sf64_teledeath function exist in the zer source code??
 //void() sf64_teledeath;
 
-.entity sibling;
 
 //--------------------------------------------------------------------
 void() DrunkExplode =

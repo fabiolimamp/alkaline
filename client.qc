@@ -939,7 +939,6 @@ WaterMove
 
 ============
 */
-.float	dmgtime;
 
 void() WaterMove =
 {

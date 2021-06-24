@@ -54,7 +54,6 @@ float	SPAWN_CRUCIFIED	= 1;
 
 //=============================================================================
 
-.float inpain;
 
 void() zombie_stand1	=[	$stand1,		zombie_stand2	] {ai_stand();};
 void() zombie_stand2	=[	$stand2,		zombie_stand3	] {ai_stand();};

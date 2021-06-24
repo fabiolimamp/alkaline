@@ -5,8 +5,6 @@ void() weapon_plasmagun;
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
 
-.vector particles_offset;
-
 float ITEM_SPAWNSILENT = 32;
 float ITEM_SPAWNED = 64;
 float ITEM_SUSPENDED = 128;
@@ -33,9 +31,7 @@ void() SUB_regen =
 // and if 'respawncount' is set we'll remove the item if cnt > respawncount
 // remember that SUB_Regen is already set on every item that can respawn, all we
 // need to do is give a nextthink time in order to trigger it
-.float	ritem,
-		respawndelay,
-		respawncount;
+
 
 void(entity whatitem, float defaultdelay) CheckItemRespawn =
 {
@@ -503,7 +499,6 @@ Deathmatch_Weapon
 
 Deathmatch weapon change rules for picking up a weapon
 
-.float		ammo_shells, ammo_nails, ammo_rockets, ammo_cells;
 =============
 */
 void(float new) Deathmatch_Weapon =

@@ -399,7 +399,6 @@ void() ogre_smash12	=[	$smash12,		ogre_smash13 ] {ai_charge(0);};
 void() ogre_smash13	=[	$smash13,		ogre_smash14 ] {ai_charge(4);};
 void() ogre_smash14	=[	$smash14,		ogre_run1	] {ai_charge(12);};
 
-.float attack_elevation;
 void() ogre_nail1   =[  $shoot1,        ogre_nail2  ] {
 ai_face();
 self.attack_elevation = IterateElevation(OGRE_DEFAULT_ELEVATION, self.enemy.origin);

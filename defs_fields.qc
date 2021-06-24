@@ -161,12 +161,16 @@ nosave float cleanUpClientStuff;
 nosave float gamestarted;
 
 
+// new door features
 #define _MAX_ENTITY_QUEUE 256
 entity doorq[_MAX_ENTITY_QUEUE];
 float lastdq;
 float currentdq;
 float door_setup_finished;
 
+
+// gravity
+entity current_gravity_ent;
 
 /*
 FIELDS
@@ -199,6 +203,22 @@ FIELDS
 // monster ai
 //
 
+//
+// monster ai
+//
+
+.void()		th_stand;
+.void()		th_walk;
+.void()		th_run;
+.void()		th_missile;
+.void()		th_melee;
+.void(entity attacker, float damage)		th_pain;
+.void()		th_die;
+.void()		th_sight;
+.float()	th_checkattack;
+
+.void(entity mon)	start_function;
+
 .entity		oldenemy;		// mad at this player before taking damage
 .float		speed;
 .float 		speed2;
@@ -210,6 +230,8 @@ FIELDS
 							// weapon or takes damage.  Used to alert
 							// monsters that otherwise would let the player go
 
+.float attack_elevation; // ogre
+.float inpain;		// zombie
 
 //
 // player only fields
@@ -235,6 +257,7 @@ FIELDS
 
 .float		axhitme;
 
+.float		dmgtime;
 
 .float		jump_flag;		// player jump flag
 .float		swim_flag;		// player swimming sound flag
@@ -245,6 +268,9 @@ FIELDS
 .float 		wantedgravity; // thanks Spike!
 
 .float	healamount, healtype;
+
+
+//.float hit_z;
 
 //
 // object stuff
@@ -267,9 +293,13 @@ FIELDS
 .entity		trigger_field;	// door's trigger entity
 .string		noise4;
 
+
+
+
 //
 // monsters
 //
+
 .float 		pausetime;
 .entity 	movetarget;
 .entity		sibling;
@@ -329,22 +359,44 @@ FIELDS
 // items
 //
 .float itemstyle = style;
+.float	ritem, respawndelay, respawncount; // item respawning
+.vector particles_offset; //keylock.qc
 
 
-// for trigger_timer
+// trigger_timer
 .float rand = healamount;	
 
 
-// for switchable brushes
+// switchable brushes
 .string		origmodel;
 
 
+//
+// hipnotic stuff
+//
+.entity     lastvictim;
+.vector     old_velocity;
+.float      spawnsilent;
+.float      spawnmulti;
+.float      duration;
+.float      gorging;
+.float      charmed;
+.float		endtime;
+
+// rotate
+.vector neworigin;
+.vector rotate;
+.float  endtime;
+.float  rotate_type;
+.string path;
+.string group;
+.string event;
+.float  duration;
 
 
 //
 //   rubicon2 stuff
 //
-
 .float		angle2;		
 .vector		movedir2;
 .string		message2;
@@ -359,7 +411,6 @@ FIELDS
 
 .float		burning_finished;
 .float		burning_time;
-
 
 .float		dismemberment;	//used by hunter.qc
 
@@ -454,3 +505,13 @@ FIELDS
 
 // entity state
 .float estate;
+
+
+// func_bob
+.float attack_timer;
+.float bsporigin;			// All bmodel origins are 0,0,0 check this first
+.float distance;
+.float waitmin2;
+
+// gravity
+.float return_gravity;

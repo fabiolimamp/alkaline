@@ -5,50 +5,6 @@
    Do not distribute.
 */
 
-//johnfitz -- moved here from hipdefs.qc
-.vector neworigin;
-.vector rotate;
-.float  endtime;
-.float  rotate_type;
-.string path;
-.string group;
-.string event;
-.float  duration;
-//johnfitz
-
-//johnfitz -- moved here from hipsubs.qc
-vector ( vector ang ) SUB_NormalizeAngles =
-   {
-   while( ang_x > 360 )
-      {
-      ang_x = ang_x - 360;
-      }
-   while( ang_x < 0 )
-      {
-      ang_x = ang_x + 360;
-      }
-
-   while( ang_y > 360 )
-      {
-      ang_y = ang_y - 360;
-      }
-   while( ang_y < 0 )
-      {
-      ang_y = ang_y + 360;
-      }
-
-   while( ang_z > 360 )
-      {
-      ang_z = ang_z - 360;
-      }
-   while( ang_z < 0 )
-      {
-      ang_z = ang_z + 360;
-      }
-
-   return ang;
-   };
-//johnfitz
 
 //johnfitz -- taken from hipnotic's triggers.qc
 void( entity ent, float amount ) hurt_setdamage =
@@ -277,7 +233,7 @@ void() rotate_entity_think =
       }
 
    self.angles = self.angles + ( self.rotate * t );
-   self.angles = SUB_NormalizeAngles( self.angles );
+   self.angles = normalizeAngles( self.angles );
    RotateTargets();
    self.nextthink = time + 0.02;
    };
@@ -455,7 +411,7 @@ void() rotate_train_think =
       }
 
    self.angles = self.angles + ( self.rotate * t );
-   self.angles = SUB_NormalizeAngles( self.angles );
+   self.angles = normalizeAngles( self.angles );
    RotateTargets();
 
    self.nextthink = time + 0.02;
@@ -670,7 +626,7 @@ void() rotate_train_next =
 
       if ( targ.spawnflags & ROTATE_ANGLES )
          {
-         self.finalangle = SUB_NormalizeAngles( targ.angles );
+         self.finalangle = normalizeAngles( targ.angles );
          self.rotate = ( targ.angles - self.angles ) * div;
          }
 
@@ -707,7 +663,7 @@ void() rotate_train_find =
    if ( targ.spawnflags & ROTATE_ANGLES )
       {
       self.angles = targ.angles;
-      self.finalangle = SUB_NormalizeAngles( targ.angles );
+      self.finalangle = normalizeAngles( targ.angles );
       }
 
    self.path = targ.target;

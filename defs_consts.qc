@@ -282,6 +282,7 @@ float	AS_STRAIGHT		= 1;
 float	AS_SLIDING		= 2;
 float	AS_MELEE		= 3;
 float	AS_MISSILE		= 4;
+float 	AS_DODGING     = 5; // hipnotic's centroid
 
 
 

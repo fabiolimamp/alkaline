@@ -6,8 +6,7 @@ trigger_setgravity (per entity)
 ==============================================================================
 */
 
-.float return_gravity;
-entity current_gravity_ent;
+
 
 void(float g) SetGlobalGravity =
 {

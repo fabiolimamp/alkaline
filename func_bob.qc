@@ -1,7 +1,4 @@
-.float attack_timer;
-.float bsporigin;			// All bmodel origins are 0,0,0 check this first
-.float distance;
-.float waitmin2;
+
 
 float BOB_COLLISION = 2;		// Collision for misc_bob
 float BOB_NONSOLID = 4;			// Non solid for func_bob

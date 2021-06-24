@@ -134,23 +134,6 @@ void(entity e) setspawnparms		= #78;		// set parm1... to the
 												// for coop respawn
 
 
-//
-// monster ai
-//
-
-.void()		th_stand;
-.void()		th_walk;
-.void()		th_run;
-.void()		th_missile;
-.void()		th_melee;
-.void(entity attacker, float damage)		th_pain;
-.void()		th_die;
-.void()		th_sight;
-.float()	th_checkattack;
-
-.void(entity mon)	start_function;
-
-
 
 //
 // subs.qc
