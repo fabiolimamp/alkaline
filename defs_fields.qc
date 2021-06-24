@@ -180,7 +180,7 @@ FIELDS
 
 
 //
-// world fields (FIXME: make globals)
+// world fields
 //
 .string		wad;
 .string 	map;
@@ -493,7 +493,7 @@ FIELDS
 .float  	doorlooped = count;
 .float 		dqplace = currentammo;
 .float 		activated = strength;
-.string 	doortowait = wad;
+//.string 	doortowait = wad;
 .float 		speed2;
 .float 		delay2;
 

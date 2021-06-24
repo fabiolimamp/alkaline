@@ -18,6 +18,8 @@ float DOOR_REDUCED_TRIGGER_Y = 524288;
 
 float DOOR_MIN_THINK_TIME = 0.013;
 
+// maximum loop count for each LinkDoors entity before it spawns another
+float DOOR_LINK_MAXLOOPCOUNT = 1800; 
 /*
 
 Doors are similar to buttons, but can spawn a fat trigger field around them
@@ -209,8 +211,8 @@ void() door_move_down = {
 };
 
 void() door_go_down = {
-	local float extradelay;
-	local entity otherdoor;
+	//local float extradelay;
+	//local entity otherdoor;
 
 	if (self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
@@ -229,19 +231,20 @@ void() door_go_down = {
 	} else {
 		// extra delay time for closing.
 		// using "doortowait" is deprecated, use delay2 to set an extra time directly
-		if (self.doortowait) {
+		/*if (self.doortowait) {
 			otherdoor = find (world, targetname2, self.doortowait);
 
 			if (otherdoor && otherdoor.classname == "func_door") {
 				extradelay = vlen(otherdoor.pos1 - otherdoor.pos2) / otherdoor.speed2;
 			}
 		} else extradelay = self.delay2;
+		*/
 
 		// Normal movement.
 		// All doors should pass through think for consistency,
 		// otherwise some flags are set when they're not supposed to
 		self.think = door_move_down;
-		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + extradelay;
+		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + self.delay2;
 	}
 
 };
@@ -575,12 +578,13 @@ void(entity door, float ldcount) setupTriggerField = {
 		
 		if (self.targetname != "") { 
 			// search for a trigger_doortriggerfield targeting it
-			// if not found, don't create a triggerfield as usual
 			do {
 				tfield = find(tfield, classname, "trigger_doortriggerfield");
 			}
 			while (tfield && tfield.target != self.targetname);
 			
+			// if found, add it as the door's trigger field, 
+			// otherwise keep the door triggerfield-less as usual
 			if (tfield) {
 				self.trigger_field = tfield;
 				tfield.owner = self;
@@ -669,7 +673,7 @@ void() LinkDoors2 = {
 		// before the engine thinks you've got a runaway loop.
 		// If that limit is reached, spawn a new entity and
 		// resume the loop from it in the next frames
-		if (doorloopcount > 1800) {
+		if (doorloopcount > DOOR_LINK_MAXLOOPCOUNT) {
 			nextld = spawn();
 
 			nextld.ld_currentdoor = d1;
