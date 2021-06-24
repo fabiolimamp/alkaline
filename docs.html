@@ -100,6 +100,10 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<li><strong>Annihilator (monster_banshee):</strong> 1300 HP</li>
 	<li><strong>Ogregon (monster_armagon):</strong> 2000-3500 HP</li>
 </ul>
+
+<h3>Scientists</h3>
+<p></p>
+
 <hr>
 
 <h2>Items</h2>
@@ -349,7 +353,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <h3>Switchable shadows</h3>
 <p>Alkaline has full-on support for switchable shadows if your compiling tools can handle it. Every brush entity, except triggers and <strong>func_detail_*</strong> ones, can have togglable shadows by adding a <strong>_switchableshadow 1</strong> key to it.</p>
-<p><strong>func_door</strong>, <strong>func_breakable</strong> and <strong>toggle_visiblewall</strong> already have built-in support for that, so all you need to do is add the key for it to work automatically. Also, any killtargeted entity (like <strong>func_wall</strong>) with a switchable shadow will have it removed automatically.</p>
+<p><strong>func_door</strong>, <strong>func_breakable</strong> and <strong>toggle_visiblewall</strong> already have built-in support for that, so all you need to do is add the key for it to work automatically. Also, any killtargeted entity (like a <strong>func_wall</strong>) with a switchable shadow will have it removed automatically.</p>
 
 <p>For other entity classes, like <strong>func_shadow</strong>, you need to set up a <strong>misc_shadowcontroller</strong> point entity to control their switchable shadows. That's how you do it:</p>
 <ul>
@@ -370,12 +374,11 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 </p>
 
 <h3>Enhanced Toggling</h3>
-<p>In vanilla, lights could only be used once, either to activate or deactivate it. Now it can be toggled indefinitely.</p>
-<p>Styled lights (flickering/fading) can now be toggled as well. Give it a targetname as usual, but set the light style into the <strong>style2</strong> key. Then it'll toggle like any other light.</p>
-<p>You can set the light to fade it in/out when toggling by setting the spawnflag <strong>Fade in/out</strong>, and control the fading time with the <strong>speed</strong> key.</p>
+<p>A feature brought over from progs_dump, animated lights (flickering/pulsing) can now be toggled. Give it a targetname as usual, but set the light style into the <strong>style2</strong> key. Then it'll toggle like any other light.</p>
+<p>You can also set the light to fade it in/out when toggling by setting the spawnflag <strong>Fade in/out</strong>, and control the fading time with the <strong>speed</strong> key. Note that this effect won't work when toggling animated lights.</p>
 
 <h3>Setting a light's style directly</h3>
-<p>The <strong>target_lightstyle</strong> point entity can modify a light's style. It works the same way as the one from Copper:</p>
+<p>The <strong>target_lightstyle</strong> point entity can modify a light's style. It's the same one from Copper, so we can quote its docs directly:</p>
 <blockquote>
 	<p>target_lightstyle gives the mapper direct control over the pattern of any of the 64 lightstyles when triggered. Styles 1-31 are the preset lightstyles, and 32-64 are assigned by the compiler to triggered lights, and both can be overridden. Set style to the lightstyle you want to override, and set message to the brightness pattern you want to set it to. If style is not set, and this entity targets any triggerable lights, it sets the brightness pattern of those lights when triggered instead. (Note that targeting anything at a light makes it a triggerable light with its own style automatically.) This is compatible with any Quake map compiler, because light.exe only cares about the style number - the pattern is only applied in-game.</p>
 
@@ -390,15 +393,60 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <p>There are 2 new decorative light entities.</p>
 <ul>
-	<li><strong>light_fixture1</strong>: wall-mounted light fixture. Control the model's angle with the <strong>angle2</strong> field. Note that the angle set won't be shown in the editor, only in-game.</li>
+	<li><strong>light_fixture1</strong>: wall-mounted light fixture. Control the model's turning angle with the <strong>angle2</strong> field. Note that this angle won't be shown in the editor, only in-game.</li>
 	<li><strong>light_beacon</strong>: Floor-mounted red beacon. Has an optional blinking animation, that syncs with light style 16.</li>
 </ul>
 
 <hr>
-<h2>Environmental Effects</h2>
+<h2>Environmental Elements and Effects</h2>
 
-<hr>
-<h2>Gravity</h2>
+<h3>misc_model</h3>
+<p>You can add any custom model to your map through the <strong>misc_model</strong> entity to use as props or decoration. Targeting the entity toggles its visibility.</p>
+<p>Any frame or skin can be selected. If the model doesn't animate automatically from a frame group, you can manually define a frame range and animation speed.</p>
+<p>The model's bounding box can be totally customized by setting its size and center offset. Also it can be set to be affected by gravity and/or be solid.</p>
+
+<h3>Void</h3>
+<p>The <strong>trigger_void</strong> brush entity removes from the world everything that touches it, such as monsters, items, gibs and weapon projectiles. Players get instantly killed.</p>
+
+<h3>Breakables</h3>
+<p>A <strong>func_breakable</strong> is a visible object that can be destroyed by shooting it. If it has a targetname, it will only be destroyed by targeting it.</p>
+<p>You have 4 debris variations, each with a different debris model and accompanying sound effect (<strong>style</strong> key). You can also customize which particle effect will be spawned when the breakable get shot (<strong>bloodtype</strong> key).</p>
+
+<h3>Togglable walls</h3>
+<p>There are 2 togglable wall entities:</p>
+<ul>
+	<li><strong>func_togglewall</strong>: Creates an invisible clipping wall that can be toggled on and off. Blocks movement and gunfire when active.</li>
+	<li><strong>func_togglevisiblewall</strong>: A togglable, visible brush model. Besides the toggling mechanism, it functions like a func_wall in any other way. Can be set to be non-solid.</li>
+</ul>
+
+<h3>Gravity</h3>
+
+<p>You can change the gravity in two ways:</p>
+<ul>
+	<li><strong>Globally:</strong> The <strong>trigger_globalgravity</strong> point entity toggles between two gravity settings when triggered (<strong>gravity</strong> and <strong>return_gravity</strong> fields).</li>
+	<li><strong>Locally:</strong> The <strong>trigger_setgravity</strong> brush entity changes the gravity of each entity that touches it.</li>
+</ul>
+
+<h3>Rotators</h3>
+<p>Alkaline uses the well-known Hipnotic's rotate entities. You can refer to <a href="https://tomeofpreach.wordpress.com/quoth/tutorial/rotation-overview/">czg's in-depth tutorial over Preach's Blog</a> on how to use them.</p>
+
+<h3>Particle field</h3>
+<p>Makes dots appear continuously within its bounds. Trigger to toggle on/off.</p>
+
+<h3>Exploboxes</h3>
+<h3>Laser</h3>
+<h3>Lightning</h3>
+<h3>Sounds and music</h3>
+
+<h3>Ladders</h3>
+<h3>func_bob</h3>
+<h3>Smoke</h3>
+<h3>Sparks</h3>
+<h3>Screen shake</h3>
+<h3>Explosions</h3>
+<h3>Meat fireworks</h3>
+<h3>Teleport fog</h3>
+<h3>Particle splash</h3>
 
 <hr>
 <h2>Fog</h2>
