@@ -220,8 +220,6 @@ void( entity client, float density) skyfog_set;
 
 
 
-float() CheckValidTouch;
-
 
 //
 // lights and shadows

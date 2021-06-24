@@ -493,8 +493,11 @@ void() keytrigger_unlock =
 
 void() keytrigger_use =
 {
-  	// from Copper -- dumptruck_ds
-  	if (!CheckValidTouch()) return;
+	if (other.classname != "player")
+		return;
+
+	if (other.health <= 0)
+		return;
 
 	if (self.attack_finished > time)
 		return;

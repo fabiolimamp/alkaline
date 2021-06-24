@@ -865,29 +865,6 @@ void() trigger_void =
 
 
 /*
-================================
-CheckValidTouch
-health and playerhood checks were duplicated everywhere
-================================
-*/
-float() CheckValidTouch = 
-{
-	if (other.classname != "player")
-		return FALSE;
-	if (other.health <= 0)
-		return FALSE;
-	//if (other.movetype == MOVETYPE_NOCLIP)
-	//	return FALSE;
-	// players in telelimbo aren't supposed to 'be' anywhere
-	//if (other.flags & CFL_LIMBO)
-	//	return FALSE;
-	return TRUE;
-}
-
-
-
-
-/*
 ==============================================================================
 
 trigger_setgravity

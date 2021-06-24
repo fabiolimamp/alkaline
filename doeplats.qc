@@ -357,8 +357,6 @@ void() plat2_center_touch =
 	local float		otherState;
 	local vector	platPosition;
 
-	// from Copper -- dumptruck_ds
-	if (!CheckValidTouch()) return;
 
 	// at this point, self is the trigger. self.enemy is the plat.
 	// this changes self to be the plat, other is the player.

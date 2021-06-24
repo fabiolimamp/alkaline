@@ -1,8 +1,9 @@
 /*
 ====================
 
-Fog controllers by bmFbr
+Fog controllers
 Based on Copper's fog by Lunaran
+Changed by bmFbr
 
 ====================
 */
@@ -113,7 +114,11 @@ fog_blendTouch
 */
 void() fog_blendTouch =
 {
-	if (!CheckValidTouch()) return;
+	if (other.classname != "player")
+		return;
+
+	if (other.health <= 0)
+		return;
 	
 	if (self.estate != STATE_ACTIVE)
 		return;
