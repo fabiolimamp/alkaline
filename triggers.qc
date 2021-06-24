@@ -868,7 +868,6 @@ void() trigger_void =
 ================================
 CheckValidTouch
 health and playerhood checks were duplicated everywhere
-added noclip check because Quake's default still-touch-everything noclip is awful
 ================================
 */
 float() CheckValidTouch = 
@@ -877,8 +876,8 @@ float() CheckValidTouch =
 		return FALSE;
 	if (other.health <= 0)
 		return FALSE;
-	if (other.movetype == MOVETYPE_NOCLIP)
-		return FALSE;
+	//if (other.movetype == MOVETYPE_NOCLIP)
+	//	return FALSE;
 	// players in telelimbo aren't supposed to 'be' anywhere
 	//if (other.flags & CFL_LIMBO)
 	//	return FALSE;
