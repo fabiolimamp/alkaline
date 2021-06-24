@@ -340,7 +340,7 @@ void() worldspawn =
 
 	linkdoor_e = spawn();
 	linkdoor_e.think = LinkDoors2;
-	linkdoor_e.nextthink = time + 0.05;
+	linkdoor_e.nextthink = time + 0.03;
 };
 
 //johnfitz -- need to wait a bit before resetting burning/underwater sounds so client will be fully connected when we do
