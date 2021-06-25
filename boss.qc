@@ -213,64 +213,64 @@ void() boss_death9 = [$death9, boss_death10]
 
 void() GibBoss =
 {
-sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-// throw tons of meat chunks
-local vector boss;
-local float x, y, z;
-local float r;
-//local entity n;
+	sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+	// throw tons of meat chunks
+	local vector boss;
+	local float x, y, z;
+	local float r;
+	//local entity n;
 
-boss = self.origin;
+	boss = self.origin;
 
-z = 16;
-while (z <= 144)
-{
-x = -64;
-while (x <= 64)
-{
-y = -64;
-while (y <= 64)
-{
-self.origin_x = boss_x + x;
-self.origin_y = boss_y + y;
-self.origin_z = boss_z + z;
+	z = 16;
+	while (z <= 144)
+	{
+		x = -64;
+		while (x <= 64)
+		{
+			y = -64;
+			while (y <= 64)
+			{
+				self.origin_x = boss_x + x;
+				self.origin_y = boss_y + y;
+				self.origin_z = boss_z + z;
 
-r = random();
-if (r < 0.3)
-ThrowGib ("progs/gib1.mdl", -999);
-else if (r < 0.6)
-ThrowGib ("progs/gib2.mdl", -999);
-else
-ThrowGib ("progs/gib3.mdl", -999);
-y = y + 32;
-}
-x = x + 32;
-}
-z = z + 96;
-}
+				r = random();
+				if (r < 0.3)
+				ThrowGib ("progs/gib1.mdl", -999);
+				else if (r < 0.6)
+				ThrowGib ("progs/gib2.mdl", -999);
+				else
+				ThrowGib ("progs/gib3.mdl", -999);
+				y = y + 32;
+			}
+			x = x + 32;
+		}
+		z = z + 96;
+	}
 
-killed_monsters = killed_monsters + 1;
-WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-WriteByte (MSG_BROADCAST, TE_LAVASPLASH);
-WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
-WriteCoord (MSG_BROADCAST, self.origin_x);
-WriteCoord (MSG_BROADCAST, self.origin_y);
-WriteCoord (MSG_BROADCAST, self.origin_z);
-SUB_UseTargets ();
-remove (self);
+	killed_monsters = killed_monsters + 1;
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_LAVASPLASH);
+	WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+	WriteCoord (MSG_BROADCAST, self.origin_x);
+	WriteCoord (MSG_BROADCAST, self.origin_y);
+	WriteCoord (MSG_BROADCAST, self.origin_z);
+	SUB_UseTargets ();
+	remove (self);
 };
 
 void() boss_die =
 {
-if (self.health < -15) // if health under 15
-{
-GibBoss (); // call the function in step 4
-return;
-}
-else // otherwise
-{
-boss_death1 (); // normal death
-}
+	if (self.health < -15) // if health under 15
+	{
+		GibBoss (); // call the function in step 4
+		return;
+	}
+	else // otherwise
+	{
+		boss_death1 (); // normal death
+	}
 };
 
 
@@ -475,5 +475,4 @@ void() event_lightning =
 {
 	self.use = lightning_use;
 };
-
 
