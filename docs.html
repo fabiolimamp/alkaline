@@ -13,15 +13,172 @@ body {
 
 <body>
 
-<h1>Alkaline Technical Documentation</h1>
+<h1>Alkaline Mapping Guide</h1>
 <h2>Contents</h2>
 <nav>
 <ul>
-	<li></li>
+	<li><a href="#philosophy">Philosophy</a></li>
+
+	<li>
+		<a href="#monsters">Monsters</a>
+		<ul>
+			<li><a href="#monster-triggered-spawning">Triggered spawning</a></li>
+			<li><a href="#monster-spawner">Monster spawner</a></li>
+			<li><a href="#monster-other-features">Other features</a></li>
+			<li><a href="#target_infight">Entity target_infight</a></li>
+			<li><a href="#monsters-list">Monsters list</a></li>
+			<li><a href="#scientists">Scientists</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#items">Items</a>
+		<ul>
+			<li><a href="#circuitboard">Circuitboard</a></li>
+			<li><a href="#trifecta">Trifecta</a></li>
+			<li><a href="#keys">Keys</a></li>
+			<li><a href="#item-respawning">Item respawning</a></li>
+			<li><a href="#item-trigger-spawning">Trigger spawning</a></li>
+			<li><a href="#item-positioning">Item positioning</a></li>
+			<li><a href="#item-style">Item box model style</a></li>
+		</ul>
+
+	</li>
+	<li>
+		<a href="#weapons">Weapons</a>
+		<ul>
+			<li><a href="#new-weapons">New weapons</a></li>
+			<li><a href="#custom-loadout">Custom loadout</a></li>
+			<li><a href="#axe-shotgun">Axe and shotgun pickups</a></li>
+			<li><a href="#target_removeitems">target_removeitems entity</a></li>
+			<li><a href="#particle-impact">Custom impact particle effect</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#triggers">Triggers</a>
+		<ul>
+			<li><a href="#multiple-targets">Multiple targets</a></li>
+			<li><a href="#dormant-triggers">Dormant triggers</a></li>
+			<li><a href="#monster-triggerable">Monster-activated triggers</a></li>
+			<li><a href="#message-all">Message all players</a></li>
+			<li><a href="#trigger_repeat">Repeater/timer trigger</a></li>
+			<li><a href="#monsterjumps">Monsterjumps</a></li>
+			<li><a href="#stealth-teleport">Stealth teleport</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#doors">Doors</a>
+		<ul>
+			<li><a href="#door-distance-angle">Distance and angle</a></li>
+			<li><a href="#door-delay">Delayed movement</a></li>
+			<li><a href="#door-linking">Door grouping/linking</a></li>
+			<li><a href="#door-sounds">Sounds</a></li>
+			<li><a href="#door-keys">Keys</a></li>
+			<li><a href="#door-set-position">Setting a door position directly</a></li>
+			<li><a href="#door-trigger-field">Trigger field</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#plats">Plats</a>
+		<ul>
+			<li><a href="#plat-start-at-top">Plat start at top</a></li>
+			<li><a href="#plat-toggle">Plat Toggle</a></li>
+			<li><a href="#plat-elevator">Elevator</a></li>
+			<li><a href="#plat2">Plat2</a></li>
+			<li><a href="#other-plat-features">Other new features</a></li>
+		</ul>
+	</li>
+
+	<li><a href="#trains">Trains</a></li>
+
+	<li>
+		<a href="#state-system">State System</a>
+		<ul>
+			<li><a href="#state-triggers">Trigger brushes of any class</a></li>
+			<li><a href="#state-doors">Doors</a></li>
+			<li><a href="#state-buttons">Buttons</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#shadows">Shadows</a>
+		<ul>
+			<li><a href="#func_shadow">func_shadow entity</a></li>
+			<li><a href="#switchable-shadows">Switchable shadows</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#lights">Lights</a>
+		<ul>
+			<li><a href="#enhanced-light-toggling">Enhanced Toggling</a></li>
+			<li><a href="#target_lightstyle">Setting a light's style directly</a></li>
+			<li><a href="#new-light-fixtures">New light fixtures</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#fog">Fog</a>
+		<ul>
+			<li><a href="#trigger_fogblend">Blending fog between two areas</a></li>
+			<li><a href="#target_fogblend">Time-based fog blending</a></li>
+			<li><a href="#skyfog">Sky fog</a></li>
+		</ul>
+	</li>
+	<li>
+		<a href="#solids">Solids</a>
+		<ul>
+			<li><a href="#breakables">Breakables</a></li>
+			<li><a href="#togglable-brushes">Walls and togglable brushes</a></li>
+			<li><a href="#misc_model">misc_model</a></li>
+			<li><a href="#rotators">Rotators</a></li>
+			<li><a href="#exploboxes">Exploboxes</a></li>
+			<li><a href="#laser">Laser</a></li>
+			<li><a href="#ladders">Ladders</a></li>
+			<li><a href="#bobbing">Bobbing</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#sounds-music">Sounds and music</a>
+		<ul>
+			<li><a href="#triggered-sounds">Triggered sounds</a></li>
+			<li><a href="#ambient-sounds">Ambient sounds</a></li>
+			<li><a href="#music">Music</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#environmental-effects">Environmental Effects</a>
+		<ul>
+			<li><a href="#void">Void</a></li>
+			<li><a href="#gravity">Gravity</a></li>
+			<li><a href="#explosions">Explosions</a></li>
+			<li><a href="#particle-field">Particle field</a></li>
+			<li><a href="#lightning-trail">Lightning trail</a></li>
+			<li><a href="#screen-shake">Screen shake</a></li>
+			<li><a href="#other-effects">Other effects</a></li>
+
+		</ul>
+	</li>
+
+	<li>
+		<a href="#enhancements">Other Enhancements</a>
+		<ul>
+			<li><a href="#autosaves">Autosaves</a></li>
+			<li><a href="#episode-ending">Episode-ending screen</a></li>
+			<li><a href="#target_move">target_move</a></li>
+			<li><a href="#developer">Developer features</a></li>
+			<li><a href="#cheats">Cheats commands</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#thanks">Thanks</a>
+	</li>
 </ul>
 </nav>
 
-<h2>Philosophy</h2>
+<h2 id="philosophy">Philosophy</h2>
 
 <p>
 	Alkaline was originally built upon Rubicon 2 codebase. But over our development period, a great deal of code ended up being changed. Lots of new features, monsters, items, powerups, bug corrections... So it grew up into its own thing. We've borrowed ideas (or entire features altogether) from all the great mods and mod frameworks of our time. Copper, Arcane Dimensions, progs_dump, Zerstorer, Malice, Rubicon Rumble Pack, Quoth... you name it. Also we've got a bunch of exclusive features. Our main focus was on things that we felt would be nice to have in all kinds of base-themed maps.
@@ -35,10 +192,10 @@ body {
 
 <hr>
 
-<h2>Monsters</h2>
+<h2 id="monsters">Monsters</h2>
 
 <p>Monsters have a multitude of new features.</p>
-<h3>Triggered spawning</h3>
+<h3 id="monster-triggered-spawning">Triggered spawning</h3>
 <p>By setting the <strong>Trigger Spawned</strong> spawnflag, the monster will only show up after it's been triggered. The following spawnflags can be used together with it:</p>
 
 <ul>
@@ -47,7 +204,7 @@ body {
 <li><strong>Count after spawn</strong>: the monster adds to the map's total monster count only after it's been spawned in.</li>
 </ul>
 
-<h3>Monster spawner</h3>
+<h3 id="monster-spawner">Monster spawner</h3>
 <p>
 	Checking the <strong>Monster spawner</strong> flag turns this entity into a monster spawner, that creates a new instance of the monster whenever it's triggered. They always spawn angry, and have a telefrag check, so they may wait for a few seconds until they have room to spawn. The spawned monsters inherit all of the spawner entity's <strong>target*</strong> fields, so you can use it to add to a counter when they're killed for example.
 	If you want it to spawn monsters in a defined time interval, you can set it up in conjunction with a <strong>trigger_repeat</strong>.
@@ -58,19 +215,19 @@ body {
 <li><strong>spawncount</strong>: Maximum amount of monsters spawned by this entity that can be alive at the same time (defaults to 10 monsters). If this value is reached, the monsters will stop spawning in from this entity until they're killed. Good for not overwhelming the player with a ludicrous amount of monsters in the same arena. Set to -1 if you want to disable this limit.</li>
 </ul>
 
-<h3>Other features</h3>
+<h3 id="monster-other-features">Other features</h3>
 <ul><li><strong>No sight sound</strong> flag: The monster won't make its sight sound when angry at something.</li>
 <li><strong>No infight</strong> flag: The monster won't be angry at another when hit, only at players. Note that it doesn't prevent some other monster from getting angry at it, thus never giving it a chance to fight back.</li>
 <li><strong>No idle sounds</strong> flag: The monster won't make any idle sounds when standing still. It'll still make sounds if walking/following path_corners though.</li>
 </ul>
 
-<h3>Entity target_infight</h3>
+<h3 id="target_infight">Entity target_infight</h3>
 <p>Point entity that makes <strong>target</strong> monster angry at <strong>target2</strong> when triggered.</p>
 <p>
 By default, the infighting doesn't start mutually, that is, <strong>target2</strong> monster will only get mad back at <strong>target</strong> after it's been attacked. If you want to make them angry at each other instantly, you can set the spawnflag <strong>Mutual hate</strong>.
 </p>
 
-<h3>Monsters</h3>
+<h3 id="monsters-list">Monsters list</h3>
 <p>Last, but not least, here's the list of the baddies that come with Alkaline. The other non-base vanilla monsters not mentioned here behave and look the same, but they're all still available to use.</p>
 
 <ul>
@@ -101,42 +258,43 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<li><strong>Ogregon (monster_armagon):</strong> 2000-3500 HP</li>
 </ul>
 
-<h3>Scientists</h3>
-<p></p>
+<h3 id="scientists">Scientists</h3>
+<p>Poor scientists that have nothing to do with the Ranger's struggles through eldridtch dimensions. They won't fight, just keep doing their jobs, or run aimlessly in panic. Select that behaviour through the spawnflag <strong>Ignore player</strong>.</p>
+<p>Set <strong>wait</strong> and <strong>angle</strong> on path_corners for them to stop and work.</p>
+<p>By default they won't count into total monster count, unless you set <strong>Count After Spawn</strong> flag.</p>
 
 <hr>
 
-<h2>Items</h2>
+<h2 id="items">Items</h2>
 
 <p>Alkaline has some new items and item features.</p>
 
-<h3>Circuitboard</h3>
+<h3 id="circuitboard">Circuitboard</h3>
 <p>Deployed through the point entity <strong>item_circuitboard</strong>, the circuitboard (or rather the "17-centimeter Fromitz board") is a completely customizable dummy item that does nothing on its own, nor adds anything to your inventory. It merely fires its targets when picked up. But don't be fooled by its simplicity, because it's where lies all its power. You can use it to trigger any event, say, spreading various circuitboards throughout your map, all targeting the same trigger_counter, that unlocks a door or a super secret for example. Almost every map in Alkaline used it in some way.</p>
 <p>You can set a custom model (<strong>mdl</strong> key), pickup sound file (<strong>noise</strong> key), and pickup name (<strong>netname</strong> key). By default the pickup text will be shown at the top of the screen like any other item, but if you want to suppress that and just centerprint a message instead, you can set the <strong>No pickup text</strong> flag and define the message in the <strong>message</strong> field.
 </p>
 
-<h3>Trifecta</h3>
+<h3 id="trifecta">Trifecta</h3>
 <p>
 	The new awesome powerup in Alkaline. Gives you quad-damage, invincibility, and a mega health boost, all in one.
 </p>
 
-<h3>Keys</h3>
-
+<h3 id="keys">Keys</h3>
 <p>Alkaline borrows the custom key system from progs_dump. You can create a key using the <strong>item_key_custom</strong> entity, and define a custom model, skin, sound and name. Then on any door you can set the name of the key that will open it. For more details, please refer to the in-editor documentation.</p>
 
 <p>Also from progs_dump comes the <strong>trigger_usekey</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event - like a door would, but with no need for a door. It can be used by a player touching it, or by triggering.</p>
 
-<h3>Item respawning</h3>
+<h3 id="item-respawning">Item respawning</h3>
 <p>Setting an item's <strong>ritem</strong> key to 1 makes it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.
 </p>
 <p>By default, the item makes the traditional teleport sound/fog effect when respawning, but you can change it to the more discreet deathmatch-style respawn effect, through the spawnflag <strong>Spawn with DM effects</strong>.
 </p>
 
-<h3>Trigger spawning</h3>
+<h3 id="item-trigger-spawning">Trigger spawning</h3>
 <p>Like monsters, items also support trigger-spawning. Just set the <strong>Trigger spawned</strong> flag and it'll only show up after triggered. You can make it spawn silently using the <strong>Spawn silent</strong> flag.
 </p>
 
-<h3>Item positioning</h3>
+<h3 id="item-positioning">Item positioning</h3>
 <p>The <strong>Suspended in air</strong> spawnflag makes the item stay in place and never drop to the floor, so it hovers in midair. Quoting Lunaran in a similar Copper feature:
 	<blockquote>It's a useful hackaround for items that insist on falling out of the world and vanishing because they don't like where you placed them. This also provides a handy solution to the irritating problem that a monster and an item cannot overlap without pushing the item out of the world.
     Even if items don't fall out of the world when you test your map in your Quake engine port of choice, inconsistent droptofloor() results are not unheard of across ports. Consider it best practice to always mark as SUSPENDED any progression-critical items like keys, or any other item that fires a necessary targetname, even when placed on the ground.</blockquote>
@@ -145,18 +303,18 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	The <strong>Don't start dropped</strong> flag, on the other hand, makes the item to still be affected by gravity, but it will not spawn already dropped the floor directly below it (I.E. it won't run droptofloor() upon spawn). This way the item will fall to the floor only after it has been spawned.
 </p>
 
-<h3>Item box model style</h3>
+<h3 id="item-style">Item box model style</h3>
 <p>
 	By default, Alkaline uses the higher-detail BSP item box models from Rubicon Rumble Pack, but you also have the option to use MDL item boxes from Copper. You can select it through the <strong>itemstyle</strong> key, either on worldspawn to set it globally, or directly on a per-entity basis.
 </p>
 
 <hr>
 
-<h2>Weapons</h2>
+<h2 id="weapons">Weapons</h2>
 
 <p>In your arsenal, some old acquaintances have made a return in Alkaline, but there's new stuff too.</p>
 
-<h3>New weapons</h3>
+<h3 id="new-weapons">New weapons</h3>
 
 <ul>
 	<li><strong>Laser Cannon:</strong> The good-old laser-ricochet chaos-inducing weapon from Scourge of Armagon makes a comeback in Alkaline.</li>
@@ -167,20 +325,20 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>The Laser Cannon and the Plasma Rifle are placed in the same slot as the Lightning Gun, and alternate between them when you press their key, but can be selected directly through impulses <strong>225</strong> and <strong>227</strong>, respectively, so you can bind them to an individual key if you like. Also the Lightning Gun can be directly selected with the impulse code <strong>228</strong> without cycling through the other energy weapons.</p>
 <p>The same happens to the Chainsaw, which sits along with the Axe, but can be directly selected through impulse <strong>224</strong>.</p>
 
-<h3>Custom loadout</h3>
+<h3 id="custom-loadout">Custom loadout</h3>
 <p>You can define a completely custom loadout at map start using the <strong>take_weapons</strong> and <strong>give_weapons</strong> worldspawn keys, as well as each of the ammo types.</p>
 <p>First, Alkaline will remove the ones checked in <strong>take_weapons</strong>, then give the ones selected in <strong>give_weapons</strong>. So, if your map would begin with a "shotgun start" (I.E. default inventory), taking away the axe and the shotgun will make the player start with no weapons at all.</p>
 <p>Setting any of the <strong>ammo_*</strong> keys will override the current amount with the defined one.</p>
 <p>Also, setting the <strong>reset_items</strong> worldspawn key to 1 will force a "shotgun start" on your map regardless of inventory/stats coming from a previous map. Note that the inventory reset is made before applying take/give weapons.</p>
 
-<h3>Axe and shotgun pickups</h3>
+<h3 id="axe-shotgun">Axe and shotgun pickups</h3>
 <p>Since you have the option to remove the axe and the shotgun from your inventory, we've added them as traditional weapon pickups as well. Deploy them through the <strong>weapon_axe</strong> and <strong>weapon_shotgun</strong> point entities.
 </p>
 
-<h3>target_removeitems entity</h3>
+<h3 id="target_removeitems">target_removeitems entity</h3>
 <p>Acts the same way as the <strong>take_weapons</strong> worldspawn key, but can be used mid-level. Trigger it to remove the selected weapons from the activating player.</p>
 
-<h3>Custom impact particle effect</h3>
+<h3 id="particle-impact">Custom impact particle effect</h3>
 <p>You can override the default particle effect when shot for every shootable entity, including monsters, breakables, buttons and doors. For that, you must manually add a <strong>bloodtype</strong> key to it, and give it one of the following values: </p>
 <ul>
 <li>1: Blood</li>
@@ -189,13 +347,14 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <li>4: Yellow sparks</li>
 <li>5: White sparks</li>
 </ul>
-<
+
+
 <hr>
-<h2>Triggers</h2>
+<h2 id="triggers">Triggers</h2>
 
 <p>In Alkaline we've gone great lengths to allow advanced scripting and events.</p>
 
-<h3>Multiple targets</h3>
+<h3 id="multiple-targets">Multiple targets</h3>
 <p>Following Copper's fashion, Alkaline also supports the <strong>target2/target3/target4</strong> keys but not multiple targetnames, as it increases code complexity and stack usage multi-fold. Having only multiple targets is usually enough to cover most cases, and you can always set up some relays if necessary.</p>
 
 <p>An exception is made for some entities that must control or modify other entities that could have their behavior changed when given a targetname, so they can also target a <strong>targetname2</strong> field. Note that the targetname2 field isn't displayed on any entity by default, so you must add it manually when needed. The following entities have that ability:
@@ -207,31 +366,31 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 		<li><strong>misc_shadowcontroller</strong></li>
 	</ul>
 
-<h3>Dormant triggers</h3>
+<h3 id="dormant-triggers">Dormant triggers</h3>
 <p>One of the first changes to triggers that every mod usually do is allow them to be trigger spawned, and with Alkaline that wouldn't be different. Set <strong>is_waiting</strong> to 1, and the trigger won't be active until you target it. It works with all touchable trigger brush entities.</p>
 
-<h3>Monster-triggerable</h3>
+<h3 id="monster-triggerable">Monster-activated triggers</h3>
 <p><strong>trigger_once</strong> and <strong>trigger_multiple</strong> can be set to be activated by monsters as well as players, so you can set them to fall into traps for example.</p>
 
-<h3>Message all players</h3>
+<h3 id="message-all">Message all players</h3>
 <p>Every entity that can centerprint a message may be set to broadcast it to all connected players. Good for when you have some map-wide event that you want to communicate in a co-op game for example. Just set the spawnflag <strong>message all players</strong> on the messaging entity.</p>
 
-<h3>Repeater/timer trigger</h3>
+<h3 id="trigger_repeat">Repeater/timer trigger</h3>
 <p>The <strong>trigger_repeat</strong> entity is a point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.</p>
 <p>The counter can be optionally not be reset after triggering it again (spawnflag 1), so it functions more like a pause/unpause.</p>
 
-<h3>Monsterjumps</h3>
+<h3 id="monsterjumps">Monsterjumps</h3>
 <p>The <strong>trigger_monsterjump</strong> entity comes with some new features. You have now a simple monster-class-based filter, so you can let only a single monster class to be affected by it, or exclude a specific one from it.</p>
 
-<h3>Stealth teleport</h3>
+<h3 id="stealth-teleport">Stealth teleport</h3>
 <p>Stealth mode can be set on both <strong>trigger_teleport</strong> (when teleporting out) and <strong>info_teleport_destination</strong> (when teleporting in).</p>
 
 <hr>
 
-<h2>Doors</h2>
+<h2 id="doors">Doors</h2>
 <p>The good old <strong>func_door</strong> in Alkaline has been completely revamped.</p>
 
-<h3>Distance and angle</h3>
+<h3 id="door-distance-angle">Distance and angle</h3>
 <p>You have various ways of setting the door's movement:</p>
 <ul>
 <li>using the traditional <strong>angle</strong> and <strong>lip</strong> keys</li>
@@ -245,19 +404,19 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>You can now set a different closing speed for the door with the <strong>speed2</strong> key. If unset, it'll use the same value as <strong>speed</strong>.
 </p>
 
-<h3>Delayed movement</h3>
+<h3 id="door-delay">Delayed movement</h3>
 <p>With this feature you can create more complex multi-entity doors with parts that move independently, but still act like a single door. You can set delayed movement for a door part with the <strong>delay</strong> key, and the timings are automatically reverted when closing, which means that the first door entity to open will be the last to close.</p>
 
 <p><strong>delay2</strong> sets an additional delay for when the door closes. Useful if you need to wait for another door part to set in position before moving.</p>
 
-<h3>Door grouping/linking</h3>
+<h3 id="door-linking">Door grouping/linking</h3>
 <p>For the delayed movement feature to work as intended, a great deal of work was put into making sure they'll link correctly. By default, all doors whose bounding boxes touch or intersect will belong to a single group, and will always move at the same time. But now you also have the option to manually group them through the <strong>groupname</strong> key. Doors with this field set will ignore the touching algorithm for linking, and will only group with other doors that have the same groupname, regardless of where they're positioned in the map.</p>
 
 <p>That also means that the old-time bug with toggling dual-doors was corrected, so you don't need to set "don't link" anymore for toggling doors.</p>
 
 <p>It's recommended that you set the same key values on all doors in the group, like targets, wait, messages, keys, except those specific for each door part, like angle, distance, speed, delay, sound, etc.</p>
 
-<h3>Sounds</h3>
+<h3 id="door-sounds">Sounds</h3>
 <p>You can set completely custom sounds to doors. They'll override the default sounds selected through the <strong>sounds</strong> key (either on the door itself or on worldspawn).</p>
 <ul>
 	<li><strong>noise1</strong>: Sound file for the 'stop moving' sound</li>
@@ -269,7 +428,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	Due to the new delayed movement features, the new spawnflag <strong>Sound during delay</strong> was added. When set, it'll make this specific door part to start its move sound at the instant the whole group starts moving, and only play the stop sound when all doors finished moving. This way you're able to set a single door in the group to sound during the whole movement sequence, and avoid multiple start/stop sounds overlapping for each entity.
 </p>
 
-<h3>Keys</h3>
+<h3 id="door-keys">Keys</h3>
 <p>You can set a door to demand a custom key through the <strong>keyname</strong> field. The keyname must match the one in a <strong>item_key_custom</strong> entity. Refer to the item_key_custom documentation in-editor for more details.</p>
 
 <p>There are two other key-related options:</p>
@@ -279,38 +438,38 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 </ul>
 
 
-<h3>Setting a door position directly</h3>
+<h3 id="door-set-position">Setting a door position directly</h3>
 <p>The <strong>target_setdoor</strong> point entity can directly command a door to open or close, regardless of which state it's in. The <strong>style</strong> key sets the command issued to the targeted door when this entity is triggered. Note that doors with a wait time set will still close again normally afterwards.</p>
 <p>If you need to command a door and still want it to retain its "touch to open" behavior, you can make the setdoor entity target the door's <strong>targetname2</strong> field..</p>
 
-<h3>Trigger field</h3>
+<h3 id="door-trigger-field">Trigger field</h3>
 <p>The door's trigger field is the built-in trigger that makes the door open when something gets close to it. Alkaline gives you some more control over how it's created, or allows to make a completely custom one.</p> 
 <p>The default door trigger field size in Quake extends 60 units beyond the whole door's bounding box in both X and Y directions. Through the spawnflags <strong>Expanded/reduced trigger field</strong>, you can set the trigger field to be expanded by another 24u, or reduced by 52u, in either X or Y direction. If you set both expand and reduce at the same time, they'll sum up, so you'll get a smaller reduction of 28u.</p>
 <p>Also, you have the option of using the <strong>trigger_doortriggerfield</strong> brush entity. With it you can define a custom trigger field. Just make it target a door, and it'll override the built-in one.</p>
 <p>Last but not least, standing monsters won't open doors anymore, so you can safely put an enemy ambushing behind one without it staying open.</p>
 
 <hr>
-<h2>Plats</h2>
+<h2 id="plats">Plats</h2>
 
 <p>Besides the traditional func_plat, we've added DoE's <strong>func_new_plat</strong> entity, which is a lot more flexible and feature-packed.</p>
 <p>You can select between multiple plat modes through its spawn flags:</p>
 
 
-<h3>Plat start at top</h3>
+<h3 id="plat-start-at-top">Plat start at top</h3>
 <p>It's a plat that starts at the top and when triggered, goes down, waits, then comes back up. The <strong>health</strong> field sets the number of seconds to wait (default 5)</p>
 
-<h3>Plat Toggle</h3>
+<h3 id="plat-toggle">Plat Toggle</h3>
 <p>Creates a plat that will change between the top and bottom each time it is triggered.</p>
 
-<h3>Elevator</h3>
+<h3 id="plat-elevator">Elevator</h3>
 <p>Makes an elevator plat. You can have as many levels as you want but they must be all the same distance away. Use the <strong>func_elvtr_button</strong> entity as the trigger. Each floor must have its own panel with func_elvtr_buttons for the elevator to move correctly.</p>
 
 <p><strong>"Elevator Start at Top"</strong> is an optional flag for elevators. It just tells the elevator that it's position is the top floor. (Default is the bottom floor) USE THIS ONLY WITH ELEVATORS!</p>
 
-<h3>Plat2</h3>
+<h3 id="plat2">Plat2</h3>
 <p>'Plat2' is a fixed version of the original plat. If you want the plat to start at the bottom and move to the top on demand, use a negative height. That will tell Quake to lower the plat at spawn time. Always place this plat type in the top position when making the map. This will ensure correct lighting, hopefully. If a plat2 is the target of a trigger, it will be disabled until it has been triggered. Delay is the wait before the plat returns to original position.</p>
 
-<h3>Other new features</h3>
+<h3 id="other-plat-features">Other new features</h3>
 
 <p>The following features are present in both <strong>func_plat</strong> and <strong>func_new_plat</strong>:</p>
 <ul>
@@ -320,7 +479,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <hr>
 
-<h2>Trains</h2>
+<h2 id="trains">Trains</h2>
 
 <p><strong>func_train</strong> have got some more tricks.</p>
 
@@ -343,7 +502,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <hr>
 
-<h2>State System</h2>
+<h2 id="state-system">State System</h2>
 
 <p>Alkaline has a state system somewhat similar to AD's "estate" system and Copper's target_lock entity. With it you can disable/enable entities at will, giving you greater control over complex map scripting and events. Entity behaviour when disabled is class-dependant.</p>
 <p>You set an entity's state using the <strong>target_setstate</strong> point entity. You can directly disable, enable, or toggle the state. Target entities can start the map already disabled through the spawnflag <strong>Targets start disabled</strong>.</p>
@@ -351,28 +510,28 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>This system is integrated with dormant triggers (<strong>is_waiting</strong> key), meaning that you can "wake" a trigger not only by triggering it, but also by using a <strong>target_setstate</strong> on it.</p>
 <p>A lot of entities support enabling/disabling:</p>
 
-<h3>Trigger brushes of any class</h3>
+<h3 id="state-triggers">Trigger brushes of any class</h3>
 <p>When disabled, all <strong>trigger_*</strong> brush entities get their touch action turned off. This includes self-sufficient entities that don't need to target anything, like fog triggers, ladders, monsterjumps, changelevels, etc.</p>
 <p>Also, any entity that fire their targets won't do it while disabled (like <strong>trigger_relay</strong>), and a <strong>trigger_counter</strong> won't get its use count increased.</p>
 
-<h3>Doors</h3>
+<h3 id="state-doors">Doors</h3>
 <p>Like in Copper, disabling a door makes it not respond to touches or triggers, and disables its trigger field.</p>
 <p>Doors will also close immediately when disabled. Toggling doors or with <strong>wait -1</strong> set won't close by default, but you can change that behaviour using the spawnflag <strong>Close all doors</strong>. In this case, if re-enabled, the door will return to the position it was before disabling.</p>
 
-<h3>Buttons</h3>
+<h3 id="state-buttons">Buttons</h3>
 
 <p>Also similar to Copper, buttons depress themselves when disabled and cannot be activated.</p>
 <p>If the button have a <strong>wait -1</strong> value (that is, it's a press-once button), when re-enabled it'll reset back to its un-pressed state regardless if it had been activated before. You can change that using the spawnflag <strong>Don't reset button state</strong>, in which case it'll revert to its previous state when re-enabled.</p>
 
 <hr>
 
-<h2>Shadows</h2>
+<h2 id="shadows">Shadows</h2>
 
-<h3>func_shadow entity</h3>
+<h3 id="func_shadow">func_shadow entity</h3>
 <p><strong>func_shadow</strong> is a brush entity with a simple function: cast shadows. It's not visible nor clips nor does anything else ingame. In order for it to work correctly you need to either set a <strong>_shadow 1</strong> or a <strong>_switchableshadow 1</strong> key in it.</p>
 <p>It's useful if you need to simulate a shadow being cast by a misc_model for example, or create more complex lighting schemes using switchable shadows (more on that below).</p>
 
-<h3>Switchable shadows</h3>
+<h3 id="switchable-shadows">Switchable shadows</h3>
 <p>Alkaline has full-on support for switchable shadows if your compiling tools can handle it. Every brush entity, except triggers and <strong>func_detail_*</strong> ones, can have togglable shadows by adding a <strong>_switchableshadow 1</strong> key to it.</p>
 <p><strong>func_door</strong>, <strong>func_breakable</strong> and <strong>toggle_visiblewall</strong> already have built-in support for that, so all you need to do is add the key for it to work automatically. Also, any killtargeted entity (like a <strong>func_wall</strong>) with a switchable shadow will have it removed automatically.</p>
 
@@ -388,18 +547,18 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	
 <hr>
 
-<h2>Lights</h2>
+<h2 id="lights">Lights</h2>
 
 <p>
 	Lights in Alkaline have some new notable features.
 </p>
 
-<h3>Enhanced Toggling</h3>
+<h3 id="enhanced-light-toggling">Enhanced Toggling</h3>
 <p>A feature brought over from progs_dump, animated lights (flickering/pulsing) can now be toggled. Give it a targetname as usual, but set the light style into the <strong>style2</strong> key. Then it'll toggle like any other light.</p>
 <p>You can also set the light to fade it in/out when toggling by setting the spawnflag <strong>Fade in/out</strong>, and control the fading time with the <strong>speed</strong> key. Note that this effect won't work when toggling animated lights.</p>
 
-<h3>Setting a light's style directly</h3>
-<p>The <strong>target_lightstyle</strong> point entity can modify a light's style. It's the same one from Copper, so we can quote its <a href="http://lunaran.com/copper/mapping/#target_lightstyle">docs</a> directly:</p>
+<h3 id="target_lightstyle">Setting a light's style directly</h3>
+<p>The <strong>target_lightstyle</strong> point entity can modify a light's style. It's the same one from Copper, so quoting its <a href="http://lunaran.com/copper/mapping/#target_lightstyle">docs</a> directly:</p>
 <blockquote>
 	<p>target_lightstyle gives the mapper direct control over the pattern of any of the 64 lightstyles when triggered. Styles 1-31 are the preset lightstyles, and 32-64 are assigned by the compiler to triggered lights, and both can be overridden. Set style to the lightstyle you want to override, and set message to the brightness pattern you want to set it to. If style is not set, and this entity targets any triggerable lights, it sets the brightness pattern of those lights when triggered instead. (Note that targeting anything at a light makes it a triggerable light with its own style automatically.) This is compatible with any Quake map compiler, because light.exe only cares about the style number - the pattern is only applied in-game.</p>
 
@@ -410,7 +569,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<p>Quake's light patterns are sequences of characters where each letter represents a brightness from 0-200% lasting 0.1 seconds, allowing long animations to be packed into an editable string. a represents total darkness, m is normal brightness, and z is double brightness. For example, the painful disco strobe in the Fiend-filled corridor in E3M5, The Wind Tunnels, is "mamamamamama". Implementing a standard on/off toggle would use a message of "a" and a noise of "m" or "z".</p>
 </blockquote>
 
-<h3>New light fixtures</h3>
+<h3 id="new-light-fixtures">New light fixtures</h3>
 
 <p>There are 2 new decorative light entities.</p>
 <ul>
@@ -420,61 +579,88 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <hr>
 
-<h2>Fog</h2>
+<h2 id="fog">Fog</h2>
 
 <p>Alkaline comes with an improved version of Copper's dynamic fog system.</p>
 <p>You can set a fog value into all player start entities, teleport destinations, and intermission cameras, so the fog will change instantly to the set value when a player makes use of them. This way, the player's view can move to a different fog zone without having to pass through a fog trigger.</p>
 <p>An important note from Copper about this fog system:</p>
 <blockquote>The fog keyvalue that goes on Worldspawn doesn't interact with this system. It is a feature of various engines (such as those in the Fitzquake family) and isn't interpreted by game code. The reason for this is that it's interpreted as four values (one for density and three for color) and set by the engine at load time. The numeric fields that are passed on to the game code (ie Copper), however, can only be one value (a float) or three (a vector). If you set fog in your world with a fog parameter on worldspawn, and never bother with fog_color and fog_density on any entities, you'll get the usual static global fog the way it's always worked. Color and density on a player start will be evaluated on the first frame of gameplay, and will override any fog set by the engine.</blockquote>
 
-<h3>Blending fog between two areas</h3>
+<h3 id="trigger_fogblend">Blending fog between two areas</h3>
 <p>Using the <strong>trigger_fogblend</strong> brush entity, you can smoothly blend between two fog values as the player moves across the trigger. It's not temporal-based, instead it's based on how far the player moves within it.</p>
 <p>This way, you can place one along a corridor for example, and the fog will seamlessly change as the player walks.</p>
 
-<h3>Time-based fog blending</h3>
+<h3 id="target_fogblend">Time-based fog blending</h3>
 <p>The <strong>trigger_fog</strong> brush entity blends the player's current fog into another when touched, within a customizable transition time.</p>
 <p>And the <strong>target_fogblend</strong> point entity toggles the activating player's fog between two different settings, also with a custom transition time. The first activation makes it blend in from the current fog, and the subsequent ones make it toggle between two values. You can optionally set the fog to be applied to all players.</p>
 
-<h3>Sky fog</h3>
+<h3 id="skyfog">Sky fog</h3>
 <p>Alkaline doesn't yet support changing the skyfog dinamically like in AD, but you can set a map-wide value with the <strong>skyfog_density</strong> worldspawn key.</p>
 
 <hr>
-<h2>Environmental Elements and Effects</h2>
 
-<h3>misc_model</h3>
-<p>You can add any custom model to your map through the <strong>misc_model</strong> entity to use as props or decoration. Targeting the entity toggles its visibility.</p>
-<p>Any frame or skin can be selected. If the model doesn't animate automatically from a frame group, you can manually define a frame range and animation speed.</p>
-<p>The model's bounding box can be totally customized by setting its size and center offset. Also it can be set to be affected by gravity and/or be solid.</p>
+<h2 id="solids">Solids</h2>
 
-<h3>Void</h3>
-<p>The <strong>trigger_void</strong> brush entity removes from the world everything that touches it, such as monsters, items, gibs and weapon projectiles. Players get instantly killed, even while wearing the Pentagram or the Trifecta.</p>
-
-<h3>Breakables</h3>
+<h3 id="breakables">Breakables</h3>
 <p>A <strong>func_breakable</strong> is a visible object that can be destroyed by shooting it. If it has a targetname, it will only be destroyed by targeting it.</p>
 <p>You have 4 debris variations, each with a different debris model and accompanying sound effect (<strong>style</strong> key). You can also customize which particle effect will be spawned when the breakable get shot (<strong>bloodtype</strong> key).</p>
 
-<h3>Walls and togglable brushes</h3>
+<h3 id="togglable-brushes">Walls and togglable brushes</h3>
 <p>There are 2 togglable brush entities:</p>
 <ul>
 	<li><strong>func_togglewall</strong>: Creates an invisible clipping wall that can be toggled on and off. Blocks movement and gunfire when active.</li>
 	<li><strong>func_togglevisiblewall</strong>: A togglable, visible brush model. Besides the toggling mechanism, it functions like a func_wall in any other way. Can be set to be non-solid.</li>
 </ul>
 
+<h3 id="misc_model">misc_model</h3>
+<p>You can add any custom model to your map through the <strong>misc_model</strong> entity to use as props or decoration. Targeting the entity toggles its visibility.</p>
+<p>Any frame or skin can be selected. If the model doesn't animate automatically from a frame group, you can manually define a frame range and animation speed.</p>
+<p>The model's bounding box can be totally customized by setting its size and center offset. Also it can be set to be affected by gravity and/or be solid.</p>
+
+
+<h3 id="rotators">Rotators</h3>
+<p>Alkaline comes with the well-known Hipnotic's rotate entities. You can refer to <a href="https://tomeofpreach.wordpress.com/quoth/tutorial/rotation-overview/">czg's in-depth tutorial over Preach's Blog</a> on how to use them.</p>
+
+<h3 id="exploboxes">Exploboxes</h3>
+<p>Besides the usual <strong>misc_explobox</strong> point entities, there's a <strong>func_explobox</strong> brush entity that works exactly the same way but can be made in any shape.</p>
+<p>Both <strong>misc_explobox</strong> and <strong>func_explobox</strong> fire their targets when exploding, and can be blown up remotely by triggering them.</p>
+
+<h3 id="laser">Laser</h3>
+<p>The <strong>func_laser</strong> brush entity creates a togglable laser with a faint flickering alpha effect. Hurts to touch, can be used to block players. We recommend to use it with a fullbright-colored texture for better looks.</p>
+
+<h3 id="ladders">Ladders</h3>
+<p><strong>trigger_ladder</strong> creates an invisible ladder entity. When player is touching it, he can climb by pushing "jump".</p>
+
+<h3 id="bobbing">Bobbing</h3>
+<p>You can create entities that gently moves back and forth in any direction. <strong>func_bob</strong> is a brush entity, and <strong>misc_bob</strong> is a point entity that uses external models.</p>
+
+
+<hr>
+
+<h2 id="sounds-music">Sounds and music</h2>
+<p>The mod comes with various options for you to play your custom sounds.</p>
+
+<h3 id="triggered-sounds">Triggered sounds</h3>
+<p>Use the <strong>play_sound_triggered</strong> to plays an one-off sound when triggered.</p>
+<p>The <strong>play_sound</strong> entity plays a sound on a periodic/random basis, like thunder effects for example. Not recommended for ambient sounds.</p>
+
+<h3 id="ambient-sounds">Ambient sounds</h3>
+<p>The <strong>ambient_general</strong> point entity lets you place a customized ambient sound. For it to work, make sure the sound file contains cue points for looping. Can be given customized volume and attenuation settings.</p>
+<p>Also, the built-in <strong>ambient_*</strong> entities now can have their default volume/attenuations changed as well.</p>
+
+<h3 id="music">Music</h3>
+<p>The <strong>misc_changemusic</strong> entity changes the current map's music track number to the one specified in the <strong>sounds</strong> field when triggered. If you set the track to 1, the music will stop.</p>
+
+<hr>
+<h2 id="environmental-effects">Environmental Effects</h2>
+
+<h3 id="void">Void</h3>
+<p>The <strong>trigger_void</strong> brush entity removes from the world everything that touches it, such as monsters, items, gibs and weapon projectiles. Players get instantly killed, even while wearing the Pentagram or the Trifecta.</p>
+
 <p>Also, the <strong>func_wall</strong> can be made non-solid, making it similar to a targetable func_illusionary.</p>
 
-<h3>Sounds and music</h3>
-<p>The mod comes with various options for you to play your custom sounds:</p>
-<ul>
-	<li><strong>play_sound_triggered:</strong> Plays an one-off sound when triggered.</li>
-	<li><strong>play_sound:</strong> Plays a sound on a periodic/random basis, like thunder effects for example. Not recommended for ambient sounds.</li>
-	<li><strong>ambient_general:</strong> Lets you place a customized ambient sound. For it to work, make sure the sound file contains cue points for looping.</li>
-</ul>
 
-<p>All of the above entities can be given customized volume and attenuation settings. Also, the built-in <strong>ambient_*</strong> entities now can have their default values changed as well.</p>
-
-<p><strong>misc_changemusic</strong> changes the current map's music track number to the one specified in the <strong>sounds</strong> field when triggered. If you set the track to 1, the music will stop.</p>
-
-<h3>Gravity</h3>
+<h3 id="gravity">Gravity</h3>
 
 <p>You can change the gravity in two ways:</p>
 <ul>
@@ -482,82 +668,82 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<li><strong>Locally:</strong> The <strong>trigger_setgravity</strong> brush entity changes the gravity of each entity that touches it.</li>
 </ul>
 
-<h3>Rotators</h3>
-<p>Alkaline comes with the well-known Hipnotic's rotate entities. You can refer to <a href="https://tomeofpreach.wordpress.com/quoth/tutorial/rotation-overview/">czg's in-depth tutorial over Preach's Blog</a> on how to use them.</p>
 
-<h3>Particle field</h3>
+<h3 id="explosions">Explosions</h3>
+<p><strong>target_explosion</strong> creates explosions on demand, with the same appearance as a rocket/grenade blast. Can explode once on triggering, or be set to fire off on a periodic basis.</p>
+<p>Damage can be customized - for reference, an Ogre's grenade blast does 40 damage, while a player's rocket hit deals 120 damage. Set it to 0 for a purely cosmetic effect.</p>
+
+<h3 id="particle-field">Particle field</h3>
 <p>The <strong>misc_particlefield</strong> brush entity makes dots appear continuously within its bounds. Trigger to toggle on/off.</p>
 
-<h3>Exploboxes</h3>
-<p>Besides the usual <strong>misc_explobox</strong> point entities, there's a <strong>func_explobox</strong> brush entity that works exactly the same way but can be made in any shape.</p>
-<p>Both <strong>misc_explobox</strong> and <strong>func_explobox</strong> fire their targets when exploding, and can be blown up remotely by triggering them.</p>
+<h3 id="lightning-trail">Lightning trail</h3>
+<p>You can create lightning trails using the <strong>misc_lightning_start</strong>, <strong>misc_lightning_relay</strong>, and <strong>misc_lightning_end</strong> point entities.</p>
+<p>The trail always must start with a <strong>misc_lightning_start</strong> and end with a <strong>misc_lightning_end</strong>, but you can place some <strong>misc_lightning_relay</strong> between those if you need the trail to go into a different direction midway.</p>
 
-<h3>Laser</h3>
-<p>The <strong>func_laser</strong> brush entity creates a togglable laser with a faint flickering alpha effect. Hurts to touch, can be used to block players. We recommend to use it with a fullbright-colored texture for better looks.</p>
-
-<h3>Lightning</h3>
-<p>You can create lightning trails using the <strong>misc_lightning_start</strong>, <strong>misc_lightning_relay</strong>, and <strong>misc_lightning_end</strong> point entities. The trail always must start with a <strong>misc_lightning_start</strong> and end with a <strong>misc_lightning_end</strong>, but you can place some <strong>misc_lightning_relay</strong> between those if you need the trail to go into a different direction midway.</p>
-
-<h3>Ladders</h3>
-<p><strong>trigger_ladder</strong> creates an invisible ladder entity. When player is touching it, he can climb by pushing "jump".</p>
-
-<h3>Bobbing</h3>
-<p>You can create entities that gently moves back and forth in any direction.</p>
-<p><strong>func_bob</strong> is a brush entity, and <strong>misc_bob</strong> is a point entity that uses external models.</p>
-
-
-<h3>Smoke</h3>
-<p>From Rubicon2, there's the <strong>misc_smoke</strong> point entity. Produces a jet of smoke/steam. If targeted, it will toggle between on or off.</p>
-
-<h3>Sparks</h3>
-<p><strong>misc_sparks</strong>, also from Rubicon2. Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks.</p>
-
-
-<h3>Screen shake</h3>
-<p>From <a href="http://lunaran.com/copper/mapping/#target_screenshake">Copper</a>:</p>
+<h3 id="screen-shake">Screen shake</h3>
+<p><strong>target_screenshake</strong>, from <a href="http://lunaran.com/copper/mapping/#target_screenshake">Copper</a>:</p>
 <blockquote>
 	<p>Shakes the screen when triggered. Jostles the view of all clients, but doesn't physically move their bounding boxes or apply velocities. Set its intensity with <strong>strength</strong>. 1 is a hearty rumble, 10 is spasmodic bordering on hilarious.</p>
 
 	<p>Follows an attack-sustain-release curve: it builds for <strong>delay</strong> seconds, holds at full strength for <strong>length</strong> seconds, then fades back toward zero for <strong>wait</strong> seconds. Total quake duration is therefore delay + length + wait. All three have defaults, but any of them can be forced to 0 by setting them to -1. (You might want a quake with no delay to be caused by a sudden blast, for example.)</p>
 </blockquote>
 
-<h3>Explosions</h3>
-<p><strong>target_explosion</strong> creates explosions on demand, with the same appearance as a rocket/grenade blast. Can explode once on triggering, or be set to fire off on a periodic basis.</p>
-<p>Damage can be customized - for reference, an Ogre's grenade blast does 40 damage, while a player's rocket hit deals 120 damage. Set it to 0 for a purely cosmetic effect.</p>
-
-<h3>Meat fireworks</h3>
-<p><strong>target_meat_fireworks</strong>. Does what it says on the tin. Meat fireworks. Can be fired once or on a periodic basis.</p>
-
-<h3>Teleport fog</h3>
-<p>Targeting a <strong>target_telefog</strong> produces a teleport fog effect when triggered, sounds and all.</p>
-
-<h3>Particle splash</h3>
-<p><strong>misc_splash</strong> produces a continuous particle splash for waterfalls.</p>
+<h3 id="other-effects">Other effects</h3>
+<ul>
+	<li><strong>Smoke:</strong> From Rubicon2, there's the <strong>misc_smoke</strong> point entity. Produces a jet of smoke/steam. If targeted, it will toggle between on or off.</li>
+	<li><strong>Sparks:</strong> the <strong>misc_sparks</strong>, also from Rubicon2. Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks.</li>
+	<li><strong>Meat/gibs:</strong> <strong>target_meat_fireworks</strong>. Does what it says on the tin. Meat fireworks. Can be fired once or on a periodic basis.</li>
+	<li><strong>Teleport fog:</strong> Targeting a <strong>target_telefog</strong> produces a teleport fog effect when triggered, sounds and all.</li>
+	<li><strong>Particle splash:</strong> <strong>misc_splash</strong> produces a continuous particle splash for waterfalls.</li>
+</ul>
 
 <hr>
-<h2>Other Enhancements</h2>
+<h2 id="enhancements">Other Enhancements</h2>
 
-<h3>Autosaves</h3>
+<h3 id="autosaves">Autosaves</h3>
 
 <p>The <strong>target_autosave</strong> point entity saves the game when triggered, and does so by default in a slot named "auto". We've included a default bind for the F8 key that loads from this slot.</p>
 <p>The same autosave entity can be used multiple times, so you don't need to place a new one for each save point if you don't want to.</p>
 
-<h3>target_move</h3>
-<p>Using this point entity you can move any other entity to its origin upon triggering. Works with any entity type. Think of it as a simplified, general-purpose teleport.</p>
-<p>If the targeted entity changes behaviour when given a targetname, you can target its <strong>targetname2</strong> field instead.</p>
+<h3 id="episode-ending">Episode-ending screen</h3>
+<p>You can create a custom episode-ending screen by giving the <strong>trigger_changelevel</strong> a text into the <strong>message</strong> field.</p>
+<p>Note that the screen width available only fits 40 characters at most, so you need to manually include line breaks (<strong>\n</strong>) into your text if necessary.</p>
 
-<h3>Developer options</h3>
+<h3 id="target_move">target_move</h3>
+<p>Using this point entity you can move any other entity to its origin upon triggering. Works with any entity type. Think of it as a simplified, general-purpose teleport.</p>
+<p>If the targeted entity changes behavior when given a targetname, you can target its <strong>targetname2</strong> field instead.</p>
+
+<h3 id="developer">Developer features</h3>
 <ul>
 	<li><strong>nomonsters</strong> cvar: if set to 1, the map will start with no monsters.</li>
 	<li><strong>info_player_start_test</strong> entity: developer-only map start (requires <strong>developer 1</strong> cvar to be set). You can set a custom loadout for this specific point. Also it'll always pick the last one created in the map if there's more than one.</li>
 	<li><strong>impulsetarget</strong> key: remote-control triggering. You can add a <strong>impulsetarget</strong> key to any entity and give it a value between 1 and 9, and it'll be triggered by the commands <strong>impulsetest1</strong> to <strong>impulsetest9</strong> (impulses 91 to 99). Useful to trigger some specific event in your map for testing purposes.</li>
 	<li><strong>listmonsters</strong> command (impulse 184): lists all monsters left alive in the map and their current positions. Good to find out where's that last hiding monster that keeps you from getting 100% kills.</li>
-	<li><strong>reveal</strong> command (impulse 200): Shows information on the entity being pointed at. Only works with solid entities.</li>
+	<li><strong>reveal</strong> command (impulse 200): Shows on the console information about the entity being pointed at. Only works with solid entities.</li>
 </ul>
 
-<h3>Cheats</h3>
+<h3 id="cheats">Cheats commands</h3>
+<p>Besides the well-known Quake cheats, Alkaline adds some others.</p>
+<p>Note that the old <strong>give #</strong> cheat to get a specific weapon won't work in this mod.</p>
 
+<ul>
+	<li><strong>resurrect</strong> (impulse 154): resurrects the player on the spot with 100 health and with their inventory intact.</li>
+	<li><strong>giveall</strong> (impulse 9): Gives all weapons, ammo, keys, runes and armor.</li>
+	<li><strong>giveweapons</strong> (impulse 13): Gives only weapons and ammo.</li>
+	<li><strong>quad</strong> (impulse 255): Gives the Quad Damage.</li>
+	<li><strong>belt</strong> (impulse 252): Gives the Invisibility Belt.</li>
+	<li><strong>suit</strong> (impulse 253): Gives the Biosuit.</li>
+	<li><strong>pentagram</strong> (impulse 254): Gives the Pentagram of Protection.</li>
+</ul>
 
+<hr>
+<h2 id="thanks">Thanks</h2>
+
+<p>To everyone responsible for the mods that we've gathered ideas and code from, especially Lunaran (Copper), dumptruck_ds (progs_dump), and sock (Arcane Dimensions). Alkaline wouldn't be what it is without your huge contributions to the Quake community.</p>
+<p>To mr. John "metlslime" Fitzgibbons for creating Rubicon2 in the first place, and to ijed for the Rubicon Rumble Pack.</p>
+<p>To Spike for the FTEQCC compiler and for being a walking encyclopedia regarding everything engine- and QuakeC-related.</p>
+<p>To ericw for creating the awesome map compiling tools that were able to take modern Quake maps into another level in map complexity and lighting features.</p>
+<p>To the awesome community of mappers, modders and players at the Quake Mapping Discord, Quaddicted and func_msgboard for all the support and feedback.</p>
 
 </body>
 </html>
