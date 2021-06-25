@@ -294,6 +294,9 @@ void() target_move_use = {
 
 	t = find(world, targetname, self.target);
 
+	if (!t) //targetname not found, search for targetname2
+		t = find(world, targetname2, self.target);
+
 	if(t) {
 		if(t.movetype == MOVETYPE_STEP) //monsters need to move off the ground, otherwise they'll lerp 
 			neworigin = self.origin + '0 0 1';
