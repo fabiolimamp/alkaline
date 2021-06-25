@@ -198,11 +198,12 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <h3>Multiple targets</h3>
 <p>Following Copper's fashion, Alkaline also supports the <strong>target2/target3/target4</strong> keys but not multiple targetnames, as it increases code complexity and stack usage multi-fold. Having only multiple targets is usually enough to cover most cases, and you can always set up some relays if necessary.</p>
 
-<p>An exception is made for some entities that must control or modify other entities that could have their behavior changed when set a targetname, so they can also target a <strong>targetname2</strong> field. Note that the targetname2 field isn't displayed on any entity by default, so you must add it manually when needed. The following entities have that ability:
+<p>An exception is made for some entities that must control or modify other entities that could have their behavior changed when given a targetname, so they can also target a <strong>targetname2</strong> field. Note that the targetname2 field isn't displayed on any entity by default, so you must add it manually when needed. The following entities have that ability:
 </p>
 	<ul>
 		<li><strong>target_setstate</strong></li>
 		<li><strong>target_setdoor</strong></li>
+		<li><strong>target_move</strong></li>
 		<li><strong>misc_shadowcontroller</strong></li>
 	</ul>
 
@@ -378,7 +379,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>For other entity classes, like <strong>func_shadow</strong>, you need to set up a <strong>misc_shadowcontroller</strong> point entity to control their switchable shadows. That's how you do it:</p>
 <ul>
 	<li>Create a <strong>_switchableshadow</strong> key in the desired entity and set it to 1;</li>
-	<li>Give it a targetname - if the entity changes behaviour when adding a targetname, you can use the special <strong>targetname2</strong> key instead, which will work only for the shadow controller.</li>
+	<li>Give it a <strong>targetname</strong> - if the entity changes behaviour when given a targetname, you can target a <strong>targetname2</strong> field instead.</li>
 	<li>Create a <strong>misc_shadowcontroller</strong> entity targeting the bmodel, and give it a different targetname.</li>
 	<li>Triggering the shadow controller toggles the shadow on/off with a fading animation.</li>
 </ul>
@@ -538,18 +539,20 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <h3>Autosaves</h3>
 
-<p>The <strong>target_autosave</strong> point entity saves the game when triggered, which by default is saved in a slot named "auto". We've included a default bind into the F8 key that loads this save.</p>
+<p>The <strong>target_autosave</strong> point entity saves the game when triggered, and does so by default in a slot named "auto". We've included a default bind for the F8 key that loads from this slot.</p>
 <p>The same autosave entity can be used multiple times, so you don't need to place a new one for each save point if you don't want to.</p>
 
 <h3>target_move</h3>
+<p>Using this point entity you can move any other entity to its origin upon triggering. Works with any entity type. Think of it as a simplified, general-purpose teleport.</p>
+<p>If the targeted entity changes behaviour when given a targetname, you can target its <strong>targetname2</strong> field instead.</p>
 
 <h3>Developer options</h3>
 <ul>
-	<li><strong>impulse 184</strong> command</li>
-	<li><strong>nomonsters</strong> cvar</li>
-	<li><strong>info_player_start_test</strong> entity</li>
-	<li><strong>impulsetarget</strong> key</li>
-
+	<li><strong>nomonsters</strong> cvar: if set to 1, the map will start with no monsters.</li>
+	<li><strong>info_player_start_test</strong> entity: developer-only map start (requires <strong>developer 1</strong> cvar to be set). You can set a custom loadout for this specific point. Also it'll always pick the last one created in the map if there's more than one.</li>
+	<li><strong>impulsetarget</strong> key: remote-control triggering. You can add a <strong>impulsetarget</strong> key to any entity and give it a value between 1 and 9, and it'll be triggered by the commands <strong>impulsetest1</strong> to <strong>impulsetest9</strong> (impulses 91 to 99). Useful to trigger some specific event in your map for testing purposes.</li>
+	<li><strong>listmonsters</strong> command (impulse 184): lists all monsters left alive in the map and their current positions. Good to find out where's that last hiding monster that keeps you from getting 100% kills.</li>
+	<li><strong>reveal</strong> command (impulse 200): Shows information on the entity being pointed at. Only works with solid entities.</li>
 </ul>
 
 <h3>Cheats</h3>
