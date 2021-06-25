@@ -1199,7 +1199,7 @@ the bprint tends to stomp any other prints on screen in most quake clients, so u
 ]
 
 @PointClass base(SingleTarget, Targetname, Appearflags) color(255 0 128) size(-8 -8 -24, 8 8 40) = target_move : 
-"Moves target entity to this spot and angle when triggered.
+"Moves target entity to this spot and angle when triggered. Can target another entity's 'targetname2' field.
 Use spawnflag 1 to not change the entity's original angle.
 Spawnflag 2 keeps the entity's original velocity."
 [
