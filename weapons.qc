@@ -1300,10 +1300,10 @@ void() W_ChangeWeapon =
 
 /*
 ============
-CheatCommand
+GiveAllCommand
 ============
 */
-void() CheatCommand =
+void() GiveAllCommand =
 {
 	if (deathmatch || coop)
 		return;
@@ -1313,6 +1313,29 @@ void() CheatCommand =
 	self.ammo_shells = 100;
 	self.weapons = self.weapons | ALL_WEAPONS;
 	self.items = self.items | HUD_WEAPONS | IT_KEY1 | IT_KEY2;
+
+	self.ammo_cells = 100;
+		
+	self.weapon = WEAPON_ROCKET_LAUNCHER;
+	self.impulse = 0;
+	W_SetCurrentAmmo ();
+};
+
+/*
+============
+GiveWeaponsCommand
+============
+*/
+void() GiveWeaponsCommand =
+{
+	if (deathmatch || coop)
+		return;
+
+	self.ammo_rockets = 100;
+	self.ammo_nails = 200;
+	self.ammo_shells = 100;
+	self.weapons = self.weapons | ALL_WEAPONS;
+	self.items = self.items | HUD_WEAPONS;
 
 	self.ammo_cells = 100;
 		
@@ -1581,32 +1604,25 @@ void(float num) ImpulseTest = {
 
 	activator = self;
 	SUB_UseSpecificTarget(tgt_impulse_num, impulsetarget);
-}
+};
 
-void() dev_reveal =
-{
-	dprint("dev\n");
-	local vector org;
+// adapted from Copper
+void() dev_reveal = {
+	vector org;
+
 	makevectors(self.v_angle);
 	org = self.origin + self.view_ofs;
 	traceline (org, org + v_forward * 8192, FALSE, self);
 
-	if (trace_fraction < 1.0 && trace_ent)
-	//if (trace_ent)
-	{
-	//	trace_ent.developer = 1;
-		//bprint("hit entity:\n");
-		dprint3("time: ", ftos(time), "\n");
-		eprint(trace_ent);
-		//bprint("hit ent's enemy:\n");
-		//eprint(trace_ent.enemy);
-		if (trace_ent.flags & FL_ONGROUND) dprint("  entity is ONGROUND\n");
-		if (trace_ent.flags & FL_PARTIALGROUND) dprint("  entity is PARTIAL_GROUND\n");
-		if (checkbottom(trace_ent)) dprint("  checkbottom is true\n");
-		else dprint("  checkbottom is FALSE\n");
+	if (trace_fraction < 1) {
+		if (trace_ent) {
+			dprint("----------------------------\n----------------------------\n");
+			eprint(trace_ent);
+		}
+		dprint5("\n-\n-\nFound ", trace_ent.classname, "; time: ", ftos(time), "\n");
 	}
-	dprint("endpoint: ");dprint(vtos(trace_endpos));dprint("\n");
-}
+
+};
 
 void(entity targ, float ammoqty, string zero10, string zero100, string zero1000, string zero10000, string zero100000) zerofill_number =
 {
@@ -1624,6 +1640,7 @@ void(entity targ, float ammoqty, string zero10, string zero100, string zero1000,
 	sprint(targ, ftos(ammoqty));	
 };
 
+// adapted from AD
 void() display_monsleft =
 {
 	local float entcount, montotal, monalive, mondead, counted, countedalive;
@@ -1713,37 +1730,39 @@ ImpulseCommands
 void() ImpulseCommands =
 {
 	if (self.impulse >= 1 && self.impulse <= 8)
-		W_ChangeWeapon ();
+		W_ChangeWeapon();
 	
 	if (self.impulse >= 224 && self.impulse <= 228)
-		W_ChangeWeapon ();
+		W_ChangeWeapon();
 	
 	if (self.impulse == 9)
-		CheatCommand ();
-	if (self.impulse == 10)
-		CycleWeaponCommand ();
-	if (self.impulse == 11)
-		ServerflagsCommand ();
-	if (self.impulse == 12)
-		CycleWeaponReverseCommand ();
+		GiveAllCommand();
 
+	if (self.impulse == 10)
+		CycleWeaponCommand();
+	if (self.impulse == 11)
+		ServerflagsCommand();
+	if (self.impulse == 12)
+		CycleWeaponReverseCommand();
+	if (self.impulse == 13)
+		GiveWeaponsCommand();
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
 	if (self.impulse == 184)
 		display_monsleft();
 	if (self.impulse == 200)
-		dev_reveal ();
+		dev_reveal();
 	//johnfitz -- new cheats
 	if (self.impulse == 252)
-		RingCheat ();
+		RingCheat();
 	if (self.impulse == 253)
-		BiosuitCheat ();
+		BiosuitCheat();
 	if (self.impulse == 254)
-		PentCheat ();
+		PentCheat();
 	//johnfitz
 		
 	if (self.impulse == 255)
-		QuadCheat ();
+		QuadCheat();
 		
 	self.impulse = 0;
 };
