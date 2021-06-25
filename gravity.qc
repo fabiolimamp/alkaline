@@ -95,23 +95,23 @@ void() trigger_gravity_touch = {
   // if (!CheckValidTouch()) return;
 	if (self.estate != STATE_ACTIVE) return;
 
-	local float grav;
+	local float temp_grav;
 
 	if (self.spawnflags & DT_PLAYERONLY && other.classname != "player")
 		return;
 
 	if (self.gravity == -1)
-		grav = 1;
+		temp_grav = 1;
 	else
-		grav = self.gravity;
+		temp_grav = self.gravity;
 
 	// the player's gravity is now managed in PlayerPreThink(), however
 	// other entities don't have special gravity management, so their
 	// gravity is still set directly -- iw
 	if (other.classname == "player")
-		other.wantedgravity = grav;
+		other.wantedgravity = temp_grav;
 	else
-		other.gravity = grav;
+		other.gravity = temp_grav;
 };
 
 /*QUAKED trigger_setgravity (.5 .5 .5) ? X X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY

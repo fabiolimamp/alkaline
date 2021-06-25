@@ -1567,7 +1567,9 @@ dmg is the amount of damage to cause when touched."
 
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
-@SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of it's angle, triggers all of it's targets, waits some time, then returns to it's original position where it can be triggered again." 
+@SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
+You can directly set a custom movement vector with the 'movedir' key.
+" 
 [
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
