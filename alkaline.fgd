@@ -1558,6 +1558,7 @@ dmg is the amount of damage to cause when touched."
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
 	health(integer) : "Health (shootable if > 0)"
+	noise(string) : "Custom pressing sound (overrides 'sounds' setting)"
 	sounds(choices) : "Sounds" = 
 	[
 		0 : "Steam metal"
@@ -1567,7 +1568,8 @@ dmg is the amount of damage to cause when touched."
 	]
 	wait(float) : "Delay before reset" : "1.0"
 	delay(string) : "Delay before trigger"
-	message(string) : "Message" 
+	movedir(string) : "Custom movement vector (X Y Z)"
+	message(string) : "Message"
 ]
 
 @SolidClass base(Targetname, BrushLight) = func_train :
