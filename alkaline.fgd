@@ -270,7 +270,7 @@
 	dmg(integer) : "Damage" : 100
 	spawnflags(flags)=
 	[
-		1 : "Start off" : 0
+		1 : "Non-shootable" : 0
 	]
 ]
 
@@ -973,8 +973,22 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 @PointClass base(Appearflags, Targetname) = air_bubbles : "Air bubbles" []
 @PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning" []
 
-@PointClass base(Appearflags, Targetname) size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" []
-@PointClass base(Appearflags, Targetname) size(0 0 0, 32 32 32) model({"path":"maps/b_exbox2.bsp"}) = misc_explobox2 : "Small nuclear container" []
+@PointClass base(Appearflags, Targetname, Target) size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" [
+	health(integer) : "Health" : 20
+	dmg(integer) : "Damage" : 160
+	spawnflags(flags)=
+	[
+		1 : "Non-shootable" : 0
+	]
+]
+@PointClass base(Appearflags, Targetname, Target) size(0 0 0, 32 32 32) model({"path":"maps/b_exbox2.bsp"}) = misc_explobox2 : "Small nuclear container" [
+	health(integer) : "Health" : 20
+	dmg(integer) : "Damage" : 160
+	spawnflags(flags)=
+	[
+		1 : "Non-shootable" : 0
+	]
+]
 
 //@PointClass = func_illusionary2 : "Static model"  
 //[
