@@ -302,7 +302,7 @@ void () func_explobox =
 
 	self.use = func_explobox_use;
 	self.th_die = func_explobox_die;
-	self.takedamage = DAMAGE_AIM;
+	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 };
 
 /*
