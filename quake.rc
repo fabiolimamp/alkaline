@@ -1,0 +1,33 @@
+exec default.cfg
+
+exec config.cfg
+
+bind "F8" "echo Loading autosave...; wait; load auto"
+
+alias resurrect "impulse 154"
+alias belt "impulse 252"
+alias suit "impulse 253"
+alias pentagram "impulse 254"
+alias quad "impulse 255"
+alias giveall "impulse 9"
+alias giveweapons "impulse 13"
+alias listmonsters "impulse 184"
+alias reveal "impulse 200"
+alias impulsetest1 "impulse 91"
+alias impulsetest2 "impulse 92"
+alias impulsetest3 "impulse 93"
+alias impulsetest4 "impulse 94"
+alias impulsetest5 "impulse 95"
+alias impulsetest6 "impulse 96"
+alias impulsetest7 "impulse 97"
+alias impulsetest8 "impulse 98"
+alias impulsetest9 "impulse 99"
+
+
+exec autoexec.cfg
+
+r_nolerp_list "progs/flame.mdl,progs/flame2.mdl"
+
+menu_main
+
+stuffcmds
