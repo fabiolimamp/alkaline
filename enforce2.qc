@@ -310,7 +310,7 @@ void() megaenforcer_fire = {
 	edist = vlen(self.enemy.origin - self.origin);
 	if (edist < 200) menf_atk1();
 	else {
-		if (random() < 0.65 || edist > 700)	{
+		if (random() < 0.5 || edist > 700)	{
 			if (time > self.attack_finished) menf_satck1();
 			else menf_atk1();
 		}
