@@ -315,8 +315,7 @@ void() SUB_UseTargets =
 //
 // print the message
 //
-	if (activator.classname == "player" && self.message != "" && !(self.flags & FL_NOCENTERPRINT))
-	{
+	if (self.message != "" && !(self.flags & FL_NOCENTERPRINT)) {
 		if (self.spawnflags & TRIGGER_CENTERPRINTALL) {
 			t = find(world, classname, "player");
 			while (t) {
@@ -327,11 +326,11 @@ void() SUB_UseTargets =
 			}
 		}
 		
-		else {
+		else if (activator.classname == "player") {
 			centerprint (activator, self.message);
 			if (!self.noise)
 				sound (activator, CHAN_VOICE, "misc/talk.wav", 1, ATTN_NORM);
-		}
+		}	
 	}
 
 //

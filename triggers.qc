@@ -1095,3 +1095,208 @@ void() target_setstate = {
 		self.nextthink = time + 0.5;
 	}
 };
+
+/*
+=============================================================
+
+trigger_filter
+
+=============================================================
+*/
+
+
+float FILTER_FIELD_STATE = 0;
+float FILTER_FIELD_HEALTH = 1;
+float FILTER_FIELD_WEAPON = 2;
+float FILTER_FIELD_FLAGS = 3;
+float FILTER_FIELD_SPAWNFLAGS = 4;
+float FILTER_FIELD_CLASSNAME = 5;
+float FILTER_FIELD_ESTATE = 6;
+float FILTER_FIELD_DOOR_GROUPSTATE = 7;
+float FILTER_FIELD_TARGETNAME = 8;
+float FILTER_FIELD_WEAPONS = 9;
+float FILTER_FIELD_ITEMS = 10;
+float FILTER_FIELD_COUNT = 11;
+float FILTER_FIELD_CNT = 12;
+float FILTER_FIELD_TYPE = 13;
+
+
+float FILTER_FIELDTYPE_FLOAT = 0;
+float FILTER_FIELDTYPE_STRING = 1;
+float FILTER_FIELDTYPE_FLAG = 2;
+
+float FILTER_OP_EQUALS = 0;
+float FILTER_OP_LT = 1;
+float FILTER_OP_LTE = 2;
+float FILTER_OP_GT = 3;
+float FILTER_OP_GTE = 4;
+float FILTER_OP_BITMASK_AND = 5;
+float FILTER_OP_BITMASK_OR = 6;
+
+void() trigger_filter_use = {
+	self.state = 0;
+
+	if (self.estate != STATE_ACTIVE) return;
+
+	entity targ;
+	float targfloat;
+	string targstring;
+
+	float fieldtype, op, result;
+
+	if (self.include != "") {
+		targ = find(world, targetname, self.include);
+		if (!targ) targ = find(world, targetname2, self.include);
+		if (!targ) return;
+	}
+	else
+		targ = activator;
+
+	op = self.weapon;
+
+	switch (self.style) {
+		case FILTER_FIELD_STATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.state;
+			break;
+
+		case FILTER_FIELD_ESTATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.estate;
+			break;
+
+		case FILTER_FIELD_HEALTH:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.health;
+			break;
+
+		case FILTER_FIELD_COUNT:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.count;
+			break;
+
+		case FILTER_FIELD_CNT:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.cnt;
+			break;
+
+		case FILTER_FIELD_WEAPON:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.weapon;
+			break;
+
+		case FILTER_FIELD_FLAGS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.flags;
+			break;
+
+		case FILTER_FIELD_SPAWNFLAGS: 
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.spawnflags;
+			break;
+
+		case FILTER_FIELD_ITEMS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.items;
+			break;
+
+		case FILTER_FIELD_WEAPONS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.weapons;
+			break;
+
+		case FILTER_FIELD_CLASSNAME:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.classname;
+			break;
+
+		case FILTER_FIELD_DOOR_GROUPSTATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.owner.groupstate;
+			break;
+
+		case FILTER_FIELD_TARGETNAME:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.targetname;
+			break;
+
+		case FILTER_FIELD_TYPE:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.type;
+			break;
+	}
+
+	if (fieldtype == FILTER_FIELDTYPE_FLOAT) {
+		if 		(op == FILTER_OP_EQUALS) 		{if (targfloat == self.count) result = 1;}
+		else if (op == FILTER_OP_LT) 			{if (targfloat <  self.count) result = 1;}
+		else if (op == FILTER_OP_LTE) 			{if (targfloat <= self.count) result = 1;}
+		else if (op == FILTER_OP_GT) 			{if (targfloat >  self.count) result = 1;}
+		else if (op == FILTER_OP_GTE) 			{if (targfloat >= self.count) result = 1;}
+		else if (op == FILTER_OP_BITMASK_AND)	{if (targfloat &  self.count) result = 1;}
+		else if (op == FILTER_OP_BITMASK_OR)	{if (targfloat |  self.count) result = 1;}
+		else 									{if (targfloat == self.count) result = 1;}
+	}
+	else if (fieldtype == FILTER_FIELDTYPE_FLAG) {
+		if 		(op == FILTER_OP_EQUALS) 		{if (targfloat == self.aflag) result = 1;}
+		else if (op == FILTER_OP_BITMASK_AND)	{if (targfloat &  self.aflag) result = 1;}
+		else if (op == FILTER_OP_BITMASK_OR)	{if (targfloat |  self.aflag) result = 1;}
+		else 									{if (targfloat == self.aflag) result = 1;}
+	}
+	else if (fieldtype == FILTER_FIELDTYPE_STRING) {
+
+		if (targstring == self.type) result = 1;
+	}
+	else {
+		objerror ("invalid fieldtype");
+		return;
+	}
+
+	if (self.spawnflags & 1) result = 1 - result; // negate
+
+	if (result) {
+		self.state = 1;
+
+		if (self.spawnflags & 2 && activator.owner) activator = activator.owner; // relay activator as owner
+
+		SUB_UseTargets();
+		if (other.classname == "trigger_everything" && other.spawnflags & 1) {
+			if (other.wait)	other.attack_finished = time + other.wait;
+		}
+
+	}
+};
+
+void() trigger_filter = {
+	self.use = trigger_filter_use;
+
+};
+
+
+/*
+=============================================================
+
+trigger_everything
+
+=============================================================
+*/
+
+void() trigger_everything_touch = {
+	if (self.estate != STATE_ACTIVE) return;
+
+	if (time < self.attack_finished) return;
+
+	activator = other;
+	
+	SUB_UseSpecificTarget(self.target, targetname);
+
+	if (self.wait)
+		if (!(self.spawnflags & 1)) self.attack_finished = time + self.wait;
+
+};
+
+void() trigger_everything = {
+	InitTrigger();
+
+	self.touch = trigger_everything_touch;
+	SUB_CheckWaiting();
+};

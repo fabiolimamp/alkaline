@@ -201,7 +201,7 @@ void(vector org, vector rock_vec) OgreFireRocket =
 	newmis.movetype = MOVETYPE_FLY;
 	newmis.solid = SOLID_BBOX;
 	newmis.effects = EF_DIMLIGHT;
-	newmis.classname = "rocket";
+	newmis.classname = "missile";
 
 	setmodel (newmis, "progs/missile.mdl");
 	setsize (newmis, '0 0 0', '0 0 0');		
