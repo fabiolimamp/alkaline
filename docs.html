@@ -100,6 +100,16 @@ body {
 			<li><a href="#state-buttons">Buttons</a></li>
 		</ul>
 	</li>
+
+	
+	<li>
+		<a href="#advanced-triggering">Advanced triggering</a>
+		<ul>
+			<li><a href="#trigger_filter">trigger_filter</a></li>
+			<li><a href="#trigger_everything">trigger_everything</a></li>
+		</ul>
+	</li>
+	
 	<li>
 		<a href="#shadows">Shadows</a>
 		<ul>
@@ -508,6 +518,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>You set an entity's state using the <strong>target_setstate</strong> point entity. You can directly disable, enable, or toggle the state. Target entities can start the map already disabled through the spawnflag <strong>Targets start disabled</strong>.</p>
 <p>If you need to target an entity that has its behaviour changed when given a targetname (like <strong>func_door</strong> or <strong>trigger_teleport</strong>), you can make the <strong>target_setstate</strong> target the entity's <strong>targetname2</strong> field.</p>
 <p>This system is integrated with dormant triggers (<strong>is_waiting</strong> key), meaning that you can "wake" a trigger not only by triggering it, but also by using a <strong>target_setstate</strong> on it.</p>
+<p>The entity's state is kept under the <strong>estate</strong> field, which 0 meaning enabled/normal operation, and 1 disabled. So for triggers, you're able make them start off by to directly setting this value to 1. You cannot do that to doors nor buttons though, in those cases you need to use a target_setstate with "start disabled" set.</p>
 <p>A lot of entities support enabling/disabling:</p>
 
 <h3 id="state-triggers">Trigger brushes of any class</h3>
@@ -525,6 +536,39 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <hr>
 
+<h2 id="advanced-triggering">Advanced triggering</h2>
+<p>Alkaline has some very advanced scripting through 2 specialized entites.</p>
+
+<h3 id="trigger_filter">trigger_filter</h3>
+<p>This point entity relays only if a given condition evaluates to true, unleashing ultimate scripting capabilites. You can test various fields on the entity targeted by the <strong>include</strong> field (you can target another entity's <strong>targetname2</strong> as well). If you let the <strong>include</strong> field empty, it'll test against the activating entity instead, be it a player, a monster or anything else - see <strong>trigger_everything</strong> below for more details.</p>
+
+<p>You can, for example, relay a trigger only if a door or plat is in a certain position, or if a targeted enemy is alive or dead or below a certain health amount, or if the player is carrying some specific weapon or item, or if the activator is a certain type of weapon projectile - the possibilites are almost endless.</p>
+
+<p>In case you're filtering to activate only in case if it's a specific weapon projectile (like a grenade for example), you can make the targets fire with the activating entity's owner as the activator with the spawnflag <strong>Relay activator as owner</strong> - say, if the trigger is activated by a player's grenade, it'll fire with the player as activator, instead of the grenade itself.</p>
+
+<p>There are various fields available to test, selectable through the <strong>style</strong> key. They all fall into three field types (float, flag and string), and for each there's a set of operations available to evaluate, selectable through the <strong>weapon</strong> key.</p>
+
+<ul>
+	<li>Float types can do all operations, and are compared to this entity's <strong>count</strong> field.</li>
+	<li>Flag types support Equal and bitwise AND, and are compared to the <strong>aflag</strong> field.</li>
+	<li>String types have only Equal evaluation, and are compared to this entity's <strong>type</strong> field.</li>
+</ul>
+
+<p>You can set the trigger to fire if the condition evaluates to false by activating the spawnflag <strong>Trigger if false</strong>. It'll never fire if the entity targeted by <strong>include</strong> isn't found, regardless of this spawnflag.</p>
+
+<p>If you need to evaluate more than one condition, you can chain multiple filters in a row.
+Also, the state of the last evaluation is stored in this entity's <strong>state</strong> field (1 for fired, 0 for not fired).</p>
+
+<h3 id="trigger_everything">trigger_everything</h3>
+
+<p>A no-holds-barred touchable solid trigger. Everything triggers it. Players, monsters, projectiles, gibs, even other solid entities like doors and plats.</p>
+
+<p>It can only fire targets matching its <strong>target</strong> field. Due to its "fire-all" nature, it doesn't have support for the 'target2-4' fields, neither 'message' nor 'killtarget'. Useful when used in conjunction with the <strong>trigger_filter</strong> point entity to filter out its firing.</p>
+
+<p>By default it'll fire for each and every registered touch, even if simultaneous. If given a <strong>wait</strong> value, it'll act like a trigger_multiple, where a single activation puts it on hold for <strong>wait</strong> seconds. If the target is a trigger_filter, you can set it to wait only if the filter evaluates to true through the spawnflag <strong>Wait only if trigger_filter evaluates to true</strong>.</p>
+
+
+<hr>
 <h2 id="shadows">Shadows</h2>
 
 <h3 id="func_shadow">func_shadow entity</h3>

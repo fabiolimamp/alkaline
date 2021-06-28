@@ -2003,6 +2003,8 @@ Ultimate scripting ability. You can test various fields on the entity targeted b
 
 You can, for example, relay a trigger only if a door or plat is in a certain position, or if a targeted enemy is alive/dead, or below a certain health amount, or if the player is carrying some specific weapon or item - the possibilites are almost endless.
 
+In case you're filtering to activate only in case if it's a specific weapon projectile (like a grenade), you can make the targets fire with the activating entity's owner as the activator - say, if the trigger is activated by a player's grenade, it'll fire with the player as activator.
+
 There are various fields available to test, selectable through the 'style' key. They all fall into three field types (float, flag and string), and for each there's a set of operations available to evaluate, selectable through the 'weapon' key.
 - Float types can do all operations, and are compared to this entity's 'count' field.
 - Flag types support Equal and bitwise AND, and are compared to the 'aflag' field.
