@@ -313,6 +313,7 @@ func_laser
 
 float LASER_SOLID = 2;
 float LASER_SILENT = 4;
+float LASER_DONTHURTMONSTERS = 8;
 
 void() laser_helper_think =
 {
@@ -332,6 +333,9 @@ void() func_laser_touch = {
 		return;
 
 	if (!self.dmg)
+		return;
+	
+	if (other.flags & FL_MONSTER && self.spawnflags & LASER_DONTHURTMONSTERS)
 		return;
 
 	if (other.takedamage && self.attack_finished < time) {

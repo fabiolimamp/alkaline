@@ -314,6 +314,7 @@ NO_MONSTERS: object ignores damage from monsters"
 		1 : "Starts off" : 0
 		2 : "Solid" : 0
 		4 : "Silent" : 0
+		8 : "Don't hurt monsters" : 0
 	]
 ]
 
