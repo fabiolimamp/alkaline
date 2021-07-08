@@ -342,11 +342,16 @@ void()  drn_die7         =[      $base1,        drn_die7       ]
 };
 
 
-void()  DroneTouch =
-{
-	if (other.takedamage)
-	{
-        drn_die7();
+void() drn_die = {
+	if (self.health < -40) 
+		drn_die7();
+	else
+		drn_die1();
+};
+
+void() DroneTouch = {
+	if (other.takedamage) {
+        T_Damage(self, other, other, self.health + 41); //explode instantly
 	}
 
 };
@@ -381,7 +386,7 @@ void(entity e) monster_drone_start =
 	self.th_run = drn_run;
 	self.th_missile = drn_atta1;
 	self.th_pain = drn_pain;
-	self.th_die = drn_die1;
+	self.th_die = drn_die;
 	self.th_sight = drn_sight;
 	self.ammo_shells = 0; // use to avoid misfiring too much
 		
