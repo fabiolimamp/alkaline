@@ -1467,6 +1467,8 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 		4: "Screechy Metal"
 		5: "Custom sounds"
 		6: "Quake 2 door sound"
+		7: "Base fast (plat sound)"
+		8: "Chain Slow (plat sound)"
 	]
 	noise1(string) : "Sound file for the 'stop moving' sound (if set, overrides 'sounds')"
 	noise2(string) : "Sound file for the 'move' sound (if set, overrides 'sounds')"
