@@ -1635,6 +1635,7 @@ The flags above are mutually exclusive and will cause an objerror when selected 
 	[
 		2: "Move on trigger" : 0
 		4: "Stop on trigger" : 0
+		8: "Non-solid" : 0
 	]
 ]
 

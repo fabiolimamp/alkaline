@@ -235,10 +235,12 @@ void() func_train_find;
 
 float TRAIN_MOVEONTRIGGER = 2; 
 float TRAIN_STOPONTRIGGER = 4;
+float TRAIN_NONSOLID = 8;
 
 float TRAIN_NEXT_WAIT = 0; //normal movement
 float TRAIN_NEXT_STOP = 1; // force a stop on the next path_corner
 float TRAIN_NEXT_CONTINUE = 2; // force continue on the next path_corner (ignores wait time)
+
 
 void() train_blocked = {
 	if (time < self.attack_finished) return;
@@ -267,6 +269,10 @@ void() train_moving_use = {
 }
 
 void() train_wait = {
+	float localtime;
+	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
+	else localtime = time;
+
 	self.use = train_use; //ready to be re-triggered
 
 	// from Copper
@@ -282,13 +288,11 @@ void() train_wait = {
 	if (self.enemy.speed) self.speed2 = self.enemy.speed; // sets the speed from the current path_corner
 
 	self.think = train_next;
-	if (self.wait && self.cnt == TRAIN_NEXT_WAIT) {
-		self.nextthink = self.ltime + self.wait;
+	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT) {
+		self.nextthink = localtime + self.wait;
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
 	}
-	else if (self.cnt != TRAIN_NEXT_STOP) {
-		//self.nextthink = self.ltime + 0.1;
-		//dprint("move instantly\n");
+	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) {
 		self.nextthink = -1; // move instantly
 		train_next();
 	}
@@ -327,6 +331,9 @@ void() train_next = {
 
 void() func_train_find = {
 	local entity	targ;
+	float localtime;
+	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
+	else localtime = time;
 
 	targ = find(world, targetname, self.target);
 	self.target = targ.target;
@@ -337,7 +344,7 @@ void() func_train_find = {
 
 	if (!self.targetname)
 	{	// not triggered, so start immediately
-		self.nextthink = self.ltime + 0.1;
+		self.nextthink = localtime + 0.1;
 		self.think = train_next;
 	}
 };
@@ -390,8 +397,15 @@ void() func_train =
 
 	self.cnt = TRAIN_NEXT_WAIT;
 	
-	self.solid = SOLID_BSP;
-	self.movetype = MOVETYPE_PUSH;
+	if (self.spawnflags & TRAIN_NONSOLID) {
+		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_NOCLIP;
+	}
+	else {
+		self.solid = SOLID_BSP;
+		self.movetype = MOVETYPE_PUSH;
+	}
+
 	self.blocked = train_blocked;
 	self.use = train_use;
 	self.classname = "train";
@@ -402,7 +416,10 @@ void() func_train =
 
 // start trains on the second frame, to make sure their targets have had
 // a chance to spawn
-	self.nextthink = self.ltime + 0.1;
+
+	if (self.movetype == MOVETYPE_PUSH) self.nextthink = self.ltime + 0.1;
+	else self.nextthink = time + 0.1;
+
 	self.think = func_train_find;
 
 	self.speed2 = self.speed;
