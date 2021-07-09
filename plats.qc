@@ -302,11 +302,12 @@ void() train_next = {
 	local entity	targ;
 
 	targ = find(world, targetname, self.target);
-	self.target = targ.target;
 	
-	if (!self.target)
+	if (!targ || self.target == "")
 		objerror("train_next: no next target");
 
+	self.target = targ.target;
+	
 	if (targ.wait){
 		if (targ.wait == -2) self.wait = 0;
 		else self.wait = targ.wait;
