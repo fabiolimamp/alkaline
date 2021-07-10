@@ -336,26 +336,45 @@ void() rail_fade = {
 	self.cnt = self.cnt - 1;
 };
 
+void(float aheadframes) rider_aim = {
+	vector vel;
+
+	vel = self.enemy.velocity;
+	vel_z = 0;
+	self.dest1 = self.enemy.origin + vel*(aheadframes/10);
+};
 
 void() rider_rail_shoot =
 {
-	local vector src, vec;
-	local float disttoenemy, segments;
+	local vector src, vec, shotdest;
+	local float shotdistance, segments, enemydistance;
 	
-	if !(visible(self.enemy))
-		return;
+	//if !(visible(self.enemy))
+	//	return;
 		
-	T_Damage(self.enemy, self, self, 50);
+	//T_Damage(self.enemy, self, self, 50);
 
 	makevectors(self.angles);
 	src = self.origin + '0 0 28' + v_right * 10 + v_forward * 2;
 	
-	traceline(src, self.enemy.origin, TRUE, self);
+	enemydistance = vlen(src - self.enemy.origin);
+
+	if (enemydistance < 128) // too close, aim directly at enemy
+		shotdest = normalize(self.enemy.origin - src)*1000 + self.enemy.origin;
+	else
+		shotdest = normalize(self.dest1 - src)*1000 + self.dest1;
+
 	
-	disttoenemy = vlen(src - trace_endpos);
+	traceline(src, shotdest, FALSE, self);
+	
+	if (trace_fraction < 1) {
+		if (trace_ent.health > 0) T_Damage(trace_ent, self, self, 50);
+	}
+
+	shotdistance = vlen(src - trace_endpos);
 //	how many railbeam models do we need to draw
 //	where 32 = the length of our beam model
-	segments = floor(disttoenemy / 32);
+	segments = floor(shotdistance / 32);
 	
 	while (segments){
 		
@@ -393,9 +412,9 @@ void() rider_rail10 = 	[51, rider_rail11]	{ai_face(); rider_think(); Rider_Push(
 void() rider_rail11 = 	[52, rider_rail12]	{rider_think_rail(36, -12); };
 void() rider_rail12 = 	[52, rider_rail13]	{rider_think_rail(37, -12); };
 void() rider_rail13 = 	[52, rider_rail14]	{rider_think_rail(38, -12); };
-void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM); };
-void() rider_rail15 = 	[52, rider_rail16]	{rider_think_rail(38, -12); };
-void() rider_rail16 = 	[52, rider_rail17]	{rider_think_rail(38, -12); };
+void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM); if(startskill == SKILL_EASY) rider_aim(3);};
+void() rider_rail15 = 	[52, rider_rail16]	{rider_think_rail(38, -12); if(startskill == SKILL_NORMAL) rider_aim(1.5);};
+void() rider_rail16 = 	[52, rider_rail17]	{rider_think_rail(38, -12); if(startskill == SKILL_HARD) rider_aim(1.8); if(startskill == SKILL_NIGHTMARE) rider_aim(1);};
 void() rider_rail17 = 	[52, rider_rail18]	{rider_think_rail(38, -12); rider_rail_shoot();};
 void() rider_rail18 = 	[52, rider_rail19]	{rider_think_rail(39, -12); };
 void() rider_rail19 = 	[52, rider_rail20]	{rider_think_rail(40, -12); };
