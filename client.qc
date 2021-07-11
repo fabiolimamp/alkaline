@@ -1699,6 +1699,16 @@ void(entity targ, entity attacker) ClientObituary =
 						deathstring2 = "'s grenade\n";
 					}
 				}
+				if (rnum == WEAPON_PROXIMITY_GUN)
+				{
+					if (random()<0.5) {
+						deathstring = " got too friendly with ";
+					}
+					else {
+						deathstring = " did the rhumba with ";
+					}
+					deathstring2 = "'s bomb\n";
+				}
 				if (rnum == WEAPON_ROCKET_LAUNCHER)
 				{
 					deathstring = " rides ";

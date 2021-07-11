@@ -304,6 +304,7 @@ void() worldspawn =
 	precache_model ("progs/v_rock2.mdl");
 	precache_model ("progs/v_laserg.mdl");
 	precache_model ("progs/v_saw.mdl");		//dhm - Chainsaw
+	precache_model ("progs/v_mine.mdl");
 	
 	precache_model ("progs/bolt.mdl");		// for lightning gun
 	precache_model ("progs/bolt2.mdl");		// for lightning gun
@@ -313,6 +314,7 @@ void() worldspawn =
 	
 	precache_model ("progs/missile.mdl");
 	precache_model ("progs/grenade.mdl");
+	precache_model ("progs/proxbomb.mdl");
 	precache_model ("progs/spike.mdl");
 	precache_model ("progs/s_spike.mdl");
 

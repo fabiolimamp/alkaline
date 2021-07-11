@@ -64,6 +64,7 @@
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	give_weapons(flags) = [		
 		1: "WEAPON_SHOTGUN"	
@@ -77,6 +78,7 @@
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	reset_items(choices) : "Reset items/weapons" : 0 =
 	[
@@ -505,6 +507,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	give_weapons(flags) = [		
 		1: "WEAPON_SHOTGUN"	
@@ -518,6 +521,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	ammo_shells(integer) : "Shells on start" : : "Override the shells amount on startup. Set to -1 to force it to 0."
 	ammo_nails(integer) : "Nails on start" : : "Override the nails amount on startup. Set to -1 to force it to 0."
@@ -756,6 +760,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 @PointClass base(Weapon) model({"path": "progs/g_nail.mdl"}) = weapon_nailgun : "Nailgun" []
 @PointClass base(Weapon) model({"path": "progs/g_nail2.mdl"}) = weapon_supernailgun : "Perforator" []
 @PointClass base(Weapon) model({"path": "progs/g_rock.mdl"}) = weapon_grenadelauncher : "Grenade launcher" []
+@PointClass base(Weapon) model({"path": "progs/g_mine.mdl"}) = weapon_proximity_gun : "Proximity Gun" []
 @PointClass base(Weapon) model({"path": "progs/g_rock2.mdl"}) = weapon_rocketlauncher : "Rocket launcher" []
 @PointClass base(Weapon) model({"path": "progs/g_light.mdl"}) = weapon_lightning : "Thunderbolt" []
 @PointClass base(Weapon) model({"path": "progs/g_laserg.mdl"}) = weapon_laser_gun : "Laser Cannon" []
@@ -2246,6 +2251,7 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 ]
 

@@ -486,11 +486,13 @@ float(float w) RankForWeapon =
 		return 6;
 	if (w == WEAPON_GRENADE_LAUNCHER)
 		return 7;
-	if (w == WEAPON_SUPER_SHOTGUN)
+	if (w == WEAPON_PROXIMITY_GUN)
 		return 8;
-	if (w == WEAPON_NAILGUN)
+	if (w == WEAPON_SUPER_SHOTGUN)
 		return 9;
-	return 9;
+	if (w == WEAPON_NAILGUN)
+		return 10;
+	return 10;
 };
 
 /*
@@ -683,6 +685,21 @@ void() weapon_grenadelauncher =
 	setmodel (self, "progs/g_rock.mdl");
 	self.weapon = WEAPON_GRENADE_LAUNCHER;
 	self.netname = "Grenade Launcher";
+	self.touch = weapon_touch;
+	if(!self.ammo_rockets) self.ammo_rockets = 5;
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+};
+
+/*QUAKED weapon_proximity_gun (0 .5 .8) (-16 -16 0) (16 16 32)
+*/
+
+void() weapon_proximity_gun =
+{
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_mine.mdl");
+	setmodel (self, "progs/g_mine.mdl");
+	self.weapon = WEAPON_PROXIMITY_GUN;
+	self.netname = "Proximity Gun";
 	self.touch = weapon_touch;
 	if(!self.ammo_rockets) self.ammo_rockets = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
@@ -1474,6 +1491,8 @@ void() DropBackpack =
 		item.netname = "Laser Cannon";
 	else if (item.weapons == WEAPON_PLASMA)
 		item.netname = "Plasma Gun";
+	else if (item.weapons == WEAPON_PROXIMITY_GUN)
+		item.netname = "Proximity Gun";
 	else if (item.weapons == WEAPON_CHAINSAW)
 		item.netname = "Chainsaw";
 	else

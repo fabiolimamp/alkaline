@@ -1,5 +1,6 @@
 void() W_FirePlasma;
 void() Plasma_PreCache;
+void() W_FireProximityGrenade;
 
 // called by worldspawn
 void() W_Precache =
@@ -22,7 +23,8 @@ void() W_Precache =
 	
 	precache_sound ("hipweap/laserg.wav");		// laser cannon
 	precache_sound ("hipweap/laserric.wav");	// laser cannon ricochet
-	
+	precache_sound ("hipweap/proxwarn.wav");	// proximity bomb
+	precache_sound ("hipweap/proxbomb.wav");	// proximity bomb
 	Plasma_PreCache();
 };
 
@@ -970,6 +972,13 @@ void() W_SetCurrentAmmo =
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
+	else if (self.weapon == WEAPON_PROXIMITY_GUN)
+	{
+		self.currentammo = self.ammo_rockets;
+		self.weaponmodel = "progs/v_mine.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_ROCKETS;
+	}
 	else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
@@ -1034,6 +1043,7 @@ float(float currentweapon, float shells, float nails, float rockets, float cells
 		(currentweapon == WEAPON_NAILGUN && nails >= 1) ||
 		(currentweapon == WEAPON_SUPER_NAILGUN && nails >= 2) ||
 		(currentweapon == WEAPON_GRENADE_LAUNCHER && rockets >= 1) ||
+		(currentweapon == WEAPON_PROXIMITY_GUN && rockets >= 1) ||
 		(currentweapon == WEAPON_ROCKET_LAUNCHER && rockets >= 1) ||
 		(currentweapon == WEAPON_LIGHTNING && cells >= 1) ||
 		(currentweapon == WEAPON_LASER_CANNON && cells >= 1) ||
@@ -1132,6 +1142,12 @@ void() W_Attack =
 		W_FireGrenade();
 		self.attack_finished = time + 0.6;
 	}
+	else if (self.weapon == WEAPON_PROXIMITY_GUN)
+	{
+		player_rocket1();
+		W_FireProximityGrenade();
+		self.attack_finished = time + 0.6;
+	}
 	else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 	{
 		player_rocket1();
@@ -1213,6 +1229,18 @@ void() W_ChangeWeapon =
 	}
 	else if (self.impulse == 6)	{
 		weap = WEAPON_GRENADE_LAUNCHER;
+		if(self.weapon == WEAPON_GRENADE_LAUNCHER){
+			weap = WEAPON_PROXIMITY_GUN;
+		}
+		else {
+			if(self.weapons & WEAPON_GRENADE_LAUNCHER){
+				weap = WEAPON_GRENADE_LAUNCHER;
+			}
+			else if(self.weapons & WEAPON_PROXIMITY_GUN){
+				weap = WEAPON_PROXIMITY_GUN;
+			}
+		}
+		
 		if (self.ammo_rockets < 1) 
 			noammo = 1;
 	}
@@ -1269,6 +1297,11 @@ void() W_ChangeWeapon =
 	else if (self.impulse == 228) {
 		weap = WEAPON_LIGHTNING;
 		if (self.ammo_cells < 1)
+			noammo = 1;
+	}
+	else if (self.impulse == 229) {
+		weap = WEAPON_PROXIMITY_GUN;
+		if (self.ammo_rockets < 1)
 			noammo = 1;
 	}
 	else 
@@ -1406,6 +1439,12 @@ void() CycleWeaponCommand =
 		}
 		else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 		{
+			self.weapon = WEAPON_PROXIMITY_GUN;
+			if (self.ammo_rockets < 1)
+				am = 1;
+		}
+		else if (self.weapon == WEAPON_PROXIMITY_GUN)
+		{
 			self.weapon = WEAPON_ROCKET_LAUNCHER;
 			if (self.ammo_rockets < 1)
 				am = 1;
@@ -1487,6 +1526,12 @@ void() CycleWeaponReverseCommand =
 				am = 1;
 		}
 		else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
+		{
+			self.weapon = WEAPON_PROXIMITY_GUN;
+			if (self.ammo_rockets < 1)
+				am = 1;
+		}
+		else if (self.weapon == WEAPON_PROXIMITY_GUN)
 		{
 			self.weapon = WEAPON_GRENADE_LAUNCHER;
 			if (self.ammo_rockets < 1)
