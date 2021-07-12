@@ -53,6 +53,12 @@ void( entity client, float density) skyfog_save =
 	client.skyfog_density = density;
 }
 
+void( entity client ) skyfog_save_to_previous =
+{
+	if (client.classname != "player") return;
+	
+	client.skyfog_density2 = client.skyfog_density;
+}
 /*
 ================
 fog_setFromEnt
@@ -60,15 +66,28 @@ fog_setFromEnt
 */
 void( entity client, entity fogger ) fog_setFromEnt =
 {
-	dprint("setting fog values\n");
+	float density;
+	//
 	// don't set the fog if the entity has no values, because it might be a custom map with
 	// _fog on the worldspawn instead
-	// to actually get an entity to clear the fog, set a color but leave density at 0
-	if (!fogger.fog_color)
-		if (!fogger.fog_density)
-			return;
+	// to actually get an entity to clear the fog, density to -1
+	// the same applies to skyfog
 	
-	fog_set(client, fogger.fog_density, fogger.fog_color);
+	//eprint(fogger);
+
+	//dprint3("fog_density: ", ftos(fogger.fog_density*100), "\n");
+	if (fogger.fog_density) {
+		dprint("setting fog\n");
+		density = zeroconvert(fogger.fog_density);
+		fog_set(client, density, fogger.fog_color);
+	}
+	
+	//dprint3("skyfog_density: ", ftos(fogger.skyfog_density*100), "\n");
+	if (fogger.skyfog_density) {
+		dprint("setting skyfog\n");
+		density = zeroconvert(fogger.skyfog_density);
+		skyfog_set(client, density);
+	}
 }
 
 /*
@@ -80,7 +99,7 @@ void( entity client, float density, vector color) fog_set =
 {
 	if (client.classname != "player") return;
 
-	//dprint("Setting fog: ");dprint(ftos(density));dprint(" ");dprint(ftos(color_x));dprint(" ");dprint(ftos(color_y));dprint(" ");dprint(ftos(color_z));dprint("\n");
+	//dprint9("Setting fog: ", ftos(density), " ", ftos(color_x), " ", ftos(color_y), " ", ftos(color_z), "\n");
 
 	stuffcmd(client, "\nfog ");
 	stuffcmd_float(client, density);
@@ -99,6 +118,8 @@ void( entity client, float density, vector color) fog_set =
 void( entity client, float density) skyfog_set =
 {
 	if (client.classname != "player") return;
+
+	//dprint3("Setting skyfog: ", ftos(density), "\n");
 
 	stuffcmd(client, "\nr_skyfog ");
 	stuffcmd_float(client, density);
@@ -128,9 +149,17 @@ void() fog_blendTouch =
 		if (time < self.attack_finished)
 			return;
 		
-	float f, ldensity, leaving;
+	float f, lerp_density, leaving;
+	float lerp_sdensity;
+	float ent_density, ent_density2, ent_sdensity, ent_sdensity2;
 	vector dorg, mid, ovel;
-	vector lcolor;
+	vector lerp_color;
+
+	ent_density = zeroconvert(self.fog_density);
+	ent_density2 = zeroconvert(self.fog_density2);
+
+	ent_sdensity = zeroconvert(self.skyfog_density);
+	ent_sdensity2 = zeroconvert(self.skyfog_density2);
 	
 	// if you run/fall through a fogblend fast enough you can come out the other side 
 	// partially blended, so check if player will exit the trigger bounds before the 
@@ -149,13 +178,15 @@ void() fog_blendTouch =
 		leaving = other.velocity * self.movedir;
 		if (leaving > 0)
 		{
-			ldensity = self.fog_density2;
-			lcolor = self.fog_color2;
+			lerp_density = ent_density2;
+			lerp_color = self.fog_color2;
+			lerp_sdensity = ent_sdensity2;
 		}
 		else
 		{
-			ldensity = self.fog_density;
-			lcolor = self.fog_color;
+			lerp_density = ent_density;
+			lerp_color = self.fog_color;
+			lerp_sdensity = ent_sdensity;
 		}
 	}
 	else
@@ -167,12 +198,13 @@ void() fog_blendTouch =
 		f = dorg * self.movedir;
 		f = (f / self.distance) + 0.5;
 		
-		ldensity = lerp(self.fog_density, self.fog_density2, f);
-		lcolor = lerpVector(self.fog_color, self.fog_color2, f);
+		lerp_density = lerp(ent_density, ent_density2, f);
+		lerp_color = lerpVector(self.fog_color, self.fog_color2, f);
+		lerp_sdensity = lerp(ent_sdensity, ent_sdensity2, f);
 	}
 
-	fog_set(other, ldensity, lcolor);
-	
+	if (self.fog_density || self.fog_density2) fog_set(other, lerp_density, lerp_color);
+	if (self.skyfog_density || self.skyfog_density2) skyfog_set(other, lerp_sdensity);
 	
 	self.rad_time = time;
 	self.attack_finished = time + FOG_INTERVAL;
@@ -231,20 +263,29 @@ float FOGBLEND_REVERSE = 2;
 float FOGBLEND_ALLCLIENTS = 4;
 float FOGBLEND_BLENDTO = 8;
 
+void(entity cl, float sTo, float f) skyfog_blendSetFraction = {
+	float s;
+
+	s = lerpHermite(cl.skyfog_density2, sTo, f);
+	
+	//eprint(cl);
+	//dprint3("Fraction skyfog density: ", ftos(s), "\n");
+	
+	skyfog_set(cl, s);
+};
+
 void(entity cl, vector cTo, float dTo, float f) fog_blendSetFraction = {
 	float d;
-	//float s;
 	vector c;
 
 	d = lerpHermite(cl.fog_density2, dTo, f);
-	//s = lerpHermite(cl.skyfog_density2, cl.skyfog_density, f);
 	c = lerpVectorHermite(cl.fog_color2, cTo, f);
 
 	/*
 	eprint(cl);
-	dprint("density: ");dprint(ftos(d));dprint("\n");
-	dprint("color: ");dprint(vtos(c));dprint("\n");
-	dprint("fraction: ");dprint(ftos(f));dprint("\n");
+	dprint3("fog density: ", ftos(d), "\n");
+	dprint3("color: ", vtos(c), "\n");
+	dprint3("fraction: ", ftos(f), "\n");
 	*/
 
 	fog_set(cl, d, c);
@@ -252,7 +293,7 @@ void(entity cl, vector cTo, float dTo, float f) fog_blendSetFraction = {
 
 void() fog_blendTimeThink = {
 	float f;
-	float dTo;
+	float dTo, sTo;
 	vector cTo;
 	
 	if (time >= self.pain_finished)	{
@@ -271,10 +312,12 @@ void() fog_blendTimeThink = {
 	if (self.state) {
 		dTo = self.fog_density2;
 		cTo = self.fog_color2;
+		sTo = self.skyfog_density2;
 	}
 	else {
 		dTo = self.fog_density;
 		cTo = self.fog_color;
+		sTo = self.skyfog_density;
 	}
 
 	if (self.spawnflags & FOGBLEND_ALLCLIENTS) {
@@ -282,8 +325,11 @@ void() fog_blendTimeThink = {
 		pl = nextent(world);
 		while (pl.flags & FL_CLIENT) {
 			if (pl.fogblend_entity == self) {
-				if (!(pl.fog_density2 == dTo && pl.fog_color2 == cTo))
-					fog_blendSetFraction(pl, cTo, dTo, f);
+				if (dTo && !(pl.fog_density2 == dTo && pl.fog_color2 == cTo))
+					fog_blendSetFraction(pl, cTo, zeroconvert(dTo), f);
+
+				if (sTo)
+					skyfog_blendSetFraction(pl, zeroconvert(sTo), f);
 
 				if (time >= self.pain_finished) 
 					pl.fogblend_entity = world;
@@ -294,8 +340,11 @@ void() fog_blendTimeThink = {
 	}
 	else {
 		if (self.enemy.fogblend_entity == self) {
-			if (!(self.enemy.fog_density2 == dTo && self.enemy.fog_color2 == cTo))
-				fog_blendSetFraction(self.enemy, cTo, dTo, f);
+			if (dTo && !(self.enemy.fog_density2 == dTo && self.enemy.fog_color2 == cTo))
+				fog_blendSetFraction(self.enemy, cTo, zeroconvert(dTo), f);
+
+			if (sTo)
+				skyfog_blendSetFraction(self.enemy, zeroconvert(sTo), f);
 
 			if (time >= self.pain_finished) {
 				self.enemy.fogblend_entity = world;
@@ -325,6 +374,7 @@ void() target_fogblend_use = {
 	self.enemy = activator;
 	if (self.enemy.classname != "player") return;
 
+
 	if (!(self.spawnflags & FOGBLEND_ONEWAY))
 		self.state = 1 - self.state;
 	
@@ -338,7 +388,8 @@ void() target_fogblend_use = {
 		entity pl;
 		pl = nextent(world);
 		while (pl.flags & FL_CLIENT) {
-			fog_save_to_previous(pl);
+			if (self.fog_density) fog_save_to_previous(pl);
+			if (self.skyfog_density) skyfog_save_to_previous(pl);
 
 			pl.fogblend_entity = self;
 
@@ -346,7 +397,8 @@ void() target_fogblend_use = {
 		}
 	}
 	else {
-		fog_save_to_previous(self.enemy);
+		if (self.fog_density) fog_save_to_previous(self.enemy);
+		if (self.skyfog_density) skyfog_save_to_previous(self.enemy);
 
 		self.enemy.fogblend_entity = self;
 	}
@@ -391,6 +443,12 @@ Activator's fog will be blended over time from start to end values.
 */
 void() target_fogblend =
 {
+
+	if (!self.fog_density && !self.skyfog_density) {
+		objerror("Neither fog density nor skyfog density set");
+		return;
+	}
+
 	self.use = target_fogblend_use;
 	self.think = fog_blendTimeThink;
 
@@ -432,7 +490,8 @@ void() trigger_fog_touch = {
 	if (other.fogblend_entity.owner == self)
 		return;
 
-	fog_save_to_previous(other);
+	if (self.fog_density) fog_save_to_previous(other);
+	if (self.skyfog_density) skyfog_save_to_previous(other);
 	
 	// spawn a temp entity to control the transition for this client
 	entity controller;
@@ -444,6 +503,7 @@ void() trigger_fog_touch = {
 	controller.speed2 = self.speed; // speed2 is used when state is 0
 	controller.fog_color = self.fog_color;
 	controller.fog_density = self.fog_density;
+	controller.skyfog_density = self.skyfog_density;
 
 	controller.pain_finished = time + self.delay + self.speed;
 
@@ -465,6 +525,10 @@ CAVEATS:
 */
 
 void() trigger_fog = {
+	if (!self.fog_density && !self.skyfog_density) {
+		objerror("Neither fog density nor skyfog density set");
+		return;
+	}
 	InitTrigger ();
 	self.touch = trigger_fog_touch;
 	if (!self.speed) self.speed = 1;
