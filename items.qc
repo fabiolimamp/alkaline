@@ -699,7 +699,7 @@ void() weapon_proximity_gun =
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_mine.mdl");
 	setmodel (self, "progs/g_mine.mdl");
 	self.weapon = WEAPON_PROXIMITY_GUN;
-	self.netname = "Proximity Gun";
+	self.netname = "Proximity Launcher";
 	self.touch = weapon_touch;
 	if(!self.ammo_rockets) self.ammo_rockets = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
@@ -1490,9 +1490,9 @@ void() DropBackpack =
 	else if (item.weapons == WEAPON_LASER_CANNON)
 		item.netname = "Laser Cannon";
 	else if (item.weapons == WEAPON_PLASMA)
-		item.netname = "Plasma Gun";
+		item.netname = "Plasma Rifle";
 	else if (item.weapons == WEAPON_PROXIMITY_GUN)
-		item.netname = "Proximity Gun";
+		item.netname = "Proximity Launcher";
 	else if (item.weapons == WEAPON_CHAINSAW)
 		item.netname = "Chainsaw";
 	else
