@@ -195,7 +195,7 @@ void() weapon_plasmagun =
 	setmodel (self, "progs/g_plasma.mdl");
 	self.weapon = WEAPON_PLASMA;
 	self.classname = "weapon_plasmagun";
-	self.netname = "Plasma Gun";
+	self.netname = "Plasma Rifle";
 	self.touch = weapon_touch;
   if(!self.ammo_cells) self.ammo_cells = 15;
 	setsize (self, '-16 -16 0', '16 16 56');
