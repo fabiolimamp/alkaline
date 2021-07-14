@@ -1888,14 +1888,12 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 			if (attacker.classname == "trap_shooter" || attacker.classname == "trap_spikeshooter")
 			{
-				//johnfitz -- lasers need different obituary
-				if (attacker.spawnflags & 2) //SPAWNFLAG_LASER		
-				{
+				if (attacker.spawnflags & 2) // TRAP_LASER		
 					bprint (" was zapped by a frickin' laser beam\n");
-					return;
-				}
-				//johnfitz
-				bprint (" was spiked\n");
+				else if (attacker.spawnflags & 4) // TRAP_ROCKET
+					bprint (" rode a rocket\n");
+				else
+					bprint (" was spiked\n");
 				return;
 			}
 			if (attacker.classname == "fireball")

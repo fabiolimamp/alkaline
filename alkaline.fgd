@@ -1022,10 +1022,19 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 @PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter" 
 [	
 	angle(integer) : "Angle"
+	dmg(integer) : "Custom damage" : : "Custom projectile damage. Defaults:
+	- Spike: 9
+	- Superspike: 18
+	- Laser: 15
+	- Rocket: 60"
+	speed(integer) : "Custom projectile speed" : : "Defaults:
+	- Spike/Superspike/rocket: 500
+	- Laser: 600"
 	spawnflags(Flags) = 
 	[
 		1 : "Superspike" : 0
 		2 : "Laser" : 0
+		4 : "Rocket" : 0
 	]
 ]
 

@@ -409,7 +409,7 @@ BecomeExplosion moved to fx.qc
 
 void() T_MissileTouch =
 {
-	local float	damg;
+	local float	damg, rdamg;
 
 	if (other == self.owner)
 		return;		// don't explode on owner
@@ -420,7 +420,15 @@ void() T_MissileTouch =
 		return;
 	}
 
-	damg = 100 + random()*20;
+	// rocket can have a custom damage
+	if (self.dmg) {
+		damg = zeroconvert(self.dmg);
+		rdamg = damg;
+	}
+	else {
+		damg = 100 + random()*20;
+		rdamg = 120;
+	}
 	
 	if (other.health)
 	{
@@ -431,7 +439,7 @@ void() T_MissileTouch =
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 120, other);
+	T_RadiusDamage (self, self.owner, rdamg, other);
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -488,9 +496,33 @@ void() T_MissileTouchArma =
 W_FireRocket
 ================
 */
+
+void(vector org, vector dir) launch_rocket = {
+	//local	entity missile;
+
+	newmis = spawn();
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLYMISSILE;
+	newmis.solid = SOLID_BBOX;
+	newmis.classname = "missile";
+	newmis.flags = newmis.flags | FL_PROJECTILE;
+	newmis.touch = T_MissileTouch;
+
+	newmis.angles = vectoangles(dir);
+	newmis.velocity = dir * 1000;
+
+	setmodel (newmis, "progs/missile.mdl");
+	setsize (newmis, '0 0 0', '0 0 0');
+	setorigin (newmis, org);
+
+	newmis.nextthink = time + 5;
+	newmis.think = SUB_Remove;
+	//newmis = missile;
+};
+
 void() W_FireRocket =
 {
-	local	entity missile;
+	local	vector dir, org;
 	
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
@@ -498,28 +530,12 @@ void() W_FireRocket =
 
 	self.punchangle_x = -2;
 
-	missile = spawn ();
-	missile.owner = self;
-	missile.movetype = MOVETYPE_FLYMISSILE;
-	missile.solid = SOLID_BBOX;
-	missile.classname = "missile";
-	missile.flags = missile.flags | FL_PROJECTILE;
-// set missile speed	
-
 	makevectors (self.v_angle);
-	missile.velocity = aim(self, 1000);
-	missile.velocity = missile.velocity * 1000;
-	missile.angles = vectoangles(missile.velocity);
+	dir = aim(self, 1000);
+	org = self.origin + v_forward*8 + '0 0 16';
 	
-	missile.touch = T_MissileTouch;
-	
-// set missile duration
-	missile.nextthink = time + 5;
-	missile.think = SUB_Remove;
+	launch_rocket(org, dir);
 
-	setmodel (missile, "progs/missile.mdl");
-	setsize (missile, '0 0 0', '0 0 0');		
-	setorigin (missile, self.origin + v_forward*8 + '0 0 16');
 };
 
 /*
@@ -817,7 +833,7 @@ void(float ox) W_FireSpikes =
 
 void() spike_touch =
 {
-//local float rand;
+	local float damage;
 	if (other == self.owner)
 		return;
 
@@ -833,8 +849,9 @@ void() spike_touch =
 // hit something that bleeds
 	if (other.takedamage)
 	{
-		spawn_touchblood (9);
-		T_Damage (other, self, self.owner, 9);
+		damage = zeroconvertdefault(self.dmg, 9);
+		spawn_touchblood(damage);
+		T_Damage(other, self, self.owner, damage);
 	}
 	else
 	{
@@ -857,7 +874,7 @@ void() spike_touch =
 
 void() superspike_touch =
 {
-//local float rand;
+	local float damage;
 	if (other == self.owner)
 		return;
 
@@ -873,8 +890,9 @@ void() superspike_touch =
 // hit something that bleeds
 	if (other.takedamage)
 	{
-		spawn_touchblood (18);
-		T_Damage (other, self, self.owner, 18);
+		damage = zeroconvertdefault(self.dmg, 18);
+		spawn_touchblood(damage);
+		T_Damage(other, self, self.owner, damage);
 	}
 	else
 	{
