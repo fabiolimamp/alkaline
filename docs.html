@@ -327,6 +327,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <h3 id="new-weapons">New weapons</h3>
 
 <ul>
+	<li><strong>Proximity Mine Launcher:</strong> </li>
 	<li><strong>Laser Cannon:</strong> The good-old laser-ricochet chaos-inducing weapon from Scourge of Armagon makes a comeback in Alkaline.</li>
 	<li><strong>Chainsaw:</strong> The chainsaw from Zerstörer, with a cool new model, animation and effects, if you like to get up close and personal with your foes.</li>
 	<li><strong>Plasma Rifle:</strong> A completely new weapon! Not the most powerful energy weapon, but it's great for mowing down large groups of enemies as quickly as it mows down your cells.</li>
@@ -547,7 +548,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <hr>
 
 <h2 id="advanced-triggering">Advanced triggering</h2>
-<p>Alkaline has some very advanced scripting through 2 specialized entites.</p>
+<p>Alkaline has some very advanced scripting through some specialized entites.</p>
 
 <h3 id="trigger_filter">trigger_filter</h3>
 <p>This point entity relays only if a given condition evaluates to true, unleashing ultimate scripting capabilites. You can test various fields on the entity targeted by the <strong>include</strong> field (you can target another entity's <strong>targetname2</strong> as well). If you let the <strong>include</strong> field empty, it'll test against the activating entity instead, be it a player, a monster or anything else - see <strong>trigger_everything</strong> below for more details.</p>
@@ -577,6 +578,11 @@ Also, the state of the last evaluation is stored in this entity's <strong>state<
 
 <p>By default it'll fire for each and every registered touch, even if simultaneous. If given a <strong>wait</strong> value, it'll act like a trigger_multiple, where a single activation puts it on hold for <strong>wait</strong> seconds. If the target is a trigger_filter, you can set it to wait only if the filter evaluates to true through the spawnflag <strong>Wait only if trigger_filter evaluates to true</strong>.</p>
 
+<h3 id="target_setcount">target_setcount</h3>
+<p>Changes the targeted entity's <strong>count</strong> field. Targets both targetname and targetname2 fields.
+Can be used with a <strong>trigger_filter</strong> to dinamically change its float comparing value, or to reset/change a <strong>trigger_counter</strong>'s current use count.</p>
+
+<p>You can either replace the current value with a new one, or add to/subtract from it (using a positive or negative <strong>count</strong>), by selecting into the <strong>style</strong> field.</p>
 
 <hr>
 <h2 id="shadows">Shadows</h2>
@@ -639,6 +645,7 @@ Also, the state of the last evaluation is stored in this entity's <strong>state<
 <p>You can set a fog value into all player start entities, teleport destinations, and intermission cameras, so the fog will change instantly to the set value when a player makes use of them. This way, the player's view can move to a different fog zone without having to pass through a fog trigger.</p>
 <p>An important note from Copper about this fog system:</p>
 <blockquote>The fog keyvalue that goes on Worldspawn doesn't interact with this system. It is a feature of various engines (such as those in the Fitzquake family) and isn't interpreted by game code. The reason for this is that it's interpreted as four values (one for density and three for color) and set by the engine at load time. The numeric fields that are passed on to the game code (ie Copper), however, can only be one value (a float) or three (a vector). If you set fog in your world with a fog parameter on worldspawn, and never bother with fog_color and fog_density on any entities, you'll get the usual static global fog the way it's always worked. Color and density on a player start will be evaluated on the first frame of gameplay, and will override any fog set by the engine.</blockquote>
+<p>Setting the fog density to -1 will disable the fog.</p>
 
 <h3 id="trigger_fogblend">Blending fog between two areas</h3>
 <p>Using the <strong>trigger_fogblend</strong> brush entity, you can smoothly blend between two fog values as the player moves across the trigger. It's not temporal-based, instead it's based on how far the player moves within it.</p>
@@ -649,7 +656,8 @@ Also, the state of the last evaluation is stored in this entity's <strong>state<
 <p>And the <strong>target_fogblend</strong> point entity toggles the activating player's fog between two different settings, also with a custom transition time. The first activation makes it blend in from the current fog, and the subsequent ones make it toggle between two values. You can optionally set the fog to be applied to all players.</p>
 
 <h3 id="skyfog">Sky fog</h3>
-<p>Alkaline doesn't yet support changing the skyfog dinamically like in AD, but you can set a map-wide value with the <strong>skyfog_density</strong> worldspawn key.</p>
+<p>All entities that change the fog can change skyfog density as well, with the key <strong>skyfog_density/skyfog_density2</strong>. The same transitions to the usual fog apply to skyfog.</p>
+<p>If you want to disable skyfog, set the field to -1. Leaving it unset, or set to 0, will keep the skyfog unchanged. In case you want to change only the skyfog density and not change the standard fog, set <strong>fog_density</strong> to 0.</p>
 
 <hr>
 
@@ -744,6 +752,8 @@ Also, the state of the last evaluation is stored in this entity's <strong>state<
 
 <h3 id="other-effects">Other effects</h3>
 <ul>
+	<li><strong>Trap shooters:</strong> Now can fire rockets, and have projectile speed and damage customized.</li>
+	<li><strong>Laser turret:</strong> the <strong>func_turret</strong> brush entity creates a rotating laser shooter that aims at the player in any horizontal direction.</li>
 	<li><strong>Smoke:</strong> From Rubicon2, there's the <strong>misc_smoke</strong> point entity. Produces a jet of smoke/steam. If targeted, it will toggle between on or off.</li>
 	<li><strong>Sparks:</strong> the <strong>misc_sparks</strong>, also from Rubicon2. Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks.</li>
 	<li><strong>Meat/gibs:</strong> <strong>target_meat_fireworks</strong>. Does what it says on the tin. Meat fireworks. Can be fired once or on a periodic basis.</li>
