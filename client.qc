@@ -1774,7 +1774,7 @@ void(entity targ, entity attacker) ClientObituary =
 				if (attacker.classname == "monster_fish")
 					bprint (" was fed to the Rotfish\n");
 				if (attacker.classname == "monster_hell_knight")
-					bprint (" was slain by a Death Knight\n");
+					bprint (" was slain by a Sabre Knight\n");
 				if (attacker.classname == "monster_knight")
 					bprint (" was slashed by a Knight\n");
 				if (attacker.classname == "monster_ogre")
@@ -1794,7 +1794,7 @@ void(entity targ, entity attacker) ClientObituary =
 				if (attacker.classname == "monster_vomit")
 					bprint (" was vomited on by a Vomitus\n");
 				if (attacker.classname == "monster_wizard")
-					bprint (" was scragged by a Scrag\n");
+					bprint (" was scorched by a CyberScrag\n");
 				if (attacker.classname == "monster_zombie")
 					bprint (" joins the Zombies\n");
 				if (attacker.classname == "monster_arachnofloyd")
