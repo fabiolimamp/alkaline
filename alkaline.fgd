@@ -814,7 +814,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 "Sabre Knight, 250 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/wizard.mdl"}) = monster_wizard :
-"Scrag (Wizard), 80 health points." []
+"CyberScrag, 80 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/demon.mdl"}) = monster_demon1 :
 "Fiend (Demon), 300 health points." []
@@ -899,7 +899,7 @@ Don't shake hands with this crazy bastard!" []
 "Hunter, 600 health points." []
 
 @PointClass base(Monster) size(32 32 48) model({"path":"progs/eel2.mdl"}) = monster_eel :
-"Eel, 25 health points." []
+"Eel, 60 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/frogman.mdl"}) = monster_frogman :
 "Frogman, 100 health points." []
