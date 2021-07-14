@@ -1415,3 +1415,51 @@ void() trigger_everything = {
 	self.touch = trigger_everything_touch;
 	SUB_CheckWaiting();
 };
+
+
+/*
+=============================================================
+
+target_setcount
+
+=============================================================
+*/
+
+void(string name, .string fld) target_setcount_set = {
+	local entity t;
+
+	t = find(world, fld, name);
+
+	while (t) {
+		if (self.style == 1)
+			t.count += self.count;
+		else
+			t.count = self.count;
+
+		t = find(t, fld, name);
+	}
+};
+
+void() target_setcount_use = {
+	if (self.target && self.target != "") {
+		target_setcount_set(self.target, targetname);
+		target_setcount_set(self.target, targetname2);
+	}
+	if (self.target2 && self.target2 != "") {
+		target_setcount_set(self.target2, targetname);
+		target_setcount_set(self.target2, targetname2);
+	}
+	if (self.target3 && self.target3 != "") {
+		target_setcount_set(self.target3, targetname);
+		target_setcount_set(self.target3, targetname2);
+	}
+	if (self.target4 && self.target4 != "") {
+		target_setcount_set(self.target4, targetname);
+		target_setcount_set(self.target4, targetname2);
+	}
+};
+
+void() target_setcount = {
+	self.use = target_setcount_use;
+
+};

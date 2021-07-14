@@ -2117,6 +2117,24 @@ By default it'll fire for each and every registered touch, even if simultaneous.
 ]
 
 
+@PointClass base(Appearflags, Targetname) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
+Can be used with a trigger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
+
+You can either replace the current value with a new one, or add/subtract to it (by using a positive or negative 'count'), by selecting into the 'style' field.
+" 
+[
+	target(target_destination) : "Target" 
+	target2(target_destination) : "Target" 
+	target3(target_destination) : "Target" 
+	target4(target_destination) : "Target"
+	style(choices) : "Set style" : 0 = [
+		0 : "Replace"
+		1 : "Add"
+	]
+	count(integer) : "Value to set"
+]
+
+
 @PointClass base(Appearflags, Targetname) = target_setdoor : "Moves a door to the specified position (open or closed).
 It respect the door's wait time and enabled/disabled state, but will move even if keylocked.
 " 
