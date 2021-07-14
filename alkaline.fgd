@@ -321,7 +321,8 @@ NO_MONSTERS: object ignores damage from monsters"
 "A rotating laser shooter that aims at the player in any horizontal direction. Has a capped rotation speed based on skill setting. When triggered, toggles between active and inactive states.
 START_OFF spawns in the inactive state.
 Place in the level in the active/attacking position for proper lighting.
-See Rubicon 2 for examples of use." 
+The laser originates from the horizontal center at the bottom of the model. You can change the height offset through the 'height' key (positive values sets it higher, negative values lower it).
+." 
 [
 	movedir(string) : "Active to start_off" : : "the offset from active position to the initial START_OFF position"
 	movedir2(string) : "Active to deactive" : : "the offset from the active position to the deactivated position (after being previously active)"
