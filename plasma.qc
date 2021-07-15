@@ -64,7 +64,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadius
 				{
           if (CanDamage (head, inflictor) && head.waterlevel>0)
 					{	// shambler takes half damage from all explosions
-						if (head.classname == "monster_shambler")						
+						if (head.classname == "monster_shambler" || head.classname == "monster_bambler")						
 							T_Damage (head, inflictor, attacker, points*0.5);
 						else
 							T_Damage (head, inflictor, attacker, points);

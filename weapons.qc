@@ -422,7 +422,7 @@ void() T_MissileTouch =
 	
 	if (other.health)
 	{
-		if (other.classname == "monster_shambler")
+		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
 			damg = damg * 0.5;	// mostly immune
 		T_Damage (other, self, self.owner, damg );
 	}
@@ -460,7 +460,7 @@ void() T_MissileTouchArma =
 	
 	if (other.health)
 	{
-		if (other.classname == "monster_shambler")
+		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
 			damg = damg * 0.5;	// mostly immune
 		T_Damage (other, self, self.owner, damg );
 	}
