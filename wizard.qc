@@ -391,6 +391,7 @@ void(entity e) monster_wizard_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
+	self.bloodtype = SPAWN_YELLOWSPARK;
 
 	self.th_stand = wiz_stand1;
 	self.th_walk = wiz_walk1;
