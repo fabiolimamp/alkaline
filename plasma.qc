@@ -122,7 +122,7 @@ void() T_PlasmaTouch =
     remove(self);
     return;
   }
-  damg = 13;
+  damg = 17;
   
   if (other.health)
   {
