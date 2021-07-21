@@ -207,6 +207,7 @@ void(entity e) monster_tarbaby_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
+	if (self.obituary == "") self.obituary = "was slimed by a Spawn";
 
 	self.th_stand = tbaby_stand1;
 	self.th_walk = tbaby_walk1;

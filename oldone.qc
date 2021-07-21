@@ -270,6 +270,8 @@ void() monster_oldone =
 	setmodel (self, "progs/oldone.mdl");
 	setsize (self, '-160 -128 -24', '160 128 256');
 
+	if (self.obituary == "") self.obituary = "became one with Shub-Niggurath";
+	
 	self.health = 40000;		// kill by telefrag
 	self.think = old_idle1;
 	self.nextthink = time + 0.1;	

@@ -295,6 +295,7 @@ void(entity e) monster_frogman_start =
 	setsize(self, VEC_HULL_MIN, '16 16 40');
 
 	self.health = 100;
+	if (self.obituary == "") self.obituary = "was harpooned by a Frogman";
 
 	self.th_stand = frogmen_stand1;
 	self.th_walk = frogmen_walk1;

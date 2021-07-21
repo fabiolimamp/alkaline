@@ -195,6 +195,7 @@ void(entity e) monster_demon1_start =
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 300;
+	if (self.obituary == "") self.obituary = "was eviscerated by a Fiend";
 
 	self.th_stand = demon1_stand1;
 	self.th_walk = demon1_walk1;

@@ -345,6 +345,7 @@ void(entity e) monster_dog_start =
 
 	setsize (self, '-32 -32 -24', '32 32 40');
 	self.health = 25;
+	if (self.obituary == "") self.obituary = "was mauled by a Rottweiler";
 
 	self.th_stand = dog_stand1;
 	self.th_walk = dog_walk1;

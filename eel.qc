@@ -211,6 +211,7 @@ void(entity e) monster_eel_start =
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	self.health = 60;
+	if (self.obituary == "") self.obituary = "was electrified by an Eel";
 
 	self.th_stand = eel_stand1;
 	self.th_walk = eel_walk1;

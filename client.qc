@@ -1742,97 +1742,12 @@ void(entity targ, entity attacker) ClientObituary =
 			targ.frags = targ.frags - 1;
 			bprint (targ.netname);
 
-			// killed by a monster?
-			if (attacker.flags & FL_MONSTER)
+			// attacker has an obituary message? (all monsters have one by default)
+			if (attacker.obituary != "")
 			{
-				if (attacker.classname == "monster_army")
-					bprint (" was shot by a Grunt\n");
-				if (attacker.classname == "monster_nailgrunt")
-					bprint (" was nailed by a Nail Grunt\n");
-				if (attacker.classname == "monster_demon1")
-					bprint (" was eviscerated by a Fiend\n");
-				if (attacker.classname == "monster_dog")
-					bprint (" was mauled by a Rottweiler\n");
-				if (attacker.classname == "monster_dragon")
-					bprint (" was fried by a Dragon\n");
-				if (attacker.classname == "monster_eel")
-					bprint (" was electrified by an Eel\n");
-				if (attacker.classname == "monster_enforcer")
-					bprint (" was blasted by an Enforcer\n");
-				if (attacker.classname == "monster_fish")
-					bprint (" was fed to the Rotfish\n");
-				if (attacker.classname == "monster_hell_knight")
-					bprint (" was slain by a Sabre Knight\n");
-				if (attacker.classname == "monster_knight")
-					bprint (" was slashed by a Knight\n");
-				if (attacker.classname == "monster_ogre")
-					bprint (" was destroyed by an Ogre\n");
-				if (attacker.classname == "monster_ogre_marksman")
-					bprint (" was ruptured by an Ogre Marksman\n");
-				if (attacker.classname == "monster_oldone")
-					bprint (" became one with Shub-Niggurath\n");
-				if (attacker.classname == "monster_shalrath")
-					bprint (" was exploded by a Vore\n");
-				if (attacker.classname == "monster_shambler")
-					bprint (" was smashed by a Shambler\n");
-				if (attacker.classname == "monster_bambler")
-					bprint (" was bashed by a Bambler\n");
-				if (attacker.classname == "monster_tarbaby")
-					bprint (" was slimed by a Spawn\n");
-				if (attacker.classname == "monster_vomit")
-					bprint (" was vomited on by a Vomitus\n");
-				if (attacker.classname == "monster_wizard")
-					bprint (" was scorched by a CyberScrag\n");
-				if (attacker.classname == "monster_zombie")
-					bprint (" joins the Zombies\n");
-				if (attacker.classname == "monster_arachnofloyd")
-					bprint (" was disintegrated by an Arachnofloyd\n");
-
-				// new Zerstörer monster
-				if (attacker.classname == "monster_me")
-					bprint (" was vaporized by a Mega-enforcer\n");
-
-				// new Forwards Compatible monster
-				if (attacker.classname == "monster_super_enforcer")
-					bprint (" was shredded by a Lieutenant\n");
-
-				// new Rubicon Rumble Pack monsters
-				if (attacker.classname == "monster_hunter")
-					bprint (" was hammered by a Hunter\n");
-				if (attacker.classname == "monster_ogreb")
-					bprint (" was sawn by a Berserker\n");
-
-				// new Operation: Urth Majik monster
-				if (attacker.classname == "monster_drone")
-					bprint(" was drilled by a Drone\n");
-
-				// new Concentric Devastation monster
-				if (attacker.classname == "monster_axegrunt")
-					bprint (" got the chop from an Axe Grunt\n");
-
-				// new Scourge of Armagon monsters
-            			if (attacker.classname == "monster_scourge")
-               				bprint (" was stung by a Centroid\n");
-				if (attacker.classname == "monster_armagon")
-               				bprint (" was outgunned by Ogregon\n");
-
-				//johnfitz new obituaries
-				if (attacker.classname == "monster_floyd")
-					bprint (" was made obsolete by an Automaton\n");
-				if (attacker.classname == "monster_dreadnaught")
-					bprint (" was incinerated by a Dreadnaught\n");
-				if (attacker.classname == "monster_centurion")
-					bprint (" was perforated by a Centurion\n");
-				//johnfitz
-				
-				if (attacker.classname == "monster_frogman")
-					bprint (" was harpooned by a Frogman\n"); 
-				if (attacker.classname == "monster_banshee")
-					bprint (" was wrecked by an Annihilator\n");
-				if (attacker.classname == "monster_rider")
-					bprint (" was picked off by a Prowler\n");
-				if (attacker.classname == "monster_probe")
-					bprint (" was plugged by a Probe\n");		
+				bprint(" ");
+				bprint(attacker.obituary);
+				bprint("\n");
 				return;
 			}
 			

@@ -273,6 +273,7 @@ void(entity e) monster_bambler_start =
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 500;
+	if (self.obituary == "") self.obituary = "was bashed by a Bambler";
 
 	self.th_stand = bam_stand1;
 	self.th_walk = bam_walk1;

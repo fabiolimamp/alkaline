@@ -495,6 +495,7 @@ void(entity e) monster_probe_start = {
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	self.yaw_speed = 9;
 	self.health = 200;
+	if (self.obituary == "") self.obituary = "was plugged by a Probe";
 
 	self.worldtype = 0.75;
 	self.state = 0;

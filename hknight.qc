@@ -414,6 +414,7 @@ void(entity e) monster_hell_knight_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 250;
+	if (self.obituary == "") self.obituary = "was slain by a Sabre Knight";
 
 	self.th_stand = hknight_stand1;
 	self.th_walk = hknight_walk1;

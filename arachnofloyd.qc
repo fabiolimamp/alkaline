@@ -509,6 +509,8 @@ void(entity e) monster_arachnofloyd_start =
 	self.th_sight = arf_sight;
 	self.th_checkattack = arfCheckAttack;
 
+	if (self.obituary == "") self.obituary = "was disintegrated by an Arachnofloyd";
+
 
 	self.think = walkmonster_start;
 	self.nextthink = time + 0.1 + random ()*0.1;	

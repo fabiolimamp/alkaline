@@ -341,6 +341,7 @@ void(entity e) monster_dreadnaught_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 150;
+	if (self.obituary == "") self.obituary = "was incinerated by a Dreadnaught";
 
 	self.th_stand = dread_stand1;
 	self.th_walk = dread_walk1;

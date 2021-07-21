@@ -340,6 +340,7 @@ void(entity e) monster_enforcer_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
+	if (self.obituary == "") self.obituary = "was blasted by an Enforcer";
 
 	self.th_stand = enf_stand1;
 	self.th_walk = enf_walk1;

@@ -304,6 +304,7 @@ FIELDS
 .float 		pausetime;
 .entity 	movetarget;
 .entity		sibling;
+.string 	obituary;
 
 .float spawncount; // spawner's maximum monsters alive at the same time allowed
 .float totalspawncount; // total spawn count limit
