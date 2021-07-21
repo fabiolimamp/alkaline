@@ -73,6 +73,8 @@ axegrunt.qc		// Lunaran
 eel.qc			// Rogue
 bambler.qc		// greenwood
 
+spider.qc
+
 monster_frogman.qc // Malice
 monster_banshee.qc // Malice
 monster_rider.qc // Malice
