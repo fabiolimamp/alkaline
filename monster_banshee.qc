@@ -535,6 +535,7 @@ void(entity e) monster_banshee_start =
 		self.health = 1300;
 		self.worldtype = 0.75;
 	}
+	if (self.obituary == "") self.obituary = "was wrecked by an Annihilator";
 	
 	self.state = 0;
 	self.super_time = 0;

@@ -480,6 +480,7 @@ void(entity e) monster_scourge_start =
 
    setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
    self.health = 300;
+   if (self.obituary == "") self.obituary = "was stung by a Centroid";
 
    if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
    

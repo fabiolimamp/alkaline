@@ -285,6 +285,7 @@ void(entity e) monster_axegrunt_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 75;
+	if (self.obituary == "") self.obituary = "got the chop from an Axe Grunt";
 
 	self.th_stand = axe_stand1;
 	self.th_walk = axe_walk1;

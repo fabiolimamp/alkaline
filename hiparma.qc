@@ -932,6 +932,7 @@ void(entity e) monster_armagon_start =
       self.health = 3500;
       self.worldtype = 0.75;
    }
+   if (self.obituary == "") self.obituary = "was outgunned by Ogregon";
    self.state = 0;
    self.super_time = 0;
    self.endtime = 0;

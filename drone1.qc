@@ -378,6 +378,7 @@ void(entity e) monster_drone_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 100;
+	if (self.obituary == "") self.obituary = "was drilled by a Drone";
 	self.touch = DroneTouch;
 		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 

@@ -670,6 +670,7 @@ void(entity e) monster_ogre_start =
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 200;
+	if (self.obituary == "") self.obituary = "was destroyed by an Ogre";
 
 	self.th_stand = ogre_stand1;
 	self.th_walk = ogre_walk1;
@@ -737,6 +738,7 @@ void(entity e) monster_ogre_marksman_start =
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 200;
+	if (self.obituary == "") self.obituary = "was ruptured by an Ogre Marksman";
 
 	self.th_stand = ogre_stand1;
 	self.th_walk = ogre_walk1;

@@ -463,6 +463,7 @@ void(entity e) monster_ogreb_start =
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 250;	//ogre is 200
+	if (self.obituary == "") self.obituary = "was sawn by a Berserker";
 
 	self.th_stand = ogreb_stand1;
 	self.th_walk = ogreb_walk1;

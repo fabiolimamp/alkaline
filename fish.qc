@@ -178,6 +178,7 @@ void(entity e) monster_fish_start =
 
 	setsize (self, '-16 -16 -24', '16 16 24');
 	self.health = 25;
+	if (self.obituary == "") self.obituary = "was fed to the Rotfish";
 	
 	self.th_stand = f_stand1;
 	self.th_walk = f_walk1;

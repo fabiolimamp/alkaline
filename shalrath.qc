@@ -218,6 +218,7 @@ void(entity e) monster_shalrath_start =
 	setmodel (self, "progs/shalrath.mdl");
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 400;
+	if (self.obituary == "") self.obituary = "was exploded by a Vore";
 
 	self.th_stand = shal_stand;
 	self.th_walk = shal_walk1;

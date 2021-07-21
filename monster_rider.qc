@@ -503,6 +503,7 @@ void(entity e) monster_rider_start =
 		self.health = 777;
 		self.worldtype = 0.75;
 	}
+	if (self.obituary == "") self.obituary = "was picked off by a Prowler";
 	
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 

@@ -391,6 +391,7 @@ void(entity e) monster_shambler_start =
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 600;
+	if (self.obituary == "") self.obituary = "was smashed by a Shambler";
 
 	self.th_stand = sham_stand1;
 	self.th_walk = sham_walk1;

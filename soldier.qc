@@ -359,7 +359,8 @@ void(entity e) monster_army_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 30;
-
+	if (self.obituary == "") self.obituary = "was shot by a Grunt";
+	
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;
 	self.th_run = army_run1;
@@ -389,6 +390,7 @@ void(entity e) monster_nailgrunt_start =
 	
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 30;
+	if (self.obituary == "") self.obituary = "was nailed by a Nail Grunt";
 
 	self.th_stand = army_stand1;
 	self.th_walk = army_walk1;

@@ -522,6 +522,7 @@ void(entity e) monster_floyd_start =
 
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 
+	if (self.obituary == "") self.obituary = "was made obsolete by an Automaton";
 	if (self.spawnflags & FLOYD_ROLLING)
 	{
 		setsize(self, get_floyd_mins(self), get_floyd_maxs(self));

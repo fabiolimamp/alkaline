@@ -854,6 +854,7 @@ void(entity e) monster_hunter_start =
 
 	setsize (self,	VEC_HULL2_MIN,	VEC_HULL2_MAX);	
 	self.health	=	600;
+	if (self.obituary == "") self.obituary = "was hammered by a Hunter";
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	
 	self.th_stand = hunter_check_idle;

@@ -60,7 +60,6 @@ void() super_enforcer_fire =
 
 	self.attack_finished = time + lth_attackfinished + random();
 
-	dprint("shot ");dprint(ftos(self.count));dprint("\n");
 };
 
 //============================================================================
@@ -239,6 +238,7 @@ void(entity e) monster_super_enforcer_start =
 		self.health = 120;
 	self.armortype = 0.8;
 	self.armorvalue = 1000;
+	if (self.obituary == "") self.obituary = "was shredded by a Lieutenant";
 
 	self.th_stand 	= lth_stand1;
 	self.th_walk 	= lth_walk1;

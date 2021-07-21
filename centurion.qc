@@ -476,6 +476,7 @@ void(entity e) monster_centurion_start =
 
 	setsize (self, '-22 -22 -24', '22 22 48');
 	self.health = 150;
+	if (self.obituary == "") self.obituary = "was perforated by a Centurion";
 
 	self.th_stand = cent_stand_random;
 	self.th_walk = cent_walk1;

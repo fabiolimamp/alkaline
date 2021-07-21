@@ -266,6 +266,7 @@ void(entity e) monster_knight_start =
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 75;
+	if (self.obituary == "") self.obituary = "was slashed by a Knight";
 
 	self.th_stand = knight_stand1;
 	self.th_walk = knight_walk1;
