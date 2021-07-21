@@ -331,7 +331,12 @@ void() FoundTarget =
 	// sight function, stored in the monster's "th_sight" field,
 	// and called here.
 	if (self.th_sight && !(self.spawnflags & MONSTER_NOSIGHTSOUND)) self.th_sight();
-	HuntTarget ();
+	HuntTarget();
+
+	// Optional wake function, in case the monster has some "going angry" animation.
+	// If this function sets new animation frames, or a different think function,
+	// it'll need to call HuntTarget() by itself afterwards.
+	if (self.th_wake) self.th_wake();
 };
 
 /*
