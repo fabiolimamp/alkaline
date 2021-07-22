@@ -38,6 +38,8 @@ void() rider_think = {
 
 	SUB_Copyonground();
 	
+	self.effects = 0;
+
 	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
@@ -347,7 +349,7 @@ void(float aheadframes) rider_aim = {
 void() rider_rail_shoot =
 {
 	local vector src, vec, shotdest;
-	local float shotdistance, segments, enemydistance;
+	local float shotdistance, segments, enemydistance, endsegment;
 	
 	//if !(visible(self.enemy))
 	//	return;
@@ -355,7 +357,7 @@ void() rider_rail_shoot =
 	//T_Damage(self.enemy, self, self, 50);
 
 	makevectors(self.angles);
-	src = self.origin + '0 0 28' + v_right * 10 + v_forward * 2;
+	src = self.origin + '0 0 16' + v_right * 10 + v_forward * 2;
 	
 	enemydistance = vlen(src - self.enemy.origin);
 
@@ -372,50 +374,63 @@ void() rider_rail_shoot =
 	}
 
 	shotdistance = vlen(src - trace_endpos);
-//	how many railbeam models do we need to draw
-//	where 32 = the length of our beam model
+
+	//	how many railbeam models do we need to draw
+	//	where 32 = the length of our beam model
 	segments = floor(shotdistance / 32);
-	
-	while (segments){
-		
+	endsegment = TRUE;
+
+	while (segments) {
 		vec = normalize(trace_endpos - src);
-		launch_spike (src, vec);
-		newmis.owner = self.owner;
+
+		newmis = spawn();
 		newmis.classname = "railbeam";
-		setmodel (newmis, "progs/rail.mdl");
-		setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);	
+
+		setmodel(newmis, "progs/rail.mdl");
+		setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);	
 		setorigin(newmis, src + vec * 32 * segments);
-		newmis.solid = SOLID_NOT;
-		newmis.touch = SUB_Null;
-		newmis.think = rail_fade;
-		newmis.movetype = MOVETYPE_NONE;
-		newmis.nextthink = time + 0.6;
-		newmis.velocity = 0;
-		segments = segments - 1;
+
 		newmis.frame = 2;
-		newmis.cnt = 5;	
+		newmis.angles = vectoangles(vec);
+		newmis.owner = self;
+		newmis.flags = newmis.flags | FL_PROJECTILE;
+
+		newmis.think = rail_fade;
+		newmis.nextthink = time + 0.6;
+
+		newmis.cnt = 5;
+
+		segments = segments - 1;
+
+		// Plays impact sound where the shot hits (at the last segment).
+		// Segments are drawn in an inverse order, so the last one is the first to spawn.
+		if (endsegment) {
+			endsegment = FALSE;
+			sound(newmis, CHAN_AUTO, "rider/thump.wav", 1, ATTN_STATIC);
+		}
 	}
+	
 
 };
 
 
 void() rider_rail1 = 	[42, rider_rail2]	{ai_face(); rider_think(); self.yaw_speed = 40; rider_charge(); };
 void() rider_rail2 = 	[43, rider_rail3]	{ai_face(); rider_think(); };
-void() rider_rail3 = 	[44, rider_rail4]	{ai_face(); rider_think(); rider_charge(); };
-void() rider_rail4 = 	[45, rider_rail5]	{ai_face(); rider_think(); self.attack_finished = time + 3.4; };
-void() rider_rail5 = 	[46, rider_rail6]	{ai_face(); rider_think(); rider_charge(); };
-void() rider_rail6 = 	[47, rider_rail7]	{ai_face(); rider_think(); };
-void() rider_rail7 = 	[48, rider_rail8]	{ai_face(); rider_think(); rider_charge(); sound (self, CHAN_VOICE, "rider/step.wav", 1, ATTN_NORM); };
-void() rider_rail8 = 	[49, rider_rail9]	{ai_face(); rider_think(); rider_charge(); };
-void() rider_rail9 = 	[50, rider_rail10]	{ai_face(); rider_think();};
-void() rider_rail10 = 	[51, rider_rail11]	{ai_face(); rider_think(); Rider_Push(); rider_charge(); };
+void() rider_rail3 = 	[44, rider_rail4]	{ai_face(); rider_think(); rider_charge(); self.effects = EF_DIMLIGHT;};
+void() rider_rail4 = 	[45, rider_rail5]	{ai_face(); rider_think(); self.attack_finished = time + 3.4;  self.effects = EF_DIMLIGHT;};
+void() rider_rail5 = 	[46, rider_rail6]	{ai_face(); rider_think(); rider_charge();  self.effects = EF_DIMLIGHT;};
+void() rider_rail6 = 	[47, rider_rail7]	{ai_face(); rider_think();  self.effects = EF_DIMLIGHT;};
+void() rider_rail7 = 	[48, rider_rail8]	{ai_face(); rider_think(); rider_charge(); sound (self, CHAN_VOICE, "rider/step.wav", 1, ATTN_NORM);  self.effects = EF_DIMLIGHT;};
+void() rider_rail8 = 	[49, rider_rail9]	{ai_face(); rider_think(); rider_charge();  self.effects = EF_DIMLIGHT;};
+void() rider_rail9 = 	[50, rider_rail10]	{ai_face(); rider_think(); self.effects = EF_DIMLIGHT;};
+void() rider_rail10 = 	[51, rider_rail11]	{ai_face(); rider_think(); Rider_Push(); rider_charge(); self.effects = EF_DIMLIGHT;};
 void() rider_rail11 = 	[52, rider_rail12]	{rider_think_rail(36, -12); };
 void() rider_rail12 = 	[52, rider_rail13]	{rider_think_rail(37, -12); };
-void() rider_rail13 = 	[52, rider_rail14]	{rider_think_rail(38, -12); };
-void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM); if(startskill == SKILL_EASY) rider_aim(3);};
+void() rider_rail13 = 	[52, rider_rail14]	{rider_think_rail(38, -12); sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM); };
+void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); if(startskill == SKILL_EASY) rider_aim(3); self.effects = 0;};
 void() rider_rail15 = 	[52, rider_rail16]	{rider_think_rail(38, -12); if(startskill == SKILL_NORMAL) rider_aim(1.5);};
 void() rider_rail16 = 	[52, rider_rail17]	{rider_think_rail(38, -12); if(startskill == SKILL_HARD) rider_aim(1.8); if(startskill == SKILL_NIGHTMARE) rider_aim(1);};
-void() rider_rail17 = 	[52, rider_rail18]	{rider_think_rail(38, -12); rider_rail_shoot();};
+void() rider_rail17 = 	[52, rider_rail18]	{rider_think_rail(38, -12); rider_rail_shoot();self.effects = EF_MUZZLEFLASH;};
 void() rider_rail18 = 	[52, rider_rail19]	{rider_think_rail(39, -12); };
 void() rider_rail19 = 	[52, rider_rail20]	{rider_think_rail(40, -12); };
 void() rider_rail20 = 	[53, rider_rail21]	{rider_think_rail(41, -8); };
@@ -541,16 +556,13 @@ void() monster_rider =
 	precache_model("progs/laser.mdl");
 	precache_model("progs/d_explod.spr");
 	
-	// temp charge sound
 	precache_sound ("misc/power.wav");		
 	precache_sound("rider/down2.wav");
 	precache_sound("rider/step.wav");
-	precache_sound("rider/rail.wav");	
-	precache_sound("rider/step.wav");
+	precache_sound("rider/rail.wav");
 	precache_sound("rider/sight.wav");
-	precache_sound("rider/shoot.wav");
+	precache_sound("rider/thump.wav");
 	precache_sound("rider/pain1.wav");
-	precache_sound("rider/down.wav");
 	precache_sound("rider/death.wav");
 	precache_sound("rider/idle.wav");
 	precache_sound("rider/idle2.wav");
