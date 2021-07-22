@@ -62,6 +62,18 @@ void() door_blocked = {
 	// so let it just squash the object to death real fast
 	if (self.wait >= 0 && !(self.spawnflags & DOOR_CRUSHING))
 	{
+
+		// stops all doors in the group immediately,
+		// so they won't keep moving/hurting until nextthink (usually a frame or so ahead)
+		entity oself, starte;
+		oself = starte = self;
+		do {
+			self.velocity = '0 0 0';
+			self.nextthink = -1;
+			self = self.enemy;
+		} while ( (self != starte) && (self != world) );
+		self = oself;
+
 		if (self.owner.groupstate == STATE_DOWN)
 			door_group_go_up ();
 		else
