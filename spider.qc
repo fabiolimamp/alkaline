@@ -115,14 +115,14 @@ void() spider_walk6 =	[15, spider_walk7]		{ai_walk(9); spider_findtarget();};
 void() spider_walk7 =	[16, spider_walk8]		{ai_walk(9); spider_findtarget();};
 void() spider_walk8 =	[17, spider_walk1]		{ai_walk(12); spider_findtarget();};
 
-void() spider_run1 =	[10, spider_run2]		{self.state = 0; ai_run(16); spider_swalk();};
-void() spider_run2 =	[11, spider_run3]		{ai_run(20);};
-void() spider_run3 =	[12, spider_run4]		{ai_run(16);};
-void() spider_run4 =	[13, spider_run5]		{ai_run(18); spider_swalk();};
-void() spider_run5 =	[14, spider_run6]		{ai_run(16);};
-void() spider_run6 =	[15, spider_run7]		{ai_run(20);};
-void() spider_run7 =	[16, spider_run8]		{ai_run(14); spider_swalk();};
-void() spider_run8 =	[17, spider_run1]		{ai_run(15);};
+void() spider_run1 =	[10, spider_run2]		{self.state = 0; ai_run(16*self.speed); spider_swalk();};
+void() spider_run2 =	[11, spider_run3]		{ai_run(20*self.speed);};
+void() spider_run3 =	[12, spider_run4]		{ai_run(16*self.speed);};
+void() spider_run4 =	[13, spider_run5]		{ai_run(18*self.speed); spider_swalk();};
+void() spider_run5 =	[14, spider_run6]		{ai_run(16*self.speed);};
+void() spider_run6 =	[15, spider_run7]		{ai_run(20*self.speed);};
+void() spider_run7 =	[16, spider_run8]		{ai_run(14*self.speed); spider_swalk();};
+void() spider_run8 =	[17, spider_run1]		{ai_run(15*self.speed);};
 
 void() spider_die2 = {
 	T_RadiusDamage(self, self, 80, self);
@@ -168,7 +168,8 @@ void(entity e) monster_spiderbot_start = {
 	setmodel(self, SPIDER_MODEL_BODY);
 	setsize(self, '-16 -16 0', '16 16 24');
 
-	self.health = 30;
+	if (!self.health) self.health = 40;
+	if (!self.speed) self.speed = 1.2;
 	if (self.obituary == "") self.obituary = "was blitzed by a Spiderbot";
 	self.th_stand = spider_stand;
 	self.th_walk = spider_walk1;
