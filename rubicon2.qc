@@ -135,7 +135,7 @@ void() make_breakable_debris =
 			new.alpha = 0.6;
 			new.frame = 1;
 		}
-		else { // BREAKABLE_GREENMETAL
+		else if (self.style == BREAKABLE_GREENMETAL) {
 			new.skin = 0;
 			if (random() > 0.333)
 				new.frame = 1; //larger
@@ -196,27 +196,33 @@ void () func_breakable =
 	setmodel (self, self.model);
 
 	if (self.style == BREAKABLE_REDMETAL) {
-		self.noise1 = "misc/metal_impact.wav";
-		self.mdl = "progs/debris.mdl";
-		if (!self.cnt) self.cnt = 6;
+		if (!self.noise1) self.noise1 = "misc/metal_impact.wav";
+		if (!self.mdl) self.mdl = "progs/debris.mdl";
+		self.cnt = zeroconvertdefault(self.cnt,6);
 		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
 	}
 	else if (self.style == BREAKABLE_CONCRETE) {
-		self.noise1 = "misc/conc_impact.wav";
-		self.mdl = "progs/debris.mdl";
-		if (!self.cnt) self.cnt = 6;
+		if (!self.noise1) self.noise1 = "misc/conc_impact.wav";
+		if (!self.mdl) self.mdl = "progs/debris.mdl";
+		self.cnt = zeroconvertdefault(self.cnt,6);
 		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
 	}
 	else if(self.style == BREAKABLE_GLASS) {
-		self.mdl = "maps/glass01.bsp";
-		self.noise1 = "misc/glass_impact.wav";
-		if (!self.cnt) self.cnt = 15;
+		if (!self.mdl) self.mdl = "maps/glass01.bsp";
+		if (!self.noise1) self.noise1 = "misc/glass_impact.wav";
+		self.cnt = zeroconvertdefault(self.cnt,15);
 		if (!self.bloodtype) self.bloodtype = SPAWN_WHITESPARK;
 	}
-	else { // BREAKABLE_GREENMETAL
-		self.noise1 = "misc/metal_impact.wav";
-		self.mdl = "progs/debris.mdl";
-		if (!self.cnt) self.cnt = 6;
+	else if (self.style == BREAKABLE_GREENMETAL) {
+		if (!self.noise1) self.noise1 = "misc/metal_impact.wav";
+		if (!self.mdl) self.mdl = "progs/debris.mdl";
+		self.cnt = zeroconvertdefault(self.cnt,6);
+		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
+	}
+	else {
+		if (!self.noise1) self.noise1 = "misc/null.wav";
+		if (!self.mdl) self.mdl = "progs/misc_empty.mdl";
+		self.cnt = zeroconvertdefault(self.cnt,6);
 		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
 	}
 

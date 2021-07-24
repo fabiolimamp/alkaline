@@ -283,7 +283,9 @@
 
 NO_MONSTERS: object ignores damage from monsters" 
 [
-	cnt(integer) : "Debris amount" :  : "Number of pieces of debris to spawn."
+	cnt(integer) : "Debris amount" :  : "Number of pieces of debris to spawn. Set to -1 to disable debris."
+	mdl(string) : "Custom debris model" : : "Overrides the model selected through 'style'. EG: 'progs/gib.mdl'"
+	noise1(string) : "Custom break sound" : : "Overrides the sound selected through 'style'. EG: 'player/gib.wav'"
 	health(integer) : "Health" : 20
 	style(choices) : "Debris color" : 0 = 
 	[
@@ -291,6 +293,7 @@ NO_MONSTERS: object ignores damage from monsters"
 		1: "Red metal"
 		2: "Concrete"
 		3: "Glass"
+		4: "Custom"
 	]
 	spawnflags(flags) =
 	[
