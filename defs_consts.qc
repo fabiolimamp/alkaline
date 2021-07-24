@@ -1,3 +1,4 @@
+string	VERSION_S				= "Alkaline v1.0.2";
 
 float	FALSE					= 0;
 float 	TRUE					= 1;
