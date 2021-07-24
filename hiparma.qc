@@ -655,7 +655,7 @@ void()   armagon_die14    =[ $ldie12.asc, armagon_die14    ]
 	self.takedamage = DAMAGE_NO;
    self.solid = SOLID_NOT;
    setsize (self, '-32 -32 -24', '32 32 32' );
-   self.flags = 0;
+   //self.flags = 0;
    self.gorging = TRUE;
    self.wait = time + 5;
 
