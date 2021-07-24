@@ -38,14 +38,16 @@ void()	s_explode6	=	[5,		SUB_Remove] {}
 
 void() BecomeBlast = 
 {
-	self.movetype = MOVETYPE_NONE;
+	self.movetype = MOVETYPE_FLY;
+	self.solid = SOLID_TRIGGER;
+	self.classname = "explosion";
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
 	if (other.classname == "monster_shambler")
 		setmodel (self, "progs/s_explo2.spr");
 	else
 		setmodel (self, "progs/s_explod.spr");
-	self.solid = SOLID_NOT;
+	setsize(self, '-16 -16 -16', '16 16 16');
 	self.nextthink = time + 0.5;
 	self.think = SUB_Remove;
 	s_explode1 ();
