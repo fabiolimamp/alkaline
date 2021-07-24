@@ -1721,6 +1721,13 @@ void() display_monsleft =
 	sprint(self, "\n\n");
 };
 
+
+void(entity cl) printVersionConsole = {
+	sprint(cl, "\b=============================================\b\n");
+	sprint(cl, VERSION_S);sprint(cl, "\n");
+	sprint(cl, "\b=============================================\b\n");
+};
+
 /*
 ============
 ImpulseCommands
@@ -1748,6 +1755,9 @@ void() ImpulseCommands =
 		GiveWeaponsCommand();
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
+	if (self.impulse == 128)
+		printVersionConsole(self);
+		//centerprint(self, VERSION_S);
 	if (self.impulse == 184)
 		display_monsleft();
 	if (self.impulse == 200)
