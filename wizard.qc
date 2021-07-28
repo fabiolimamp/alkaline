@@ -200,7 +200,10 @@ void() Wiz_FastFire =
 		dst = self.enemy.origin - 13*self.movedir;
 	
 		vec = normalize(dst - self.origin);
-		sound (self, CHAN_WEAPON, "wizard/wattack.wav", 1, ATTN_NORM);
+
+		if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
+		else sound (self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
+
 		launch_spike (self.origin, vec);
 		newmis.velocity = vec*600;
 		newmis.owner = self.owner;
@@ -217,7 +220,9 @@ void() Wiz_StartFast =
 {
 	local	entity	missile;
 	
-	sound (self, CHAN_WEAPON, "wizard/wattack.wav", 1, ATTN_NORM);
+	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
+
 	self.v_angle = self.angles;
 	makevectors (self.angles);
 
@@ -254,10 +259,14 @@ local float wr;
 	if (self.waitmin < time)
 	{
 	 	self.waitmin = time + 2;
-	 	if (wr > 4.5) 
-	 		sound (self, CHAN_VOICE, "wizard/widle1.wav", 1,  ATTN_IDLE);
-	 	if (wr < 1.5)
-	 		sound (self, CHAN_VOICE, "wizard/widle2.wav", 1, ATTN_IDLE);
+	 	if (wr > 4.5) {
+	 		if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/widle1.wav", 1, ATTN_IDLE);
+			else sound (self, CHAN_VOICE, "cyberscrag/widle1.wav", 1,  ATTN_IDLE);
+		}
+	 	if (wr < 1.5) {
+	 		if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/widle2.wav", 1, ATTN_IDLE);
+			else sound (self, CHAN_VOICE, "cyberscrag/widle2.wav", 1, ATTN_IDLE);
+	 	}
 	}
 	return;
 };
@@ -329,7 +338,8 @@ void()	wiz_death1	=[	$death1,		wiz_death2	] {
 	self.velocity_y = -200 + 400*random();
 	self.velocity_z = 100 + 100*random();
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	sound (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM);
+	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "cyberscrag/wdeath.wav", 1, ATTN_NORM);
 };
 void()	wiz_death2	=[	$death2,		wiz_death3	] {};
 void()	wiz_death3	=[	$death3,		wiz_death4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
@@ -345,7 +355,10 @@ void() wiz_die =
 	if (self.health < -40)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_wizard.mdl", self.health);
+
+		if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead("progs/h_wizard.mdl", self.health);
+		else ThrowHead("progs/h_cyberscrag.mdl", self.health);
+		
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -358,7 +371,9 @@ void() wiz_die =
 
 void(entity attacker, float damage) Wiz_Pain =
 {
-	sound (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM);
+	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "cyberscrag/wpain.wav", 1, ATTN_NORM);
+
 	if (random()*70 > damage)
 		return;		// didn't flinch
 
@@ -372,7 +387,8 @@ void() Wiz_Missile =
 };
 
 void() wiz_sight = {
-	sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
+	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "cyberscrag/wsight.wav", 1, ATTN_NORM);
 };
 
 /*QUAKED monster_wizard (1 0 0) (-16 -16 -24) (16 16 40) Ambush
@@ -387,12 +403,18 @@ void(entity e) monster_wizard_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/wizard.mdl");
+	if (self.spawnflags & MONSTER_ORIGINAL)	setmodel (self, "progs/wizard.mdl");
+	else setmodel (self, "progs/cyberscrag.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
-	if (self.obituary == "") self.obituary = "was scorched by a CyberScrag";
-	self.bloodtype = SPAWN_YELLOWSPARK;
+	if (self.obituary == "") {
+		if (self.spawnflags & MONSTER_ORIGINAL) self.obituary = "was scragged by a Scrag";
+		else self.obituary = "was scorched by a CyberScrag";
+	}
+	
+	if (self.spawnflags & MONSTER_ORIGINAL) self.bloodtype = SPAWN_BLOOD;
+	else self.bloodtype = SPAWN_YELLOWSPARK;
 
 	self.th_stand = wiz_stand1;
 	self.th_walk = wiz_walk1;
@@ -419,18 +441,36 @@ void() monster_wizard =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/wizard.mdl");
-	precache_model ("progs/h_wizard.mdl");
+	
+	if (self.spawnflags & MONSTER_ORIGINAL) {
+		precache_model ("progs/wizard.mdl");
+		precache_model ("progs/h_wizard.mdl");
+
+		precache_sound ("wizard/wattack.wav");
+		precache_sound ("wizard/wdeath.wav");
+		precache_sound ("wizard/widle1.wav");
+		precache_sound ("wizard/widle2.wav");
+		precache_sound ("wizard/wpain.wav");
+		precache_sound ("wizard/wsight.wav");
+	}
+	else {
+		precache_model ("progs/cyberscrag.mdl");
+		precache_model ("progs/h_cyberscrag.mdl");
+
+		precache_sound ("cyberscrag/hit.wav");		// used by c code
+		precache_sound ("cyberscrag/wattack.wav");
+		precache_sound ("cyberscrag/wdeath.wav");
+		precache_sound ("cyberscrag/widle1.wav");
+		precache_sound ("cyberscrag/widle2.wav");
+		precache_sound ("cyberscrag/wpain.wav");
+		precache_sound ("cyberscrag/wsight.wav");
+	}
 	precache_model ("progs/w_spike.mdl");
 
-	precache_sound ("wizard/hit.wav");		// used by c code
-	precache_sound ("wizard/wattack.wav");
-	precache_sound ("wizard/wdeath.wav");
-	precache_sound ("wizard/widle1.wav");
-	precache_sound ("wizard/widle2.wav");
-	precache_sound ("wizard/wpain.wav");
-	precache_sound ("wizard/wsight.wav");
 
+
+	precache_sound ("wizard/hit.wav");		// used by c code
+	
 	setsize (self, '-16 -16 -24', '16 16 40');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
