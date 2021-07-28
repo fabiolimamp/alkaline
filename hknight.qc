@@ -74,7 +74,10 @@ void(float offset) hknight_shot =
 	
 	launch_spike (org, vec);
 	newmis.classname = "knightspike";
-	setmodel (newmis, "progs/k_spike.mdl");
+
+	if (self.spawnflags & MONSTER_ORIGINAL) setmodel(newmis, "progs/k_spike.mdl");
+	else setmodel(newmis, "progs/k_laserspike.mdl");
+
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	newmis.velocity = vec*300;
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
@@ -203,7 +206,8 @@ void() hknight_die =
 	if (self.health < -40)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_hellkn.mdl", self.health);
+		if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_hellkn.mdl", self.health);
+		else ThrowHead ("progs/h_sabrkn.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
@@ -395,7 +399,9 @@ void() hknight_melee =
 };
 
 void() hknight_sight = {
-	sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+
+	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "sknight/sight1.wav", 1, ATTN_NORM);
 };
 
 /*QUAKED monster_hell_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
@@ -410,11 +416,15 @@ void(entity e) monster_hell_knight_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/hknight.mdl");
+	if (self.spawnflags & MONSTER_ORIGINAL) setmodel (self, "progs/hknight.mdl");
+	else setmodel (self, "progs/sknight.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 250;
-	if (self.obituary == "") self.obituary = "was slain by a Sabre Knight";
+	if (self.obituary == "") {
+		if (self.spawnflags & MONSTER_ORIGINAL) self.obituary = "was slain by a Death Knight";
+		else self.obituary = "was slain by a Sabre Knight";
+	}
 
 	self.th_stand = hknight_stand1;
 	self.th_walk = hknight_walk1;
@@ -441,22 +451,30 @@ void() monster_hell_knight =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/hknight.mdl");
-	precache_model2 ("progs/k_spike.mdl");
-	precache_model2 ("progs/h_hellkn.mdl");
+
+	if (self.spawnflags & MONSTER_ORIGINAL) {
+		precache_model2 ("progs/hknight.mdl");
+		precache_model2 ("progs/h_hellkn.mdl");
+		precache_model2 ("progs/k_spike.mdl");
+		precache_sound2 ("hknight/sight1.wav");
+	}
+	else {
+		precache_model2 ("progs/sknight.mdl");
+		precache_model2 ("progs/h_sabrkn.mdl");
+		precache_model2 ("progs/k_laserspike.mdl");
+		precache_sound2 ("sknight/sight1.wav");
+	}
 
 	
+	precache_sound ("knight/sword1.wav");
+	precache_sound ("knight/sword2.wav");
 	precache_sound2 ("hknight/attack1.wav");
 	precache_sound2 ("hknight/death1.wav");
 	precache_sound2 ("hknight/pain1.wav");
-	precache_sound2 ("hknight/sight1.wav");
-	precache_sound ("hknight/hit.wav");		// used by C code, so don't sound2
+	precache_sound  ("hknight/hit.wav");		// used by C code, so don't sound2
 	precache_sound2 ("hknight/slash1.wav");
 	precache_sound2 ("hknight/idle.wav");
 	precache_sound2 ("hknight/grunt.wav");
-
-	precache_sound ("knight/sword1.wav");
-	precache_sound ("knight/sword2.wav");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	
