@@ -284,13 +284,14 @@
 ]
 
 @SolidClass base(Appearflags, Targetname, Target, Blood) color(255 128 128) = func_breakable : 
-"A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable.
+"A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable, unless you set the spawnflag 'Always shootable'.
 
 NO_MONSTERS: object ignores damage from monsters" 
 [
 	cnt(integer) : "Debris amount" :  : "Number of pieces of debris to spawn. Set to -1 to disable debris."
 	mdl(string) : "Custom debris model" : : "Overrides the model selected through 'style'. EG: 'progs/gib.mdl'"
 	noise1(string) : "Custom break sound" : : "Overrides the sound selected through 'style'. EG: 'player/gib.wav'"
+	alpha2(integer) : "Custom debris opacity"
 	health(integer) : "Health" : 20
 	style(choices) : "Debris color" : 0 = 
 	[
@@ -303,6 +304,7 @@ NO_MONSTERS: object ignores damage from monsters"
 	spawnflags(flags) =
 	[
 		1 : "No monsters" : 0
+		2 : "Always shootable" : 0
 	]
 
 ]

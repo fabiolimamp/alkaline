@@ -92,6 +92,8 @@ float BREAKABLE_REDMETAL = 1;
 float BREAKABLE_CONCRETE = 2;
 float BREAKABLE_GLASS = 3;
 
+float BREAKABLE_ALWAYS_SHOOTABLE = 2;
+
 void() make_breakable_debris =
 {
 	local float i;
@@ -142,6 +144,7 @@ void() make_breakable_debris =
 			else
 				new.frame = 2; //smaller
 		}
+		if (self.alpha2) new.alpha = self.alpha2;
 
 		i = i + 1;
 	}
@@ -232,12 +235,10 @@ void () func_breakable =
 		self.health = 20;
 	
 		
-	if (self.targetname)
-	{
+	if (self.targetname != "")
 		self.use = func_breakable_use;
-	}
-	else
-	{
+
+	if (self.targetname == "" || (self.targetname != "" && (self.spawnflags & BREAKABLE_ALWAYS_SHOOTABLE))) {
 		self.takedamage = DAMAGE_YES;
 		self.th_die = func_breakable_killed;
 	}

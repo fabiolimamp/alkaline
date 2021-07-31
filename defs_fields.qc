@@ -408,7 +408,7 @@ FIELDS
 .float		burningsound;
 .float		gravity;
 .float		color;
-.float		alpha;
+.float		alpha, alpha2;
 .entity		missle;
 
 .float		burning_finished;
