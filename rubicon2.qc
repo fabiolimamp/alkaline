@@ -235,8 +235,7 @@ void () func_breakable =
 		self.health = 20;
 	
 		
-	if (self.targetname != "")
-		self.use = func_breakable_use;
+	self.use = func_breakable_use;
 
 	if (self.targetname == "" || (self.targetname != "" && (self.spawnflags & BREAKABLE_ALWAYS_SHOOTABLE))) {
 		self.takedamage = DAMAGE_YES;
