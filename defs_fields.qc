@@ -217,6 +217,7 @@ FIELDS
 .void()		th_sight;
 .void()		th_wake;
 .float()	th_checkattack;
+.float(entity inflictor, entity attacker, float damage, float orig_damage) th_damage;
 
 .void(entity mon)	start_function;
 
