@@ -286,53 +286,51 @@ void() ProximityBomb =
 W_FireProximityGrenade
 ================
 */
-void() W_FireProximityGrenade =
-{
-   local entity missile;
+void() W_FireProximityGrenade = {
 
-   NumProximityGrenades = NumProximityGrenades + 1;
-   self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	NumProximityGrenades = NumProximityGrenades + 1;
+	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 
-   sound (self, CHAN_WEAPON, "hipweap/proxbomb.wav", 1, ATTN_NORM);
+	sound (self, CHAN_WEAPON, "hipweap/proxbomb.wav", 1, ATTN_NORM);
 
 	self.punchangle_x = -2;
 
-	missile = spawn ();
-   missile.owner = self;
-   missile.lastvictim = self;
-   missile.movetype = MOVETYPE_TOSS;
-	missile.solid = SOLID_BBOX;
-   missile.classname = "proximity_grenade";
-   missile.takedamage = DAMAGE_NO;
-   missile.health = 5;
-   missile.state = 0;
+	newmis = spawn ();
+	newmis.owner = self;
+	newmis.lastvictim = self;
+	newmis.movetype = MOVETYPE_TOSS;
+	newmis.solid = SOLID_BBOX;
+	newmis.classname = "proximity_grenade";
+	newmis.flags = newmis.flags | FL_PROJECTILE;
+	newmis.takedamage = DAMAGE_NO;
+	newmis.health = 5;
+	newmis.state = 0;
 
-// set missile speed
+	// set newmis speed
 
 	makevectors (self.v_angle);
 
 	if (self.v_angle_x)
-		missile.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
-	else
-	{
-		missile.velocity = aim(self, 10000);
-		missile.velocity = missile.velocity * 600;
-		missile.velocity_z = 200;
+		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
+	else {
+		newmis.velocity = aim(self, 10000);
+		newmis.velocity = newmis.velocity * 600;
+		newmis.velocity_z = 200;
 	}
 
-   missile.avelocity = '100 600 100';
+	newmis.avelocity = '100 600 100';
 
-	missile.angles = vectoangles(missile.velocity);
+	newmis.angles = vectoangles(newmis.velocity);
 
-   missile.touch = ProximityGrenadeTouch;
+	newmis.touch = ProximityGrenadeTouch;
 
-// set missile duration
-   missile.nextthink = time + 2;
-   missile.delay = time + 15 + (10*random());
-   missile.think = ProximityBomb;
-   missile.th_die = ProximityGrenadeExplode;
+	// set duration
+	newmis.nextthink = time + 2;
+	newmis.delay = time + 15 + (10*random());
+	newmis.think = ProximityBomb;
+	newmis.th_die = ProximityGrenadeExplode;
 
-   setmodel (missile, "progs/proxbomb.mdl");
-   setorigin (missile, self.origin);
-   setsize (missile, '-1 -1 -1', '1 1 1');
+	setmodel (newmis, "progs/proxbomb.mdl");
+	setorigin (newmis, self.origin);
+	setsize (newmis, '-1 -1 -1', '1 1 1');
 };

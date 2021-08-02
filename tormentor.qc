@@ -1,17 +1,25 @@
 void() torm_checkprojectiles;
 void() torm_block1;
+float torm_ahead_divider;
 
 void() torm_stand1	=[	0,	torm_stand2	] {ai_stand();
+
+	if (time < self.air_finished)
+		return;
+
 	float rnd;
 	if (!(self.spawnflags & MONSTER_NOIDLESOUND)) {
 		rnd = random();
 		if (rnd < 0.1) {
 			sound (self, CHAN_VOICE, "tormentor/idle1.wav", 1, ATTN_IDLE);
+			self.air_finished = time + 4;
 		}
-		else if (rnd < 0.05) {
+		else if (rnd < 0.2) {
 			sound (self, CHAN_VOICE, "tormentor/idle2.wav", 1, ATTN_IDLE);
+			self.air_finished = time + 4;
 		}
-	};
+	}
+};
 void() torm_stand2	=[	1,	torm_stand3	] {ai_stand();};
 void() torm_stand3	=[	2,	torm_stand4	] {ai_stand();};
 void() torm_stand4	=[	3,	torm_stand5	] {ai_stand();};
@@ -25,14 +33,25 @@ void() torm_stand11	=[	10,	torm_stand12] {ai_stand();};
 void() torm_stand12	=[	11,	torm_stand13] {ai_stand();};
 void() torm_stand13	=[	12,	torm_stand1] {ai_stand();};
 
-void() torm_walk1		=[      13,        torm_walk2 ] {ai_walk(18);
+
+
+//============================================================================
+
+void() torm_walk1	=[   13,        torm_walk2 ] {
+	ai_walk(18);
+
+	if (time < self.air_finished)
+		return;
+
 	float rnd;
 	rnd = random();
-	if (rnd < 0.1) {
+	if (rnd < 0.15) {
 		sound (self, CHAN_VOICE, "tormentor/idle1.wav", 1, ATTN_IDLE);
+		self.air_finished = time + 4;
 	}
-	else if (rnd < 0.05) {
+	else if (rnd < 0.3) {
 		sound (self, CHAN_VOICE, "tormentor/idle2.wav", 1, ATTN_IDLE);
+		self.air_finished = time + 4;
 	}
 };
 void() torm_walk2       =[      14,        torm_walk3 ] {ai_walk(12);};
@@ -47,16 +66,25 @@ void() torm_walk10      =[      22,        torm_walk11] {ai_walk(14);};
 void() torm_walk11      =[      23,        torm_walk12] {ai_walk(14);};
 void() torm_walk12      =[      24,        torm_walk1 ] {ai_walk(16);  sound(self, CHAN_AUTO, "tormentor/step1.wav", 1, ATTN_IDLE);};
 
+
+
+//============================================================================
+
 void() torm_run1	   =[      13,        torm_run2 ] {
 	self.state = 0; self.yaw_speed = 20; 
 	ai_run(18);
+
+	if(time < self.air_finished) return;
+
 	float rnd;
 	rnd = random();
 	if (rnd < 0.2) {
 		sound (self, CHAN_VOICE, "tormentor/angry1.wav", 1, ATTN_NORM);
+		self.air_finished = time + 2.5;
 	}
 	else if (rnd < 0.4) {
 		sound (self, CHAN_VOICE, "tormentor/angry2.wav", 1, ATTN_NORM);
+		self.air_finished = time + 2.5;
 	}
 	
 };
@@ -71,6 +99,9 @@ void() torm_run9       =[      21,        torm_run10] {ai_run(10); torm_checkpro
 void() torm_run10      =[      22,        torm_run11] {ai_run(14); torm_checkprojectiles();};
 void() torm_run11      =[      23,        torm_run12] {ai_run(14); torm_checkprojectiles();};
 void() torm_run12      =[      24,        torm_run1 ] {ai_run(16); sound(self, CHAN_AUTO, "tormentor/step1.wav", 1, ATTN_NORM); torm_checkprojectiles();};
+
+
+//============================================================================
 
 void(float dist) torm_sting_hit = {
 	vector vec1;
@@ -104,12 +135,11 @@ void() torm_sting12    =[      60,       torm_sting13	] {self.nextthink = time +
 void() torm_sting13    =[      61,       torm_run1	    ] {self.nextthink = time + 0.05;};
 
 
-
+//============================================================================
 
 void() torm_slap_hit = {
 	if (infront(self.enemy)) {
 		if (vlen(self.enemy.origin - self.origin) < 128 && CanDamage(self.enemy, self)) {
-			//sound(self, CHAN_BODY, ((void())0xccafi), ((void())0x3f800000i), ATTN_NORM);
 			sound(self, CHAN_WEAPON, "tormentor/punch_hit.wav", 1, ATTN_NORM);
 			T_Damage(self.enemy, self, self, 40);
 			makevectors(self.angles);
@@ -142,6 +172,17 @@ void() torm_slap12    =[      73,       torm_run1	  ] {ai_face(); ai_forward(8);
 
 
 
+//============================================================================
+
+void() torm_shot_face = {
+	vector ang;
+	ang = vectoangles(self.enemy.origin + self.enemy.velocity/torm_ahead_divider - self.origin);
+	self.ideal_yaw = ang_y;
+	ChangeYaw();
+};
+
+
+//============================================================================
 
 void() torm_largeshot_touch = {
 	if (other == self.owner)
@@ -188,7 +229,7 @@ void() torm_shot1_fire = {
 	makevectors(self.angles);
 
 	shotorigin = self.origin + '0 0 80' + v_forward*56 + v_right * 16;
-	shotdest = self.enemy.origin + normalize(self.enemy.velocity)*100;
+	shotdest = self.enemy.origin + self.enemy.velocity/(torm_ahead_divider - 1);
 	dir = normalize(shotdest - shotorigin);
 
 	torm_launch_largeshot(shotorigin, dir);
@@ -228,6 +269,8 @@ void() torm_shot1_10    =[      83,       torm_shot1_11   ] {ai_face();torm_chec
 void() torm_shot1_11    =[      84,       torm_shot1_12   ] {ai_face();torm_checkprojectiles();};
 void() torm_shot1_12    =[      85,       torm_run1	      ] {ai_face();torm_checkprojectiles();};
 
+
+//============================================================================
 
 void() torm_smallshot_touch = {
 
@@ -277,10 +320,9 @@ void() torm_shot2_fire = {
 	vector dir, shotorigin, shotdest;
 	float delta;
 	
-
 	makevectors(self.angles);
 	shotorigin = self.origin + '0 0 80' + v_forward*48;
-	shotdest = self.enemy.origin + normalize(self.enemy.velocity)*100;
+	shotdest = self.enemy.origin + self.enemy.velocity/torm_ahead_divider;
 	dir = normalize(shotdest - shotorigin);
 
 	sound (self, CHAN_WEAPON, "hunter/fire.wav", 1, ATTN_NORM);
@@ -312,10 +354,10 @@ void() torm_shot2_5     =[      90,       torm_shot2_6    ] {
 	else
 		self.count = 8 + floor(rnd * 4.99);
 };
-void() torm_shot2_6     =[      91,       torm_shot2_7    ] {self.yaw_speed = 8; torm_shot2_fire();};
+void() torm_shot2_6     =[      91,       torm_shot2_7    ] {self.yaw_speed = 12; torm_shot2_fire();};
 void() torm_shot2_7     =[      92,       torm_shot2_8    ] {torm_checkprojectiles();};
 void() torm_shot2_8     =[      93,       torm_shot2_9    ] {
-	ai_face();
+	torm_shot_face();
 	torm_checkprojectiles();
 	if (self.count > 0) {
 		self.count--;
@@ -330,6 +372,19 @@ void() torm_shot2_11    =[      96,       torm_shot2_12   ] {torm_checkprojectil
 void() torm_shot2_12    =[      97,       torm_run1	      ] {torm_checkprojectiles();};
 
 
+//============================================================================
+
+void() torm_melee = {
+	local float chance, dist;
+	dist = vlen(self.origin - self.enemy.origin);
+	
+	chance = random();
+	if (chance < 0.8 && dist < 120)
+		torm_slap1();
+	else
+		torm_sting1();
+};
+
 void() torm_fire = {
 	local float chance, dist;
 	dist = vlen(self.origin - self.enemy.origin);
@@ -339,19 +394,6 @@ void() torm_fire = {
 		torm_shot2_1(); // small shot
 	else
 		torm_shot1_1(); // large shot
-};
-
-
-void() torm_melee =
-{
-	local float chance, dist;
-	dist = vlen(self.origin - self.enemy.origin);
-	
-	chance = random();
-	if (chance < 0.8 && dist < 120)
-		torm_slap1();
-	else
-		torm_sting1();
 };
 
 
@@ -365,7 +407,7 @@ void() torm_checkprojectiles = {
 
 	while (e) {
 		if (e.flags & FL_PROJECTILE) {
-			if ((e.classname == "missile" || e.classname == "grenade") && e.owner.flags & FL_CLIENT) {
+			if ((e.classname == "missile" || e.classname == "grenade" || e.classname == "proximity_grenade") && e.owner == self.enemy) {
 				missiledir = normalize(e.velocity);
 
 				traceline(e.origin, e.origin + missiledir*1000, FALSE, e);
@@ -406,10 +448,10 @@ void() torm_pain5       =[      29, torm_pain6      ] {};
 void() torm_pain6       =[      30, torm_pain7      ] {};
 void() torm_pain7       =[      31, torm_pain8      ] {};
 void() torm_pain8       =[      32, torm_pain9      ] {};
-void() torm_pain9       =[      33, torm_pain10      ] {};
-void() torm_pain10       =[      34, torm_pain11      ] {};
-void() torm_pain11       =[      35, torm_pain12      ] {};
-void() torm_pain12       =[      36, torm_run1       ] {};
+void() torm_pain9       =[      33, torm_pain10     ] {};
+void() torm_pain10      =[      34, torm_pain11     ] {};
+void() torm_pain11      =[      35, torm_pain12     ] {};
+void() torm_pain12      =[      36, torm_run1       ] {};
 
 void(entity attacker, float damage)	torm_pain =
 {
@@ -431,6 +473,9 @@ void(entity attacker, float damage)	torm_pain =
 	torm_pain1();
 };
 
+
+//============================================================================
+
 float() torm_CheckAttack = {
 	local entity	targ;
 	local float		chance;
@@ -439,8 +484,6 @@ float() torm_CheckAttack = {
 	targ = self.enemy;
 	
 	dist = vlen(self.origin - targ.origin);
-
-
 
 	if (dist <= 192) {	// melee attack
 		if (CanDamage(targ, self)) {
@@ -527,10 +570,8 @@ void() torm_death = [ 98, torm_death ] {
 //============================================================================
 
 void() torm_sight = {
-	//if (random() > 0.5)
-	//	sound (self, CHAN_VOICE, "tormentor/sight.wav", 1, ATTN_NORM);
-	//else
-		sound (self, CHAN_VOICE, "tormentor/sight2.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "tormentor/sight.wav", 1, ATTN_NORM);
+	self.air_finished = time + 3;
 };
 
 //============================================================================
@@ -538,8 +579,7 @@ void() torm_sight = {
 
 /*QUAKED monster_shambler (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
-void(entity e) monster_tormentor_start =
-{
+void(entity e) monster_tormentor_start = {
 	local entity oself;
 
 	oself = self;
@@ -552,6 +592,14 @@ void(entity e) monster_tormentor_start =
 	setsize (self,  '-32 -32 -24', '32 32 120');
 	if (!self.health) self.health = 2000;
 	if (self.obituary == "") self.obituary = "was obliterated by Tormentor";
+
+	if (startskill == SKILL_EASY)
+		torm_ahead_divider = 8;
+	else if (startskill == SKILL_NORMAL)
+		torm_ahead_divider = 4;
+	else
+		torm_ahead_divider = 3;
+
 
 	self.th_stand = torm_stand1;
 	self.th_walk = torm_walk1;
@@ -574,8 +622,7 @@ void() monster_tormentor_spawner = {
 };
 
 
-void() monster_tormentor =
-{
+void() monster_tormentor = {
 	if (deathmatch)
 	{
 		remove(self);
@@ -588,8 +635,7 @@ void() monster_tormentor =
 	precache_model ("progs/big_bullet_blast.mdl");
 	
 	precache_sound ("tormentor/step1.wav");
-	//precache_sound ("tormentor/sight.wav");
-	precache_sound ("tormentor/sight2.wav");
+	precache_sound ("tormentor/sight.wav");
 	precache_sound ("tormentor/fire2.wav");
 	precache_sound ("tormentor/sting2.wav");
 	precache_sound ("tormentor/death.wav");
@@ -606,7 +652,7 @@ void() monster_tormentor =
 	setsize (self, '-32 -32 -24', '32 32 120');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
-		self.use = monster_shambler_spawner;
+		self.use = monster_tormentor_spawner;
 		monster_spawner_updatecounter();
 	}
 	else {
