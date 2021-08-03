@@ -228,7 +228,7 @@ void() torm_shot1_fire = {
 
 	makevectors(self.angles);
 
-	shotorigin = self.origin + '0 0 80' + v_forward*56 + v_right * 16;
+	shotorigin = self.origin + '0 0 80' + v_forward*80 + v_right * 16;
 	shotdest = self.enemy.origin + self.enemy.velocity/(torm_ahead_divider - 1);
 	dir = normalize(shotdest - shotorigin);
 
@@ -254,12 +254,12 @@ void() torm_shot1_4     =[      77,       torm_shot1_5    ] {ai_face();
 	else
 		self.count = 3 + floor(rnd * 2.99);
 };
-void() torm_shot1_5     =[      78,       torm_shot1_6    ] {ai_face(); torm_shot1_fire();};
+void() torm_shot1_5     =[      78,       torm_shot1_6    ] {torm_shot_face(); torm_shot1_fire();};
 void() torm_shot1_6     =[      79,       torm_shot1_7    ] {};
 void() torm_shot1_7     =[      80,       torm_shot1_8    ] {};
 void() torm_shot1_8     =[      81,       torm_shot1_9    ] {torm_checkprojectiles();};
-void() torm_shot1_9     =[      82,       torm_shot1_10   ] {ai_face();torm_checkprojectiles();};
-void() torm_shot1_10    =[      83,       torm_shot1_11   ] {ai_face();torm_checkprojectiles();
+void() torm_shot1_9     =[      82,       torm_shot1_10   ] {torm_shot_face();torm_checkprojectiles();};
+void() torm_shot1_10    =[      83,       torm_shot1_11   ] {torm_shot_face();torm_checkprojectiles();
 	if (self.count > 0) {
 		self.count--;
 		torm_shot1_5();
@@ -577,8 +577,6 @@ void() torm_sight = {
 //============================================================================
 
 
-/*QUAKED monster_shambler (1 0 0) (-32 -32 -24) (32 32 64) Ambush
-*/
 void(entity e) monster_tormentor_start = {
 	local entity oself;
 
