@@ -284,6 +284,13 @@ void() worldspawn =
 	precache_sound ("misc/water1.wav");			// swimming
 	precache_sound ("misc/water2.wav");			// swimming
 
+	precache_sound ("items/jboots_plyrjmp1.wav");		//player airjump with jboots jcr
+	precache_sound ("items/jboots_plyrjmp0.wav");		//player jump with jboots 
+	precache_sound ("items/jboots_got.wav");			// got the jump boots
+	precache_sound ("items/jboots_got_timed.wav");		// got the timed jump boots
+	precache_sound ("items/jboots_dry.wav");			// empty jump boots
+	precache_sound ("items/jboots_timed.wav");			// timed jump boot powerup
+
 	precache_model ("progs/player.mdl");
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");
@@ -327,6 +334,9 @@ void() worldspawn =
 	precache_model ("progs/misc_empty.mdl");
 	
 	precache_model ("progs/d_explod.spr");
+
+	precache_model ("progs/jboots.mdl");	//jboots model jcr
+	precache_model ("progs/jboots_timed.mdl");	//timed jboots model jcr
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.

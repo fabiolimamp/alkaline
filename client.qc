@@ -43,7 +43,7 @@ void() SetChangeParms =
 
 // remove items
 	self.items = self.items - (self.items & 
-	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
+	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_JBOOTS) );
 	
 // cap super health
 	if (self.health > 100)
@@ -63,11 +63,14 @@ void() SetChangeParms =
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 	parm10 = self.weapons;
+	parm11 = self.jboots_got;
+	parm12 = self.jboots_ammo;
+	parm13 = self.jboots_rechargelimit;
 };
 
 void() SetNewParms =
 {
-	parm1 = WEAPON_SHOTGUN | WEAPON_AXE;
+	parm1 = WEAPON_SHOTGUN; // items + HUD weapons only, axe isn't needed here
 	parm2 = 100;
 	parm3 = 0;
 	parm4 = 25;
@@ -77,7 +80,10 @@ void() SetNewParms =
 	parm8 = 1;
 	parm9 = 0;
 	parm10 = WEAPON_SHOTGUN | WEAPON_AXE;
-	
+	parm11 = 0;
+	parm12 = 0;
+	parm13 = 0;
+
 	if (world.model == "maps/test.bsp") // johnfitz start the player with nothing
 	{
 		parm10 = WEAPON_NO_WEAPON; // no weapons
@@ -559,6 +565,7 @@ void() PutClientInServer =
 	self.effects = 0;
 	self.invincible_time = 0;
 	self.customkeys = 0;  // support for item_key_custom -- iw
+	self.jboots_finished = 0;	//jcr jboots timed
 	
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -917,21 +924,72 @@ void() PlayerJump =
 
 		return;
 	}
+
+
+	if (self.jboots_got == TRUE) {	//JCR jump boots equipped jump logic
+
+		if ((self.flags & FL_ONGROUND))	{
+			if (!(self.flags & FL_JUMPRELEASED))
+				return;
+
+			self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+			self.button2 = 0;
+			self.jboots_sfx = 0;
+			self.flags = self.flags - (self.flags & FL_ONGROUND);
+			self.jboots_onground = 0;
+			self.jboots_ammo = self.jboots_rechargelimit;
+			sound(self, CHAN_BODY, "items/jboots_plyrjmp0.wav", 1, ATTN_NORM);	//Regularjump with jump boots equipped.
+			self.velocity_z = (self.velocity_z + 270);
+		}
+		else {
+			if (self.jboots_rechargelimit == -1 || self.jboots_ammo >= 1 || self.jboots_onground) {	//Conditions for airjumping.
+			
+				if (!(self.flags & FL_JUMPRELEASED))
+					return;
+				
+				self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+				self.button2 = 0;
+				self.jboots_sfx = time + 0.4;
+
+				if (self.jboots_onground)
+					self.jboots_ammo = self.jboots_rechargelimit;	//Resets air jump limit once player contacts the ground.
+				
+				self.jboots_onground = 0;
+				self.jboots_ammo = self.jboots_ammo - 1;
+				sound(self, CHAN_BODY, "items/jboots_plyrjmp1.wav", 1, ATTN_NORM);	//Airjump fired.
+				self.punchangle_x = -1;		//View shift when airjump is fired.
+
+				if (self.velocity_z > 360)
+					self.velocity_z = self.velocity_z + 360;
+				else
+					self.velocity_z = 360;
+				
+			}
+			else {
+				if (self.jboots_sfx < time) {
+					self.jboots_sfx = (time + 0.4);
+					sound(self, CHAN_BODY, "items/jboots_dry.wav", 1, ATTN_NORM);	//Out of air jumps!
+				}
+			}	
+		}	//JCR jump boots equipped jump logic end
+	}
+
+	else {
+		if (!(self.flags & FL_ONGROUND))
+			return;
+
+		if ( !(self.flags & FL_JUMPRELEASED) )
+			return;		// don't pogo stick
+
+		self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+
+		self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
 		
-	if (!(self.flags & FL_ONGROUND))
-		return;
-
-	if ( !(self.flags & FL_JUMPRELEASED) )
-		return;		// don't pogo stick
-
-	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
-
-	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
-	
-	self.button2 = 0;
-// player jumping sound
-	sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
-	self.velocity_z = self.velocity_z + 270;
+		self.button2 = 0;
+		// player jumping sound
+		sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
+		self.velocity_z = self.velocity_z + 270;
+	}
 };
 
 
@@ -1150,6 +1208,10 @@ void() PlayerPreThink =
 			W_SetCurrentAmmo ();
 		}
 	}
+	
+	if (self.jboots_got == TRUE && (self.flags & FL_ONGROUND))		//jcr jboots prethink for onground checking
+		self.jboots_onground = TRUE;
+	
 };
 	
 /*
@@ -1351,6 +1413,33 @@ void() CheckPowerups =
 			self.items = self.items - IT_SUIT;
 			self.rad_time = 0;
 			self.radsuit_finished = 0;
+		}
+	}
+
+	if (self.jboots_finished)	{
+		// sound and screen flash when items starts to run out
+		if (self.jboots_finished < time + 3)
+		{
+			if (self.jboots_time == 1)
+			{
+				sprint (self, "Super Jump Boot's battery depleting...\n");
+				sound (self, CHAN_AUTO, "items/jboots_timed.wav", 1, ATTN_NORM);
+				self.jboots_time = time + 1;
+			}	  
+			
+			if (self.jboots_time < time)
+			{
+				self.jboots_time = time + 1;
+			}
+		}
+
+		if (self.jboots_finished < time)
+		{	// just stopped
+			self.items = self.items - IT_JBOOTS;
+			self.jboots_finished = 0;
+			self.jboots_time = 0;
+			self.jboots_got = 0;
+			self.jboots_rechargelimit = 0;
 		}
 	}	
 

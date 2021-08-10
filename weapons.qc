@@ -1657,6 +1657,25 @@ void() QuadCheat =
 	dprint ("quad cheat\n");
 };
 
+void() JBootsCheat = { //JCR superjump boot cheat
+	if (self.jboots_got == FALSE) {
+		self.jboots_got = TRUE;
+		self.items = self.items + IT_JBOOTS;
+		self.jboots_rechargelimit = self.jboots_rechargelimit + 1;
+		
+		sprint(self, "You got the Jump boots!\n");
+		sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
+	}
+	else {
+		if(self.jboots_rechargelimit >= 3)
+			self.jboots_rechargelimit = 3;
+		else
+			self.jboots_rechargelimit = self.jboots_rechargelimit + 1;
+
+		sprint(self, "Jump module added.\n");
+	}
+}
+
 void(float num) ImpulseTest = {
 	local string tgt_impulse_num;
 	
@@ -1836,6 +1855,9 @@ void() ImpulseCommands =
 		
 	if (self.impulse == 255)
 		QuadCheat();
+
+	if (self.impulse == 222)
+		JBootsCheat();
 		
 	self.impulse = 0;
 };

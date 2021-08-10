@@ -55,7 +55,10 @@ float(float in) bprint_int =
 }
 
 
-
+float(float in, float def) defaultFl = {
+	if (in) return in;
+	else return def;
+}
 
 
 // shorthand for turning -1 to 0 for keyvalues for which 0 is a valid non-default selection

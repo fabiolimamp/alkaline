@@ -92,6 +92,8 @@ float 	HUD_WEAPONS					= WEAPON_SHOTGUN + WEAPON_SUPER_SHOTGUN +
 // items
 // item flags below 128 are reserved for the HUD weapons, don't use them
 
+float   IT_JBOOTS				= 128;
+
 float	IT_SHELLS				= 256;
 float	IT_NAILS				= 512;
 float	IT_ROCKETS				= 1024;

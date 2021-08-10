@@ -518,3 +518,13 @@ FIELDS
 
 // gravity
 .float return_gravity;
+
+
+//JCR super jump defs
+.float jboots_got;		
+.float jboots_rechargelimit;
+.float jboots_sfx;
+.float jboots_ammo;
+.float jboots_onground;
+.float jboots_finished;
+.float jboots_time; 

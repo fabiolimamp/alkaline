@@ -1221,8 +1221,34 @@ void() powerup_touch =
 		self.think = item_megahealth_rot;
 		self.owner = other;		
 		
-	}		
+	}
 
+	if (self.classname == "item_jboots")	//JCR Superjump boots PERSISTENT with LIMITED CHARGES (max 3 airjumps)
+	{
+		if (other.jboots_got == FALSE) {
+			other.jboots_got = TRUE;
+			other.jboots_rechargelimit = other.jboots_rechargelimit + 1;
+		}
+		else {
+			if (other.jboots_rechargelimit >= 3) {
+				other.jboots_rechargelimit = 3;
+				sprint(other, "Jump module limit reached. Module not added.\n");
+			}
+			else {
+				other.jboots_rechargelimit = other.jboots_rechargelimit + 1;
+				sprint(other, "Jump module added.\n");
+			}
+		}
+	}
+
+	if (self.classname == "item_jboots_timed")	//JCR Superjump boots TIMED with INFINITE CHARGES
+	{
+		other.jboots_time = 1;
+		other.jboots_finished = time + 30;
+		other.jboots_got = TRUE;
+		other.jboots_rechargelimit = defaultFl(self.jboots_rechargelimit, -1);
+	}
+	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
 };
@@ -1534,3 +1560,33 @@ void() item_backpack = {
 
 	self.touch = BackpackTouch;
 };
+
+
+void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
+	precache_model ("progs/jboots.mdl");
+	precache_sound ("items/jboots_got.wav");
+	
+	self.noise = "items/jboots_got.wav";
+	self.touch = powerup_touch;
+	self.netname = "Jump Boots";
+	self.items = IT_JBOOTS;
+
+	setmodel (self, "progs/jboots.mdl");
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+}
+
+void() item_jboots_timed = { //JCR SUPERJUMP BOOTS	TIMED
+	precache_model ("progs/jboots_timed.mdl");
+	precache_sound ("items/jboots_got.wav");
+	
+	self.touch = powerup_touch;
+	self.noise = "items/jboots_got_timed.wav";
+	self.netname = "Super Jump Boots";
+	self.items = IT_JBOOTS;
+
+	setmodel (self, "progs/jboots_timed.mdl");
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+};
+
