@@ -1225,27 +1225,31 @@ void() powerup_touch =
 
 	if (self.classname == "item_jboots")	//JCR Superjump boots PERSISTENT with LIMITED CHARGES (max 3 airjumps)
 	{
-		if (other.jboots_got == FALSE) {
-			other.jboots_got = TRUE;
-			other.jboots_rechargelimit = other.jboots_rechargelimit + 1;
+		float limit;
+
+		// if theres a timed boot active, add persistent boot in "background mode"
+		if (other.jboots_finished) limit = other.jboots_prevlimit;
+		else limit = other.jboots_rechargelimit;
+
+		if (limit >= 3) {
+			limit = 3;
+			sprint(other, "Jump module limit reached. Module not added.\n");
 		}
 		else {
-			if (other.jboots_rechargelimit >= 3) {
-				other.jboots_rechargelimit = 3;
-				sprint(other, "Jump module limit reached. Module not added.\n");
-			}
-			else {
-				other.jboots_rechargelimit = other.jboots_rechargelimit + 1;
-				sprint(other, "Jump module added.\n");
-			}
+			if (limit) sprint(other, "Jump module added.\n");
+			limit = limit + 1;
 		}
+
+		if (other.jboots_finished) other.jboots_prevlimit = limit;
+		else other.jboots_rechargelimit = limit;
+		
 	}
 
 	if (self.classname == "item_jboots_timed")	//JCR Superjump boots TIMED with INFINITE CHARGES
 	{
+		other.jboots_prevlimit = other.jboots_rechargelimit;
 		other.jboots_time = 1;
 		other.jboots_finished = time + 30;
-		other.jboots_got = TRUE;
 		other.jboots_rechargelimit = defaultFl(self.jboots_rechargelimit, -1);
 	}
 	
@@ -1572,7 +1576,7 @@ void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
 	self.items = IT_JBOOTS;
 
 	setmodel (self, "progs/jboots.mdl");
-	setsize (self, '-16 -16 0', '16 16 56');
+	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 }
 

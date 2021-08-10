@@ -662,7 +662,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 @PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/trifecta.mdl" }) =
 	item_artifact_trifecta : "Trifecta of Alkaline" []
 
-@PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/jboots.mdl"}) =
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/jboots.mdl"}) =
 	item_jboots : "Jump Boots" []
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/jboots_timed.mdl"}) =
 	item_jboots_timed : "Jump Boots (Timed)" [

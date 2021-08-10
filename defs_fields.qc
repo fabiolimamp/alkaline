@@ -521,7 +521,7 @@ FIELDS
 
 
 //JCR super jump defs
-.float jboots_got;		
+.float jboots_prevlimit;		
 .float jboots_rechargelimit;
 .float jboots_sfx;
 .float jboots_ammo;

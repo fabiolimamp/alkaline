@@ -43,7 +43,8 @@ void() SetChangeParms =
 
 // remove items
 	self.items = self.items - (self.items & 
-	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_JBOOTS) );
+		(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD)
+	);
 	
 // cap super health
 	if (self.health > 100)
@@ -63,26 +64,25 @@ void() SetChangeParms =
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 	parm10 = self.weapons;
-	parm11 = self.jboots_got;
-	parm12 = self.jboots_ammo;
-	parm13 = self.jboots_rechargelimit;
+	
+	// jump boots persists across levels
+	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
+	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
 };
 
 void() SetNewParms =
 {
 	parm1 = WEAPON_SHOTGUN; // items + HUD weapons only, axe isn't needed here
-	parm2 = 100;
-	parm3 = 0;
-	parm4 = 25;
-	parm5 = 0;
-	parm6 = 0;
-	parm7 = 0;
-	parm8 = 1;
-	parm9 = 0;
-	parm10 = WEAPON_SHOTGUN | WEAPON_AXE;
-	parm11 = 0;
-	parm12 = 0;
-	parm13 = 0;
+	parm2 = 100; // health
+	parm3 = 0; // armor value
+	parm4 = 25; // shells
+	parm5 = 0; // nails
+	parm6 = 0; // rockets
+	parm7 = 0; // cells
+	parm8 = WEAPON_SHOTGUN; // current weapon
+	parm9 = 0; // armor type
+	parm10 = WEAPON_SHOTGUN | WEAPON_AXE; // weapons
+	parm11 = 0; // jump boot recharge limit
 
 	if (world.model == "maps/test.bsp") // johnfitz start the player with nothing
 	{
@@ -136,6 +136,7 @@ void() DecodeLevelParms =
 	self.ammo_cells = parm7;
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
+	self.jboots_rechargelimit = parm11;
 
 	TakeAndGiveWeapons(self, world);
 };
@@ -926,7 +927,7 @@ void() PlayerJump =
 	}
 
 
-	if (self.jboots_got == TRUE) {	//JCR jump boots equipped jump logic
+	if (self.jboots_rechargelimit) {	//JCR jump boots equipped jump logic
 
 		if ((self.flags & FL_ONGROUND))	{
 			if (!(self.flags & FL_JUMPRELEASED))
@@ -1209,7 +1210,7 @@ void() PlayerPreThink =
 		}
 	}
 	
-	if (self.jboots_got == TRUE && (self.flags & FL_ONGROUND))		//jcr jboots prethink for onground checking
+	if (self.jboots_rechargelimit && (self.flags & FL_ONGROUND))		//jcr jboots prethink for onground checking
 		self.jboots_onground = TRUE;
 	
 };
@@ -1433,13 +1434,14 @@ void() CheckPowerups =
 			}
 		}
 
-		if (self.jboots_finished < time)
-		{	// just stopped
-			self.items = self.items - IT_JBOOTS;
+		if (self.jboots_finished < time) {	// just stopped
+			self.jboots_rechargelimit = self.jboots_prevlimit; // restore previous persistent boot value if there was any
+			self.jboots_prevlimit = 0;
+			
+			if (!self.jboots_rechargelimit) self.items = self.items - IT_JBOOTS;
+
 			self.jboots_finished = 0;
 			self.jboots_time = 0;
-			self.jboots_got = 0;
-			self.jboots_rechargelimit = 0;
 		}
 	}	
 
