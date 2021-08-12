@@ -1463,3 +1463,54 @@ void() target_setcount = {
 	self.use = target_setcount_use;
 
 };
+
+
+/*
+=============================================================
+
+target_setsize
+
+=============================================================
+*/
+
+void(string name, .string fld) target_setsize_set = {
+	local entity t;
+
+	t = find(world, fld, name);
+
+	while (t) {
+		if (t.mins != self.cmins || t.maxs != self.cmaxs)
+			setsize(t, self.cmins, self.cmaxs);
+
+		t = find(t, fld, name);
+	}
+};
+
+void() target_setsize_use = {
+	if (self.target && self.target != "") {
+		target_setsize_set(self.target, targetname);
+		target_setsize_set(self.target, targetname2);
+	}
+	if (self.target2 && self.target2 != "") {
+		target_setsize_set(self.target2, targetname);
+		target_setsize_set(self.target2, targetname2);
+	}
+	if (self.target3 && self.target3 != "") {
+		target_setsize_set(self.target3, targetname);
+		target_setsize_set(self.target3, targetname2);
+	}
+	if (self.target4 && self.target4 != "") {
+		target_setsize_set(self.target4, targetname);
+		target_setsize_set(self.target4, targetname2);
+	}
+
+	if (self.spawnflags & 1) {
+		if (activator.mins != self.cmins || activator.maxs != self.cmaxs)
+			setsize(activator, self.cmins, self.cmaxs);
+	}
+};
+
+void() target_setsize = {
+	self.use = target_setsize_use;
+
+};
