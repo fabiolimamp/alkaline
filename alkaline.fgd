@@ -2166,6 +2166,10 @@ You can either replace the current value with a new one, or add/subtract to it (
 		1 : "Add"
 	]
 	count(integer) : "Value to set"
+	spawnflags(flags) = [
+		1 : "Change activator's field"
+	]
+]
 
 @PointClass base(Appearflags, Targetname) = target_setsize : "Resizes the targeted entity's bounding box. Targets both targetname and targetname2 fields.
 The activator's bbox can be changed as well by activating spawnflag 1.

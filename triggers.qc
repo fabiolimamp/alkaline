@@ -1457,6 +1457,13 @@ void() target_setcount_use = {
 		target_setcount_set(self.target4, targetname);
 		target_setcount_set(self.target4, targetname2);
 	}
+
+	if (self.spawnflags & 1) {
+		if (self.style == 1)
+			activator.count += activator.count;
+		else
+			activator.count = activator.count;
+	}
 };
 
 void() target_setcount = {
