@@ -335,8 +335,8 @@ void() worldspawn =
 	
 	precache_model ("progs/d_explod.spr");
 
-	precache_model ("progs/jboots.mdl");	//jboots model jcr
-	precache_model ("progs/jboots_timed.mdl");	//timed jboots model jcr
+	precache_model ("progs/jumpblue.mdl");
+	precache_model ("progs/jumpgold.mdl");
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.

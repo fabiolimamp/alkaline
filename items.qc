@@ -1575,7 +1575,7 @@ void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
 	self.netname = "Jump Boots";
 	self.items = IT_JBOOTS;
 
-	setmodel (self, "progs/jboots.mdl");
+	setmodel (self, "progs/jumpblue.mdl");
 	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 }
@@ -1589,8 +1589,8 @@ void() item_jboots_timed = { //JCR SUPERJUMP BOOTS	TIMED
 	self.netname = "Super Jump Boots";
 	self.items = IT_JBOOTS;
 
-	setmodel (self, "progs/jboots_timed.mdl");
-	setsize (self, '-16 -16 0', '16 16 56');
+	setmodel (self, "progs/jumpgold.mdl");
+	setsize (self, '-16 -16 -24', '16 16 32');
 	StartItem ();
 };
 
