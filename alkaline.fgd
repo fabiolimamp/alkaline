@@ -50,7 +50,7 @@
 	fog(string) : "Fog Command" :  : "ENGINE only 'console command' for setting fog parameters, Density/R/G/B example = (0.05 0.3 0.3 0.3)."
 	fog_density(float) : "Fog Density" :  : "Global fog density (def 0.1)."
 	skyfog_density(float) : "Skyfog Density" : "0.5" : "How much fog is applied to skybrushes (def 0.5)."
-	fog_colour(color1) : "Fog Colour" :  : "Initial global fog colour (def 0.1 0.1 0.1)."
+	fog_color(color1) : "Fog Color" :  : "Initial global fog color (def 0.1 0.1 0.1)."
 
 	take_weapons(flags) = [		
 		1: "WEAPON_SHOTGUN"	
