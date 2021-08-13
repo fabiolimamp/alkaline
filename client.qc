@@ -598,7 +598,7 @@ void() PutClientInServer =
 
 	if (spot.skyfog_density)
 		skyfog_save(self, spot.skyfog_density);
-	else if (world.skyfog_density){
+	else if (world.skyfog_density)
 		skyfog_save(self, world.skyfog_density);
 
 	cleanUpClientStuff = 2;
