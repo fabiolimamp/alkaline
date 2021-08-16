@@ -558,9 +558,10 @@ void() torm_death = [ 98, torm_death ] {
 		ThrowGib ("progs/gib1.mdl", -20);
 		ThrowGib ("progs/gib1.mdl", -20);
 		ThrowGib ("progs/gib2.mdl", -20);
-		ThrowGib ("progs/gib2.mdl", -20);
 		ThrowGib ("progs/gib3.mdl", -20);
-		ThrowGib ("progs/gib3.mdl", -20);
+		ThrowGib ("progs/fgib1.mdl", -20);
+		ThrowGib ("progs/fgib1.mdl", -20);
+		ThrowGib ("progs/fgib1.mdl", -20);
 		return;
 	}
 
@@ -631,6 +632,7 @@ void() monster_tormentor = {
 	precache_model ("progs/torm_largeshot.mdl");
 	precache_model ("progs/big_bullet.mdl");
 	precache_model ("progs/big_bullet_blast.mdl");
+	precache_model ("progs/fgib1.mdl");
 	
 	precache_sound ("tormentor/step1.wav");
 	precache_sound ("tormentor/sight.wav");
