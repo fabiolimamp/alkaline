@@ -212,6 +212,36 @@ void(entity e) monster_demon1_start =
 	self = oself;
 };
 
+void(entity e) monster_mutant_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/mutant.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.health = 300;
+	if (self.obituary == "") self.obituary = "was mutilated by a Mutant";
+
+	self.th_stand = demon1_stand1;
+	self.th_walk = demon1_walk1;
+	self.th_run = demon1_run1;
+	self.th_die = demon_die;
+	self.th_melee = Demon_MeleeAttack;		// one of two attacks
+	self.th_missile = demon1_jump1;			// jump attack
+	self.th_pain = demon1_pain;
+	self.th_sight = demon1_sight;
+	self.th_checkattack = DemonCheckAttack;
+		
+	walkmonster_start();
+
+	self = oself;
+};
 
 void() monster_demon1_spawner = {
 	monster_spawner(monster_demon1_start);
@@ -243,8 +273,39 @@ void() monster_demon1 =
 	else {
 		monster_demon1_start(self);
 	}
-}
+};
 
+void() monster_mutant_spawner = {
+	monster_spawner(monster_mutant_start);
+};
+
+void() monster_mutant =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/mutant.mdl");
+	precache_model ("progs/h_mutant.mdl");
+
+	precache_sound ("demon/ddeath.wav");
+	precache_sound ("demon/dhit2.wav");
+	precache_sound ("demon/djump.wav");
+	precache_sound ("demon/dpain1.wav");
+	precache_sound ("demon/idle1.wav");
+	precache_sound ("demon/sight2.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_mutant_spawner;
+		monster_spawner_updatecounter();
+	}
+	else {
+		monster_mutant_start(self);
+	}
+};
 
 /*
 ==============================================================================
