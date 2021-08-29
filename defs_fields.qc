@@ -160,6 +160,9 @@ nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
 nosave float cleanUpClientStuff;
 nosave float gamestarted;
 
+// simple kex detection, thanks Lunaran
+float isKex; // running the quake rerelease
+
 
 // new door features
 #define _MAX_ENTITY_QUEUE 256

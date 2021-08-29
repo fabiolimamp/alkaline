@@ -176,6 +176,13 @@ void() worldspawn =
 	local entity linkdoor_e;
 
 	lastspawn = world;
+
+	// simple kex detection, thanks Lunaran
+	if (cvar("pr_checkextension")){
+		if (checkextension("QUAKE_EX"))
+			isKex = TRUE;
+	}
+
 	InitBodyQue ();
 
 // custom map attributes
@@ -183,6 +190,8 @@ void() worldspawn =
 		cvar_set ("sv_gravity", "100");
 	else
 		cvar_set ("sv_gravity", "800");
+
+
 
 	startskill = cvar("skill");
 

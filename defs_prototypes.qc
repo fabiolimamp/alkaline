@@ -133,7 +133,7 @@ void(entity e) setspawnparms		= #78;		// set parm1... to the
 												// values at level start
 												// for coop respawn
 
-
+float(string s) checkextension		= #99;		// check cvar("pr_checkextension") before calling
 
 //
 // subs.qc
