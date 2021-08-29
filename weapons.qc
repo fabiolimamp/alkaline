@@ -1811,6 +1811,8 @@ ImpulseCommands
 
 ============
 */
+void() toggle_autosave;
+
 void() ImpulseCommands =
 {
 	if (self.impulse >= 1 && self.impulse <= 8)
@@ -1839,6 +1841,8 @@ void() ImpulseCommands =
 		display_monsleft();
 	if (self.impulse == 200)
 		dev_reveal();
+	if (self.impulse == 210)
+		toggle_autosave();
 	//johnfitz -- new cheats
 	if (self.impulse == 252)
 		RingCheat();
