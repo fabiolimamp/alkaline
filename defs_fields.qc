@@ -238,6 +238,11 @@ FIELDS
 .float attack_elevation; // ogre
 .float inpain;		// zombie
 
+// edie
+.float multiplier; 
+.entity spawnmaster;
+.float gug_slapped;
+
 //
 // player only fields
 //
