@@ -603,8 +603,8 @@ Axe
 */
 void() weapon_axe =
 {
-	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_axe.mdl");
-	setmodel (self, "progs/g_axe.mdl");
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_axe_alk.mdl");
+	setmodel (self, "progs/g_axe_alk.mdl");
 	self.weapon = WEAPON_AXE;
 	self.netname = "Axe";
 	self.touch = weapon_touch;
