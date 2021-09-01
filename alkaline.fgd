@@ -825,10 +825,10 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 
 // Regular monsters
 		
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier.mdl"}) = monster_army :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier_alk.mdl"}) = monster_army :
 "Grunt, 30 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog.mdl"}) = monster_dog :
+@PointClass base(Monster) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
 "Dog (Rottweiler), 25 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogre.mdl"}) = monster_ogre :
@@ -919,7 +919,7 @@ if you are not careful!" []
 With a force field, plasma gun, and shoulder
 cannon, look out for this cold-blooded killer." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier.mdl"}) = monster_nailgrunt :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier_alk.mdl"}) = monster_nailgrunt :
 "Nail Grunt, 30 health points.
 This ugly cyborg can penetrate your heart
 ...and not in a good way." []

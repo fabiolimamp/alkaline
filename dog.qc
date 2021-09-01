@@ -199,6 +199,8 @@ void(entity attacker, float damage) dog_pain =
 {
 	sound (self, CHAN_VOICE, "dog/dpain1.wav", 1, ATTN_NORM);
 
+	if (self.health < 15) self.skin = 1;
+
 	if (random() > 0.5)
 		dog_pain1 ();
 	else
@@ -235,7 +237,7 @@ void() dog_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-		ThrowHead ("progs/h_dog.mdl", self.health);
+		ThrowHead ("progs/h_dog_alk.mdl", self.health);
 		return;
 	}
 
@@ -341,7 +343,7 @@ void(entity e) monster_dog_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/dog.mdl");
+	setmodel (self, "progs/dog_alk.mdl");
 
 	setsize (self, '-32 -32 -24', '32 32 40');
 	self.health = 25;
@@ -373,8 +375,8 @@ void() monster_dog =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/h_dog.mdl");
-	precache_model ("progs/dog.mdl");
+	precache_model ("progs/h_dog_alk.mdl");
+	precache_model ("progs/dog_alk.mdl");
 
 	precache_sound ("dog/dattack1.wav");
 	precache_sound ("dog/ddeath.wav");

@@ -172,6 +172,8 @@ void(entity attacker, float damage)	army_pain =
 {
 	local float r;
 	
+	if (self.health < 20) self.skin = 1;
+
 	if (self.pain_finished > time)
 		return;
 
@@ -355,7 +357,7 @@ void(entity e) monster_army_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/soldier.mdl");
+	setmodel (self, "progs/soldier_alk.mdl");
 
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 30;
@@ -386,7 +388,7 @@ void(entity e) monster_nailgrunt_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/nsoldier.mdl");
+	setmodel (self, "progs/nsoldier_alk.mdl");
 	
 	setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 30;
@@ -417,7 +419,7 @@ void() monster_nailgrunt = {
 		remove(self);
 		return;
 	}
-	precache_model ("progs/nsoldier.mdl");
+	precache_model ("progs/nsoldier_alk.mdl");
 	precache_model ("progs/h_guard.mdl");
 	precache_model ("progs/gib1.mdl");
 	precache_model ("progs/gib2.mdl");
@@ -455,7 +457,7 @@ void() monster_army = {
 		remove(self);
 		return;
 	}
-	precache_model ("progs/soldier.mdl");
+	precache_model ("progs/soldier_alk.mdl");
 	precache_model ("progs/h_guard.mdl");
 	precache_model ("progs/gib1.mdl");
 	precache_model ("progs/gib2.mdl");
