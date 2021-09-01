@@ -931,7 +931,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_AXE)
 	{
 		self.currentammo = 0;
-		self.weaponmodel = "progs/v_axe.mdl";
+		self.weaponmodel = "progs/v_axe_alk.mdl";
 		self.weaponframe = 0;
 	}
 	else if (self.weapon == WEAPON_CHAINSAW)
