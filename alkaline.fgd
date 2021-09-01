@@ -769,7 +769,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 
 @baseclass size(-16 -16 0, 16 16 56) color(128 128 255) base(RespawnableItem, Appearflags) = Weapon []
 
-@PointClass base(Weapon) model({"path": "progs/g_axe.mdl"}) = weapon_axe : "Axe." []
+@PointClass base(Weapon) model({"path": "progs/g_axe_alk.mdl"}) = weapon_axe : "Axe." []
 @PointClass base(Weapon) model({"path": "progs/g_shotgn.mdl"}) = weapon_shotgun : "Shotgun." []
 @PointClass base(Weapon) model({"path": "progs/g_shot.mdl"}) = weapon_supershotgun : "Super shotgun" []
 @PointClass base(Weapon) model({"path": "progs/g_nail.mdl"}) = weapon_nailgun : "Nailgun" []
