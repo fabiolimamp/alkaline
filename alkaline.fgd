@@ -838,7 +838,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/demon.mdl"}) = monster_demon1 :
 "Fiend (Demon), 300 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler.mdl"}) = monster_shambler :
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
 "Shambler, 600 health points.
 Rockets only have half damage
 when hitting the Shambler." []
