@@ -263,6 +263,10 @@ void(entity attacker, float damage)	sham_pain =
 {
 	sound (self, CHAN_VOICE, "shambler/shurt2.wav", 1, ATTN_NORM);
 
+	if (self.health < 150) 		self.skin = 3;
+	else if (self.health < 300 && self.health >= 150)	self.skin = 2;
+	else if (self.health < 450 && self.health >= 300)	self.skin = 1;
+
 	if (self.health <= 0)
 		return;		// allready dying, don't go into pain frame
 
@@ -297,7 +301,8 @@ void() sham_die =
 	if (self.health < -60)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_shams.mdl", self.health);
+		self.skin = 0;
+		ThrowHead ("progs/h_shams_alk.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
@@ -387,7 +392,7 @@ void(entity e) monster_shambler_start =
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
-	setmodel (self, "progs/shambler.mdl");
+	setmodel (self, "progs/shambler_alk.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 600;
@@ -420,9 +425,9 @@ void() monster_shambler =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/shambler.mdl");
+	precache_model ("progs/shambler_alk.mdl");
 	precache_model ("progs/s_light.mdl");
-	precache_model ("progs/h_shams.mdl");
+	precache_model ("progs/h_shams_alk.mdl");
 	precache_model ("progs/bolt.mdl");
 	
 	precache_sound ("shambler/sattck1.wav");
