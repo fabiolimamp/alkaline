@@ -972,6 +972,10 @@ Don't shake hands with this crazy bastard!" []
 @PointClass base(Monster) size(-32 -32 -24, 32 32 120) model({"path":"progs/tormentor.mdl"}) = monster_tormentor :
 "Tormentor, 2000 health points." []
 
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/edie.mdl", "frame":149}) = monster_edie :
+"Edie, 500 health points." []
+
+
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 

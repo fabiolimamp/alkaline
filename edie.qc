@@ -114,8 +114,8 @@ void(float dist, float power, float clawdmg, float stime, string hitsound) gug_h
 						
 						if (dummy.flags & FL_ONGROUND)
 							dummy.flags = dummy.flags - FL_ONGROUND;
-
-						dummy.velocity = (e.velocity * 0.5) + (normalize(e.origin - self.origin) * power);
+						e.velocity = e.velocity + '0 0 22.5' * clawdmg;
+						dummy.velocity = (e.velocity * 0.5) + ((normalize(e.origin - self.origin)) * power);
 
 						if (vlen(dummy.velocity) > 600) {
 							dummy.velocity = normalize(dummy.velocity) * 600;
@@ -376,7 +376,21 @@ void(float x, float y, float z, float moving) edie_Fire =
 };
 
 
-void() edie_stand1	=[	$run2,		edie_stand1	] {ai_stand();};
+void() edie_stand1	=[	149,		edie_stand2	] {ai_stand();
+	if ((self.waitmin < time)) {
+		if (random() < 0.15) {
+			sound(self, CHAN_VOICE, "edie/idle1.wav", 1, ATTN_IDLE);
+			self.waitmin = (time + 3);
+		}
+	}
+};
+void() edie_stand2	=[	150,		edie_stand3	] {ai_stand();};
+void() edie_stand3	=[	151,		edie_stand4	] {ai_stand();};
+void() edie_stand4	=[	152,		edie_stand5	] {ai_stand();};
+void() edie_stand5	=[	153,		edie_stand6	] {ai_stand();};
+void() edie_stand6	=[	154,		edie_stand7	] {ai_stand();};
+void() edie_stand7	=[	155,		edie_stand8	] {ai_stand();};
+void() edie_stand8	=[	156,		edie_stand1	] {ai_stand();};
 
 
 void() edie_walk1	=[	$run1,		edie_walk2	] {ai_walk(20);};
@@ -921,7 +935,7 @@ void() monster_edie =
 
 //	precache_sound ("ogre/ogwake.wav");
 	
-
+	precache_sound ("edie/idle1.wav");
 	precache_sound ("edie/step.wav");
 	precache_sound ("edie/mangle.wav");
 	
