@@ -551,7 +551,8 @@ void() trigger_skill_use =
 {
 	if (activator.classname != "player")
 		return;
-		
+	
+	other = activator;
 	trigger_skill_touch();
 };
 //johnfitz
