@@ -64,6 +64,7 @@ body {
 			<li><a href="#trigger_repeat">Repeater/timer trigger</a></li>
 			<li><a href="#monsterjumps">Monsterjumps</a></li>
 			<li><a href="#stealth-teleport">Stealth teleport</a></li>
+			<li><a href="#multiple-destinations">Multiple teleport destinations</a></li>
 		</ul>
 	</li>
 	<li>
@@ -107,6 +108,7 @@ body {
 		<ul>
 			<li><a href="#trigger_filter">trigger_filter</a></li>
 			<li><a href="#trigger_everything">trigger_everything</a></li>
+			<li><a href="#target_setcount">target_setcount</a></li>
 		</ul>
 	</li>
 	
@@ -395,6 +397,16 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <h3 id="stealth-teleport">Stealth teleport</h3>
 <p>Stealth mode can be set on both <strong>trigger_teleport</strong> (when teleporting out) and <strong>info_teleport_destination</strong> (when teleporting in).</p>
+
+<h3 id="multiple-destinations">Multiple teleport destinations</h3>
+<p>A single <strong>trigger_teleport</strong> can target multiple <strong>info_teleport_destination</strong> entities with the same targetname.</p>
+<p>There are 3 ways in which the trigger can deal with that:</p>
+<ul>
+<li><strong>First</strong> mode (default): always selects the destination with the lowest <strong>count</strong> value. This way you can disable a specific destination with a <strong>target_setstate</strong> when you want the teleport to target the next one;</li>
+<li><strong>Random</strong> mode: selects a destination randomly;</li>
+<li><strong>Cycle</strong> mode: goes sequentially through destinations every time the teleport is used, according to their <strong>count</strong> field ordering.</li>
+</ul>
+<p>Refer to the in-editor documentation for both <strong>trigger_teleport</strong> and <strong>info_teleport_destination</strong> for more info.</p>
 
 <hr>
 

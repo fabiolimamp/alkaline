@@ -136,26 +136,47 @@ void() misc_explobox2 =
 
 //============================================================================
 
-float SPAWNFLAG_SUPERSPIKE	= 1;
-float SPAWNFLAG_LASER = 2;
+float TRAP_SUPERSPIKE = 1;
+float TRAP_LASER = 2;
+float TRAP_ROCKET = 4;
 
 void(vector org, vector vec) LaunchLaser;
 
 void() spikeshooter_use =
 {
-	if (self.spawnflags & SPAWNFLAG_LASER)
+	local float spd, damage;
+
+	if (self.spawnflags & TRAP_LASER)
 	{
 		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
 		LaunchLaser (self.origin, self.movedir);
+		spd = 600;
+		damage = 15;
+	}
+	else if (self.spawnflags & TRAP_ROCKET)
+	{
+		sound (self, CHAN_VOICE, "weapons/sgun1.wav", 1, ATTN_NORM);
+		launch_rocket (self.origin, self.movedir);
+		spd = 500;
+		damage = 60;
 	}
 	else
 	{
 		sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
 		launch_spike (self.origin, self.movedir);
-		newmis.velocity = self.movedir * 500;
-		if (self.spawnflags & SPAWNFLAG_SUPERSPIKE)
+		spd = 500;
+		if (self.spawnflags & TRAP_SUPERSPIKE) {
 			newmis.touch = superspike_touch;
+			damage = 18;
+		}
+		else damage = 9;
 	}
+	
+	if (self.dmg) damage = zeroconvert(self.dmg);
+	newmis.dmg = damage;
+	
+	if (self.speed) spd = self.speed;
+	newmis.velocity = self.movedir * spd;
 };
 
 void() shooter_think =
@@ -175,15 +196,15 @@ void() trap_spikeshooter =
 {
 	SetMovedir ();
 	self.use = spikeshooter_use;
-	if (self.spawnflags & SPAWNFLAG_LASER)
+	if (self.spawnflags & TRAP_LASER)
 	{
-		precache_model2 ("progs/laser.mdl");
+		precache_model ("progs/laser.mdl");
 		
-		precache_sound2 ("enforcer/enfire.wav");
-		precache_sound2 ("enforcer/enfstop.wav");
+		precache_sound ("enforcer/enfire.wav");
+		precache_sound ("enforcer/enfstop.wav");
 	}
-	else
-		precache_sound ("weapons/spike2.wav");
+	// spike and rocket sounds precached in weapons.qc
+	// models in world.qc
 };
 
 
@@ -249,6 +270,34 @@ void() target_autosave_use =
 	}
 	sound(activator, CHAN_VOICE, "misc/sav.wav", 0.3, ATTN_NORM);
 	autosave(activator, self.message);
+}
+
+void() toggle_autosave =
+{
+	entity e = world;
+	float printed = FALSE;
+	do {
+		e = find(e, classname, "target_autosave");
+		if (!e) break;
+
+		if (e.use == target_autosave_use)
+		{
+			e.use = SUB_Null;
+			if (!printed)
+			{
+				bprint("Autosaves disabled\n");
+				printed = TRUE;
+			}
+		} else {
+			e.use = target_autosave_use;
+			if (!printed)
+			{
+				bprint("Autosaves reenabled\n");
+				printed = TRUE;
+			}
+		}
+
+	} while (e != world);
 }
 
 /*QUAKED target_autosave (1 .0 .5) (-8 -8 -8) (8 8 8)

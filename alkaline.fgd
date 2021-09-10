@@ -50,7 +50,7 @@
 	fog(string) : "Fog Command" :  : "ENGINE only 'console command' for setting fog parameters, Density/R/G/B example = (0.05 0.3 0.3 0.3)."
 	fog_density(float) : "Fog Density" :  : "Global fog density (def 0.1)."
 	skyfog_density(float) : "Skyfog Density" : "0.5" : "How much fog is applied to skybrushes (def 0.5)."
-	fog_colour(color1) : "Fog Colour" :  : "Initial global fog colour (def 0.1 0.1 0.1)."
+	fog_color(color1) : "Fog Color" :  : "Initial global fog color (def 0.1 0.1 0.1)."
 
 	take_weapons(flags) = [		
 		1: "WEAPON_SHOTGUN"	
@@ -64,6 +64,7 @@
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	give_weapons(flags) = [		
 		1: "WEAPON_SHOTGUN"	
@@ -77,6 +78,7 @@
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	reset_items(choices) : "Reset items/weapons" : 0 =
 	[
@@ -231,13 +233,16 @@
 
 @baseclass = Fog [ 
 	fog_density(string) : "Fog Density" 
-	fog_color(color1) : "Fog Color" 
+	fog_color(color1) : "Fog Color"
+	skyfog_density(string) : "Skyfog Density"
 ]
 @baseclass = FogShift [ 
 	fog_density(string) : "Start Fog Density" 
 	fog_color(color1) : "Start Fog Color" 
+	skyfog_density(string) : "Start Skyfog Density" 
 	fog_density2(string) : "End Fog Density" 
 	fog_color2(color1) : "End Fog Color" 
+	skyfog_density2(string) : "End Skyfog Density" 
 ]
      
 @baseclass = Deathtype [ deathtype(string) : "Obituary message" ]
@@ -279,13 +284,14 @@
 ]
 
 @SolidClass base(Appearflags, Targetname, Target, Blood) color(255 128 128) = func_breakable : 
-"A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable.
+"A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable, unless you set the spawnflag 'Always shootable'.
 
 NO_MONSTERS: object ignores damage from monsters" 
 [
 	cnt(integer) : "Debris amount" :  : "Number of pieces of debris to spawn. Set to -1 to disable debris."
 	mdl(string) : "Custom debris model" : : "Overrides the model selected through 'style'. EG: 'progs/gib.mdl'"
 	noise1(string) : "Custom break sound" : : "Overrides the sound selected through 'style'. EG: 'player/gib.wav'"
+	alpha2(integer) : "Custom debris opacity"
 	health(integer) : "Health" : 20
 	style(choices) : "Debris color" : 0 = 
 	[
@@ -298,6 +304,7 @@ NO_MONSTERS: object ignores damage from monsters"
 	spawnflags(flags) =
 	[
 		1 : "No monsters" : 0
+		2 : "Always shootable" : 0
 	]
 
 ]
@@ -317,6 +324,7 @@ NO_MONSTERS: object ignores damage from monsters"
 		1 : "Starts off" : 0
 		2 : "Solid" : 0
 		4 : "Silent" : 0
+		8 : "Don't hurt monsters" : 0
 	]
 ]
 
@@ -508,6 +516,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	give_weapons(flags) = [		
 		1: "WEAPON_SHOTGUN"	
@@ -521,6 +530,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 	ammo_shells(integer) : "Shells on start" : : "Override the shells amount on startup. Set to -1 to force it to 0."
 	ammo_nails(integer) : "Nails on start" : : "Override the nails amount on startup. Set to -1 to force it to 0."
@@ -530,10 +540,20 @@ You can override initial weapon/ammo loadout for this specific spot.
 @PointClass base(PlayerClass) = info_player_coop : "Player cooperative start" []
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
 @PointClass base(PlayerClass) = info_player_deathmatch : "DM start" []
-@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog) = info_teleport_destination : "Teleport destination" [
+
+@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog) = info_teleport_destination : "Teleport destination.
+
+- 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
+
+- 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'angle' field.
+
+- 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
+" [
 	spawnflags(flags) = [
+		1: "Free angle"
 		4: "Stealth teleport in"
 	]
+	count(integer) : "Group order"
 ]
 @PointClass = info_null : "info_null (spotlight target)"
 [
@@ -642,6 +662,12 @@ You can override initial weapon/ammo loadout for this specific spot.
 @PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/trifecta.mdl" }) =
 	item_artifact_trifecta : "Trifecta of Alkaline" []
 
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/jumpblue.mdl"}) =
+	item_jboots : "Jump Boots" []
+@PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/jumpgold.mdl"}) =
+	item_jboots_timed : "Jump Boots (Timed)" [
+		jboots_rechargelimit(float) : "Maximum charges" : -1 : "Maximum jump charges given. -1 is no limit"
+	]
 
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 2 }) =
 	item_armorInv : "Red armor (200%)" []
@@ -749,6 +775,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 @PointClass base(Weapon) model({"path": "progs/g_nail.mdl"}) = weapon_nailgun : "Nailgun" []
 @PointClass base(Weapon) model({"path": "progs/g_nail2.mdl"}) = weapon_supernailgun : "Perforator" []
 @PointClass base(Weapon) model({"path": "progs/g_rock.mdl"}) = weapon_grenadelauncher : "Grenade launcher" []
+@PointClass base(Weapon) model({"path": "progs/g_mine.mdl"}) = weapon_proximity_gun : "Proximity Gun" []
 @PointClass base(Weapon) model({"path": "progs/g_rock2.mdl"}) = weapon_rocketlauncher : "Rocket launcher" []
 @PointClass base(Weapon) model({"path": "progs/g_light.mdl"}) = weapon_lightning : "Thunderbolt" []
 @PointClass base(Weapon) model({"path": "progs/g_laserg.mdl"}) = weapon_laser_gun : "Laser Cannon" []
@@ -935,6 +962,20 @@ Don't shake hands with this crazy bastard!" []
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnofloyd.mdl"}) = monster_arachnofloyd :
 "Arachnofloyd, 600 health points." []
 
+@PointClass base(Monster) size(-16 -16 0, 16 16 24) model({"path":"progs/spiderbot.mdl"}) = monster_spiderbot :
+"Spiderbot, 30 health points." [
+	spawnflags(flags) = [
+		524288 : "0-sized bbox"
+	]
+]
+
+@PointClass base(Monster) size(-32 -32 -24, 32 32 120) model({"path":"progs/tormentor.mdl"}) = monster_tormentor :
+"Tormentor, 2000 health points." []
+
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/edie.mdl", "frame":149}) = monster_edie :
+"Edie, 500 health points." []
+
+
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 
@@ -1023,10 +1064,19 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 @PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter" 
 [	
 	angle(integer) : "Angle"
+	dmg(integer) : "Custom damage" : : "Custom projectile damage. Defaults:
+	- Spike: 9
+	- Superspike: 18
+	- Laser: 15
+	- Rocket: 60"
+	speed(integer) : "Custom projectile speed" : : "Defaults:
+	- Spike/Superspike/rocket: 500
+	- Laser: 600"
 	spawnflags(Flags) = 
 	[
 		1 : "Superspike" : 0
 		2 : "Laser" : 0
+		4 : "Rocket" : 0
 	]
 ]
 
@@ -1476,6 +1526,8 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 		4: "Screechy Metal"
 		5: "Custom sounds"
 		6: "Quake 2 door sound"
+		7: "Base fast (plat sound)"
+		8: "Chain Slow (plat sound)"
 	]
 	noise1(string) : "Sound file for the 'stop moving' sound (if set, overrides 'sounds')"
 	noise2(string) : "Sound file for the 'move' sound (if set, overrides 'sounds')"
@@ -1642,6 +1694,7 @@ The flags above are mutually exclusive and will cause an objerror when selected 
 	[
 		2: "Move on trigger" : 0
 		4: "Stop on trigger" : 0
+		8: "Non-solid" : 0
 	]
 ]
 
@@ -1925,13 +1978,29 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 	spawnflags(flags) = [ 1: "Entity only" : 0 ]
 ]
 
-@SolidClass base(SingleTarget, Targetname, TriggerWait) = trigger_teleport : "Trigger teleport" 
+@SolidClass base(SingleTarget, Targetname, TriggerWait) = trigger_teleport : "Trigger teleport
+
+You can have multiple info_teleport_destination entities with the same targetname, and select how the trigger will deal with them through the 'style' key.
+
+Destinations can be disabled through target_setstate (or setting a 'estate = 1' key on the entity) so they won't get selected. In this case you'll also need to set a different 'targetname2' on that specific destination (along with the 'targetname' matching the trigger) so you can target it individually with a target_setstate.
+
+Using the destination's 'count' field, you can define which order they'll be selected when using 'first' or 'cycle' modes. Note that for these modes, each info_teleport_destination with the same targetname needs to have a unique count value - not necessarily sequential, you're allowed to have holes in the numbering sequence. For the 'random' mode, however, the 'count' field isn't necessary, since destination ordering doesn't matter in this case.
+
+- 'First' style: always selects the destination with the lowest 'count' value. This way you can disable a destination when you want the teleport to target the next one;
+- 'Random' style: selects a destination randomly;
+- 'Cycle' style: goes sequentially through destinations every time the teleport is used, according to their 'count' field ordering.
+" 
 [
 	spawnflags(Flags) =
 	[
 		1 : "Player only" : 0
 		2 : "No portal sound" : 0
 		4 : "Stealth teleport out" : 0
+	]
+	style(choices) : "Multiple destination mode" : 0 = [
+		0 : "First"
+		1 : "Random"
+		2 : "Cycle"
 	]
 ]
 
@@ -2090,6 +2159,42 @@ By default it'll fire for each and every registered touch, even if simultaneous.
 ]
 
 
+@PointClass base(Appearflags, Targetname) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
+Can be used with a trigger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
+
+You can either replace the current value with a new one, or add/subtract to it (by using a positive or negative 'count'), by selecting into the 'style' field.
+" 
+[
+	target(target_destination) : "Target" 
+	target2(target_destination) : "Target" 
+	target3(target_destination) : "Target" 
+	target4(target_destination) : "Target"
+	style(choices) : "Set style" : 0 = [
+		0 : "Replace"
+		1 : "Add"
+	]
+	count(integer) : "Value to set"
+	spawnflags(flags) = [
+		1 : "Change activator's field"
+	]
+]
+
+@PointClass base(Appearflags, Targetname) = target_setsize : "Resizes the targeted entity's bounding box. Targets both targetname and targetname2 fields.
+The activator's bbox can be changed as well by activating spawnflag 1.
+" 
+[
+	target(target_destination) : "Target" 
+	target2(target_destination) : "Target" 
+	target3(target_destination) : "Target" 
+	target4(target_destination) : "Target"
+	cmins(string) : "Min. bounding box point"
+	cmaxs(string) : "Max. bounding box point"
+	spawnflags(flags) = [
+		1 : "Change activator's size"
+	]
+]
+
+
 @PointClass base(Appearflags, Targetname) = target_setdoor : "Moves a door to the specified position (open or closed).
 It respect the door's wait time and enabled/disabled state, but will move even if keylocked.
 " 
@@ -2128,6 +2233,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 "Trigger: Fog Blend
 Acts as a smoothly blending portal between two zones of different fog. Sets the fog for any client passing through it, blending their global fog settings between start and end values proportional to their position within the trigger.
 
+- both standard fog and skyfog can be changed at the same time. If you want one of them to not be changed, just set its density to 0 (or keep undeclared). To clear them, set density to -1.
 - will 'stuffcmd' 2 dozen times per frame so try not to make these huge
 - a bug in most quake engine ports will reset the eye position smoothing that happens when climbing stairs or riding a plat on every frame that a 'stuffcmd' is sent, so fog transitions during upwards motion will cause noticeable stuttering." 
 [
@@ -2139,6 +2245,7 @@ Acts as a smoothly blending portal between two zones of different fog. Sets the 
 "Trigger: Sets a fog.
 Smoothly blends client's currently applied fog to this value over time.
 
+- both standard fog and skyfog can be changed at the same time. If you want one of them to not be changed, just set its density to 0 (or keep undeclared). To clear them, set density to -1.
 - will 'stuffcmd' 2 dozen times per frame so try not to make these huge
 - a bug in most quake engine ports will reset the eye position smoothing that happens when climbing stairs or riding a plat on every frame that a 'stuffcmd' is sent, so fog transitions during upwards motion will cause noticeable stuttering." 
 [
@@ -2154,6 +2261,7 @@ Activator's fog will toggle between fog_color/fog_density and fog_color2/fog_den
 If you check the 'one-way' spawnflag, it'll only blend over to fog_color2/fog_density2 - unless you check the 'reverse' flag as well, which will make it blend only to fog_color/fog_density.
 Checking 'All clients' will affect all connected players.
 
+- both standard fog and skyfog can be changed at the same time. If you want one of them to not be changed, just set its density to 0 (or keep undeclared). To clear them, set density to -1.
 - will 'stuffcmd' 2 dozen times per frame so try not to make this take too long
 - a bug in most quake engine ports will reset the eye position smoothing that happens when climbing stairs or riding a plat on every frame that a 'stuffcmd' is sent, so fog transitions during upwards motion will cause noticeable stuttering." 
 [
@@ -2236,6 +2344,7 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 		512: "WEAPON_PLASMA"
 		1024: "WEAPON_LASER_CANNON"
 		4096: "WEAPON_AXE"
+		8192: "WEAPON_PROXIMITY_GUN"
 	]
 ]
 

@@ -332,6 +332,10 @@ float TELE_STEALTH = 4;
 float MONSTER_ONLY = 16;
 float TELE_DD = 32;*/
 
+float TELEPORT_STYLE_FIRST = 0;
+float TELEPORT_STYLE_RANDOM = 1;
+float TELEPORT_STYLE_CYCLE = 2;
+
 void() play_teleport =
 {
 	local	float v;
@@ -412,10 +416,90 @@ local entity	death;
 	force_retouch = 2;		// make sure even still objects get hit
 };
 
+entity() teleport_getdestination = {
+	entity dests[256];
+	entity d;
+	float totaldests, i, nextdest;
+	float maxdest, mindest;
+
+	if (self.style == TELEPORT_STYLE_RANDOM) {
+
+		d = find(world, targetname, self.target);
+		while (d) {
+			if (d.classname == "info_teleport_destination" && d.estate == STATE_ACTIVE) {
+				dests[i] = d;
+				i++;
+				totaldests++;
+			}
+			d = find(d, targetname, self.target);
+		}
+
+		if (!totaldests) return world;
+
+		i = floor(random() * (totaldests - 0.01));
+		//dprint5("Found ", ftos(totaldests), " dests, returning ", ftos(i), "\n");
+		return dests[i];
+	}
+	else if (self.style == TELEPORT_STYLE_CYCLE) {
+		nextdest = 255;
+		mindest = 255;
+		
+		d = find(world, targetname, self.target);
+		while (d) {
+			if (d.classname == "info_teleport_destination" && d.estate == STATE_ACTIVE) {
+				if (dests[d.count]) {
+					dprint3("trigger_teleport (", vtos((self.mins + self.maxs)*0.5), "): destinations with the same count order at:\n");
+					dprint4(vtos(d.origin), " and ", vtos(dests[d.count].origin), "\n");
+				}
+
+				dests[d.count] = d;
+
+				if (d.count > self.count && d.count < nextdest) nextdest = d.count;
+				if (d.count < mindest) mindest = d.count;
+				if (d.count > maxdest) maxdest = d.count;
+
+				totaldests++;
+			}
+			d = find(d, targetname, self.target);
+		}
+
+		if (!totaldests) return world;
+
+		if (self.count >= maxdest) nextdest = mindest;
+		self.count = nextdest;
+		return dests[nextdest];
+
+	}
+	else { // TELEPORT_STYLE_FIRST, default
+		nextdest = 255;
+		
+		d = find(world, targetname, self.target);
+		while (d) {
+			if (d.classname == "info_teleport_destination" && d.estate == STATE_ACTIVE) {
+				if (dests[d.count]) {
+					dprint3("trigger_teleport (", vtos((self.mins + self.maxs)*0.5), "): destinations with the same count order at:\n");
+					dprint4(vtos(d.origin), " and ", vtos(dests[d.count].origin), "\n");
+				}
+
+				dests[d.count] = d;
+
+				if (d.count < nextdest) nextdest = d.count;
+				totaldests++;
+			}
+			d = find(d, targetname, self.target);
+		}
+
+		if (!totaldests) return world;
+		else return dests[nextdest];
+	}
+};
+
 void() teleport_touch =
 {
 	local entity	t;
 	local vector	org;
+	local vector	tAngle, pAngle, outAngle;
+	local float vAngleX;
 
 	if (self.estate != STATE_ACTIVE)
 		return;
@@ -439,21 +523,32 @@ void() teleport_touch =
 			return;		// not fired yet
 	}
 
-// only teleport living creatures
+	// only teleport living creatures
 	if (other.health <= 0 || other.solid != SOLID_SLIDEBOX)
 		return;
 
 	SUB_UseTargets ();
-
-// put a tfog where the player was
+	
+	t = teleport_getdestination();
+	if (!t) {
+		dprint5("trigger_teleport (", vtos((self.mins + self.maxs)*0.5), ": couldn't find target \"", self.target, "\"\n");
+		return;
+	}
+	// put a tfog where the player was
 	if(!(self.spawnflags & TELE_STEALTH)) spawn_tfog (other.origin);
 
-	t = find (world, targetname, self.target);
-	if (!t)
-		objerror ("couldn't find target");
-		
-// spawn a tfog flash in front of the destination
-	makevectors (t.mangle);
+	// spawn a tfog flash in front of the destination
+	
+	tAngle = [t.mangle_x, t.mangle_y, 0];
+	pAngle = [other.angles_x, other.angles_y, 0];
+
+	if (t.spawnflags & 1){
+		outAngle = tAngle + pAngle;
+		vAngleX = other.v_angle_x;
+	}
+	else outAngle = tAngle;
+
+	makevectors (outAngle);
 	org = t.origin + 32 * v_forward;
 
 	if(!(t.spawnflags & TELE_STEALTH)) spawn_tfog (org);
@@ -468,15 +563,21 @@ void() teleport_touch =
 	}
 
 	setorigin (other, t.origin);
-	other.angles = t.mangle;
+	
+	other.angles = outAngle;
+
 	if (other.classname == "player")
 	{
 		fog_setFromEnt(other, t);
+		if (t.spawnflags & 1) other.angles_x = vAngleX; // reset vertical view angle, engine bug?
+
 		other.fixangle = 1;		// turn this way immediately
 		other.teleport_time = time + 0.7;
 		if (other.flags & FL_ONGROUND)
 			other.flags = other.flags - FL_ONGROUND;
 		other.velocity = v_forward * 300;
+
+
 	}
 	other.flags = other.flags - other.flags & FL_ONGROUND;
 };
@@ -518,6 +619,7 @@ void() trigger_teleport =
 		objerror ("no target");
 	self.use = teleport_use;
 
+	self.count = -1;
 	if (!(self.spawnflags & SILENT))
 	{
 		precache_sound ("ambience/hum1.wav");
@@ -528,6 +630,19 @@ void() trigger_teleport =
 	SUB_CheckWaiting();
 };
 
+
+void() trigger_test_touch = {
+	if (other.classname == "player"){
+		other.fixangle = 1;
+		other.angles_x = 45;
+
+	}
+}
+
+void() trigger_test = {
+	InitTrigger();
+	self.touch = trigger_test_touch;
+}
 /*
 ==============================================================================
 
@@ -1300,4 +1415,110 @@ void() trigger_everything = {
 
 	self.touch = trigger_everything_touch;
 	SUB_CheckWaiting();
+};
+
+
+/*
+=============================================================
+
+target_setcount
+
+=============================================================
+*/
+
+void(string name, .string fld) target_setcount_set = {
+	local entity t;
+
+	t = find(world, fld, name);
+
+	while (t) {
+		if (self.style == 1)
+			t.count += self.count;
+		else
+			t.count = self.count;
+
+		t = find(t, fld, name);
+	}
+};
+
+void() target_setcount_use = {
+	if (self.target && self.target != "") {
+		target_setcount_set(self.target, targetname);
+		target_setcount_set(self.target, targetname2);
+	}
+	if (self.target2 && self.target2 != "") {
+		target_setcount_set(self.target2, targetname);
+		target_setcount_set(self.target2, targetname2);
+	}
+	if (self.target3 && self.target3 != "") {
+		target_setcount_set(self.target3, targetname);
+		target_setcount_set(self.target3, targetname2);
+	}
+	if (self.target4 && self.target4 != "") {
+		target_setcount_set(self.target4, targetname);
+		target_setcount_set(self.target4, targetname2);
+	}
+
+	if (self.spawnflags & 1) {
+		if (self.style == 1)
+			activator.count += activator.count;
+		else
+			activator.count = activator.count;
+	}
+};
+
+void() target_setcount = {
+	self.use = target_setcount_use;
+
+};
+
+
+/*
+=============================================================
+
+target_setsize
+
+=============================================================
+*/
+
+void(string name, .string fld) target_setsize_set = {
+	local entity t;
+
+	t = find(world, fld, name);
+
+	while (t) {
+		if (t.mins != self.cmins || t.maxs != self.cmaxs)
+			setsize(t, self.cmins, self.cmaxs);
+
+		t = find(t, fld, name);
+	}
+};
+
+void() target_setsize_use = {
+	if (self.target && self.target != "") {
+		target_setsize_set(self.target, targetname);
+		target_setsize_set(self.target, targetname2);
+	}
+	if (self.target2 && self.target2 != "") {
+		target_setsize_set(self.target2, targetname);
+		target_setsize_set(self.target2, targetname2);
+	}
+	if (self.target3 && self.target3 != "") {
+		target_setsize_set(self.target3, targetname);
+		target_setsize_set(self.target3, targetname2);
+	}
+	if (self.target4 && self.target4 != "") {
+		target_setsize_set(self.target4, targetname);
+		target_setsize_set(self.target4, targetname2);
+	}
+
+	if (self.spawnflags & 1) {
+		if (activator.mins != self.cmins || activator.maxs != self.cmaxs)
+			setsize(activator, self.cmins, self.cmaxs);
+	}
+};
+
+void() target_setsize = {
+	self.use = target_setsize_use;
+
 };

@@ -865,6 +865,15 @@ void() func_door = {
 		default_noise1 = "doors/q2door2.wav";
 		default_noise2 = "doors/q2door1.wav";
 	}
+	else if (self.sounds == 7) {
+		default_noise1 = "plats/plat2.wav";
+		default_noise2 = "plats/plat1.wav";
+	}
+	else if (self.sounds == 8) {
+		default_noise1 = "plats/medplat2.wav";
+		default_noise2 = "plats/medplat1.wav";
+	}
+
 	else {
 		default_noise1 = "misc/null.wav";
 		default_noise2 = "misc/null.wav";

@@ -486,11 +486,13 @@ float(float w) RankForWeapon =
 		return 6;
 	if (w == WEAPON_GRENADE_LAUNCHER)
 		return 7;
-	if (w == WEAPON_SUPER_SHOTGUN)
+	if (w == WEAPON_PROXIMITY_GUN)
 		return 8;
-	if (w == WEAPON_NAILGUN)
+	if (w == WEAPON_SUPER_SHOTGUN)
 		return 9;
-	return 9;
+	if (w == WEAPON_NAILGUN)
+		return 10;
+	return 10;
 };
 
 /*
@@ -683,6 +685,21 @@ void() weapon_grenadelauncher =
 	setmodel (self, "progs/g_rock.mdl");
 	self.weapon = WEAPON_GRENADE_LAUNCHER;
 	self.netname = "Grenade Launcher";
+	self.touch = weapon_touch;
+	if(!self.ammo_rockets) self.ammo_rockets = 5;
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+};
+
+/*QUAKED weapon_proximity_gun (0 .5 .8) (-16 -16 0) (16 16 32)
+*/
+
+void() weapon_proximity_gun =
+{
+	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_mine.mdl");
+	setmodel (self, "progs/g_mine.mdl");
+	self.weapon = WEAPON_PROXIMITY_GUN;
+	self.netname = "Proximity Launcher";
 	self.touch = weapon_touch;
 	if(!self.ammo_rockets) self.ammo_rockets = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
@@ -1204,8 +1221,38 @@ void() powerup_touch =
 		self.think = item_megahealth_rot;
 		self.owner = other;		
 		
-	}		
+	}
 
+	if (self.classname == "item_jboots")	//JCR Superjump boots PERSISTENT with LIMITED CHARGES (max 3 airjumps)
+	{
+		float limit;
+
+		// if theres a timed boot active, add persistent boot in "background mode"
+		if (other.jboots_finished) limit = other.jboots_prevlimit;
+		else limit = other.jboots_rechargelimit;
+
+		if (limit >= 3) {
+			limit = 3;
+			sprint(other, "Jump module limit reached. Module not added.\n");
+		}
+		else {
+			if (limit) sprint(other, "Jump module added.\n");
+			limit = limit + 1;
+		}
+
+		if (other.jboots_finished) other.jboots_prevlimit = limit;
+		else other.jboots_rechargelimit = limit;
+		
+	}
+
+	if (self.classname == "item_jboots_timed")	//JCR Superjump boots TIMED with INFINITE CHARGES
+	{
+		other.jboots_prevlimit = other.jboots_rechargelimit;
+		other.jboots_time = 1;
+		other.jboots_finished = time + 30;
+		other.jboots_rechargelimit = defaultFl(self.jboots_rechargelimit, -1);
+	}
+	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
 };
@@ -1473,7 +1520,9 @@ void() DropBackpack =
 	else if (item.weapons == WEAPON_LASER_CANNON)
 		item.netname = "Laser Cannon";
 	else if (item.weapons == WEAPON_PLASMA)
-		item.netname = "Plasma Gun";
+		item.netname = "Plasma Rifle";
+	else if (item.weapons == WEAPON_PROXIMITY_GUN)
+		item.netname = "Proximity Launcher";
 	else if (item.weapons == WEAPON_CHAINSAW)
 		item.netname = "Chainsaw";
 	else
@@ -1515,3 +1564,33 @@ void() item_backpack = {
 
 	self.touch = BackpackTouch;
 };
+
+
+void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
+	precache_model ("progs/jboots.mdl");
+	precache_sound ("items/jboots_got.wav");
+	
+	self.noise = "items/jboots_got.wav";
+	self.touch = powerup_touch;
+	self.netname = "Jump Boots";
+	self.items = IT_JBOOTS;
+
+	setmodel (self, "progs/jumpblue.mdl");
+	setsize (self, '-16 -16 -24', '16 16 32');
+	StartItem ();
+}
+
+void() item_jboots_timed = { //JCR SUPERJUMP BOOTS	TIMED
+	precache_model ("progs/jboots_timed.mdl");
+	precache_sound ("items/jboots_got.wav");
+	
+	self.touch = powerup_touch;
+	self.noise = "items/jboots_got_timed.wav";
+	self.netname = "Super Jump Boots";
+	self.items = IT_JBOOTS;
+
+	setmodel (self, "progs/jumpgold.mdl");
+	setsize (self, '-16 -16 -24', '16 16 32');
+	StartItem ();
+};
+

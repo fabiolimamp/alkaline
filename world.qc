@@ -176,6 +176,13 @@ void() worldspawn =
 	local entity linkdoor_e;
 
 	lastspawn = world;
+
+	// simple kex detection, thanks Lunaran
+	if (cvar("pr_checkextension")){
+		if (checkextension("QUAKE_EX"))
+			isKex = TRUE;
+	}
+
 	InitBodyQue ();
 
 // custom map attributes
@@ -183,6 +190,8 @@ void() worldspawn =
 		cvar_set ("sv_gravity", "100");
 	else
 		cvar_set ("sv_gravity", "800");
+
+
 
 	startskill = cvar("skill");
 
@@ -284,6 +293,13 @@ void() worldspawn =
 	precache_sound ("misc/water1.wav");			// swimming
 	precache_sound ("misc/water2.wav");			// swimming
 
+	precache_sound ("items/jboots_plyrjmp1.wav");		//player airjump with jboots jcr
+	precache_sound ("items/jboots_plyrjmp0.wav");		//player jump with jboots 
+	precache_sound ("items/jboots_got.wav");			// got the jump boots
+	precache_sound ("items/jboots_got_timed.wav");		// got the timed jump boots
+	precache_sound ("items/jboots_dry.wav");			// empty jump boots
+	precache_sound ("items/jboots_timed.wav");			// timed jump boot powerup
+
 	precache_model ("progs/player.mdl");
 	precache_model ("progs/eyes.mdl");
 	precache_model ("progs/h_player.mdl");
@@ -304,6 +320,7 @@ void() worldspawn =
 	precache_model ("progs/v_rock2.mdl");
 	precache_model ("progs/v_laserg.mdl");
 	precache_model ("progs/v_saw.mdl");		//dhm - Chainsaw
+	precache_model ("progs/v_mine.mdl");
 	
 	precache_model ("progs/bolt.mdl");		// for lightning gun
 	precache_model ("progs/bolt2.mdl");		// for lightning gun
@@ -313,6 +330,7 @@ void() worldspawn =
 	
 	precache_model ("progs/missile.mdl");
 	precache_model ("progs/grenade.mdl");
+	precache_model ("progs/proxbomb.mdl");
 	precache_model ("progs/spike.mdl");
 	precache_model ("progs/s_spike.mdl");
 
@@ -325,6 +343,9 @@ void() worldspawn =
 	precache_model ("progs/misc_empty.mdl");
 	
 	precache_model ("progs/d_explod.spr");
+
+	precache_model ("progs/jumpblue.mdl");
+	precache_model ("progs/jumpgold.mdl");
 
 //
 // Setup light animation tables. 'a' is total darkness, 'z' is maxbright.

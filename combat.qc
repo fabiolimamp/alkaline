@@ -122,7 +122,7 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
+void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 {
 	local	vector	dir;
 	local	entity	oldself;
@@ -188,9 +188,18 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	targ.armorvalue = targ.armorvalue - save;
 	take = ceil(damage-save);
 
-// add to the damage total for clients, which will be sent as a single
-// message at the end of the frame
-// FIXME: remove after combining shotgun blasts?
+	// checks if entity has a custom damage calculation function
+	if (targ.th_damage)	{
+		oldself = self;
+		self = targ;
+		take = self.th_damage(inflictor, attacker, take, damage);
+		self = oldself;
+		if (take == 0) return;
+	}
+
+	// add to the damage total for clients, which will be sent as a single
+	// message at the end of the frame
+	// FIXME: remove after combining shotgun blasts?
 	if (targ.flags & FL_CLIENT)
 	{
 		targ.dmg_take = targ.dmg_take + take;
@@ -211,7 +220,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 		return;
 	if ((targ.invincible_finished >= time) || (targ.trif_finished >= time))
 	{
-		if (targ.invincible_sound < time && targ.invincible_finished >= time)//johnfitz -- note that this logic doesn't work because it says "self" instead of "targ" -- not sure if it makes sense to fix it though
+		if (targ.invincible_sound < time && targ.invincible_finished >= time)
 		{
 			sound (self, CHAN_ITEM, "items/protect3.wav", 1, ATTN_NORM);
 			self.invincible_sound = time + 2;
@@ -228,7 +237,8 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage=
 	if ( (teamplay == 1) && (targ.team > 0)&&(targ.team == attacker.team) )
 		return;
 		
-// do the damage
+
+	// do the damage
 	targ.health = targ.health - take;
 			
 	if (targ.health <= 0)

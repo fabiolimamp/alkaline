@@ -1,5 +1,6 @@
 void() W_FirePlasma;
 void() Plasma_PreCache;
+void() W_FireProximityGrenade;
 
 // called by worldspawn
 void() W_Precache =
@@ -22,7 +23,8 @@ void() W_Precache =
 	
 	precache_sound ("hipweap/laserg.wav");		// laser cannon
 	precache_sound ("hipweap/laserric.wav");	// laser cannon ricochet
-	
+	precache_sound ("hipweap/proxwarn.wav");	// proximity bomb
+	precache_sound ("hipweap/proxbomb.wav");	// proximity bomb
 	Plasma_PreCache();
 };
 
@@ -407,7 +409,7 @@ BecomeExplosion moved to fx.qc
 
 void() T_MissileTouch =
 {
-	local float	damg;
+	local float	damg, rdamg;
 
 	if (other == self.owner)
 		return;		// don't explode on owner
@@ -418,7 +420,15 @@ void() T_MissileTouch =
 		return;
 	}
 
-	damg = 100 + random()*20;
+	// rocket can have a custom damage
+	if (self.dmg) {
+		damg = zeroconvert(self.dmg);
+		rdamg = damg;
+	}
+	else {
+		damg = 100 + random()*20;
+		rdamg = 120;
+	}
 	
 	if (other.health)
 	{
@@ -429,7 +439,7 @@ void() T_MissileTouch =
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 120, other);
+	T_RadiusDamage (self, self.owner, rdamg, other);
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -486,9 +496,33 @@ void() T_MissileTouchArma =
 W_FireRocket
 ================
 */
+
+void(vector org, vector dir) launch_rocket = {
+	//local	entity missile;
+
+	newmis = spawn();
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLYMISSILE;
+	newmis.solid = SOLID_BBOX;
+	newmis.classname = "missile";
+	newmis.flags = newmis.flags | FL_PROJECTILE;
+	newmis.touch = T_MissileTouch;
+
+	newmis.angles = vectoangles(dir);
+	newmis.velocity = dir * 1000;
+
+	setmodel (newmis, "progs/missile.mdl");
+	setsize (newmis, '0 0 0', '0 0 0');
+	setorigin (newmis, org);
+
+	newmis.nextthink = time + 5;
+	newmis.think = SUB_Remove;
+	//newmis = missile;
+};
+
 void() W_FireRocket =
 {
-	local	entity missile;
+	local	vector dir, org;
 	
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
@@ -496,28 +530,12 @@ void() W_FireRocket =
 
 	self.punchangle_x = -2;
 
-	missile = spawn ();
-	missile.owner = self;
-	missile.movetype = MOVETYPE_FLYMISSILE;
-	missile.solid = SOLID_BBOX;
-	missile.classname = "missile";
-	missile.flags = missile.flags | FL_PROJECTILE;
-// set missile speed	
-
 	makevectors (self.v_angle);
-	missile.velocity = aim(self, 1000);
-	missile.velocity = missile.velocity * 1000;
-	missile.angles = vectoangles(missile.velocity);
+	dir = aim(self, 1000);
+	org = self.origin + v_forward*8 + '0 0 16';
 	
-	missile.touch = T_MissileTouch;
-	
-// set missile duration
-	missile.nextthink = time + 5;
-	missile.think = SUB_Remove;
+	launch_rocket(org, dir);
 
-	setmodel (missile, "progs/missile.mdl");
-	setsize (missile, '0 0 0', '0 0 0');		
-	setorigin (missile, self.origin + v_forward*8 + '0 0 16');
 };
 
 /*
@@ -815,7 +833,7 @@ void(float ox) W_FireSpikes =
 
 void() spike_touch =
 {
-//local float rand;
+	local float damage;
 	if (other == self.owner)
 		return;
 
@@ -831,8 +849,9 @@ void() spike_touch =
 // hit something that bleeds
 	if (other.takedamage)
 	{
-		spawn_touchblood (9);
-		T_Damage (other, self, self.owner, 9);
+		damage = zeroconvertdefault(self.dmg, 9);
+		spawn_touchblood(damage);
+		T_Damage(other, self, self.owner, damage);
 	}
 	else
 	{
@@ -855,7 +874,7 @@ void() spike_touch =
 
 void() superspike_touch =
 {
-//local float rand;
+	local float damage;
 	if (other == self.owner)
 		return;
 
@@ -871,8 +890,9 @@ void() superspike_touch =
 // hit something that bleeds
 	if (other.takedamage)
 	{
-		spawn_touchblood (18);
-		T_Damage (other, self, self.owner, 18);
+		damage = zeroconvertdefault(self.dmg, 18);
+		spawn_touchblood(damage);
+		T_Damage(other, self, self.owner, damage);
 	}
 	else
 	{
@@ -970,6 +990,13 @@ void() W_SetCurrentAmmo =
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
+	else if (self.weapon == WEAPON_PROXIMITY_GUN)
+	{
+		self.currentammo = self.ammo_rockets;
+		self.weaponmodel = "progs/v_mine.mdl";
+		self.weaponframe = 0;
+		self.items = self.items | IT_ROCKETS;
+	}
 	else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
@@ -1034,6 +1061,7 @@ float(float currentweapon, float shells, float nails, float rockets, float cells
 		(currentweapon == WEAPON_NAILGUN && nails >= 1) ||
 		(currentweapon == WEAPON_SUPER_NAILGUN && nails >= 2) ||
 		(currentweapon == WEAPON_GRENADE_LAUNCHER && rockets >= 1) ||
+		(currentweapon == WEAPON_PROXIMITY_GUN && rockets >= 1) ||
 		(currentweapon == WEAPON_ROCKET_LAUNCHER && rockets >= 1) ||
 		(currentweapon == WEAPON_LIGHTNING && cells >= 1) ||
 		(currentweapon == WEAPON_LASER_CANNON && cells >= 1) ||
@@ -1132,6 +1160,12 @@ void() W_Attack =
 		W_FireGrenade();
 		self.attack_finished = time + 0.6;
 	}
+	else if (self.weapon == WEAPON_PROXIMITY_GUN)
+	{
+		player_rocket1();
+		W_FireProximityGrenade();
+		self.attack_finished = time + 0.6;
+	}
 	else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 	{
 		player_rocket1();
@@ -1213,6 +1247,18 @@ void() W_ChangeWeapon =
 	}
 	else if (self.impulse == 6)	{
 		weap = WEAPON_GRENADE_LAUNCHER;
+		if(self.weapon == WEAPON_GRENADE_LAUNCHER){
+			weap = WEAPON_PROXIMITY_GUN;
+		}
+		else {
+			if(self.weapons & WEAPON_GRENADE_LAUNCHER){
+				weap = WEAPON_GRENADE_LAUNCHER;
+			}
+			else if(self.weapons & WEAPON_PROXIMITY_GUN){
+				weap = WEAPON_PROXIMITY_GUN;
+			}
+		}
+		
 		if (self.ammo_rockets < 1) 
 			noammo = 1;
 	}
@@ -1269,6 +1315,11 @@ void() W_ChangeWeapon =
 	else if (self.impulse == 228) {
 		weap = WEAPON_LIGHTNING;
 		if (self.ammo_cells < 1)
+			noammo = 1;
+	}
+	else if (self.impulse == 229) {
+		weap = WEAPON_PROXIMITY_GUN;
+		if (self.ammo_rockets < 1)
 			noammo = 1;
 	}
 	else 
@@ -1406,6 +1457,12 @@ void() CycleWeaponCommand =
 		}
 		else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 		{
+			self.weapon = WEAPON_PROXIMITY_GUN;
+			if (self.ammo_rockets < 1)
+				am = 1;
+		}
+		else if (self.weapon == WEAPON_PROXIMITY_GUN)
+		{
 			self.weapon = WEAPON_ROCKET_LAUNCHER;
 			if (self.ammo_rockets < 1)
 				am = 1;
@@ -1487,6 +1544,12 @@ void() CycleWeaponReverseCommand =
 				am = 1;
 		}
 		else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
+		{
+			self.weapon = WEAPON_PROXIMITY_GUN;
+			if (self.ammo_rockets < 1)
+				am = 1;
+		}
+		else if (self.weapon == WEAPON_PROXIMITY_GUN)
 		{
 			self.weapon = WEAPON_GRENADE_LAUNCHER;
 			if (self.ammo_rockets < 1)
@@ -1593,6 +1656,20 @@ void() QuadCheat =
 	self.items = self.items | IT_QUAD;
 	dprint ("quad cheat\n");
 };
+
+void() JBootsCheat = { //JCR superjump boot cheat
+		self.items = self.items | IT_JBOOTS;
+
+		if (!self.jboots_rechargelimit) sprint(self, "You got the Jump boots!\n");
+		else sprint(self, "Jump module added.\n");
+
+		sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
+
+		if (self.jboots_rechargelimit >= 3)
+			self.jboots_rechargelimit = 3;
+		else
+			self.jboots_rechargelimit = self.jboots_rechargelimit + 1;
+}
 
 void(float num) ImpulseTest = {
 	local string tgt_impulse_num;
@@ -1734,6 +1811,8 @@ ImpulseCommands
 
 ============
 */
+void() toggle_autosave;
+
 void() ImpulseCommands =
 {
 	if (self.impulse >= 1 && self.impulse <= 8)
@@ -1762,6 +1841,8 @@ void() ImpulseCommands =
 		display_monsleft();
 	if (self.impulse == 200)
 		dev_reveal();
+	if (self.impulse == 210)
+		toggle_autosave();
 	//johnfitz -- new cheats
 	if (self.impulse == 252)
 		RingCheat();
@@ -1773,6 +1854,9 @@ void() ImpulseCommands =
 		
 	if (self.impulse == 255)
 		QuadCheat();
+
+	if (self.impulse == 222)
+		JBootsCheat();
 		
 	self.impulse = 0;
 };

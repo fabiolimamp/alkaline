@@ -43,7 +43,8 @@ void() SetChangeParms =
 
 // remove items
 	self.items = self.items - (self.items & 
-	(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD) );
+		(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD)
+	);
 	
 // cap super health
 	if (self.health > 100)
@@ -63,21 +64,26 @@ void() SetChangeParms =
 	parm8 = self.weapon;
 	parm9 = self.armortype * 100;
 	parm10 = self.weapons;
+	
+	// jump boots persists across levels
+	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
+	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
 };
 
 void() SetNewParms =
 {
-	parm1 = WEAPON_SHOTGUN | WEAPON_AXE;
-	parm2 = 100;
-	parm3 = 0;
-	parm4 = 25;
-	parm5 = 0;
-	parm6 = 0;
-	parm7 = 0;
-	parm8 = 1;
-	parm9 = 0;
-	parm10 = WEAPON_SHOTGUN | WEAPON_AXE;
-	
+	parm1 = WEAPON_SHOTGUN; // items + HUD weapons only, axe isn't needed here
+	parm2 = 100; // health
+	parm3 = 0; // armor value
+	parm4 = 25; // shells
+	parm5 = 0; // nails
+	parm6 = 0; // rockets
+	parm7 = 0; // cells
+	parm8 = WEAPON_SHOTGUN; // current weapon
+	parm9 = 0; // armor type
+	parm10 = WEAPON_SHOTGUN | WEAPON_AXE; // weapons
+	parm11 = 0; // jump boot recharge limit
+
 	if (world.model == "maps/test.bsp") // johnfitz start the player with nothing
 	{
 		parm10 = WEAPON_NO_WEAPON; // no weapons
@@ -130,6 +136,7 @@ void() DecodeLevelParms =
 	self.ammo_cells = parm7;
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
+	self.jboots_rechargelimit = parm11;
 
 	TakeAndGiveWeapons(self, world);
 };
@@ -559,6 +566,7 @@ void() PutClientInServer =
 	self.effects = 0;
 	self.invincible_time = 0;
 	self.customkeys = 0;  // support for item_key_custom -- iw
+	self.jboots_finished = 0;	//jcr jboots timed
 	
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -584,9 +592,15 @@ void() PutClientInServer =
 
 
 	if (spot.fog_density)
-		fog_save(self,spot.fog_density,spot.fog_color);
+		fog_save(self, spot.fog_density, spot.fog_color);
 	else if (world.fog_density)
-		fog_save(self,world.fog_density,world.fog_color);
+		fog_save(self, world.fog_density, world.fog_color);
+
+	if (spot.skyfog_density)
+		skyfog_save(self, spot.skyfog_density);
+	else if (world.skyfog_density)
+		skyfog_save(self, world.skyfog_density);
+
 	cleanUpClientStuff = 2;
 
 // oh, this is a hack!
@@ -610,12 +624,7 @@ void() PutClientInServer =
 
 	spawn_tdeath (self.origin, self);
 
-	if(world.skyfog_density){
-		if(world.skyfog_density == -1)
-			skyfog_set(self, 0);
-		else
-			skyfog_set(self, world.skyfog_density);
-	}
+
 
 
 
@@ -915,21 +924,72 @@ void() PlayerJump =
 
 		return;
 	}
+
+
+	if (self.jboots_rechargelimit) {	//JCR jump boots equipped jump logic
+
+		if ((self.flags & FL_ONGROUND))	{
+			if (!(self.flags & FL_JUMPRELEASED))
+				return;
+
+			self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+			self.button2 = 0;
+			self.jboots_sfx = 0;
+			self.flags = self.flags - (self.flags & FL_ONGROUND);
+			self.jboots_onground = 0;
+			self.jboots_ammo = self.jboots_rechargelimit;
+			sound(self, CHAN_BODY, "items/jboots_plyrjmp0.wav", 1, ATTN_NORM);	//Regularjump with jump boots equipped.
+			self.velocity_z = (self.velocity_z + 270);
+		}
+		else {
+			if (self.jboots_rechargelimit == -1 || self.jboots_ammo >= 1 || self.jboots_onground) {	//Conditions for airjumping.
+			
+				if (!(self.flags & FL_JUMPRELEASED))
+					return;
+				
+				self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+				self.button2 = 0;
+				self.jboots_sfx = time + 0.4;
+
+				if (self.jboots_onground)
+					self.jboots_ammo = self.jboots_rechargelimit;	//Resets air jump limit once player contacts the ground.
+				
+				self.jboots_onground = 0;
+				self.jboots_ammo = self.jboots_ammo - 1;
+				sound(self, CHAN_BODY, "items/jboots_plyrjmp1.wav", 1, ATTN_NORM);	//Airjump fired.
+				self.punchangle_x = -1;		//View shift when airjump is fired.
+
+				if (self.velocity_z > 360)
+					self.velocity_z = self.velocity_z + 360;
+				else
+					self.velocity_z = 360;
+				
+			}
+			else {
+				if (self.jboots_sfx < time) {
+					self.jboots_sfx = (time + 0.4);
+					sound(self, CHAN_BODY, "items/jboots_dry.wav", 1, ATTN_NORM);	//Out of air jumps!
+				}
+			}	
+		}	//JCR jump boots equipped jump logic end
+	}
+
+	else {
+		if (!(self.flags & FL_ONGROUND))
+			return;
+
+		if ( !(self.flags & FL_JUMPRELEASED) )
+			return;		// don't pogo stick
+
+		self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
+
+		self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
 		
-	if (!(self.flags & FL_ONGROUND))
-		return;
-
-	if ( !(self.flags & FL_JUMPRELEASED) )
-		return;		// don't pogo stick
-
-	self.flags = self.flags - (self.flags & FL_JUMPRELEASED);
-
-	self.flags = self.flags - FL_ONGROUND;	// don't stairwalk
-	
-	self.button2 = 0;
-// player jumping sound
-	sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
-	self.velocity_z = self.velocity_z + 270;
+		self.button2 = 0;
+		// player jumping sound
+		sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
+		self.velocity_z = self.velocity_z + 270;
+	}
 };
 
 
@@ -1148,6 +1208,10 @@ void() PlayerPreThink =
 			W_SetCurrentAmmo ();
 		}
 	}
+	
+	if (self.jboots_rechargelimit && (self.flags & FL_ONGROUND))		//jcr jboots prethink for onground checking
+		self.jboots_onground = TRUE;
+	
 };
 	
 /*
@@ -1349,6 +1413,34 @@ void() CheckPowerups =
 			self.items = self.items - IT_SUIT;
 			self.rad_time = 0;
 			self.radsuit_finished = 0;
+		}
+	}
+
+	if (self.jboots_finished)	{
+		// sound and screen flash when items starts to run out
+		if (self.jboots_finished < time + 3)
+		{
+			if (self.jboots_time == 1)
+			{
+				sprint (self, "Super Jump Boot's battery depleting...\n");
+				sound (self, CHAN_AUTO, "items/jboots_timed.wav", 1, ATTN_NORM);
+				self.jboots_time = time + 1;
+			}	  
+			
+			if (self.jboots_time < time)
+			{
+				self.jboots_time = time + 1;
+			}
+		}
+
+		if (self.jboots_finished < time) {	// just stopped
+			self.jboots_rechargelimit = self.jboots_prevlimit; // restore previous persistent boot value if there was any
+			self.jboots_prevlimit = 0;
+			
+			if (!self.jboots_rechargelimit) self.items = self.items - IT_JBOOTS;
+
+			self.jboots_finished = 0;
+			self.jboots_time = 0;
 		}
 	}	
 
@@ -1699,6 +1791,16 @@ void(entity targ, entity attacker) ClientObituary =
 						deathstring2 = "'s grenade\n";
 					}
 				}
+				if (rnum == WEAPON_PROXIMITY_GUN)
+				{
+					if (random()<0.5) {
+						deathstring = " got too friendly with ";
+					}
+					else {
+						deathstring = " did the rhumba with ";
+					}
+					deathstring2 = "'s bomb\n";
+				}
 				if (rnum == WEAPON_ROCKET_LAUNCHER)
 				{
 					deathstring = " rides ";
@@ -1791,14 +1893,12 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 			if (attacker.classname == "trap_shooter" || attacker.classname == "trap_spikeshooter")
 			{
-				//johnfitz -- lasers need different obituary
-				if (attacker.spawnflags & 2) //SPAWNFLAG_LASER		
-				{
+				if (attacker.spawnflags & 2) // TRAP_LASER		
 					bprint (" was zapped by a frickin' laser beam\n");
-					return;
-				}
-				//johnfitz
-				bprint (" was spiked\n");
+				else if (attacker.spawnflags & 4) // TRAP_ROCKET
+					bprint (" rode a rocket\n");
+				else
+					bprint (" was spiked\n");
 				return;
 			}
 			if (attacker.classname == "fireball")

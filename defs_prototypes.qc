@@ -133,7 +133,7 @@ void(entity e) setspawnparms		= #78;		// set parm1... to the
 												// values at level start
 												// for coop respawn
 
-
+float(string s) checkextension		= #99;		// check cvar("pr_checkextension") before calling
 
 //
 // subs.qc
@@ -214,6 +214,7 @@ void(vector org, vector vel) SpawnBitSpray;
 // fog
 //
 void( entity client, float density, vector color ) fog_save;
+void( entity client, float density) skyfog_save;
 void( entity client, entity fogger ) fog_setFromEnt;
 void( entity client, float density, vector color ) fog_set;
 void( entity client, float density) skyfog_set;

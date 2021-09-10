@@ -160,6 +160,9 @@ nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
 nosave float cleanUpClientStuff;
 nosave float gamestarted;
 
+// simple kex detection, thanks Lunaran
+float isKex; // running the quake rerelease
+
 
 // new door features
 #define _MAX_ENTITY_QUEUE 256
@@ -217,6 +220,7 @@ FIELDS
 .void()		th_sight;
 .void()		th_wake;
 .float()	th_checkattack;
+.float(entity inflictor, entity attacker, float damage, float orig_damage) th_damage;
 
 .void(entity mon)	start_function;
 
@@ -233,6 +237,11 @@ FIELDS
 
 .float attack_elevation; // ogre
 .float inpain;		// zombie
+
+// edie
+.float multiplier; 
+.entity spawnmaster;
+.float gug_slapped;
 
 //
 // player only fields
@@ -408,7 +417,7 @@ FIELDS
 .float		burningsound;
 .float		gravity;
 .float		color;
-.float		alpha;
+.float		alpha, alpha2;
 .entity		missle;
 
 .float		burning_finished;
@@ -517,3 +526,13 @@ FIELDS
 
 // gravity
 .float return_gravity;
+
+
+//JCR super jump defs
+.float jboots_prevlimit;		
+.float jboots_rechargelimit;
+.float jboots_sfx;
+.float jboots_ammo;
+.float jboots_onground;
+.float jboots_finished;
+.float jboots_time; 

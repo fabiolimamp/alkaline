@@ -6,7 +6,14 @@ void(string s, string ss, string sss, string ssss) dprint4 =
 	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); }
 void(string s, string ss, string sss, string ssss, string sssss) dprint5 = 
 	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); }
-
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss) dprint6 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss) dprint7 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss) dprint8 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss); dprint(ssssssss); }
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss, string sssssssss) dprint9 = 
+	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss); dprint(ssssssss); dprint(sssssssss); }
 
 /**********************************
  Sourced from utility.qc from smej2
@@ -48,7 +55,10 @@ float(float in) bprint_int =
 }
 
 
-
+float(float in, float def) defaultFl = {
+	if (in) return in;
+	else return def;
+}
 
 
 // shorthand for turning -1 to 0 for keyvalues for which 0 is a valid non-default selection
