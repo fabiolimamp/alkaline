@@ -89,6 +89,7 @@ void() misc_model = {
     	&& !(self.spawnflags & MISC_MODEL_GRAVITY)
     	&& !(self.spawnflags & MISC_MODEL_SOLID)
     	&& !self.targetname
+    	&& !self.targetname2
     ) makestatic(self);
     
 
