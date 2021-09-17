@@ -54,6 +54,93 @@ void(float ofs, float turn) Probe_laser_fire = {
 	setorigin(missile, src);
 };
 
+
+// derived from OgreFireGrenade
+// needs some functions from ogre.qc
+
+void(float ofs, float elevation) ProbeFireGrenade =
+{
+	local entity missile;
+	local vector ang;
+
+	local vector src;
+	local vector vec;
+	local vector targ;
+	local float dist;
+	//local float ofs;
+
+	ang = self.angles;
+	ang_y = ang_y + self.fixangle;
+	
+
+	/*if (self.lip) {
+		ofs = 30;
+		self.lip = 0;
+	}
+	else {
+		ofs = -30;
+		self.lip = 1;
+	}*/
+	/*if (turn == 1)
+		ang_y = ang_y + 165;
+	else if (turn == 2)
+		ang_y = ang_y - 165;
+		*/
+	ang_x = -elevation - 10;
+	makevectors(ang);
+	src = self.origin + '0 0 -10' + v_right * ofs + v_forward;
+	targ = self.enemy.origin + self.enemy.view_ofs;
+	
+	if (startskill != 0)	{
+		dist = vlen(targ - src);
+		targ = targ + self.enemy.velocity * (dist / 800);
+	}
+
+	vec = targ - src;
+	vec = normalize(vec);
+	dist = vec * v_forward;
+
+	if (dist < self.worldtype) {
+		vec = v_forward;
+	}
+
+
+
+	self.effects = self.effects | EF_MUZZLEFLASH;
+
+	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
+
+	missile = spawn ();
+	missile.classname = "grenade";
+	missile.owner = self;
+	missile.movetype = MOVETYPE_BOUNCE;
+	missile.solid = SOLID_BBOX;
+	missile.flags = missile.flags | FL_PROJECTILE;
+	missile.dmg = 30;
+
+	// set missile speed
+	/*ang = self.angles;
+	ang_x = -elevation;
+	makevectors (ang);
+*/
+	missile.velocity = vec * OGRE_G_VEL;
+
+	missile.avelocity = '300 300 300';
+
+	missile.angles = vectoangles(missile.velocity);
+
+	missile.touch = OgreGrenadeTouch;
+
+	// set missile duration
+	missile.nextthink = time + 2.5;
+	missile.think = OgreGrenadeExplode;
+
+	setmodel (missile, "progs/grenade_probe.mdl");
+	setsize (missile, '0 0 0', '0 0 0');
+	setorigin (missile, src);
+};
+
+
 void() probe_pulsetouch = 
 {
 	local vector org;
@@ -300,7 +387,7 @@ void() probe_watk_frame = {
 	walkmove(self.angles_y, 14);
 	probe_think();
 }
-
+/*
 void() probe_watk1 = 	[13, probe_watk2] 	{probe_watk_frame(); probe_servo();};
 void() probe_watk2 = 	[14, probe_watk3] 	{probe_watk_frame(); Probe_laser_fire(-30, 0);};
 void() probe_watk3 = 	[15, probe_watk4] 	{probe_watk_frame(); };
@@ -311,7 +398,24 @@ void() probe_watk7 = 	[19, probe_watk8] 	{probe_watk_frame();};
 void() probe_watk8 = 	[20, probe_watk9] 	{probe_watk_frame();};
 void() probe_watk9 = 	[21, probe_watk10] 	{probe_watk_frame();};
 void() probe_watk10 = 	[22, probe_run1] 	{probe_watk_frame(); SUB_AttackFinished(1);};
+*/
 
+void() probe_watk1 = 	[13, probe_watk2] 	{probe_watk_frame(); probe_servo();
+	self.attack_elevation = IterateElevation(30, self.enemy.origin);
+};
+void() probe_watk2 = 	[14, probe_watk3] 	{probe_watk_frame(); ProbeFireGrenade(-30, self.attack_elevation);};
+void() probe_watk3 = 	[15, probe_watk4] 	{probe_watk_frame();
+	self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
+};
+void() probe_watk4 = 	[16, probe_watk5] 	{probe_watk_frame();
+	self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
+};
+void() probe_watk5 = 	[17, probe_watk6] 	{probe_watk_frame(); ProbeFireGrenade(30, self.attack_elevation);};
+void() probe_watk6 = 	[18, probe_watk7] 	{probe_watk_frame(); probe_sound();};
+void() probe_watk7 = 	[19, probe_watk8] 	{probe_watk_frame();};
+void() probe_watk8 = 	[20, probe_watk9] 	{probe_watk_frame();};
+void() probe_watk9 = 	[21, probe_watk10] 	{probe_watk_frame();};
+void() probe_watk10 = 	[22, probe_run1] 	{probe_watk_frame(); SUB_AttackFinished(1);};
 
 
 void() probe_plant1 = [0, probe_plant1] {probe_stand_attack(); probe_think();};
@@ -323,9 +427,20 @@ void() probe_stop2 = [21, probe_stop3] {probe_think();};
 void() probe_stop3 = [22, probe_plant1] {probe_sound();	probe_think();};
 
 
-
+/*
 void() probe_satk1 = [23, probe_satk2] {probe_think(); probe_servo();};
 void() probe_satk2 = [24, probe_satk3] {probe_think(); Probe_laser_fire(-18, 0); Probe_laser_fire(18, 0);};
+void() probe_satk3 = [25, probe_satk4] {probe_think(); probe_sound();};
+void() probe_satk4 = [26, probe_satk5] {probe_think();};
+void() probe_satk5 = [27, probe_satk6] {probe_think();};
+void() probe_satk6 = [28, probe_plant1] {probe_think(); SUB_AttackFinished(0.3);};
+*/
+
+
+void() probe_satk1 = [23, probe_satk2] {probe_think(); probe_servo();
+	self.attack_elevation = IterateElevation(30, self.enemy.origin);
+};
+void() probe_satk2 = [24, probe_satk3] {probe_think(); ProbeFireGrenade(30, self.attack_elevation); ProbeFireGrenade(-30, self.attack_elevation);};
 void() probe_satk3 = [25, probe_satk4] {probe_think(); probe_sound();};
 void() probe_satk4 = [26, probe_satk5] {probe_think();};
 void() probe_satk5 = [27, probe_satk6] {probe_think();};
@@ -535,6 +650,7 @@ void() monster_probe = {
 	precache_model("progs/probedom.mdl");
 	precache_model("progs/d_explod.spr");
 	precache_model("progs/laser.mdl");
+	precache_model("progs/grenade_probe.mdl");
 	
 	precache_sound("probe/shoot.wav");
 	precache_sound("probe/footfall.wav");
