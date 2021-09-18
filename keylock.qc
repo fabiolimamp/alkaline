@@ -422,8 +422,8 @@ void(entity client, string custom_message, void() success_func) keylock_try_to_u
 		if (custom_message != "")
 			centerprint (client, custom_message);
 		else
-			if (isKex) centerprint2 (client, "You need the {0}", self.netname);
-			else centerprint2 (client, "You need the ", self.netname);
+			if (isKex) centerprint3 (client, "You need the {0}", self.netname, "");
+			else centerprint3 (client, "You need the ", self.netname, "");
 		sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
 		return;
 	}

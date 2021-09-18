@@ -912,3 +912,76 @@ void() misc_changemusic = {
 
 	self.use = misc_changemusic_use;
 }
+
+
+
+
+/*
+=============================================================
+
+trigger_textstory
+
+=============================================================
+*/
+
+void() textstory_hide = {
+	self.enemy.suppressCenterPrint = FALSE;
+	centerprint(self.enemy, "");
+	self.enemy = world;
+	self.state = 0;
+
+	if (self.noise2) 
+		sound(other, CHAN_BODY, self.noise2, 1, ATTN_NORM);
+};
+
+void() textstory_show = {
+	self.enemy.suppressCenterPrint = TRUE;
+	centerprint_msg(self.enemy, self.message, self.message2);
+	self.think = textstory_hide;
+	self.nextthink = time + 0.2;
+
+	//stuffcmd (self.enemy, "v_cshift 0 0 0 64\n");
+	//self.enemy.cshift_set = 1;
+	//self.enemy.cshift_cleared = 0;
+};
+
+void() trigger_textstory_touch = {
+	
+	if (!(other.flags & FL_CLIENT)) return;
+	if (self.estate != STATE_ACTIVE) return;
+
+	if (other != self.enemy && self.state == 1) return;
+
+	if (self.mangle && !isInAngle(other.v_angle, self.mangle, self.view_ofs))
+		return;
+
+	if (self.attack_finished < time) {
+		if (!self.state && self.noise1) 
+			sound(other, CHAN_BODY, self.noise1, 1, ATTN_NORM);
+
+		self.state = 1;
+		self.attack_finished = time + 0.1;
+		self.enemy = other;
+
+		textstory_show();
+	}
+};
+
+void() trigger_textstory = {
+	InitTrigger();
+	self.touch = trigger_textstory_touch;
+
+	if (self.view_ofs == '0 0 0')
+		self.view_ofs = '90 90 0';
+
+	if (self.noise1 != "" && self.noise2 == "")
+		self.noise2 = "misc/null.wav";
+
+	if (self.noise1 != "")
+		precache_sound (self.noise1);
+	if (self.noise2 != "")
+		precache_sound (self.noise2);
+
+
+	SUB_CheckWaiting();
+};

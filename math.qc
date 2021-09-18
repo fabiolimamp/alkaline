@@ -138,6 +138,14 @@ float(float anga, float angb) angledif =
     return dif;
 }
 
+float(vector ang, vector base_ang, vector offset) isInAngle = {
+    if (angledif(ang_x, base_ang_x) > offset_x || angledif(ang_y, base_ang_y) > offset_y)
+        return FALSE;
+    else
+        return TRUE;
+};
+
+
 // mathlib_sqrt
 float(float num) sqrt =
 {
