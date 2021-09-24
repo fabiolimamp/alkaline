@@ -91,11 +91,22 @@ float()	WizardCheckAttack =
 	local vector	spot1, spot2;	
 	local entity	targ;
 	local float		chance;
-
 	if (time < self.attack_finished)
 		return FALSE;
-	if (!enemy_vis)
+
+	if (self.enemy.type != "enemytarget") {
+		if (SUB_setupEnemyTarget(self.enemy, self.above, MONAI_ABOVETIMER)) {
+			self.enemy = self.enemytarget;
+		}
+	}
+
+	enemy_vis = visible(SUB_entEnemyTarget());
+
+	if (!enemy_vis){
+		dprint("Not visible\n");
+		if(self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 		return FALSE;
+	}
 
 	if (enemy_range == RANGE_FAR)
 	{
@@ -107,7 +118,7 @@ float()	WizardCheckAttack =
 		return FALSE;
 	}
 		
-	targ = self.enemy;
+	targ = SUB_entEnemyTarget();
 	
 // see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
@@ -196,8 +207,8 @@ void() Wiz_FastFire =
 	{
 		self.owner.effects = self.owner.effects | EF_MUZZLEFLASH;
 
-		makevectors (self.enemy.angles);	
-		dst = self.enemy.origin - 13*self.movedir;
+		makevectors (SUB_entEnemyTarget().angles);	
+		dst = SUB_entEnemyTarget().origin - 13*self.movedir;
 	
 		vec = normalize(dst - self.origin);
 
@@ -231,7 +242,7 @@ void() Wiz_StartFast =
 	missile.nextthink = time + 0.6;
 	setsize (missile, '0 0 0', '0 0 0');		
 	setorigin (missile, self.origin + '0 0 30' + v_forward*14 + v_right*14);
-	missile.enemy = self.enemy;
+	missile.enemy = SUB_entEnemyTarget();
 	missile.nextthink = time + 0.8;
 	missile.think = Wiz_FastFire;
 	missile.movedir = v_right;
@@ -242,7 +253,7 @@ void() Wiz_StartFast =
 	missile.nextthink = time + 1;
 	setsize (missile, '0 0 0', '0 0 0');		
 	setorigin (missile, self.origin + '0 0 30' + v_forward*14 + v_right* -14);
-	missile.enemy = self.enemy;
+	missile.enemy = SUB_entEnemyTarget();
 	missile.nextthink = time + 0.3;
 	missile.think = Wiz_FastFire;
 	missile.movedir = VEC_ORIGIN - v_right;

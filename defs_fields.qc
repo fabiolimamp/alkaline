@@ -154,6 +154,7 @@ float	framecount;
 
 float		skill;
 float 		startskill;
+float developer;
 
 nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
 
@@ -536,3 +537,8 @@ FIELDS
 .float jboots_onground;
 .float jboots_finished;
 .float jboots_time; 
+
+
+.entity		enemytarget;		// flying monsters enemy target
+.float		enemytargetlock;	// Lockout timer for enemy target
+.float 		above;

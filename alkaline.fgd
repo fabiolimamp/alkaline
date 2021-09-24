@@ -666,7 +666,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 	item_jboots : "Jump Boots" []
 @PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/jumpgold.mdl"}) =
 	item_jboots_timed : "Jump Boots (Timed)" [
-		jboots_rechargelimit(float) : "Maximum charges" : -1 : "Maximum jump charges given. -1 is no limit"
+		jboots_rechargelimit(float) : "Maximum charges" : "-1" : "Maximum jump charges given. -1 is no limit"
 	]
 
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl", "skin": 2 }) =
@@ -805,9 +805,13 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 	totalspawncount(integer) : "Total spawn count" : : "For monster spawners. Maximum total spawns. When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this maximum already counted, unless you set the 'Count on spawn' flag as well."
 ]
 
+@baseclass = Above [
+	above(integer) : "Fly above enemy" : : "Makes enemy fly this height above its enemy."
+]
+
 // Rubicon 2 monsters first
 // Centurion, 150 hp
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/cent.mdl"})= monster_centurion : "Centurion, 150 health points." []
+@PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/cent.mdl"})= monster_centurion : "Centurion, 150 health points." []
 // Dreadnaught, 150 hp
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
 
@@ -851,7 +855,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({{
+@PointClass base(Monster, Above) size(-16 -16 -24, 16 16 40) model({{
 	spawnflags & 8 -> 	"progs/wizard.mdl", "progs/cyberscrag.mdl"
 	}}
 ) = monster_wizard :
@@ -938,7 +942,7 @@ The big boss mam!" []
 "Berserker, 200 health points.
 Don't shake hands with this crazy bastard!" []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/drone1.mdl"}) = monster_drone :
+@PointClass base(Monster, Above) size(-16 -16 -24, 16 16 40) model({"path":"progs/drone1.mdl"}) = monster_drone :
 "Drone, 100 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/hunter.mdl"}) = monster_hunter :
@@ -956,7 +960,7 @@ Don't shake hands with this crazy bastard!" []
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ridlegs.mdl"}) = monster_rider :
 "Prowler, 777 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/probebod.mdl"}) = monster_probe :
+@PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/probebod.mdl"}) = monster_probe :
 "Probe, 200 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnofloyd.mdl"}) = monster_arachnofloyd :

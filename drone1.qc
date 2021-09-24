@@ -111,10 +111,10 @@ void(float offset) drone_fire =
 	makevectors (self.angles);
 	
  //       org = self.origin + v_forward * 30 + '-5 15 0';
-        org = self.origin;
+	org = self.origin;
 
-        LaunchDLaser(org, self.enemy.origin + v_right * offset - self.origin);
-        SUB_AttackFinished (4);
+	LaunchDLaser(org, SUB_entEnemyTarget().origin + v_right * offset - self.origin);
+	SUB_AttackFinished (4);
 };
 
 
@@ -128,7 +128,7 @@ void()  drn_stand4      =[      $idl4,                drn_stand5      ]
 	ai_stand();
 	if (self.spawnflags & 1)
 		drn_stand5();
-	if (random() < 0.1 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
+	if (random() < 0.1 && !(self.spawnflags & MONSTER_NOIDLESOUND && !SUB_entEnemyTarget()))
 		sound (self, CHAN_VOICE, "drone/drnidle.wav", 0.6, ATTN_IDLE);
 };
 void()  drn_stand5      =[      $idl5,                drn_stand6      ] {ai_stand();};
@@ -141,7 +141,7 @@ void()  drn_stand10     =[      $idl1,                drn_stand1      ]
 	ai_stand();
 	if (self.spawnflags & 1)
 		drn_stand1();
-	if (random() < 0.1 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
+	if (random() < 0.1 && !(self.spawnflags & MONSTER_NOIDLESOUND && !SUB_entEnemyTarget()))
 	{
 		if (random() > 0.5)
 			sound (self, CHAN_VOICE, "drone/drnidle2.wav", 0.6, ATTN_IDLE);

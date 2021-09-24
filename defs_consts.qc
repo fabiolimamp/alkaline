@@ -153,6 +153,9 @@ float STATE_FIND = 3;
 float STATE_NEXT = 4;
 // end rotate states
 
+float STATE_ON = 1;
+float STATE_OFF = 2;
+
 vector	VEC_ORIGIN = '0 0 0';
 vector	VEC_HULL_MIN = '-16 -16 -24';
 vector	VEC_HULL_MAX = '16 16 32';
@@ -277,6 +280,11 @@ float MONSTER_NOIDLESOUND = 65536;
 float MONSTER_IGNOREPLAYER	= 131072;
 float MONSTER_SPAWNER = 262144;
 float MONSTER_ZEROBBOX = 524288;
+
+float MONAI_ABOVEMELEE = 120;		// Always be high above enemies inside this distance
+float MONAI_ABOVEDIST = 128;		// Distance to maintain above enemytarget
+float MONAI_ABOVETIMER = 2;			// Amount of time before changing Z
+
 
 float TRIGGER_CENTERPRINTALL = 1048576;
 

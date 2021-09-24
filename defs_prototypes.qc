@@ -172,6 +172,13 @@ void() SUB_Null;
 void() SUB_UseTargets;
 void() SUB_Remove;
 
+
+//
+//	ai.qc
+//
+float(entity targ, float flat2d) range_distance;
+float (entity org, entity targ) visible2;
+
 //
 //	combat.qc
 //

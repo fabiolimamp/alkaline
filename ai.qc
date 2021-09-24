@@ -177,6 +177,22 @@ local float		r;
 	return RANGE_FAR;
 };
 
+/*======================================================================
+ range_distance (target entity)
+ 	returns the vector distance between two points
+======================================================================*/
+float(entity targ, float flat2d) range_distance =
+{
+	local vector	spot1, spot2;
+	local float		r;
+		
+	spot1 = self.origin + self.view_ofs;
+	spot2 = targ.origin + targ.view_ofs;
+	if (flat2d) { spot1_z = spot2_z = 0; }
+	r = vlen (spot1 - spot2);
+	
+	return r;
+};
 /*
 =============
 visible
@@ -191,6 +207,22 @@ float (entity targ) visible =
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	traceline (spot1, spot2, TRUE, self);	// see through other monsters
+	
+	if (trace_inopen && trace_inwater)
+		return FALSE;			// sight line crossed contents
+
+	if (trace_fraction == 1)
+		return TRUE;
+	return FALSE;
+};
+
+float (entity org, entity targ) visible2 =
+{
+	local vector	spot1, spot2;
+	
+	spot1 = org.origin + org.view_ofs;
+	spot2 = targ.origin + targ.view_ofs;
+	traceline (spot1, spot2, TRUE, org);	// see through other monsters
 	
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
@@ -370,7 +402,7 @@ float() FindTarget =
 	if (sight_entity_time >= time - 0.1 && !(self.spawnflags & 3) )
 	{
 		client = sight_entity;
-		if (client.enemy == self.enemy)
+		if (client.enemy == SUB_entEnemyTarget())
 			return FALSE; //was just return;
 	}
 	else
@@ -380,7 +412,7 @@ float() FindTarget =
 			return FALSE;	// current check entity isn't in PVS
 	}
 
-	if (client == self.enemy)
+	if (client == SUB_entEnemyTarget())
 		return FALSE;
 
 	if (client.flags & FL_NOTARGET)
@@ -418,6 +450,8 @@ float() FindTarget =
 //
 // got one
 //
+	if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
+
 	self.enemy = client;
 	if (self.enemy.classname != "player")
 	{
@@ -578,7 +612,7 @@ void() ai_turn_in_place =
    local float delta;
 
    self.nextthink = time + 0.1;
-   enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
+   enemy_yaw = vectoyaw(SUB_entEnemyTarget().origin - self.origin);
    delta = fabs(self.angles_y - enemy_yaw);
    if (delta > 10)
       {
@@ -659,8 +693,13 @@ float() CheckAttack =
 	local entity	targ;
 	local float		chance;
 
-	targ = self.enemy;
-	
+	if (self.flags & FL_FLY && self.enemy.type != "enemytarget") {
+		if (SUB_setupEnemyTarget(self.enemy, self.above, MONAI_ABOVETIMER)) {
+			self.enemy = self.enemytarget;
+		}
+	}
+
+	targ = SUB_entEnemyTarget();
 
 	if (!canshoot(targ))
 		return FALSE;
@@ -814,12 +853,14 @@ void(float dist) ai_run =
 //	local	float	direct, ang_rint, ang_floor, ang_ceil;
 	
 	movedist = dist;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 	
 	// see if the enemy is dead
 	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
-	if (self.enemy.health <= 0 || self.enemy.takedamage == DAMAGE_NO) 
-	
+	if (enem.health <= 0 || enem.takedamage == DAMAGE_NO) 
 	{
+		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 		self.enemy = world;
 	// FIXME: look all around for other targets
 		if (self.oldenemy.health > 0)
@@ -840,9 +881,11 @@ void(float dist) ai_run =
 	self.show_hostile = time + 1;		// wake up other monsters
 
 // check knowledge of enemy
-	enemy_vis = visible(self.enemy);
+	enemy_vis = visible(enem);
 	if (enemy_vis)
 		self.search_time = time + 5;
+	// disable enemy target for flying monsters when enemy isn't visible
+	else if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 
 // look for other coop players
 	if (coop && self.search_time < time)
@@ -851,9 +894,9 @@ void(float dist) ai_run =
 			return;
 	}
 
-	enemy_infront = infront(self.enemy);
-	enemy_range = range(self.enemy);
-	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
+	enemy_infront = infront(enem);
+	enemy_range = range(enem);
+	enemy_yaw = vectoyaw(enem.origin - self.origin);
 	
 	if (self.attack_state == AS_MISSILE)
 	{
@@ -889,11 +932,14 @@ ai_run_away
 void(float dist) ai_run_away =
 {
 	movedist = dist;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 	
 	// see if the enemy is dead
 	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
-	if (self.enemy.health <= 0 || self.enemy.takedamage == DAMAGE_NO)
+	if (enem.health <= 0 || enem.takedamage == DAMAGE_NO)
 	{
+		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 		self.enemy = world;
 		if (self.oldenemy.health > 0)
 		{
@@ -913,7 +959,7 @@ void(float dist) ai_run_away =
 	self.show_hostile = time + 1;		// wake up other monsters
 
 // check knowledge of enemy
-	enemy_vis = visible(self.enemy);
+	enemy_vis = visible(enem);
 	if (enemy_vis)
 		self.search_time = time + 5;
 
@@ -924,13 +970,14 @@ void(float dist) ai_run_away =
 			return;
 	}
 
-	self.ideal_yaw = vectoyaw(self.origin - self.enemy.origin);
+	self.ideal_yaw = vectoyaw(self.origin - enem.origin);
 		
 	//enemy_infront = infront(self.enemy);
 	enemy_range = range(self.enemy);
 	
 	if(enemy_range >= RANGE_MID)
 	{
+		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 		self.enemy = world;
 		self.pausetime = time + 999999;
 		self.th_stand ();
@@ -957,7 +1004,7 @@ Stay facing the enemy
 */
 void() ai_face =
 {
-	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
+	self.ideal_yaw = vectoyaw(SUB_entEnemyTarget().origin - self.origin);
 	ChangeYaw ();
 };
 
@@ -982,14 +1029,16 @@ void() ai_charge_side =
 {
 	local	vector	dtemp;
 	local	float	heading;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 	
 // aim to the left of the enemy for a flyby
 
-	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
+	self.ideal_yaw = vectoyaw(enem.origin - self.origin);
 	ChangeYaw ();
 
 	makevectors (self.angles);
-	dtemp = self.enemy.origin - 30*v_right;
+	dtemp = enem.origin - 30*v_right;
 	heading = vectoyaw(dtemp - self.origin);
 	
 	walkmove(heading, 20);
@@ -1006,17 +1055,19 @@ void() ai_melee =
 {
 	local vector	delta;
 	local float 	ldmg;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 
-	if (!self.enemy)
+	if (!enem)
 		return;		// removed before stroke
 		
-	delta = self.enemy.origin - self.origin;
+	delta = enem.origin - self.origin;
 
 	if (vlen(delta) > 60)
 		return;
 		
 	ldmg = (random() + random() + random()) * 3;
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage (enem, self, self, ldmg);
 };
 
 
@@ -1024,18 +1075,20 @@ void() ai_melee_side =
 {
 	local vector	delta;
 	local float 	ldmg;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 
-	if (!self.enemy)
+	if (!enem)
 		return;		// removed before stroke
 		
 	ai_charge_side();
 	
-	delta = self.enemy.origin - self.origin;
+	delta = enem.origin - self.origin;
 
 	if (vlen(delta) > 60)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (enem, self))
 		return;
 	ldmg = (random() + random() + random()) * 3;
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage (enem, self, self, ldmg);
 };

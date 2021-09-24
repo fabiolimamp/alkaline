@@ -194,6 +194,7 @@ void() worldspawn =
 
 
 	startskill = cvar("skill");
+	developer = cvar("developer");
 
 	world_sounds = &world.sounds;
 // the area based ambient sounds MUST be the first precache_sounds
@@ -310,6 +311,7 @@ void() worldspawn =
 	precache_model ("progs/s_bubble.spr");	// drowning bubbles
 	precache_model ("progs/s_explod.spr");	// sprite explosion
 	precache_model ("progs/s_explo2.spr");	// sprite explosion
+	precache_model ("progs/s_light.spr");	// light bulb
 
 	precache_model ("progs/v_axe_alk.mdl");
 	precache_model ("progs/v_shot.mdl");

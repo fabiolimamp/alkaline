@@ -93,6 +93,13 @@ void(entity targ, entity attacker) Killed =
 	self.takedamage = DAMAGE_NO;
 	self.touch = SUB_Null;
 
+	// fall to ground
+	self.movetype = MOVETYPE_STEP;
+	if (self.flags & FL_FLY)
+		self.flags = self.flags - FL_FLY;
+	if (self.flags & FL_SWIM)
+		self.flags = self.flags - FL_SWIM;
+
 	monster_death_use();
 
 	if (attacker.classname == "trigger_void") {
@@ -256,14 +263,16 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	if ( (self.flags & FL_MONSTER) && attacker != world)
 	{
 	// get mad unless of the same class (except for soldiers)
-		if (self != attacker && attacker != self.enemy )
+		if (self != attacker && attacker != SUB_entEnemyTarget() )
 		{
 			if (
 				(self.classname != attacker.classname || self.classname == "monster_army") &&
 				!(attacker.flags & FL_MONSTER && self.spawnflags & MONSTER_NOINFIGHT)
 			) {
-				if (self.enemy.classname == "player")  
-					self.oldenemy = self.enemy;
+				if (SUB_entEnemyTarget().classname == "player")  
+					self.oldenemy = SUB_entEnemyTarget();
+
+				if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 				self.enemy = attacker;
 				FoundTarget ();
 			}

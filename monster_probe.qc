@@ -68,6 +68,9 @@ void(float ofs, float elevation) ProbeFireGrenade =
 	local vector targ;
 	local float dist;
 	//local float ofs;
+	entity enem;
+
+	enem = SUB_entEnemyTarget();
 
 	ang = self.angles;
 	ang_y = ang_y + self.fixangle;
@@ -89,11 +92,11 @@ void(float ofs, float elevation) ProbeFireGrenade =
 	ang_x = -elevation - 10;
 	makevectors(ang);
 	src = self.origin + '0 0 -10' + v_right * ofs + v_forward;
-	targ = self.enemy.origin + self.enemy.view_ofs;
+	targ = enem.origin + enem.view_ofs;
 	
 	if (startskill != 0)	{
 		dist = vlen(targ - src);
-		targ = targ + self.enemy.velocity * (dist / 800);
+		targ = targ + enem.velocity * (dist / 800);
 	}
 
 	vec = targ - src;
@@ -230,15 +233,17 @@ void() probe_angry_sound = {
 void() probe_think = {
 	local float delta;
 	local float angdelta;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
 	if(self.frame > 22) self.frame = 0;
-	if(self.enemy)
+	if(enem)
 		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 
-	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
+	enemy_yaw = vectoyaw(enem.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
 	self.cnt = 0;
@@ -258,9 +263,9 @@ void() probe_think = {
 	if (self.health < 0)
 		return;
 
-	if (time > self.super_time && !self.enemy)	{
+	if (time > self.super_time && !enem)	{
 		self.super_time = time + 3;
-		if (random() < 0.5 && !self.enemy)
+		if (random() < 0.5 && !enem)
 			probe_idle_sound();
 	}
 };
@@ -268,6 +273,8 @@ void() probe_think = {
 void() probe_walkthink = {
 	local float delta;
 	local float angdelta;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 
 	probe_walk_sound();
 
@@ -275,7 +282,7 @@ void() probe_walkthink = {
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
 	if(self.frame > 22) self.frame = 0;
-	if(self.enemy)
+	if(enem)
 		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle;
 
 	delta = 0;
@@ -288,7 +295,7 @@ void() probe_walkthink = {
 
 	if (time > self.super_time)	{
 		self.super_time = time + 3;
-		if (random() < 0.5 && !self.enemy) 
+		if (random() < 0.5 && !enem) 
 			probe_idle_sound();	
 	}
 
@@ -401,14 +408,14 @@ void() probe_watk10 = 	[22, probe_run1] 	{probe_watk_frame(); SUB_AttackFinished
 */
 
 void() probe_watk1 = 	[13, probe_watk2] 	{probe_watk_frame(); probe_servo();
-	self.attack_elevation = IterateElevation(30, self.enemy.origin);
+	self.attack_elevation = IterateElevation(30, SUB_entEnemyTarget().origin);
 };
 void() probe_watk2 = 	[14, probe_watk3] 	{probe_watk_frame(); ProbeFireGrenade(-30, self.attack_elevation);};
 void() probe_watk3 = 	[15, probe_watk4] 	{probe_watk_frame();
-	self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
+	self.attack_elevation = IterateElevation(self.attack_elevation, SUB_entEnemyTarget().origin);
 };
 void() probe_watk4 = 	[16, probe_watk5] 	{probe_watk_frame();
-	self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
+	self.attack_elevation = IterateElevation(self.attack_elevation, SUB_entEnemyTarget().origin);
 };
 void() probe_watk5 = 	[17, probe_watk6] 	{probe_watk_frame(); ProbeFireGrenade(30, self.attack_elevation);};
 void() probe_watk6 = 	[18, probe_watk7] 	{probe_watk_frame(); probe_sound();};
@@ -438,7 +445,7 @@ void() probe_satk6 = [28, probe_plant1] {probe_think(); SUB_AttackFinished(0.3);
 
 
 void() probe_satk1 = [23, probe_satk2] {probe_think(); probe_servo();
-	self.attack_elevation = IterateElevation(30, self.enemy.origin);
+	self.attack_elevation = IterateElevation(30, SUB_entEnemyTarget().origin);
 };
 void() probe_satk2 = [24, probe_satk3] {probe_think(); ProbeFireGrenade(30, self.attack_elevation); ProbeFireGrenade(-30, self.attack_elevation);};
 void() probe_satk3 = [25, probe_satk4] {probe_think(); probe_sound();};
@@ -504,12 +511,14 @@ void() probe_missile_attack = {
 void() probe_stand_attack = {
 	
 	local vector spot1, spot2;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 
 	spot1 = self.origin + self.view_ofs;
-	spot2 = self.enemy.origin + self.enemy.view_ofs;
+	spot2 = enem.origin + enem.view_ofs;
 	traceline(spot1, spot2, 0, self);
 
-	if (trace_ent != self.enemy) {
+	if (trace_ent != enem) {
 		probe_run1();
 		return;
 	}
@@ -543,9 +552,11 @@ float() ProbeCheckAttack = {
 	local float ang;
 	local float delta;
 	local float dist;
+	entity enem;
+	enem = SUB_entEnemyTarget();
 	
 	self.lefty = 0;
-	targ = self.enemy;
+	targ = enem;
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 
@@ -561,7 +572,7 @@ float() ProbeCheckAttack = {
 	delta = self.ideal_yaw - ang;
 	dist = vlen(spot2 - spot1);
 
-	if (fabs(delta) > 10 && dist > 200 || self.enemy.classname != "player")
+	if (fabs(delta) > 10 && dist > 200 || enem.classname != "player")
 		return 0;
 	
 	if (dist < 400)	{
@@ -610,6 +621,7 @@ void(entity e) monster_probe_start = {
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	self.yaw_speed = 9;
 	self.health = 200;
+	if (!self.above) self.above = 64;
 	if (self.obituary == "") self.obituary = "was plugged by a Probe";
 
 	self.worldtype = 0.75;

@@ -107,7 +107,7 @@ void() centurion_fire =
 	
 	org = self.origin + v_forward * 34 + v_right * 8.5 + '0 0 24'; //16 for enforcer, added 8 more for platform
 
-	centurion_launch_missle(org, self.enemy.origin - self.origin);
+	centurion_launch_missle(org, SUB_entEnemyTarget().origin - self.origin);
 };
 
 //============================================================================
@@ -175,13 +175,14 @@ void() cent_combatmove = {
 
 	local vector	spot1, spot2, spot3;
 	local float		r, a, dir, v;
-	
-	if (self.enemy == world)
+	entity enem = SUB_entEnemyTarget();
+
+	if (enem == world)
 		return;
 	
 	//check relative enemy position
 	spot1 = self.origin + self.view_ofs;
-	spot2 = self.enemy.origin + self.enemy.view_ofs;
+	spot2 = enem.origin + enem.view_ofs;
 	r = vlen (spot1 - spot2);
 	a = spot1_z - spot2_z;
 	
@@ -222,7 +223,7 @@ void() cent_combatmove = {
 	}
 	
 	// Temporarily change enemy's origin to control vertical movement
-	self.enemy.origin_z = self.enemy.origin_z + 1000 * self.height;
+	enem.origin_z = enem.origin_z + 1000 * self.height;
 	
 	//TODO: try not to get too close to other centurions
 	// using findradius, then what?
@@ -272,7 +273,7 @@ void() cent_combatmove = {
 		movetogoal(CENT_RUNSPEED);
 		
 	// Restore enemy's correct origin
-	self.enemy.origin_z = self.enemy.origin_z - 1000 * self.height;
+	enem.origin_z = enem.origin_z - 1000 * self.height;
 };
 
 void() cent_ai_run = {
@@ -295,7 +296,7 @@ void()	cent_run7	=[	$stand7  ,	cent_run1	] {cent_ai_run();};
 
 void() cent_atk11;
 void() abort_if_blocked = {
-	if (!clean_shot (self.enemy)) self.think = cent_atk11; //abort if shot is blocked by monster or wall
+	if (!clean_shot (SUB_entEnemyTarget())) self.think = cent_atk11; //abort if shot is blocked by monster or wall
 };
 
 void() cent_ai_face = {
