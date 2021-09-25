@@ -2363,3 +2363,28 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 [
 	count(integer) : "Use count" : : "Maximum usage count. Set to -1 for infinite uses. Default is infinite"
 ]
+
+
+@SolidClass base(Appearflags, Targetname) = trigger_textstory :
+"Trigger to show long centerprint texts. Message remains on screen while player is inside the trigger volume.
+
+You can set it to be show the message only when the player is facing a certain angle within the trigger. Set the central angle with 'mangle', and the maximum angle offset with 'view_ofs' (both in 'pitch way 0' format)."
+
+[
+	mangle(string) : "Central view angle" : : "Central point of the viewcone, in 'pitch yaw 0' format"
+	view_ofs(string) : "Maximum angle offset" : : "Angle offsets from the central viewcone point in each direction, in 'pitch yaw 0' format"
+	message(string) : "Message/title" : : "First message field."
+	message2(string) : "Message body" : : "Second message field."
+	noise1(string) : "Activate sound" : : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
+	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
+]
+
+@PointClass base(Appearflags, Targetname, Message) = target_textstory :
+"Trigger to show long centerprint texts. Message remains on screen for the duration of 'wait'."
+[
+	wait(integer) : "Message duration" : 5
+	message(string) : "Message/title" : : "First message field."
+	message2(string) : "Message body" : : "Second message field."
+	noise1(string) : "Activate sound" : : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
+	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
+]

@@ -36,6 +36,7 @@ body {
 		<ul>
 			<li><a href="#circuitboard">Circuitboard</a></li>
 			<li><a href="#trifecta">Trifecta</a></li>
+			<li><a href="#boots">Jump Boots</a></li>
 			<li><a href="#keys">Keys</a></li>
 			<li><a href="#item-respawning">Item respawning</a></li>
 			<li><a href="#item-trigger-spawning">Trigger spawning</a></li>
@@ -168,6 +169,7 @@ body {
 			<li><a href="#particle-field">Particle field</a></li>
 			<li><a href="#lightning-trail">Lightning trail</a></li>
 			<li><a href="#screen-shake">Screen shake</a></li>
+			<li><a href="#text-story">Story texts</a></li>
 			<li><a href="#other-effects">Other effects</a></li>
 
 		</ul>
@@ -290,6 +292,17 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>
 	The new awesome powerup in Alkaline. Gives you quad-damage, invincibility, and a mega health boost, all in one.
 </p>
+
+<h3 id="boots">Jump Boots</h3>
+<p>
+	This well-known powerup is available as well. Comes in two versions:
+</p>
+<ul>
+	<li><strong>Persistent (item_jboots):</strong> always-on and upgradeable indefinitely. Each time one is picked up by a player, they get another jump charge. Also it's not removed from the inventory after a map change.</li>
+	<li><strong>Timed (item_jboots_timed):</strong> Timed upgrade, available for 30s. By default it gives limitless charges, but you can change that through the <strong>jboots_rechargelimit</strong> key.</li>
+</ul>
+	
+
 
 <h3 id="keys">Keys</h3>
 <p>Alkaline borrows the custom key system from progs_dump. You can create a key using the <strong>item_key_custom</strong> entity, and define a custom model, skin, sound and name. Then on any door you can set the name of the key that will open it. For more details, please refer to the in-editor documentation.</p>
@@ -752,6 +765,13 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 	<p>Follows an attack-sustain-release curve: it builds for <strong>delay</strong> seconds, holds at full strength for <strong>length</strong> seconds, then fades back toward zero for <strong>wait</strong> seconds. Total quake duration is therefore delay + length + wait. All three have defaults, but any of them can be forced to 0 by setting them to -1. (You might want a quake with no delay to be caused by a sudden blast, for example.)</p>
 </blockquote>
 
+<h3 id="text-story">Story texts</h3>
+<p>To show long story texts, for logs, terminals, books, etc., you can use the <strong>trigger_textstory</strong> brush entity. It shows a message that remains on-screen while the player is inside the trigger volume.</p>
+<p>You can set it to be show the message only when the player is facing a certain angle within the trigger. Set the central angle with <strong>mangle</strong>, and the maximum angle offset with <strong>view_ofs</strong> (both in 'pitch way 0' format).</p>
+<p>You can define custom sounds as well, both for when the message is shown (<strong>noise1</strong>) and when it fades away (<strong>noise2</strong>). Use "misc/talk.wav" for the default centerprint beep.</p>
+<p>There's a point entity variant called <strong>target_textstory</strong>. When triggered, it'll show the message on-screen for the duration defined in <strong>wait</strong>.</p>
+
+
 <h3 id="other-effects">Other effects</h3>
 <ul>
 	<li><strong>Trap shooters:</strong> Now can fire rockets, and have projectile speed and damage customized.</li>
@@ -778,6 +798,10 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 <h3 id="target_move">target_move</h3>
 <p>Using this point entity you can move any other entity to its origin upon triggering. Works with any entity type. Think of it as a simplified, general-purpose teleport.</p>
 <p>If the targeted entity changes behavior when given a targetname, you can target its <strong>targetname2</strong> field instead.</p>
+
+<h3 id="target_setsize">target_setsize</h3>
+<p>Resizes the targeted entity's bounding box. Targets both <strong>targetname</strong> and <strong>targetname2</strong> fields.
+The activator's bounding box can be changed as well by activating spawnflag 1.</p>
 
 <h3 id="developer">Developer features</h3>
 <ul>
