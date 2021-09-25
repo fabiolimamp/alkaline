@@ -1020,7 +1020,7 @@ void() target_textstory_helper_show = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) {
 		remove(self);
 		return;
-	};
+	}
 
 	textstory_show(self.owner);
 

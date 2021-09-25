@@ -860,7 +860,7 @@ void(float dist) ai_run =
 	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
 	if (enem.health <= 0 || enem.takedamage == DAMAGE_NO) 
 	{
-		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
+		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget(); // disable enemy target system while changing enemies
 		self.enemy = world;
 	// FIXME: look all around for other targets
 		if (self.oldenemy.health > 0)

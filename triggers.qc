@@ -126,7 +126,8 @@ void() multi_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
-// if the trigger has an angles field, check player's facing direction
+	// if the trigger has an angles field, check player's facing direction.
+	// Deprecated, use mangle+view_ofs instead. This is used in id1's start.wad tho, so don't remove
 	if (self.movedir != '0 0 0')
 	{
 		makevectors (other.angles);
