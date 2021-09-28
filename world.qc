@@ -360,6 +360,9 @@ void() worldspawn =
 
 	if(!self.itemstyle) self.itemstyle = ITEMSTYLE_BSP;
 
+	// defaults to base theme, because of course it does
+	if (!self.worldtype) self.worldtype = WORLDTYPE_BASE;
+
 	lastdq = -1;
 	currentdq = -1;
 
