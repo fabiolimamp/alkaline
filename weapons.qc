@@ -1839,6 +1839,8 @@ void() ImpulseCommands =
 		//centerprint(self, VERSION_S);
 	if (self.impulse == 184)
 		display_monsleft();
+	if (self.impulse == 185)
+		display_mapvar();
 	if (self.impulse == 200)
 		dev_reveal();
 	if (self.impulse == 210)

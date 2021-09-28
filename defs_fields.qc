@@ -176,6 +176,11 @@ float door_setup_finished;
 // gravity
 entity current_gravity_ent;
 
+float bitflags[24];				// Bitflag values
+float mapvar[2];				// Map variables stored in savefile
+nosave float mapvar_cvar;
+
+
 /*
 FIELDS
 ==============================================================================
@@ -538,7 +543,10 @@ FIELDS
 .float jboots_finished;
 .float jboots_time; 
 
-
+//
+// enemytarget system from AD (thanks Lun)
+//
 .entity		enemytarget;		// flying monsters enemy target
 .float		enemytargetlock;	// Lockout timer for enemy target
 .float 		above;
+

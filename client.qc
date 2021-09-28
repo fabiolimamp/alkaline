@@ -68,6 +68,9 @@ void() SetChangeParms =
 	// jump boots persists across levels
 	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
 	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
+
+	parm15 = mapvar[0];
+	parm16 = mapvar[1];
 };
 
 void() SetNewParms =
@@ -83,15 +86,16 @@ void() SetNewParms =
 	parm9 = 0; // armor type
 	parm10 = WEAPON_SHOTGUN | WEAPON_AXE; // weapons
 	parm11 = 0; // jump boot recharge limit
-
-	if (world.model == "maps/test.bsp") // johnfitz start the player with nothing
-	{
-		parm10 = WEAPON_NO_WEAPON; // no weapons
-		parm4 = 0; // no shells
-		parm8 = WEAPON_NO_WEAPON; // no current weapon
-	}
-
 	
+	// Are map variables live?
+	if (mapvar_cvar) dprint("\b[CLIENT]\b LIVE Map Variables Detected\n");
+	else {
+		dprint("\b[CLIENT]\b RESETTING Map Variables\n");
+		// Reset map variables ready for use
+		parm15 = 0;
+		parm16 = 0;
+		mapvar_reset();
+	}
 };
 
 void(entity cl, entity base) TakeAndGiveWeapons = {
@@ -121,6 +125,10 @@ void(entity cl, entity base) TakeAndGiveWeapons = {
 
 void() DecodeLevelParms =
 {
+	dprint("\b[CLIENT]\b Decode (Level) Parms\n");
+	// Map Variables are active (do not reset)
+	mapvar_cvar = TRUE;
+	
 	// take away all stuff on starting new episode
 	// or if set in worldspawn
 	if ((serverflags && world.model == "maps/start.bsp") || world.reset_items)
@@ -137,6 +145,9 @@ void() DecodeLevelParms =
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
 	self.jboots_rechargelimit = parm11;
+
+	mapvar[0] = parm15;
+	mapvar[1] = parm16;
 
 	TakeAndGiveWeapons(self, world);
 };
@@ -1550,7 +1561,9 @@ void() PlayerPostThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
-	
+	if (self.flags & FL_CLIENT) {
+		mapvar_cvar = TRUE;			// Map Variable are live
+	}
 //johnfitz -- do stuff with burning and underwater sounds before the dead/intermission check, so that we are sure to turn things off correctly
 	CheckBurning (); //flamethrower burn
 		

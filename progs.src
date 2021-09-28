@@ -19,6 +19,7 @@ weapons.qc
 world.qc
 client.qc
 player.qc
+mapvar.qc
 monsters.qc
 doors.qc
 buttons.qc

@@ -349,12 +349,14 @@ void() worldspawn =
 	precache_model ("progs/jumpblue.mdl");
 	precache_model ("progs/jumpgold.mdl");
 
-//
-// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
-// Moved to lights.qc -- bmFbr
-//
-
+	//
+	// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
+	// Moved to lights.qc -- bmFbr
+	//
 	setup_lightstyles();
+	
+	// setup mapvar bit array
+	mapvar_setuparray();
 
 	if(!self.itemstyle) self.itemstyle = ITEMSTYLE_BSP;
 

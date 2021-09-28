@@ -267,3 +267,8 @@ void() setup_lightstyles; //lights.qc
 
 // new door features
 void() LinkDoors2;
+
+
+void() mapvar_setuparray;
+void() mapvar_reset;
+void() display_mapvar;
