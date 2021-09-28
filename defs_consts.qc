@@ -1,4 +1,4 @@
-string	VERSION_S				= "Alkaline v1.0.2";
+string	VERSION_S				= "Alkaline v1.1";
 
 float	FALSE					= 0;
 float 	TRUE					= 1;
@@ -90,7 +90,7 @@ float 	HUD_WEAPONS					= WEAPON_SHOTGUN + WEAPON_SUPER_SHOTGUN +
 										WEAPON_GRENADE_LAUNCHER + WEAPON_ROCKET_LAUNCHER +
 										WEAPON_LIGHTNING;
 // items
-// item flags below 128 are reserved for the HUD weapons, don't use them
+// item flags 1-64 are reserved for the HUD weapons, don't use them
 
 float   IT_JBOOTS				= 128;
 
@@ -98,6 +98,8 @@ float	IT_SHELLS				= 256;
 float	IT_NAILS				= 512;
 float	IT_ROCKETS				= 1024;
 float	IT_CELLS				= 2048;
+
+//								= 4096
 
 float	IT_ARMOR1				= 8192;
 float	IT_ARMOR2				= 16384;
