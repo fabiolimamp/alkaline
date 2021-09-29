@@ -63,7 +63,7 @@ float OGRE_DEFAULT_ELEVATION = 30;
  
 //uses QuakeC builtins to calculate tan of angle
 //WARNING: uses makevectors! This overwrites the v_forward... globals
-float(float theta) tan =
+/*float(float theta) tan =
 {
   local vector ang; //temporary used to calculate trig values
   ang = '0 0 0';
@@ -82,7 +82,7 @@ float(float y, float x) atan2 =
   ang_x = x;
   ang_y = y;
   return vectoyaw(ang);
-}
+}*/
  
 float(float theta, vector dest) IterateElevation =
 {

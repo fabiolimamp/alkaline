@@ -25,6 +25,55 @@ vector(float x, float y, float z) Vector =
     return swiz;
 }
 
+vector(float num) SinCos =
+{
+    local vector angle, vf, vu, vr, result;
+    
+    vf = v_forward;
+    vu = v_up;
+    vr = v_right;
+    
+    angle = '0 1 0' * num;
+    makevectors(angle);
+    result = Vector(v_forward_y, v_forward_x, v_forward_x / v_forward_y);   // technically SinCosTan
+    
+    v_forward = vf;
+    v_up = vu;
+    v_right = vr;
+    
+    return result;
+}
+
+float(float num) sin =
+{
+    vector temp;
+    temp = SinCos(num);
+    return temp_x;
+}
+
+float(float num) cos =
+{
+    vector temp;
+    temp = SinCos(num);
+    return temp_y;
+}
+
+float(float num) tan =
+{
+    vector temp;
+    temp = SinCos(num);
+    return temp_x / temp_y;
+}
+ 
+float(float y, float x) atan2 =
+{
+    local vector ang; //temporary used to calculate trig values
+    ang = '0 0 0';
+    ang_x = x;
+    ang_y = y;
+    return vectoyaw(ang);
+}
+
 vector(vector v) vabs =
 {
     return Vector(fabs(v_x),fabs(v_y),fabs(v_z));
@@ -208,6 +257,29 @@ vector(vector a, vector b, float mix) lerpVectorHermite =
     h01 *= 3 - 2 * mix;
     
     return (b * h01 + a * ( 1 - h01 ) );
+}
+
+// even more smooth:
+float(float a, float b, float mix) lerpCosine =
+{
+    if (mix <= 0) return a;
+    if (mix >= 1) return b;
+    
+    local float cmx;
+    cmx = (1 - cos(mix * 180)) / 2;
+    
+    return (b * cmx + a * ( 1 - cmx ) );
+}
+
+vector(vector a, vector b, float mix) lerpVectorCosine =
+{
+    if (mix <= 0) return a;
+    if (mix >= 1) return b;
+
+    local float cmx;
+    cmx = (1 - cos(mix * 180)) / 2;
+    
+    return (b * cmx + a * ( 1 - cmx ) );
 }
 
 
