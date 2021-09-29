@@ -308,3 +308,19 @@ float FLOYD_ASLEEP = 4;
 float SPARKS_BLUE = 2;
 float SPARKS_PALE = 4;
 float BREAKABLE_NO_MONSTERS = 1;
+
+
+//
+// mapvar
+//
+
+float MAPV_BITS = 22;			// Bits used in each parm block
+float MAPV_BLCK = 2;			// Blocks used (total parm's)
+float MAPV_TOTAL = 44;			// Maximum amount of variables
+
+float MAPV_WRITE_OFF = 1;
+float MAPV_WRITE_ON = 2;
+float MAPV_WRITE_TOGGLE = 3;
+
+float MAPV_READ_OFF = 1;
+float MAPV_READ_ON = 2;

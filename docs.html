@@ -66,6 +66,7 @@ body {
 			<li><a href="#monsterjumps">Monsterjumps</a></li>
 			<li><a href="#stealth-teleport">Stealth teleport</a></li>
 			<li><a href="#multiple-destinations">Multiple teleport destinations</a></li>
+			<li><a href="#mapvars">Mapvars</a></li>
 		</ul>
 	</li>
 	<li>
@@ -421,6 +422,15 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 </ul>
 <p>Refer to the in-editor documentation for both <strong>trigger_teleport</strong> and <strong>info_teleport_destination</strong> for more info.</p>
 
+<h3 id="mapvars">Mapvars</h3>
+<p>Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track completion progress on mapjams for example. You have a total of 44 flags availabe to use, each identified by a number in the 1-44 range.
+</p>
+<p>You can access them through 2 point entities:</p>
+<ul>
+<li><strong>trigger_mapvar_write</strong>: Writes a value to a specified mapvar. Can either set to on, to off, or toggle the current mapvar value.</li>
+<li><strong>trigger_mapvar_read</strong>: Tests a mapvar against a specified value, and relays the trigger if the condition is met. When given a targetname, it'll read/relay when triggered. Otherwise, it'll fire automatically once after the map starts - good for modifying map structures or enabling/disabling triggers right from the start.</li>
+</ul>
+<p>Also, you can define a mapvar to be enabled automatically in <strong>trigger_changelevel</strong> entities when the player goes through it.</p>
 <hr>
 
 <h2 id="doors">Doors</h2>

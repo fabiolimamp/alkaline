@@ -357,6 +357,10 @@ void() changelevel_touch =
 		bprint (" exited the level\n");
 	}
 	
+
+	if (self.count > 0 && self.count <= MAPV_TOTAL)
+		write_mapvar(self.count, MAPV_WRITE_ON);
+
 	nextmap = self.map;
 
 	//johnfitz -- add a serverflag so users spawn at info_player_start2 when returning to startmap

@@ -1937,11 +1937,15 @@ Other than that, this entity functions like a normal button.
 @SolidClass base(Targetname, TriggerWait) = trigger_changelevel : "Trigger: Change level
 
 If you set the 'message' field, an episode-ending screen will be show with the defined text.
-Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text."
+Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text.
+
+You can define a mapvar to be automatically enabled when the level changes through the 'count' key.
+"
 [
 	map(string) : "New map name"
 	target(target_destination) : "Target"
 	message(string) : "End-of-episode text"
+	count(integer) : "Mapvar to enable"
 	spawnflags(flags) =
 	[
 		1: "No Intermission" : 0
@@ -2387,4 +2391,36 @@ You can set it to be show the message only when the player is facing a certain a
 	message2(string) : "Message body" : : "Second message field."
 	noise1(string) : "Activate sound" : : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
 	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
+]
+
+@PointClass color(192 0 128) base(Appearflags, Trigger, Message) = trigger_mapvar_read :
+"Reads a value from the mapvar bank, and relays the trigger if the specified value is met.
+When given a targetname, it'll read/relay when triggered. Otherwise, it'll fire automatically once after the map starts - good for modifying map structures or enabling/disabling triggers right from the start.
+
+Select the desired mapvar id using the 'count' field, and the relay condition in 'style'. When the condition is met, it'll function like a conventional trigger_relay.
+
+Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track completion progress on mapjams for example. You have a total of 44 flags availabe to use, each identified by a number in the 1-44 range.
+"
+[
+	count(int) : "Mapvar id" : : "Obligatory. Must range between 1 and 44."
+	style(choices) : "Relay condition" : 1 = [
+		1 : "Trigger if mapvar is on/true"
+		2 : "Trigger if mapvar is off/false"
+	]
+]
+
+@PointClass color(192 0 128) base(Appearflags, Targetname) = trigger_mapvar_write :
+"Writes a value to the mapvar bank.
+
+Select the desired mapvar id using the 'count' field, and the value to be set in 'style'. You can either set to on, set to off, or toggle the flag's value.
+
+Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track completion progress on mapjams for example. You have a total of 44 flags availabe to use, each identified by a number in the 1-44 range.
+"
+[
+	count(int) : "Mapvar id" : : "Obligatory. Must range between 1 and 44."
+	style(choices) : "Value to write" : 2 = [
+		1 : "Set flag to off/false"
+		2 : "Set flag to on/true"
+		3 : "Toggle flag value"
+	]
 ]

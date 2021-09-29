@@ -9,16 +9,6 @@ and can easily be turned into variables for the map to use.
 Adapted from AD
 
 ======================================================================*/
-float MAPV_BITS = 22;			// Bits used in each parm block
-float MAPV_BLCK = 2;			// Blocks used (total parm's)
-float MAPV_TOTAL = 44;			// Maximum amount of variables
-
-float MAPV_WRITE_OFF = 1;
-float MAPV_WRITE_ON = 2;
-float MAPV_WRITE_TOGGLE = 3;
-
-float MAPV_READ_OFF = 1;
-float MAPV_READ_ON = 2;
 
 
 // Setup the bitflag array (used in world.qc)
@@ -142,6 +132,8 @@ void() trigger_mapvar_write_use = {
 void() trigger_mapvar_write = {
 	if (!self.count)
 		objerror("Mapvar id not selected");
+	if (self.count < 1 || self.count > MAPV_TOTAL)
+		objerror("Mapvar id out of range");
 
 	self.style = defaultFl(self.style, MAPV_WRITE_ON);
 	
@@ -161,7 +153,7 @@ void() trigger_mapvar_read_use = {
 
 void() trigger_mapvar_read_start = {
 	entity pl;
-	//dprint("Starting...\n");
+	dprint3("trigger_mapvar_read fired automatically at (", vtos(self.origin), ")\n");
 	pl = find(world, classname, "player");
 	if (!pl) return;
 
@@ -172,6 +164,8 @@ void() trigger_mapvar_read_start = {
 void() trigger_mapvar_read = {
 	if (!self.count)
 		objerror("Mapvar id not selected");
+	if (self.count < 1 || self.count > MAPV_TOTAL)
+		objerror("Mapvar id out of range");
 
 	self.style = defaultFl(self.style, MAPV_READ_ON);
 	

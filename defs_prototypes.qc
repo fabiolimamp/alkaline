@@ -272,3 +272,5 @@ void() LinkDoors2;
 void() mapvar_setuparray;
 void() mapvar_reset;
 void() display_mapvar;
+void(float mapv_indx, float mapv_val) write_mapvar;
+float(float mapv_indx) read_mapvar;
