@@ -101,8 +101,15 @@ void(string var, string val) cvar_set = #72;	// sets cvar.value
 
 
 .float suppressCenterPrint;
+
 void(entity client, string s1) centerprint_builtin = #73;
-void(entity client, string s1, string s2) centerprint_msg = #73;
+void(entity client, string s1, string s2) centerprint_builtin2 = #73;
+void(entity client, string s1, string s2, string s3) centerprint_builtin3 = #73;
+void(entity client, string s1, string s2, string s3, string s4) centerprint_builtin4 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5) centerprint_builtin5 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5, string s6) centerprint_builtin6 = #73;
+void(entity client, string s1, string s2, string s3, string s4, string s5, string s6, string s7) centerprint_builtin7 = #73;
+
 void(entity client, string s1) centerprint = {
 	// Is the centerprint message being used by something else?
 	if (!client.suppressCenterPrint)
@@ -114,36 +121,16 @@ void(entity client, string s1) centerprint = {
 		sprint(client, "\n");
 	}
 }
-void(entity client, string s1, string s2, string s3) centerprint_msg3 = #73;
-void(entity client, string s1, string s2, string s3) centerprint3 = {
+
+void(entity client, string s1, string s2) centerprint2 = {
 	// Is the centerprint message being used by something else?
 	if (!client.suppressCenterPrint)
-		centerprint_msg3(client, s1, s2, s3);
+		centerprint_builtin2(client, s1, s2);
 	else {
 		// Send message to client console instead
 		sprint(client, "(centerprint) ");
 		sprint(client, s1);
 		sprint(client, s2);
-		sprint(client, s3);
-		sprint(client, "\n");
-	}
-}
-void(entity client, string s1, string s2, string s3, string s4) centerprint_msg4 = #73;
-void(entity client, string s1, string s2, string s3, string s4, string s5, string s6, string s7) centerprint_msg7 = #73;
-void(entity client, string s1, string s2, string s3, string s4, string s5, string s6, string s7) centerprint7 = {
-	// Is the centerprint message being used by something else?
-	if (!client.suppressCenterPrint)
-		centerprint_msg7(client, s1, s2, s3, s4, s5, s6, s7);
-	else {
-		// Send message to client console instead
-		sprint(client, "(centerprint) ");
-		sprint(client, s1);
-		sprint(client, s2);
-		sprint(client, s3);
-		sprint(client, s4);
-		sprint(client, s5);
-		sprint(client, s6);
-		sprint(client, s7);
 		sprint(client, "\n");
 	}
 }

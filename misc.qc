@@ -923,7 +923,7 @@ trigger_textstory
 
 =============================================================
 */
-
+float TEXTSTORY_SILENT = 1;
 
 void(entity controller) textstory_hide = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
@@ -940,10 +940,8 @@ void(entity controller) textstory_show = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
 
 	self.enemy.suppressCenterPrint = TRUE;
-	if (controller.message2 == "")
-		centerprint_builtin(self.enemy, controller.message);
-	else
-		centerprint_msg7(self.enemy, controller.message, "\n\n", controller.message2, "", "", "", "");
+	
+	centerprint_builtin(self.enemy, controller.message);
 
 	if (!self.state && controller.noise1) 
 		sound(self.enemy, CHAN_BODY, controller.noise1, 1, ATTN_NORM);
@@ -995,8 +993,17 @@ void() trigger_textstory = {
 	if (self.view_ofs == '0 0 0')
 		self.view_ofs = '90 90 0';
 
-	if (self.noise1 != "" && self.noise2 == "")
+	if (self.noise1 == "")
+		self.noise1 = "misc/talk.wav";
+
+	if (self.noise2 == "")
 		self.noise2 = "misc/null.wav";
+
+	if (self.spawnflags & TEXTSTORY_SILENT) {
+		self.noise1 = "";
+		self.noise2 = "";
+	}
+
 
 	if (self.noise1 != "")
 		precache_sound (self.noise1);
@@ -1060,8 +1067,16 @@ void() target_textstory_use = {
 };
 
 void() target_textstory = {
-	if (self.noise1 != "" && self.noise2 == "")
+	if (self.noise1 == "")
+		self.noise1 = "misc/talk.wav";
+	
+	if (self.noise2 == "")
 		self.noise2 = "misc/null.wav";
+
+	if (self.spawnflags & TEXTSTORY_SILENT) {
+		self.noise1 = "";
+		self.noise2 = "";
+	}
 
 	if (self.noise1 != "")
 		precache_sound (self.noise1);
