@@ -1801,7 +1801,7 @@ void() display_monsleft =
 
 void(entity cl) printVersionConsole = {
 	sprint(cl, "\b=============================================\b\n");
-	sprint(cl, VERSION_S);sprint(cl, "\n");
+	sprint(cl, VERSION_S); sprint(cl, " ("); sprint(cl, BUILD_DATE); sprint(cl, " "); sprint(cl, BUILD_TIME); sprint(cl, ")\n");
 	sprint(cl, "\b=============================================\b\n");
 };
 

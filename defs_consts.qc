@@ -1,4 +1,6 @@
 string	VERSION_S				= "Alkaline v1.1";
+string	BUILD_DATE				= __DATE__;
+string	BUILD_TIME				= __TIME__;
 
 float	FALSE					= 0;
 float 	TRUE					= 1;
