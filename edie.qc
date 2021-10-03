@@ -54,93 +54,6 @@ float() edieCheckLoS;
 
 
 
-void() gug_dummy_think =
-{
-	self.owner.gug_slapped = 0;
-	self.owner.spawnmaster = world;
-	self.owner.velocity = self.velocity;
-	self.nextthink = (time + 0.1);
-	self.think = SUB_Remove;
-};
-float inside_gradius;
-
-void(float dist, float power, float clawdmg, float stime, string hitsound) gug_hit =
-{
-	entity e, dummy;
-	float dist_front;
-	if (inside_gradius)	{
-		objerror("gug_hit: recursive");
-		return;
-	}
-
-	inside_gradius = 1;
-	
-	e = findradius(self.origin, dist);
-	while (e) {
-		if ((e.flags & (FL_MONSTER + FL_CLIENT)) &&	e != self && e.health > 0) {
-			makevectors(self.angles);
-			dist_front = vlen(self.origin + (v_forward * 100) - (self.origin + normalize(e.origin - self.origin) * 100));
-			if (dist_front < 100 && visible(e)) {
-				
-				if (e == self.enemy) 
-					T_Damage(e, self, self, clawdmg);
-				else
-					T_Damage(e, self, self, clawdmg * 0.25);
-
-				if (self.gug_slapped == 0) {
-					sound(self, CHAN_WEAPON, hitsound, 1, ATTN_NORM);
-					self.gug_slapped = 1;
-				}
-
-
-				if (e.flags & FL_CLIENT) {
-					e.gug_slapped = 1;
-					if (e.health <= 0) {
-						e.velocity = e.velocity + (normalize(e.origin - self.origin) * power);
-					}
-					else
-					{
-						dummy = spawn();
-
-						setsize(dummy, '-16 -16 -24', '16 16 40');
-						setorigin(dummy, (e.origin + '0 0 1'));
-						dummy.movetype = MOVETYPE_TOSS;
-						dummy.nextthink = (time + 0.1);
-						dummy.think = gug_dummy_think;
-						dummy.touch = gug_dummy_think;
-						dummy.owner = e;
-						dummy.classname = "dummy";
-						e.spawnmaster = dummy;
-						
-						if (dummy.flags & FL_ONGROUND)
-							dummy.flags = dummy.flags - FL_ONGROUND;
-						e.velocity = e.velocity + '0 0 22.5' * clawdmg;
-						dummy.velocity = (e.velocity * 0.5) + ((normalize(e.origin - self.origin)) * power);
-
-						if (vlen(dummy.velocity) > 600) {
-							dummy.velocity = normalize(dummy.velocity) * 600;
-						}
-
-						if (e.velocity_z > 400) {
-							dummy.velocity_z = 400;
-						}
-					}
-				}
-				else {
-					//if (e.classname != "monster_shambler" && e.classname != "monster_shalrath" && e.classname != "monster_edie" && e.classname != "monster_shambler" ) {
-					if (e.size_z <= 56) {
-						if (e.flags & FL_ONGROUND) e.flags = e.flags - FL_ONGROUND;
-						
-						e.velocity = (e.velocity + ('0 0 0' * 1));
-					}
-				}
-			}	
-		}
-		e = e.chain;
-	}
-	inside_gradius = 0;
-	self.gug_slapped = 0;
-};
 
 
 void() edie_SpikeTouch =
@@ -573,7 +486,46 @@ void() edie_firesit_end4	=[	$firesitend4,		edie_run1		] {};
 
 //============================================ [ START MELEE ] ==================================================
 void() edie_fswing_end1;
-void(float dist, float power, float clawdmg, float stime, string hitsound) gug_hit;
+
+void(float dist, float kickback, float dmg) edie_melee_hit =
+{
+	entity e;
+	float dist_front;
+
+	
+	e = findradius(self.origin, dist);
+	while (e) {
+		if ((e.flags & (FL_MONSTER + FL_CLIENT)) &&	e != self && e.health > 0) {
+			makevectors(self.angles);
+			dist_front = vlen(self.origin + (v_forward * 100) - (self.origin + normalize(e.origin - self.origin) * 100));
+
+			if (dist_front < 100 && visible(e)) {
+								
+				if (e == self.enemy) 
+					T_Damage(e, self, self, dmg);
+				else
+					T_Damage(e, self, self, dmg * 0.25);
+
+				if (self.gug_slapped == 0) {
+					sound(self, CHAN_WEAPON, "edie/mangle.wav", 1, ATTN_NORM);
+					self.gug_slapped = 1;
+				}
+
+				// large targets don't get kicked back
+				if (e.size_x <= 32) {
+					if (e.flags & FL_ONGROUND) e.flags = e.flags - FL_ONGROUND;
+					
+					e.velocity = e.velocity + '0 0 24' * dmg;
+					e.velocity = e.velocity*0.5 + ((normalize(e.origin - self.origin)) * kickback);
+
+					if (e.velocity_z > 400) e.velocity_z = 400;
+				}
+			}	
+		}
+		e = e.chain;
+	}
+	self.gug_slapped = 0;
+};
 
 void() edie_fswing1	=[	$fswing1,		edie_fswing2	] {self.nextthink = time + 0.1;ai_face();ai_forward(8);sound (self, CHAN_VOICE, "edie/sawstart.wav", 1, ATTN_IDLE);};
 void() edie_fswing2	=[	$fswing2,		edie_fswing3	] {self.nextthink = time + 0.1;ai_face();ai_forward(16);sound (self, CHAN_BODY, "edie/step.wav", 1, ATTN_IDLE);};
@@ -582,7 +534,7 @@ void() edie_fswing4	=[	$fswing4,		edie_fswing5	] {self.nextthink = time + 0.08;a
 void() edie_fswing5	=[	$fswing5,		edie_fswing6	] {self.nextthink = time + 0.07;ai_face();ai_forward(2);};
 void() edie_fswing6	=[	$fswing6,		edie_fswing7	] {self.nextthink = time + 0.07;ai_face();ai_forward(1);};
 void() edie_fswing7	=[	$fswing7,		edie_fswing8	] {self.nextthink = time + 0.06;ai_face();ai_forward(1);};
-void() edie_fswing8	=[	$fswing8,		edie_fswing9	] {self.nextthink = time + 0.05;ai_face();ai_forward(2);gug_hit(100, 5, 20, 0.6, "edie/mangle.wav");};
+void() edie_fswing8	=[	$fswing8,		edie_fswing9	] {self.nextthink = time + 0.05;ai_face();ai_forward(2);edie_melee_hit(100, 30, 20);};
 void() edie_fswing9	=[	$fswing9,		edie_fswing10	] {ai_face();ai_forward(2);};
 void() edie_fswing10	=[	$fswing10,		edie_fswing11	] {ai_face();ai_forward(2);};
 void() edie_fswing11	=[	$fswing11,		edie_bswing1	] 
@@ -619,7 +571,7 @@ void() edie_bswing1	=[	$bswing1,		edie_bswing2	] {ai_face();ai_forward(20);sound
 void() edie_bswing2	=[	$bswing2,		edie_bswing3	] {ai_face();ai_forward(12);};
 void() edie_bswing3	=[	$bswing3,		edie_bswing4	] {ai_face();ai_forward(4);};
 void() edie_bswing4	=[	$bswing4,		edie_bswing5	] {ai_face();ai_forward(2);sound (self, CHAN_BODY, "edie/step.wav", 1, ATTN_IDLE);};
-void() edie_bswing5	=[	$bswing5,		edie_bswing6	] {ai_face();ai_forward(6);gug_hit(100, 20, 20, 0.6, "edie/mangle.wav");};
+void() edie_bswing5	=[	$bswing5,		edie_bswing6	] {ai_face();ai_forward(6);edie_melee_hit(100, 12, 20);};
 void() edie_bswing6	=[	$bswing6,		edie_bswing7	] {ai_face();ai_forward(4);};
 void() edie_bswing7	=[	$bswing7,		edie_bswing8	] {ai_face();ai_forward(4);};
 void() edie_bswing8	=[	$bswing8,		edie_bswing9	] {ai_face();ai_forward(8);};
