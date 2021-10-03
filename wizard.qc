@@ -367,12 +367,19 @@ void() wiz_die =
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 
-		if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead("progs/h_wizard.mdl", self.health);
-		else ThrowHead("progs/h_cyberscrag.mdl", self.health);
+		if (self.spawnflags & MONSTER_ORIGINAL) {
+			ThrowHead("progs/h_wizard.mdl", self.health);
+			ThrowGib ("progs/gib2.mdl", self.health);
+			ThrowGib ("progs/gib2.mdl", self.health);
+			ThrowGib ("progs/gib2.mdl", self.health);
+		}
+		else {
+			ThrowHead("progs/h_cyberscrag.mdl", self.health);
+			ThrowGib ("progs/fgib1.mdl", self.health);
+			ThrowGib ("progs/drngib2.mdl", self.health);
+			ThrowGib ("progs/drngib3.mdl", self.health);
+		}
 		
-		ThrowGib ("progs/gib2.mdl", self.health);
-		ThrowGib ("progs/gib2.mdl", self.health);
-		ThrowGib ("progs/gib2.mdl", self.health);
 		return;
 	}
 
