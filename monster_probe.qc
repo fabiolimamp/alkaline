@@ -634,7 +634,10 @@ void(entity e) monster_probe_start = {
 
 	if (!self.above && self.classname == "monster_grenadeprobe") self.above = 64;
 
-	if (self.obituary == "") self.obituary = "was plugged by a Probe";
+	if (self.obituary == "") {
+		if (self.classname == "monster_grenadeprobe") self.obituary = "was plugged by a Grenade Probe";
+		else self.obituary = "was plugged by a Probe";
+	}
 
 	self.worldtype = 0.75;
 	self.state = 0;
