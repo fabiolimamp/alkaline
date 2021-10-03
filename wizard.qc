@@ -212,8 +212,11 @@ void() Wiz_FastFire =
 	
 		vec = normalize(dst - self.origin);
 
-		if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
-		else sound (self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
+		if (self.owner.spawnflags & MONSTER_ORIGINAL)
+			sound(self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
+		else 
+			sound(self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
+		
 
 		launch_spike (self.origin, vec);
 		newmis.velocity = vec*600;
@@ -231,8 +234,11 @@ void() Wiz_StartFast =
 {
 	local	entity	missile;
 	
-	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
-	else sound (self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
+	if (self.spawnflags & MONSTER_ORIGINAL) 
+		sound(self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
+	else
+		sound(self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
+	
 
 	self.v_angle = self.angles;
 	makevectors (self.angles);
@@ -365,9 +371,10 @@ void() wiz_die =
 // check for gib
 	if (self.health < -40)
 	{
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-
 		if (self.spawnflags & MONSTER_ORIGINAL) {
+			// gib sound
+			sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+
 			ThrowHead("progs/h_wizard.mdl", self.health);
 			ThrowGib ("progs/gib2.mdl", self.health);
 			ThrowGib ("progs/gib2.mdl", self.health);
@@ -474,6 +481,10 @@ void() monster_wizard =
 	else {
 		precache_model ("progs/cyberscrag.mdl");
 		precache_model ("progs/h_cyberscrag.mdl");
+		
+		precache_model ("progs/fgib1.mdl");
+		precache_model ("progs/drngib2.mdl");
+		precache_model ("progs/drngib3.mdl");
 
 		precache_sound ("cyberscrag/hit.wav");		// used by c code
 		precache_sound ("cyberscrag/wattack.wav");
