@@ -193,10 +193,10 @@ float(entity targ, float zoffset, float rndtimer) SUB_setupEnemyTarget =
 		self.enemytarget.owner = self;
 		self.enemytarget.type = "enemytarget";
 
-		if (developer > 0 ) {
-			self.enemytarget.mdl = "progs/s_light.spr";
-			setmodel(self.enemytarget, self.enemytarget.mdl);
-		}
+		//if (developer > 0 ) {
+		//	self.enemytarget.mdl = "progs/s_light.spr";
+		//	setmodel(self.enemytarget, self.enemytarget.mdl);
+		//}
 
 		setsize (self.enemytarget, VEC_ORIGIN, VEC_ORIGIN);
 		self.enemytarget.movetype = MOVETYPE_NONE;
