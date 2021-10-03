@@ -394,7 +394,7 @@ void() probe_watk_frame = {
 	walkmove(self.angles_y, 14);
 	probe_think();
 }
-/*
+
 void() probe_watk1 = 	[13, probe_watk2] 	{probe_watk_frame(); probe_servo();};
 void() probe_watk2 = 	[14, probe_watk3] 	{probe_watk_frame(); Probe_laser_fire(-30, 0);};
 void() probe_watk3 = 	[15, probe_watk4] 	{probe_watk_frame(); };
@@ -405,24 +405,24 @@ void() probe_watk7 = 	[19, probe_watk8] 	{probe_watk_frame();};
 void() probe_watk8 = 	[20, probe_watk9] 	{probe_watk_frame();};
 void() probe_watk9 = 	[21, probe_watk10] 	{probe_watk_frame();};
 void() probe_watk10 = 	[22, probe_run1] 	{probe_watk_frame(); SUB_AttackFinished(1);};
-*/
 
-void() probe_watk1 = 	[13, probe_watk2] 	{probe_watk_frame(); probe_servo();
+
+void() probe_gr_watk1 = 	[13, probe_gr_watk2] 	{probe_watk_frame(); probe_servo();
 	self.attack_elevation = IterateElevation(30, SUB_entEnemyTarget().origin);
 };
-void() probe_watk2 = 	[14, probe_watk3] 	{probe_watk_frame(); ProbeFireGrenade(-30, self.attack_elevation);};
-void() probe_watk3 = 	[15, probe_watk4] 	{probe_watk_frame();
+void() probe_gr_watk2 = 	[14, probe_gr_watk3] 	{probe_watk_frame(); ProbeFireGrenade(-30, self.attack_elevation);};
+void() probe_gr_watk3 = 	[15, probe_gr_watk4] 	{probe_watk_frame();
 	self.attack_elevation = IterateElevation(self.attack_elevation, SUB_entEnemyTarget().origin);
 };
-void() probe_watk4 = 	[16, probe_watk5] 	{probe_watk_frame();
+void() probe_gr_watk4 = 	[16, probe_gr_watk5] 	{probe_watk_frame();
 	self.attack_elevation = IterateElevation(self.attack_elevation, SUB_entEnemyTarget().origin);
 };
-void() probe_watk5 = 	[17, probe_watk6] 	{probe_watk_frame(); ProbeFireGrenade(30, self.attack_elevation);};
-void() probe_watk6 = 	[18, probe_watk7] 	{probe_watk_frame(); probe_sound();};
-void() probe_watk7 = 	[19, probe_watk8] 	{probe_watk_frame();};
-void() probe_watk8 = 	[20, probe_watk9] 	{probe_watk_frame();};
-void() probe_watk9 = 	[21, probe_watk10] 	{probe_watk_frame();};
-void() probe_watk10 = 	[22, probe_run1] 	{probe_watk_frame(); SUB_AttackFinished(1);};
+void() probe_gr_watk5 = 	[17, probe_gr_watk6] 	{probe_watk_frame(); ProbeFireGrenade(30, self.attack_elevation);};
+void() probe_gr_watk6 = 	[18, probe_gr_watk7] 	{probe_watk_frame(); probe_sound();};
+void() probe_gr_watk7 = 	[19, probe_gr_watk8] 	{probe_watk_frame();};
+void() probe_gr_watk8 = 	[20, probe_gr_watk9] 	{probe_watk_frame();};
+void() probe_gr_watk9 = 	[21, probe_gr_watk10] 	{probe_watk_frame();};
+void() probe_gr_watk10 = 	[22, probe_run1] 	{probe_watk_frame(); SUB_AttackFinished(1);};
 
 
 void() probe_plant1 = [0, probe_plant1] {probe_stand_attack(); probe_think();};
@@ -434,24 +434,24 @@ void() probe_stop2 = [21, probe_stop3] {probe_think();};
 void() probe_stop3 = [22, probe_plant1] {probe_sound();	probe_think();};
 
 
-/*
+
 void() probe_satk1 = [23, probe_satk2] {probe_think(); probe_servo();};
 void() probe_satk2 = [24, probe_satk3] {probe_think(); Probe_laser_fire(-18, 0); Probe_laser_fire(18, 0);};
 void() probe_satk3 = [25, probe_satk4] {probe_think(); probe_sound();};
 void() probe_satk4 = [26, probe_satk5] {probe_think();};
 void() probe_satk5 = [27, probe_satk6] {probe_think();};
 void() probe_satk6 = [28, probe_plant1] {probe_think(); SUB_AttackFinished(0.3);};
-*/
 
 
-void() probe_satk1 = [23, probe_satk2] {probe_think(); probe_servo();
+
+void() probe_gr_satk1 = [23, probe_gr_satk2] {probe_think(); probe_servo();
 	self.attack_elevation = IterateElevation(30, SUB_entEnemyTarget().origin);
 };
-void() probe_satk2 = [24, probe_satk3] {probe_think(); ProbeFireGrenade(30, self.attack_elevation); ProbeFireGrenade(-30, self.attack_elevation);};
-void() probe_satk3 = [25, probe_satk4] {probe_think(); probe_sound();};
-void() probe_satk4 = [26, probe_satk5] {probe_think();};
-void() probe_satk5 = [27, probe_satk6] {probe_think();};
-void() probe_satk6 = [28, probe_plant1] {probe_think(); SUB_AttackFinished(0.3);};
+void() probe_gr_satk2 = [24, probe_gr_satk3] {probe_think(); ProbeFireGrenade(30, self.attack_elevation); ProbeFireGrenade(-30, self.attack_elevation);};
+void() probe_gr_satk3 = [25, probe_gr_satk4] {probe_think(); probe_sound();};
+void() probe_gr_satk4 = [26, probe_gr_satk5] {probe_think();};
+void() probe_gr_satk5 = [27, probe_gr_satk6] {probe_think();};
+void() probe_gr_satk6 = [28, probe_plant1] {probe_think(); SUB_AttackFinished(0.3);};
 
 
 
@@ -459,7 +459,8 @@ void() bodydie = {
 	self.health = self.trigger_field.health;
 	self.origin = self.origin + '0 0 -32';
 	FuelTankExplode();
-	ThrowGib ("progs/progib1.mdl", self.health);	
+	if (self.trigger_field.classname == "monster_grenadeprobe") ThrowGib ("progs/progib1_double_cannons.mdl", self.health);
+	else ThrowGib ("progs/progib1.mdl", self.health);
 	ThrowGib ("progs/progib2.mdl", self.health);
 	ThrowGib ("progs/progib3.mdl", self.health);
 	SUB_Remove();
@@ -502,10 +503,14 @@ void(entity attacker, float damage) probe_pain = {
 };
 
 void() probe_missile_attack = {
-	if (random() < 0.5)
-		probe_watk1();
-	else
-		probe_satk1();
+	if (random() < 0.5){
+		if (self.classname == "monster_grenadeprobe") probe_gr_watk1();
+		else probe_watk1();
+	}
+	else {
+		if (self.classname == "monster_grenadeprobe") probe_gr_satk1();
+		else probe_satk1();
+	}
 };
 
 void() probe_stand_attack = {
@@ -538,7 +543,9 @@ void() probe_stand_attack = {
 		return;
 	}
 	
-	probe_satk1();
+	if (self.classname == "monster_grenadeprobe") probe_gr_satk1();
+	else probe_satk1();
+
 	if (self.cnt == 1) {
 		probe_run1();
 		return;
@@ -611,7 +618,10 @@ void(entity e) monster_probe_start = {
 	body.movetype = MOVETYPE_STEP;
 	body.flags = body.flags | FL_FLY;
 	
-	setmodel(body, "progs/probebod.mdl");
+	if (self.classname == "monster_grenadeprobe") setmodel(body, "progs/probebod_double_cannons.mdl");
+	else setmodel(body, "progs/probebod.mdl");
+
+	
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(body, body.origin);
 
@@ -621,7 +631,9 @@ void(entity e) monster_probe_start = {
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 	self.yaw_speed = 9;
 	self.health = 200;
-	if (!self.above) self.above = 64;
+
+	if (!self.above && self.classname == "monster_grenadeprobe") self.above = 64;
+
 	if (self.obituary == "") self.obituary = "was plugged by a Probe";
 
 	self.worldtype = 0.75;
@@ -648,6 +660,48 @@ void() monster_probe_spawner = {
 };
 
 
+
+void() monster_grenadeprobe = {
+	//local float sk;
+	if (deathmatch)	{
+		remove(self);
+		return;
+	}
+
+	precache_model("progs/progib1_double_cannons.mdl");
+	precache_model("progs/progib2.mdl");
+	precache_model("progs/progib3.mdl");		
+	precache_model("progs/probebod_double_cannons.mdl");
+	precache_model("progs/probedom.mdl");
+	precache_model("progs/d_explod.spr");
+	precache_model("progs/laser.mdl");
+	precache_model("progs/grenade_probe.mdl");
+	
+	precache_sound("probe/shoot.wav");
+	precache_sound("probe/footfall.wav");
+	precache_sound("probe/servo.wav");
+	precache_sound("probe/death.wav");
+	precache_sound("probe/pain.wav");
+	precache_sound("enforcer/enfstop.wav");
+	precache_sound("probe/sight.wav");
+	precache_sound("probe/idle1.wav");
+	precache_sound("probe/idle2.wav");
+	precache_sound("probe/idle3.wav");
+	precache_sound("probe/idle4.wav");
+	precache_sound("weapons/fuelexp.wav");
+
+	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_probe_spawner;
+		monster_spawner_updatecounter();
+	}
+	else {
+		monster_probe_start(self);
+	}
+};
+
+
 void() monster_probe = {
 	//local float sk;
 	if (deathmatch)	{
@@ -662,7 +716,6 @@ void() monster_probe = {
 	precache_model("progs/probedom.mdl");
 	precache_model("progs/d_explod.spr");
 	precache_model("progs/laser.mdl");
-	precache_model("progs/grenade_probe.mdl");
 	
 	precache_sound("probe/shoot.wav");
 	precache_sound("probe/footfall.wav");
