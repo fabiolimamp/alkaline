@@ -468,19 +468,19 @@ void() bodydie = {
 
 
 void() probe_die1 = [13, probe_die2] {
-	probe_think();
-	ai_run_slide();
-	ai_run_slide();
+
 	FuelTankExplode();
-	self.trigger_field.flags = self.trigger_field.flags - FL_FLY;
-		
+	self.trigger_field.flags = self.trigger_field.flags - (self.trigger_field.flags & FL_FLY);
+	self.movetype = MOVETYPE_TOSS;
+	self.trigger_field.movetype = MOVETYPE_TOSS;
+	setorigin(self.trigger_field, self.trigger_field.origin);
+	setorigin(self, self.origin);
+	self.trigger_field.velocity = self.velocity;
 };
 
 void() probe_die2 = [14, probe_die3] {
-	probe_think();
 	sound(self, CHAN_AUTO, "probe/death.wav", 1, ATTN_NORM);
 	self.nextthink = time + 0.2;
-	ai_run_slide();
 };
 
 void() probe_die3 = [15, SUB_Hide] {
