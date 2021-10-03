@@ -963,11 +963,8 @@ Don't shake hands with this crazy bastard!" []
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ridlegs.mdl"}) = monster_rider :
 "Prowler, 777 health points." []
 
-@PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/probebod.mdl"}) = monster_probe :
+@PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/probebod_double_cannons.mdl"}) = monster_probe :
 "Probe, 200 health points." []
-
-@PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/probebod_double_cannons.mdl"}) = monster_grenadeprobe :
-"Grenade Probe, 200 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnofloyd.mdl"}) = monster_arachnofloyd :
 "Arachnofloyd, 600 health points." []

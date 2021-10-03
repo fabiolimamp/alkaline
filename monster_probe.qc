@@ -459,8 +459,10 @@ void() bodydie = {
 	self.health = self.trigger_field.health;
 	self.origin = self.origin + '0 0 -32';
 	FuelTankExplode();
-	if (self.trigger_field.classname == "monster_grenadeprobe") ThrowGib ("progs/progib1_double_cannons.mdl", self.health);
-	else ThrowGib ("progs/progib1.mdl", self.health);
+	//if (self.trigger_field.classname == "monster_grenadeprobe")
+		ThrowGib ("progs/progib1_double_cannons.mdl", self.health);
+	//else
+	//	ThrowGib ("progs/progib1.mdl", self.health);
 	ThrowGib ("progs/progib2.mdl", self.health);
 	ThrowGib ("progs/progib3.mdl", self.health);
 	SUB_Remove();
@@ -504,12 +506,16 @@ void(entity attacker, float damage) probe_pain = {
 
 void() probe_missile_attack = {
 	if (random() < 0.5){
-		if (self.classname == "monster_grenadeprobe") probe_gr_watk1();
-		else probe_watk1();
+		//if (self.classname == "monster_grenadeprobe")
+			probe_gr_watk1();
+		//else
+			//probe_watk1();
 	}
 	else {
-		if (self.classname == "monster_grenadeprobe") probe_gr_satk1();
-		else probe_satk1();
+		//if (self.classname == "monster_grenadeprobe")
+			probe_gr_satk1();
+		//else
+			//probe_satk1();
 	}
 };
 
@@ -543,8 +549,10 @@ void() probe_stand_attack = {
 		return;
 	}
 	
-	if (self.classname == "monster_grenadeprobe") probe_gr_satk1();
-	else probe_satk1();
+	//if (self.classname == "monster_grenadeprobe")
+		probe_gr_satk1();
+	//else
+	//	probe_satk1();
 
 	if (self.cnt == 1) {
 		probe_run1();
@@ -618,8 +626,9 @@ void(entity e) monster_probe_start = {
 	body.movetype = MOVETYPE_STEP;
 	body.flags = body.flags | FL_FLY;
 	
-	if (self.classname == "monster_grenadeprobe") setmodel(body, "progs/probebod_double_cannons.mdl");
-	else setmodel(body, "progs/probebod.mdl");
+	//if (self.classname == "monster_grenadeprobe")
+		setmodel(body, "progs/probebod_double_cannons.mdl");
+	//else setmodel(body, "progs/probebod.mdl");
 
 	
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
@@ -632,11 +641,12 @@ void(entity e) monster_probe_start = {
 	self.yaw_speed = 9;
 	self.health = 200;
 
-	if (!self.above && self.classname == "monster_grenadeprobe") self.above = 64;
+	if (!self.above /*&& self.classname == "monster_grenadeprobe"*/) self.above = 64;
 
 	if (self.obituary == "") {
-		if (self.classname == "monster_grenadeprobe") self.obituary = "was plugged by a Grenade Probe";
-		else self.obituary = "was plugged by a Probe";
+		//if (self.classname == "monster_grenadeprobe") self.obituary = "was plugged by a Probe";
+		//else
+			self.obituary = "was plugged by a Probe";
 	}
 
 	self.worldtype = 0.75;
@@ -664,7 +674,7 @@ void() monster_probe_spawner = {
 
 
 
-void() monster_grenadeprobe = {
+void() monster_probe = {
 	//local float sk;
 	if (deathmatch)	{
 		remove(self);
@@ -704,7 +714,7 @@ void() monster_grenadeprobe = {
 	}
 };
 
-
+/*
 void() monster_probe = {
 	//local float sk;
 	if (deathmatch)	{
@@ -743,3 +753,4 @@ void() monster_probe = {
 		monster_probe_start(self);
 	}
 };
+*/
