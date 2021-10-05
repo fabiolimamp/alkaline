@@ -1567,7 +1567,7 @@ void() item_backpack = {
 
 
 void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
-	precache_model ("progs/jboots.mdl");
+	precache_model ("progs/jumpblue.mdl");
 	precache_sound ("items/jboots_got.wav");
 	
 	self.noise = "items/jboots_got.wav";
@@ -1581,7 +1581,7 @@ void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
 }
 
 void() item_jboots_timed = { //JCR SUPERJUMP BOOTS	TIMED
-	precache_model ("progs/jboots_timed.mdl");
+	precache_model ("progs/jumpgold.mdl");
 	precache_sound ("items/jboots_got.wav");
 	
 	self.touch = powerup_touch;
