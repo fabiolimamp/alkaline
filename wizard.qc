@@ -381,6 +381,8 @@ void() wiz_die =
 			ThrowGib ("progs/gib2.mdl", self.health);
 		}
 		else {
+			sound (self, CHAN_VOICE, "misc/metal_impact.wav", 1, ATTN_NORM);
+
 			ThrowHead("progs/h_cyberscrag.mdl", self.health);
 			ThrowGib ("progs/fgib1.mdl", self.health);
 			ThrowGib ("progs/drngib2.mdl", self.health);
@@ -481,7 +483,7 @@ void() monster_wizard =
 	else {
 		precache_model ("progs/cyberscrag.mdl");
 		precache_model ("progs/h_cyberscrag.mdl");
-		
+
 		precache_model ("progs/fgib1.mdl");
 		precache_model ("progs/drngib2.mdl");
 		precache_model ("progs/drngib3.mdl");
@@ -493,6 +495,7 @@ void() monster_wizard =
 		precache_sound ("cyberscrag/widle2.wav");
 		precache_sound ("cyberscrag/wpain.wav");
 		precache_sound ("cyberscrag/wsight.wav");
+		precache_sound ("misc/metal_impact.wav");
 	}
 	precache_model ("progs/w_spike.mdl");
 
