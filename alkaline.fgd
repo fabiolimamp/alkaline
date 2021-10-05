@@ -499,7 +499,11 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 		angle(integer) : "Angle"
 	]
 
-@PointClass base(PlayerClass) = info_player_start : "Player 1 start" []
+@baseclass = PlayerStartId [
+	count(integer) : "Player start ID" : : "Previous map's trigger_changelevel entity must have a matching 'count' field to start here."
+]
+
+@PointClass base(PlayerClass, PlayerStartId) = info_player_start : "Player 1 start" []
 @PointClass base(PlayerClass) = info_player_start_test : "Player 1 developer start.
 Only works when developer mode is active. If there's more than one in the level, you'll always start at the last created one.
 You can override initial weapon/ammo loadout for this specific spot.
@@ -537,7 +541,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 	ammo_rockets(integer) : "Rockets on start" : : "Override the rockets amount on startup. Set to -1 to force it to 0."
 	ammo_cells(integer) : "Cells on start" : : "Override the cells amount on startup. Set to -1 to force it to 0."
 ]
-@PointClass base(PlayerClass) = info_player_coop : "Player cooperative start" []
+@PointClass base(PlayerClass, PlayerStartId) = info_player_coop : "Player cooperative start" []
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
 @PointClass base(PlayerClass) = info_player_deathmatch : "DM start" []
 
@@ -1942,13 +1946,16 @@ Other than that, this entity functions like a normal button.
 If you set the 'message' field, an episode-ending screen will be show with the defined text.
 Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text.
 
-You can define a mapvar to be automatically enabled when the level changes through the 'count' key.
+By giving the changelevel a 'count' value, the next map will start on a info_player_start/info_player_coop with a matching 'count' field. If no matching player start ID is found, it'll fall back to the first start spot found.
+
+You can define a mapvar to be automatically enabled when the level changes through the 'jump_flag' key.
 "
 [
 	map(string) : "New map name"
 	target(target_destination) : "Target"
 	message(string) : "End-of-episode text"
-	count(integer) : "Mapvar to enable"
+	count(integer) : "Playerstart destination ID"
+	jump_flag(integer) : "Mapvar to enable"
 	spawnflags(flags) =
 	[
 		1: "No Intermission" : 0

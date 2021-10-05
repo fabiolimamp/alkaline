@@ -142,24 +142,25 @@ float	gameover;		// set when a rule exits
 string	string_null;	// null string, nothing should be held here
 // float	empty_float;
 
-nosave float	clients;
+nosave float clients;
 
-entity 	client_ent;
-entity	newmis;			// launch_spike sets this after spawning it
+entity client_ent;
+entity newmis;			// launch_spike sets this after spawning it
 
-entity	activator;		// the entity that activated a trigger or brush
+entity activator;		// the entity that activated a trigger or brush
 
-entity	damage_attacker;	// set by T_Damage
-float	framecount;
+entity damage_attacker;	// set by T_Damage
+float framecount;
 
-float		skill;
-float 		startskill;
+float skill;
+float startskill;
 float developer;
 
 nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
 
 nosave float cleanUpClientStuff;
 nosave float gamestarted;
+
 
 // simple kex detection, thanks Lunaran
 float isKex; // running the quake rerelease
@@ -176,10 +177,13 @@ float door_setup_finished;
 // gravity
 entity current_gravity_ent;
 
+
+// mapvars
 float bitflags[24];				// Bitflag values
 float mapvar[2];				// Map variables stored in savefile
 nosave float mapvar_cvar;
 
+float playerstart_id;
 
 /*
 FIELDS

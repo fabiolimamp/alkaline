@@ -67,6 +67,7 @@ body {
 			<li><a href="#stealth-teleport">Stealth teleport</a></li>
 			<li><a href="#multiple-destinations">Multiple teleport destinations</a></li>
 			<li><a href="#mapvars">Mapvars</a></li>
+			<li><a href="#mapstart">Multiple map starting spots</a></li>
 		</ul>
 	</li>
 	<li>
@@ -435,6 +436,10 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 </ul>
 <p>Also, you can define a mapvar to be enabled automatically in <strong>trigger_changelevel</strong> entities when the player goes through it.</p>
 <hr>
+
+<h3 id="mapstart">Multiple map starting spots</h3>
+
+<p>You can have multiple player start spots in your map. <strong>trigger_changelevel</strong> entities accept a <strong>count</strong> key, which on the next map will try to direct the player to an <strong>info_player_start</strong> spot with a matching <strong>count</strong> value. That's also true for coop starts.</p>
 
 <h2 id="doors">Doors</h2>
 <p>The good old <strong>func_door</strong> in Alkaline has been completely revamped.</p>

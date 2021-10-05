@@ -69,6 +69,8 @@ void() SetChangeParms =
 	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
 	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
 
+	parm12 = playerstart_id;
+
 	parm15 = mapvar[0];
 	parm16 = mapvar[1];
 };
@@ -145,6 +147,8 @@ void() DecodeLevelParms =
 	self.weapon = parm8;
 	self.armortype = parm9 * 0.01;
 	self.jboots_rechargelimit = parm11;
+
+	playerstart_id = parm12;
 
 	mapvar[0] = parm15;
 	mapvar[1] = parm16;
@@ -358,8 +362,10 @@ void() changelevel_touch =
 	}
 	
 
-	if (self.count > 0 && self.count <= MAPV_TOTAL)
-		write_mapvar(self.count, MAPV_WRITE_ON);
+	if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
+		write_mapvar(self.jump_flag, MAPV_WRITE_ON);
+
+	playerstart_id = self.count;
 
 	nextmap = self.map;
 
@@ -384,6 +390,12 @@ void() changelevel_touch =
 	self.nextthink = time + 0.1;
 };
 
+void() changelevel_use = {
+	other = activator;
+	changelevel_touch();
+};
+
+
 /*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
@@ -395,6 +407,7 @@ void() trigger_changelevel =
 	InitTrigger ();
 	self.flags = self.flags | FL_NOCENTERPRINT;
 	self.touch = changelevel_touch;
+	self.use = changelevel_use;
 
 	SUB_CheckWaiting();
 };
@@ -467,6 +480,23 @@ SelectSpawnPoint
 Returns the entity to spawn at
 ============
 */
+
+entity(entity start, string findclass, float id) findSpawnPoint = {
+	entity spot;
+	spot = find(start, classname, findclass);
+
+	while (spot && (
+			(id > 0 && spot.count != id) ||
+			(id < 0 && spot.count != 0) ||
+			(spot.estate != STATE_ACTIVE)
+		)
+	) {
+		spot = find(spot, classname, findclass);
+	}
+	
+	return spot;
+};
+
 entity() SelectSpawnPoint =
 {
 	local	entity spot;
@@ -476,6 +506,7 @@ entity() SelectSpawnPoint =
 	
 // testinfo_player_start is only found in regioned levels
 	spot = find (world, classname, "testplayerstart");
+
 	if (spot)
 		return spot;
 	
@@ -491,20 +522,34 @@ entity() SelectSpawnPoint =
 	}
 
 // choose a info_player_deathmatch point
-	if (coop)
-	{
-		lastspawn = find(lastspawn, classname, "info_player_coop");
+	if (coop) {
+		if (playerstart_id) {
+			lastspawn = findSpawnPoint(lastspawn, "info_player_coop", playerstart_id);
+			
+			if (lastspawn == world) {
+				lastspawn = findSpawnPoint(lastspawn, "info_player_start", playerstart_id);
+			}
+
+			if (lastspawn != world)
+				return lastspawn;
+		}
+
+		lastspawn = findSpawnPoint(lastspawn, "info_player_coop", 0);
+
 		if (lastspawn == world)
-			lastspawn = find (lastspawn, classname, "info_player_start");
+			lastspawn = findSpawnPoint(lastspawn, "info_player_start", 0);
+
 		if (lastspawn != world)
 			return lastspawn;
+		
 	}
-	else if (deathmatch)
-	{
+
+
+	else if (deathmatch) {
 		spot = lastspawn;
 		while (1)
 		{
-			spot = find(spot, classname, "info_player_deathmatch");
+			spot = findSpawnPoint(spot, "info_player_deathmatch", 0);
 			if (spot != world)
 			{
 				if (spot == lastspawn)
@@ -526,14 +571,29 @@ entity() SelectSpawnPoint =
 		}
 	}
 
+	// previous map's changelevel had a playerstart id
+	if (playerstart_id) {
+		spot = findSpawnPoint(world, "info_player_start", playerstart_id);
+
+		if (spot)
+			return spot;
+	}
+
 	if (serverflags)
 	{	// return with a rune to start
-		spot = find (world, classname, "info_player_start2");
+		spot = findSpawnPoint(world, "info_player_start2", 0);
 		if (spot)
 			return spot;
 	}
 	
-	spot = find (world, classname, "info_player_start");
+	// tries to find a "count 0" playerstart first
+	spot = findSpawnPoint(world, "info_player_start", -1);
+	if (spot)
+		return spot;
+	
+
+	spot = findSpawnPoint(world, "info_player_start", 0);
+
 	if (!spot)
 		error ("PutClientInServer: no info_player_start on level");
 	
@@ -555,7 +615,6 @@ void() PutClientInServer =
 {
 	local	entity spot;
 
-	spot = SelectSpawnPoint ();
 
 	if(!client_ent) client_ent = self; //client_ent will be the first player to enter
 	
@@ -586,7 +645,9 @@ void() PutClientInServer =
 	StopBurning(self);//johnfitz -- reset burning	
 
 	DecodeLevelParms ();
-
+	
+	spot = SelectSpawnPoint ();
+	
 	if (spot.classname == "info_player_start_test") TakeAndGiveWeapons(self, spot);
 	
 	W_SetCurrentAmmo ();
