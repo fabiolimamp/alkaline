@@ -435,11 +435,11 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <li><strong>trigger_mapvar_read</strong>: Tests a mapvar against a specified value, and relays the trigger if the condition is met. When given a targetname, it'll read/relay when triggered. Otherwise, it'll fire automatically once after the map starts - good for modifying map structures or enabling/disabling triggers right from the start.</li>
 </ul>
 <p>Also, you can define a mapvar to be enabled automatically in <strong>trigger_changelevel</strong> entities when the player goes through it.</p>
-<hr>
 
 <h3 id="mapstart">Multiple map starting spots</h3>
-
 <p>You can have multiple player start spots in your map. <strong>trigger_changelevel</strong> entities accept a <strong>count</strong> key, which on the next map will try to direct the player to an <strong>info_player_start</strong> spot with a matching <strong>count</strong> value. That's also true for coop starts.</p>
+
+<hr>
 
 <h2 id="doors">Doors</h2>
 <p>The good old <strong>func_door</strong> in Alkaline has been completely revamped.</p>
