@@ -127,6 +127,9 @@ void(entity cl, entity base) TakeAndGiveWeapons = {
 
 void() DecodeLevelParms =
 {
+	float prev_mapvar_cvar;
+	prev_mapvar_cvar = mapvar_cvar;
+
 	dprint("\b[CLIENT]\b Decode (Level) Parms\n");
 	// Map Variables are active (do not reset)
 	mapvar_cvar = TRUE;
@@ -150,8 +153,10 @@ void() DecodeLevelParms =
 
 	playerstart_id = parm12;
 
-	mapvar[0] = parm15;
-	mapvar[1] = parm16;
+	if (!prev_mapvar_cvar) {
+		mapvar[0] = parm15;
+		mapvar[1] = parm16;
+	}
 
 	TakeAndGiveWeapons(self, world);
 };
