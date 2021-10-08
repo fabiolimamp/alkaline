@@ -2350,7 +2350,7 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 ]
 
 @baseclass = ItemsList [
-	items(flags) = [
+	weapons(flags) = [
 		1: "WEAPON_SHOTGUN"	
 		2: "WEAPON_SUPER_SHOTGUN"
 		4: "WEAPON_NAILGUN"
