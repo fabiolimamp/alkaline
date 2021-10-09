@@ -427,7 +427,7 @@ void() monster_shambler =
 	}
 	precache_model ("progs/shambler_alk.mdl");
 	precache_model ("progs/s_light.mdl");
-	precache_model ("progs/h_shams_alk.mdl");
+	precache_model ("progs/h_shams.mdl");
 	precache_model ("progs/bolt.mdl");
 	
 	precache_sound ("shambler/sattck1.wav");
