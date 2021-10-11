@@ -147,6 +147,10 @@ void(entity e) setspawnparms		= #78;		// set parm1... to the
 
 float(string s) checkextension		= #99;		// check cvar("pr_checkextension") before calling
 
+
+// CSQC
+void(float num, float type, .__variant fld) clientstat = #232;
+
 //
 // subs.qc
 //

@@ -326,3 +326,24 @@ float MAPV_WRITE_TOGGLE = 3;
 
 float MAPV_READ_OFF = 1;
 float MAPV_READ_ON = 2;
+
+
+
+//
+// CSQC
+//
+
+const float EV_VOID = 0;
+const float EV_STRING = 1;
+const float EV_FLOAT = 2;
+const float EV_VECTOR = 3;
+const float EV_ENTITY = 4;
+const float EV_FIELD = 5;
+const float EV_FUNCTION = 6;
+const float EV_POINTER = 7;
+const float EV_INTEGER = 8;
+
+float STAT_LEVELNAME = 32;
+float STAT_WEAPONS = 33;
+float STAT_BOOTS = 34;
+float STAT_BOOTS_FINISHED = 35;

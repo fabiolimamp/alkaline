@@ -554,3 +554,4 @@ FIELDS
 .float		enemytargetlock;	// Lockout timer for enemy target
 .float 		above;
 
+.string levelname;

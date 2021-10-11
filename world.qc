@@ -177,10 +177,15 @@ void() worldspawn =
 
 	lastspawn = world;
 
-	// simple kex detection, thanks Lunaran
+	
 	if (cvar("pr_checkextension")){
 		if (checkextension("QUAKE_EX"))
 			isKex = TRUE;
+
+		clientstat(STAT_LEVELNAME, EV_STRING, levelname);
+		clientstat(STAT_WEAPONS, EV_FLOAT, weapons);
+		clientstat(STAT_BOOTS, EV_FLOAT, jboots_rechargelimit);
+		clientstat(STAT_BOOTS_FINISHED, EV_FLOAT, jboots_finished);
 	}
 
 	InitBodyQue ();
@@ -369,6 +374,9 @@ void() worldspawn =
 	linkdoor_e = spawn();
 	linkdoor_e.think = LinkDoors2;
 	linkdoor_e.nextthink = time + 0.03;
+
+
+
 };
 
 //johnfitz -- need to wait a bit before resetting burning/underwater sounds so client will be fully connected when we do

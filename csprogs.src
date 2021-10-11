@@ -1,0 +1,6 @@
+../csprogs.dat  //the name of the file to 
+csdefs.qc       //system defs to match the engine, including various extensions
+csdefscustom.qc
+cshud.qc
+//cshud2.qc
+csview.qc         //name it whatever you want. This is where you will be writing code.
