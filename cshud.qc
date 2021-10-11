@@ -386,7 +386,7 @@ void Hud_DrawIBar(vector pos)
 	if (st_items & IT_QUAD)
 		drawpic(pos+'368 8 0', "sb_quad", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_TRIFECTA)
-		drawpic(pos+'384 8 0', "sb_quad", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'384 8 0', "gfx/sb_trifecta.lmp", '16 16 0', '1 1 1', 1, 0);
 	if (st_boots)
 		drawpic(pos+'400 8 0', "gfx/sb_boots.lmp", '16 16 0', '1 1 1', 1, 0);
 
@@ -511,6 +511,7 @@ void() Hud_Init
 nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float height)
 {
 	vector pos;
+	float hudviewsize;
 	float i;
 	screensize_x = width;
 	screensize_y = height;
@@ -521,12 +522,15 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 	pos_x = (screensize_x-448)/2;
 	pos_y = screensize_y;
 
-	st_items = getstatbits(STAT_ITEMS, 0, 23);
+	//st_items = getstatbits(STAT_ITEMS, 0, 23);
+	st_items = getstatf(STAT_IT);
 	st_items2 = getstatbits(STAT_ITEMS, 23, 9);
 	st_weapons = getstatf(STAT_WEAPONS);
 	st_activeweapon = getstatf(STAT_ACTIVEWEAPON);
 	st_boots = getstatf(STAT_BOOTS);
 	st_boots_finished = getstatf(STAT_BOOTS_FINISHED);
+
+	hudviewsize = cvar("viewsize");
 
 	baralpha = cvar("scr_sbaralpha");
 	if (baralpha == 0) baralpha = 0.333;
@@ -548,8 +552,8 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 	}
 	else
 	{
-		Hud_DrawSBar(pos - '0 24 0');
+		if (hudviewsize <= 110) Hud_DrawSBar(pos - '0 24 0');
 	}
-	Hud_DrawIBar(pos - '0 48 0');
+	if (hudviewsize <= 100) Hud_DrawIBar(pos - '0 48 0');
 	
 };
