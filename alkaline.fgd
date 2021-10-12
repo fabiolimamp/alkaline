@@ -2157,7 +2157,8 @@ Also, the state of the last evaluation is stored in this entity's 'state' field 
 	type(string) : "String value to test"
 	spawnflags(flags) = [
 		1: "Trigger if false"
-		2: "Relay activator as owner"
+		2: "Relay owner as activator"
+		4: "Relay closest player as activator"
 	]
 ]
 

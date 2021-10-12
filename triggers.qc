@@ -1404,7 +1404,24 @@ void() trigger_filter_use = {
 	if (result) {
 		self.state = 1;
 
-		if (self.spawnflags & 2 && activator.owner) activator = activator.owner; // relay activator as owner
+		if (self.spawnflags & 2 && activator.owner) activator = activator.owner; // Relay owner as activator
+		else if (self.spawnflags & 4) {
+			entity closest, next;
+			float closestdist, nextdist;
+
+			closest = next = find(world, classname, "player");
+			nextdist = closestdist = vlen(next.origin - self.origin);
+
+			while (next) {
+				nextdist = vlen(next.origin - self.origin);
+				if (nextdist < closestdist) {
+					closestdist = nextdist;
+					closest = next;
+				}
+				next = find(next, classname, "player");
+			}
+			if (closest) activator = closest;
+		}
 
 		SUB_UseTargets();
 		if (other.classname == "trigger_everything" && other.spawnflags & 1) {
