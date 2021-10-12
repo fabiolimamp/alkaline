@@ -2349,7 +2349,7 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 	return_gravity(integer) : "Return Gravity"
 ]
 
-@baseclass = ItemsList [
+@baseclass = WeaponsList [
 	weapons(flags) = [
 		1: "WEAPON_SHOTGUN"	
 		2: "WEAPON_SUPER_SHOTGUN"
@@ -2365,15 +2365,26 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 		8192: "WEAPON_PROXIMITY_GUN"
 	]
 ]
-
-@SolidClass base(Appearflags, Targetname, ItemsList, TriggerWait) = trigger_removeitems :
-"Removes the selected items from the inventory."
+@baseclass = ItemsList [
+	items(flags) = [
+		128: "Jump boots"
+		131072: "Silver key"
+		262144: "Gold key"
+		524288: "Invisibility"
+		1048576: "Pentagram"
+		2097152: "Environtment Suit"
+		4194304: "Quad Damage"
+		8388608: "Trifecta"
+	]
+]
+@SolidClass base(Appearflags, Targetname, WeaponsList, ItemsList, TriggerWait) = trigger_removeitems :
+"Removes the selected items and weapons from the inventory."
 [
 	count(integer) : "Use count" : 1 : "Maximum usage count. Set to -1 for infinite uses. Defaults to 1."
 ]
 
-@PointClass base(Appearflags, Targetname, ItemsList) = target_removeitems :
-"Removes the selected items from the inventory."
+@PointClass base(Appearflags, Targetname, ItemsList, WeaponsList) = target_removeitems :
+"Removes the selected items and weapons from the inventory."
 [
 	count(integer) : "Use count" : : "Maximum usage count. Set to -1 for infinite uses. Default is infinite"
 ]

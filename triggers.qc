@@ -1000,6 +1000,37 @@ void(entity plr, float removeditems, float removedweapons) removeitems_go = {
 	oself = self;
 	self = plr;
 
+	
+
+	if (removeditems & IT_INVISIBILITY & self.items) {
+		self.invisible_finished = 0;
+		self.invisible_time = 0;
+	}
+	if (removeditems & IT_INVULNERABILITY & self.items) {
+		self.invincible_time = 0;
+		self.invincible_finished = 0;
+	}
+	if (removeditems & IT_TRIFECTA & self.items) {
+		self.trif_finished = 0;
+		self.trif_time = 0;
+		self.cshift_set = 0;
+		self.cshift_cleared = 0;
+	}
+	if (removeditems & IT_QUAD & self.items) {
+		self.super_damage_finished = 0;
+		self.super_time = 0;
+	}
+	if (removeditems & IT_SUIT & self.items) {
+		self.rad_time = 0;
+		self.radsuit_finished = 0;
+	}
+	if (removeditems & IT_JBOOTS & self.items) {
+		self.jboots_finished = 0;
+		self.jboots_time = 0;
+		self.jboots_rechargelimit = 0;
+		self.jboots_prevlimit = 0;
+	}
+
 	self.items -= self.items & removeditems;
 	self.items -= self.items & removedweapons & HUD_WEAPONS;
 	self.weapons -= self.weapons & removedweapons;
