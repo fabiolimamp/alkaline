@@ -40,22 +40,27 @@ void() BecomeBlast =
 {
 	self.movetype = MOVETYPE_FLY;
 	self.solid = SOLID_TRIGGER;
-	//self.flags -= self.flags & FL_ONGROUND;
+	self.flags -= self.flags & FL_ONGROUND;
 	self.classname = "explosion";
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
+
 	if (other.classname == "monster_shambler")
 		setmodel (self, "progs/s_explo2.spr");
 	else
 		setmodel (self, "progs/s_explod.spr");
+
 	setsize(self, '-8 -8 -8', '8 8 8');
+
 	// Correction for explosions happening on horizontal surfaces
 	// not getting detected by trigger_everything (why??)
-	traceline(self.origin, self.origin - '0 0 9', TRUE, self);
+	traceline(self.origin, self.origin - '0 0 17', TRUE, world);
 	//dprint2(ftos(trace_fraction), "\n");
 	if (trace_fraction < 0.5)
 		force_retouch = 2;
-	setorigin(self, self.origin + [0, 0, 16 - (trace_fraction * 16)]);
+
+	// moves explosion a bit off the ground
+	setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
 
 	self.nextthink = time + 0.5;
 	self.think = SUB_Remove;
