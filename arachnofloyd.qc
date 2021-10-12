@@ -297,16 +297,8 @@ void(float offs) arf_Lightning =
 	dir = normalize (dir);
 	
 	traceline (org, org + dir*600, TRUE, self);
-
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_LIGHTNING1);
-	WriteEntity (MSG_BROADCAST, self);
-	WriteCoord (MSG_BROADCAST, org2_x);
-	WriteCoord (MSG_BROADCAST, org2_y);
-	WriteCoord (MSG_BROADCAST, org2_z);
-	WriteCoord (MSG_BROADCAST, trace_endpos_x);
-	WriteCoord (MSG_BROADCAST, trace_endpos_y);
-	WriteCoord (MSG_BROADCAST, trace_endpos_z);
+	
+	fx_beam(org2, trace_endpos, self);
 
 	LightningDamage (org, trace_endpos, self, 8);
 };

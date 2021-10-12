@@ -204,15 +204,7 @@ void() CastLightning =
 
 	traceline (org, self.origin + dir*600, TRUE, self);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_LIGHTNING1);
-	WriteEntity (MSG_BROADCAST, self);
-	WriteCoord (MSG_BROADCAST, org_x);
-	WriteCoord (MSG_BROADCAST, org_y);
-	WriteCoord (MSG_BROADCAST, org_z);
-	WriteCoord (MSG_BROADCAST, trace_endpos_x);
-	WriteCoord (MSG_BROADCAST, trace_endpos_y);
-	WriteCoord (MSG_BROADCAST, trace_endpos_z);
+	fx_beam(org, trace_endpos, self);
 
 	LightningDamage (org, trace_endpos, self, 10);
 };

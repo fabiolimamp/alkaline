@@ -335,16 +335,8 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 							dir = normalize (dir);
 						
 							traceline (inflictor.origin, inflictor.origin + dir*radius, TRUE, self);
-
-							WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-							WriteByte (MSG_BROADCAST, TE_LIGHTNING1);
-							WriteEntity (MSG_BROADCAST, self);
-							WriteCoord (MSG_BROADCAST, inflictor.origin_x);
-							WriteCoord (MSG_BROADCAST, inflictor.origin_y);
-							WriteCoord (MSG_BROADCAST, inflictor.origin_z);
-							WriteCoord (MSG_BROADCAST, trace_endpos_x);
-							WriteCoord (MSG_BROADCAST, trace_endpos_y);
-							WriteCoord (MSG_BROADCAST, trace_endpos_z);
+							
+							fx_beam(inflictor.origin, trace_endpos, self);
 							
 							T_Damage (head, inflictor, attacker, points);
 						}
