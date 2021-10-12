@@ -674,12 +674,10 @@ void()   armagon_die14    =[ $ldie12.asc, armagon_die14    ]
 
 void(string, float) ThrowGibArmagon;
 
-void()   armagon_body_explode2 =
-   {
+void()   armagon_body_explode2 = {
    //local entity expl;
 
    sound (self , CHAN_AUTO, "misc/longexpl.wav", 1, ATTN_ARMAGON);
-   self.think = armagon_body_explode2;
    ThrowGibArmagon ("progs/gib1.mdl", -200);
    ThrowGibArmagon ("progs/gib2.mdl", -200);
    ThrowGibArmagon ("progs/gib3.mdl", -200);
@@ -689,12 +687,8 @@ void()   armagon_body_explode2 =
    ThrowGibArmagon ("progs/gib1.mdl", -200);
    ThrowGibArmagon ("progs/gib2.mdl", -200);
    ThrowGibArmagon ("progs/gib3.mdl", -200);
-   self.movetype = MOVETYPE_NONE;
-   setmodel (self, "progs/s_explod.spr");
-   self.solid = SOLID_NOT;
-   self.nextthink = time + 0.1;
-   s_explode1 ();
-   };
+   BecomeBlast();
+};
 
 void()   armagon_body_explode1 =
    {
