@@ -1,3 +1,4 @@
+void( vector pos ) placebullethole;
 void() W_FirePlasma;
 void() Plasma_PreCache;
 void() W_FireProximityGrenade;
@@ -343,8 +344,16 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (src, src + direction*2048, FALSE, self);
-		if (trace_fraction != 1.0)
+		if (trace_fraction != 1.0)         
+//JIM
+         {
 			TraceAttack (4, direction);
+         if ( ( !bullet ) && ( trace_ent == world ) )
+            {
+            placebullethole( trace_endpos );
+            bullet = 1;
+            }
+         }
 
 		shotcount = shotcount - 1;
 	}
