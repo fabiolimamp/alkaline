@@ -33,7 +33,6 @@ lights.qc
 forcefield.qc
 misc_model.qc
 ltrail.qc
-hipholes.qc
 
 ogre.qc
 demon.qc
@@ -97,3 +96,5 @@ func_bob.qc
 gravity.qc
 
 plasma.qc
+
+hipholes.qc
