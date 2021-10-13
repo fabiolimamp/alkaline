@@ -1,6 +1,7 @@
 
 void() InitBodyQue;
-
+//JIM
+void() InitBulletHoles;
 
 void() main =
 {
@@ -176,7 +177,6 @@ void() worldspawn =
 	local entity linkdoor_e;
 
 	lastspawn = world;
-
 	
 	if (cvar("pr_checkextension")){
 		if (checkextension("QUAKE_EX"))
@@ -190,7 +190,9 @@ void() worldspawn =
 	}
 
 	InitBodyQue ();
-
+//JIM
+   InitBulletHoles();
+   
 // custom map attributes
 	if (self.model == "maps/e1m8.bsp")
 		cvar_set ("sv_gravity", "100");
