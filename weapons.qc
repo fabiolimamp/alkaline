@@ -332,9 +332,6 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 {
 	local	vector direction;
 	local	vector	src;
-//JIM
-   local float bullet;
-   bullet = 0;
 	
 	makevectors(self.v_angle);
 
