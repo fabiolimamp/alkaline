@@ -33,6 +33,7 @@ lights.qc
 forcefield.qc
 misc_model.qc
 ltrail.qc
+hipholes.qc
 
 ogre.qc
 demon.qc
