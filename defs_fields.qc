@@ -173,6 +173,11 @@ float lastdq;
 float currentdq;
 float door_setup_finished;
 
+// Hipnotic's bullet holes
+entity nullentity;
+entity bulletholes;
+entity lastbullet;
+float numbulletholes;
 
 // gravity
 entity current_gravity_ent;
