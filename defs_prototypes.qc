@@ -181,8 +181,6 @@ float(entity targ, entity inflictor) CanDamage;
 
 void() StartItem;
 
-entity(vector org, float damg, entity parent, float multi) kaboom;
-void() BecomeExplosion;
 
 
 //
@@ -243,6 +241,12 @@ void( entity client, float density, vector color ) fog_set;
 void( entity client, float density) skyfog_set;
 
 
+//
+// fx.qc
+//
+void(vector a, vector b, entity who) fx_beam;
+entity(vector org, float damg, entity parent, float multi) kaboom;
+void() BecomeExplosion;
 
 
 //
