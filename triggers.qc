@@ -1405,21 +1405,9 @@ void() trigger_filter_use = {
 		self.state = 1;
 
 		if (self.spawnflags & 2 && activator.owner) activator = activator.owner; // Relay owner as activator
-		else if (self.spawnflags & 4) {
-			entity closest, next;
-			float closestdist, nextdist;
-
-			closest = next = find(world, classname, "player");
-			nextdist = closestdist = vlen(next.origin - self.origin);
-
-			while (next) {
-				nextdist = vlen(next.origin - self.origin);
-				if (nextdist < closestdist) {
-					closestdist = nextdist;
-					closest = next;
-				}
-				next = find(next, classname, "player");
-			}
+		else if (self.spawnflags & 4) { // relay closest player as activator
+			entity closest;
+			closest = findClosest(self.origin, classname, "player");
 			if (closest) activator = closest;
 		}
 

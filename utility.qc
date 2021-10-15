@@ -76,6 +76,45 @@ float(float in, float def) zeroconvertdefault =
 
 
 
+entity(vector org, .string fld, string match) findClosest = {
+	entity closest, next;
+	float closestdist, nextdist;
+
+	closestdist = 99999999;
+	
+	next = find(world, fld, match);	
+	while (next) {
+		nextdist = vlen(next.origin - org);
+		if (nextdist < closestdist) {
+			closestdist = nextdist;
+			closest = next;
+		}
+		next = find(next, fld, match);
+	}
+	return closest;
+};
+
+entity(vector org, .string fld, string match, entity ignored) findClosestVisible = {
+	entity closest, next;
+	float closestdist, nextdist;
+
+	closestdist = 99999999;
+	
+	next = find(world, fld, match);	
+	while (next) {
+		nextdist = vlen(next.origin - org);
+		if (nextdist < closestdist) {
+			traceline(org, next.origin, TRUE, ignored);
+
+			if (trace_fraction < 1 && !(trace_inopen && trace_inwater)) {
+				closestdist = nextdist;
+				closest = next;
+			}
+		}
+		next = find(next, fld, match);
+	}
+	return closest;
+};
 
 // for measuring how large an entity is along an arbitrary vector
 // FIXME: this is trash and it returns trash
