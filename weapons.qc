@@ -1,4 +1,4 @@
-void( vector pos ) placebullethole;
+void(vector pos, vector norm) placebullethole;
 void() W_FirePlasma;
 void() Plasma_PreCache;
 void() W_FireProximityGrenade;
@@ -332,7 +332,8 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 {
 	local	vector direction;
 	local	vector	src;
-	
+	local vector plane_normal;
+	float bullet;
 	makevectors(self.v_angle);
 
 	src = self.origin + v_forward*10;
@@ -344,18 +345,18 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (src, src + direction*2048, FALSE, self);
-		if (trace_fraction != 1.0)         
-//JIM
-         {
-			TraceAttack (4, direction);
-         if ( ( !bullet ) && ( trace_ent == world ) )
-            {
-            placebullethole( trace_endpos );
-            bullet = 1;
-            }
-         }
+		if (trace_fraction != 1.0) {
+			plane_normal = trace_plane_normal;
+			//JIM
+			TraceAttack(4, direction);
 
+			if (bullet < 5 && trace_ent == world ) {
+				placebullethole(trace_endpos, plane_normal);
+				bullet++;
+			}
+		}
 		shotcount = shotcount - 1;
+		
 	}
 	ApplyMultiDamage ();
 };
