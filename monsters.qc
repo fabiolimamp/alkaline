@@ -20,24 +20,52 @@ void(float qt) add_monster_total = {
 monster_use
 
 Using a monster makes it angry at the current activator
+If the activator isn't a player, look for the closest one
 ================
 */
 void() monster_use =
 {
+	entity e, next;
 	if (self.enemy)
 		return;
+	// don't angry when dead, not good
 	if (self.health <= 0)
 		return;
-	if (activator.items & IT_INVISIBILITY)
+
+	if (self.lastvictim) {
+		e = self.lastvictim;
+		self.lastvictim = world;
+	}
+	// activator *is* a player, but has invisibility/notarget, so do nothing
+	if (e.classname == "player" && (e.items & IT_INVISIBILITY || e.flags & FL_NOTARGET))
 		return;
-	if (activator.flags & FL_NOTARGET)
-		return;
-	if (activator.classname != "player")
-		return;
+
 	
-// delay reaction so if the monster is teleported, its sound is still
-// heard
-	self.enemy = activator;
+	
+	// activator isn't a player, so look for the closest non-invisible player
+	if (e.classname != "player") {
+		float closestdist = 99999999;
+		float nextdist;
+		next = find(world, classname, "player");
+		while (next) {
+			nextdist = vlen(self.origin - next.origin);
+			if (nextdist < closestdist &&
+				!(next.items & IT_INVISIBILITY || next.flags & FL_NOTARGET)
+			){
+				e = next;
+				closestdist = nextdist;
+			}
+			next = find(next, classname, "player");
+		}
+		// no player found that satisfies those conditions
+		if (!e) return;
+	}
+	// otherwise continue normally
+	//else e = activator;
+
+	// delay reaction so if the monster is teleported, its sound is still
+	// heard
+	self.enemy = e;
 	self.nextthink = time + 0.1;
 	self.think = FoundTarget;
 };
@@ -432,6 +460,7 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	e.start_function = start_function_parm; // stores the start function to be called later
 	setsize(e, self.mins, self.maxs); // size needs to be set now for the telefrag check
 
+	e.lastvictim = activator;
 	e.think = monster_spawned_trytostart;
 	e.nextthink = time + 0.02;
 
