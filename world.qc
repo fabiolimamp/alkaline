@@ -403,6 +403,7 @@ void() ResetPlayerLoopingSounds =
 nosave float loadsavegamecallback_done;
 void() smoke_firstthink;
 void() FindAndReadGlobalGravity;
+void() update_bulletholes;
 
 void() LoadSaveGameCallback =
 {
@@ -444,6 +445,8 @@ void() StartFrame =
 		
 		gamestarted = TRUE;
 	}
+	if (framecount > 2)
+		update_bulletholes();
 
 	//johnfitz -- new stuff for LoadSaveGameCallback function
 	if (framecount == 3)

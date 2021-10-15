@@ -177,7 +177,7 @@ float door_setup_finished;
 entity nullentity;
 entity bulletholes;
 entity lastbullet;
-float numbulletholes;
+float numbulletholes, numbulletsframe;
 
 // gravity
 entity current_gravity_ent;

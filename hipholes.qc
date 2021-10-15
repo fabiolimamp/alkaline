@@ -64,17 +64,62 @@ void() remove_bullethole = {
 	numbulletholes = numbulletholes - 1;
 };
 
-void(vector pos, vector norm) placebullethole = {
+void() update_bulletholes = {
+	numbulletsframe = 0;
+	entity e, prev, next;
+	e = bulletholes;
+	while (e) {
+		if (e.owner && e.owner.solid == SOLID_BSP) { // hole is still in a valid non-world brush
+			if (e.owner.absmin != e.oldorigin) {
+				setorigin(e, e.origin - e.oldorigin + e.owner.absmin);
+				e.oldorigin = e.owner.absmin;
+			}
+			
+			prev = e;
+			e = e.lastvictim;
+		}
+		else if (e.state) { // hole was originally in a non-world brush, but not anymore
+			if (e == bulletholes) { // first in list
+				bulletholes = e.lastvictim;
+			}
+			else {
+				prev.lastvictim = e.lastvictim;
+			}
+
+			if (e == lastbullet) lastbullet = world;
+			next = e.lastvictim;
+			remove(e);
+			numbulletholes = numbulletholes - 1;
+			e = next;
+
+		}
+		else {
+			prev = e;
+			e = e.lastvictim;
+		}
+	}
+};
+
+void(vector pos, vector norm, entity tgt) placebullethole = {
+	
+	if (tgt.solid != SOLID_BSP)
+		return;
+
+	if (numbulletsframe > 10)
+		return;
+
 	local entity new;
 
 	new = spawn();
-	new.owner = new;
 	new.movetype = MOVETYPE_NONE;
 	new.solid = SOLID_NOT;
 	new.classname = "bullethole";
 	setmodel( new, "progs/s_bullet.spr" );
 	setsize (new, '0 0 0', '0 0 0');
-	new.alpha = 0.3;
+
+	new.owner = tgt;
+	new.oldorigin = tgt.absmin;
+	if (tgt != world) new.state = 1;
 
 	norm_x = 0 - norm_x;
 	norm_y = 0 - norm_y;
@@ -85,17 +130,19 @@ void(vector pos, vector norm) placebullethole = {
 	new.think = remove_bullethole;
 	new.nextthink = time + 300;
 
-	numbulletholes = numbulletholes + 1;
+	numbulletholes++;
+	numbulletsframe++;
+
 	if ( numbulletholes > 40 ){
 		remove_bullethole();
 	}
 
-	if (lastbullet != nullentity) {
+	if (lastbullet) {
 		lastbullet.lastvictim = new;
 	}
 	else {
 		bulletholes = new;
 	}
-	new.lastvictim = nullentity;
+	new.lastvictim = world;
 	lastbullet = new;
 };

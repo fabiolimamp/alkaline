@@ -1,4 +1,4 @@
-void(vector pos, vector norm) placebullethole;
+void(vector pos, vector norm, entity tgt) placebullethole;
 void() W_FirePlasma;
 void() Plasma_PreCache;
 void() W_FireProximityGrenade;
@@ -333,7 +333,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	local	vector direction;
 	local	vector	src;
 	local vector plane_normal;
-	float bullet;
+	//float bullet;
 	makevectors(self.v_angle);
 
 	src = self.origin + v_forward*10;
@@ -350,10 +350,9 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 			//JIM
 			TraceAttack(4, direction);
 
-			if (bullet < 5 && trace_ent == world ) {
-				placebullethole(trace_endpos, plane_normal);
-				bullet++;
-			}
+
+			placebullethole(trace_endpos, plane_normal, trace_ent);
+
 		}
 		shotcount = shotcount - 1;
 		
