@@ -254,10 +254,10 @@ float()	DemonCheckAttack =
 		return TRUE;
 	}
 	
-	if (CheckDemonJump ())
+	if (CheckDemonJump () && self.goalentity.classname != "path_angry")
 	{
 		self.attack_state = AS_MISSILE;
-        if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/step2.wav", 1, ATTN_NORM);
+        if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/mutjump.wav", 1, ATTN_NORM);
         else sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);
 		return TRUE;
 	}
@@ -450,7 +450,7 @@ void() monster_mutant =
 	precache_sound ("mutant/mutatck1.wav");
 	precache_sound ("mutant/mutatck2.wav");
 	precache_sound ("mutant/mutatck3.wav");
-	precache_sound ("mutant/step2.wav"); // jump
+	precache_sound ("mutant/mutjump.wav"); // jump
 	precache_sound ("mutant/step1.wav"); 
 	precache_sound ("mutant/step3.wav");
 	precache_sound ("mutant/mutdeth1.wav");
