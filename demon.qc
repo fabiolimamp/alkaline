@@ -52,7 +52,7 @@ void()	demon1_stand13	=[	$stand13,	demon1_stand1	] {ai_stand();};
 
 void()	demon1_walk1	=[	$walk1,		demon1_walk2	] {
 if (random() < 0.2)
-	if (self.classname == "monster_mutant") sound (self, CHAN_VOICE, "mutant/mutidle1.wav", 1, ATTN_IDLE);
+	if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/mutidle1.wav", 1, ATTN_IDLE);
     else sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
 ai_walk(8);
 };
@@ -66,14 +66,14 @@ void()	demon1_walk8	=[	$walk8,		demon1_walk1	] {ai_walk(10);};
 
 void()	demon1_run1	=[	$run1,		demon1_run2	] {
 if (random() < 0.2) {
-	if (self.classname == "monster_mutant") sound (self, CHAN_VOICE, "mutant/mutidle1.wav", 1, ATTN_IDLE);
-    else sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/mutidle1.wav", 1, ATTN_IDLE);
+    else sound(self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
 }
 ai_run(20);};
-void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15); if (self.classname == "monster_mutant") sound (self, 6, "mutant/step1.wav", 1, ATTN_IDLE);};
+void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15); if (self.classname == "monster_mutant") sound(self, 6, "mutant/step1.wav", 1, ATTN_IDLE);};
 void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_run(36);};
 void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_run(20);};
-void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15); if (self.classname == "monster_mutant") sound (self, 7, "mutant/step3.wav", 1, ATTN_IDLE);};
+void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15); if (self.classname == "monster_mutant") sound(self, 7, "mutant/step3.wav", 1, ATTN_IDLE);};
 void()	demon1_run6	=[	$run6,		demon1_run1	] {ai_run(36);};
 
 void()	demon1_jump1	=[	$leap1,		demon1_jump2	] {ai_face();};
@@ -159,7 +159,7 @@ void(entity attacker, float damage)	demon1_pain =
 	self.pain_finished = time + 1;
 	if (self.classname == "monster_mutant") {
 		if (random() > 0.5) sound (self, CHAN_VOICE, "mutant/mutpain1.wav", 1, ATTN_NORM);
-		else sound (self, 6, "mutant/mutpain2.wav", CHAN_VOICE, ATTN_NORM);
+		else sound (self, CHAN_VOICE, "mutant/mutpain2.wav", 1, ATTN_NORM);
 	}
     else sound (self, CHAN_VOICE, "demon/dpain1.wav", 1, ATTN_NORM);
 
