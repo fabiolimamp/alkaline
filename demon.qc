@@ -33,6 +33,7 @@ $frame attacka9 attacka10 attacka11 attacka12 attacka13 attacka14 attacka15
 
 void()	Demon_JumpTouch;
 void(float side)	Demon_Melee;
+void(float side)	Mutant_Melee;
 float()	DemonCheckAttack;
 
 void()	demon1_stand1	=[	$stand1,	demon1_stand2	] {ai_stand();};
@@ -108,7 +109,6 @@ void()	demon1_atta2	=[	$attacka2,		demon1_atta3	] {ai_charge(0);};
 void()	demon1_atta3	=[	$attacka3,		demon1_atta4	] {ai_charge(0);};
 void()	demon1_atta4	=[	$attacka4,		demon1_atta5	] {ai_charge(1);};
 void()	demon1_atta5	=[	$attacka5,		demon1_atta6	] {
-	if (self.classname == "monster_mutant") sound (self, CHAN_WEAPON, "mutant/mutatck1.wav", 1, ATTN_NORM);
 	ai_charge(2); Demon_Melee(200);
 };
 void()	demon1_atta6	=[	$attacka6,		demon1_atta7	] {ai_charge(1);};
@@ -117,12 +117,29 @@ void()	demon1_atta8	=[	$attacka8,		demon1_atta9	] {ai_charge(8);};
 void()	demon1_atta9	=[	$attacka9,		demon1_atta10] {ai_charge(4);};
 void()	demon1_atta10	=[	$attacka10,		demon1_atta11] {ai_charge(2);};
 void()	demon1_atta11	=[	$attacka11,		demon1_atta12] {
-	if (self.classname == "monster_mutant") sound (self, CHAN_WEAPON, "mutant/mutatck1.wav", 1, ATTN_NORM);
 	Demon_Melee(-200);};
 void()	demon1_atta12	=[	$attacka12,		demon1_atta13] {ai_charge(5);};
 void()	demon1_atta13	=[	$attacka13,		demon1_atta14] {ai_charge(8);};
 void()	demon1_atta14	=[	$attacka14,		demon1_atta15] {ai_charge(4);};
 void()	demon1_atta15	=[	$attacka15,		demon1_run1] {ai_charge(4);};
+
+
+
+void()	mutant_atta1	=[	$attacka1,		mutant_atta2	] {ai_charge(4);};
+void()	mutant_atta2	=[	$attacka2,		mutant_atta3	] {ai_charge(1);};
+void()	mutant_atta3	=[	$attacka3,		mutant_atta4	] {ai_charge(5); Mutant_Melee(200);};
+void()	mutant_atta4	=[	$attacka4,		mutant_atta5	] {ai_charge(2);};
+void()	mutant_atta5	=[	$attacka5,		mutant_atta6	] {ai_charge(4); Mutant_Melee(-200);};
+void()	mutant_atta6	=[	$attacka6,		mutant_atta7	] {ai_charge(4);};
+void()	mutant_atta7	=[	$attacka7,		mutant_atta8	] {ai_charge(4);};
+void()	mutant_atta8	=[	$attacka8,		mutant_atta9	] {ai_charge(2);};
+void()	mutant_atta9	=[	$attacka9,		mutant_atta10] {ai_charge(1);};
+void()	mutant_atta10	=[	$attacka10,		mutant_atta11] {ai_charge(5);Mutant_Melee(200);};
+void()	mutant_atta11	=[	$attacka11,		mutant_atta12] {ai_charge(2);};
+void()	mutant_atta12	=[	$attacka12,		mutant_atta13] {ai_charge(4);Mutant_Melee(-200);};
+void()	mutant_atta13	=[	$attacka13,		mutant_atta14] {ai_charge(4);};
+void()	mutant_atta14	=[	$attacka14,		mutant_atta15] {ai_charge(4);};
+void()	mutant_atta15	=[	$attacka15,		demon1_run1] {ai_charge(2);};
 
 void()	demon1_pain1	=[	$pain1,		demon1_pain2	] {};
 void()	demon1_pain2	=[	$pain2,		demon1_pain3	] {};
@@ -186,7 +203,8 @@ void() demon_die =
 
 void() Demon_MeleeAttack =
 {
-	demon1_atta1 ();
+	if (self.classname == "monster_mutant") mutant_atta1();
+	else demon1_atta1 ();
 };
 
 
@@ -257,7 +275,7 @@ float()	DemonCheckAttack =
 	if (CheckDemonJump () && self.goalentity.classname != "path_angry")
 	{
 		self.attack_state = AS_MISSILE;
-        if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/mutjump.wav", 1, ATTN_NORM);
+        if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/mutsght1.wav", 1, ATTN_NORM);
         else sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);
 		return TRUE;
 	}
@@ -277,13 +295,15 @@ void(float side)	Demon_Melee =
 	walkmove (self.ideal_yaw, 12);	// allow a little closing
 
 	delta = self.enemy.origin - self.origin;
-
+	
+	
 	if (vlen(delta) > 100)
 		return;
 	if (!CanDamage (self.enemy, self))
 		return;
-		
-    sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
+
+	sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
+	
 	ldmg = 10 + 5*random();
 	T_Damage (self.enemy, self, self, ldmg);	
 
@@ -291,6 +311,31 @@ void(float side)	Demon_Melee =
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
 };
 
+void(float side)	Mutant_Melee =
+{
+	local	float	ldmg;
+	local vector	delta;
+	
+	ai_face ();
+	walkmove (self.ideal_yaw, 12);	// allow a little closing
+
+	delta = self.enemy.origin - self.origin;
+	
+	sound (self, CHAN_WEAPON, "mutant/mutatck1.wav", 1, ATTN_NORM);
+	
+	if (vlen(delta) > 100)
+		return;
+	if (!CanDamage (self.enemy, self))
+		return;
+
+	sound (self, CHAN_WEAPON, "mutant/mutatck2.wav", 1, ATTN_NORM);
+    	
+	ldmg = 5 + 2*random();
+	T_Damage (self.enemy, self, self, ldmg);	
+
+	makevectors (self.angles);
+	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
+};
 
 void()	Demon_JumpTouch =
 {
@@ -303,7 +348,8 @@ void()	Demon_JumpTouch =
 	{
 		if ( vlen(self.velocity) > 400 )
 		{
-			ldmg = 40 + 10*random();
+			if (self.classname == "monster_mutant") ldmg = 25 + 10*random();
+			else ldmg = 40 + 10*random();
 			T_Damage (other, self, self, ldmg);	
 		}
 	}
@@ -332,7 +378,8 @@ void()	Demon_JumpTouch =
 
 
 void() demon1_sight = {
-	sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
+	if (self.classname == "monster_mutant") sound (self, CHAN_VOICE, "mutant/mutsrch1.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
 };
 /*QUAKED monster_demon1 (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
@@ -381,7 +428,7 @@ void(entity e) monster_mutant_start =
 	setmodel (self, "progs/mutant.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 250;
+	self.health = 220;
 	if (self.obituary == "") self.obituary = "was mutilated by a Mutant";
 
 	self.th_stand = demon1_stand1;
@@ -450,13 +497,14 @@ void() monster_mutant =
 	precache_sound ("mutant/mutatck1.wav");
 	precache_sound ("mutant/mutatck2.wav");
 	precache_sound ("mutant/mutatck3.wav");
-	precache_sound ("mutant/mutjump.wav"); // jump
+	//precache_sound ("mutant/mutjump.wav"); // jump
 	precache_sound ("mutant/step1.wav"); 
 	precache_sound ("mutant/step3.wav");
 	precache_sound ("mutant/mutdeth1.wav");
 	precache_sound ("mutant/mutpain1.wav");
 	precache_sound ("mutant/mutpain2.wav");
 	precache_sound ("mutant/mutsght1.wav");
+	precache_sound ("mutant/mutsrch1.wav");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 
