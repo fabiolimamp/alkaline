@@ -69,7 +69,8 @@ void() update_bulletholes = {
 	entity e, prev, next;
 	e = bulletholes;
 	while (e) {
-		if (e.owner && e.owner.solid == SOLID_BSP) { // hole is still in a valid non-world brush
+		// hole is in a valid non-world brush, so check if the brush moved
+		if (e.owner && e.owner.solid == SOLID_BSP) {
 			if (e.owner.absmin != e.oldorigin) {
 				setorigin(e, e.origin - e.oldorigin + e.owner.absmin);
 				e.oldorigin = e.owner.absmin;
@@ -78,7 +79,8 @@ void() update_bulletholes = {
 			prev = e;
 			e = e.lastvictim;
 		}
-		else if (e.state) { // hole was originally in a non-world brush, but not anymore
+		// hole was originally in a non-world brush, but brush was removed or changed to non-solid
+		else if (e.state) { 
 			if (e == bulletholes) { // first in list
 				bulletholes = e.lastvictim;
 			}
@@ -93,6 +95,7 @@ void() update_bulletholes = {
 			e = next;
 
 		}
+		// hole is in a world brush, do nothing
 		else {
 			prev = e;
 			e = e.lastvictim;
