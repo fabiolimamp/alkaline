@@ -20,30 +20,41 @@ void(float qt) add_monster_total = {
 monster_use
 
 Using a monster makes it angry at the current activator
-If the activator isn't a player, look for the closest one
+If the activator is a monster with a valid enemy, inherit it
+If isn't a player nor a monster, look for the closest player
 ================
 */
 void() monster_use =
 {
 	entity e, next;
+
+	// don't change enemy if already angry at something
 	if (self.enemy)
 		return;
 	// don't angry when dead, not good
 	if (self.health <= 0)
 		return;
 
+	// hipnotic's laser gun ricochet hack
 	if (self.lastvictim) {
 		e = self.lastvictim;
 		self.lastvictim = world;
 	}
-	// activator *is* a player, but has invisibility/notarget, so do nothing
-	if (e.classname == "player" && (e.items & IT_INVISIBILITY || e.flags & FL_NOTARGET))
-		return;
 
-	
-	
-	// activator isn't a player, so look for the closest non-invisible player
-	if (e.classname != "player") {
+	else e = activator;
+
+	// activator *is* a player, but has invisibility/notarget, so do nothing
+	if (e.flags & FL_CLIENT && (e.items & IT_INVISIBILITY || e.flags & FL_NOTARGET)) {
+		return;
+	}
+
+	// activator is a monster, so inherit its enemies if they're alive
+	if (e.flags & FL_MONSTER && e.enemy.health > 0) {
+		self.oldenemy = e.oldenemy;
+		e = e.enemy;
+	}	
+	// activator isn't a player, nor a monster with a valid enemy, so look for the closest non-invisible player
+	else if (!(e.flags & FL_CLIENT)) {
 		float closestdist = 99999999;
 		float nextdist;
 		next = find(world, classname, "player");
@@ -61,7 +72,7 @@ void() monster_use =
 		if (!e) return;
 	}
 	// otherwise continue normally
-	//else e = activator;
+
 
 	// delay reaction so if the monster is teleported, its sound is still
 	// heard
