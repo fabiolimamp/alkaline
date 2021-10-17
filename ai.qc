@@ -94,6 +94,37 @@ void() path_corner =
 	movetarget_f ();
 };
 
+void() path_angry_touch = {
+	if (other.goalentity != self)
+		return;		// not running towards this
+
+	dprint2(ftos(time), ": Touched path_angry... ");
+	//eprint(self);
+	entity next;
+
+	if (self.target) {	
+		next = find(world, targetname, self.target);
+		other.goalentity = next;
+		dprint("Moving to next!\n");
+	}
+	else if (!next) {
+		other.enemy = other.goalentity = other.oldenemy;
+		other.oldenemy = world;
+		dprint("Path ended! \n");
+	}
+
+	
+};
+
+void() path_angry = {
+	if (!self.targetname)
+		objerror ("path_angry: no targetname");
+
+	self.solid = SOLID_TRIGGER;
+	self.touch = path_angry_touch;
+	//setsize (self, '-8 -8 -8', '8 8 8');
+	setsize (self, '-16 -16 -16', '16 16 16');
+};
 
 /*
 =============
@@ -340,10 +371,22 @@ void() ChangeYaw =
 
 void() HuntTarget =
 {
-	self.goalentity = self.enemy;
+	if (self.startpath && self.startpath.classname == "path_angry") {
+		dprint("Found path_angry, following\n");
+		self.goalentity = self.startpath;
+		self.oldenemy = self.enemy;
+		self.enemy = world; // if monsters have their enemy field set they'll never touch their goalentity (why??)
+		self.startpath = world; // started following path, so don't do this again
+	}
+	else {
+		//dprint("path_angry not found\n");
+		self.goalentity = self.enemy;
+	}
+
 	self.think = self.th_run;
 	self.ideal_yaw = vectoyaw(self.enemy.origin - self.origin);
 	self.nextthink = time + 0.1;
+	//eprint(self.goalentity);
 	SUB_AttackFinished (1);	// wait a while before first attack
 };
 
@@ -363,12 +406,12 @@ void() FoundTarget =
 	// sight function, stored in the monster's "th_sight" field,
 	// and called here.
 	if (self.th_sight && !(self.spawnflags & MONSTER_NOSIGHTSOUND)) self.th_sight();
-	HuntTarget();
+	
 
 	// Optional wake function, in case the monster has some "going angry" animation.
-	// If this function sets new animation frames, or a different think function,
-	// it'll need to call HuntTarget() by itself afterwards.
-	if (self.th_wake) self.th_wake();
+	// This function needs to call HuntTarget() by itself afterwards.
+	if (self.th_wake && !self.was_angry) self.th_wake();
+	else HuntTarget();
 };
 
 /*
@@ -392,6 +435,9 @@ float() FindTarget =
 {
 	local entity	client;
 	local float		r;
+
+	if (self.enemy) self.was_angry = 1;
+	else self.was_angry = 0;
 
 // if the first spawnflag bit is set, the monster will only wake up on
 // really seeing the player, not another monster getting angry
@@ -463,11 +509,16 @@ float() FindTarget =
 		}
 	}
 	
-	FoundTarget ();
+	FoundTarget();
 
 	return TRUE;
 };
 
+
+void(float dist) ai_run_path = {
+
+	movetogoal (dist);
+}
 
 //=============================================================================
 
@@ -704,7 +755,7 @@ float() CheckAttack =
 	if (!canshoot(targ))
 		return FALSE;
 
-	if (enemy_range == RANGE_MELEE)
+	if (enemy_range == RANGE_MELEE && self.goalentity.classname != "path_angry")
 	{	// melee attack
 		if (self.th_melee)
 		{
@@ -856,9 +907,21 @@ void(float dist) ai_run =
 	entity enem;
 	enem = SUB_entEnemyTarget();
 	
+
+	if (self.goalentity.classname == "path_angry"){
+		if (vlen(self.origin - self.goalentity.origin) < (self.size_x + 32)){
+			dprint("Disabling enemy\n");
+			self.enemy = world;
+			ai_run_path(dist);
+			return;
+		}
+		else
+			self.enemy = self.oldenemy;
+
+	}
 	// see if the enemy is dead
 	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
-	if (enem.health <= 0 || enem.takedamage == DAMAGE_NO) 
+	if ((enem.health <= 0 || enem.takedamage == DAMAGE_NO) && self.goalentity.classname != "path_angry") 
 	{
 		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget(); // disable enemy target system while changing enemies
 		self.enemy = world;
@@ -879,7 +942,7 @@ void(float dist) ai_run =
 	}
 
 	self.show_hostile = time + 1;		// wake up other monsters
-
+	
 // check knowledge of enemy
 	enemy_vis = visible(enem);
 	if (enemy_vis)
@@ -888,7 +951,7 @@ void(float dist) ai_run =
 	else if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 
 // look for other coop players
-	if (coop && self.search_time < time)
+	if (coop && self.search_time < time && enem.classname != "path_angry")
 	{
 		if (FindTarget ())
 			return;
@@ -897,14 +960,14 @@ void(float dist) ai_run =
 	enemy_infront = infront(enem);
 	enemy_range = range(enem);
 	enemy_yaw = vectoyaw(enem.origin - self.origin);
-	
+
 	if (self.attack_state == AS_MISSILE)
 	{
 //dprint ("ai_run_missile\n");
 		ai_run_missile ();
 		return;
 	}
-	if (self.attack_state == AS_MELEE)
+	if (self.attack_state == AS_MELEE && self.goalentity.classname != "path_angry")
 	{
 //dprint ("ai_run_melee\n");
 		ai_run_melee ();
@@ -914,13 +977,13 @@ void(float dist) ai_run =
 	if (CheckAnyAttack ())
 		return;					// beginning an attack
 		
-	if (self.attack_state == AS_SLIDING)
+	if (self.attack_state == AS_SLIDING && self.goalentity.classname != "path_angry")
 	{
 		ai_run_slide ();
 		return;
 	}
-		
-// head straight in
+
+	// head straight in
 	movetogoal (dist);		// done in C code...
 };
 

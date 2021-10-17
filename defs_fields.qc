@@ -249,9 +249,11 @@ FIELDS
 .float		show_hostile;	// set to time+0.2 whenever a client fires a
 							// weapon or takes damage.  Used to alert
 							// monsters that otherwise would let the player go
-
+.float 		was_angry;
 .float attack_elevation; // ogre
 .float inpain;		// zombie
+.float followpath;
+.entity startpath;
 
 // edie
 .float multiplier; 

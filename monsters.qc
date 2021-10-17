@@ -203,6 +203,22 @@ void(void() go_function) pacifist_start = {
 	}
 };
 
+void() search_path_angry = {
+	entity path;
+	if (self.target)
+		path = find(world, targetname, self.target);
+	if (self.target2 && path.classname != "path_angry")
+		path = find(world, targetname, self.target2);
+	if (self.target3 && path.classname != "path_angry")
+		path = find(world, targetname, self.target3);
+	if (self.target4 && path.classname != "path_angry")
+		path = find(world, targetname, self.target4);
+	if (path) {
+		self.startpath = path;
+		dprint("achou!\n");
+	}
+}
+
 //============================================================================
 // go functions
 //============================================================================
@@ -219,6 +235,8 @@ void() walkmonster_start_go =
 		dprint (vtos(self.origin));
 		dprint ("\n");
 	}
+	
+	search_path_angry();
 	
 	self.takedamage = DAMAGE_AIM;
 
@@ -282,6 +300,8 @@ void() flymonster_start_go =
 		dprint ("\n");
 	}
 
+	search_path_angry();
+
 	if (self.target)
 	{
 		self.goalentity = self.movetarget = find(world, targetname, self.target);
@@ -327,6 +347,8 @@ void() swimmonster_start_go =
 		self.yaw_speed = 10;
 	self.view_ofs = '0 0 10';
 	self.use = monster_use;
+
+	search_path_angry();
 	
 	self.flags = self.flags | FL_SWIM;
 	self.flags = self.flags | FL_MONSTER;
