@@ -51,7 +51,8 @@ void()	demon1_stand13	=[	$stand13,	demon1_stand1	] {ai_stand();};
 
 void()	demon1_walk1	=[	$walk1,		demon1_walk2	] {
 if (random() < 0.2)
-    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+	if (self.classname == "monster_mutant") sound (self, CHAN_VOICE, "mutant/mutidle1.wav", 1, ATTN_IDLE);
+    else sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
 ai_walk(8);
 };
 void()	demon1_walk2	=[	$walk2,		demon1_walk3	] {ai_walk(6);};
@@ -63,13 +64,15 @@ void()	demon1_walk7	=[	$walk7,		demon1_walk8	] {ai_walk(10);};
 void()	demon1_walk8	=[	$walk8,		demon1_walk1	] {ai_walk(10);};
 
 void()	demon1_run1	=[	$run1,		demon1_run2	] {
-if (random() < 0.2)
-    sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+if (random() < 0.2) {
+	if (self.classname == "monster_mutant") sound (self, CHAN_VOICE, "mutant/mutidle1.wav", 1, ATTN_IDLE);
+    else sound (self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
+}
 ai_run(20);};
-void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15);};
+void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15); if (self.classname == "monster_mutant") sound (self, 6, "mutant/step1.wav", 1, ATTN_IDLE);};
 void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_run(36);};
 void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_run(20);};
-void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15);};
+void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15); if (self.classname == "monster_mutant") sound (self, 7, "mutant/step3.wav", 1, ATTN_IDLE);};
 void()	demon1_run6	=[	$run6,		demon1_run1	] {ai_run(36);};
 
 void()	demon1_jump1	=[	$leap1,		demon1_jump2	] {ai_face();};
@@ -104,13 +107,18 @@ void()	demon1_atta1	=[	$attacka1,		demon1_atta2	] {ai_charge(4);};
 void()	demon1_atta2	=[	$attacka2,		demon1_atta3	] {ai_charge(0);};
 void()	demon1_atta3	=[	$attacka3,		demon1_atta4	] {ai_charge(0);};
 void()	demon1_atta4	=[	$attacka4,		demon1_atta5	] {ai_charge(1);};
-void()	demon1_atta5	=[	$attacka5,		demon1_atta6	] {ai_charge(2); Demon_Melee(200);};
+void()	demon1_atta5	=[	$attacka5,		demon1_atta6	] {
+	if (self.classname == "monster_mutant") sound (self, CHAN_WEAPON, "mutant/mutatck1.wav", 1, ATTN_NORM);
+	ai_charge(2); Demon_Melee(200);
+};
 void()	demon1_atta6	=[	$attacka6,		demon1_atta7	] {ai_charge(1);};
 void()	demon1_atta7	=[	$attacka7,		demon1_atta8	] {ai_charge(6);};
 void()	demon1_atta8	=[	$attacka8,		demon1_atta9	] {ai_charge(8);};
 void()	demon1_atta9	=[	$attacka9,		demon1_atta10] {ai_charge(4);};
 void()	demon1_atta10	=[	$attacka10,		demon1_atta11] {ai_charge(2);};
-void()	demon1_atta11	=[	$attacka11,		demon1_atta12] {Demon_Melee(-200);};
+void()	demon1_atta11	=[	$attacka11,		demon1_atta12] {
+	if (self.classname == "monster_mutant") sound (self, CHAN_WEAPON, "mutant/mutatck1.wav", 1, ATTN_NORM);
+	Demon_Melee(-200);};
 void()	demon1_atta12	=[	$attacka12,		demon1_atta13] {ai_charge(5);};
 void()	demon1_atta13	=[	$attacka13,		demon1_atta14] {ai_charge(8);};
 void()	demon1_atta14	=[	$attacka14,		demon1_atta15] {ai_charge(4);};
@@ -132,7 +140,11 @@ void(entity attacker, float damage)	demon1_pain =
 		return;
 
 	self.pain_finished = time + 1;
-    sound (self, CHAN_VOICE, "demon/dpain1.wav", 1, ATTN_NORM);
+	if (self.classname == "monster_mutant") {
+		if (random() > 0.5) sound (self, CHAN_VOICE, "mutant/mutpain1.wav", 1, ATTN_NORM);
+		else sound (self, 6, "mutant/mutpain2.wav", CHAN_VOICE, ATTN_NORM);
+	}
+    else sound (self, CHAN_VOICE, "demon/dpain1.wav", 1, ATTN_NORM);
 
 	if (random()*200 > damage)
 		return;		// didn't flinch
@@ -141,7 +153,9 @@ void(entity attacker, float damage)	demon1_pain =
 };
 
 void()	demon1_die1		=[	$death1,		demon1_die2	] {
-sound (self, CHAN_VOICE, "demon/ddeath.wav", 1, ATTN_NORM);};
+	if (self.classname == "monster_mutant") sound (self, CHAN_VOICE, "mutant/mutdeth1.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "demon/ddeath.wav", 1, ATTN_NORM);
+};
 void()	demon1_die2		=[	$death2,		demon1_die3	] {};
 void()	demon1_die3		=[	$death3,		demon1_die4	] {};
 void()	demon1_die4		=[	$death4,		demon1_die5	] {};
@@ -175,145 +189,6 @@ void() Demon_MeleeAttack =
 	demon1_atta1 ();
 };
 
-void() demon1_sight = {
-	sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
-};
-/*QUAKED monster_demon1 (1 0 0) (-32 -32 -24) (32 32 64) Ambush
-
-*/
-void(entity e) monster_demon1_start =
-{
-	local entity oself;
-
-	oself = self;
-	self = e;
-
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/demon.mdl");
-
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 300;
-	if (self.obituary == "") self.obituary = "was eviscerated by a Fiend";
-
-	self.th_stand = demon1_stand1;
-	self.th_walk = demon1_walk1;
-	self.th_run = demon1_run1;
-	self.th_die = demon_die;
-	self.th_melee = Demon_MeleeAttack;		// one of two attacks
-	self.th_missile = demon1_jump1;			// jump attack
-	self.th_pain = demon1_pain;
-	self.th_sight = demon1_sight;
-	self.th_checkattack = DemonCheckAttack;
-		
-	walkmonster_start();
-
-	self = oself;
-};
-
-void(entity e) monster_mutant_start =
-{
-	local entity oself;
-
-	oself = self;
-	self = e;
-
-	self.solid = SOLID_SLIDEBOX;
-	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/mutant.mdl");
-
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-	self.health = 300;
-	if (self.obituary == "") self.obituary = "was mutilated by a Mutant";
-
-	self.th_stand = demon1_stand1;
-	self.th_walk = demon1_walk1;
-	self.th_run = demon1_run1;
-	self.th_die = demon_die;
-	self.th_melee = Demon_MeleeAttack;		// one of two attacks
-	self.th_missile = demon1_jump1;			// jump attack
-	self.th_pain = demon1_pain;
-	self.th_sight = demon1_sight;
-	self.th_checkattack = DemonCheckAttack;
-		
-	walkmonster_start();
-
-	self = oself;
-};
-
-void() monster_demon1_spawner = {
-	monster_spawner(monster_demon1_start);
-};
-
-void() monster_demon1 =
-{
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/demon.mdl");
-	precache_model ("progs/h_demon.mdl");
-
-	precache_sound ("demon/ddeath.wav");
-	precache_sound ("demon/dhit2.wav");
-	precache_sound ("demon/djump.wav");
-	precache_sound ("demon/dpain1.wav");
-	precache_sound ("demon/idle1.wav");
-	precache_sound ("demon/sight2.wav");
-
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-
-	if (self.spawnflags & MONSTER_SPAWNER) {
-		self.use = monster_demon1_spawner;
-		monster_spawner_updatecounter();
-	}
-	else {
-		monster_demon1_start(self);
-	}
-};
-
-void() monster_mutant_spawner = {
-	monster_spawner(monster_mutant_start);
-};
-
-void() monster_mutant =
-{
-	if (deathmatch)
-	{
-		remove(self);
-		return;
-	}
-	precache_model ("progs/mutant.mdl");
-	precache_model ("progs/h_mutant.mdl");
-
-	precache_sound ("demon/ddeath.wav");
-	precache_sound ("demon/dhit2.wav");
-	precache_sound ("demon/djump.wav");
-	precache_sound ("demon/dpain1.wav");
-	precache_sound ("demon/idle1.wav");
-	precache_sound ("demon/sight2.wav");
-
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
-
-	if (self.spawnflags & MONSTER_SPAWNER) {
-		self.use = monster_mutant_spawner;
-		monster_spawner_updatecounter();
-	}
-	else {
-		monster_mutant_start(self);
-	}
-};
-
-/*
-==============================================================================
-
-DEMON
-
-==============================================================================
-*/
 
 /*
 ==============
@@ -382,7 +257,8 @@ float()	DemonCheckAttack =
 	if (CheckDemonJump ())
 	{
 		self.attack_state = AS_MISSILE;
-        sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);
+        if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/step2.wav", 1, ATTN_NORM);
+        else sound (self, CHAN_VOICE, "demon/djump.wav", 1, ATTN_NORM);
 		return TRUE;
 	}
 	
@@ -436,10 +312,10 @@ void()	Demon_JumpTouch =
 	{
 		if (self.flags & FL_ONGROUND)
 		{	// jump randomly to not get hung up
-//dprint ("popjump\n");
-	self.touch = SUB_Null;
-	self.think = demon1_jump1;
-	self.nextthink = time + 0.1;
+			//dprint ("popjump\n");
+			self.touch = SUB_Null;
+			self.think = demon1_jump1;
+			self.nextthink = time + 0.1;
 
 //			self.velocity_x = (random() - 0.5) * 600;
 //			self.velocity_y = (random() - 0.5) * 600;
@@ -454,3 +330,141 @@ void()	Demon_JumpTouch =
 	self.nextthink = time + 0.1;
 };
 
+
+void() demon1_sight = {
+	sound (self, CHAN_VOICE, "demon/sight2.wav", 1, ATTN_NORM);
+};
+/*QUAKED monster_demon1 (1 0 0) (-32 -32 -24) (32 32 64) Ambush
+
+*/
+void(entity e) monster_demon1_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/demon.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.health = 300;
+	if (self.obituary == "") self.obituary = "was eviscerated by a Fiend";
+
+	self.th_stand = demon1_stand1;
+	self.th_walk = demon1_walk1;
+	self.th_run = demon1_run1;
+	self.th_die = demon_die;
+	self.th_melee = Demon_MeleeAttack;		// one of two attacks
+	self.th_missile = demon1_jump1;			// jump attack
+	self.th_pain = demon1_pain;
+	self.th_sight = demon1_sight;
+	self.th_checkattack = DemonCheckAttack;
+		
+	walkmonster_start();
+
+	self = oself;
+};
+
+void(entity e) monster_mutant_start =
+{
+	local entity oself;
+
+	oself = self;
+	self = e;
+
+	self.solid = SOLID_SLIDEBOX;
+	self.movetype = MOVETYPE_STEP;
+
+	setmodel (self, "progs/mutant.mdl");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.health = 250;
+	if (self.obituary == "") self.obituary = "was mutilated by a Mutant";
+
+	self.th_stand = demon1_stand1;
+	self.th_walk = demon1_walk1;
+	self.th_run = demon1_run1;
+	self.th_die = demon_die;
+	self.th_melee = Demon_MeleeAttack;		// one of two attacks
+	self.th_missile = demon1_jump1;			// jump attack
+	self.th_pain = demon1_pain;
+	self.th_sight = demon1_sight;
+	self.th_checkattack = DemonCheckAttack;
+		
+	walkmonster_start();
+
+	self = oself;
+};
+
+void() monster_demon1_spawner = {
+	monster_spawner(monster_demon1_start);
+};
+
+void() monster_demon1 =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/demon.mdl");
+	precache_model ("progs/h_demon.mdl");
+
+	precache_sound ("demon/ddeath.wav");
+	precache_sound ("demon/dhit2.wav");
+	precache_sound ("demon/djump.wav");
+	precache_sound ("demon/dpain1.wav");
+	precache_sound ("demon/idle1.wav");
+	precache_sound ("demon/sight2.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_demon1_spawner;
+		monster_spawner_updatecounter();
+	}
+	else {
+		monster_demon1_start(self);
+	}
+};
+
+void() monster_mutant_spawner = {
+	monster_spawner(monster_mutant_start);
+};
+
+void() monster_mutant =
+{
+	if (deathmatch)
+	{
+		remove(self);
+		return;
+	}
+	precache_model ("progs/mutant.mdl");
+	precache_model ("progs/h_mutant.mdl");
+
+	
+	precache_sound ("mutant/mutidle1.wav");
+	precache_sound ("mutant/mutatck1.wav");
+	precache_sound ("mutant/mutatck2.wav");
+	precache_sound ("mutant/mutatck3.wav");
+	precache_sound ("mutant/step2.wav"); // jump
+	precache_sound ("mutant/step1.wav"); 
+	precache_sound ("mutant/step3.wav");
+	precache_sound ("mutant/mutdeth1.wav");
+	precache_sound ("mutant/mutpain1.wav");
+	precache_sound ("mutant/mutpain2.wav");
+	precache_sound ("mutant/mutsght1.wav");
+
+	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
+	if (self.spawnflags & MONSTER_SPAWNER) {
+		self.use = monster_mutant_spawner;
+		monster_spawner_updatecounter();
+	}
+	else {
+		monster_mutant_start(self);
+	}
+};

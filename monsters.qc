@@ -215,7 +215,6 @@ void() search_path_angry = {
 		path = find(world, targetname, self.target4);
 	if (path) {
 		self.startpath = path;
-		dprint("achou!\n");
 	}
 }
 
@@ -300,6 +299,7 @@ void() flymonster_start_go =
 		dprint ("\n");
 	}
 
+	// path_angry doesn't work well with flying monsters
 	search_path_angry();
 
 	if (self.target)
@@ -349,7 +349,7 @@ void() swimmonster_start_go =
 	self.use = monster_use;
 
 	search_path_angry();
-	
+
 	self.flags = self.flags | FL_SWIM;
 	self.flags = self.flags | FL_MONSTER;
 

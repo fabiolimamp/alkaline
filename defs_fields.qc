@@ -252,7 +252,7 @@ FIELDS
 .float 		was_angry;
 .float attack_elevation; // ogre
 .float inpain;		// zombie
-.float followpath;
+.float followingpath;
 .entity startpath;
 
 // edie

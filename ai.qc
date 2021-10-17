@@ -95,21 +95,22 @@ void() path_corner =
 };
 
 void() path_angry_touch = {
-	if (other.goalentity != self)
+	if (other.goalentity != self.owner)
 		return;		// not running towards this
 
-	dprint2(ftos(time), ": Touched path_angry... ");
+	dprint2(other.classname, ": Touched path_angry... ");
 	//eprint(self);
 	entity next;
 
-	if (self.target) {	
-		next = find(world, targetname, self.target);
+	if (self.owner.target) {	
+		next = find(world, targetname, self.owner.target);
 		other.goalentity = next;
 		dprint("Moving to next!\n");
 	}
 	else if (!next) {
-		other.enemy = other.goalentity = other.oldenemy;
+		other.goalentity = other.enemy;
 		other.oldenemy = world;
+		other.followingpath = FALSE;
 		dprint("Path ended! \n");
 	}
 
@@ -119,11 +120,21 @@ void() path_angry_touch = {
 void() path_angry = {
 	if (!self.targetname)
 		objerror ("path_angry: no targetname");
+	entity trg;
 
-	self.solid = SOLID_TRIGGER;
-	self.touch = path_angry_touch;
+
+	// if monsters have their enemy field set they'll never touch their goalentity (why??)
+	// so we create a trigger field around it 
+	trg = spawn();
+
+	trg.solid = SOLID_TRIGGER;
+	trg.touch = path_angry_touch;
+	trg.owner = self;
+	trg.classname = "path_angry_trigger";
+	self.owner = trg;
+	setorigin(trg, self.origin);
 	//setsize (self, '-8 -8 -8', '8 8 8');
-	setsize (self, '-16 -16 -16', '16 16 16');
+	setsize (trg, '-16 -16 -16', '16 16 16');
 };
 
 /*
@@ -372,11 +383,19 @@ void() ChangeYaw =
 void() HuntTarget =
 {
 	if (self.startpath && self.startpath.classname == "path_angry") {
-		dprint("Found path_angry, following\n");
-		self.goalentity = self.startpath;
-		self.oldenemy = self.enemy;
-		self.enemy = world; // if monsters have their enemy field set they'll never touch their goalentity (why??)
-		self.startpath = world; // started following path, so don't do this again
+		if (self.flags & FL_FLY & FL_SWIM) {
+			// todo
+			dprint4(self.classname, " (", vtos(self.origin), "): path_angry doesn't work with fly/swimmonsters\n");
+			self.goalentity = self.enemy;
+			self.startpath = world;
+		}
+		else {
+			dprint("Found path_angry, following\n");
+			self.followingpath = TRUE;
+			self.goalentity = self.startpath;
+			self.oldenemy = self.enemy;
+			self.startpath = world; // started following path, so don't do this again
+		}
 	}
 	else {
 		//dprint("path_angry not found\n");
@@ -755,7 +774,7 @@ float() CheckAttack =
 	if (!canshoot(targ))
 		return FALSE;
 
-	if (enemy_range == RANGE_MELEE && self.goalentity.classname != "path_angry")
+	if (enemy_range == RANGE_MELEE)
 	{	// melee attack
 		if (self.th_melee)
 		{
@@ -908,7 +927,7 @@ void(float dist) ai_run =
 	enem = SUB_entEnemyTarget();
 	
 
-	if (self.goalentity.classname == "path_angry"){
+	/*if (self.goalentity.classname == "path_angry"){
 		if (vlen(self.origin - self.goalentity.origin) < (self.size_x + 32)){
 			dprint("Disabling enemy\n");
 			self.enemy = world;
@@ -918,7 +937,7 @@ void(float dist) ai_run =
 		else
 			self.enemy = self.oldenemy;
 
-	}
+	}*/
 	// see if the enemy is dead
 	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
 	if ((enem.health <= 0 || enem.takedamage == DAMAGE_NO) && self.goalentity.classname != "path_angry") 
@@ -967,7 +986,7 @@ void(float dist) ai_run =
 		ai_run_missile ();
 		return;
 	}
-	if (self.attack_state == AS_MELEE && self.goalentity.classname != "path_angry")
+	if (self.attack_state == AS_MELEE)
 	{
 //dprint ("ai_run_melee\n");
 		ai_run_melee ();
@@ -982,6 +1001,7 @@ void(float dist) ai_run =
 		ai_run_slide ();
 		return;
 	}
+	else if (self.attack_state == AS_SLIDING) self.attack_state = 0;
 
 	// head straight in
 	movetogoal (dist);		// done in C code...

@@ -1710,11 +1710,11 @@ The flags above are mutually exclusive and will cause an objerror when selected 
 ]
 
 @PointClass base(Targetname) color(128 64 0) size(8 8 8) = path_corner :
-"Moving platform waypoint.
+"Waypoint for func_train and walking monsters.
 Check each field's description for more details.
 "
 [
-	target(target_source) : "Next stop target"
+	target(target_source) : "Next waypoint target"
 	wait(float) : "Wait" : : "Waiting time at this point.
 - A positive value directly sets a waiting time in seconds.
 - A 0 value (or not defined) uses the 'pausetime' field value in the func_train (which defaults to 0s).
@@ -1722,6 +1722,14 @@ Check each field's description for more details.
 - A -2 value forces the train to not wait here even when 'pausetime' is set on the func_train.
 "
 	speed(integer) : "Speed" : : "Sets a new speed for the train to move from this point onwards."
+]
+
+@PointClass base(Targetname) color(192 32 0) size(8 8 8) = path_angry :
+"Waypoint for angry monsters.
+When angered, the monster will try to follow this path until the end, when it returns to its normal attacking state.
+"
+[
+	target(target_source) : "Next waypoint target"
 ]
 
 @SolidClass base(Targetname, ModelLight) = func_plat :
