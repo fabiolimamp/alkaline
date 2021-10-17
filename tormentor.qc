@@ -555,13 +555,15 @@ void() torm_death = [ 98, torm_death ] {
 		self.nextthink = -1;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_torm.mdl", -20);
-		ThrowGib ("progs/gib1.mdl", -20);
-		ThrowGib ("progs/gib1.mdl", -20);
+		ThrowGib ("progs/gib1.mdl", -25);
+		ThrowGib ("progs/gib1.mdl", -25);
 		ThrowGib ("progs/gib2.mdl", -20);
 		ThrowGib ("progs/gib3.mdl", -20);
-		ThrowGib ("progs/fgib1.mdl", -20);
-		ThrowGib ("progs/fgib1.mdl", -20);
-		ThrowGib ("progs/fgib1.mdl", -20);
+		ThrowGib ("progs/gib3.mdl", -15);
+		ThrowGib ("progs/gib3.mdl", -20);
+		ThrowGib ("progs/fgib1.mdl", -23);
+		ThrowGib ("progs/fgib1.mdl", -23);
+		ThrowGib ("progs/fgib1.mdl", -23);
 		return;
 	}
 

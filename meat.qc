@@ -36,8 +36,15 @@ void(entity gib, string gibname) MakeGib =
 	SUB_ChangeModel(gib, gibname);
 	gib.type = "gib";
 	gib.avelocity = Vector(random(),random(),random()) * 600;
-	
-	gib.frame = 0;
+	float frm;
+
+	if (gibname == "progs/gib1.mdl" ||
+		gibname == "progs/gib2.mdl" ||
+		gibname == "progs/gib3.mdl" 
+	) frm = floor(random() * 9.99);
+	else frm = 0;
+
+	gib.frame = frm;
 	gib.flags = 0;
 }
 
