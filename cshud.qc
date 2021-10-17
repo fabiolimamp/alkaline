@@ -67,18 +67,18 @@ string weaponprefix[12] = {
 };
 
 string weaponname[12] = {
-	"lightng.lmp",
-	"lightng.lmp",
+	"lightng.lmp",//"axe.lmp",
+	"lightng.lmp",//"chainsaw.lmp",
 	"shotgun",
 	"sshotgun",
 	"nailgun",
 	"snailgun",
 	"rlaunch",
-	"lightng.lmp",
+	"lightng.lmp",//"plaunch.lmp",
 	"srlaunch",
 	"lightng.lmp",
-	"lightng.lmp",
-	"lightng.lmp"
+	"lightng.lmp",//"laser.lmp",
+	"lightng.lmp"//"plasma.lmp"
 };
 
 float weaponflags[12] = {
