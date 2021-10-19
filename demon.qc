@@ -190,7 +190,8 @@ void() demon_die =
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		if (self.classname == "monster_mutant") ThrowHead ("progs/h_mutant.mdl", self.health);
-		else ThrowHead ("progs/h_demon.mdl", self.health);
+		else if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_demon.mdl", self.health);
+		else  ThrowHead ("progs/h_demon_alk.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -462,12 +463,16 @@ void() monster_demon1 =
 		remove(self);
 		return;
 	}
-	if (self.spawnflags & MONSTER_ORIGINAL)
+	if (self.spawnflags & MONSTER_ORIGINAL) {
 		precache_model ("progs/demon.mdl");
-	else
+		precache_model ("progs/h_demon.mdl");
+	}
+	else {
 		precache_model ("progs/demon_alk.mdl");
+		precache_model ("progs/h_demon_alk.mdl");
+	}
 
-	precache_model ("progs/h_demon.mdl");
+	
 
 	precache_sound ("demon/ddeath.wav");
 	precache_sound ("demon/dhit2.wav");
