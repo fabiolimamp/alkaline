@@ -294,7 +294,7 @@ void() sham_die =
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		self.skin = 0;
-		ThrowHead ("progs/h_shams.mdl", self.health);
+		ThrowHead ("progs/h_shams_alk.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -421,7 +421,7 @@ void() monster_shambler =
 	}
 	precache_model ("progs/shambler_alk.mdl");
 	precache_model ("progs/s_light.mdl");
-	precache_model ("progs/h_shams.mdl");
+	precache_model ("progs/h_shams_alk.mdl");
 	precache_model ("progs/bolt.mdl");
 	
 	precache_sound ("shambler/sattck1.wav");
