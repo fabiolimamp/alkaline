@@ -1,6 +1,9 @@
 void() probe_pulsetouch;
 void() probe_stand_attack;
 
+float ST_PROBE_LASER = 0;
+float ST_PROBE_GRENADE = 1;
+
 void(float ofs, float turn) Probe_laser_fire = {
 	local vector src;
 	local vector vec;
@@ -459,12 +462,17 @@ void() bodydie = {
 	self.health = self.trigger_field.health;
 	self.origin = self.origin + '0 0 -32';
 	FuelTankExplode();
-	//if (self.trigger_field.classname == "monster_grenadeprobe")
-		ThrowGib ("progs/progib1_double_cannons.mdl", self.health);
-	//else
-	//	ThrowGib ("progs/progib1.mdl", self.health);
-	ThrowGib ("progs/progib2.mdl", self.health);
-	ThrowGib ("progs/progib3.mdl", self.health);
+	if (self.trigger_field.style == ST_PROBE_GRENADE){
+		ThrowGib ("progs/probegren_gib1.mdl", self.health);
+		ThrowGib ("progs/probegren_gib2.mdl", self.health);
+		ThrowGib ("progs/probegren_gib3.mdl", self.health);
+	}
+	else{
+		ThrowGib ("progs/probelasr_gib1.mdl", self.health);
+		ThrowGib ("progs/probelasr_gib2.mdl", self.health);
+		ThrowGib ("progs/probelasr_gib3.mdl", self.health);
+	}
+	
 	SUB_Remove();
 };
 
@@ -506,16 +514,16 @@ void(entity attacker, float damage) probe_pain = {
 
 void() probe_missile_attack = {
 	if (random() < 0.5){
-		//if (self.classname == "monster_grenadeprobe")
+		if (self.style == ST_PROBE_GRENADE)
 			probe_gr_watk1();
-		//else
-			//probe_watk1();
+		else
+			probe_watk1();
 	}
 	else {
-		//if (self.classname == "monster_grenadeprobe")
+		if (self.style == ST_PROBE_GRENADE)
 			probe_gr_satk1();
-		//else
-			//probe_satk1();
+		else
+			probe_satk1();
 	}
 };
 
@@ -549,10 +557,10 @@ void() probe_stand_attack = {
 		return;
 	}
 	
-	//if (self.classname == "monster_grenadeprobe")
+	if (self.style == ST_PROBE_GRENADE)
 		probe_gr_satk1();
-	//else
-	//	probe_satk1();
+	else
+		probe_satk1();
 
 	if (self.cnt == 1) {
 		probe_run1();
@@ -612,11 +620,19 @@ void(entity e) monster_probe_start = {
 	oself = self;
 	self = e;
 
+	if (self.classname == "monster_grenadeprobe") self.style = ST_PROBE_GRENADE;
+	else self.style = ST_PROBE_LASER;
+
 	self.lefty = 0;
 	self.solid = SOLID_SLIDEBOX;
 	self.fixangle = 0;
 	self.movetype = MOVETYPE_STEP;
-	setmodel(self, "progs/probedom.mdl");
+
+	if (self.style == ST_PROBE_GRENADE)
+		setmodel(self, "progs/probegren_dome.mdl");
+	else
+		setmodel(self, "progs/probelasr_dome.mdl");
+
 	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	setorigin(self, self.origin);
 
@@ -626,9 +642,10 @@ void(entity e) monster_probe_start = {
 	body.movetype = MOVETYPE_STEP;
 	body.flags = body.flags | FL_FLY;
 	
-	//if (self.classname == "monster_grenadeprobe")
-		setmodel(body, "progs/probebod_double_cannons.mdl");
-	//else setmodel(body, "progs/probebod.mdl");
+	if (self.style == ST_PROBE_GRENADE)
+		setmodel(body, "progs/probegren_body.mdl");
+	else
+		setmodel(body, "progs/probelasr_body.mdl");
 
 	
 	setsize(body, VEC_HULL2_MIN, VEC_HULL2_MAX);
@@ -641,11 +658,12 @@ void(entity e) monster_probe_start = {
 	self.yaw_speed = 9;
 	self.health = 200;
 
-	if (!self.above /*&& self.classname == "monster_grenadeprobe"*/) self.above = 64;
+	if (!self.above && self.style == ST_PROBE_GRENADE) self.above = 64;
 
 	if (self.obituary == "") {
-		//if (self.classname == "monster_grenadeprobe") self.obituary = "was plugged by a Probe";
-		//else
+		if (self.style == ST_PROBE_GRENADE)
+			self.obituary = "was bombarded by a Grenade Probe";
+		else
 			self.obituary = "was plugged by a Probe";
 	}
 
@@ -674,20 +692,19 @@ void() monster_probe_spawner = {
 
 
 
-void() monster_probe = {
+void() monster_grenadeprobe = {
 	//local float sk;
 	if (deathmatch)	{
 		remove(self);
 		return;
 	}
 
-	precache_model("progs/progib1_double_cannons.mdl");
-	precache_model("progs/progib2.mdl");
-	precache_model("progs/progib3.mdl");		
-	precache_model("progs/probebod_double_cannons.mdl");
-	precache_model("progs/probedom.mdl");
+	precache_model("progs/probegren_gib1.mdl");
+	precache_model("progs/probegren_gib2.mdl");
+	precache_model("progs/probegren_gib3.mdl");		
+	precache_model("progs/probegren_body.mdl");
+	precache_model("progs/probegren_dome.mdl");
 	precache_model("progs/d_explod.spr");
-	precache_model("progs/laser.mdl");
 	precache_model("progs/grenade.mdl");
 	
 	precache_sound("probe/shoot.wav");
@@ -714,7 +731,7 @@ void() monster_probe = {
 	}
 };
 
-/*
+
 void() monster_probe = {
 	//local float sk;
 	if (deathmatch)	{
@@ -722,11 +739,11 @@ void() monster_probe = {
 		return;
 	}
 
-	precache_model("progs/progib1.mdl");
-	precache_model("progs/progib2.mdl");
-	precache_model("progs/progib3.mdl");		
-	precache_model("progs/probebod.mdl");
-	precache_model("progs/probedom.mdl");
+	precache_model("progs/probelasr_gib1.mdl");
+	precache_model("progs/probelasr_gib2.mdl");
+	precache_model("progs/probelasr_gib3.mdl");		
+	precache_model("progs/probelasr_body.mdl");
+	precache_model("progs/probelasr_dome.mdl");
 	precache_model("progs/d_explod.spr");
 	precache_model("progs/laser.mdl");
 	
@@ -753,4 +770,3 @@ void() monster_probe = {
 		monster_probe_start(self);
 	}
 };
-*/
