@@ -396,8 +396,10 @@ void(entity e) monster_demon1_start =
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
-
-	setmodel (self, "progs/demon.mdl");
+	if (self.spawnflags & MONSTER_ORIGINAL)
+		setmodel (self, "progs/demon.mdl");
+	else
+		setmodel (self, "progs/demon_alk.mdl");
 
 	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 300;
@@ -460,7 +462,11 @@ void() monster_demon1 =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/demon.mdl");
+	if (self.spawnflags & MONSTER_ORIGINAL)
+		precache_model ("progs/demon.mdl");
+	else
+		precache_model ("progs/demon_alk.mdl");
+
 	precache_model ("progs/h_demon.mdl");
 
 	precache_sound ("demon/ddeath.wav");
