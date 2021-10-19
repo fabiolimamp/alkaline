@@ -138,7 +138,7 @@ void(float ofs, float elevation) ProbeFireGrenade =
 	missile.nextthink = time + 2.5;
 	missile.think = OgreGrenadeExplode;
 
-	setmodel (missile, "progs/grenade_probe.mdl");
+	setmodel (missile, "progs/grenade.mdl");
 	setsize (missile, '0 0 0', '0 0 0');
 	setorigin (missile, src);
 };
@@ -688,7 +688,7 @@ void() monster_probe = {
 	precache_model("progs/probedom.mdl");
 	precache_model("progs/d_explod.spr");
 	precache_model("progs/laser.mdl");
-	precache_model("progs/grenade_probe.mdl");
+	precache_model("progs/grenade.mdl");
 	
 	precache_sound("probe/shoot.wav");
 	precache_sound("probe/footfall.wav");
