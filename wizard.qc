@@ -384,8 +384,8 @@ void() wiz_die =
 			sound (self, CHAN_VOICE, "misc/metal_impact.wav", 1, ATTN_NORM);
 
 			ThrowHead("progs/h_cyberscrag.mdl", self.health);
-			ThrowGib ("progs/fgib1.mdl", self.health);
-			ThrowGib ("progs/drngib2.mdl", self.health);
+			ThrowGib ("progs/cyberscrag_gib1.mdl", self.health);
+			ThrowGib ("progs/cyberscrag_gib2.mdl", self.health);
 			ThrowGib ("progs/drngib3.mdl", self.health);
 		}
 		
@@ -484,8 +484,8 @@ void() monster_wizard =
 		precache_model ("progs/cyberscrag.mdl");
 		precache_model ("progs/h_cyberscrag.mdl");
 
-		precache_model ("progs/fgib1.mdl");
-		precache_model ("progs/drngib2.mdl");
+		precache_model ("progs/cyberscrag_gib1.mdl");
+		precache_model ("progs/cyberscrag_gib2.mdl");
 		precache_model ("progs/drngib3.mdl");
 
 		precache_sound ("cyberscrag/hit.wav");		// used by c code
