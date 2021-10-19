@@ -3,14 +3,22 @@
 	Copyright (c)1996 Hipnotic Interactive, Inc.
 	All rights reserved.
 	Distributed (unsupported) on 3.12.97
+
+	Modified by bmFbr
 */
+
+// maximum bulletholes on the map
+float BULLETHOLES_MAX = 50;
+// maximum bulletholes spawned per frame
+float BULLETHOLES_MAXFRAME = 10;
+float BULLETHOLES_LIFETIME = 60;
 
 /*QUAKED wallsprite (0 1 0) (-8 -8 -8) (8 8 8)
 Places a sprite on a wall.  Angles should be opposite of face.
 
 "model" sprite to place on wall.  Default is "progs/s_blood1.spr".
 */
-void() wallsprite = {
+/*void() wallsprite = {
 	if (!self.model) {
 		self.model = "progs/s_blood1.spr";
 	}
@@ -29,7 +37,7 @@ void() wallsprite = {
 	makevectors(self.angles);
 	setorigin( self, self.origin - ( v_forward * 0.2 ) );
 	makestatic (self);
-};
+};*/
 
 void() InitBulletHoles = {
 	precache_model("progs/s_bullet.spr");
@@ -40,64 +48,60 @@ void() InitBulletHoles = {
 };
 
 void() remove_bullethole = {
-	local entity ent;
+	local entity e;
 
-	// There is a possibility that this is not the first bullet
-	// in the list, but it doesn't really matter.  All that
-	// matters is there is one less bullet.  Just make sure
-	// we don't remove the world!
-	if (bulletholes == nullentity) {
-		objerror("remove_bullethole: bulletholes == nullentity! " );
+	e = self;
+	
+	if (e.classname != "bullethole") {
+		dprint("bulletholes: Tried to remove non-bullethole\n");
+		return;
 	}
 
-	ent = bulletholes;
-	if (ent.classname != "bullethole") {
-		objerror("remove_bullethole: Tried to remove non-bullethole!" );
+	if (e == bulletholes) { // first in list
+		bulletholes = e.lastvictim;
+
+		if (e.lastvictim ) // there's a next one
+			e.lastvictim.prevvictim = world; 
+		else // there's no next one
+			lastbullet = world;
+	}
+	else if (e == lastbullet) { // last in list (if this condition is reached then we're sure there's at least one before it)
+		if (e.prevvictim) // checks just to be sure if prevvictim isn't world, but it should never happen
+			e.prevvictim.lastvictim = world; 
+		lastbullet = e.prevvictim;
+	}
+	else { // somewhere between
+		e.prevvictim.lastvictim = e.lastvictim;
+		e.lastvictim.prevvictim = e.prevvictim;
 	}
 
-	bulletholes = bulletholes.lastvictim;
-	remove(ent);
-
-	if (lastbullet == ent) {
-		lastbullet = nullentity;
-	}
+	remove(e);
 	numbulletholes = numbulletholes - 1;
 };
 
 void() update_bulletholes = {
 	numbulletsframe = 0;
-	entity e, prev, next;
+	entity e, next;
 	e = bulletholes;
 	while (e) {
-		// hole is in a valid non-world brush, so check if the brush moved
+		// hole is in a valid non-world brush
 		if (e.owner && e.owner.solid == SOLID_BSP) {
+			// check if the brush moved
 			if (e.owner.absmin != e.oldorigin) {
 				setorigin(e, e.origin - e.oldorigin + e.owner.absmin);
 				e.oldorigin = e.owner.absmin;
 			}
-			
-			prev = e;
+
 			e = e.lastvictim;
 		}
 		// hole was originally in a non-world brush, but brush was removed or changed to non-solid
 		else if (e.state) { 
-			if (e == bulletholes) { // first in list
-				bulletholes = e.lastvictim;
-			}
-			else {
-				prev.lastvictim = e.lastvictim;
-			}
-
-			if (e == lastbullet) lastbullet = world;
 			next = e.lastvictim;
-			remove(e);
-			numbulletholes = numbulletholes - 1;
+			SUB_CallAsSelf(remove_bullethole, e);
 			e = next;
-
 		}
 		// hole is in a world brush, do nothing
 		else {
-			prev = e;
 			e = e.lastvictim;
 		}
 	}
@@ -108,7 +112,7 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 	if (tgt.solid != SOLID_BSP)
 		return;
 
-	if (numbulletsframe > 10)
+	if (numbulletsframe > BULLETHOLES_MAXFRAME)
 		return;
 
 	local entity new;
@@ -120,8 +124,9 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 	setmodel( new, "progs/s_bullet.spr" );
 	setsize (new, '0 0 0', '0 0 0');
 
-	new.owner = tgt;
+	new.owner = tgt; // entity whose this bullethole is attached to, world or otherwise
 	new.oldorigin = tgt.absmin;
+	// set state 1 to holes attached to non-world entities (for movement and validity checks)
 	if (tgt != world) new.state = 1;
 
 	norm_x = 0 - norm_x;
@@ -131,17 +136,18 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 	setorigin(new, pos - (v_forward * 0.2));
 
 	new.think = remove_bullethole;
-	new.nextthink = time + 300;
+	new.nextthink = time + BULLETHOLES_LIFETIME;
+
+	if (numbulletholes > BULLETHOLES_MAX) {
+		SUB_CallAsSelf(remove_bullethole, bulletholes);
+	}
 
 	numbulletholes++;
 	numbulletsframe++;
 
-	if ( numbulletholes > 40 ){
-		remove_bullethole();
-	}
-
 	if (lastbullet) {
 		lastbullet.lastvictim = new;
+		new.prevvictim = lastbullet;
 	}
 	else {
 		bulletholes = new;

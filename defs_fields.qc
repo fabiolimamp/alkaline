@@ -174,7 +174,6 @@ float currentdq;
 float door_setup_finished;
 
 // Hipnotic's bullet holes
-entity nullentity;
 entity bulletholes;
 entity lastbullet;
 float numbulletholes, numbulletsframe;
@@ -403,6 +402,7 @@ FIELDS
 // hipnotic stuff
 //
 .entity     lastvictim;
+.entity 	prevvictim;
 .vector     old_velocity;
 .float      spawnsilent;
 .float      spawnmulti;
