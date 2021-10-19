@@ -165,14 +165,14 @@ local entity	temp;
 //dprint ("t_movetarget\n");
 	self.goalentity = self.movetarget = find (world, targetname, other.target);
 	self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
-	if (!self.movetarget)
+	if (!self.movetarget || other.wait == -1)
 	{
 		self.pausetime = time + 999999;
 		self.th_stand ();
 		return;
 	}
 	
-	if(self.flags & FL_PACIFIST)
+	//if(self.flags & FL_PACIFIST)
 	{
 		if(other.wait > 0)
 		{
