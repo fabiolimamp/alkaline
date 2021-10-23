@@ -795,15 +795,15 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 [
 	spawnflags(Flags) = 
 	[
-		1 : "Ambush" : 0
+		1 : "Ambush" : 0 : "Only wakes when directly seeing player"
 		16 : "No sight sound" : 0
-		32 : "Spawn Angry" : 0
-		64 : "Trigger Spawned" : 0
-		128 : "Silent Spawn" : 0
-		16384 : "No infight" : 0
-		32768 : "Count after spawn" : 0
+		32 : "Spawn Angry" : 0 : "Appears angry when trigger spawned"
+		64 : "Trigger Spawned" : 0 : "Starts invisible, only spawns in after triggered"
+		128 : "Silent Spawn" : 0 : "Don't make teleport fog/sound when spawning in"
+		16384 : "No infight" : 0 : "Don't react to other monsters' attacks"
+		32768 : "Count after spawn" : 0 : "Only counts towards total enemy count after spawning in"
 		65536 : "No idle sounds" : 0
-		262144 : "Monster spawner" : 0
+		262144 : "Monster spawner" : 0 : "Spawns a monster from this entity when triggered"
 		1048576 : "Health triggers" : 0 : "Triggers target2/3/4 when reaching 75%/50%/25% health respectively"
 	]
 	spawncount(integer) : "Maximum alive monsters" : 10 : "For monster spawners. Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawn in from this entity until they're killed. Set to -1 to remove this limit."
