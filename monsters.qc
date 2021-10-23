@@ -130,6 +130,17 @@ void(entity e) show_spawned_monster_entity = {
 }
 
 // spawn trigger-spawned monster
+void() spawn_monster;
+
+void() spawn_monster_use = {
+	if (self.delay) {
+		self.think = spawn_monster;
+		self.nextthink = time + self.delay;
+	}
+	else
+		spawn_monster();
+};
+
 void() spawn_monster = {
 
 	show_spawned_monster_entity(self);
@@ -165,7 +176,7 @@ void(entity e, void() go_function) init_spawned_monster = {
 
 	//set up the teleport functions
 
-	e.use = spawn_monster;
+	e.use = spawn_monster_use;
 	e.think1 = go_function;
 }
 
