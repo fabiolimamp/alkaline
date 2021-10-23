@@ -247,7 +247,28 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 
 	// do the damage
 	targ.health = targ.health - take;
-			
+	
+	// health-based triggering
+	if (targ.flags & FL_MONSTER && targ.spawnflags & MONSTER_HEALTHTRIGGER) {
+		if (targ.health <= targ.max_health * 0.75 && targ.target2 != "") {
+			activator = targ.enemy;
+			SUB_UseSpecificTarget(targ.target2, targetname);
+			targ.target2 = "";
+		}
+
+		if (targ.health <= targ.max_health * 0.50 && targ.target3 != "") {
+			activator = targ.enemy;
+			SUB_UseSpecificTarget(targ.target3, targetname);
+			targ.target3 = "";
+		}
+
+		if (targ.health <= targ.max_health * 0.25 && targ.target4 != "") {
+			activator = targ.enemy;
+			SUB_UseSpecificTarget(targ.target4, targetname);
+			targ.target4 = "";
+		}
+	}
+
 	if (targ.health <= 0)
 	{
 		targ.deathtype = death_type; //johnfitz

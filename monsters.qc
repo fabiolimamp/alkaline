@@ -261,6 +261,8 @@ void() walkmonster_start_go =
 	
 	self.takedamage = DAMAGE_AIM;
 
+	self.max_health = self.health;
+
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
 		self.yaw_speed = 20;
@@ -304,6 +306,8 @@ void() walkmonster_start_go =
 void() flymonster_start_go =
 {
 	self.takedamage = DAMAGE_AIM;
+
+	self.max_health = self.health;
 
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
@@ -363,6 +367,8 @@ void() swimmonster_start_go =
 	}
 
 	self.takedamage = DAMAGE_AIM;
+	
+	self.max_health = self.health;
 	
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
