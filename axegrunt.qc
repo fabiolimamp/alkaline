@@ -285,7 +285,9 @@ void(entity e) monster_axegrunt_start =
 
 	setmodel (self, "progs/axegrunt.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
+
 	self.health = 75;
 	if (self.obituary == "") self.obituary = "got the chop from an Axe Grunt";
 
@@ -324,7 +326,8 @@ void() monster_axegrunt =
 	precache_sound ("knight/idle.wav");
 	precache_sound ("soldier/idle.wav");
 	
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_axegrunt_spawner;

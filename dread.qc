@@ -341,7 +341,9 @@ void(entity e) monster_dreadnaught_start =
 
 	setmodel (self, "progs/dread.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
+
 	self.health = 150;
 	if (self.obituary == "") self.obituary = "was incinerated by a Dreadnaught";
 
@@ -394,8 +396,9 @@ void() monster_dreadnaught =
 	precache_sound ("misc/null.wav");
 	
 	precache_model ("progs/s_flame.spr");
-
-	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_dreadnaught_spawner;

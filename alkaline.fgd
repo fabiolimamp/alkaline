@@ -804,6 +804,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 		32768 : "Count after spawn" : 0 : "Only counts towards total enemy count after spawning in"
 		65536 : "No idle sounds" : 0
 		262144 : "Monster spawner" : 0 : "Spawns a monster from this entity when triggered"
+		524288 : "0-sized bbox" : 0 : "Starts with 0-sized entity. Use target_setsize to set the original size"
 		1048576 : "Health triggers" : 0 : "Triggers target2/3/4 when reaching 75%/50%/25% health respectively"
 	]
 	spawncount(integer) : "Maximum alive monsters" : 10 : "For monster spawners. Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawn in from this entity until they're killed. Set to -1 to remove this limit."
@@ -987,11 +988,7 @@ Don't shake hands with this crazy bastard!" []
 "Arachnofloyd, 600 health points." []
 
 @PointClass base(Monster) size(-16 -16 0, 16 16 24) model({"path":"progs/spiderbot.mdl"}) = monster_spiderbot :
-"Spiderbot, 30 health points." [
-	spawnflags(flags) = [
-		524288 : "0-sized bbox"
-	]
-]
+"Spiderbot, 30 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 120) model({"path":"progs/tormentor.mdl"}) = monster_tormentor :
 "Tormentor, 2000 health points." []

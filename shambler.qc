@@ -388,7 +388,9 @@ void(entity e) monster_shambler_start =
 	self.movetype = MOVETYPE_STEP;
 	setmodel (self, "progs/shambler_alk.mdl");
 
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
 	self.health = 600;
 	if (self.obituary == "") self.obituary = "was smashed by a Shambler";
 
@@ -434,7 +436,8 @@ void() monster_shambler =
 	precache_sound ("shambler/melee2.wav");
 	precache_sound ("shambler/smack.wav");
 
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_shambler_spawner;

@@ -176,7 +176,8 @@ void(entity e) monster_fish_start =
 
 	setmodel (self, "progs/fish.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 24');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 24');
 	self.health = 25;
 	if (self.obituary == "") self.obituary = "was fed to the Rotfish";
 	
@@ -210,7 +211,8 @@ void() monster_fish =
 	precache_sound2 ("fish/bite.wav");
 	precache_sound2 ("fish/idle.wav");
 	
-	setsize (self, '-16 -16 -24', '16 16 24');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 24');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_fish_spawner;

@@ -209,7 +209,9 @@ void(entity e) monster_eel_start =
 
 	setmodel (self, "progs/eel2.mdl");
 
-	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+	
 	self.health = 60;
 	if (self.obituary == "") self.obituary = "was electrified by an Eel";
 
@@ -251,7 +253,8 @@ void() monster_eel =
 	precache_sound ("eel/eatt1.wav");
 	precache_sound ("eel/eelc5.wav");
 
-	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_eel_spawner;

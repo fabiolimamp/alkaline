@@ -205,7 +205,8 @@ void(entity e) monster_tarbaby_start =
 
 	setmodel (self, "progs/tarbaby.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
 	if (self.obituary == "") self.obituary = "was slimed by a Spawn";
 
@@ -241,7 +242,8 @@ void() monster_tarbaby =
 	precache_sound2 ("blob/land1.wav");
 	precache_sound2 ("blob/sight1.wav");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_tarbaby_spawner;

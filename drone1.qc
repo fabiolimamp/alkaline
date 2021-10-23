@@ -376,7 +376,9 @@ void(entity e) monster_drone_start =
 
     setmodel (self, "progs/drone1.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+    if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
+	
 	self.health = 100;
 	if (self.obituary == "") self.obituary = "was drilled by a Drone";
 	self.touch = DroneTouch;
@@ -426,8 +428,9 @@ void() monster_drone =
 	precache_sound2 ("drone/drndeth.wav"); // death sound
 	precache_sound2 ("enforcer/enfstop.wav");
 	precache_model ("progs/spike.mdl");	
-
-	setsize (self, '-16 -16 -24', '16 16 40');
+	
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_drone_spawner;

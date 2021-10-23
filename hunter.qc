@@ -852,7 +852,9 @@ void(entity e) monster_hunter_start =
 
 	setmodel (self, "progs/hunter.mdl");
 
-	setsize (self,	VEC_HULL2_MIN,	VEC_HULL2_MAX);	
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self,	VEC_HULL2_MIN,	VEC_HULL2_MAX);	
+	
 	self.health	=	600;
 	if (self.obituary == "") self.obituary = "was hammered by a Hunter";
 	if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
@@ -903,7 +905,8 @@ void()	monster_hunter	=
 	precache_sound ("hunter/smash.wav");
 	precache_sound ("weapons/r_exp3.wav");
 
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_hunter_spawner;

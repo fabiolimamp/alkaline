@@ -265,7 +265,8 @@ void(entity e) monster_knight_start =
 
 	setmodel (self, "progs/knight.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 75;
 	if (self.obituary == "") self.obituary = "was slashed by a Knight";
 
@@ -303,7 +304,8 @@ void() monster_knight =
 	precache_sound ("knight/sword2.wav");
 	precache_sound ("knight/idle.wav");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_knight_spawner;

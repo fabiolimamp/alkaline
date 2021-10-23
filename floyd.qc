@@ -565,7 +565,8 @@ void(entity e) monster_floyd_start =
 	}
 	else //normal operation
 	{
-		setsize(self, '-24 -24 -24', '24 24 64');
+		if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+		else setsize(self, '-24 -24 -24', '24 24 64');
 		self.health = 200;
 		self.movetype = MOVETYPE_STEP;
 		self.solid = SOLID_SLIDEBOX;
@@ -610,7 +611,8 @@ void() monster_floyd =
 	precache_sound2("floyd/death.wav");
 	precache_sound2("enforcer/enfstop.wav");
 
-	setsize(self, '-24 -24 -24', '24 24 64');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize(self, '-24 -24 -24', '24 24 64');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_floyd_spawner;

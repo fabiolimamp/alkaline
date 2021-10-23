@@ -433,7 +433,8 @@ void(entity e) monster_wizard_start =
 	if (self.spawnflags & MONSTER_ORIGINAL)	setmodel (self, "progs/wizard.mdl");
 	else setmodel (self, "progs/cyberscrag.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	self.health = 80;
 	if (self.obituary == "") {
 		if (self.spawnflags & MONSTER_ORIGINAL) self.obituary = "was scragged by a Scrag";
@@ -503,7 +504,8 @@ void() monster_wizard =
 
 	precache_sound ("wizard/hit.wav");		// used by c code
 	
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_wizard_spawner;

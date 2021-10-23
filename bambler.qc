@@ -274,7 +274,9 @@ void(entity e) monster_bambler_start =
 	self.movetype = MOVETYPE_STEP;
 	setmodel (self, "progs/bambler.mdl");
 
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+
 	self.health = 500;
 	if (self.obituary == "") self.obituary = "was bashed by a Bambler";
 
@@ -314,8 +316,9 @@ void() monster_bambler =
 	precache_sound ("bambler/melee1.wav");
 	precache_sound ("bambler/melee2.wav");
 	precache_sound ("bambler/smack.wav");
-
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_bambler_spawner;

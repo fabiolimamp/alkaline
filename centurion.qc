@@ -477,7 +477,9 @@ void(entity e) monster_centurion_start =
 
 	setmodel (self, "progs/cent.mdl");
 
-	setsize (self, '-22 -22 -24', '22 22 48');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-22 -22 -24', '22 22 48');
+
 	self.health = 150;
 	if (self.obituary == "") self.obituary = "was perforated by a Centurion";
 
@@ -526,7 +528,8 @@ void() monster_centurion =
 	precache_model2 ("progs/c_spike.mdl");
 	precache_sound2 ("weapons/rocket1i.wav");
 
-	setsize (self, '-22 -22 -24', '22 22 48');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-22 -22 -24', '22 22 48');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_centurion_spawner;

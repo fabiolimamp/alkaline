@@ -489,7 +489,8 @@ void(entity e) monster_arachnofloyd_start =
 	self.classname = "monster_arachnofloyd";
 	
 	setmodel (self, "progs/arachnofloyd.mdl");
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 24');
+	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	self.health = 600;
 	self.bloodtype = SPAWN_YELLOWSPARK;
 
@@ -545,7 +546,8 @@ void() monster_arachnofloyd =
 	precache_sound2 ("arachnofloyd/pain2.wav");	
 	precache_sound2 ("arachnofloyd/sight.wav");
 
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 24');
+	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_arachnofloyd_spawner;

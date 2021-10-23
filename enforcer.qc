@@ -343,7 +343,9 @@ void(entity e) monster_enforcer_start =
 
 	setmodel (self, "progs/enforcer.mdl");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
+
 	self.health = 80;
 	if (self.obituary == "") self.obituary = "was blasted by an Enforcer";
 
@@ -389,7 +391,8 @@ void() monster_enforcer =
 	precache_sound2 ("enforcer/sight3.wav");
 	precache_sound2 ("enforcer/sight4.wav");
 
-	setsize (self, '-16 -16 -24', '16 16 40');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, '-16 -16 -24', '16 16 40');
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_enforcer_spawner;
