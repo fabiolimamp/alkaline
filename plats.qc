@@ -296,8 +296,10 @@ void() train_wait = {
 		self.nextthink = -1; // move instantly
 		train_next();
 	}
-	else
+	else {
+		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
 		self.nextthink = -1;
+	}
 
 	
 };
