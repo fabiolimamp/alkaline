@@ -293,6 +293,7 @@ void() train_wait = {
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
 	}
 	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) {
+		if (self.noise2 != "") sound(self, CHAN_WEAPON, self.noise2, 1, ATTN_NORM);
 		self.nextthink = -1; // move instantly
 		train_next();
 	}
@@ -396,6 +397,7 @@ void() func_train =
 
 	precache_sound(self.noise);
 	precache_sound(self.noise1);
+	if (self.noise2 != "") precache_sound(self.noise2);
 
 
 	self.cnt = TRAIN_NEXT_WAIT;

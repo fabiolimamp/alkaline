@@ -1709,8 +1709,9 @@ The flags above are mutually exclusive and will cause an objerror when selected 
 	pausetime(integer) : "Default wait time" : : "Wait time used when not defined in path_corner."
 	target(target_source) : "First stop target"
 	dmg(integer) : "Damage on crush" : 2
-	noise(string) : "Custom moving loop sound (if set, overrides 'sounds')"
-	noise1(string) : "Custom corner sound, plays when the train reaches a path_corner (if set, overrides 'sounds')"
+	noise1(string) : "Custom moving loop sound (if set, overrides 'sounds')"
+	noise(string) : "Custom stopping sound (if set, overrides 'sounds')"
+	noise2(string) : "Custom corner sound, plays when the crosses a path_corner without stopping"
 	spawnflags(flags) =
 	[
 		2: "Move on trigger" : 0
