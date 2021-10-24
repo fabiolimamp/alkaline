@@ -330,6 +330,8 @@ void() train_next = {
 
 	self.use = train_moving_use; //store up any premature triggerings until current movement is finished
 
+	if (self.classname == "misc_modeltrain") self.angles = vectoangles(targ.origin - self.origin);
+
 	SUB_CalcMove(targ.origin - self.mins, self.speed2, train_wait);
 };
 
@@ -413,7 +415,7 @@ void() func_train =
 
 	self.blocked = train_blocked;
 	self.use = train_use;
-	self.classname = "train";
+	//self.classname = "train";
 
 	setmodel (self, self.model);
 	setsize (self, self.mins , self.maxs);
@@ -428,6 +430,16 @@ void() func_train =
 	self.think = func_train_find;
 
 	self.speed2 = self.speed;
+};
+
+void() misc_modeltrain = {
+	self.spawnflags = self.spawnflags | TRAIN_NONSOLID;
+	func_train();
+
+	setmodel (self, self.mdl);
+	setsize (self, '0 0 0' , '0 0 0');
+	setorigin (self, self.origin);
+	//self.classname = "misc_modeltrain";
 };
 
 /*QUAKED misc_teleporttrain (0 .5 .8) (-8 -8 -8) (8 8 8)

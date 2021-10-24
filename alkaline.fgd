@@ -1720,6 +1720,42 @@ The flags above are mutually exclusive and will cause an objerror when selected 
 	]
 ]
 
+
+@PointClass base(Targetname) = misc_modeltrain :
+"Trains are moving platforms that players can ride. The target's origin specifies the min point of the train at each corner. The train spawns at the first target it is pointing at.
+Use path_corner as targets.
+path_corners with a 'wait -1' value will stop the train. Trigger the func_train again to resume its path.
+
+'pausetime' sets a default waiting time when a value is not defined in path_corners.
+'speed' sets the initial moving speed. If the train encounters a path_corner with its 'speed' field set it will move at that speed afterwards.
+
+Spawnflags:
+- 'Move on trigger' will force the train to resume its path when triggered, even when temporarily waiting at a path_corner.
+- 'Stop on trigger' will stop the train at the next path_corner when triggered. Trigger it again to resume.
+The flags above are mutually exclusive and will cause an objerror when selected simultaneously.
+" 
+[
+	sounds(choices) : "Sound" : 1 =
+	[
+		0: "None"
+		1: "Ratchet Metal"
+		2: "Base door"
+	]
+	speed(integer) : "Speed (units per second)" : 100
+	speed2(float) : "Animation frametime" : "0.1"
+	pausetime(integer) : "Default wait time" : : "Wait time used when not defined in path_corner."
+	target(target_source) : "First stop target"
+	dmg(integer) : "Damage on crush" : 2
+	noise1(string) : "Custom moving loop sound (if set, overrides 'sounds')"
+	noise(string) : "Custom stopping sound (if set, overrides 'sounds')"
+	noise2(string) : "Custom corner sound, plays when the crosses a path_corner without stopping"
+	spawnflags(flags) =
+	[
+		2: "Move on trigger" : 0
+		4: "Stop on trigger" : 0
+	]
+]
+
 @PointClass base(Targetname) color(128 64 0) size(8 8 8) = path_corner :
 "Waypoint for func_train and walking monsters.
 Check each field's description for more details.

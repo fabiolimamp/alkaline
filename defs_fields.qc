@@ -421,6 +421,9 @@ FIELDS
 .string event;
 .float  duration;
 
+// model train
+.entity animcontroller = lastvictim;
+.entity rotatecontroller = prevvictim;
 
 //
 //   rubicon2 stuff
