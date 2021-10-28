@@ -241,6 +241,7 @@ FIELDS
 .entity		oldenemy;		// mad at this player before taking damage
 .float		speed;
 .float 		speed2;
+.float 		speed3;
 .float		lefty;
 .float		search_time;
 .float		attack_state;
@@ -347,7 +348,8 @@ FIELDS
 .vector 	centeroffset;	// misc_model
 .vector 	mdlsz;			// misc_model
 .float 		first_frame, last_frame; // misc_model
-
+.float 		first_frame2, last_frame2; // misc_modeltrain
+.float 		frtime, frtime2;
 //
 // subs
 //

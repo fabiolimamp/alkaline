@@ -289,6 +289,8 @@ void() train_wait = {
 
 	self.think = train_next;
 	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT) {
+		self.state = 0;
+		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
 		self.nextthink = localtime + self.wait;
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
 	}
@@ -299,6 +301,8 @@ void() train_wait = {
 	}
 	else {
 		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
+		self.state = 0;
+		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
 		self.nextthink = -1;
 	}
 
@@ -330,8 +334,14 @@ void() train_next = {
 
 	self.use = train_moving_use; //store up any premature triggerings until current movement is finished
 
-	if (self.classname == "misc_modeltrain") self.angles = vectoangles(targ.origin - self.origin);
-
+	if (self.classname == "misc_modeltrain") {
+		self.angles = vectoangles(targ.origin - self.origin);
+	}
+	if (!self.state) {
+		self.state = 1;
+		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
+	}
+	
 	SUB_CalcMove(targ.origin - self.mins, self.speed2, train_wait);
 };
 
@@ -421,8 +431,8 @@ void() func_train =
 	setsize (self, self.mins , self.maxs);
 	setorigin (self, self.origin);
 
-// start trains on the second frame, to make sure their targets have had
-// a chance to spawn
+	// start trains on the second frame, to make sure their targets have had
+	// a chance to spawn
 
 	if (self.movetype == MOVETYPE_PUSH) self.nextthink = self.ltime + 0.1;
 	else self.nextthink = time + 0.1;
@@ -432,14 +442,85 @@ void() func_train =
 	self.speed2 = self.speed;
 };
 
+void() animcontroller_think = {
+	entity tr;
+	tr = self.owner;
+	
+	float first, last;
+
+	if (self.state != tr.state) { // changed animation
+		if (tr.state) { // started moving
+			tr.frame = tr.first_frame2;
+		}
+		else { // just stopped
+			tr.frame = tr.first_frame;
+		}
+
+		self.state = tr.state;
+	}
+	
+	else {
+		if (tr.state) { // moving animation
+			first = tr.first_frame2;
+			last = tr.last_frame2;
+		}
+		else { // stopped animation
+			first = tr.first_frame;
+			last = tr.last_frame;
+		}
+		if (first > last) { // reverse direction
+			if (tr.frame <= last) {
+				tr.frame = first; // range ended, return to first
+			}
+			else {
+				tr.frame--;
+			}
+		}
+		else {
+			if (tr.frame >= last) {
+				tr.frame = first; // range ended, return to first
+			}
+			else {
+				tr.frame++;
+			}
+		}
+
+	}
+
+	self.think = animcontroller_think;
+	if (tr.state) self.nextthink = time + tr.frtime;
+	else self.nextthink = time + tr.frtime2;
+};
+
 void() misc_modeltrain = {
 	self.spawnflags = self.spawnflags | TRAIN_NONSOLID;
+	precache_model(self.mdl);
+
 	func_train();
+
+	entity rot, anim;
 
 	setmodel (self, self.mdl);
 	setsize (self, '0 0 0' , '0 0 0');
 	setorigin (self, self.origin);
-	//self.classname = "misc_modeltrain";
+
+	rot = spawn();
+	self.rotatecontroller = rot;
+	rot.classname = "rotatecontroller";
+	rot.owner = self;
+
+	anim = spawn();
+	self.animcontroller = anim;
+	anim.classname = "animcontroller";
+	anim.owner = self;
+
+	anim.think = animcontroller_think;
+	anim.nextthink = time + 0.2;
+
+	if (!self.frtime) self.frtime = 0.1;
+	if (!self.frtime2) self.frtime2 = self.frtime;
+
+
 };
 
 /*QUAKED misc_teleporttrain (0 .5 .8) (-8 -8 -8) (8 8 8)
