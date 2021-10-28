@@ -84,9 +84,9 @@ void() update_bulletholes = {
 	entity e, next;
 	e = bulletholes;
 	while (e) {
-		// hole is in a valid non-world brush
+		// hole is in a valid non-world solid entity
 		if (e.owner && e.owner.solid == SOLID_BSP) {
-			// check if the brush moved
+			// check if the entity moved
 			if (e.owner.absmin != e.oldorigin) {
 				setorigin(e, e.origin - e.oldorigin + e.owner.absmin);
 				e.oldorigin = e.owner.absmin;
@@ -94,13 +94,13 @@ void() update_bulletholes = {
 
 			e = e.lastvictim;
 		}
-		// hole was originally in a non-world brush, but brush was removed or changed to non-solid
+		// hole was originally in a non-world entity, but it was removed or changed to non-solid
 		else if (e.state) { 
 			next = e.lastvictim;
 			SUB_CallAsSelf(remove_bullethole, e);
 			e = next;
 		}
-		// hole is in a world brush, do nothing
+		// hole is in a world face, do nothing
 		else {
 			e = e.lastvictim;
 		}
@@ -131,7 +131,7 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 
 	norm_x = 0 - norm_x;
 	norm_y = 0 - norm_y;
-	
+
 	new.angles = vectoangles(norm);
 	new.angles_z = floor(random()*3.99) * 90;
 	makevectors(self.angles);
