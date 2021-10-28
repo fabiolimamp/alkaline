@@ -1763,7 +1763,7 @@ The flags above are mutually exclusive and will cause an objerror when selected 
 	]
 ]
 
-@PointClass base(Targetname) color(128 64 0) size(8 8 8) = path_corner :
+@PointClass base(Targetname) color(128 64 0) size(16 16 16) = path_corner :
 "Waypoint for func_train and walking monsters.
 Check each field's description for more details.
 "
