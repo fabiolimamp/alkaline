@@ -226,6 +226,67 @@ void() SUB_CalcAngleMoveDone =
 };
 
 
+/*
+=============
+SUB_CalcAngleMoveController
+
+Same as SUB_CalcAngleMove, but using a separate controller entity
+to not lose track of current think functions.
+
+===============
+*/
+void() SUB_CalcAngleMoveDoneController;
+
+void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController =
+{
+	local vector	destdelta;
+	local float		len, traveltime;
+
+	if (!tspeed)
+		objerror("No speed is defined!");
+		
+	// set destdelta to the vector needed to move
+
+	destdelta = normalizeAngles180(destangle - self.angles);
+	/*dprint3("destangle:   ", vtos(destangle), "\n");
+	dprint3("self.angles: ", vtos( self.angles), "\n");
+	dprint3("destdelta:   ", vtos(destdelta), "\n");
+	*/
+
+	// calculate length of vector
+	len = vlen (destdelta);
+	
+	// divide by speed to get time to reach dest
+	traveltime = len / tspeed;
+
+	// set nextthink to trigger a think when dest is reached
+	controller.nextthink = time + traveltime;
+
+	// scale the destdelta vector by the time spent traveling to get velocity
+	self.avelocity = destdelta * (1 / traveltime);
+	
+	// Makes sure controller.owner points to self so it can be referenced later in the think function
+	controller.owner = self;  
+	controller.think1 = func;
+	controller.finalangle = destangle;
+	controller.think = SUB_CalcAngleMoveDoneController;
+};
+
+/*
+============
+After rotating, set angle to exact final angle
+============
+*/
+void() SUB_CalcAngleMoveDoneController =
+{
+	self.owner.angles = self.finalangle;
+	self.owner.avelocity = '0 0 0';
+	self.nextthink = -1;
+	if (self.think1)
+		SUB_CallAsSelf(self.think1, self.owner);
+};
+
+
 //=============================================================================
 
 void() DelayThink =
@@ -341,13 +402,16 @@ void() SUB_UseTargets =
 //
 // kill the killtagets
 //
-	if (self.killtarget)
+	if (self.killtarget != "")
 	{
 		//johnfitz -- fix for "killtarget" prevents "target" from firing
 		t = find (world, targetname, self.killtarget);
 		while (t)
 		{
 			if(t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
+
+			if (t.animcontroller) remove(t.animcontroller);
+			if (t.rotatecontroller) remove(t.rotatecontroller);
 
 			if (t.flags & FL_MONSTER || t.flags & FL_SPAWNMONSTER) { // increase the kill counter if it's a monster
 				if (

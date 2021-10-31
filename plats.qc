@@ -236,11 +236,14 @@ void() func_train_find;
 float TRAIN_MOVEONTRIGGER = 2; 
 float TRAIN_STOPONTRIGGER = 4;
 float TRAIN_NONSOLID = 8;
+float TRAIN_NOROTATE = 16;
+float TRAIN_ROTATEY = 32;
 
 float TRAIN_NEXT_WAIT = 0; //normal movement
 float TRAIN_NEXT_STOP = 1; // force a stop on the next path_corner
 float TRAIN_NEXT_CONTINUE = 2; // force continue on the next path_corner (ignores wait time)
 
+float TRAIN_STYLE_SINGLEANIM = 1;
 
 void() train_blocked = {
 	if (time < self.attack_finished) return;
@@ -311,6 +314,7 @@ void() train_wait = {
 
 void() train_next = {
 	local entity	targ;
+	vector destang, displ;
 
 	targ = find(world, targetname, self.target);
 	
@@ -334,28 +338,40 @@ void() train_next = {
 
 	self.use = train_moving_use; //store up any premature triggerings until current movement is finished
 
-	if (self.classname == "misc_modeltrain") {
-		self.angles = vectoangles(targ.origin - self.origin);
+	if (self.classname == "misc_modeltrain" && !(self.spawnflags & TRAIN_NOROTATE)) {
+		destang = vectoangles(targ.origin - self.origin);
+		if (self.spawnflags & TRAIN_ROTATEY) {
+			destang_x = self.angles_x;
+			destang_z = self.angles_z;
+		}
+		if (self.multiplier > 0) SUB_CalcAngleMoveController(destang, self.speed2*self.multiplier, SUB_Null, self.rotatecontroller);
+		else self.angles = destang;
 	}
 	if (!self.state) {
 		self.state = 1;
-		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
+		if (self.classname == "misc_modeltrain" && self.style != TRAIN_STYLE_SINGLEANIM)
+			SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
 	}
 	
-	SUB_CalcMove(targ.origin - self.mins, self.speed2, train_wait);
+	if (self.classname != "misc_modeltrain") displ = self.mins;
+	
+	SUB_CalcMove(targ.origin - displ, self.speed2, train_wait);
 };
 
 void() func_train_find = {
 	local entity	targ;
 	float localtime;
+	vector displ;
+
 	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
 	else localtime = time;
 
 	targ = find(world, targetname, self.target);
 	self.target = targ.target;
 
+	if (self.classname != "misc_modeltrain") displ = self.mins;
 	self.enemy = targ;
-	setorigin(self, targ.origin - self.mins);
+	setorigin(self, targ.origin - displ);
 	if (targ.speed) self.speed2 = targ.speed; // uses speed from the 1st path corner if set
 
 	if (!self.targetname)
@@ -448,26 +464,27 @@ void() animcontroller_think = {
 	
 	float first, last;
 
-	if (self.state != tr.state) { // changed animation
+	if (self.state != tr.state && tr.style != TRAIN_STYLE_SINGLEANIM) { // changed animation
 		if (tr.state) { // started moving
-			tr.frame = tr.first_frame2;
+			tr.frame = zeroconvert(tr.first_frame2);
 		}
 		else { // just stopped
-			tr.frame = tr.first_frame;
+			tr.frame = zeroconvert(tr.first_frame);
 		}
 
 		self.state = tr.state;
 	}
 	
 	else {
-		if (tr.state) { // moving animation
-			first = tr.first_frame2;
-			last = tr.last_frame2;
+		if (self.state && tr.style != TRAIN_STYLE_SINGLEANIM) { // moving animation
+			first = zeroconvert(tr.first_frame2);
+			last = zeroconvert(tr.last_frame2);
 		}
 		else { // stopped animation
-			first = tr.first_frame;
-			last = tr.last_frame;
+			first = zeroconvert(tr.first_frame);
+			last = zeroconvert(tr.last_frame);
 		}
+
 		if (first > last) { // reverse direction
 			if (tr.frame <= last) {
 				tr.frame = first; // range ended, return to first
@@ -488,22 +505,30 @@ void() animcontroller_think = {
 	}
 
 	self.think = animcontroller_think;
-	if (tr.state) self.nextthink = time + tr.frtime;
+	if (self.state || tr.style == TRAIN_STYLE_SINGLEANIM) self.nextthink = time + tr.frtime;
 	else self.nextthink = time + tr.frtime2;
 };
 
 void() misc_modeltrain = {
-	self.spawnflags = self.spawnflags | TRAIN_NONSOLID;
+	//self.spawnflags = self.spawnflags | TRAIN_NONSOLID;
 	precache_model(self.mdl);
 
 	func_train();
 
-	entity rot, anim;
+	if (self.spawnflags & TRAIN_NONSOLID)
+		self.solid = SOLID_NOT;
+	else { 
+		self.solid = SOLID_BBOX;
+		if (self.cmins == VEC_ORIGIN) self.cmins = '-8 -8 -8';
+		if (self.cmaxs == VEC_ORIGIN) self.cmaxs = '8 8 8';
+	}
 
 	setmodel (self, self.mdl);
-	setsize (self, '0 0 0' , '0 0 0');
+	setsize (self, self.cmins , self.cmaxs);
 	setorigin (self, self.origin);
 
+	entity rot, anim;
+	
 	rot = spawn();
 	self.rotatecontroller = rot;
 	rot.classname = "rotatecontroller";
@@ -519,7 +544,19 @@ void() misc_modeltrain = {
 
 	if (!self.frtime) self.frtime = 0.1;
 	if (!self.frtime2) self.frtime2 = self.frtime;
+	if (!self.multiplier) self.multiplier = 1;
 
+
+	// make sure all first and last frame fields are filled
+	if (self.first_frame && !self.last_frame) self.last_frame = self.first_frame;
+	else if (!self.first_frame && self.last_frame) self.first_frame = self.last_frame;
+
+	if (self.first_frame2 && !self.last_frame2) self.last_frame2 = self.first_frame2;
+	else if (!self.first_frame2 && self.last_frame2) self.first_frame2 = self.last_frame2;
+
+	if (!self.first_frame2) self.style = TRAIN_STYLE_SINGLEANIM;
+
+	self.frame = self.first_frame;
 
 };
 

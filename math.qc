@@ -187,6 +187,19 @@ float(float anga, float angb) angledif =
     return dif;
 }
 
+vector(vector anga, vector angb) anglesdif =
+{
+    vector dif;
+    dif = anga - angb;
+    if (dif_x > 180)
+        dif_x = 360 - dif_x;
+    if (dif_y > 180)
+        dif_y = 360 - dif_y;
+    if (dif_z > 180)
+        dif_z = 360 - dif_z;
+    return dif;
+}
+
 float(vector ang, vector base_ang, vector offset) isInAngle = {
     if (angledif(ang_x, base_ang_x) > offset_x || angledif(ang_y, base_ang_y) > offset_y)
         return FALSE;
@@ -317,6 +330,29 @@ vector(vector ang) normalizeAngles = {
       ang_z = ang_z - 360;
 
    while (ang_z < 0)
+      ang_z = ang_z + 360;
+
+   return ang;
+};
+
+
+vector(vector ang) normalizeAngles180 = {
+   while (ang_x > 180)
+      ang_x = ang_x - 360;
+
+   while (ang_x < -180)
+      ang_x = ang_x + 360;
+
+   while (ang_y > 180)
+      ang_y = ang_y - 360;
+
+   while (ang_y < -180)
+      ang_y = ang_y + 360;
+
+   while (ang_z > 180)
+      ang_z = ang_z - 360;
+
+   while (ang_z < -180)
       ang_z = ang_z + 360;
 
    return ang;
