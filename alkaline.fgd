@@ -680,6 +680,9 @@ You can override initial weapon/ammo loadout for this specific spot.
 @PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/armor.mdl" }) =
 	item_armor1 : "Green armor (100%)" []
 
+@PointClass size(-16 -16 0, 16 16 56) base(RespawnableItem, Appearflags) model({ "path": ":progs/shard.mdl" }) =
+	item_armor_shard : "Armor shard (5 armor)" []
+
 @PointClass size(-16 -16 -24, 16 16 32) base(RespawnableItem, Appearflags) model({ "path": ":progs/supbkpack.mdl" }) =
 	item_backpack : "Backpack" [
 		ammo_shells(integer) : "Shells"

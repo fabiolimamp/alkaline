@@ -403,15 +403,74 @@ void() armor_touch =
 	sprint(other, "You got armor\n");
 // armor touch sound
 	sound(other, CHAN_ITEM, "items/armor1.wav", 1, ATTN_NORM);
-	stuffcmd (other, "bf\n");
+	stuffcmd(other, "bf\n");
 	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
 };
 
 
+void() shard_touch = // this from RMQ shard_touch
+{
+	if (other.health <= 0)
+		return;
+	if (other.classname != "player")
+		return;
+
+	local	float	bit;
+
+	if (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3))	{
+		// Supa, check bounds, original armourvalue + 25
+		if (other.items & IT_ARMOR1 && other.armorvalue >= 125)	return;
+		if (other.items & IT_ARMOR2 && other.armorvalue >= 175)	return;
+		if (other.items & IT_ARMOR3 && other.armorvalue >= 225)	return;
+
+		other.armorvalue = other.armorvalue + 5;	// was 2, RMQ team
+
+		// Supa, now cap armourvalue to bounds
+		if		(other.items & IT_ARMOR1 && other.armorvalue >= 125)	other.armorvalue = 125;
+		else if (other.items & IT_ARMOR2 && other.armorvalue >= 175)	other.armorvalue = 175;
+		else if (other.items & IT_ARMOR3 && other.armorvalue >= 225)	other.armorvalue = 225;
+	}
+	else {
+		other.armortype = 0.3;	// shard = Green armor level
+		other.armorvalue = 5;
+		bit = IT_ARMOR1;
+		other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
+	}
+
+	self.solid = SOLID_NOT;
+	self.model = string_null;
+
+	// Supa, SP respawning items support
+	if (!deathmatch)
+		CheckItemRespawn(self, 30);
+	else if (deathmatch == 1)  // doesn't respawn in "deathmatch 2"
+		self.nextthink = time + 20;
+
+	self.think = SUB_regen;
+
+	sprint(other, "You got armor\n");
+	sound(other, CHAN_ITEM, "items/shard_pickup.wav", 1, ATTN_NORM);
+	stuffcmd(other, "bf\n");
+
+	activator = other;
+	SUB_UseTargets();	// fire all targets / killtargets
+};
+
+
 /*QUAKED item_armor1 (0 .5 .8) (-16 -16 0) (16 16 32)
 */
+
+void() item_armor_shard = {
+	self.touch = shard_touch;
+	precache_model("progs/shard.mdl");
+	setmodel(self, "progs/shard.mdl");
+	precache_sound("items/shard_pickup.wav");
+	self.skin = 0;
+	setsize(self, '-16 -16 0', '16 16 56');
+	StartItem();
+};
 
 void() item_armor1 =
 {
