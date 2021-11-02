@@ -1267,6 +1267,7 @@ float FILTER_FIELD_ITEMS = 10;
 float FILTER_FIELD_COUNT = 11;
 float FILTER_FIELD_CNT = 12;
 float FILTER_FIELD_TYPE = 13;
+float FILTER_FIELD_TARGETNAME2 = 14;
 
 
 float FILTER_FIELDTYPE_FLOAT = 0;
@@ -1368,6 +1369,11 @@ void() trigger_filter_use = {
 			targstring = targ.targetname;
 			break;
 
+		case FILTER_FIELD_TARGETNAME2:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.targetname2;
+			break;
+			
 		case FILTER_FIELD_TYPE:
 			fieldtype = FILTER_FIELDTYPE_STRING;
 			targstring = targ.type;
