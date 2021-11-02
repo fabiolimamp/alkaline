@@ -734,20 +734,20 @@ void() key_setsounds =
 		return;
 	}
 	
-	if (world.worldtype == 0)
-	{
-		precache_sound ("misc/medkey.wav");
-		self.noise = "misc/medkey.wav";
-	}
-	if (world.worldtype == 1)
+	if (world.worldtype == WORLDTYPE_METAL)
 	{
 		precache_sound ("misc/runekey.wav");
 		self.noise = "misc/runekey.wav";
 	}
-	if (world.worldtype == 2)
+	else if (world.worldtype == WORLDTYPE_BASE)
 	{
 		precache_sound2 ("misc/basekey.wav");
 		self.noise = "misc/basekey.wav";
+	}
+	else
+	{
+		precache_sound ("misc/medkey.wav");
+		self.noise = "misc/medkey.wav";
 	}
 };
 
@@ -762,12 +762,7 @@ In order for keys to work you MUST set your map's worldtype to one of the follow
 void() item_key1 =
 {
 
-	if (world.worldtype == WORLDTYPE_MEDIEVAL)
-	{
-		precache_model ("progs/w_s_key.mdl");
-		setmodel (self, "progs/w_s_key.mdl");
-	}
-	else if (world.worldtype == WORLDTYPE_METAL)
+	if (world.worldtype == WORLDTYPE_METAL)
 	{
 		precache_model ("progs/m_s_key.mdl");
 		setmodel (self, "progs/m_s_key.mdl");
@@ -776,6 +771,11 @@ void() item_key1 =
 	{
 		precache_model2 ("progs/b_s_key.mdl");
 		setmodel (self, "progs/b_s_key.mdl");
+	}
+	else
+ 	{
+		precache_model ("progs/w_s_key.mdl");
+		setmodel (self, "progs/w_s_key.mdl");
 	}
 	self.netname = SilverKeyName ();
 	self.items = IT_KEY1;
@@ -801,21 +801,19 @@ In order for keys to work you MUST set your map's worldtype to one of the follow
 
 void() item_key2 =
 {
-
-	if (world.worldtype == WORLDTYPE_MEDIEVAL)
-	{
-		precache_model ("progs/w_g_key.mdl");
-		setmodel (self, "progs/w_g_key.mdl");
-	}
 	if (world.worldtype == WORLDTYPE_METAL)
 	{
 		precache_model ("progs/m_g_key.mdl");
 		setmodel (self, "progs/m_g_key.mdl");
 	}
-	if (world.worldtype == WORLDTYPE_BASE)
+	else if (world.worldtype == WORLDTYPE_BASE)
 	{
 		precache_model2 ("progs/b_g_key.mdl");
 		setmodel (self, "progs/b_g_key.mdl");
+	}
+	else {
+		precache_model ("progs/w_g_key.mdl");
+		setmodel (self, "progs/w_g_key.mdl");
 	}
 	self.netname = GoldKeyName ();
 	self.items = IT_KEY2;

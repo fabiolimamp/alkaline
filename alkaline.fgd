@@ -26,9 +26,9 @@
 	message(string) : "Text on entering the world"
 	worldtype(choices) : "Ambience" : 0 =
 	[
-		0 : "Medieval"
 		1 : "Runic (metal)"
 		2 : "Present (base)"
+		3 : "Medieval"
 	]
 	sounds(integer) : "CD track to play" : 1
 	light(integer) : "Ambient light"
@@ -2205,7 +2205,7 @@ Also, the state of the last evaluation is stored in this entity's 'state' field 
 "
 [
 	include(target_destination) : "Entity's targetname to evaluate (leave empty to evaluate the activator)"
-	style(choices) : "Field to evaluate" : 0 =[
+	style(choices) : "Field to evaluate" : 0 = [
 		0 : "state (float, use 'count' field)"
 		1 : "health (float, use 'count' field)"
 		2 : "weapon (float, use 'count' field)"
@@ -2219,6 +2219,8 @@ Also, the state of the last evaluation is stored in this entity's 'state' field 
 		10 : "items (flag, use 'aflags' field)"
 		11 : "count (float, use 'count' field)"
 		12 : "cnt (float, use 'count' field)"
+		13 : "type (string, use 'type' field)"
+		14 : "targetname2 (string, use 'type' field)"
 	]
 	weapon(choices) : "Operation" : 0 = [
 		0 : "== (equal, valid for all fields)"

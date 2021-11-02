@@ -254,7 +254,7 @@ float   SKILL_HARD      = 2;
 float   SKILL_NIGHTMARE = 3;
 
 // worldtype values
-float	WORLDTYPE_MEDIEVAL		= 0;
+float	WORLDTYPE_MEDIEVAL		= 3; // was 0
 float	WORLDTYPE_METAL			= 1;
 float	WORLDTYPE_BASE			= 2;
 
