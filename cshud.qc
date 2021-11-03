@@ -67,8 +67,8 @@ string weaponprefix[12] = {
 };
 
 string weaponname[12] = {
-	"lightng.lmp",//"axe.lmp",
-	"lightng.lmp",//"chainsaw.lmp",
+	"axe.lmp",//"axe.lmp",
+	"chainsaw.lmp",//"chainsaw.lmp",
 	"shotgun",
 	"sshotgun",
 	"nailgun",
