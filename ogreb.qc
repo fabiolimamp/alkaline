@@ -337,6 +337,8 @@ void() ogreb_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+if (random() < 0.2)
+                ThrowGib ("progs/brz_saw.mdl", self.health);
 		return;
 	}
 
@@ -498,6 +500,7 @@ void() monster_ogreb =
 	precache_model ("progs/ogreb.mdl");
 	precache_model ("progs/h_ogreb.mdl");
 	precache_model ("progs/gib.mdl");
+        precache_model ("progs/brz_saw.mdl");
 
 	precache_sound ("ogre/ogdrag.wav");
 	precache_sound ("ogre/ogdth.wav");
