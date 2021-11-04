@@ -301,6 +301,8 @@ void() enf_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+if (random() < 0.2)
+                ThrowGib ("progs/enf_gun.mdl", self.health);
 		return;
 	}
 
@@ -379,6 +381,7 @@ void() monster_enforcer =
 	precache_model2 ("progs/enforcer.mdl");
 	precache_model2 ("progs/h_mega.mdl");
 	precache_model2 ("progs/laser.mdl");
+        precache_model2 ("progs/enf_gun.mdl");
 
 	precache_sound2 ("enforcer/death1.wav");
 	precache_sound2 ("enforcer/enfire.wav");
