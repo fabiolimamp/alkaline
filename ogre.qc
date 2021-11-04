@@ -556,6 +556,8 @@ void() ogre_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+if (random() < 0.2)
+                ThrowGib ("progs/ogr_gun.mdl", self.health);
 		return;
 	}
 
@@ -696,6 +698,7 @@ void() monster_ogre = {
 	precache_model ("progs/ogre.mdl");
 	precache_model ("progs/h_ogre.mdl");
 	precache_model ("progs/grenade.mdl");
+        precache_model ("progs/ogr_gun.mdl");
 
 	precache_sound ("ogre/ogdrag.wav");
 	precache_sound ("ogre/ogdth.wav");
@@ -767,6 +770,7 @@ void() monster_ogre_marksman = {
 	precache_model ("progs/ogrem.mdl");
 	precache_model ("progs/h_ogre.mdl");
 	precache_model ("progs/grenade.mdl");
+        precache_model ("progs/ogr_gun.mdl");
 
 	precache_sound ("ogre/ogdrag.wav");
 	precache_sound ("ogre/ogdth.wav");
