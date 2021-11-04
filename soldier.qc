@@ -272,6 +272,8 @@ void() army_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+if (random() < 0.2)
+                ThrowGib ("progs/arm_foot.mdl", self.health);
 		return;
 	}
 
@@ -466,6 +468,7 @@ void() monster_army = {
 	precache_model ("progs/gib1.mdl");
 	precache_model ("progs/gib2.mdl");
 	precache_model ("progs/gib3.mdl");
+        precache_model ("progs/arm_foot.mdl");
 	precache_model ("progs/shelcase.mdl");
 
 	precache_sound ("soldier/death1.wav");
