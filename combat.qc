@@ -281,7 +281,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	oldself = self;
 	self = targ;
 
-	if ( (self.flags & FL_MONSTER) && attacker != world)
+	if ( (self.flags & FL_MONSTER) && attacker != world && !(attacker.flags & FL_IGNOREDATTACK))
 	{
 	// get mad unless of the same class (except for soldiers)
 		if (self != attacker && attacker != SUB_entEnemyTarget() )
@@ -295,7 +295,7 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 
 				if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 				self.enemy = attacker;
-				FoundTarget ();
+				FoundTarget();
 			}
 		}
 	}

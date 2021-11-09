@@ -442,16 +442,14 @@ void () func_laser =
 	if (!self.alpha)
 		self.alpha = 0.5;
 		
-	if (!self.dmg)
-		self.dmg = 1;
-	else if (self.dmg == -1)
-		self.dmg = 0;
+	self.flags |= FL_IGNOREDATTACK; // monsters won't try to get mad at the laser
+
+	self.dmg = zeroconvertdefault(self.dmg, 1);
 		
 	self.use = func_laser_use;
 
-
-
 	self.touch = func_laser_touch;
+
 	//spawn a second entity to handle alpha changes, since MOVETYPE_PUSH doesn't support think functions
 	helper = spawn();
 	helper.alpha = self.alpha;

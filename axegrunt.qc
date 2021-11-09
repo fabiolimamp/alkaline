@@ -212,7 +212,7 @@ void()	axe_atk =
 //===========================================================================
 
 
-void()	axe_pain1	=[	$axpain1,	axe_pain2	] {ai_painforward(0);};
+void()	axe_pain1	=[	$axpain1,	axe_pain2	] {};
 void()	axe_pain2	=[	$axpain2,	axe_pain3	] {ai_painforward(-1);};
 void()	axe_pain3	=[	$axpain3,	axe_pain4	] {ai_painforward(-2);};
 void()	axe_pain4	=[	$axpain4,	axe_pain5	] {};
