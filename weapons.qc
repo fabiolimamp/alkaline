@@ -1814,6 +1814,17 @@ void(entity cl) printVersionConsole = {
 	sprint(cl, "\b=============================================\b\n");
 };
 
+void() ToggleBulletHole = {
+	if (bulletmode == 0) {
+		sprint(self, "Bullet holes: enabled\n");
+		bulletmode = 1;
+	}
+	else {
+		sprint(self, "Bullet holes: disabled\n");
+		bulletmode = 0;
+	}
+};
+
 /*
 ============
 ImpulseCommands
@@ -1843,6 +1854,8 @@ void() ImpulseCommands =
 		GiveWeaponsCommand();
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
+	if (self.impulse == 30)
+		ToggleBulletHole();
 	if (self.impulse == 128)
 		printVersionConsole(self);
 		//centerprint(self, VERSION_S);
@@ -1868,6 +1881,8 @@ void() ImpulseCommands =
 
 	if (self.impulse == 222)
 		JBootsCheat();
+
+
 		
 	self.impulse = 0;
 };

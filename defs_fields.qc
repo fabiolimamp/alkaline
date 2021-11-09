@@ -176,6 +176,7 @@ float door_setup_finished;
 // Hipnotic's bullet holes
 entity bulletholes;
 entity lastbullet;
+float bulletmode;
 float numbulletholes, numbulletsframe;
 
 // gravity

@@ -45,6 +45,7 @@ void() InitBulletHoles = {
 	bulletholes = world;
 	lastbullet = world;
 	numbulletholes = 0;
+	bulletmode = 1;
 };
 
 void() remove_bullethole = {
@@ -115,14 +116,20 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 	if (numbulletsframe > BULLETHOLES_MAXFRAME)
 		return;
 
+	if (!bulletmode)
+		return;
+
 	local entity new;
 
 	new = spawn();
 	new.movetype = MOVETYPE_NONE;
 	new.solid = SOLID_NOT;
 	new.classname = "bullethole";
-	setmodel( new, "progs/s_bullet.spr" );
+	
+	setmodel(new, "progs/s_bullet.spr");
+	
 	setsize (new, '0 0 0', '0 0 0');
+	
 
 	new.owner = tgt; // entity whose this bullethole is attached to, world or otherwise
 	new.oldorigin = tgt.absmin;
