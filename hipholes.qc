@@ -119,15 +119,19 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 	if (!bulletmode)
 		return;
 
+	if (tgt.nobullets)
+		return;
+
 	local entity new;
 
 	new = spawn();
 	new.movetype = MOVETYPE_NONE;
 	new.solid = SOLID_NOT;
 	new.classname = "bullethole";
+
 	
 	setmodel(new, "progs/s_bullet.spr");
-	
+	new.frame = floor(random()*2.99);
 	setsize (new, '0 0 0', '0 0 0');
 	
 

@@ -458,7 +458,7 @@ FIELDS
 .float lifetime_finished;
 .string type;
 
-
+.float nobullets;
 
 //
 // fog
