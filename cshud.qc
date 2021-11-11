@@ -74,11 +74,11 @@ string weaponname[12] = {
 	"nailgun",
 	"snailgun",
 	"rlaunch",
-	"lightng.lmp",//"plaunch.lmp",
+	"plaunch.lmp",//"plaunch.lmp",
 	"srlaunch",
 	"lightng.lmp",
-	"lightng.lmp",//"laser.lmp",
-	"lightng.lmp"//"plasma.lmp"
+	"laser.lmp",//"laser.lmp",
+	"plasma.lmp"//"plasma.lmp"
 };
 
 float weaponflags[12] = {
@@ -322,7 +322,7 @@ void(vector pos) Hud_CoopScores_SBar =
 
 void Hud_DrawSBar(vector pos)
 {
-	drawpic(pos, "gfx/alk_sbar.lmp", '448 24 0', '1 1 1', baralpha, 0);
+	
 
 	if (st_items & IT_INVULNERABILITY)
 	{
@@ -331,32 +331,31 @@ void Hud_DrawSBar(vector pos)
 	}
 	else
 	{
-		Hud_DrawLargeValue(pos+'24 0 0', getstatf(STAT_ARMOR), 25);
+		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25);
 		if (st_items & IT_ARMOR3)
-			drawpic(pos, "sb_armor3", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "sb_armor3", '24 24 0', '1 1 1', 1, 0);
 		else if (st_items & IT_ARMOR2)
-			drawpic(pos, "sb_armor2", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "sb_armor2", '24 24 0', '1 1 1', 1, 0);
 		else if (st_items & IT_ARMOR1)
-			drawpic(pos, "sb_armor1", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "sb_armor1", '24 24 0', '1 1 1', 1, 0);
 	}
 
-	Hud_DrawFace(pos+'240 0 0');
-	Hud_DrawLargeValue(pos+'264 0 0', getstatf(STAT_HEALTH), 25);
+	Hud_DrawFace(pos+'176 0 0');
+	Hud_DrawLargeValue(pos+'208 0 0', getstatf(STAT_HEALTH), 25);
 
 	if (st_items & IT_SHELLS)
-		drawpic(pos+'352 0 0', "sb_shells", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "sb_shells", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_NAILS)
-		drawpic(pos+'352 0 0', "sb_nails", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "sb_nails", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_ROCKETS)
-		drawpic(pos+'352 0 0', "sb_rocket", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "sb_rocket", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_CELLS)
-		drawpic(pos+'352 0 0', "sb_cells", '24 24 0', '1 1 1', 1, 0);
-	Hud_DrawLargeValue(pos+'376 0 0', getstatf(STAT_AMMO), 10);
+		drawpic(pos+'336 0 0', "sb_cells", '24 24 0', '1 1 1', 1, 0);
+	Hud_DrawLargeValue(pos+'368 0 0', getstatf(STAT_AMMO), 10);
 };
 
 void Hud_DrawIBar(vector pos)
 {
-	drawpic(pos, "gfx/alk_ibar.lmp", '448 24 0', '1 1 1', baralpha, 0);
 
 	float i;
 	vector offset;
@@ -399,6 +398,7 @@ void Hud_DrawIBar(vector pos)
 	if (st_items2 & 256)
 		drawpic(pos+'440 8 0', "sb_sigil4", '8 16 0', '1 1 1', 1, 0);
 };
+
 
 //======================================================================
 // SCOREBOARD BARS
@@ -519,7 +519,7 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 
 	prevweapons = st_weapons;
 
-	pos_x = (screensize_x-448)/2;
+	pos_x = (screensize_x-464)/2;
 	pos_y = screensize_y;
 
 	//st_items = getstatbits(STAT_ITEMS, 0, 23);
@@ -550,10 +550,15 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 		//Hud_CoopScores_SBar(pos - '0 24 0');
 		Hud_DrawScoreBar_QSClock(pos - '0 24 ');
 	}
-	else
-	{
-		if (hudviewsize <= 110) Hud_DrawSBar(pos - '0 24 0');
+	else if (hudviewsize < 110) {
+		drawpic(pos - '0 48 0', "gfx/alk_hud_large.lmp", '464 48 0', '1 1 1', baralpha, 0);
+		Hud_DrawIBar(pos - '-8 48 0');
+		Hud_DrawSBar(pos - '0 24 0');
 	}
-	if (hudviewsize <= 100) Hud_DrawIBar(pos - '0 48 0');
+	
+	else if (hudviewsize == 110) {
+		drawpic(pos - '0 24 0', "gfx/alk_sbar.lmp", '464 24 0', '1 1 1', baralpha, 0);
+		Hud_DrawSBar(pos - '0 24 0');
+	}
 	
 };
