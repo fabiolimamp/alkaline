@@ -209,6 +209,10 @@ void(entity attacker, float damage)	dread_pain =
 {
 	local float r;
 
+	if (self.health < self.max_health * 0.1) 		self.skin = 3;
+	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
+	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
+
 	r = random ();
 	if (self.pain_finished > time)
 		return; 	// too soon
@@ -284,6 +288,7 @@ void() dread_die =
 {
 	if (self.health < -35) // gib
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_dread.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -300,6 +305,7 @@ void() dread_die =
 		else
 			dread_fdie1 ();
 	}
+	self.skin = 3;
 
 	if (self.attack_finished > time) //turn off flame sound
 	{

@@ -479,6 +479,10 @@ void(entity attacker, float damage)	ogre_pain =
 {
 	local float	r;
 
+	if (self.health < self.max_health * 0.1) 		self.skin = 3;
+	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
+	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
+
 // don't make multiple pain sounds right after each other
 	if (self.pain_finished > time)
 		return;
@@ -550,17 +554,18 @@ void() ogre_die =
 	if (self.health < -80)
 	{
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+		self.skin = 0;
 		ThrowHead ("progs/h_ogre.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-if (random() < 0.2)
+		if (random() < 0.2)
                 ThrowGib ("progs/ogr_gun.mdl", self.health);
 		return;
 	}
-
+	self.skin = 3;
 	sound (self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
 	
 	if (random() < 0.5)
@@ -770,7 +775,7 @@ void() monster_ogre_marksman = {
 	precache_model ("progs/ogrem.mdl");
 	precache_model ("progs/h_ogre.mdl");
 	precache_model ("progs/grenade.mdl");
-        precache_model ("progs/ogr_gun.mdl");
+    precache_model ("progs/ogr_gun.mdl");
 
 	precache_sound ("ogre/ogdrag.wav");
 	precache_sound ("ogre/ogdth.wav");

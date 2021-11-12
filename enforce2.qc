@@ -451,6 +451,9 @@ void(entity attacker, float damage)	menf_pain =
 {
 	local float r;
 
+	if (self.health < self.max_health * 0.25) 		self.skin = 3;
+	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
+	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
 
 	if (self.pain_finished > time || self.health > 120)
 		return;
@@ -526,6 +529,7 @@ void() menf_die =
 // check for gib
 	if (self.health < -35)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_me.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -535,7 +539,7 @@ void() menf_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		return;
 	}
-
+	self.skin = 3;
 // regular death
 	if (random() > 0.5)
 	{

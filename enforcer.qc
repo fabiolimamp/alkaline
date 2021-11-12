@@ -220,6 +220,10 @@ void(entity attacker, float damage)	enf_pain =
 {
 	local float r;
 
+	if (self.health < self.max_health * 0.1) 		self.skin = 3;
+	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
+	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
+
 	r = random ();
 	if (self.pain_finished > time)
 		return;
@@ -294,6 +298,7 @@ void() enf_die =
 // check for gib
 	if (self.health < -35)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_mega.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -301,11 +306,11 @@ void() enf_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-if (random() < 0.2)
-                ThrowGib ("progs/enf_gun.mdl", self.health);
+		if (random() < 0.2)
+        	ThrowGib ("progs/enf_gun.mdl", self.health);
 		return;
 	}
-
+	self.skin = 3;
 // regular death
 	sound (self, CHAN_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
 	if (random() > 0.5)

@@ -255,9 +255,9 @@ void(entity attacker, float damage)	sham_pain =
 {
 	sound (self, CHAN_VOICE, "shambler/shurt2.wav", 1, ATTN_NORM);
 
-	if (self.health < 150) 		self.skin = 3;
-	else if (self.health < 300 && self.health >= 150)	self.skin = 2;
-	else if (self.health < 450 && self.health >= 300)	self.skin = 1;
+	if (self.health < self.max_health * 0.25) 		self.skin = 3;
+	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
+	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
 
 	if (self.health <= 0)
 		return;		// allready dying, don't go into pain frame
@@ -302,7 +302,7 @@ void() sham_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		return;
 	}
-
+	self.skin = 3;
 // regular death
 	sound (self, CHAN_VOICE, "shambler/sdeath.wav", 1, ATTN_NORM);
 	sham_death1 ();
