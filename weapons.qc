@@ -19,6 +19,7 @@ void() W_Precache =
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
 	precache_sound ("weapons/shotgn2.wav");		// super shotgun
 	precache_sound ("weapons/axhit4.wav");		// extra axe sound for melee - greenwood
+	precache_sound ("weapons/spindn.wav");		// super nailgun spindown
 	
 	precache_sound ("enforcer/enfstop.wav");	// laser cannon
 	
@@ -806,7 +807,7 @@ void() W_FireSuperSpikes =
 	newmis.touch = superspike_touch;
 	setmodel (newmis, "progs/s_spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
-	self.punchangle_x = -2;
+	//self.punchangle_x = -2;
 };
 
 void(float ox) W_FireSpikes =
@@ -974,7 +975,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_SUPER_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
-		self.weaponmodel = "progs/v_nail2.mdl";
+		self.weaponmodel = "progs/v_nail3.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
@@ -1112,7 +1113,8 @@ void()	player_axeb1;
 void()	player_axec1;
 void()	player_axed1;
 void()	player_shot1;
-void()	player_nail1;
+void()	player_nail;
+void()	player_super_nail;
 void()	player_light1;
 void()	player_rocket1;
 void()	player_laser1;
@@ -1157,11 +1159,11 @@ void() W_Attack =
 	}
 	else if (self.weapon == WEAPON_NAILGUN)
 	{
-		player_nail1 ();
+		player_nail ();
 	}
 	else if (self.weapon == WEAPON_SUPER_NAILGUN)
 	{
-		player_nail1 ();
+		player_super_nail ();
 	}
 	else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 	{

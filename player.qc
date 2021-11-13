@@ -124,8 +124,8 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 		
 		return;
 	}
-	else
-		self.weaponframe=0;
+	else if(!(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1))
+		self.weaponframe = 0;
 	
 	if (self.weapon == WEAPON_AXE)
 	{
@@ -166,8 +166,8 @@ void()	player_run =[	$rockrun1,	player_run	]
 		self.walkframe = self.walkframe + 1;
 		return;
 	}
-	else
-		self.weaponframe=0;
+	else if(!(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1))
+		self.weaponframe = 0;
 	
 	if (self.weapon == WEAPON_AXE)
 	{
@@ -261,32 +261,87 @@ void() player_chainsaw6   =[$sawatt2, player_run  ]
 
 //============================================================================
 
-void() player_nail1   =[$nailatt1, player_nail2  ] 
-{
-	self.effects = self.effects | EF_MUZZLEFLASH;
 
-	if (!self.button0)
-		{player_run ();return;}
-	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
-		self.weaponframe = 1;
-	SuperDamageSound();
-	W_FireSpikes (3);
-	self.attack_finished = time + 0.2;
-};
-void() player_nail2   =[$nailatt2, player_nail1  ]
-{
-	self.effects = self.effects | EF_MUZZLEFLASH;
+void() player_nail = {
+	if (!self.button0) {
+		player_run();
+		return;
+	}
+		
+	self.effects |= EF_MUZZLEFLASH;
 
-	if (!self.button0)
-		{player_run ();return;}
-	self.weaponframe = self.weaponframe + 1;
-	if (self.weaponframe == 9)
+	if (self.frame != $nailatt1)
+		self.frame = $nailatt1;
+	else 
+		self.frame += 1;
+
+	self.think = player_nail;
+	self.nextthink = time + 0.1;
+	
+	
+	self.weaponframe++;
+	if (self.weaponframe > 9)
 		self.weaponframe = 1;
-	SuperDamageSound();
-	W_FireSpikes (-3);
+		
+	float offs;
+	if (self.frame == $nailatt1) offs = 3;
+	else offs = -3;
+	W_FireSpikes(offs);
+
 	self.attack_finished = time + 0.2;
-};
+}
+
+void() super_nail_spindown = {
+
+	self.weaponframe += 1;
+	player_run();
+	
+	if (self.weaponframe < 51) {
+		self.think = super_nail_spindown;		
+		self.nextthink = time + 0.025;
+	}	
+	else {
+		self.cnt = 0;
+	}
+}
+
+
+void() player_super_nail = {
+
+	self.weaponframe = self.weaponframe + 1;	
+	
+	if (self.weaponframe >= 9)
+		self.weaponframe = 1;
+
+	self.cnt = 0; //using this to keep track of if we're spinning down or not;
+
+	if (!self.button0)	{	
+		player_run();
+		self.cnt = 1;
+		super_nail_spindown();
+		sound (self, CHAN_AUTO, "weapons/spindn.wav", 1, ATTN_NONE);	
+		return;
+	}
+
+
+	if ((self.weaponframe == 1 || self.weaponframe == 5) && self.ammo_nails >= 1) {
+
+		self.punchangle_x = -2;
+
+		self.effects |= EF_MUZZLEFLASH;
+
+		if (self.frame != $nailatt1)
+			self.frame = $nailatt1;
+		else 
+			self.frame += 1;
+
+		W_FireSpikes(0);
+	}
+	
+	self.think = player_super_nail;
+	self.nextthink = time + 0.025;
+}
+
 
 void() player_light1   =[$light1, player_light2  ] 
 {
