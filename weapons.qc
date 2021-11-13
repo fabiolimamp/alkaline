@@ -877,12 +877,12 @@ void() spike_touch =
 		WriteCoord (MSG_BROADCAST, self.origin_x);
 		WriteCoord (MSG_BROADCAST, self.origin_y);
 		WriteCoord (MSG_BROADCAST, self.origin_z);
-		
-		makevectors(self.angles);
-		traceline(self.origin, self.origin + v_forward*32, TRUE, self);
-		//dprint2(ftos(trace_fraction),"\n");
-		//dprint2(trace_ent.classname, "\n");
-		if (trace_fraction != 1) placebullethole(trace_endpos, trace_plane_normal, trace_ent);
+
+		if (self.owner.classname != "trap_shooter" && self.owner.classname != "trap_spikeshooter") {
+			makevectors(self.angles);
+			traceline(self.origin, self.origin + v_forward*32, TRUE, self);
+			if (trace_fraction != 1) placebullethole(trace_endpos, trace_plane_normal, trace_ent);
+		}
 	}
 
 	remove(self);
@@ -919,9 +919,11 @@ void() superspike_touch =
 		WriteCoord (MSG_BROADCAST, self.origin_y);
 		WriteCoord (MSG_BROADCAST, self.origin_z);
 
-		makevectors(self.angles);
-		traceline(self.origin, self.origin + v_forward*32, TRUE, self);
-		if (trace_fraction != 1) placebullethole(trace_endpos, trace_plane_normal, trace_ent);
+		if (self.owner.classname != "trap_shooter" && self.owner.classname != "trap_spikeshooter") {
+			makevectors(self.angles);
+			traceline(self.origin, self.origin + v_forward*32, TRUE, self);
+			if (trace_fraction != 1) placebullethole(trace_endpos, trace_plane_normal, trace_ent);
+		}
 	}
 
 	remove(self);
