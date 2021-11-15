@@ -1,6 +1,5 @@
 void(float apilevel, string enginename, float engineversion) CSQC_Init = {
-	precache_pic("gfx/alk_sbar.lmp", FALSE);
-	precache_pic("gfx/alk_ibar.lmp", FALSE);
+
 };
 
 float(float save, float take, vector dir) CSQC_Parse_Damage = {

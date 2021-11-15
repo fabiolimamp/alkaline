@@ -21,64 +21,63 @@ float HUDFONT_RED = 2;		// index = index + 128
 vector HUDRGB_DEF = '1 1 1';
 
 string number[10] = {
-	"num_0",
-	"num_1",
-	"num_2",
-	"num_3",
-	"num_4",
-	"num_5",
-	"num_6",
-	"num_7",
-	"num_8",
-	"num_9"
+	"gfx/xnum_0",
+	"gfx/xnum_1",
+	"gfx/xnum_2",
+	"gfx/xnum_3",
+	"gfx/xnum_4",
+	"gfx/xnum_5",
+	"gfx/xnum_6",
+	"gfx/xnum_7",
+	"gfx/xnum_8",
+	"gfx/xnum_9"
 };
 string anumber[10] = {
-	"anum_0",
-	"anum_1",
-	"anum_2",
-	"anum_3",
-	"anum_4",
-	"anum_5",
-	"anum_6",
-	"anum_7",
-	"anum_8",
-	"anum_9"
+	"gfx/xanum_0",
+	"gfx/xanum_1",
+	"gfx/xanum_2",
+	"gfx/xanum_3",
+	"gfx/xanum_4",
+	"gfx/xanum_5",
+	"gfx/xanum_6",
+	"gfx/xanum_7",
+	"gfx/xanum_8",
+	"gfx/xanum_9"
 };
 
-string faceid[14] = {
+string faceid[10] = {
 	"face5", "face4", "face3", "face2", "face1",
-	"face_p5", "face_p4", "face_p3", "face_p2", "face_p1",
-	"face_inv2", "face_quad", "face_invis", "face_invul2"
+	"face_p5", "face_p4", "face_p3", "face_p2", "face_p1"
 };
 
 string weaponprefix[12] = {
 	"gfx/",
 	"gfx/",
-	"",
-	"",
-	"",
-	"",
-	"",
 	"gfx/",
-	"",
+	"gfx/",
+	"gfx/",
+	"gfx/",
+	"gfx/",
+	"gfx/",
+	"gfx/",
 	"gfx/",
 	"gfx/",
 	"gfx/"
 };
 
 string weaponname[12] = {
-	"axe.lmp",//"axe.lmp",
-	"chainsaw.lmp",//"chainsaw.lmp",
+	"axe",//"axe.lmp",
+	"chainsaw",//"chainsaw.lmp",
 	"shotgun",
 	"sshotgun",
 	"nailgun",
 	"snailgun",
 	"rlaunch",
-	"plaunch.lmp",//"plaunch.lmp",
+	"plaunch",//"plaunch.lmp",
 	"srlaunch",
-	"lightng.lmp",
-	"laser.lmp",//"laser.lmp",
-	"plasma.lmp"//"plasma.lmp"
+	"alightng",
+	"laser",//"laser.lmp",
+	"plasma"//"plasma.lmp"
 };
 
 float weaponflags[12] = {
@@ -195,12 +194,15 @@ void(vector pos, float value, float threshhold) Hud_DrawLargeValue =
 	if (value>999)
 		value = 999;
 
+	for (len = 0; len < 3; len++) {
+		drawpic(pos+ len * '24 0 0', "gfx/numbk_non", '24 24 0', '1 1 1', 1, 0);
+	}
+
 	s = ftos(floor(value));
 	len = strlen(s);
 
 	pos_x += 24 * (3-len);
 	
-
 	if (value <= threshhold)
 	{	//use alternate (red) numbers
 
@@ -257,17 +259,39 @@ void(vector pos) Hud_DrawFace =
 	string face;
 	local float hpframe;
 
-	// Start with InvRing as it has two states
-	if (st_items & IT_INVISIBILITY) {
-		// InvRing + Pentagram!?! WTF!?! SandyP E4 design!
-		if (st_items & IT_INVULNERABILITY) face = faceid[10];
-		// Just InvRing only
-		else face = faceid[12];
+	
+	
+	if (st_items & IT_TRIFECTA){
+		// trifecta + invisibliity
+		if (st_items & IT_INVISIBILITY)
+			face = "gfx/face_tri2";
+		// trifecta
+		else
+			face = "gfx/face_tri";
 	}
-	// Quad only
-	else if (st_items & IT_QUAD) face = faceid[11];
-	// Pentagram only
-	else if (st_items & IT_INVULNERABILITY) face = faceid[13];
+	// invisibility + pentagram + quad
+	else if (st_items & (IT_INVISIBILITY | IT_INVULNERABILITY | IT_QUAD) == (IT_INVISIBILITY | IT_INVULNERABILITY | IT_QUAD))
+		face = "gfx/face_allbuttri";
+	// invisibility + pentagram
+	else if (st_items & (IT_INVISIBILITY | IT_INVULNERABILITY) == (IT_INVISIBILITY | IT_INVULNERABILITY))
+		face = "gfx/face_inv2";
+	// invisibility + quad
+	else if (st_items & (IT_INVISIBILITY | IT_QUAD) ==  (IT_INVISIBILITY | IT_QUAD))
+		face = "gfx/face_invisquad";
+	// pentagram + quad
+	else if (st_items & (IT_INVULNERABILITY | IT_QUAD) == (IT_INVULNERABILITY | IT_QUAD))
+		face = "gfx/face_inv3";
+	// invisibility only
+	else if (st_items & IT_INVISIBILITY)
+		face = "gfx/face_invis";
+	// Quad
+	else if (st_items & IT_QUAD)
+		face = "gfx/face_quad";
+	// Pentagram
+	else if (st_items & IT_INVULNERABILITY){
+		face = "gfx/face_invul2";
+	}
+
 	// Regular face
 	else {
 		// Work out face based on HP (100/80/60/40/20)
@@ -324,34 +348,43 @@ void Hud_DrawSBar(vector pos)
 {
 	
 
-	if (st_items & IT_INVULNERABILITY)
-	{
-		drawpic(pos, "disc", '24 24 0', '1 1 1', 1, 0);
-		Hud_DrawLargeValue(pos+'24 0 0', 999, 25);
+	if (st_items & IT_TRIFECTA)	{
+		drawpic(pos + '16 0 0', "gfx/sb_aarmortri", '112 24 0', '1 1 1', 1, 0);
 	}
-	else
-	{
-		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25);
+	else if (st_items & IT_INVULNERABILITY) {
+		drawpic(pos + '16 0 0', "gfx/sb_aarmor666", '112 24 0', '1 1 1', 1, 0);
+	}
+	else {
 		if (st_items & IT_ARMOR3)
-			drawpic(pos+'16 0 0', "sb_armor3", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "gfx/sb_aarmor3", '24 24 0', '1 1 1', 1, 0);
 		else if (st_items & IT_ARMOR2)
-			drawpic(pos+'16 0 0', "sb_armor2", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "gfx/sb_aarmor2", '24 24 0', '1 1 1', 1, 0);
 		else if (st_items & IT_ARMOR1)
-			drawpic(pos+'16 0 0', "sb_armor1", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "gfx/sb_aarmor1", '24 24 0', '1 1 1', 1, 0);
+
+		drawpic(pos+'40 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
+		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25);
+		drawpic(pos+'120 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
 	}
 
 	Hud_DrawFace(pos+'176 0 0');
+	
+	drawpic(pos+'200 0 0', "gfx/numbk_l2", '8 24 0', '1 1 1', 1, 0);
 	Hud_DrawLargeValue(pos+'208 0 0', getstatf(STAT_HEALTH), 25);
+	drawpic(pos+'280 0 0', "gfx/numbk_r2", '8 24 0', '1 1 1', 1, 0);
 
 	if (st_items & IT_SHELLS)
-		drawpic(pos+'336 0 0', "sb_shells", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "gfx/sb_ashells", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_NAILS)
-		drawpic(pos+'336 0 0', "sb_nails", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "gfx/sb_anails", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_ROCKETS)
-		drawpic(pos+'336 0 0', "sb_rocket", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "gfx/sb_arocket", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_CELLS)
-		drawpic(pos+'336 0 0', "sb_cells", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "gfx/sb_cells", '24 24 0', '1 1 1', 1, 0);
+
+	drawpic(pos+'360 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
 	Hud_DrawLargeValue(pos+'368 0 0', getstatf(STAT_AMMO), 10);
+	drawpic(pos+'440 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
 };
 
 void Hud_DrawIBar(vector pos)
@@ -360,8 +393,7 @@ void Hud_DrawIBar(vector pos)
 	float i;
 	vector offset;
 	for (i = 0; i < 12; i++) {
-		offset = '0 8 0';
-		offset_x = i * 24;
+		offset = [i * 24, 8, 0];
 		Hud_DrawWeapon(i, pos + offset);
 	}
 	
@@ -372,31 +404,31 @@ void Hud_DrawIBar(vector pos)
 	Hud_DrawAmmoCount(3, pos + '154 0 0', FALSE);
 
 	if (st_items & IT_KEY1)
-		drawpic(pos+'288 8 0', "sb_key1", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'288 8 0', "gfx/sb_key1", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_KEY2)
-		drawpic(pos+'304 8 0', "sb_key2", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'304 8 0', "gfx/sb_key2", '16 16 0', '1 1 1', 1, 0);
 
 	if (st_items & IT_INVISIBILITY)
-		drawpic(pos+'320 8 0', "sb_invis", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'320 8 0', "gfx/sb_invis", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_INVULNERABILITY)
-		drawpic(pos+'336 8 0', "sb_invuln", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 8 0', "gfx/sb_invuln", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_SUIT)
-		drawpic(pos+'352 8 0', "sb_suit", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'352 8 0', "gfx/sb_suit", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_QUAD)
-		drawpic(pos+'368 8 0', "sb_quad", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'368 8 0', "gfx/sb_quad", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_TRIFECTA)
-		drawpic(pos+'384 8 0', "gfx/sb_trifecta.lmp", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'384 8 0', "gfx/sb_trifecta", '16 16 0', '1 1 1', 1, 0);
 	if (st_boots)
-		drawpic(pos+'400 8 0', "gfx/sb_boots.lmp", '16 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'400 8 0', "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
 
 	if (st_items2 & 32)
-		drawpic(pos+'416 8 0', "sb_sigil1", '8 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'416 8 0', "gfx/sb_sigil1", '8 16 0', '1 1 1', 1, 0);
 	if (st_items2 & 64)
-		drawpic(pos+'424 8 0', "sb_sigil2", '8 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'424 8 0', "gfx/sb_sigil2", '8 16 0', '1 1 1', 1, 0);
 	if (st_items2 & 128)
-		drawpic(pos+'432 8 0', "sb_sigil3", '8 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'432 8 0', "gfx/sb_sigil3", '8 16 0', '1 1 1', 1, 0);
 	if (st_items2 & 256)
-		drawpic(pos+'440 8 0', "sb_sigil4", '8 16 0', '1 1 1', 1, 0);
+		drawpic(pos+'440 8 0', "gfx/sb_sigil4", '8 16 0', '1 1 1', 1, 0);
 };
 
 
@@ -440,17 +472,15 @@ void(vector pos, float bx, float by, float bwidth, float bheight, float pixelspe
 };
 
 
-void(vector pos) Hud_DrawScoreBar_QSClock =
-{
+void(vector pos) Hud_DrawScoreBar_QSClock = {
 	local string skill_str, map_str;
 	local float digit, skill_no;
 	local float nsecs, nmins;
 	
 	// Clear status bar ready for map info/scores
-	drawpic(pos, "gfx/alk_scorebar.lmp", [448, 24], '1 1 1', baralpha, 0);
+	drawpic(pos, "gfx/alk_scorebar", [464, 24], '1 1 1', baralpha, 0);
 
 	// Display headings
-	
 
 	drawstring(pos+[8,12], "Kills:", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
 	Hud_DrawNoFont8(pos+[56,12], getstatf(STAT_KILLEDMONSTERS), 3, FALSE, HUDFONT_WHITE);
@@ -462,9 +492,7 @@ void(vector pos) Hud_DrawScoreBar_QSClock =
 	Hud_DrawNoFont8(pos+[88,12], getstatf(STAT_TOTALMONSTERS), digit, FALSE, HUDFONT_WHITE);
 
 
-
 	// Display monster/secret totals
-
 
 
 	// Work out time passed
@@ -497,19 +525,8 @@ void(vector pos) Hud_DrawScoreBar_QSClock =
 	Hud_ScrollTextBox(pos, 8, 4, 432, 8, 16, map_str);
 };
 
-void() Hud_Init
-{
-	float i;
-	precache_pic("sbar", TRUE);
-	for (i = 0; i < 10; i++)
-	{
-		precache_pic(number[i], TRUE);
-		precache_pic(anumber[i], TRUE);
-	}
-};
 
-nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float height)
-{
+nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float height) {
 	vector pos;
 	float hudviewsize;
 	float i;
@@ -545,20 +562,26 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 	//if hudtype == 0 then the engine already drew it.
 
 	
-	if (scoreboard)
-	{
+	if (scoreboard)	{
 		//Hud_CoopScores_SBar(pos - '0 24 0');
 		Hud_DrawScoreBar_QSClock(pos - '0 24 ');
 	}
-	else if (hudviewsize < 110) {
-		drawpic(pos - '0 48 0', "gfx/alk_hud_large.lmp", '464 48 0', '1 1 1', baralpha, 0);
+
+	if (hudviewsize < 110) {
+		drawpic(pos - '0 48 0', "gfx/alk_ibar", '464 24 0', '1 1 1', baralpha, 0);
 		Hud_DrawIBar(pos - '-8 48 0');
-		Hud_DrawSBar(pos - '0 24 0');
+
+		if (!scoreboard) {
+			drawpic(pos - '0 24 0', "gfx/alk_sbar", '464 24 0', '1 1 1', baralpha, 0);
+			Hud_DrawSBar(pos - '0 24 0');
+		}
 	}
 	
-	else if (hudviewsize == 110) {
-		drawpic(pos - '0 24 0', "gfx/alk_sbar.lmp", '464 24 0', '1 1 1', baralpha, 0);
+	else if (hudviewsize == 110 && !scoreboard) {
+		drawpic(pos - '0 24 0', "gfx/alk_sbar_solo", '464 24 0', '1 1 1', baralpha, 0);
 		Hud_DrawSBar(pos - '0 24 0');
 	}
+
+
 	
 };
