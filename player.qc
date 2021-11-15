@@ -309,9 +309,11 @@ void() player_nail = {
 	self.nextthink = time + 0.1;
 	
 	
-	self.weaponframe++;
-	if (self.weaponframe > 9)
+	
+	if (self.weaponframe >= 8)
 		self.weaponframe = 1;
+	else
+		self.weaponframe++;
 		
 	float offs;
 	if (self.frame == $nailatt1) offs = 3;
