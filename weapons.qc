@@ -19,7 +19,7 @@ void() W_Precache =
 	precache_sound ("weapons/bounce.wav");		// grenade bounce
 	precache_sound ("weapons/shotgn2.wav");		// super shotgun
 	precache_sound ("weapons/axhit4.wav");		// extra axe sound for melee - greenwood
-	precache_sound ("weapons/spindn.wav");		// super nailgun spindown
+	precache_sound ("weapons/spindn_click.wav");		// super nailgun spindown click
 	
 	precache_sound ("enforcer/enfstop.wav");	// laser cannon
 	
@@ -838,7 +838,7 @@ void(float ox) W_FireSpikes =
 	}
 
 	makevectors (self.v_angle);
-	
+
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
 	self.currentammo = self.ammo_nails = self.ammo_nails - 1;

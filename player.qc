@@ -142,6 +142,25 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 	self.walkframe = self.walkframe + 1;	
 };
 
+void() player_super_nail_spindown = {
+
+	// thinks run at 4x the usual speed while spinning down,
+	// so only update every 4 weaponframes
+	if (self.weaponframe % 4 == 0) {
+		if (self.walkframe == 6)
+			self.walkframe = 0;
+		self.frame = $axrun1 + self.walkframe;
+		
+		self.walkframe = self.walkframe + 1;
+
+		if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND) {
+			// Need to be moving before feet sounds
+			if (fabs(self.velocity_x + self.velocity_y) > 50) play_footstep(FALSE);
+		}
+	}
+	
+}
+
 void()	player_run =[	$rockrun1,	player_run	]
 {
 	if (!self.velocity_x && !self.velocity_y)
@@ -151,6 +170,11 @@ void()	player_run =[	$rockrun1,	player_run	]
 		return;
 	}
 	
+	if (self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1) {
+		player_super_nail_spindown();
+		return;
+	}
+
 	if (self.weapon == WEAPON_CHAINSAW)
 	{
 		self.weaponframe = self.weaponframe + 1;
@@ -166,9 +190,9 @@ void()	player_run =[	$rockrun1,	player_run	]
 		self.walkframe = self.walkframe + 1;
 		return;
 	}
-	else if(!(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1))
-		self.weaponframe = 0;
 	
+	self.weaponframe = 0;
+
 	if (self.weapon == WEAPON_AXE)
 	{
 		if (self.walkframe == 6)
@@ -182,11 +206,12 @@ void()	player_run =[	$rockrun1,	player_run	]
 		self.frame = self.frame + self.walkframe;
 	}
 
-	if ((self.walkframe == 2 || self.walkframe == 5) && self.flags & FL_ONGROUND) {
+	self.walkframe = self.walkframe + 1;
+
+	if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND) {
 		// Need to be moving before feet sounds
 		if (fabs(self.velocity_x + self.velocity_y) > 50) play_footstep(FALSE);
 	}
-	self.walkframe = self.walkframe + 1;
 };
 
 
@@ -302,10 +327,11 @@ void() super_nail_spindown = {
 	self.weaponframe += 1;
 	player_run();
 	
-	if (self.weaponframe == 40) sound (self, CHAN_AUTO, "weapons/spindn.wav", 0.2, ATTN_NORM);
+	if (self.weaponframe == 25) sound (self, 7, "weapons/spindn_click.wav", 0.15, ATTN_NORM);
+	if (self.weaponframe == 48) sound (self, 7, "weapons/spindn_click.wav", 0.3, ATTN_NORM);
 
 	if (self.weaponframe < 51) {
-		self.think = super_nail_spindown;		
+		self.think = super_nail_spindown;
 		self.nextthink = time + 0.025;
 	}	
 	else {
