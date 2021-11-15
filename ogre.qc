@@ -479,9 +479,10 @@ void(entity attacker, float damage)	ogre_pain =
 {
 	local float	r;
 
-	if (self.health < self.max_health * 0.1) 		self.skin = 3;
-	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
-	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
+	if (!(self.spawnflags & MONSTER_ORIGINAL)) {
+		if (self.health < self.max_health * 0.4)	self.skin = 2;
+		else if (self.health < self.max_health * 0.8)	self.skin = 1;
+	}
 
 // don't make multiple pain sounds right after each other
 	if (self.pain_finished > time)
@@ -565,7 +566,8 @@ void() ogre_die =
                 ThrowGib ("progs/ogr_gun.mdl", self.health);
 		return;
 	}
-	self.skin = 3;
+	if (!(self.spawnflags & MONSTER_ORIGINAL)) self.skin = 3;
+	
 	sound (self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
 	
 	if (random() < 0.5)
@@ -666,7 +668,8 @@ void(entity e) monster_ogre_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/ogre.mdl");
+	if (self.spawnflags & MONSTER_ORIGINAL) setmodel (self, "progs/ogre.mdl");
+	else setmodel (self, "progs/ogre_alk.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
@@ -700,10 +703,12 @@ void() monster_ogre = {
 		remove(self);
 		return;
 	}
-	precache_model ("progs/ogre.mdl");
+	if (self.spawnflags & MONSTER_ORIGINAL) precache_model ("progs/ogre.mdl");
+	else precache_model ("progs/ogre_alk.mdl");
+
 	precache_model ("progs/h_ogre.mdl");
 	precache_model ("progs/grenade.mdl");
-        precache_model ("progs/ogr_gun.mdl");
+    precache_model ("progs/ogr_gun.mdl");
 
 	precache_sound ("ogre/ogdrag.wav");
 	precache_sound ("ogre/ogdth.wav");
