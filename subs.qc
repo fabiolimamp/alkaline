@@ -596,3 +596,142 @@ void(float hud_item) update_hud_totals =
 		}
 	}
 };
+
+
+void(float altfoot) play_footstep = {
+	local float footstep, footstepnext, footvol;
+	local string footstepwav;
+	
+	if (self.health < 1) return;
+	if (self.movetype == MOVETYPE_NOCLIP) return;
+	if (self.watertype < CONTENT_EMPTY) return;
+	if (self.steptype == FS_FLYING) return;
+	
+	// Wide volume range for player
+	if (self.flags & FL_CLIENT) footvol = 0.2 + random()*0.2;
+	// feetsteps need to be louder during combat
+	else if (self.enemy) footvol = 1;
+	// Dogs have too many legs making noise, reduce volume	
+	//else if (self.classtype == CT_MONDOG) footvol = 0.2 + random()*0.6;
+	// Slight random volume level out of combat
+	else footvol = 0.7 + random()*0.3;
+	
+	// Decide which foot sound to play, long live clubfoot!
+	if (altfoot) {
+		// Switch to ALTernative foot sound
+		footstep = self.altsteptype;
+		if (self.altsteplast < 1) self.altsteplast = rint(1 + random()*6);
+
+		// Increase footstep sound index by one 
+		footstepnext = rint(self.altsteplast + 1);
+		// Every loop around, randomly reset
+		if (footstepnext > 7) footstepnext = rint(1 + random()*6);
+		self.altsteplast = footstepnext;
+	}
+	else {
+		// Setup last footstep sound
+		footstep = self.steptype;
+		if (self.steplast < 1) self.steplast = rint(1 + random()*6);
+
+		// Player is randomly selected footsteps
+		if (self.flags & FL_CLIENT) {
+			// Quake random function is not really super random
+			// Probably a bad seed starting point for function
+			// Use 3 randoms to create something more random!
+			footstepnext = rint(self.steplast + random() + random() + random());
+			if (footstepnext > 7) footstepnext = footstepnext - 7;
+		}
+		else {
+			// Increase footstep sound index by one 
+			footstepnext = rint(self.steplast + 1);
+			// Every loop around, randomly reset
+			if (footstepnext > 7) footstepnext = rint(1 + random()*6);
+		}
+
+		// update last footstep index
+		self.steplast = footstepnext;
+	}
+	
+	// Cycle through all footstep types and work out correct sound file
+	// All footstep types reduced down to 5 possible choices (speed things up)
+	// Could store sound files with entity and cycle round quicker, req more memory
+	// re-checking the sound file every footstep is costly on time
+	// Luckly most footstep sounds are several frames apart (too noisy as well)
+	/*if (footstep == FS_TYPELIGHT) {
+		// Light heal/ paw sound
+		if (footstepnext < 2) footstepwav = SOUND_FS_LIGHT1;
+		else if (footstepnext < 3) footstepwav = SOUND_FS_LIGHT2;
+		else if (footstepnext < 4) footstepwav = SOUND_FS_LIGHT3;
+		else if (footstepnext < 5) footstepwav = SOUND_FS_LIGHT4;
+		else footstepwav = SOUND_FS_LIGHT5;
+	}
+	else if (footstep == FS_TYPEMEDIUM) {
+		// Average foot/boot sound
+		if (footstepnext < 2) footstepwav = SOUND_FS_MEDIUM1;
+		else if (footstepnext < 3) footstepwav = SOUND_FS_MEDIUM2;
+		else if (footstepnext < 4) footstepwav = SOUND_FS_MEDIUM3;
+		else if (footstepnext < 5) footstepwav = SOUND_FS_MEDIUM4;
+		else footstepwav = SOUND_FS_MEDIUM5;
+	}
+	else if (footstep == FS_TYPEHEAVY) {
+		// Heavy foot with slight echo
+		if (footstepnext < 2) footstepwav = SOUND_FS_HEAVY1;
+		else if (footstepnext < 3) footstepwav = SOUND_FS_HEAVY2;
+		else if (footstepnext < 4) footstepwav = SOUND_FS_HEAVY3;
+		else if (footstepnext < 5) footstepwav = SOUND_FS_HEAVY4;
+		else footstepwav = SOUND_FS_HEAVY5;
+	}
+	else if (footstep == FS_TYPELARGE) {
+		// Large foot with large echo
+		if (footstepnext < 2) footstepwav = SOUND_FS_LARGE1;
+		else if (footstepnext < 3) footstepwav = SOUND_FS_LARGE2;
+		else if (footstepnext < 4) footstepwav = SOUND_FS_LARGE3;
+		else if (footstepnext < 5) footstepwav = SOUND_FS_LARGE4;
+		else footstepwav = SOUND_FS_LARGE5;
+	}
+	else if (footstep == FS_TYPEGIANT) {
+		// Giant foot with long echo
+		if (footstepnext < 2) footstepwav = SOUND_FS_GIANT1;
+		else if (footstepnext < 3) footstepwav = SOUND_FS_GIANT2;
+		else if (footstepnext < 4) footstepwav = SOUND_FS_GIANT3;
+		else if (footstepnext < 5) footstepwav = SOUND_FS_GIANT4;
+		else footstepwav = SOUND_FS_GIANT5;
+	}
+	else if (footstep == FS_TYPECUSTOM) {
+		// Custom feet sounds (usually boss type creatures)
+		if (footstepnext < 2) footstepwav = self.stepc1;
+		else if (footstepnext < 3) footstepwav = self.stepc2;
+		else if (footstepnext < 4) footstepwav = self.stepc3;
+		else if (footstepnext < 5) footstepwav = self.stepc4;
+		else footstepwav = self.stepc5;
+	}
+	else if (footstep == FS_TYPEDRAG) {
+		// Small scraping foot on ground
+		if (footstepnext < 2) footstepwav = SOUND_FS_DRAG1;
+		else if (footstepnext < 3) footstepwav = SOUND_FS_DRAG2;
+		else if (footstepnext < 4) footstepwav = SOUND_FS_DRAG3;
+		else if (footstepnext < 5) footstepwav = SOUND_FS_DRAG4;
+		else footstepwav = SOUND_FS_DRAG5;
+	}
+	// FS_TYPESLOW (default)
+	else {
+		// Souless shoe foot sound
+		if (footstepnext < 2) footstepwav = SOUND_FS_SLOW1;
+		else if (footstepnext < 3) footstepwav = SOUND_FS_SLOW2;
+		else if (footstepnext < 4) footstepwav = SOUND_FS_SLOW3;
+		else if (footstepnext < 5) footstepwav = SOUND_FS_SLOW4;
+		else footstepwav = SOUND_FS_SLOW5;
+	}*/
+
+	if (footstepnext < 2) footstepwav = "player/foot1.wav";
+	else if (footstepnext < 3) footstepwav = "player/foot2.wav";
+	else if (footstepnext < 4) footstepwav = "player/foot3.wav";
+	else if (footstepnext < 5) footstepwav = "player/foot4.wav";
+	else if (footstepnext < 6) footstepwav = "player/foot5.wav";
+	else if (footstepnext < 7) footstepwav = "player/foot6.wav";
+	else footstepwav = "player/foot7.wav";
+
+	// Play the sound (large feet need to be heard further away)
+	if (footstep == FS_TYPELARGE) sound (self, 5, footstepwav, footvol, 1.5);
+	else sound (self, 5, footstepwav, footvol, ATTN_IDLE);
+};

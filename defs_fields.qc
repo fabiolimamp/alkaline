@@ -297,6 +297,7 @@ FIELDS
 
 .float	healamount, healtype;
 
+.float steptype, steplast, altsteptype, altsteplast;
 
 //.float hit_z;
 

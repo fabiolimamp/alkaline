@@ -302,6 +302,14 @@ void() worldspawn =
 	precache_sound ("misc/water1.wav");			// swimming
 	precache_sound ("misc/water2.wav");			// swimming
 
+	precache_sound ("player/foot1.wav");
+	precache_sound ("player/foot2.wav");
+	precache_sound ("player/foot3.wav");
+	precache_sound ("player/foot4.wav");
+	precache_sound ("player/foot5.wav");
+	precache_sound ("player/foot6.wav");
+	precache_sound ("player/foot7.wav");
+
 	precache_sound ("items/jboots_plyrjmp1.wav");		//player airjump with jboots jcr
 	precache_sound ("items/jboots_plyrjmp0.wav");		//player jump with jboots 
 	precache_sound ("items/jboots_got.wav");			// got the jump boots

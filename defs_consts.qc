@@ -330,6 +330,18 @@ float MAPV_READ_OFF = 1;
 float MAPV_READ_ON = 2;
 
 
+// Footstep types (slow, drag, light, medium, heavy, large, giant)
+// todo: add sounds to monsters, find proper sound files
+float FS_TYPESLOW = 1;		// Demon, Dogs, Ogres, Zombies
+float FS_TYPEDRAG = 2;		// Alt Zombie foot
+float FS_TYPELIGHT = 3;
+float FS_TYPEMEDIUM = 4;
+float FS_TYPEHEAVY = 5;		// Death/Hell Knight, Drole, Player, Enforcer
+float FS_TYPELARGE = 6;		// Minotaur, Shambler
+float FS_TYPEGIANT = 7;		// Golem
+float FS_TYPECUSTOM = 9;	// Defined/precached by monster
+float FS_FLYING = 10;		// Exclusion, no happy feet!
+
 
 //
 // CSQC

@@ -181,6 +181,11 @@ void()	player_run =[	$rockrun1,	player_run	]
 			self.walkframe = 0;
 		self.frame = self.frame + self.walkframe;
 	}
+
+	if ((self.walkframe == 2 || self.walkframe == 5) && self.flags & FL_ONGROUND) {
+		// Need to be moving before feet sounds
+		if (fabs(self.velocity_x + self.velocity_y) > 50) play_footstep(FALSE);
+	}
 	self.walkframe = self.walkframe + 1;
 };
 
@@ -286,6 +291,7 @@ void() player_nail = {
 	float offs;
 	if (self.frame == $nailatt1) offs = 3;
 	else offs = -3;
+	SuperDamageSound();
 	W_FireSpikes(offs);
 
 	self.attack_finished = time + 0.2;
