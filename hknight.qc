@@ -205,6 +205,7 @@ void() hknight_die =
 // check for gib
 	if (self.health < -40)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_hellkn.mdl", self.health);
 		else ThrowHead ("progs/h_sabrkn.mdl", self.health);
@@ -216,6 +217,7 @@ void() hknight_die =
 		return;
 	}
 
+	if (!(self.spawnflags & MONSTER_ORIGINAL)) self.skin = 4;
 // regular death
 	sound (self, CHAN_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
 	if (random() > 0.5)
@@ -363,6 +365,12 @@ void() hk_idle_sound =
 
 void(entity attacker, float damage)	hknight_pain =
 {
+	if (!(self.spawnflags & MONSTER_ORIGINAL)) {
+		if (self.health < self.max_health * 0.3)	self.skin = 3;
+		else if (self.health < self.max_health * 0.6)	self.skin = 2;
+		else if (self.health < self.max_health * 0.85)	self.skin = 1;
+	}
+
 	if (self.pain_finished > time)
 		return;
 
