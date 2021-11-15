@@ -296,6 +296,8 @@ void() super_nail_spindown = {
 	self.weaponframe += 1;
 	player_run();
 	
+	if (self.weaponframe == 40) sound (self, CHAN_AUTO, "weapons/spindn.wav", 0.2, ATTN_NORM);
+
 	if (self.weaponframe < 51) {
 		self.think = super_nail_spindown;		
 		self.nextthink = time + 0.025;
@@ -319,7 +321,6 @@ void() player_super_nail = {
 		player_run();
 		self.cnt = 1;
 		super_nail_spindown();
-		sound (self, CHAN_AUTO, "weapons/spindn.wav", 1, ATTN_NONE);	
 		return;
 	}
 
@@ -334,7 +335,7 @@ void() player_super_nail = {
 			self.frame = $nailatt1;
 		else 
 			self.frame += 1;
-
+		SuperDamageSound();
 		W_FireSpikes(0);
 	}
 	

@@ -797,13 +797,21 @@ void(vector org, vector dir) launch_spike =
 void() W_FireSuperSpikes =
 {
 	local vector	dir;
+	vector org;
 //	local entity	old;
 	
+	makevectors (self.v_angle);
+
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
 	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
 	dir = aim (self, 1000);
-	launch_spike (self.origin + '0 0 16', dir);
+
+	org = self.origin + '0 0 16';
+
+	traceline(org, org + v_forward * 24, FALSE, self);
+	launch_spike (org + v_forward * 24 * trace_fraction , dir);
+
 	newmis.touch = superspike_touch;
 	setmodel (newmis, "progs/s_spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
@@ -813,9 +821,8 @@ void() W_FireSuperSpikes =
 void(float ox) W_FireSpikes =
 {
 	local vector	dir;
+	vector org;
 //	local entity	old;
-	
-	makevectors (self.v_angle);
 	
 	if (self.ammo_nails >= 2 && self.weapon == WEAPON_SUPER_NAILGUN)
 	{
@@ -830,11 +837,16 @@ void(float ox) W_FireSpikes =
 		return;
 	}
 
+	makevectors (self.v_angle);
+	
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
 	self.attack_finished = time + 0.2;
 	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+
+	org = self.origin + self.view_ofs + v_up * -8 + v_right*ox;
 	dir = aim (self, 1000);
-	launch_spike (self.origin + self.view_ofs + v_up * -8 + v_right*ox, dir);
+	traceline(org, org + v_forward * 24, FALSE, self);
+	launch_spike (org + v_forward * 24 * trace_fraction, dir);
 
 	self.punchangle_x = -2;
 };
