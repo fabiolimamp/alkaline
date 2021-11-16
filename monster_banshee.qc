@@ -140,7 +140,7 @@ void() banshee_think = {
 	if(self.enemy) // avoids weird torso angle when standing
 		self.trigger_field.angles_y = self.trigger_field.angles_y + self.fixangle; // makes torso always track the enemy
 	
-	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
+	enemy_yaw = vectoyaw(self.goalentity.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
 

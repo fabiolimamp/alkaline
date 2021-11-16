@@ -40,7 +40,7 @@ void() rider_think = {
 	
 	self.effects = 0;
 
-	enemy_yaw = vectoyaw(self.enemy.origin - self.origin);
+	enemy_yaw = vectoyaw(self.goalentity.origin - self.origin);
 	self.ideal_yaw = enemy_yaw;
 	delta = self.ideal_yaw - self.angles_y;
 
