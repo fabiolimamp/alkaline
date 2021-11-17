@@ -30,14 +30,15 @@ void() Plasma_PreCache =
   precache_model ("progs/pbullet.mdl");      // Plasma bullet model
   precache_model ("progs/g_plasma.mdl");     // Plasma gun item
   precache_model ("progs/v_plasma.mdl");     // Plasma being used
-  precache_model ("progs/s_plasma.spr");     // Plasma explosion sprite
+  precache_model ("progs/s_plasma_new.spr");     // Plasma explosion sprite
 };
 
-void()  s_pexplode1  = [1,   s_pexplode2] {};
-void()  s_pexplode2  = [2,   s_pexplode3] {};
-void()  s_pexplode3  = [3,   s_pexplode4] {};
-void()  s_pexplode4  = [4,   s_pexplode5] {};
-void()  s_pexplode5  = [5,   SUB_Remove] {};
+void()  s_pexplode1  = [0,   s_pexplode2] {self.nextthink = time + 0.05;};
+void()  s_pexplode2  = [1,   s_pexplode3] {self.nextthink = time + 0.05;};
+void()  s_pexplode3  = [2,   s_pexplode4] {self.nextthink = time + 0.05;};
+void()  s_pexplode4  = [3,   s_pexplode5] {self.nextthink = time + 0.05;};
+void()  s_pexplode5  = [4,   s_pexplode6] {self.nextthink = time + 0.05;};
+void()  s_pexplode6  = [5,   SUB_Remove] {self.nextthink = time + 0.05;};
 
 void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadiusDamage =
 {
@@ -82,7 +83,7 @@ void() PlasmaExplosion =
 	self.movetype = MOVETYPE_NONE;
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
-  setmodel (self, "progs/s_plasma.spr");
+  setmodel (self, "progs/s_plasma_new.spr");
 	self.solid = SOLID_NOT;
   s_pexplode1 ();
 };

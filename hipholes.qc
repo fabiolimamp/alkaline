@@ -40,7 +40,7 @@ Places a sprite on a wall.  Angles should be opposite of face.
 };*/
 
 void() InitBulletHoles = {
-	precache_model("progs/s_bullet.spr");
+	precache_model("progs/s_bullet_new.spr");
 
 	bulletholes = world;
 	lastbullet = world;
@@ -130,8 +130,8 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 	new.classname = "bullethole";
 
 	
-	setmodel(new, "progs/s_bullet.spr");
-	new.frame = floor(random()*2.99);
+	setmodel(new, "progs/s_bullet_new.spr");
+	new.frame = floor(random()*6.99);
 	setsize (new, '0 0 0', '0 0 0');
 	
 
