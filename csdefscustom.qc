@@ -1,4 +1,4 @@
-string levelname;
+//string levelname;
 float painfinishtime;
 
 float   IT_JBOOTS				= 128;

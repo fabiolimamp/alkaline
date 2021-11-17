@@ -194,9 +194,9 @@ void(vector pos, float value, float threshhold) Hud_DrawLargeValue =
 	if (value>999)
 		value = 999;
 
-	for (len = 0; len < 3; len++) {
-		drawpic(pos+ len * '24 0 0', "gfx/numbk_non", '24 24 0', '1 1 1', 1, 0);
-	}
+	//for (len = 0; len < 3; len++) {
+	//	drawpic(pos+ len * '24 0 0', "gfx/numbk_non", '24 24 0', '1 1 1', 1, 0);
+	//}
 
 	s = ftos(floor(value));
 	len = strlen(s);
@@ -262,32 +262,32 @@ void(vector pos) Hud_DrawFace =
 	
 	
 	if (st_items & IT_TRIFECTA){
-		// trifecta + invisibliity
+		// trifecta + belt
 		if (st_items & IT_INVISIBILITY)
 			face = "gfx/face_tri2";
-		// trifecta
+		// trifecta only
 		else
 			face = "gfx/face_tri";
 	}
-	// invisibility + pentagram + quad
+	// belt + pentagram + quad
 	else if (st_items & (IT_INVISIBILITY | IT_INVULNERABILITY | IT_QUAD) == (IT_INVISIBILITY | IT_INVULNERABILITY | IT_QUAD))
 		face = "gfx/face_allbuttri";
-	// invisibility + pentagram
+	// belt + pentagram
 	else if (st_items & (IT_INVISIBILITY | IT_INVULNERABILITY) == (IT_INVISIBILITY | IT_INVULNERABILITY))
 		face = "gfx/face_inv2";
-	// invisibility + quad
+	// belt + quad
 	else if (st_items & (IT_INVISIBILITY | IT_QUAD) ==  (IT_INVISIBILITY | IT_QUAD))
 		face = "gfx/face_invisquad";
 	// pentagram + quad
 	else if (st_items & (IT_INVULNERABILITY | IT_QUAD) == (IT_INVULNERABILITY | IT_QUAD))
 		face = "gfx/face_inv3";
-	// invisibility only
+	// belt only
 	else if (st_items & IT_INVISIBILITY)
 		face = "gfx/face_invis";
-	// Quad
+	// quad only
 	else if (st_items & IT_QUAD)
 		face = "gfx/face_quad";
-	// Pentagram
+	// pentagram only
 	else if (st_items & IT_INVULNERABILITY){
 		face = "gfx/face_invul2";
 	}
@@ -322,28 +322,6 @@ string(float f, float chars, string lead) FormatFloat
 	return s;
 };
 
-void(vector pos) Hud_CoopScores_SBar =
-{
-	string s;
-	float secs;
-	float mins;
-	//When you press tab in single player/coop, you get some replacement info over the sbar
-	vector sbar = screensize_y * ' 0 1 0' - '0 24 0';
-	drawpic(sbar, "scorebar", '320 24 0', '1 1 1', 0.333, 0);
-
-	s = strcat("Monsters:", FormatFloat(getstatf(STAT_KILLEDMONSTERS), 3, " "), "/", FormatFloat(getstatf(STAT_TOTALMONSTERS), 3, " "));
-	drawstring(sbar + '8 4', s, '8 8 0', '1 1 1', 1, 0);
-	s = strcat("Secrets :", FormatFloat(getstatf(STAT_FOUNDSECRETS), 3, " "), "/", FormatFloat(getstatf(STAT_TOTALSECRETS), 3, " "));
-	drawstring(sbar + '8 12', s, '8 8 0', '1 1 1', 1, 0);
-
-	mins = floor(time/60);
-	secs = floor(time - mins*60);
-	s = strcat("Time :", FormatFloat(mins, 3, " "), ":", FormatFloat(secs, 2, "0"));
-	drawstring(sbar + '184 4', s, '8 8 0', '1 1 1', 1, 0);
-
-	drawstring(sbar + '232 12' - strlen(levelname)*'4 0', levelname, '8 8 0', '1 1 1', 1, 0);
-};
-
 void Hud_DrawSBar(vector pos)
 {
 	
@@ -362,16 +340,18 @@ void Hud_DrawSBar(vector pos)
 		else if (st_items & IT_ARMOR1)
 			drawpic(pos+'16 0 0', "gfx/sb_aarmor1", '24 24 0', '1 1 1', 1, 0);
 
-		drawpic(pos+'40 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'40 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
+		//drawpic(pos+'40 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
 		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25);
-		drawpic(pos+'120 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
+		//drawpic(pos+'120 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
 	}
 
 	Hud_DrawFace(pos+'176 0 0');
 	
-	drawpic(pos+'200 0 0', "gfx/numbk_l2", '8 24 0', '1 1 1', 1, 0);
+	drawpic(pos+'200 0 0', "gfx/numbk_health", '88 24 0', '1 1 1', 1, 0);
+	//drawpic(pos+'200 0 0', "gfx/numbk_l2", '8 24 0', '1 1 1', 1, 0);
 	Hud_DrawLargeValue(pos+'208 0 0', getstatf(STAT_HEALTH), 25);
-	drawpic(pos+'280 0 0', "gfx/numbk_r2", '8 24 0', '1 1 1', 1, 0);
+	//drawpic(pos+'280 0 0', "gfx/numbk_r2", '8 24 0', '1 1 1', 1, 0);
 
 	if (st_items & IT_SHELLS)
 		drawpic(pos+'336 0 0', "gfx/sb_ashells", '24 24 0', '1 1 1', 1, 0);
@@ -382,9 +362,10 @@ void Hud_DrawSBar(vector pos)
 	else if (st_items & IT_CELLS)
 		drawpic(pos+'336 0 0', "gfx/sb_cells", '24 24 0', '1 1 1', 1, 0);
 
-	drawpic(pos+'360 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
+	drawpic(pos+'360 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
+	//drawpic(pos+'360 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
 	Hud_DrawLargeValue(pos+'368 0 0', getstatf(STAT_AMMO), 10);
-	drawpic(pos+'440 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
+	//drawpic(pos+'440 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
 };
 
 void Hud_DrawIBar(vector pos)
@@ -432,13 +413,6 @@ void Hud_DrawIBar(vector pos)
 };
 
 
-//======================================================================
-// SCOREBOARD BARS
-//
-// - shows monster/secret quantities and map info
-// - multiple setups for different hud layouts
-//
-//======================================================================
 void(vector pos, float bx, float by, float bwidth, float bheight, float pixelspeed, string draw_str) Hud_ScrollTextBox =
 {
 	local float str_width, str_double, str_speed;
