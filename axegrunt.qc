@@ -221,6 +221,10 @@ void()	axe_pain6	=[	$axpain6,	axe_run1	] {};
 
 void(entity attacker, float damage)	axe_pain =
 {
+	if (self.health < self.max_health * 0.05)	self.skin = 3;
+	else if (self.health < self.max_health * 0.4)	self.skin = 2;
+	else if (self.health < self.max_health * 0.8)	self.skin = 1;
+
 	if (self.pain_finished > time)
 		return;
 
@@ -253,6 +257,7 @@ void() axe_die =
 // check for gib
 	if (self.health < -30)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_guard.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -262,6 +267,7 @@ void() axe_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		return;
 	}
+	self.skin = 3;
 // regular death
 	sound (self, CHAN_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
 	axe_die1 ();

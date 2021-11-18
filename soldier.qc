@@ -172,7 +172,14 @@ void(entity attacker, float damage)	army_pain =
 {
 	local float r;
 	
-	if (self.health < 20) self.skin = 1;
+	if (self.classname == "monster_nailgrunt") {
+		if (self.health < self.max_health * 0.05)	self.skin = 3;
+		else if (self.health < self.max_health * 0.4)	self.skin = 2;
+		else if (self.health < self.max_health * 0.8)	self.skin = 1;
+	}
+	else {
+		if (self.health < self.max_health * 0.6) self.skin = 1;
+	}
 
 	if (self.pain_finished > time)
 		return;
@@ -272,10 +279,13 @@ void() army_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-if (random() < 0.2)
-                ThrowGib ("progs/arm_foot.mdl", self.health);
+		if (random() < 0.2)
+        	ThrowGib ("progs/arm_foot.mdl", self.health);
 		return;
 	}
+
+	if (self.classname == "monster_nailgrunt") self.skin = 3;
+	else self.skin = 1;
 
 // regular death
 	sound (self, CHAN_VOICE, "soldier/death1.wav", 1, ATTN_NORM);
