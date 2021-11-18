@@ -250,7 +250,7 @@ void() frogmen_die =
 	local float r;
 	if (self.health < -50) {
 		sound(self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead("progs/h_guard.mdl", self.health);
+		ThrowHead("progs/h_zombie.mdl", self.health);
 		ThrowGib("progs/gib1.mdl", self.health);
 		ThrowGib("progs/gib2.mdl", self.health);
 		ThrowGib("progs/gib3.mdl", self.health);
@@ -326,7 +326,7 @@ void() monster_frogman =
 
 	precache_model("progs/frogman.mdl");
 	precache_model("progs/harpoon.mdl");
-	precache_model ("progs/h_guard.mdl");
+	precache_model ("progs/h_zombie.mdl");
 	precache_model ("progs/gib1.mdl");
 	precache_model ("progs/gib2.mdl");
 	precache_model ("progs/gib3.mdl");
