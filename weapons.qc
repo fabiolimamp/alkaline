@@ -953,7 +953,7 @@ PLAYER WEAPON USE
 
 void() W_SetCurrentAmmo =
 {
-	player_run ();		// get out of any weapon firing states
+	if (self.weapon != WEAPON_NO_WEAPON) player_run ();		// get out of any weapon firing states
 
 	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
 	

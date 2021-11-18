@@ -1281,9 +1281,9 @@ void() PlayerPreThink =
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if(time > self.attack_finished && self.currentammo == 0)
+	if (time > self.attack_finished && self.currentammo == 0)
 	{
-		if(self.weapon != WEAPON_AXE && self.weapon != WEAPON_CHAINSAW)
+		if (self.weapon != WEAPON_AXE && self.weapon != WEAPON_CHAINSAW)
 		{
 			self.weapon = W_BestWeapon ();
 			W_SetCurrentAmmo ();
