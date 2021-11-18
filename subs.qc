@@ -602,6 +602,7 @@ void(float altfoot) play_footstep = {
 	local float footstep, footstepnext, footvol;
 	local string footstepwav;
 	
+	if (nofootsteps) return;
 	if (self.health < 1) return;
 	if (self.movetype == MOVETYPE_NOCLIP) return;
 	if (self.watertype < CONTENT_EMPTY) return;

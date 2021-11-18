@@ -179,6 +179,8 @@ entity lastbullet;
 float bulletmode;
 float numbulletholes, numbulletsframe;
 
+float nofootsteps;
+
 // gravity
 entity current_gravity_ent;
 

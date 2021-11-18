@@ -1852,6 +1852,17 @@ void() ToggleBulletHole = {
 	}
 };
 
+void() ToggleFootsteps = {
+	if (nofootsteps == 1) {
+		sprint(self, "Footsteps: enabled\n");
+		nofootsteps = 0;
+	}
+	else {
+		sprint(self, "Footsteps: disabled\n");
+		nofootsteps = 1;
+	}
+};
+
 /*
 ============
 ImpulseCommands
@@ -1883,6 +1894,10 @@ void() ImpulseCommands =
 		ImpulseTest(self.impulse - 90);
 	if (self.impulse == 30)
 		ToggleBulletHole();
+	if (self.impulse == 31)
+		ToggleFootsteps();
+	if (self.impulse == 32)
+		toggle_autosave();
 	if (self.impulse == 128)
 		printVersionConsole(self);
 		//centerprint(self, VERSION_S);
@@ -1892,8 +1907,6 @@ void() ImpulseCommands =
 		display_mapvar();
 	if (self.impulse == 200)
 		dev_reveal();
-	if (self.impulse == 210)
-		toggle_autosave();
 	//johnfitz -- new cheats
 	if (self.impulse == 252)
 		RingCheat();
