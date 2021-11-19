@@ -299,13 +299,14 @@ void() dread_die =
 	}
 	else // regular death
 	{
+
+		self.skin = 3;
 		sound (self, CHAN_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
 		if (random() > 0.5)
 			dread_die1 ();
 		else
 			dread_fdie1 ();
 	}
-	self.skin = 3;
 
 	if (self.attack_finished > time) //turn off flame sound
 	{
