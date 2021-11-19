@@ -150,6 +150,15 @@ void()	demon1_pain6	=[	$pain6,		demon1_run1	] {};
 
 void(entity attacker, float damage)	demon1_pain =
 {
+	if (self.classname == "monster_mutant") {
+		if (self.health < self.max_health * 0.6) self.skin = 1;
+	}
+	else {
+		if (self.health < self.max_health * 0.05)	self.skin = 3;
+		else if (self.health < self.max_health * 0.4)	self.skin = 2;
+		else if (self.health < self.max_health * 0.8)	self.skin = 1;
+	}
+
 	if (self.touch == Demon_JumpTouch)
 		return;
 
@@ -188,6 +197,7 @@ void() demon_die =
 // check for gib
 	if (self.health < -80)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		if (self.classname == "monster_mutant") ThrowHead ("progs/h_mutant.mdl", self.health);
 		else if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_demon.mdl", self.health);
@@ -199,6 +209,9 @@ void() demon_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		return;
 	}
+
+	if (self.classname == "monster_mutant") self.skin = 1;
+	else self.skin = 3;
 
 // regular death
 	demon1_die1 ();
