@@ -239,6 +239,7 @@ void() worldspawn =
 	precache_sound ("weapons/lstart.wav");		//lightning start
 	precache_sound ("items/damage3.wav");
 	precache_sound ("misc/null.wav");
+	precache_sound ("doors/alka_doorlocked.wav");
 	
 	precache_sound ("weapons/sawidle.wav");		//chainsaw idle
 	precache_sound ("weapons/sawridle.wav");	//chainsaw idle
