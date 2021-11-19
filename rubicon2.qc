@@ -450,6 +450,9 @@ void () func_laser =
 
 	self.touch = func_laser_touch;
 
+	// lasers shouldn't get bulletholes
+	self.nobullets = zeroconvertdefault(self.nobullets, 1);
+
 	//spawn a second entity to handle alpha changes, since MOVETYPE_PUSH doesn't support think functions
 	helper = spawn();
 	helper.alpha = self.alpha;
