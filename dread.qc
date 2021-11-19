@@ -319,6 +319,8 @@ void() dread_die =
 };
 
 void() dread_sight = {
+	sound (self, CHAN_VOICE, "dread/dread_sight.wav", 1, ATTN_NORM);
+	/*
 	local float rsnd;
 	rsnd = rint(random() * 3);			
 	if (rsnd == 1)
@@ -329,6 +331,7 @@ void() dread_sight = {
 		sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
 	else
 		sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
+	*/
 }
 
 /*QUAKED monster_dreadnaught (1 0 0) (-16 -16 -24) (16 16 40) AMBUSH
@@ -393,10 +396,12 @@ void() monster_dreadnaught =
 	precache_sound2 ("enforcer/idle1.wav");
 	precache_sound2 ("enforcer/pain1.wav");
 	precache_sound2 ("enforcer/pain2.wav");
-	precache_sound2 ("enforcer/sight1.wav");
+	/*precache_sound2 ("enforcer/sight1.wav");
 	precache_sound2 ("enforcer/sight2.wav");
 	precache_sound2 ("enforcer/sight3.wav");
 	precache_sound2 ("enforcer/sight4.wav");
+	*/
+	precache_sound2 ("dread/dread_sight.wav");
 	
 	precache_sound ("dread/flameon.wav");
 	precache_sound ("dread/flameoff.wav");
