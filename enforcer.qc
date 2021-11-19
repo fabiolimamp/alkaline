@@ -348,7 +348,7 @@ void(entity e) monster_enforcer_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/enforcer.mdl");
+	setmodel (self, "progs/enforcer_alk.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize (self, '-16 -16 -24', '16 16 40');
@@ -383,7 +383,7 @@ void() monster_enforcer =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/enforcer.mdl");
+	precache_model2 ("progs/enforcer_alk.mdl");
 	precache_model2 ("progs/h_mega.mdl");
 	precache_model2 ("progs/laser.mdl");
         precache_model2 ("progs/enf_gun.mdl");
