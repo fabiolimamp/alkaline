@@ -485,7 +485,9 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 	Hud_DrawNoFont8(pos+[280,12], getstatf(STAT_TOTALSECRETS), 2, FALSE, HUDFONT_WHITE);
 
 	// Display map skill level
-	skill_no = stof(autocvar(skill, "1"));
+
+	//skill_no = stof(autocvar(skill, "1"));
+	skill_no = cvar("skill");
 	if (skill_no == 0) skill_str = "Easy";
 	else if (skill_no == 1) skill_str = "Normal";
 	else if (skill_no == 2) skill_str = "Hard";
