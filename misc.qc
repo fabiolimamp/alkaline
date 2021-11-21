@@ -54,20 +54,33 @@ void() barrel_explode =
 {
 	self.takedamage = DAMAGE_NO;
 	self.classname = "explo_box";
-	// did say self.owner
-	T_RadiusDamage (self, self, self.dmg, world);
-	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
+
 	particle (self.origin, '0 0 0', 75, 255);
 
 	self.origin_z = self.origin_z + 32;
+	
+	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	// exploded by damage, not by triggering, so the attacker becomes the activator
-	if (self.health <= 0) activator = damage_attacker; 
+	T_RadiusDamage (self, self, self.dmg, world);
+
+	activator = self.enemy;
 	SUB_UseTargets();
+
 	BecomeExplosion ();
 };
 
+void() barrel_die = {
+	// already fired, so disable all subsequent triggers
+	self.th_die = SUB_Null;
+	self.use = SUB_Null;
 
+	// exploded by damage, not by triggering, so the attacker becomes the activator
+	if (self.health <= 0) self.enemy = damage_attacker;
+	else self.enemy = activator;
+
+	self.think = barrel_explode;
+	self.nextthink = time + 0.05 + random()*0.05;
+}
 /*QUAKED misc_explobox (0 .5 .8) (0 0 0) (32 32 64)
 TESTING THING
 */
@@ -83,10 +96,11 @@ void() misc_explobox =
 	precache_sound ("weapons/r_exp3.wav");
 	if (!self.health) self.health = 20;
 	if (!self.dmg) self.dmg = 160;
-	self.th_die = barrel_explode;
-	self.use = barrel_explode;
+	self.th_die = barrel_die;
+	self.use = barrel_die;
 	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 
+	self.bloodtype = zeroconvertdefault(self.bloodtype, SPAWN_YELLOWSPARK);
 	self.origin_z = self.origin_z + 2;
 	oldz = self.origin_z;
 	droptofloor();
@@ -122,6 +136,7 @@ void() misc_explobox2 =
 	
 	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 
+	self.bloodtype = zeroconvertdefault(self.bloodtype, SPAWN_YELLOWSPARK);
 	self.origin_z = self.origin_z + 2;
 	oldz = self.origin_z;
 	droptofloor();

@@ -257,33 +257,31 @@ void () func_explobox_explode =
 	self.origin = ((self.absmin + self.absmax) * 0.5);
 	self.classname = "explo_box";
 
+	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
+
+	T_RadiusDamage (self, self, self.dmg, world);
+	
 	activator = self.enemy;
 	SUB_UseTargets();
 
-	T_RadiusDamage (self, self, self.dmg, world);
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
 	BecomeExplosion ();
-	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 };
 
 void () func_explobox_die =
 {
+	// already fired, so disable all subsequent triggers
+	self.th_die = SUB_Null;
+	self.use = SUB_Null;
+
+	if (self.health <= 0) self.enemy = damage_attacker;
+	else self.enemy = activator;
+
 	self.enemy = damage_attacker;
-	self.nextthink = self.ltime + 0.1; // why not instantly?
+	self.nextthink = self.ltime + 0.05 + random()*0.05;
 	self.think = func_explobox_explode;
 };
 
 
-void () func_explobox_use =
-{
-	self.enemy = activator;
-	self.nextthink = self.ltime + 0.1;
-	self.think = func_explobox_explode;
-};
 /*QUAKED func_explobox (0 .5 .8) ? START_OFF
 An exploding brush entity.  Works just like misc_explobox.
 
@@ -306,7 +304,9 @@ void () func_explobox =
 	if (!self.dmg)
 		self.dmg = 100;
 
-	self.use = func_explobox_use;
+	self.bloodtype = zeroconvertdefault(self.bloodtype, SPAWN_YELLOWSPARK);
+
+	self.use = func_explobox_die;
 	self.th_die = func_explobox_die;
 	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 };
