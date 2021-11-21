@@ -99,11 +99,11 @@ vector(vector a, vector b) vec_scale =
  * Returns: A number within the given range.
  */
 float(float value, float minValue, float maxValue) clamp = {
-    if (value < minValue) {
-        return minValue;
-    }
-    else if (value > maxValue) {
+    if (value > maxValue) {
         return maxValue;
+    }
+    else if (value < minValue) {
+        return minValue;
     }
 
     return value;

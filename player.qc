@@ -217,7 +217,7 @@ void()	player_run =[	$rockrun1,	player_run	]
 		float spd;
 		spd = vlen([self.velocity_x, self.velocity_y, 0]);
 		if (spd > 50) {
-			play_footstep(FALSE, spd/320);
+			play_footstep(FALSE, clamp(spd, 0, 320)/320);
 		}
 	}
 };
