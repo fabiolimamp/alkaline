@@ -37,7 +37,7 @@ void()  s_pexplode1  = [0,   s_pexplode2] {self.nextthink = time + 0.05;};
 void()  s_pexplode2  = [1,   s_pexplode3] {self.nextthink = time + 0.05;};
 void()  s_pexplode3  = [2,   s_pexplode4] {self.nextthink = time + 0.05;};
 void()  s_pexplode4  = [3,   s_pexplode5] {self.nextthink = time + 0.05;};
-void()  s_pexplode5  = [4,   s_pexplode6] {self.nextthink = time + 0.05;};
+void()  s_pexplode5  = [4,   s_pexplode6] {self.nextthink = time + 0.05;self.effects -= EF_DIMLIGHT;};
 void()  s_pexplode6  = [5,   SUB_Remove] {self.nextthink = time + 0.05;};
 
 void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadiusDamage =
@@ -177,7 +177,7 @@ void() W_FirePlasma =
   missile.think = Plasma_Watercheck;        // If shot underwater -> razzp!
   missile.touch = T_PlasmaTouch;
   
-  missile.effects = 8;           // Plasma bullets emit light...
+  missile.effects = EF_DIMLIGHT;           // Plasma bullets emit light...
 
   setmodel (missile, "progs/pbullet.mdl");   // Plasma bullet model
   setsize (missile, '0 0 0', '0 0 0');
