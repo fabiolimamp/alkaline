@@ -454,37 +454,37 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 	// Clear status bar ready for map info/scores
 	drawpic(pos, "gfx/alk_scorebar", [464, 24], '1 1 1', baralpha, 0);
 
-	// Display headings
+	// Level designers Map name + Skill level name
+	map_str = strcat(world.message, " (", mapname, ")");
+	Hud_ScrollTextBox(pos, 8, 4, 448, 8, 16, map_str);
 
+	// Kills
 	drawstring(pos+[8,12], "Kills:", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
 	Hud_DrawNoFont8(pos+[56,12], getstatf(STAT_KILLEDMONSTERS), 3, FALSE, HUDFONT_WHITE);
 	drawstring(pos+[80,12], "/", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);	
 	
 	if (getstatf(STAT_TOTALMONSTERS) < 100) digit = 2;
 	else digit = 3;
-
 	Hud_DrawNoFont8(pos+[88,12], getstatf(STAT_TOTALMONSTERS), digit, FALSE, HUDFONT_WHITE);
-
-
-	// Display monster/secret totals
 
 
 	// Work out time passed
 	//drawstring(pos+[112,12], "Time", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
 	nmins = floor(time/60);
 	nsecs = floor(time - nmins*60);
-	Hud_DrawNoFont8(pos+[120,12], nmins, 3, FALSE, HUDFONT_WHITE);
-	drawstring(pos+[144,12], ":", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);	
-	Hud_DrawNoFont8(pos+[156,12], nsecs, 2, TRUE, HUDFONT_WHITE);
+	Hud_DrawNoFont8(pos+[124,12], nmins, 3, FALSE, HUDFONT_WHITE);
+	drawstring(pos+[148,12], ":", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);	
+	Hud_DrawNoFont8(pos+[160,12], nsecs, 2, TRUE, HUDFONT_WHITE);
 
 
+	// Secret totals
 
-	drawstring(pos+[192,12], "Secrets:", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
-	Hud_DrawNoFont8(pos+[256,12], getstatf(STAT_FOUNDSECRETS), 2, FALSE, HUDFONT_WHITE);
-	drawstring(pos+[272,12], "/", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
-	Hud_DrawNoFont8(pos+[280,12], getstatf(STAT_TOTALSECRETS), 2, FALSE, HUDFONT_WHITE);
+	drawstring(pos+[200,12], "Secrets:", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
+	Hud_DrawNoFont8(pos+[264,12], getstatf(STAT_FOUNDSECRETS), 2, FALSE, HUDFONT_WHITE);
+	drawstring(pos+[280,12], "/", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
+	Hud_DrawNoFont8(pos+[288,12], getstatf(STAT_TOTALSECRETS), 2, FALSE, HUDFONT_WHITE);
 
-	// Display map skill level
+	// Map skill level
 
 	//skill_no = stof(autocvar(skill, "1"));
 	skill_no = cvar("skill");
@@ -494,11 +494,8 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 	else if (skill_no == 3) skill_str = "Nightmare";
 	else skill_str = "Unknown";
 
-	drawstring(pos+[320, 12], strcat(skill_str, " skill"), HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
+	drawstring(pos+[332, 12], strcat(skill_str, " skill"), HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
 
-	// Level designers Map name + Skill level name
-	map_str = strcat(world.message, " (", mapname, ")");
-	Hud_ScrollTextBox(pos, 8, 4, 432, 8, 16, map_str);
 };
 
 

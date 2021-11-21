@@ -45,7 +45,9 @@ void() InitBulletHoles = {
 	bulletholes = world;
 	lastbullet = world;
 	numbulletholes = 0;
-	bulletmode = 1;
+	
+	if (cvar("temp1") & TEMPSETTINGS_NOBULLETHOLES) bulletmode = 0;
+	else bulletmode = 1;
 };
 
 void() remove_bullethole = {

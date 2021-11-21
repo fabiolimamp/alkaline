@@ -1830,26 +1830,82 @@ void(entity cl) printVersionConsole = {
 };
 
 void() ToggleBulletHole = {
+	float tmp1;
+	tmp1 = cvar("temp1");
 	if (bulletmode == 0) {
-		sprint(self, "Bullet holes: enabled\n");
+		bprint("Bullet holes: enabled\n");
 		bulletmode = 1;
+		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOBULLETHOLES)));
 	}
 	else {
-		sprint(self, "Bullet holes: disabled\n");
+		bprint("Bullet holes: disabled\n");
 		bulletmode = 0;
+		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOBULLETHOLES));
 	}
 };
 
 void() ToggleFootsteps = {
-	if (nofootsteps == 1) {
-		sprint(self, "Footsteps: enabled\n");
+	float tmp1;
+	tmp1 = cvar("temp1");
+	if (nofootsteps) {
+		bprint("Footsteps: enabled\n");
 		nofootsteps = 0;
+		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOFOOTSTEPS)));
 	}
 	else {
-		sprint(self, "Footsteps: disabled\n");
+		bprint("Footsteps: disabled\n");
 		nofootsteps = 1;
+		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOFOOTSTEPS));
 	}
 };
+
+void() ToggleAutosave = {
+	float tmp1;
+	tmp1 = cvar("temp1");
+	if (noautosaves) {
+		bprint("Autosaves: enabled\n");
+		noautosaves = 0;
+		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOAUTOSAVES)));
+	}
+	else {
+		bprint("Autosaves: disabled\n");
+		noautosaves = 1;
+		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOAUTOSAVES));
+	}
+};
+
+void() ResetModSettings = {
+	cvar_set("temp1", 0);
+	bprint("Mod settings reset to default\n");
+};
+
+/*void() ToggleAutosave =
+{
+	entity e = world;
+	float printed = FALSE;
+	do {
+		e = find(e, classname, "target_autosave");
+		if (!e) break;
+
+		if (e.use == target_autosave_use)
+		{
+			e.use = SUB_Null;
+			if (!printed)
+			{
+				bprint("Autosaves: disabled\n");
+				printed = TRUE;
+			}
+		} else {
+			e.use = target_autosave_use;
+			if (!printed)
+			{
+				bprint("Autosaves: enabled\n");
+				printed = TRUE;
+			}
+		}
+
+	} while (e != world);
+}*/
 
 /*
 ============
@@ -1857,7 +1913,6 @@ ImpulseCommands
 
 ============
 */
-void() toggle_autosave;
 
 void() ImpulseCommands =
 {
@@ -1880,12 +1935,16 @@ void() ImpulseCommands =
 		GiveWeaponsCommand();
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
+
 	if (self.impulse == 30)
 		ToggleBulletHole();
 	if (self.impulse == 31)
 		ToggleFootsteps();
 	if (self.impulse == 32)
-		toggle_autosave();
+		ToggleAutosave();
+	if (self.impulse == 40)
+		ResetModSettings();
+
 	if (self.impulse == 128)
 		printVersionConsole(self);
 		//centerprint(self, VERSION_S);
@@ -1895,18 +1954,15 @@ void() ImpulseCommands =
 		display_mapvar();
 	if (self.impulse == 200)
 		dev_reveal();
-	//johnfitz -- new cheats
+	
 	if (self.impulse == 252)
 		RingCheat();
 	if (self.impulse == 253)
 		BiosuitCheat();
 	if (self.impulse == 254)
 		PentCheat();
-	//johnfitz
-		
 	if (self.impulse == 255)
 		QuadCheat();
-
 	if (self.impulse == 222)
 		JBootsCheat();
 

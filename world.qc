@@ -199,7 +199,10 @@ void() worldspawn =
 	else
 		cvar_set ("sv_gravity", "800");
 
-
+	float tmp1;
+	tmp1 = cvar("temp1");
+	if (tmp1 & TEMPSETTINGS_NOFOOTSTEPS) nofootsteps = 1;
+	if (tmp1 & TEMPSETTINGS_NOAUTOSAVES) noautosaves = 1;
 
 	startskill = cvar("skill");
 	developer = cvar("developer");
@@ -240,7 +243,7 @@ void() worldspawn =
 	precache_sound ("items/damage3.wav");
 	precache_sound ("misc/null.wav");
 	precache_sound ("doors/alka_doorlocked.wav");
-	
+
 	precache_sound ("weapons/sawidle.wav");		//chainsaw idle
 	precache_sound ("weapons/sawridle.wav");	//chainsaw idle
 	precache_sound ("weapons/sawatck.wav");		//chainsaw attack

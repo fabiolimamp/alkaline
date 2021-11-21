@@ -265,6 +265,8 @@ from Copper
 
 void() target_autosave_use =
 {
+	if (noautosaves) return;
+	
 	if (self.enemy)
 	{
 		activator = self.enemy;
@@ -287,33 +289,6 @@ void() target_autosave_use =
 	autosave(activator, self.message);
 }
 
-void() toggle_autosave =
-{
-	entity e = world;
-	float printed = FALSE;
-	do {
-		e = find(e, classname, "target_autosave");
-		if (!e) break;
-
-		if (e.use == target_autosave_use)
-		{
-			e.use = SUB_Null;
-			if (!printed)
-			{
-				bprint("Autosaves disabled\n");
-				printed = TRUE;
-			}
-		} else {
-			e.use = target_autosave_use;
-			if (!printed)
-			{
-				bprint("Autosaves reenabled\n");
-				printed = TRUE;
-			}
-		}
-
-	} while (e != world);
-}
 
 /*QUAKED target_autosave (1 .0 .5) (-8 -8 -8) (8 8 8)
 Saves the game when triggered by a player. Never appears in multiplayer. the bprint tends to stomp any other prints on screen in most quake clients, so use a delayed trigger_relay if you fire this from an important pickup/trigger_counter/something else that puts text on screen more important than the autosave blurb.

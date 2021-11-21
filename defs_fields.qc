@@ -180,6 +180,7 @@ float bulletmode;
 float numbulletholes, numbulletsframe;
 
 float nofootsteps;
+float noautosaves;
 
 // gravity
 entity current_gravity_ent;

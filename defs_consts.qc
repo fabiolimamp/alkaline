@@ -294,6 +294,9 @@ float MONAI_ABOVETIMER = 2;			// Amount of time before changing Z
 
 float TRIGGER_CENTERPRINTALL = 1048576;
 
+float TEMPSETTINGS_NOBULLETHOLES = 1;
+float TEMPSETTINGS_NOFOOTSTEPS = 2;
+float TEMPSETTINGS_NOAUTOSAVES = 4;
 
 //
 // monster ai
