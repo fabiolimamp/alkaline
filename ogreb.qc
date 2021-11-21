@@ -250,7 +250,11 @@ void()	ogreb_pain5	=[	$pain5,		ogreb_run1	] {};
 
 void(entity attacker, float damage)	ogreb_pain =	//ijed Only has a single short pain sequence
 {
+	
 	local float resistance;
+	
+	if (self.health < self.max_health * 0.4)	self.skin = 2;
+	else if (self.health < self.max_health * 0.8)	self.skin = 1;
 	
 	resistance = skill * 100;	// 0/100/200/300 pain resitance on E/M/H/NM
 	
@@ -327,9 +331,10 @@ void() ogreb_die =
 	local float r;
 	r = random();
 
-// check for gib
+	// check for gib
 	if (self.health < -80)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_ogreb.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -337,10 +342,12 @@ void() ogreb_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
-if (random() < 0.2)
-                ThrowGib ("progs/brz_saw.mdl", self.health);
+
+		if (random() < 0.2) ThrowGib ("progs/brz_saw.mdl", self.health);
+
 		return;
 	}
+	self.skin = 3;
 
 	sound (self, CHAN_VOICE, "ogre/ogdth.wav", 1, ATTN_NORM);
 	
