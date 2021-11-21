@@ -169,11 +169,7 @@ void() probe_pulsetouch =
 	{
 		sound(self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_NORM);
 		self.origin = self.origin - 8 * normalize(self.velocity);
-		WriteByte(0, SVC_TEMPENTITY);
-		WriteByte(0, TE_GUNSHOT);
-		WriteCoord(0, self.origin_x);
-		WriteCoord(0, self.origin_y);
-		WriteCoord(0, self.origin_z);
+		gunshot(self.origin);
 	}
 	remove(self);
 };

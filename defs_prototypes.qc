@@ -247,7 +247,7 @@ void( entity client, float density) skyfog_set;
 void(vector a, vector b, entity who) fx_beam;
 entity(vector org, float damg, entity parent, float multi) kaboom;
 void() BecomeExplosion;
-
+void(vector org) gunshot;
 
 //
 // lights and shadows

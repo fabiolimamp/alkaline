@@ -13,6 +13,7 @@ void(vector org) gunshot =
 	WriteCoord (MSG_BROADCAST, org_x);
 	WriteCoord (MSG_BROADCAST, org_y);
 	WriteCoord (MSG_BROADCAST, org_z);
+	//dprint("gunshot\n");
 }
 
 void(vector a, vector b, entity who) fx_beam =

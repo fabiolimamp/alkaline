@@ -31,11 +31,7 @@ void() HIP_LaserTouch =
     }
 	else if ((self.cnt == 3) || (random()<0.15))
     {
-		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_GUNSHOT);
-		WriteCoord (MSG_BROADCAST, org_x);
-		WriteCoord (MSG_BROADCAST, org_y);
-		WriteCoord (MSG_BROADCAST, org_z);
+		gunshot(org);
     }
 	else
     {
