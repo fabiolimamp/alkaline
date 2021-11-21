@@ -598,7 +598,7 @@ void(float hud_item) update_hud_totals =
 };
 
 
-void(float altfoot) play_footstep = {
+void(float altfoot, float vol_multiplier) play_footstep = {
 	local float footstep, footstepnext, footvol;
 	local string footstepwav;
 	
@@ -609,13 +609,15 @@ void(float altfoot) play_footstep = {
 	if (self.steptype == FS_FLYING) return;
 	
 	// Wide volume range for player
-	if (self.flags & FL_CLIENT) footvol = 0.2 + random()*0.2;
+	if (self.flags & FL_CLIENT) footvol = 0.15 + random()*0.1;
 	// feetsteps need to be louder during combat
 	else if (self.enemy) footvol = 1;
 	// Dogs have too many legs making noise, reduce volume	
 	//else if (self.classtype == CT_MONDOG) footvol = 0.2 + random()*0.6;
 	// Slight random volume level out of combat
 	else footvol = 0.7 + random()*0.3;
+
+	footvol = footvol * vol_multiplier;
 	
 	// Decide which foot sound to play, long live clubfoot!
 	if (altfoot) {

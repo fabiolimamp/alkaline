@@ -155,7 +155,11 @@ void() player_super_nail_spindown = {
 
 		if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND && !intermission_running) {
 			// Need to be moving before feet sounds
-			if (fabs(self.velocity_x + self.velocity_y) > 50) play_footstep(FALSE);
+			float spd;
+			spd = vlen([self.velocity_x, self.velocity_y, 0]);
+			if (spd > 50) {
+				play_footstep(FALSE, (spd - 50)/270);
+			}
 		}
 	}
 	
@@ -210,7 +214,11 @@ void()	player_run =[	$rockrun1,	player_run	]
 
 	if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND && !intermission_running) {
 		// Need to be moving before feet sounds
-		if (fabs(self.velocity_x + self.velocity_y) > 50) play_footstep(FALSE);
+		float spd;
+		spd = vlen([self.velocity_x, self.velocity_y, 0]);
+		if (spd > 50) {
+			play_footstep(FALSE, spd/320);
+		}
 	}
 };
 
