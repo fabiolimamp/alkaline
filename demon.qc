@@ -153,11 +153,6 @@ void(entity attacker, float damage)	demon1_pain =
 	if (self.classname == "monster_mutant") {
 		if (self.health < self.max_health * 0.6) self.skin = 1;
 	}
-	else {
-		if (self.health < self.max_health * 0.05)	self.skin = 3;
-		else if (self.health < self.max_health * 0.4)	self.skin = 2;
-		else if (self.health < self.max_health * 0.8)	self.skin = 1;
-	}
 
 	if (self.touch == Demon_JumpTouch)
 		return;
@@ -211,7 +206,6 @@ void() demon_die =
 	}
 
 	if (self.classname == "monster_mutant") self.skin = 1;
-	else self.skin = 3;
 
 // regular death
 	demon1_die1 ();
