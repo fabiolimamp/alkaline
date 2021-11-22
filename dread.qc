@@ -221,9 +221,9 @@ void(entity attacker, float damage)	dread_pain =
 		return;		// didn't flinch
 		
 	if (r < 0.5)
-		sound (self, CHAN_VOICE, "enforcer/pain1.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "dread/dread_pain1.wav", 1, ATTN_NORM);
 	else
-		sound (self, CHAN_VOICE, "enforcer/pain2.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "dread/dread_pain2.wav", 1, ATTN_NORM);
 
 	if (r < 0.33)
 	{
@@ -301,7 +301,7 @@ void() dread_die =
 	{
 
 		self.skin = 3;
-		sound (self, CHAN_VOICE, "enforcer/death1.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "dread/dread_death.wav", 1, ATTN_NORM);
 		if (random() > 0.5)
 			dread_die1 ();
 		else
@@ -319,7 +319,10 @@ void() dread_die =
 };
 
 void() dread_sight = {
-	sound (self, CHAN_VOICE, "dread/dread_sight.wav", 1, ATTN_NORM);
+	if (random() > 0.5)
+		sound (self, CHAN_VOICE, "dread/dread_sight.wav", 1, ATTN_NORM);
+	else
+		sound (self, CHAN_VOICE, "dread/dread_sight2.wav", 1, ATTN_NORM);
 	/*
 	local float rsnd;
 	rsnd = rint(random() * 3);			
@@ -390,18 +393,12 @@ void() monster_dreadnaught =
 	precache_model2 ("progs/dread.mdl");
 	precache_model2 ("progs/h_dread.mdl");
 
-	precache_sound2 ("enforcer/death1.wav");
-	precache_sound2 ("enforcer/enfire.wav");
-	precache_sound2 ("enforcer/enfstop.wav");
+	precache_sound2 ("dread/dread_death.wav");
 	precache_sound2 ("enforcer/idle1.wav");
-	precache_sound2 ("enforcer/pain1.wav");
-	precache_sound2 ("enforcer/pain2.wav");
-	/*precache_sound2 ("enforcer/sight1.wav");
-	precache_sound2 ("enforcer/sight2.wav");
-	precache_sound2 ("enforcer/sight3.wav");
-	precache_sound2 ("enforcer/sight4.wav");
-	*/
+	precache_sound2 ("dread/dread_pain1.wav");
+	precache_sound2 ("dread/dread_pain2.wav");
 	precache_sound2 ("dread/dread_sight.wav");
+	precache_sound2 ("dread/dread_sight2.wav");
 	
 	precache_sound ("dread/flameon.wav");
 	precache_sound ("dread/flameoff.wav");
