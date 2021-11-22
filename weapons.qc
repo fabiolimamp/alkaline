@@ -1829,17 +1829,22 @@ void(entity cl) printVersionConsole = {
 	sprint(cl, "\b=============================================\b\n");
 };
 
+void() show_bulletholes;
+void() hide_bulletholes;
+
 void() ToggleBulletHole = {
 	float tmp1;
 	tmp1 = cvar("temp1");
 	if (bulletmode == 0) {
 		bprint("Bullet holes: enabled\n");
 		bulletmode = 1;
+		show_bulletholes();
 		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOBULLETHOLES)));
 	}
 	else {
 		bprint("Bullet holes: disabled\n");
 		bulletmode = 0;
+		hide_bulletholes();
 		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOBULLETHOLES));
 	}
 };
@@ -1954,7 +1959,7 @@ void() ImpulseCommands =
 		display_mapvar();
 	if (self.impulse == 200)
 		dev_reveal();
-	
+
 	if (self.impulse == 252)
 		RingCheat();
 	if (self.impulse == 253)

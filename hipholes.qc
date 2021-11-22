@@ -45,7 +45,7 @@ void() InitBulletHoles = {
 	bulletholes = world;
 	lastbullet = world;
 	numbulletholes = 0;
-	
+
 	if (cvar("temp1") & TEMPSETTINGS_NOBULLETHOLES) bulletmode = 0;
 	else bulletmode = 1;
 };
@@ -80,6 +80,27 @@ void() remove_bullethole = {
 
 	remove(e);
 	numbulletholes = numbulletholes - 1;
+};
+
+void() show_bulletholes = {
+	entity e;
+	e = bulletholes;
+	while (e) {
+		setmodel(e, "progs/s_bullet_new.spr");
+		e.frame = floor(random()*6.99);
+		setsize (e, '0 0 0', '0 0 0');
+		e = e.lastvictim;
+	}
+};
+
+void() hide_bulletholes = {
+	entity e;
+	e = bulletholes;
+	while (e) {
+		setmodel(e, "");
+		setsize (e, '0 0 0', '0 0 0');
+		e = e.lastvictim;
+	}
 };
 
 void() update_bulletholes = {
