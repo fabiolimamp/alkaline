@@ -114,6 +114,10 @@ void() frogmen_pain5 = [32, frogmen_run1]{};
 
 void(entity attacker, float damage) frogmen_pain = 
 {
+
+	if (self.health < self.max_health * 0.4)	self.skin = 2;
+	else if (self.health < self.max_health * 0.8)	self.skin = 1;
+
 	if (self.pain_finished > time)
 		return;
 
@@ -249,13 +253,17 @@ void() frogmen_die =
 {
 	local float r;
 	if (self.health < -50) {
+		self.skin = 0;
 		sound(self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead("progs/h_zombie.mdl", self.health);
 		ThrowGib("progs/gib1.mdl", self.health);
+		ThrowGib("progs/gib1.mdl", self.health);
 		ThrowGib("progs/gib2.mdl", self.health);
+		ThrowGib("progs/gib3.mdl", self.health);
 		ThrowGib("progs/gib3.mdl", self.health);
 		return;
 	}
+	self.skin = 3;
 
 	if (self.health > -30) {
 		frogmen_death1();
