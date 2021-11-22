@@ -158,7 +158,7 @@ void() player_super_nail_spindown = {
 			float spd;
 			spd = vlen([self.velocity_x, self.velocity_y, 0]);
 			if (spd > 50) {
-				play_footstep(FALSE, (spd - 50)/270);
+				play_footstep(FALSE, clamp(spd, 0, 320)/320);
 			}
 		}
 	}
