@@ -71,7 +71,7 @@ void() monster_use =
 		// no player found that satisfies those conditions
 		if (!e) return;
 	}
-	// otherwise continue normally
+	// otherwise simply use activator as enemy
 
 
 	// delay reaction so if the monster is teleported, its sound is still

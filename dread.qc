@@ -323,18 +323,6 @@ void() dread_sight = {
 		sound (self, CHAN_VOICE, "dread/dread_sight.wav", 1, ATTN_NORM);
 	else
 		sound (self, CHAN_VOICE, "dread/dread_sight2.wav", 1, ATTN_NORM);
-	/*
-	local float rsnd;
-	rsnd = rint(random() * 3);			
-	if (rsnd == 1)
-		sound (self, CHAN_VOICE, "enforcer/sight1.wav", 1, ATTN_NORM);
-	else if (rsnd == 2)
-		sound (self, CHAN_VOICE, "enforcer/sight2.wav", 1, ATTN_NORM);
-	else if (rsnd == 0)
-		sound (self, CHAN_VOICE, "enforcer/sight3.wav", 1, ATTN_NORM);
-	else
-		sound (self, CHAN_VOICE, "enforcer/sight4.wav", 1, ATTN_NORM);
-	*/
 }
 
 /*QUAKED monster_dreadnaught (1 0 0) (-16 -16 -24) (16 16 40) AMBUSH

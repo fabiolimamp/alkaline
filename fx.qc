@@ -78,7 +78,7 @@ void() BecomeExplosion =
 	BecomeBlast();
 }
 
-void() fx_explode =
+inline void() fx_explode =
 {
 	kaboom(self.origin, 0, self, 0);
 }
