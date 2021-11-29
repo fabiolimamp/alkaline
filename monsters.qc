@@ -53,15 +53,16 @@ void() monster_use =
 		self.oldenemy = e.oldenemy;
 		e = e.enemy;
 	}	
-	// activator isn't a player, nor a monster with a valid enemy, so look for the closest non-invisible player
-	else if (!(e.flags & FL_CLIENT)) {
+	// activator isn't a living player, nor a monster with a valid enemy, so look for the closest non-invisible player alive
+	else if (!(e.flags & FL_CLIENT) || e.health <= 0) {
 		float closestdist = 99999999;
 		float nextdist;
 		next = find(world, classname, "player");
 		while (next) {
 			nextdist = vlen(self.origin - next.origin);
 			if (nextdist < closestdist &&
-				!(next.items & IT_INVISIBILITY || next.flags & FL_NOTARGET)
+				!(next.items & IT_INVISIBILITY || next.flags & FL_NOTARGET) &&
+				next.health > 0
 			){
 				e = next;
 				closestdist = nextdist;

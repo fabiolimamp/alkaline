@@ -282,6 +282,13 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>Set <strong>wait</strong> and <strong>angle</strong> on path_corners for them to stop and work.</p>
 <p>By default they won't count into total monster count, unless you set <strong>Count After Spawn</strong> flag.</p>
 
+<h3 id="health-triggers">Health Triggers</h3>
+<p>By activating the <strong>Health trigger</strong> spawnflag, the monster will fire <strong>target2</strong>, <strong>target3</strong> and <strong>target4</strong> when it takes 25%, 50% and 75% damage, respectively. Only <strong>target</strong> will be fired immediately when the monster dies in this case.</p>
+
+<p>You don't have to assign targets to each health trigger level, just the ones you need. So, for example, you can ignore <strong>target2</strong> and <strong>target3</strong> if you only need a trigger to fire at 75% damage. Also, the all assigned targets WILL fire when their thresholds have passed, even if they happen at the same frame - so if you gib or 1-hit-kill an enemy for example, all its remaining triggers will be fired.</p>
+
+
+
 <hr>
 
 <h2 id="items">Items</h2>
