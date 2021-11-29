@@ -572,3 +572,19 @@ FIELDS
 .float 		above;
 
 .string levelname;
+
+
+// lost soul
+
+.float lostsearch;
+.entity lostenemy;
+.float losttimer;
+.float attack_sidestep;
+.float attack_sidedeny;
+.float meleeattack;
+.float idlebusy;
+.float idlereverse;
+//.float idletimer;
+.float enemydist;
+.float attack_speed;
+.float attack_rage;

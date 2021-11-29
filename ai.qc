@@ -321,7 +321,30 @@ float(entity targ) infront =
 	return FALSE;
 };
 
+/*======================================================================
+ ai_checkmelee
+  Check if the monster (self) can attack enemy (target)
+  and returns TRUE if the monster is within XYZ range
+======================================================================*/
+float(float attackdist, float attackzaxis) ai_checkmelee =
+{
+	local vector	spot1, spot2;
+	local float 	delta, zdiff;
 
+	// Setup default
+	if (attackzaxis <= 0) attackzaxis = 48;
+	
+	// Calculate distance and z axis difference seperate
+	spot1 = SUB_entEnemyTarget().origin;
+	spot2 = self.origin;
+	zdiff = fabs(spot1_z - spot2_z);
+	spot1_z = spot2_z = 0;				// Flatten Z axis before vector length
+	delta = vlen(spot1 - spot2);		// Calculate vector distance
+
+	// Is the enemy too far away and the zaxis is wrong (too low/high)
+	if (delta <= attackdist && zdiff <= 48) return TRUE;
+	else return FALSE;
+};
 //============================================================================
 
 /*

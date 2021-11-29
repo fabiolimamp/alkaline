@@ -80,6 +80,8 @@ spider.qc
 
 edie.qc
 
+lostsoul.qc
+
 monster_frogman.qc // Malice
 monster_banshee.qc // Malice
 monster_rider.qc // Malice
