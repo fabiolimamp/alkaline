@@ -845,8 +845,15 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 @PointClass base(Monster) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
 "Dog (Rottweiler), 25 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogre.mdl"}) = monster_ogre :
-"Ogre, 200 health points." []
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model(
+	{{spawnflags & 8 -> 	"progs/ogre.mdl", "progs/ogre_alk.mdl"}}
+) = monster_ogre :
+"Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
+	spawnflags(flags) =
+	[
+		8 : "Original version" : 0
+	]
+]
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
 "Ogre Marksman, 200 health points." []
@@ -858,7 +865,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	spawnflags & 8 -> 	"progs/hknight.mdl", "progs/sknight.mdl"
 	}}
 ) = monster_hell_knight :
-"Sabre Knight, 250 health points." [
+"Sabre Knight, 250 health points. Original Death Knight available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
 		8 : "Original version" : 0
@@ -869,7 +876,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	spawnflags & 8 -> 	"progs/wizard.mdl", "progs/cyberscrag.mdl"
 	}}
 ) = monster_wizard :
-"CyberScrag, 80 health points." [
+"CyberScrag, 80 health points. Original Scrag available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
 		8 : "Original version" : 0
@@ -880,7 +887,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	spawnflags & 8 -> "progs/demon.mdl", "progs/demon_alk.mdl"
 	}}
 ) = monster_demon1 :
-"Fiend (Demon), 300 health points." [
+"Fiend (Demon), 300 health points. Original Fiend available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
 		8 : "Original version" : 0
@@ -888,7 +895,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 ]
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
-"Mutant, 300 health points." []
+"Mutant, 220 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
 "Shambler, 600 health points.

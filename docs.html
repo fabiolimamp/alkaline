@@ -24,6 +24,7 @@ body {
 		<ul>
 			<li><a href="#monster-triggered-spawning">Triggered spawning</a></li>
 			<li><a href="#monster-spawner">Monster spawner</a></li>
+			<li><a href="#path-angry">Angry monsters' waypoints</a></li>
 			<li><a href="#monster-other-features">Other features</a></li>
 			<li><a href="#target_infight">Entity target_infight</a></li>
 			<li><a href="#monsters-list">Monsters list</a></li>
@@ -37,6 +38,7 @@ body {
 			<li><a href="#circuitboard">Circuitboard</a></li>
 			<li><a href="#trifecta">Trifecta</a></li>
 			<li><a href="#boots">Jump Boots</a></li>
+			<li><a href="#shards">Armor Shards</a></li>
 			<li><a href="#keys">Keys</a></li>
 			<li><a href="#item-respawning">Item respawning</a></li>
 			<li><a href="#item-trigger-spawning">Trigger spawning</a></li>
@@ -94,7 +96,11 @@ body {
 		</ul>
 	</li>
 
-	<li><a href="#trains">Trains</a></li>
+	<li><a href="#trains">Trains</a>
+		<ul>
+			<li><a href="#modeltrain">Model trains</a></li>
+		</ul>
+	</li>
 
 	<li>
 		<a href="#state-system">State System</a>
@@ -231,20 +237,28 @@ body {
 <li><strong>spawncount</strong>: Maximum amount of monsters spawned by this entity that can be alive at the same time (defaults to 10 monsters). If this value is reached, the monsters will stop spawning in from this entity until they're killed. Good for not overwhelming the player with a ludicrous amount of monsters in the same arena. Set to -1 if you want to disable this limit.</li>
 </ul>
 
+<h3 id="path-angry">Angry monsters' waypoints</h3>
+<p>The <strong>path_angry</strong> point entity makes monsters follow a path automatically when angered for the first time, either by sight or trigger. They'll always follow the path up to its end, where they return to their normal movement behavior. While following this path, they can still see and attack you normally. It's useful when you need a monster to reliably come out of somewhere or run through complex pathways when angered, without randomly bumping into things while trying to get to you.</p>
+<p>It works the same way as a path_corner, as in, you chain <strong>path_angry</strong> entities by their target/targetname fields to form a path, and make the monster target the first one - but it'll only act when the monster get angered or triggered.</p>
+<p>Note that the chained <strong>path_angry</strong> entities must have an endpoint that doesn't target any other if you want the monster to get out of its path-chasing behavior. Also flying monsters don't work with it yet.</p>
+
 <h3 id="monster-other-features">Other features</h3>
 <ul><li><strong>No sight sound</strong> flag: The monster won't make its sight sound when angry at something.</li>
 <li><strong>No infight</strong> flag: The monster won't be angry at another when hit, only at players. Note that it doesn't prevent some other monster from getting angry at it, thus never giving it a chance to fight back.</li>
 <li><strong>No idle sounds</strong> flag: The monster won't make any idle sounds when standing still. It'll still make sounds if walking/following path_corners though.</li>
+<li><strong>Above</strong> key (flying monsters only): Specifies a height in units that a the monster will try to stay above the player, instead of always hover at its height.</li>
 </ul>
 
-<h3 id="target_infight">Entity target_infight</h3>
+<h3 id="target_infight">Infight trigger</h3>
 <p>Point entity that makes <strong>target</strong> monster angry at <strong>target2</strong> when triggered.</p>
 <p>
 By default, the infighting doesn't start mutually, that is, <strong>target2</strong> monster will only get mad back at <strong>target</strong> after it's been attacked. If you want to make them angry at each other instantly, you can set the spawnflag <strong>Mutual hate</strong>.
 </p>
 
 <h3 id="monsters-list">Monsters list</h3>
-<p>Last, but not least, here's the list of the baddies that come with Alkaline. The other non-base vanilla monsters not mentioned here behave and look the same, but they're all still available to use.</p>
+<p>Last, but not least, here's the list of the baddies that come with Alkaline. The other non-base vanilla monsters not mentioned here behave and look the same, and they're all still available to use.</p>
+
+<p>All of the original monsters whose visuals/sounds were modified (Death Knight, Scrag, Ogre and Fiend), are also available in their original versions, selectable through the spawnflag <strong>Original version</strong>.</p>
 
 <ul>
 	<li><strong>Grunt (monster_army):</strong> 30 HP</li>
@@ -256,17 +270,21 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<li><strong>Ogre Marksman (monster_ogre_marksman):</strong> 200 HP</li>
 	<li><strong>Berserker (monster_ogreb):</strong> 200 HP</li>
 	<li><strong>Axe Grunt (monster_axegrunt):</strong> 75 HP</li>
-	<li><strong>Death Knight (monster_hell_knight):</strong> 250 HP</li>
+	<li><strong>Sabre Knight (monster_hell_knight):</strong> 250 HP</li>
 	<li><strong>Dreadnaught (monster_dreadnaught):</strong> 150 HP</li>
 	<li><strong>Centroid (monster_scourge):</strong> 300 HP</li>
+	<li><strong>Spiderbot (monster_spiderbot):</strong> 25 HP</li>
 	<li><strong>Eel (monster_eel):</strong> 25 HP</li>
 	<li><strong>Frogman (monster_frogman):</strong> 100 HP</li>
 	<li><strong>Drone (monster_drone):</strong> 100 HP</li>
 	<li><strong>Centurion (monster_centurion):</strong> 150 HP</li>
 	<li><strong>Probe (monster_probe):</strong> 200 HP</li>
+	<li><strong>Grenade Probe (monster_grenadeprobe):</strong> 200 HP</li>
 	<li><strong>Floyd Automaton (monster_floyd):</strong> 200 HP</li>
 	<li><strong>Mega Enforcer (monster_me):</strong> 150 HP</li>
-	<li><strong>Mutant (monster_mutant):</strong> 300 HP</li>
+	<li><strong>Mutant (monster_mutant):</strong> 220 HP</li>
+	<li><strong>Fiend (monster_demon1):</strong> 300 HP</li>
+	<li><strong>Edie (monster_edie):</strong> 500 HP</li>
 	<li><strong>Bambler (monster_bambler):</strong> 500 HP</li>
 	<li><strong>Hunter (monster_hunter):</strong> 600 HP</li>
 	<li><strong>Arachnofloyd (monster_arachnofloyd):</strong> 600 HP</li>
@@ -285,7 +303,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <h3 id="health-triggers">Health Triggers</h3>
 <p>By activating the <strong>Health trigger</strong> spawnflag, the monster will fire <strong>target2</strong>, <strong>target3</strong> and <strong>target4</strong> when it takes 25%, 50% and 75% damage, respectively. Only <strong>target</strong> will be fired immediately when the monster dies in this case.</p>
 
-<p>You don't have to assign targets to each health trigger level, just the ones you need. So, for example, you can ignore <strong>target2</strong> and <strong>target3</strong> if you only need a trigger to fire at 75% damage. Also, the all assigned targets WILL fire when their thresholds have passed, even if they happen at the same frame - so if you gib or 1-hit-kill an enemy for example, all its remaining triggers will be fired.</p>
+<p>You don't have to assign targets to each health trigger level, just the ones you need. So, for example, you can ignore <strong>target2</strong> and <strong>target3</strong> if you only need a trigger to fire at 75% damage. Also, all assigned targets WILL fire when their thresholds have passed, even if they happen at the same frame - so if you gib or 1-hit-kill an enemy for example, all its remaining targets will be fired at the same time.</p>
 
 
 
@@ -314,6 +332,8 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 	<li><strong>Timed (item_jboots_timed):</strong> Timed upgrade, available for 30s. By default it gives limitless charges, but you can change that through the <strong>jboots_rechargelimit</strong> key.</li>
 </ul>
 	
+<h3 id="shards">Armor Shards</h3>
+<p>Gives 5 armor points. It adds up to the player's current armor if it has one, and can go up to 25 points more than the armor type's maximum points. So, up to 125 for green armor, 175 for yellow, and 225 for red. If the player doesn't have any armor, it'll always count as green.</p>
 
 
 <h3 id="keys">Keys</h3>
@@ -342,7 +362,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <h3 id="item-style">Item box model style</h3>
 <p>
-	By default, Alkaline uses the higher-detail BSP item box models from Rubicon Rumble Pack, but you also have the option to use MDL item boxes from Copper. You can select it through the <strong>itemstyle</strong> key, either on worldspawn to set it globally, or directly on a per-entity basis.
+	By default, Alkaline uses the higher-detail BSP item box models from Rubicon Rumble Pack, but you also have the option to use MDL item boxes by Markie - with proper fullbright parts so you can still see them in the dark. You can select it through the <strong>itemstyle</strong> key, either on worldspawn to set it globally, or directly on a per-entity basis.
 </p>
 
 <hr>
@@ -560,6 +580,12 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <li><strong>Stop on trigger</strong> spawnflag will stop the train at the next path_corner when triggered. Trigger it again to resume.</li>
 </ul>
 <p>The flags above are mutually exclusive and will cause an objerror when selected simultaneously.</p>
+
+<h3 id="modeltrain">Model trains</h3>
+<p><strong>misc_modeltrain</strong> works the same way as a func_train, but for using with external models.</p>
+<p>The model can smoothly orient itself towards the next path_corner when moving. The turning speed is automatic and based on the movement speed, but you can set a multiplier for the turning speed with the <strong>multiplier</strong> key. Set it to -1 to turn instantly.</p>
+<p>You can define two different frame ranges and animation speeds, for when the model is stopped and moving. If you don't need different stopped/moving animations, only setting <strong>first_frame</strong>/<strong>last_frame</strong>/<strong>frtime</strong> is enough. If you don't need any animation at all, just set <strong>first_frame</strong> to the desired frame and all other fields can go blank.</p>
+<p>Make sure to check the in-editor documentation for more details on other specific options.</p>
 
 <hr>
 
@@ -806,6 +832,7 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 	<li><strong>Meat/gibs:</strong> <strong>target_meat_fireworks</strong>. Does what it says on the tin. Meat fireworks. Can be fired once or on a periodic basis.</li>
 	<li><strong>Teleport fog:</strong> Targeting a <strong>target_telefog</strong> produces a teleport fog effect when triggered, sounds and all.</li>
 	<li><strong>Particle splash:</strong> <strong>misc_splash</strong> produces a continuous particle splash for waterfalls.</li>
+	<li><strong>Bullet holes:</strong> adding a <strong>nobullets</strong> with a value of 1 to any brush entity prevents it from getting bulletholes.</li>
 </ul>
 
 <hr>
