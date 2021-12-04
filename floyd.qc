@@ -245,6 +245,7 @@ void(string gibname, float dm) ThrowFloydHead =
 	local entity head;
 	head = self; //spawn();
 	head.origin = self.origin;
+	head.skin = 0;
 	setmodel (head, gibname);
 	head.frame = 0;
 	head.nextthink = -1;
