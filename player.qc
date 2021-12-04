@@ -317,30 +317,31 @@ void() player_nail = {
 		return;
 	}
 		
-	self.effects |= EF_MUZZLEFLASH;
-
-	if (self.frame != $nailatt1)
-		self.frame = $nailatt1;
-	else 
-		self.frame += 1;
-
-	self.think = player_nail;
-	self.nextthink = time + 0.1;
-	
-	
-	
+		
 	if (self.weaponframe >= 8)
 		self.weaponframe = 1;
 	else
 		self.weaponframe++;
 		
 	float offs;
-	if (self.frame == $nailatt1) offs = 3;
-	else offs = -3;
-	SuperDamageSound();
-	W_FireSpikes(offs);
+	if (self.weaponframe == 1 || self.weaponframe == 5) {
+		self.effects |= EF_MUZZLEFLASH;
+		
+		if (self.frame != $nailatt1)
+			self.frame = $nailatt1;
+		else 
+			self.frame += 1;
 
-	self.attack_finished = time + 0.2;
+		if (self.frame == $nailatt1) offs = 3;
+		else offs = -3;
+		SuperDamageSound();
+		W_FireSpikes(offs);
+
+		self.attack_finished = time + 0.2;
+	}
+
+	self.think = player_nail;
+	self.nextthink = time + 0.025;
 }
 
 void() super_nail_spindown = {
