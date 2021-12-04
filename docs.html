@@ -66,6 +66,7 @@ body {
 			<li><a href="#message-all">Message all players</a></li>
 			<li><a href="#trigger_repeat">Repeater/timer trigger</a></li>
 			<li><a href="#monsterjumps">Monsterjumps</a></li>
+			<li><a href="#hurt">Hurt triggers</a></li>
 			<li><a href="#stealth-teleport">Stealth teleport</a></li>
 			<li><a href="#multiple-destinations">Multiple teleport destinations</a></li>
 			<li><a href="#mapvars">Mapvars</a></li>
@@ -439,6 +440,15 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <h3 id="monsterjumps">Monsterjumps</h3>
 <p>The <strong>trigger_monsterjump</strong> entity comes with some new features. You have now a simple monster-class-based filter, so you can let only a single monster class to be affected by it, or exclude a specific one from it.</p>
+
+<h3 id="hurt">Hurt triggers</h3>
+<p>The <strong>trigger_hurt</strong> brush entity works the same as before, but has 2 new features:</p>
+<ul>
+<li>Damage interval and amount can both be customized.</li>
+<li>You can set it to not hurt players and/or monsters.</li>
+</ul>
+
+<p>The new <strong>target_hurt</strong> entity is a point version of that. It hurts any entity activating it, or the entities defined in its target-target4 fields.</p>
 
 <h3 id="stealth-teleport">Stealth teleport</h3>
 <p>Stealth mode can be set on both <strong>trigger_teleport</strong> (when teleporting out) and <strong>info_teleport_destination</strong> (when teleporting in).</p>

@@ -111,11 +111,14 @@
 ]
 
 @baseclass = Targetname [ targetname(target_source) : "Name" ]
-@baseclass = Target [ 
+@baseclass = TargetsOnly [ 
 	target(target_destination) : "Target" 
 	target2(target_destination) : "Target" 
 	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target" 
+	target4(target_destination) : "Target"
+]
+
+@baseclass base(TargetsOnly) = Target [ 
 	killtarget(target_destination) : "Killtarget"
 ]
 
@@ -2328,7 +2331,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	noise(string) : "Sound" : "ambience/windfly.wav"
 	delay(float) : "Sound loop time" : "1.5"
 ]
-@SolidClass base(Appearflags, Targetname, Targets, TriggerWait) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
 [
 	dmg(integer) : "Damage" : 5
 	wait(float) : "Damage interval" : "1"
@@ -2338,6 +2341,18 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	]
 ]
 
+@PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_hurt : "Trigger hurt. Hurts any entity activating it, or the entities defined in the target-target4 fields.
+'dmg' sets the total damage to be inflicted.
+'speed' sets the total time it takes for damage to be progressively applied.
+" 
+[
+	dmg(integer) : "Total damage" : 10
+	speed(float) : "Damage time" : "1"
+	spawnflags(flags) = [
+		1: "Don't hurt players" : 0 
+		2: "Don't hurt monsters" : 0
+	]
+]
 
 
 @SolidClass base(Appearflags, Targetname, FogShift, TriggerWait) = trigger_fogblend : 

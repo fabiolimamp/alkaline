@@ -819,6 +819,14 @@ void() hurt_think = {
 
 void(entity tgt, float totaldmg, float duration) hurt_start = {
 	entity controller;
+	if (self.spawnflags & 1 && tgt.flags & FL_CLIENT)
+		return;
+	
+	if (self.spawnflags & 2 && tgt.flags & FL_MONSTER)
+		return;
+	
+	if (!tgt.takedamage || tgt.health <= 0)
+		return;
 
 	if (!tgt.hurtcontroller ||
 		tgt.hurtcontroller.classname != "hurt_controller" ||
