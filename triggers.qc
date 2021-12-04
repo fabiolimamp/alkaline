@@ -752,7 +752,13 @@ void() hurt_touch =
 {
 	if (self.estate != STATE_ACTIVE)
 		return;
-
+	
+	if (self.spawnflags & 1 && other.flags & FL_CLIENT)
+		return;
+	
+	if (self.spawnflags & 2 && other.flags & FL_MONSTER)
+		return;
+	
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;

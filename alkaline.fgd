@@ -2330,6 +2330,10 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 [
 	dmg(integer) : "Damage" : 5
 	wait(float) : "Damage interval" : "1"
+	spawnflags(flags) = [
+		1: "Don't hurt players" : 0 
+		2: "Don't hurt monsters" : 0
+	]
 ]
 
 
