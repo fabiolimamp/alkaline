@@ -941,7 +941,7 @@ PLAYER WEAPON USE
 
 void() W_SetCurrentAmmo =
 {
-	if (self.weapon != WEAPON_NO_WEAPON) player_run ();		// get out of any weapon firing states
+	if (self.weapon != WEAPON_NO_WEAPON && !(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1)) player_run ();		// get out of any weapon firing states
 
 	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
 	
@@ -989,7 +989,7 @@ void() W_SetCurrentAmmo =
 	{
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail3.mdl";
-		self.weaponframe = 0;
+		if (self.cnt != 1) self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
 	else if (self.weapon == WEAPON_LASER_CANNON)
