@@ -591,7 +591,7 @@ void(entity e) monster_tormentor_start = {
 	setmodel (self, "progs/tormentor.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self,  '-32 -32 -24', '32 32 120');
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (!self.health) self.health = 2000;
 	if (self.obituary == "") self.obituary = "was obliterated by Tormentor";
@@ -653,9 +653,12 @@ void() monster_tormentor = {
 
 	precache_sound("hunter/hit.wav");
 	precache_sound("hunter/fire.wav");
-	
+
+	self.cmins = '-32 -32 -24';
+	self.cmaxs = '32 32 120';
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-32 -32 -24', '32 32 120');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_tormentor_spawner;

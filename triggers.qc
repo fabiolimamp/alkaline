@@ -758,7 +758,7 @@ void() hurt_touch =
 	
 	if (self.spawnflags & 2 && other.flags & FL_MONSTER)
 		return;
-	
+
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;
@@ -1536,8 +1536,14 @@ void(string name, .string fld) target_setsize_set = {
 	t = find(world, fld, name);
 
 	while (t) {
-		if (t.mins != self.cmins || t.maxs != self.cmaxs)
+		if (t.flags & FL_MONSTER && self.spawnflags & 2) { // restore monsters' original bbox
+			if (t.mins != t.cmins || t.maxs != t.cmaxs) {
+				setsize(t, t.cmins, t.cmaxs);
+			}
+		}
+		else if (t.mins != self.cmins || t.maxs != self.cmaxs) {
 			setsize(t, self.cmins, self.cmaxs);
+		}
 
 		t = find(t, fld, name);
 	}
@@ -1562,7 +1568,11 @@ void() target_setsize_use = {
 	}
 
 	if (self.spawnflags & 1) {
-		if (activator.mins != self.cmins || activator.maxs != self.cmaxs)
+		if (activator.flags & FL_MONSTER && self.spawnflags & 2) { // restore monsters' original bbox
+			if (activator.mins != activator.cmins || activator.maxs != activator.cmaxs) 
+				setsize(activator, activator.cmins, activator.cmaxs);
+		}
+		else if (activator.mins != self.cmins || activator.maxs != self.cmaxs) 
 			setsize(activator, self.cmins, self.cmaxs);
 	}
 };

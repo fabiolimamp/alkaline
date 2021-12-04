@@ -347,7 +347,7 @@ void(entity e) monster_dog_start =
 	setmodel (self, "progs/dog_alk.mdl");
 	
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-32 -32 -24', '32 32 40');
+	else setsize (self, self.cmins, self.cmaxs);
 	
 	self.health = 25;
 	if (self.obituary == "") self.obituary = "was mauled by a Rottweiler";
@@ -386,9 +386,12 @@ void() monster_dog =
 	precache_sound ("dog/dpain1.wav");
 	precache_sound ("dog/dsight.wav");
 	precache_sound ("dog/idle.wav");
+
+	self.cmins = '-32 -32 -24';
+	self.cmaxs = '32 32 40';
 	
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-32 -32 -24', '32 32 40');
+	else setsize (self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_dog_spawner;

@@ -853,7 +853,7 @@ void(entity e) monster_hunter_start =
 	setmodel (self, "progs/hunter.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self,	VEC_HULL2_MIN,	VEC_HULL2_MAX);	
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health	=	600;
 	if (self.obituary == "") self.obituary = "was hammered by a Hunter";
@@ -905,8 +905,11 @@ void()	monster_hunter	=
 	precache_sound ("hunter/smash.wav");
 	precache_sound ("weapons/r_exp3.wav");
 
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_hunter_spawner;

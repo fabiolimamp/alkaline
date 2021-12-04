@@ -483,7 +483,8 @@ void(entity e) monster_zombie_start =
 	setmodel (self, "progs/zombie.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
+	
 	self.health = 60;
 	if (self.obituary == "") self.obituary = "joins the Zombies";
 
@@ -533,8 +534,11 @@ void() monster_zombie =
 	precache_sound ("zombie/z_hit.wav");
 	precache_sound ("zombie/idle_w2.wav");
 
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_zombie_spawner;

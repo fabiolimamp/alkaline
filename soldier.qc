@@ -372,7 +372,8 @@ void(entity e) monster_army_start =
 	setmodel (self, "progs/soldier_alk.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
+	
 	self.health = 30;
 	if (self.obituary == "") self.obituary = "was shot by a Grunt";
 	
@@ -404,7 +405,8 @@ void(entity e) monster_nailgrunt_start =
 	setmodel (self, "progs/nsoldier_alk.mdl");
 	
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
+
 	self.health = 30;
 	if (self.obituary == "") self.obituary = "was nailed by a Nail Grunt";
 
@@ -450,8 +452,11 @@ void() monster_nailgrunt = {
 
 	precache_sound ("player/udeath.wav");		// gib death
 
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_nailgrunt_spawner;
@@ -489,9 +494,12 @@ void() monster_army = {
 	precache_sound ("soldier/sight1.wav");
 
 	precache_sound ("player/udeath.wav");		// gib death
+	
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_army_spawner;

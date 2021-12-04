@@ -430,7 +430,7 @@ void(entity e) monster_hell_knight_start =
 	else setmodel (self, "progs/sknight.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health = 250;
 	if (self.obituary == "") {
@@ -488,8 +488,11 @@ void() monster_hell_knight =
 	precache_sound2 ("hknight/idle.wav");
 	precache_sound2 ("hknight/grunt.wav");
 
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_hell_knight_spawner;

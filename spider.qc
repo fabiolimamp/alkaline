@@ -168,7 +168,7 @@ void(entity e) monster_spiderbot_start = {
 	setmodel(self, SPIDER_MODEL_BODY);
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 0', '0 0 0');
-	else setsize(self, '-16 -16 0', '16 16 24');
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (!self.health) self.health = 40;
 	if (!self.speed) self.speed = 1.2;
@@ -206,8 +206,11 @@ void() monster_spiderbot = {
 	precache_sound(SPIDER_SOUND_ACTIVE);
 	precache_sound(SPIDER_SOUND_CHARGE);
 
+	self.cmins = '-16 -16 0';
+	self.cmaxs = '16 16 24';
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 0', '0 0 0');
-	else setsize(self, '-16 -16 0', '16 16 24');
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_spiderbot_spawner;

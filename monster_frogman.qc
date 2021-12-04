@@ -302,7 +302,7 @@ void(entity e) monster_frogman_start =
 	setmodel(self, "progs/frogman.mdl");
 	
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize(self, VEC_HULL_MIN, '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 
 	self.health = 100;
 	if (self.obituary == "") self.obituary = "was harpooned by a Frogman";
@@ -347,8 +347,11 @@ void() monster_frogman =
 	precache_sound("frogman/death.wav");
 	precache_sound("frogman/impact.wav");
 
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize(self, VEC_HULL_MIN, '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_frogman_spawner;

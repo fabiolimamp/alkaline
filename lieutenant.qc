@@ -233,7 +233,7 @@ void(entity e) monster_super_enforcer_start =
 	setmodel (self, "progs/enforce3.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (skill == 0)
 		self.health = 100;
@@ -282,8 +282,11 @@ void() monster_super_enforcer =
 	precache_sound2 ("lieut/alert.wav");
 	precache_sound2 ("lieut/you.wav");
 
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (startskill == SKILL_EASY) {
 		lth_min_volley = 4;

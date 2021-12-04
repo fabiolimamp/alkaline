@@ -409,7 +409,9 @@ void(entity e) monster_demon1_start =
 	else
 		setmodel (self, "progs/demon_alk.mdl");
 
-	setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	else setsize (self, self.cmins, self.cmaxs);
+
 	self.health = 300;
 	if (self.obituary == "") self.obituary = "was eviscerated by a Fiend";
 
@@ -441,7 +443,7 @@ void(entity e) monster_mutant_start =
 	setmodel (self, "progs/mutant.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize (self, self.cmins, self.cmaxs);
 	
 	self.health = 220;
 	if (self.obituary == "") self.obituary = "was mutilated by a Mutant";
@@ -490,8 +492,11 @@ void() monster_demon1 =
 	precache_sound ("demon/idle1.wav");
 	precache_sound ("demon/sight2.wav");
 
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize (self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_demon1_spawner;
@@ -530,8 +535,11 @@ void() monster_mutant =
 	precache_sound ("mutant/mutsght1.wav");
 	precache_sound ("mutant/mutsrch1.wav");
 
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize (self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_mutant_spawner;
