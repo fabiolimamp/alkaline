@@ -2328,7 +2328,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	noise(string) : "Sound" : "ambience/windfly.wav"
 	delay(float) : "Sound loop time" : "1.5"
 ]
-@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
+@SolidClass base(Appearflags, Targetname, Targets, TriggerWait) = trigger_hurt : "Trigger hurt. Any object touching this will be hurt." 
 [
 	dmg(integer) : "Damage" : 5
 	wait(float) : "Damage interval" : "1"

@@ -788,6 +788,113 @@ void() trigger_hurt =
 /*
 ==============================================================================
 
+target_hurt
+
+==============================================================================
+*/
+
+void() hurt_think = {
+	if (self.owner.health <= 0 || self.attack_finished < time) {
+		if (self.attack_finished < time) {
+			if (self.dmg_save < self.dmg) 
+				T_Damage (self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save);
+		}
+		self.owner.hurtcontroller = world;
+		remove(self);
+		return;
+	}
+
+	self.dmg_take += self.dmg / self.delay / 10;
+
+	if (self.dmg_take >= 1) {
+		T_Damage (self.owner, self.enemy, self.enemy, floor(self.dmg_take));
+		
+		self.dmg_save += floor(self.dmg_take);
+		
+		self.dmg_take = self.dmg_take % floor(self.dmg_take);
+		dprint2(ftos(self.dmg_take),"\n");
+	}
+	self.nextthink = time + 0.1;
+};
+
+void(entity tgt, float totaldmg, float duration) hurt_start = {
+	entity controller;
+
+	if (!tgt.hurtcontroller ||
+		tgt.hurtcontroller.classname != "hurt_controller" ||
+		tgt.hurtcontroller.enemy != self
+	) {
+		if (tgt.hurtcontroller) remove(tgt.hurtcontroller);
+
+		controller = spawn();
+		controller.owner = tgt;
+		controller.enemy = self;
+		controller.classname = "hurt_controller";
+		tgt.hurtcontroller = controller;
+
+		controller.attack_finished = time + duration;
+		controller.dmg = totaldmg;
+		controller.delay = duration;
+
+		controller.think = hurt_think;
+		controller.nextthink = time + 0.1;
+	}
+
+};
+
+void(string name, .string fld) hurt_find = {
+	local entity t;
+
+	t = find(world, fld, name);
+
+	while (t) {
+		hurt_start(t, self.dmg, self.speed);
+
+		t = find(t, fld, name);
+	}
+}
+
+void() hurt_use = {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	float has_target;
+
+	if (self.target && self.target != "") {
+		hurt_find(self.target, targetname);
+		hurt_find(self.target, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target2 && self.target2 != "") {
+		hurt_find(self.target2, targetname);
+		hurt_find(self.target2, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target3 && self.target3 != "") {
+		hurt_find(self.target3, targetname);
+		hurt_find(self.target3, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target4 && self.target4 != "") {
+		hurt_find(self.target4, targetname);
+		hurt_find(self.target4, targetname2);
+		has_target = TRUE;
+	}
+
+	if (!has_target) {
+		hurt_start(activator, self.dmg, self.speed);
+	}
+
+
+}
+
+void() target_hurt = {
+	self.use = hurt_use;
+};
+
+/*
+==============================================================================
+
 trigger_push
 
 ==============================================================================

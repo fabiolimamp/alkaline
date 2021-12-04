@@ -302,6 +302,8 @@ FIELDS
 
 .float steptype, steplast, altsteptype, altsteplast;
 
+.entity hurtcontroller, healthcontroller;
+
 //.float hit_z;
 
 //
