@@ -954,7 +954,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_AXE)
 	{
 		self.currentammo = 0;
-		self.weaponmodel = "progs/v_axe_alk.mdl";
+		self.weaponmodel = "progs/v_alkaxe20fps.mdl";
 		self.weaponframe = 0;
 	}
 	else if (self.weapon == WEAPON_CHAINSAW)
@@ -981,7 +981,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
-		self.weaponmodel = "progs/v_nail.mdl";
+		self.weaponmodel = "progs/v_nail_alk40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
@@ -1121,10 +1121,12 @@ W_Attack
 An attack impulse can be triggered now
 ============
 */
+/*
 void()	player_axe1;
 void()	player_axeb1;
 void()	player_axec1;
-void()	player_axed1;
+void()	player_axed1;*/
+void()	player_axe;
 void()	player_shot1;
 void()	player_nail;
 void()	player_super_nail;
@@ -1136,7 +1138,6 @@ void()	player_chainsaw1;
 
 void() W_Attack =
 {
-	local	float	r;
 
 	if (!W_CheckNoAmmo ())
 		return;
@@ -1147,15 +1148,7 @@ void() W_Attack =
 	if (self.weapon == WEAPON_AXE)
 	{
 		sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
-		r = random();
-		if (r < 0.25)
-			player_axe1 ();
-		else if (r<0.5)
-			player_axeb1 ();
-		else if (r<0.75)
-			player_axec1 ();
-		else
-			player_axed1 ();
+		player_axe();
 		self.attack_finished = time + 0.5;
 	}
 	else if (self.weapon == WEAPON_SHOTGUN)
