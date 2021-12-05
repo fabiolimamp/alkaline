@@ -473,13 +473,14 @@ void() floyd_rolling_start = {
 };
 
 void() floyd_asleep_start = {
-	self.origin_z = self.origin_z + 1;	// raise off floor a bit
+	self.origin_z = self.origin_z + 10;	// raise off floor a bit
 	droptofloor();
 	self.max_health = self.health;
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
 		self.yaw_speed = 20;
 	self.view_ofs = '0 0 25';
+	//self.use = monster_use;
 
 	self.flags = self.flags | FL_MONSTER;
 
@@ -542,7 +543,7 @@ void(entity e) monster_floyd_start =
 	}
 	else if (self.spawnflags & FLOYD_ASLEEP)
 	{
-		setsize(self, '-24 -24 -24', '24 24 64');
+		setsize(self, self.cmins, self.cmaxs);
 		self.health = 200;
 		self.movetype = MOVETYPE_STEP;
 		self.takedamage = DAMAGE_AIM;
@@ -608,9 +609,10 @@ void() monster_floyd =
 	precache_sound2("floyd/death.wav");
 	precache_sound2("enforcer/enfstop.wav");
 
-	self.cmins = '-24 -24 -24';
-	self.cmaxs = '24 24 64';
-
+	//self.cmins = '-24 -24 -24';
+	//self.cmaxs = '24 24 64';
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 64';
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
 	
