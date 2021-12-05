@@ -805,14 +805,22 @@ void() hurt_think = {
 	}
 
 	self.dmg_take += self.dmg / self.delay / 10;
+	float take;
 
-	if (self.dmg_take >= 1) {
-		T_Damage (self.owner, self.enemy, self.enemy, floor(self.dmg_take));
+	if (fabs(self.dmg_take) >= 1) {
+
+		if (self.dmg_take < 0) {
+			take = ceil(self.dmg_take);
+			self.owner.health -= take;
+		}
+		else {
+			take = floor(self.dmg_take);
+			T_Damage (self.owner, self.enemy, self.enemy, take);
+		}
 		
-		self.dmg_save += floor(self.dmg_take);
+		self.dmg_save += take;
 		
-		self.dmg_take = self.dmg_take % floor(self.dmg_take);
-		dprint2(ftos(self.dmg_take),"\n");
+		self.dmg_take = self.dmg_take % take;
 	}
 	self.nextthink = time + 0.1;
 };
@@ -824,7 +832,7 @@ void(entity tgt, float totaldmg, float duration) hurt_start = {
 	
 	if (self.spawnflags & 2 && tgt.flags & FL_MONSTER)
 		return;
-	
+
 	if (!tgt.takedamage || tgt.health <= 0)
 		return;
 
