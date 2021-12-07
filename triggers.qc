@@ -1704,3 +1704,39 @@ void() target_setsize = {
 	self.use = target_setsize_use;
 
 };
+
+
+void() target_startpath_use = {
+	if (self.estate != STATE_ACTIVE) return;
+
+	entity mon, path;
+
+	mon = find(world, targetname, self.target);
+	path = find(world, targetname, self.target2);
+	
+	if (!mon || !path || !(mon.flags & FL_MONSTER))
+		return;
+
+	if (path.classname == "path_angry" && mon.enemy) {
+		dprint("Found path_angry, following\n");
+		mon.followingpath = TRUE;
+		mon.goalentity = path;
+		mon.oldenemy = mon.enemy;
+		mon.startpath = world;
+		mon.think = mon.th_run;
+		mon.nextthink = time + 0.1;
+	}
+	else if (path.classname == "path_corner" && !mon.enemy) {
+		dprint("Found path_corner, following\n");
+		mon.goalentity = mon.movetarget = path;
+		mon.ideal_yaw = vectoyaw(mon.goalentity.origin - mon.origin);
+
+		SUB_CallAsSelf(mon.th_walk, mon);
+		
+	}
+}
+
+
+void() target_startpath = {
+	self.use = target_startpath_use;
+};

@@ -25,6 +25,7 @@ body {
 			<li><a href="#monster-triggered-spawning">Triggered spawning</a></li>
 			<li><a href="#monster-spawner">Monster spawner</a></li>
 			<li><a href="#path-angry">Angry monsters' waypoints</a></li>
+			<li><a href="#startpath">Follow a path upon an event</a></li>
 			<li><a href="#monster-other-features">Other features</a></li>
 			<li><a href="#target_infight">Entity target_infight</a></li>
 			<li><a href="#monsters-list">Monsters list</a></li>
@@ -242,6 +243,14 @@ body {
 <p>The <strong>path_angry</strong> point entity makes monsters follow a path automatically when angered for the first time, either by sight or trigger. They'll always follow the path up to its end, where they return to their normal movement behavior. While following this path, they can still see and attack you normally. It's useful when you need a monster to reliably come out of somewhere or run through complex pathways when angered, without randomly bumping into things while trying to get to you.</p>
 <p>It works the same way as a path_corner, as in, you chain <strong>path_angry</strong> entities by their target/targetname fields to form a path, and make the monster target the first one - but it'll only act when the monster get angered or triggered.</p>
 <p>Note that the chained <strong>path_angry</strong> entities must have an endpoint that doesn't target any other if you want the monster to get out of its path-chasing behavior. Also flying monsters don't work with it yet.</p>
+
+
+<h3 id="startpath">Follow a path upon an event</h3>
+<p>The <strong>target_startpath</strong> point entity makes a monster start following a path upon being triggered. Works with both path_corner and path_angry. <strong>target</strong> is the monster's name, and <strong>target2</strong> is the destination path.</p>
+
+<p>If 'target2' is a path_corner, the monster will start walking towards it only when not angry. If it's a path_angry, on the other hand, it'll only do it while angry at something.</p>
+
+<p>You can set up more than one target_setpath entity for a monster, if you need both walking/angry pathing situations to happen at different times. Or you can even have more than one of the same path type, if you want to route it to a different direction depending on some event.</p>
 
 <h3 id="monster-other-features">Other features</h3>
 <ul><li><strong>No sight sound</strong> flag: The monster won't make its sight sound when angry at something.</li>

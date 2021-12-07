@@ -2172,17 +2172,13 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 	wait(integer) : "Repeat interval" : 2 
 ]
 
-@PointClass base(Appearflags, Targetname) = target_setstate : "Changes an entity's state.
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setstate : "Changes an entity's state.
 Entities in a disabled state won't execute its main function, depending on context.
 Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
 The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
 You can force the target entities to spawn disabled/locked with spawnflag 1.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target" 
 	spawnflags(flags) = [
 		1: "Targets start disabled" : 0
 		2: "Force all doors to close" : 0
@@ -2264,19 +2260,15 @@ By default it'll fire for each and every registered touch, even if simultaneous.
 	spawnflags(flags) = [
 		1: "Wait only if trigger_filter evaluates to true"
 	]
-]
+]'
 
 
-@PointClass base(Appearflags, Targetname) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
-Can be used with a trigger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
+Can be used with a trig'ger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
 
 You can either replace the current value with a new one, or add/subtract to it (by using a positive or negative 'count'), by selecting into the 'style' field.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target"
 	style(choices) : "Set style" : 0 = [
 		0 : "Replace"
 		1 : "Add"
@@ -2287,15 +2279,11 @@ You can either replace the current value with a new one, or add/subtract to it (
 	]
 ]
 
-@PointClass base(Appearflags, Targetname) = target_setsize : "Resizes the targeted entity's bounding box. Targets both targetname and targetname2 fields.
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setsize : "Resizes the targeted entity's bounding box. Targets both targetname and targetname2 fields.
 If you only want to restore a monster's original size (in case it was spawned with a 0-sized bbox) just set the respective spawnflag and you won't need to set a min/max size manually.
 The activator's bbox can be changed as well by activating spawnflag 1.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target"
 	cmins(string) : "Min. bounding box point"
 	cmaxs(string) : "Max. bounding box point"
 	spawnflags(flags) = [
@@ -2304,15 +2292,21 @@ The activator's bbox can be changed as well by activating spawnflag 1.
 	]
 ]
 
+@PointClass base(Appearflags, Targetname) = target_startpath : "Makes a monster start following a path upon this entity being triggered. Works with both path_corner and path_angry. 'target' is the monster's name, and 'target2' is the destination path.
 
-@PointClass base(Appearflags, Targetname) = target_setdoor : "Moves a door to the specified position (open or closed).
+If 'target2' is a path_corner, the monster will start walking towards it only when not angry. If it's a path_angry, on the other hand, it'll only do it while angry at something.
+
+You can set up more than one target_setpath entity for a monster, if you need both walking/angry pathing situations to happen at different times. Or you can even have more than one of the same path type, if you want to route it to a different direction depending on some event. 
+" 
+[
+	target(target_destination) : "Monster's name" 
+	target2(target_destination) : "Path point to go to" 
+]
+
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setdoor : "Moves a door to the specified position (open or closed).
 It respect the door's wait time and enabled/disabled state, but will move even if keylocked.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target"
 	delay(integer) : "Delay before activation"
 	style(choices) : "Door action" : 0 = [
 		0 : "Open"
