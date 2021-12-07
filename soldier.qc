@@ -344,10 +344,15 @@ float() SoldierCheckAttack =
 	else
 		chance = 0;
 
+	if (self.goalentity.classname == "path_angry") chance = chance * 0.2;
+
 	if (random () < chance)
 	{
 		self.th_missile ();
-		SUB_AttackFinished (1 + random());
+		
+		if (self.goalentity.classname == "path_angry") SUB_AttackFinished (3 + random()*2);
+		else SUB_AttackFinished (1 + random());
+		
 		if (random() < 0.3)
 			self.lefty = !self.lefty;
 
@@ -494,7 +499,7 @@ void() monster_army = {
 	precache_sound ("soldier/sight1.wav");
 
 	precache_sound ("player/udeath.wav");		// gib death
-	
+
 	self.cmins = '-16 -16 -24';
 	self.cmaxs = '16 16 40';
 

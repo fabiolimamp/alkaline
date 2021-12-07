@@ -134,7 +134,7 @@ void() path_angry = {
 	self.owner = trg;
 	setorigin(trg, self.origin);
 	//setsize (self, '-8 -8 -8', '8 8 8');
-	setsize (trg, '-16 -16 -16', '16 16 16');
+	setsize (trg, '-24 -24 -24', '24 24 24');
 };
 
 /*
@@ -818,6 +818,8 @@ float() CheckAttack =
 	else
 		chance = 0;
 
+	if (self.goalentity.classname == "path_angry") chance = chance * 0.2;
+	
 	if (random () < chance)
 	{
 		self.th_missile ();
@@ -978,7 +980,9 @@ void(float dist) ai_run =
 
 	enemy_infront = infront(enem);
 	enemy_range = range(enem);
-	enemy_yaw = vectoyaw(enem.origin - self.origin);
+
+	if (self.goalentity.classname == "path_angry") enemy_yaw = vectoyaw(self.goalentity.origin - self.origin);
+	else enemy_yaw = vectoyaw(enem.origin - self.origin);
 
 	if (self.attack_state == AS_MISSILE)
 	{
@@ -1053,7 +1057,8 @@ void(float dist) ai_run_away =
 			return;
 	}
 
-	self.ideal_yaw = vectoyaw(self.origin - enem.origin);
+	if (self.goalentity.classname == "path_angry") self.ideal_yaw = vectoyaw(self.origin - self.goalentity.origin);
+	else self.ideal_yaw = vectoyaw(self.origin - enem.origin);
 		
 	//enemy_infront = infront(self.enemy);
 	enemy_range = range(self.enemy);

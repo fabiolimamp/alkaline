@@ -649,6 +649,9 @@ float() OgreCheckAttack =
 	else
 		chance = 0;
 
+	if (self.goalentity.classname == "path_angry" && random() > chance)
+		return FALSE;
+
 	self.attack_state = AS_MISSILE;
 	SUB_AttackFinished (1 + 2*random());
 	return TRUE;
