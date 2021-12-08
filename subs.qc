@@ -330,13 +330,24 @@ void(string matchstring, .string matchfield) SUB_UseSpecificTarget =
 		otemp = other;
 		self = t;
 		other = stemp;
-		if (self.use != SUB_Null)
+		if (self.use && self.use != SUB_Null)
 		{
-			if (self.use)
-			{
-				//lastnameused = matchstring;
-				self.use ();
+			/*
+			// correction for door triggers happening before they're setup
+			// maybe not necessary
+			if (!door_setup_finished && self.classname == "func_door") {
+				dprint("Door didn't finish setup yet, delaying\n");
+				entity dl;
+				dl = spawn();
+				dl.classname = "DelayedUse";
+				dl.think = DelayThink;
+				dl.nextthink = time + 0.12;
+				dl.enemy = act;
+				dl.target = matchstring;
+				dl.owner = stemp;
 			}
+			else*/
+				self.use();
 		}
 		self = stemp;
 		other = otemp;
