@@ -1683,17 +1683,41 @@ void() QuadCheat =
 };
 
 void() JBootsCheat = { //JCR superjump boot cheat
-		self.items = self.items | IT_JBOOTS;
+	self.items = self.items | IT_JBOOTS;
 
-		if (!self.jboots_rechargelimit) sprint(self, "You got the Jump boots!\n");
-		else sprint(self, "Jump module added.\n");
+	if (!self.jboots_rechargelimit) sprint(self, "You got the Jump Boots!\n");
+	else sprint(self, "Jump module added.\n");
 
-		sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
+	sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
 
-		if (self.jboots_rechargelimit >= 3)
-			self.jboots_rechargelimit = 3;
-		else
-			self.jboots_rechargelimit = self.jboots_rechargelimit + 1;
+	if (self.jboots_rechargelimit >= 3)
+		self.jboots_rechargelimit = 3;
+	else
+		self.jboots_rechargelimit = self.jboots_rechargelimit + 1;
+}
+
+void() JBootsTimedCheat = { //JCR superjump boot cheat
+	self.items = self.items | IT_JBOOTS;
+
+	sprint(self, "You got the Super Jump Boots!\n");
+
+	sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
+
+	self.jboots_prevlimit = self.jboots_rechargelimit;
+	self.jboots_time = 1;
+	self.jboots_finished = time + 30;
+	self.jboots_rechargelimit = -1;
+}
+
+void() JBootsRemoveCheat = {
+	sprint(self, "Jump boots removed.\n");
+
+	self.items -= self.items & IT_JBOOTS;
+
+	self.jboots_finished = 0;
+	self.jboots_time = 0;
+	self.jboots_rechargelimit = 0;
+	self.jboots_prevlimit = 0;
 }
 
 void(float num) ImpulseTest = {
@@ -1969,9 +1993,12 @@ void() ImpulseCommands =
 		PentCheat();
 	if (self.impulse == 255)
 		QuadCheat();
+	if (self.impulse == 221)
+		JBootsTimedCheat();
 	if (self.impulse == 222)
 		JBootsCheat();
-
+	if (self.impulse == 223)
+		JBootsRemoveCheat();
 
 		
 	self.impulse = 0;
