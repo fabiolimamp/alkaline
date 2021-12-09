@@ -1339,6 +1339,14 @@ void() W_ChangeWeapon =
 		if (self.ammo_rockets < 1)
 			noammo = 1;
 	}
+	else if (self.impulse == 230) {
+		weap = WEAPON_GRENADE_LAUNCHER;
+		if (self.ammo_rockets < 1)
+			noammo = 1;
+	}
+	else if (self.impulse == 231) {
+		weap = WEAPON_AXE;
+	}
 	else 
 		weap = WEAPON_NO_WEAPON; // doesn't work right but does no harm either
 	
@@ -1917,7 +1925,7 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon();
 	
-	if (self.impulse >= 224 && self.impulse <= 228)
+	if (self.impulse >= 224 && self.impulse <= 235)
 		W_ChangeWeapon();
 	
 	if (self.impulse == 9)
