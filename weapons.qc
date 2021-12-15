@@ -941,7 +941,7 @@ PLAYER WEAPON USE
 
 void() W_SetCurrentAmmo =
 {
-	if (self.weapon != WEAPON_NO_WEAPON) player_run ();		// get out of any weapon firing states
+	if (self.weapon != WEAPON_NO_WEAPON && !(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1)) player_run ();		// get out of any weapon firing states
 
 	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
 	
@@ -954,7 +954,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_AXE)
 	{
 		self.currentammo = 0;
-		self.weaponmodel = "progs/v_axe_alk.mdl";
+		self.weaponmodel = "progs/v_alkaxe20fps.mdl";
 		self.weaponframe = 0;
 	}
 	else if (self.weapon == WEAPON_CHAINSAW)
@@ -981,7 +981,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
-		self.weaponmodel = "progs/v_nail.mdl";
+		self.weaponmodel = "progs/v_nail_alk40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
@@ -989,7 +989,7 @@ void() W_SetCurrentAmmo =
 	{
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail3.mdl";
-		self.weaponframe = 0;
+		if (self.cnt != 1) self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
 	else if (self.weapon == WEAPON_LASER_CANNON)
@@ -1121,10 +1121,12 @@ W_Attack
 An attack impulse can be triggered now
 ============
 */
+/*
 void()	player_axe1;
 void()	player_axeb1;
 void()	player_axec1;
-void()	player_axed1;
+void()	player_axed1;*/
+void()	player_axe;
 void()	player_shot1;
 void()	player_nail;
 void()	player_super_nail;
@@ -1136,7 +1138,6 @@ void()	player_chainsaw1;
 
 void() W_Attack =
 {
-	local	float	r;
 
 	if (!W_CheckNoAmmo ())
 		return;
@@ -1147,15 +1148,7 @@ void() W_Attack =
 	if (self.weapon == WEAPON_AXE)
 	{
 		sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
-		r = random();
-		if (r < 0.25)
-			player_axe1 ();
-		else if (r<0.5)
-			player_axeb1 ();
-		else if (r<0.75)
-			player_axec1 ();
-		else
-			player_axed1 ();
+		player_axe();
 		self.attack_finished = time + 0.5;
 	}
 	else if (self.weapon == WEAPON_SHOTGUN)
@@ -1345,6 +1338,14 @@ void() W_ChangeWeapon =
 		weap = WEAPON_PROXIMITY_GUN;
 		if (self.ammo_rockets < 1)
 			noammo = 1;
+	}
+	else if (self.impulse == 230) {
+		weap = WEAPON_GRENADE_LAUNCHER;
+		if (self.ammo_rockets < 1)
+			noammo = 1;
+	}
+	else if (self.impulse == 231) {
+		weap = WEAPON_AXE;
 	}
 	else 
 		weap = WEAPON_NO_WEAPON; // doesn't work right but does no harm either
@@ -1682,17 +1683,41 @@ void() QuadCheat =
 };
 
 void() JBootsCheat = { //JCR superjump boot cheat
-		self.items = self.items | IT_JBOOTS;
+	self.items = self.items | IT_JBOOTS;
 
-		if (!self.jboots_rechargelimit) sprint(self, "You got the Jump boots!\n");
-		else sprint(self, "Jump module added.\n");
+	if (!self.jboots_rechargelimit) sprint(self, "You got the Jump Boots!\n");
+	else sprint(self, "Jump module added.\n");
 
-		sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
+	sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
 
-		if (self.jboots_rechargelimit >= 3)
-			self.jboots_rechargelimit = 3;
-		else
-			self.jboots_rechargelimit = self.jboots_rechargelimit + 1;
+	if (self.jboots_rechargelimit >= 3)
+		self.jboots_rechargelimit = 3;
+	else
+		self.jboots_rechargelimit = self.jboots_rechargelimit + 1;
+}
+
+void() JBootsTimedCheat = { //JCR superjump boot cheat
+	self.items = self.items | IT_JBOOTS;
+
+	sprint(self, "You got the Super Jump Boots!\n");
+
+	sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
+
+	self.jboots_prevlimit = self.jboots_rechargelimit;
+	self.jboots_time = 1;
+	self.jboots_finished = time + 30;
+	self.jboots_rechargelimit = -1;
+}
+
+void() JBootsRemoveCheat = {
+	sprint(self, "Jump boots removed.\n");
+
+	self.items -= self.items & IT_JBOOTS;
+
+	self.jboots_finished = 0;
+	self.jboots_time = 0;
+	self.jboots_rechargelimit = 0;
+	self.jboots_prevlimit = 0;
 }
 
 void(float num) ImpulseTest = {
@@ -1924,7 +1949,7 @@ void() ImpulseCommands =
 	if (self.impulse >= 1 && self.impulse <= 8)
 		W_ChangeWeapon();
 	
-	if (self.impulse >= 224 && self.impulse <= 228)
+	if (self.impulse >= 224 && self.impulse <= 235)
 		W_ChangeWeapon();
 	
 	if (self.impulse == 9)
@@ -1968,9 +1993,12 @@ void() ImpulseCommands =
 		PentCheat();
 	if (self.impulse == 255)
 		QuadCheat();
+	if (self.impulse == 221)
+		JBootsTimedCheat();
 	if (self.impulse == 222)
 		JBootsCheat();
-
+	if (self.impulse == 223)
+		JBootsRemoveCheat();
 
 		
 	self.impulse = 0;

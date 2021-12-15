@@ -843,7 +843,7 @@ void(entity e) monster_edie_start = {
 	setmodel (self, "progs/edie.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 
 	self.th_stand = edie_stand1;
 	self.th_walk = edie_walk1;
@@ -899,8 +899,11 @@ void() monster_edie =
 	precache_sound ("edie/stfire.wav");
 	precache_sound ("edie/sawstart.wav");
 
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_edie_spawner;

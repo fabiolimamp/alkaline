@@ -649,6 +649,9 @@ float() OgreCheckAttack =
 	else
 		chance = 0;
 
+	if (self.goalentity.classname == "path_angry" && random() > chance)
+		return FALSE;
+
 	self.attack_state = AS_MISSILE;
 	SUB_AttackFinished (1 + 2*random());
 	return TRUE;
@@ -672,7 +675,7 @@ void(entity e) monster_ogre_start =
 	else setmodel (self, "progs/ogre_alk.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 
 	self.health = 200;
 	if (self.obituary == "") self.obituary = "was destroyed by an Ogre";
@@ -718,8 +721,11 @@ void() monster_ogre = {
 	precache_sound ("ogre/ogsawatk.wav");
 	precache_sound ("ogre/ogwake.wav");
 
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_ogre_spawner;
@@ -746,7 +752,7 @@ void(entity e) monster_ogre_marksman_start =
 	setmodel (self, "progs/ogrem.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health = 200;
 	if (self.obituary == "") self.obituary = "was ruptured by an Ogre Marksman";
@@ -790,8 +796,11 @@ void() monster_ogre_marksman = {
 	precache_sound ("ogre/ogsawatk.wav");
 	precache_sound ("ogre/ogwake.wav");
 	
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_ogre_marksman_spawner;

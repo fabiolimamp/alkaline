@@ -589,7 +589,7 @@ void(entity e) monster_me_start =
 	setmodel (self, "progs/enforce2.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 
 	self.health = 150;
 	if (self.obituary == "") self.obituary = "was vaporized by a Mega-enforcer";
@@ -634,8 +634,11 @@ void() monster_me =
 	precache_sound2 ("me/me_son.wav");
 	precache_sound2 ("me/me_soff.wav");
 
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
+	
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, '-16 -16 -24', '16 16 40');
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_me_spawner;

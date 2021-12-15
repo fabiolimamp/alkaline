@@ -371,6 +371,11 @@ void() door_fire = {
 
 void() door_use = {
 	local entity oself;
+	
+	if (!self.owner) {
+		dprint3("Warning! Tried to use func_door with no owner close to (", vtos(self.mins), ")\n");
+		return;
+	}
 
 	self.message = "";			// door message is for touch only
 	self.owner.message = "";	
@@ -535,7 +540,7 @@ void() door_touch =
 	if (self.owner.message != "")
 	{
 		centerprint (other, self.owner.message);
-		sound (other, CHAN_VOICE, "doors/alka_doorlocked.wav", 1, ATTN_NORM);
+		sound (other, CHAN_VOICE, "doors/alka_doorlocked.wav", 0.5, ATTN_NORM);
 	}
 
 

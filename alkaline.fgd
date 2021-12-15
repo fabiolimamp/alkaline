@@ -111,11 +111,14 @@
 ]
 
 @baseclass = Targetname [ targetname(target_source) : "Name" ]
-@baseclass = Target [ 
+@baseclass = TargetsOnly [ 
 	target(target_destination) : "Target" 
 	target2(target_destination) : "Target" 
 	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target" 
+	target4(target_destination) : "Target"
+]
+
+@baseclass base(TargetsOnly) = Target [ 
 	killtarget(target_destination) : "Killtarget"
 ]
 
@@ -825,7 +828,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 // Dreadnaught, 150 hp
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/floyd.mdl", "frame":1}) = monster_floyd : "Floyd automaton robot, 200 hp
+@PointClass base(Monster) size(-16 -16 -24, 16 16 64) model({"path":"progs/floyd.mdl", "frame":1}) = monster_floyd : "Floyd automaton robot, 200 hp
 ROLLING Floyd is on his back and helpless, explodes after taking 75 damage
 ASLEEP Floyd will not respond to anything unless he is shot or his targetname is triggered"
 [
@@ -845,8 +848,15 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 @PointClass base(Monster) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
 "Dog (Rottweiler), 25 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogre.mdl"}) = monster_ogre :
-"Ogre, 200 health points." []
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model(
+	{{spawnflags & 8 -> 	"progs/ogre.mdl", "progs/ogre_alk.mdl"}}
+) = monster_ogre :
+"Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
+	spawnflags(flags) =
+	[
+		8 : "Original version" : 0
+	]
+]
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
 "Ogre Marksman, 200 health points." []
@@ -858,7 +868,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	spawnflags & 8 -> 	"progs/hknight.mdl", "progs/sknight.mdl"
 	}}
 ) = monster_hell_knight :
-"Sabre Knight, 250 health points." [
+"Sabre Knight, 250 health points. Original Death Knight available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
 		8 : "Original version" : 0
@@ -869,7 +879,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	spawnflags & 8 -> 	"progs/wizard.mdl", "progs/cyberscrag.mdl"
 	}}
 ) = monster_wizard :
-"CyberScrag, 80 health points." [
+"CyberScrag, 80 health points. Original Scrag available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
 		8 : "Original version" : 0
@@ -880,7 +890,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	spawnflags & 8 -> "progs/demon.mdl", "progs/demon_alk.mdl"
 	}}
 ) = monster_demon1 :
-"Fiend (Demon), 300 health points." [
+"Fiend (Demon), 300 health points. Original Fiend available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
 		8 : "Original version" : 0
@@ -888,7 +898,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 ]
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
-"Mutant, 300 health points." []
+"Mutant, 220 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
 "Shambler, 600 health points.
@@ -2165,17 +2175,13 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 	wait(integer) : "Repeat interval" : 2 
 ]
 
-@PointClass base(Appearflags, Targetname) = target_setstate : "Changes an entity's state.
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setstate : "Changes an entity's state.
 Entities in a disabled state won't execute its main function, depending on context.
 Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
 The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
 You can force the target entities to spawn disabled/locked with spawnflag 1.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target" 
 	spawnflags(flags) = [
 		1: "Targets start disabled" : 0
 		2: "Force all doors to close" : 0
@@ -2260,16 +2266,12 @@ By default it'll fire for each and every registered touch, even if simultaneous.
 ]
 
 
-@PointClass base(Appearflags, Targetname) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
-Can be used with a trigger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
+Can be used with a trig'ger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
 
 You can either replace the current value with a new one, or add/subtract to it (by using a positive or negative 'count'), by selecting into the 'style' field.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target"
 	style(choices) : "Set style" : 0 = [
 		0 : "Replace"
 		1 : "Add"
@@ -2280,30 +2282,34 @@ You can either replace the current value with a new one, or add/subtract to it (
 	]
 ]
 
-@PointClass base(Appearflags, Targetname) = target_setsize : "Resizes the targeted entity's bounding box. Targets both targetname and targetname2 fields.
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setsize : "Resizes the targeted entity's bounding box. Targets both targetname and targetname2 fields.
+If you only want to restore a monster's original size (in case it was spawned with a 0-sized bbox) just set the respective spawnflag and you won't need to set a min/max size manually.
 The activator's bbox can be changed as well by activating spawnflag 1.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target"
 	cmins(string) : "Min. bounding box point"
 	cmaxs(string) : "Max. bounding box point"
 	spawnflags(flags) = [
 		1 : "Change activator's size"
+		2 : "Restore monsters' original bbox"
 	]
 ]
 
+@PointClass base(Appearflags, Targetname) = target_startpath : "Makes a monster start following a path upon this entity being triggered. Works with both path_corner and path_angry. 'target' is the monster's name, and 'target2' is the destination path.
 
-@PointClass base(Appearflags, Targetname) = target_setdoor : "Moves a door to the specified position (open or closed).
+If 'target2' is a path_corner, the monster will start walking towards it only when not angry. If it's a path_angry, on the other hand, it'll only do it while angry at something.
+
+You can set up more than one target_setpath entity for a monster, if you need both walking/angry pathing situations to happen at different times. Or you can even have more than one of the same path type, if you want to route it to a different direction depending on some event. 
+" 
+[
+	target(target_destination) : "Monster's name" 
+	target2(target_destination) : "Path point to go to" 
+]
+
+@PointClass base(Appearflags, Targetname, TargetsOnly) = target_setdoor : "Moves a door to the specified position (open or closed).
 It respect the door's wait time and enabled/disabled state, but will move even if keylocked.
 " 
 [
-	target(target_destination) : "Target" 
-	target2(target_destination) : "Target" 
-	target3(target_destination) : "Target" 
-	target4(target_destination) : "Target"
 	delay(integer) : "Delay before activation"
 	style(choices) : "Door action" : 0 = [
 		0 : "Open"
@@ -2326,8 +2332,24 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 [
 	dmg(integer) : "Damage" : 5
 	wait(float) : "Damage interval" : "1"
+	spawnflags(flags) = [
+		1: "Don't hurt players" : 0 
+		2: "Don't hurt monsters" : 0
+	]
 ]
 
+@PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_hurt : "Trigger hurt. Hurts any entity activating it, or the entities defined in the target-target4 fields.
+'dmg' sets the total damage to be inflicted.
+'speed' sets the total time it takes for damage to be progressively applied.
+" 
+[
+	dmg(integer) : "Total damage" : 10
+	speed(float) : "Damage time" : "1"
+	spawnflags(flags) = [
+		1: "Don't hurt players" : 0 
+		2: "Don't hurt monsters" : 0
+	]
+]
 
 
 @SolidClass base(Appearflags, Targetname, FogShift, TriggerWait) = trigger_fogblend : 

@@ -752,6 +752,12 @@ void() hurt_touch =
 {
 	if (self.estate != STATE_ACTIVE)
 		return;
+	
+	if (self.spawnflags & 1 && other.flags & FL_CLIENT)
+		return;
+	
+	if (self.spawnflags & 2 && other.flags & FL_MONSTER)
+		return;
 
 	if (other.takedamage)
 	{
@@ -777,6 +783,129 @@ void() trigger_hurt =
 		self.dmg = 5;
 
 	SUB_CheckWaiting();
+};
+
+/*
+==============================================================================
+
+target_hurt
+
+==============================================================================
+*/
+
+void() hurt_think = {
+	if (self.owner.health <= 0 || self.attack_finished < time) {
+		if (self.attack_finished < time) {
+			if (self.dmg_save < self.dmg) 
+				T_Damage (self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save);
+		}
+		self.owner.hurtcontroller = world;
+		remove(self);
+		return;
+	}
+
+	self.dmg_take += self.dmg / self.delay / 10;
+	float take;
+
+	if (fabs(self.dmg_take) >= 1) {
+
+		if (self.dmg_take < 0) {
+			take = ceil(self.dmg_take);
+			self.owner.health -= take;
+		}
+		else {
+			take = floor(self.dmg_take);
+			T_Damage (self.owner, self.enemy, self.enemy, take);
+		}
+		
+		self.dmg_save += take;
+		
+		self.dmg_take = self.dmg_take % take;
+	}
+	self.nextthink = time + 0.1;
+};
+
+void(entity tgt, float totaldmg, float duration) hurt_start = {
+	entity controller;
+	if (self.spawnflags & 1 && tgt.flags & FL_CLIENT)
+		return;
+	
+	if (self.spawnflags & 2 && tgt.flags & FL_MONSTER)
+		return;
+
+	if (!tgt.takedamage || tgt.health <= 0)
+		return;
+
+	if (!tgt.hurtcontroller ||
+		tgt.hurtcontroller.classname != "hurt_controller" ||
+		tgt.hurtcontroller.enemy != self
+	) {
+		if (tgt.hurtcontroller) remove(tgt.hurtcontroller);
+
+		controller = spawn();
+		controller.owner = tgt;
+		controller.enemy = self;
+		controller.classname = "hurt_controller";
+		tgt.hurtcontroller = controller;
+
+		controller.attack_finished = time + duration;
+		controller.dmg = totaldmg;
+		controller.delay = duration;
+
+		controller.think = hurt_think;
+		controller.nextthink = time + 0.1;
+	}
+
+};
+
+void(string name, .string fld) hurt_find = {
+	local entity t;
+
+	t = find(world, fld, name);
+
+	while (t) {
+		hurt_start(t, self.dmg, self.speed);
+
+		t = find(t, fld, name);
+	}
+}
+
+void() hurt_use = {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	float has_target;
+
+	if (self.target && self.target != "") {
+		hurt_find(self.target, targetname);
+		hurt_find(self.target, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target2 && self.target2 != "") {
+		hurt_find(self.target2, targetname);
+		hurt_find(self.target2, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target3 && self.target3 != "") {
+		hurt_find(self.target3, targetname);
+		hurt_find(self.target3, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target4 && self.target4 != "") {
+		hurt_find(self.target4, targetname);
+		hurt_find(self.target4, targetname2);
+		has_target = TRUE;
+	}
+
+	if (!has_target) {
+		hurt_start(activator, self.dmg, self.speed);
+	}
+
+
+}
+
+void() target_hurt = {
+	self.use = hurt_use;
 };
 
 /*
@@ -1530,8 +1659,14 @@ void(string name, .string fld) target_setsize_set = {
 	t = find(world, fld, name);
 
 	while (t) {
-		if (t.mins != self.cmins || t.maxs != self.cmaxs)
+		if (t.flags & FL_MONSTER && self.spawnflags & 2) { // restore monsters' original bbox
+			if (t.mins != t.cmins || t.maxs != t.cmaxs) {
+				setsize(t, t.cmins, t.cmaxs);
+			}
+		}
+		else if (t.mins != self.cmins || t.maxs != self.cmaxs) {
 			setsize(t, self.cmins, self.cmaxs);
+		}
 
 		t = find(t, fld, name);
 	}
@@ -1556,7 +1691,11 @@ void() target_setsize_use = {
 	}
 
 	if (self.spawnflags & 1) {
-		if (activator.mins != self.cmins || activator.maxs != self.cmaxs)
+		if (activator.flags & FL_MONSTER && self.spawnflags & 2) { // restore monsters' original bbox
+			if (activator.mins != activator.cmins || activator.maxs != activator.cmaxs) 
+				setsize(activator, activator.cmins, activator.cmaxs);
+		}
+		else if (activator.mins != self.cmins || activator.maxs != self.cmaxs) 
 			setsize(activator, self.cmins, self.cmaxs);
 	}
 };
@@ -1564,4 +1703,40 @@ void() target_setsize_use = {
 void() target_setsize = {
 	self.use = target_setsize_use;
 
+};
+
+
+void() target_startpath_use = {
+	if (self.estate != STATE_ACTIVE) return;
+
+	entity mon, path;
+
+	mon = find(world, targetname, self.target);
+	path = find(world, targetname, self.target2);
+	
+	if (!mon || !path || !(mon.flags & FL_MONSTER))
+		return;
+
+	if (path.classname == "path_angry" && mon.enemy) {
+		dprint("Found path_angry, following\n");
+		mon.followingpath = TRUE;
+		mon.goalentity = path;
+		mon.oldenemy = mon.enemy;
+		mon.startpath = world;
+		mon.think = mon.th_run;
+		mon.nextthink = time + 0.1;
+	}
+	else if (path.classname == "path_corner" && !mon.enemy) {
+		dprint("Found path_corner, following\n");
+		mon.goalentity = mon.movetarget = path;
+		mon.ideal_yaw = vectoyaw(mon.goalentity.origin - mon.origin);
+
+		SUB_CallAsSelf(mon.th_walk, mon);
+		
+	}
+}
+
+
+void() target_startpath = {
+	self.use = target_startpath_use;
 };

@@ -476,7 +476,7 @@ void(entity e) monster_scourge_start =
 	setmodel (self, "progs/scor.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health = 300;
 	if (self.obituary == "") self.obituary = "was stung by a Centroid";
@@ -528,8 +528,11 @@ void() monster_scourge =
 	precache_sound2 ("shambler/smack.wav");
 	precache_sound2 ("weapons/rocket1i.wav");
 
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_scourge_spawner;

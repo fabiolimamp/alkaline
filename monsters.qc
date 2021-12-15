@@ -497,6 +497,8 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	e.angles = self.angles;
 	e.bloodtype = self.bloodtype;
 	e.above = self.above;
+	e.cmins = self.cmins;
+	e.cmaxs = self.cmaxs;
 	e.spawnflags = self.spawnflags | MONSTER_SPAWNANGRY; // always spawn angry
 
 

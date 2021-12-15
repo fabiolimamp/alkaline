@@ -333,9 +333,9 @@ void() worldspawn =
 	precache_model ("progs/s_explo2.spr");	// sprite explosion
 	precache_model ("progs/s_light.spr");	// light bulb
 
-	precache_model ("progs/v_axe_alk.mdl");
+	precache_model ("progs/v_alkaxe20fps.mdl");
 	precache_model ("progs/v_shot.mdl");
-	precache_model ("progs/v_nail.mdl");
+	precache_model ("progs/v_nail_alk40fps.mdl");
 	precache_model ("progs/v_nail3.mdl");
 	precache_model ("progs/v_rock.mdl");
 	precache_model ("progs/v_shot2.mdl");

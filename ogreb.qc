@@ -473,7 +473,7 @@ void(entity e) monster_ogreb_start =
 	setmodel (self, "progs/ogreb.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health = 250;	//ogre is 200
 	if (self.obituary == "") self.obituary = "was sawn by a Berserker";
@@ -507,7 +507,7 @@ void() monster_ogreb =
 	precache_model ("progs/ogreb.mdl");
 	precache_model ("progs/h_ogreb.mdl");
 	precache_model ("progs/gib.mdl");
-        precache_model ("progs/brz_saw.mdl");
+    precache_model ("progs/brz_saw.mdl");
 
 	precache_sound ("ogre/ogdrag.wav");
 	precache_sound ("ogre/ogdth.wav");
@@ -518,8 +518,11 @@ void() monster_ogreb =
 	precache_sound ("ogre/ogwake.wav");
 	precache_sound ("ogre/ogleap.wav");
 
+	self.cmins = VEC_HULL2_MIN;
+	self.cmaxs = VEC_HULL2_MAX;
+
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
-	else setsize (self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
 		self.use = monster_ogreb_spawner;
