@@ -372,7 +372,7 @@ void(entity e) monster_drone_start =
 
     setmodel (self, "progs/drone1.mdl");
 
-    if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+    if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 0', '0 0 0');
 	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health = 100;
