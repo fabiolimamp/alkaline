@@ -294,20 +294,21 @@ void()	garg_wakeup6	=[	$flyup20,	garg_run1	] {HuntTarget();};
 //----------------------------------------------------------------------
 void() gargoyle_wakeup =
 {
+	//dprint("wake up!\n");
 	// Dead already?
-	if (self.health < 1) return;
+	if (self.health <= 0) return;
 
 	// No longer perched on the ground
 	self.spawnflags = self.spawnflags - (self.spawnflags & MON_GARGOYLE_PERCH);
 	
-	self.takedamage = DAMAGE_AIM;		// Can receive damage
+	//self.takedamage = DAMAGE_AIM;		// Can receive damage
 	//self.use = SUB_Null;				// no re-trigger
 	
 	// Restore all think state functions
 	self.th_stand = garg_idle1;
 	self.th_walk = garg_walk1;
-	//self.th_run = garg_run1;
-	//self.th_missile = garg_fire1;
+	self.th_run = garg_run1;
+	self.th_missile = garg_fire1;
 
 
 	// Allow gargoyle to fly up, no more ground checks
@@ -467,7 +468,7 @@ void(entity e) monster_gargoyle_start =
 	
 	flymonster_start ();
 
-	if (self.spawnflags & MON_GARGOYLE_PERCH) self.flags -= FL_FLY;
+	//if (self.spawnflags & MON_GARGOYLE_PERCH) self.flags -= FL_FLY;
 	
 	self = oself;
 };
