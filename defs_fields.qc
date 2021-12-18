@@ -576,7 +576,7 @@ FIELDS
 .string levelname;
 
 
-// lost soul
+// AD monsters
 
 .float lostsearch;
 .entity lostenemy;
@@ -586,7 +586,8 @@ FIELDS
 .float meleeattack;
 .float idlebusy;
 .float idlereverse;
-//.float idletimer;
+.float idletimer;
 .float enemydist;
 .float attack_speed;
 .float attack_rage;
+.float attack_chance;
