@@ -13,8 +13,6 @@ $origin 0 0 24
 $base base
 $skin badass3
 
-$frame	skin
-
 $frame run1 run2 run3 run4 run5 run6 run7 run8 run9 run10 run11 run12 run13 run14 run15 run16 run17 run18 run19
 
 $frame fire1 fire2 fire3 fire4 fire5 fire6 fire7 fire8 fire9 fire10 fire11 fire12 fire13 fire14 fire15 fire16 fire17 fire18 fire19 fire20 fire21 fire22 fire23 fire24 fire25 fire26 fire27 fire28 fire29 fire30
