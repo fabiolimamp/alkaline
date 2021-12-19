@@ -56,9 +56,9 @@ void()  HunterIdleSound;
 
 //==========================================================
 
-void()	bbullet_explode1	=	[0,	bbullet_explode2]	{};
-void()	bbullet_explode2	=	[1,	bbullet_explode3]	{};
-void()	bbullet_explode3	=	[2,	SUB_Remove]			{};
+void() bbullet_explode1 = [0,	bbullet_explode2]	{};
+void() bbullet_explode2 = [1,	bbullet_explode3]	{};
+void() bbullet_explode3 = [2,	SUB_Remove]			{};
 
 //ijed These are for the Mr Big monster's attacks
 void() become_big_bullet_explosion =
@@ -391,12 +391,12 @@ void()	hunter_fire9	=[	$fire18,	hunter_fire10	]	{ai_face(); };
 void()	hunter_fire10	=[	$fire19,	hunter_fire11	]	{ai_face(); hunter_shoot();};
 void()	hunter_fire11	=[	$fire20,	hunter_fire1	]	{ai_face();	hunter_check_refire(1);};
 
-void()	hunter_refire6	=[	$fire21,	hunter_refire7	]	{ai_face(); hunter_shoot();};
-void()	hunter_refire7	=[	$fire20,	hunter_refire8	]	{ai_face();	};
-void()	hunter_refire8	=[	$fire19,	hunter_refire9	]	{ai_face(); hunter_shoot();};
-void()	hunter_refire9	=[	$fire18,	hunter_refire10	]	{ai_face(); };	
-void()	hunter_refire10	=[	$fire17,	hunter_refire11	]	{ai_face(); hunter_shoot();};
-void()	hunter_refire11	=[	$fire16,	hunter_fire1	]	{ai_face();	hunter_check_refire(0);};
+void()	hunter_refire6	=[	$fire20,	hunter_refire7	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire7	=[	$fire19,	hunter_refire8	]	{ai_face();	};
+void()	hunter_refire8	=[	$fire18,	hunter_refire9	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire9	=[	$fire17,	hunter_refire10	]	{ai_face(); };	
+void()	hunter_refire10	=[	$fire16,	hunter_refire11	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire11	=[	$fire15,	hunter_fire1	]	{ai_face();	hunter_check_refire(0);};
 
 //fire no left arm
 void()	hunter_fire_loff1	=[	$fire_loff1,	hunter_fire_loff2	]	{ai_face(); HunterIdleSound();};
@@ -718,19 +718,14 @@ void(entity attacker, float damage)	hunter_pain	=
 	{
 		if (random() > TotalModifier)	//BAM!
 		{
-			if (random() > 0.5)
-			{
-				ThrowExplosion();
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			ThrowExplosion();
+			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			if (random() > 0.5) {
 				self.dismemberment = 1;
 				hunter_run_loff1();	//left arm
 			}
-			else
-			{
-				ThrowExplosion();
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			else {
 				self.dismemberment = 2;
 				hunter_run_roff1();	//right arm
 			}
