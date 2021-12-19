@@ -1429,22 +1429,24 @@ Go to the next weapon with ammo
 */
 void() CycleWeaponCommand =
 {
-	local	float	it, am;
+	local	float	weaps, noammo, loop;
 	
-	it = self.weapons;
+	weaps = self.weapons;
+	
 	self.impulse = 0;
 	self.weaponframe = 0;
 	
-	if (!(it & ALL_WEAPONS))
+	if (!(weaps & ALL_WEAPONS))
 	{
 		self.weapon = WEAPON_NO_WEAPON;
 		W_SetCurrentAmmo ();
 		return;
 	}
+
 	
 	while (1)
 	{
-		am = 0;
+		noammo = FALSE;
 		
 		if (self.weapon == WEAPON_AXE)
 		{
@@ -1454,73 +1456,76 @@ void() CycleWeaponCommand =
 		{
 			self.weapon = WEAPON_SHOTGUN;
 			if (self.ammo_shells < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_SHOTGUN)
 		{
 			self.weapon = WEAPON_SUPER_SHOTGUN;
 			if (self.ammo_shells < 2)
-				am = 1;
+				noammo = TRUE;
 		}		
 		else if (self.weapon == WEAPON_SUPER_SHOTGUN)
 		{
 			self.weapon = WEAPON_NAILGUN;
 			if (self.ammo_nails < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_NAILGUN)
 		{
 			self.weapon = WEAPON_SUPER_NAILGUN;
 			if (self.ammo_nails < 2)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_SUPER_NAILGUN)
 		{
 			self.weapon = WEAPON_GRENADE_LAUNCHER;
 			if (self.ammo_rockets < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 		{
 			self.weapon = WEAPON_PROXIMITY_GUN;
 			if (self.ammo_rockets < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_PROXIMITY_GUN)
 		{
 			self.weapon = WEAPON_ROCKET_LAUNCHER;
 			if (self.ammo_rockets < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 		{
 			self.weapon = WEAPON_LIGHTNING;
 			if (self.ammo_cells < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_LIGHTNING)
 		{
 			self.weapon = WEAPON_LASER_CANNON;
 			if (self.ammo_cells < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_LASER_CANNON)
 		{
 			self.weapon = WEAPON_PLASMA;
 			if (self.ammo_cells < 1)
-				am = 1;				
+				noammo = TRUE;			
 		}
 		else if (self.weapon == WEAPON_PLASMA)
 		{
 			self.weapon = WEAPON_AXE;
 		}
-
 		
-		if ((it & self.weapon) && am == 0)
+		if ((weaps & self.weapon && !noammo) || loop > 12)
 		{
+			if (loop > 12) self.weapon = WEAPON_NO_WEAPON;
 			W_SetCurrentAmmo ();
 			return;
 		}
+
+		loop++;
+
 	}
 };
 
@@ -1533,13 +1538,14 @@ Go to the prev weapon with ammo
 */
 void() CycleWeaponReverseCommand =
 {
-	local	float	it, am;
+	local	float	weaps, noammo, loop;
 	
-	it = self.weapons;
+	weaps = self.weapons;
+
 	self.impulse = 0;
 	self.weaponframe = 0;
 
-	if (!(it & ALL_WEAPONS))
+	if (!(weaps & ALL_WEAPONS))
 	{
 		self.weapon = WEAPON_NO_WEAPON;
 		W_SetCurrentAmmo ();
@@ -1548,61 +1554,61 @@ void() CycleWeaponReverseCommand =
 
 	while (1)
 	{
-		am = 0;
+		noammo = FALSE;
 		
 		if (self.weapon == WEAPON_PLASMA)
 		{
 			self.weapon = WEAPON_LASER_CANNON;
 			if (self.ammo_cells < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_LASER_CANNON)
 		{
 			self.weapon = WEAPON_LIGHTNING;
 			if (self.ammo_cells < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_LIGHTNING)
 		{
 			self.weapon = WEAPON_ROCKET_LAUNCHER;
 			if (self.ammo_rockets < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 		{
 			self.weapon = WEAPON_PROXIMITY_GUN;
 			if (self.ammo_rockets < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_PROXIMITY_GUN)
 		{
 			self.weapon = WEAPON_GRENADE_LAUNCHER;
 			if (self.ammo_rockets < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 		{
 			self.weapon = WEAPON_SUPER_NAILGUN;
 			if (self.ammo_nails < 2)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_SUPER_NAILGUN)
 		{
 			self.weapon = WEAPON_NAILGUN;
 			if (self.ammo_nails < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_NAILGUN)
 		{
 			self.weapon = WEAPON_SUPER_SHOTGUN;
 			if (self.ammo_shells < 2)
-				am = 1;
+				noammo = TRUE;
 		}		
 		else if (self.weapon == WEAPON_SUPER_SHOTGUN)
 		{
 			self.weapon = WEAPON_SHOTGUN;
 			if (self.ammo_shells < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		else if (self.weapon == WEAPON_SHOTGUN)
 		{
@@ -1612,18 +1618,20 @@ void() CycleWeaponReverseCommand =
 		{
 			self.weapon = WEAPON_AXE;
 		}
-		else if (self.weapon == WEAPON_AXE)
+		else if (self.weapon == WEAPON_AXE || self.weapon == WEAPON_NO_WEAPON)
 		{	
 			self.weapon = WEAPON_PLASMA;
 			if (self.ammo_cells < 1)
-				am = 1;
+				noammo = TRUE;
 		}
 		
-		if ((it & self.weapon) && am == 0)
+		if ((weaps & self.weapon && !noammo) || loop > 12)
 		{
+			if (loop > 12) self.weapon = WEAPON_NO_WEAPON;
 			W_SetCurrentAmmo ();
 			return;
 		}
+		loop++;
 	}
 
 };
