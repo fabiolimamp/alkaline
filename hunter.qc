@@ -13,7 +13,7 @@ $origin 0 0 24
 $base base
 $skin badass3
 
-$frame	skin
+//$frame skin
 
 $frame run1 run2 run3 run4 run5 run6 run7 run8 run9 run10 run11 run12 run13 run14 run15 run16 run17 run18 run19
 
@@ -48,7 +48,7 @@ $frame idle_roff1 idle_roff2 idle_roff3 idle_roff4 idle_roff5 idle_roff6 idle_ro
 //==========================================================
 
 void()	hunter_shoot;
-void()	hunter_check_refire;
+void(float dir)	hunter_check_refire;
 void()	hunter_detonate;
 void()	hunter_explode;
 void()	ThrowExplosion;
@@ -56,9 +56,9 @@ void()  HunterIdleSound;
 
 //==========================================================
 
-void()	bbullet_explode1	=	[0,	bbullet_explode2]	{};
-void()	bbullet_explode2	=	[1,	bbullet_explode3]	{};
-void()	bbullet_explode3	=	[2,	SUB_Remove]			{};
+void() bbullet_explode1 = [0,	bbullet_explode2]	{};
+void() bbullet_explode2 = [1,	bbullet_explode3]	{};
+void() bbullet_explode3 = [2,	SUB_Remove]			{};
 
 //ijed These are for the Mr Big monster's attacks
 void() become_big_bullet_explosion =
@@ -146,7 +146,7 @@ void() hunter_shoot =
 	org2 = self.origin + v_forward * 20 + v_right * -36 + '0 0 24';		//left hand
 	
 	sound (self, CHAN_WEAPON, "hunter/fire.wav", 1, ATTN_NORM);
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	//self.effects = self.effects | EF_MUZZLEFLASH;
 	
 	vec1 = self.enemy.origin + RandomOffset(32) - org1;
 	vec2 = self.enemy.origin + RandomOffset(32) - org2;
@@ -354,7 +354,8 @@ void()	hunter_run_loff14	=[	$run_loff14,	hunter_run_loff15	] {ai_run(3);};
 void()	hunter_run_loff15	=[	$run_loff15,	hunter_run_loff16	] {ai_run(5); hunter_step();};
 void()	hunter_run_loff16	=[	$run_loff16, 	hunter_run_loff17	] {ai_run(6);};
 void()	hunter_run_loff17	=[	$run_loff17,	hunter_run_loff18	] {ai_run(5);};
-void()	hunter_run_loff18	=[	$run_loff18,	hunter_run_loff1	] {ai_run(4);};
+void()	hunter_run_loff18	=[	$run_loff18,	hunter_run_loff19	] {ai_run(4);};
+void()	hunter_run_loff19	=[	$run_loff19,	hunter_run_loff1	] {ai_run(3);};
 
 //run no right arm
 void()	hunter_run_roff1	=[	$run_roff1,		hunter_run_roff2	] {ai_run(3); HunterIdleSound();};
@@ -375,6 +376,7 @@ void()	hunter_run_roff15	=[	$run_roff15,	hunter_run_roff16	] {ai_run(5); hunter_
 void()	hunter_run_roff16	=[	$run_roff16,	hunter_run_roff17	] {ai_run(6);};
 void()	hunter_run_roff17	=[	$run_roff17,	hunter_run_roff18	] {ai_run(5);};
 void()	hunter_run_roff18	=[	$run_roff18,	hunter_run_roff1	] {ai_run(4);};
+void()	hunter_run_roff19	=[	$run_roff19,	hunter_run_roff1	] {ai_run(3);};
 
 //fire
 void()	hunter_fire1	=[	$fire1,		hunter_fire2	]	{ai_face(); HunterIdleSound();};
@@ -382,12 +384,19 @@ void()	hunter_fire2	=[	$fire2,		hunter_fire3	]	{ai_face();};
 void()	hunter_fire3	=[	$fire3,		hunter_fire4	]	{ai_face();};
 void()	hunter_fire4	=[	$fire4,		hunter_fire5	]	{ai_face();};
 void()	hunter_fire5	=[	$fire5,		hunter_fire6	]	{ai_face();};
-void()	hunter_fire6	=[	$fire16,	hunter_fire7	]	{ai_face(); hunter_shoot();};
-void()	hunter_fire7	=[	$fire17,	hunter_fire8	]	{ai_face();	};
-void()	hunter_fire8	=[	$fire18,	hunter_fire9	]	{ai_face(); hunter_shoot();};
-void()	hunter_fire9	=[	$fire19,	hunter_fire10	]	{ai_face(); };	
-void()	hunter_fire10	=[	$fire20,	hunter_fire11	]	{ai_face(); hunter_shoot();};
-void()	hunter_fire11	=[	$fire21,	hunter_fire1	]	{ai_face();	hunter_check_refire();};
+void()	hunter_fire6	=[	$fire15,	hunter_fire7	]	{ai_face(); hunter_shoot();};
+void()	hunter_fire7	=[	$fire16,	hunter_fire8	]	{ai_face();	};
+void()	hunter_fire8	=[	$fire17,	hunter_fire9	]	{ai_face(); hunter_shoot();};
+void()	hunter_fire9	=[	$fire18,	hunter_fire10	]	{ai_face(); };	
+void()	hunter_fire10	=[	$fire19,	hunter_fire11	]	{ai_face(); hunter_shoot();};
+void()	hunter_fire11	=[	$fire20,	hunter_fire1	]	{ai_face();	hunter_check_refire(1);};
+
+void()	hunter_refire6	=[	$fire20,	hunter_refire7	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire7	=[	$fire19,	hunter_refire8	]	{ai_face();	};
+void()	hunter_refire8	=[	$fire18,	hunter_refire9	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire9	=[	$fire17,	hunter_refire10	]	{ai_face(); };	
+void()	hunter_refire10	=[	$fire16,	hunter_refire11	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire11	=[	$fire15,	hunter_fire1	]	{ai_face();	hunter_check_refire(0);};
 
 //fire no left arm
 void()	hunter_fire_loff1	=[	$fire_loff1,	hunter_fire_loff2	]	{ai_face(); HunterIdleSound();};
@@ -400,7 +409,14 @@ void()	hunter_fire_loff7	=[	$fire_loff7,	hunter_fire_loff8	]	{ai_face();	};
 void()	hunter_fire_loff8	=[	$fire_loff8,	hunter_fire_loff9	]	{ai_face(); hunter_shoot();};
 void()	hunter_fire_loff9	=[	$fire_loff9,	hunter_fire_loff10	]	{ai_face(); };	
 void()	hunter_fire_loff10	=[	$fire_loff10,	hunter_fire_loff11	]	{ai_face(); hunter_shoot();};
-void()	hunter_fire_loff11	=[	$fire_loff11,	hunter_fire_loff1	]	{ai_face();	hunter_check_refire();};
+void()	hunter_fire_loff11	=[	$fire_loff11,	hunter_fire_loff1	]	{ai_face();	hunter_check_refire(1);};
+
+void()	hunter_refire_loff6	=[	$fire_loff11,	hunter_refire_loff7	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire_loff7	=[	$fire_loff10,	hunter_refire_loff8	]	{ai_face();	};
+void()	hunter_refire_loff8	=[	$fire_loff9,	hunter_refire_loff9	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire_loff9	=[	$fire_loff8,	hunter_refire_loff10	]	{ai_face(); };	
+void()	hunter_refire_loff10	=[	$fire_loff7,	hunter_refire_loff11	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire_loff11	=[	$fire_loff6,	hunter_fire_loff1	]	{ai_face();	hunter_check_refire(0);};
 
 //fire no right arm
 void()	hunter_fire_roff1	=[	$fire_roff1,	hunter_fire_roff2	]	{ai_face(); HunterIdleSound();};
@@ -413,7 +429,14 @@ void()	hunter_fire_roff7	=[	$fire_roff7,	hunter_fire_roff8	]	{ai_face();	};
 void()	hunter_fire_roff8	=[	$fire_roff8,	hunter_fire_roff9	]	{ai_face(); hunter_shoot();};
 void()	hunter_fire_roff9	=[	$fire_roff9,	hunter_fire_roff10	]	{ai_face(); };	
 void()	hunter_fire_roff10	=[	$fire_roff10,	hunter_fire_roff11	]	{ai_face(); hunter_shoot();};
-void()	hunter_fire_roff11	=[	$fire_roff11,	hunter_fire_roff1	]	{ai_face();	hunter_check_refire();};
+void()	hunter_fire_roff11	=[	$fire_roff11,	hunter_fire_roff1	]	{ai_face();	hunter_check_refire(1);};
+
+void()	hunter_refire_roff6	=[	$fire_roff11,	hunter_refire_roff7	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire_roff7	=[	$fire_roff10,	hunter_refire_roff8	]	{ai_face();	};
+void()	hunter_refire_roff8	=[	$fire_roff9,	hunter_refire_roff9	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire_roff9	=[	$fire_roff8,	hunter_refire_roff10	]	{ai_face(); };	
+void()	hunter_refire_roff10	=[	$fire_roff7,	hunter_refire_roff11	]	{ai_face(); hunter_shoot();};
+void()	hunter_refire_roff11	=[	$fire_roff6,	hunter_fire_roff1	]	{ai_face();	hunter_check_refire(1);};
 
 //die
 void()	hunter_die1		=[	$die1,	hunter_die2		]	{};
@@ -695,19 +718,14 @@ void(entity attacker, float damage)	hunter_pain	=
 	{
 		if (random() > TotalModifier)	//BAM!
 		{
-			if (random() > 0.5)
-			{
-				ThrowExplosion();
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			ThrowExplosion();
+			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			if (random() > 0.5) {
 				self.dismemberment = 1;
 				hunter_run_loff1();	//left arm
 			}
-			else
-			{
-				ThrowExplosion();
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-				ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			else {
 				self.dismemberment = 2;
 				hunter_run_roff1();	//right arm
 			}
@@ -740,7 +758,7 @@ void(entity attacker, float damage)	hunter_pain	=
 };
 
 
-void()	hunter_check_refire =
+void(float dir)	hunter_check_refire =
 {
 	if ((range(self.enemy) == RANGE_MELEE) && self.dismemberment == 0)
 	{
@@ -762,12 +780,18 @@ void()	hunter_check_refire =
 	if ((visible (self.enemy)) && (self.enemy.health > 0))	//can I see my enemy?  Are they alive?
 	{
 		//keep firing
-		if (self.dismemberment == 1)
-			hunter_fire_loff6();
-		else if (self.dismemberment == 2)
-			hunter_fire_roff6();
-		else
-			hunter_fire6();
+		if (self.dismemberment == 1){
+			if (dir == 1) hunter_refire_loff6();
+			else hunter_fire_loff6();
+		}
+		else if (self.dismemberment == 2){
+			if (dir == 1) hunter_refire_roff6();
+			else hunter_fire_roff6();
+		}
+		else{
+			if (dir == 1) hunter_refire6();
+			else hunter_fire6();
+		}
 	}
 	else
 	{
@@ -780,7 +804,7 @@ void()	hunter_check_refire =
 	}
 }; 
 
-void()	hunter_check_idle	=
+void() hunter_check_idle =
 {
 	if (self.dismemberment == 1)		//no left arm
 		hunter_idle_loff1();
@@ -790,7 +814,7 @@ void()	hunter_check_idle	=
 		hunter_idle1();
 };
 
-void()	hunter_check_walk	=
+void() hunter_check_walk =
 {
 	if (self.dismemberment == 1)		//no left arm
 		hunter_walk_loff1();
@@ -800,7 +824,7 @@ void()	hunter_check_walk	=
 		hunter_walk1();
 };
 
-void()	hunter_check_run	=
+void() hunter_check_run =
 {
 	if (self.dismemberment == 1)		//no left arm
 		hunter_run_loff1();
@@ -810,7 +834,7 @@ void()	hunter_check_run	=
 		hunter_run1();
 };
 
-void()	hunter_check_melee	=
+void()	hunter_check_melee =
 {
 	//don't melee if damaged
 	if (self.dismemberment == 1)		//no left arm
@@ -821,7 +845,7 @@ void()	hunter_check_melee	=
 		hunter_punch1();
 };
 
-void()	hunter_check_fire	=
+void()	hunter_check_fire =
 {
 	if (self.dismemberment == 1)		//no left arm
 		hunter_fire_loff1();
@@ -879,7 +903,7 @@ void() monster_hunter_spawner = {
 	monster_spawner(monster_hunter_start);
 };
 
-void()	monster_hunter	=
+void() monster_hunter =
 {
 	if (deathmatch)
 	{
