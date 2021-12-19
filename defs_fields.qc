@@ -574,3 +574,20 @@ FIELDS
 .float 		above;
 
 .string levelname;
+
+
+// AD monsters
+
+.float lostsearch;
+.entity lostenemy;
+.float losttimer;
+.float attack_sidestep;
+.float attack_sidedeny;
+.float meleeattack;
+.float idlebusy;
+.float idlereverse;
+.float idletimer;
+.float enemydist;
+.float attack_speed;
+.float attack_rage;
+.float attack_chance;
