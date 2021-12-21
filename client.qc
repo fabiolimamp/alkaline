@@ -615,6 +615,12 @@ called each time a player is spawned
 void() DecodeLevelParms;
 void() PlayerDie;
 
+void() applyCheats = {
+	if (self.spawnflags & 1) stuffcmd(self.owner, "god\n");
+	if (self.spawnflags & 2) stuffcmd(self.owner, "noclip\n");
+	if (self.spawnflags & 4) stuffcmd(self.owner, "notarget\n");
+	remove(self);
+}
 
 void() PutClientInServer =
 {
@@ -646,14 +652,23 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 	self.customkeys = 0;  // support for item_key_custom -- iw
 	self.jboots_finished = 0;	//jcr jboots timed
-	
+
 	StopBurning(self);//johnfitz -- reset burning	
 
 	DecodeLevelParms ();
 	
 	spot = SelectSpawnPoint ();
 	
-	if (spot.classname == "info_player_start_test") TakeAndGiveWeapons(self, spot);
+	if (spot.classname == "info_player_start_test") {
+		TakeAndGiveWeapons(self, spot);
+		if (spot.spawnflags & 7) {
+			self.shadowcontroller = spawn();
+			self.shadowcontroller.think = applyCheats;
+			self.shadowcontroller.nextthink = time + 0.1;
+			self.shadowcontroller.owner = self;
+			self.shadowcontroller.spawnflags = spot.spawnflags;
+		}
+	}
 	
 	W_SetCurrentAmmo ();
 

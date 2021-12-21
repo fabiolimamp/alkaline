@@ -543,6 +543,11 @@ You can override initial weapon/ammo loadout for this specific spot.
 	ammo_nails(integer) : "Nails on start" : : "Override the nails amount on startup. Set to -1 to force it to 0."
 	ammo_rockets(integer) : "Rockets on start" : : "Override the rockets amount on startup. Set to -1 to force it to 0."
 	ammo_cells(integer) : "Cells on start" : : "Override the cells amount on startup. Set to -1 to force it to 0."
+	spawnflags(flags) = [		
+		1: "god mode"	
+		2: "noclip"
+		4: "notarget"
+	]
 ]
 @PointClass base(PlayerClass, PlayerStartId) = info_player_coop : "Player cooperative start" []
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
