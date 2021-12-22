@@ -1306,7 +1306,7 @@ void() powerup_touch =
 
 	if (self.classname == "item_jboots_timed")	//JCR Superjump boots TIMED with INFINITE CHARGES
 	{
-		other.jboots_prevlimit = other.jboots_rechargelimit;
+		if (!other.jboots_finished) other.jboots_prevlimit = other.jboots_rechargelimit;
 		other.jboots_time = 1;
 		other.jboots_finished = time + 30;
 		other.jboots_rechargelimit = defaultFl(self.jboots_rechargelimit, -1);
