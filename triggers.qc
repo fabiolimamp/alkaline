@@ -505,23 +505,15 @@ void() teleport_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
-	if (self.targetname)
-	{
+	if (self.targetname != "" && self.is_waiting != -1)	{
 		if (self.nextthink < time)
-		{
 			return;		// not fired yet
-		}
 	}
 
 	if (self.spawnflags & PLAYER_ONLY)
 	{
 		if (other.classname != "player")
 			return;
-	}
-
-	if (self.targetname != "" && self.is_waiting != -1)	{
-		if (self.nextthink < time)
-			return;		// not fired yet
 	}
 
 	// only teleport living creatures
