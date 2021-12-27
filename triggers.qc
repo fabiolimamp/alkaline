@@ -1596,10 +1596,16 @@ void(string name, .string fld) target_setcount_set = {
 	t = find(world, fld, name);
 
 	while (t) {
-		if (self.style == 1)
+		if (self.style == 1){
 			t.count += self.count;
-		else
+		}
+		else if (self.style == 2){
+			if (t.count) t.count = 0;
+			else t.count = 1;
+		}
+		else {
 			t.count = self.count;
+		}
 
 		t = find(t, fld, name);
 	}
