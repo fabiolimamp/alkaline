@@ -1500,6 +1500,7 @@ void() trigger_filter_use = {
 			targstring = targ.type;
 			break;
 	}
+	result = 0;
 
 	if (fieldtype == FILTER_FIELDTYPE_FLOAT) {
 		if 		(op == FILTER_OP_EQUALS) 		{if (targfloat == self.count) result = 1;}
