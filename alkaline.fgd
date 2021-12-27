@@ -814,6 +814,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 		16384 : "No infight" : 0 : "Don't react to other monsters' attacks"
 		32768 : "Count after spawn" : 0 : "Only counts towards total enemy count after spawning in"
 		65536 : "No idle sounds" : 0
+		131072 : "Pacifist" : 0 : "Only gets angry at you when hurt"
 		262144 : "Monster spawner" : 0 : "Spawns a monster from this entity when triggered"
 		524288 : "0-sized bbox" : 0 : "Starts with 0-sized entity. Use target_setsize to set the original size"
 		1048576 : "Health triggers" : 0 : "Triggers target2/3/4 when reaching 75%/50%/25% health respectively"
@@ -1018,14 +1019,9 @@ Don't shake hands with this crazy bastard!" []
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 
-Set 'Ignore Player' spawn flag (131072) to totally ignore the player.
+Set 'Pacifist' spawn flag (131072) to totally ignore the player.
 Doesn't count into total monster count, unless you set 'Count After Spawn' flag."
-[
-	spawnflags(flags) =
-	[
-		131072 : "Ignore Player" : 0
-	]
-]
+[]
 
 //
 // lights
@@ -2271,7 +2267,7 @@ By default it'll fire for each and every registered touch, even if simultaneous.
 @PointClass base(Appearflags, Targetname, TargetsOnly) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
 Can be used with a trig'ger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
 
-By selecting into the 'style' field, you can either replace the current value with a new one, add/subtract to it (by using a positive or negative 'count'), or toggle the current value (if count is 0 it gets set to 1, and if it's any other value it changes back to 0).
+By selecting into the 'style' field, you can either replace the current value with a new one, add/subtract to it (by using a positive or negative 'count'), or toggle the current value (if 'count' is 0 it gets set to 1, and if it's any other value it changes back to 0).
 " 
 [
 	style(choices) : "Set style" : 0 = [
