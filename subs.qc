@@ -356,6 +356,31 @@ void(string matchstring, .string matchfield) SUB_UseSpecificTarget =
 	}
 };
 
+void(string matchstring, .string matchfield) SUB_KillSpecificTarget = 
+{
+	entity t;
+	t = find (world, matchfield, matchstring);
+	while (t)
+	{
+		if (t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
+
+		if (t.animcontroller) remove(t.animcontroller);
+		if (t.rotatecontroller) remove(t.rotatecontroller);
+
+		if (t.flags & FL_MONSTER || t.flags & FL_SPAWNMONSTER) { // increase the kill counter if it's a monster
+			if (
+				self.health > 0
+				&& !(t.flags & FL_SPAWNMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
+				&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
+			){
+				killed_monsters = killed_monsters + 1;
+				WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+			}
+		}
+		remove (t);
+		t = find (t, matchfield, matchstring);
+	}
+}
 
 void() SUB_UseTargets =
 {
@@ -415,29 +440,8 @@ void() SUB_UseTargets =
 //
 	if (self.killtarget != "")
 	{
-		//johnfitz -- fix for "killtarget" prevents "target" from firing
-		t = find (world, targetname, self.killtarget);
-		while (t)
-		{
-			if(t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
-
-			if (t.animcontroller) remove(t.animcontroller);
-			if (t.rotatecontroller) remove(t.rotatecontroller);
-
-			if (t.flags & FL_MONSTER || t.flags & FL_SPAWNMONSTER) { // increase the kill counter if it's a monster
-				if (
-					self.health > 0
-					&& !(t.flags & FL_SPAWNMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
-					&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
-				){
-					killed_monsters = killed_monsters + 1;
-					WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
-				}
-			}
-			remove (t);
-			t = find (t, targetname, self.killtarget);
-		}
-		//johnfitz
+		SUB_KillSpecificTarget(self.killtarget, targetname);
+		SUB_KillSpecificTarget(self.killtarget, targetname2);
 	}
 
 //
