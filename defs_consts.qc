@@ -312,8 +312,6 @@ float 	AS_DODGING     = 5; // hipnotic's centroid
 
 float FLOYD_ROLLING = 2;
 float FLOYD_ASLEEP = 4;
-float SPARKS_BLUE = 2;
-float SPARKS_PALE = 4;
 float BREAKABLE_NO_MONSTERS = 1;
 
 

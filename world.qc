@@ -370,6 +370,8 @@ void() worldspawn =
 	precache_model ("progs/jumpblue.mdl");
 	precache_model ("progs/jumpgold.mdl");
 
+	precache_model ("progs/spark.mdl");
+
 	//
 	// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
 	// Moved to lights.qc -- bmFbr
@@ -391,7 +393,9 @@ void() worldspawn =
 	linkdoor_e.think = LinkDoors2;
 	linkdoor_e.nextthink = time + 0.03;
 
-
+	flickercontroller = spawn();
+	flickercontroller.think = flickercontroller_think;
+	flickercontroller.nextthink = time + 0.1;
 
 };
 

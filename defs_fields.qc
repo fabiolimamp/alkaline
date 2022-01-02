@@ -193,6 +193,8 @@ nosave float mapvar_cvar;
 
 float playerstart_id;
 
+entity flickercontroller;
+
 /*
 FIELDS
 ==============================================================================
@@ -397,6 +399,8 @@ FIELDS
 .float itemstyle = style;
 .float	ritem, respawndelay, respawncount; // item respawning
 .vector particles_offset; //keylock.qc
+.string flicker;
+.float spark_finished;
 
 
 // trigger_timer

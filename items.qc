@@ -17,13 +17,38 @@ float ITEM_DONTPRECACHE = 8388608;
 
 void() SUB_regen =
 {
-	self.model = self.mdl;		// restore original model
+	//self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
 	if (deathmatch || (self.spawnflags & ITEM_RESPAWNDM))	// Respawn with DM effects
 		sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);	// play respawn sound
 	else
 		spawn_tfog (self.origin + self.particles_offset);	// play teleport sound and display particles
+	self.flicker = "";
+	self.alpha = 0;
 	setorigin (self, self.origin);
+};
+
+
+void(vector org, float qt, float color, vector vel) spawnsparks;
+
+void() flickercontroller_think = {
+	self.nextthink = time + 0.1;
+	
+	entity e;
+	vector org;
+
+	e = find(world, flicker, "true");
+
+	while (e) {
+		e.alpha = 0.2 + random()*0.2;
+		if (time > e.spark_finished) {
+			org = (e.absmin + e.absmax)*0.5;
+			org_z = e.origin_z + 16;
+			spawnsparks(org, 8, 0, '0 0 80');
+			e.spark_finished = time + 2 + random() * 2;
+		}
+		e = find(e, flicker, "true");
+	}
 };
 
 // Supa, Quoth respawning items support Respawn item like in DM if 'ritem' TRUE,
@@ -31,7 +56,6 @@ void() SUB_regen =
 // and if 'respawncount' is set we'll remove the item if cnt > respawncount
 // remember that SUB_Regen is already set on every item that can respawn, all we
 // need to do is give a nextthink time in order to trigger it
-
 
 void(entity whatitem, float defaultdelay) CheckItemRespawn =
 {
@@ -50,6 +74,10 @@ void(entity whatitem, float defaultdelay) CheckItemRespawn =
 		whatitem.nextthink = time + whatitem.respawndelay;
 	else
 		whatitem.nextthink = time + defaultdelay;
+
+	self.spark_finished = time + 1 + random() * 2;
+	self.model = self.mdl;
+	whatitem.flicker = "true";
 };
 
 
