@@ -31,6 +31,8 @@ void() SUB_regen =
 
 void(vector org, float qt, float color, vector vel) spawnsparks;
 
+// global entity that controls respawning items' flicker/spark effect
+// entities with ".flicker" set to "true" will be affected
 void() flickercontroller_think = {
 	self.nextthink = time + 0.1;
 	
@@ -1242,6 +1244,12 @@ void() powerup_touch =
 	self.mdl	= self.model;
 	self.think	= SUB_regen;
 
+	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM); //johnfitz -- was CHAN_VOICE
+	stuffcmd (other, "bf\n");
+	self.solid = SOLID_NOT;
+	other.items = other.items | self.items;
+	self.model = string_null;
+	
 	if (!deathmatch)
 	{
 		local float spawndelay;
@@ -1262,11 +1270,7 @@ void() powerup_touch =
 			self.nextthink = time + 60;
 	}
 
-	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM); //johnfitz -- was CHAN_VOICE
-	stuffcmd (other, "bf\n");
-	self.solid = SOLID_NOT;
-	other.items = other.items | self.items;
-	self.model = string_null;
+	
 
 // do the apropriate action
 	if (self.classname == "item_artifact_envirosuit")
