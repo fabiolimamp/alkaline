@@ -709,7 +709,10 @@ void() PutClientInServer =
 
 	spawn_tdeath (self.origin, self);
 
-
+	self.healthcontroller = spawn();
+	self.healthcontroller.owner = self;
+	self.healthcontroller.think = healthcontroller_think;
+	self.healthcontroller.nextthink = time + 1;
 
 
 

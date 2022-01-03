@@ -51,6 +51,31 @@ void() flickercontroller_think = {
 	}
 };
 
+
+// controls player's megahealth rot
+// one instance is attached to each player
+void() healthcontroller_think = {
+
+	// player lost link with this entity for some reason, so just remove it
+	if (self.owner.healthcontroller != self) {
+		remove(self);
+		return;
+	}
+
+	self.nextthink = time + 1;
+	
+	if (self.owner.health > self.owner.max_health) {
+		self.owner.health = self.owner.health - 1;
+		return;
+	}
+
+	// it is possible for a player to die and respawn between rots, so don't
+	// just blindly subtract the flag off
+	self.owner.items = self.owner.items - (self.owner.items & IT_SUPERHEALTH);
+
+};
+
+
 // Supa, Quoth respawning items support Respawn item like in DM if 'ritem' TRUE,
 // override respawn time with 'respawndelay' if set, inc 'cnt' with each respawn
 // and if 'respawncount' is set we'll remove the item if cnt > respawncount
@@ -253,7 +278,7 @@ one point per second.
 float	H_ROTTEN = 1;
 float	H_MEGA = 2;
 void() health_touch;
-void() item_megahealth_rot;
+//void() item_megahealth_rot;
 
 
 void() item_health =
@@ -305,6 +330,7 @@ void() health_touch =
 	
 	if (self.healtype == 2) // Megahealth?  Ignore max_health...
 	{
+		other.healthcontroller.nextthink = time + 1; //resets rot controller's nextthink so it first happens exactly 1s after
 		if (other.health >= 250)
 			return;
 		if (!T_Heal(other, self.healamount, 1))
@@ -331,49 +357,17 @@ void() health_touch =
 
 	self.think = SUB_regen;
 
-	// Megahealth = rot down the player's super health
-	if (self.healtype == 2)
+	if (deathmatch != 2)		// deathmatch 2 is the silly old rules
 	{
-		other.items = other.items | IT_SUPERHEALTH;
-		self.nextthink = time + 5;
-		self.think = item_megahealth_rot;
-		self.owner = other;
+		if (deathmatch)	self.nextthink = time + 20;
+		else CheckItemRespawn(self, 30); // checks if item is set to respawn and sets nextthink
 	}
-	else
-	{
-		if (deathmatch != 2)		// deathmatch 2 is the silly old rules
-		{
-			if (deathmatch)	self.nextthink = time + 20;
-			else CheckItemRespawn(self, 30); // checks if item is set to respawn and sets nextthink
-		}
-	}
+	
 	
 	activator = other;
 	SUB_UseTargets();				// fire all targets / killtargets
 };	
 
-
-void() item_megahealth_rot =
-{
-	other = self.owner;
-	
-	if (other.health > other.max_health)
-	{
-		other.health = other.health - 1;
-		self.nextthink = time + 1;
-		return;
-	}
-
-// it is possible for a player to die and respawn between rots, so don't
-// just blindly subtract the flag off
-	other.items = other.items - (other.items & IT_SUPERHEALTH);
-	
-	if (deathmatch == 1)	// deathmatch 2 is silly old rules
-	{
-		self.nextthink = time + 20;
-		self.think = SUB_regen;
-	}
-};
 
 /*
 ===============================================================================
@@ -1303,11 +1297,8 @@ void() powerup_touch =
 	{
 		other.trif_time = 1;
 		other.trif_finished = time + 30;
-		self.nextthink = time + 30;
-		other.health = other.health + 100;
-		self.think = item_megahealth_rot;
-		self.owner = other;		
-		
+		T_Heal(other, 100, 1);
+		other.healthcontroller.nextthink = time + 1;
 	}
 
 	if (self.classname == "item_jboots")	//JCR Superjump boots PERSISTENT with LIMITED CHARGES (max 3 airjumps)
