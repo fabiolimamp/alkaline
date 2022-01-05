@@ -1828,13 +1828,13 @@ void() display_monsleft =
 		entcount = entcount + 1;
 		// Only interested in monsters (regular + boss)
 		if (
-			(entlist.flags & FL_MONSTER || entlist.flags & FL_SPAWNMONSTER)
+			(entlist.flags & FL_MONSTER || entlist.flags & FL_UNSPAWNEDMONSTER)
 			&& !(entlist.flags & FL_PACIFIST && !(entlist.spawnflags & MONSTER_COUNTONSPAWN))
 		) {
 			// Keep counting up monsters
 			montotal = montotal + 1;
 			if (entlist.spawnflags & MONSTER_COUNTONSPAWN && !(entlist.flags & FL_PACIFIST)) {
-				if(!(entlist.flags & FL_SPAWNMONSTER)) counted = counted + 1;
+				if(!(entlist.flags & FL_UNSPAWNEDMONSTER)) counted = counted + 1;
 			}
 			else counted = counted + 1;
 			if (entlist.health > 0) {
@@ -1845,7 +1845,7 @@ void() display_monsleft =
 					sprint(self, " ");
 					zerofill_number(self, entlist.health, " ", " ", " ", "", "");
 					// Check for monster spawn delay (flag)
-					if (entlist.flags & FL_SPAWNMONSTER) sprint(self, " Y ");
+					if (entlist.flags & FL_UNSPAWNEDMONSTER) sprint(self, " Y ");
 					else sprint(self, " - ");
 
 					if (entlist.spawnflags & MONSTER_COUNTONSPAWN && !(entlist.flags & FL_PACIFIST)) {

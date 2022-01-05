@@ -18,11 +18,12 @@ float	FL_ONGROUND				= 512;		// standing on something
 float	FL_PARTIALGROUND		= 1024;		// not all corners are valid
 float	FL_WATERJUMP			= 2048;		// player jumping out of water
 float	FL_JUMPRELEASED			= 4096;		// for jump debouncing
-float 	FL_SPAWNMONSTER			= 8192; 	// triggered spawn monsters
+float 	FL_UNSPAWNEDMONSTER		= 8192; 	// unspawned triggered spawn monsters
 float 	FL_PACIFIST				= 16384;	// monsters that don't fight (usually run away)
 float 	FL_PROJECTILE			= 32768;	// projectile entities, like lasers, plasma, rockets, spikes, etc
 float 	FL_NOCENTERPRINT		= 65536;	// don't centerprint entity's message field when its targets are used
 float 	FL_IGNOREDATTACK		= 131072; 	// monsters won't get angry at this entity when attacked by it
+float 	FL_SPAWNEDMONSTER		= 262144; 	// spawned trigger spawn monsters
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves
