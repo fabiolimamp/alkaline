@@ -422,6 +422,27 @@ void() smoke_firstthink;
 void() FindAndReadGlobalGravity;
 void() update_bulletholes;
 
+void() RestartLoopSounds_think = {
+	sound(self, self.impulse, self.noise, self.volume, self.speed);
+};
+
+void() RestartLoopSounds = {
+	dprint("Restarting sound loops...\n");
+	entity e;
+	e = find(world, classname, "play_sound_triggered");
+	while (e) {
+
+		if (e.spawnflags & 3 == 3) {
+			if (e.state == 1) {
+				e.nextthink = time + 0.2;
+				e.think = RestartLoopSounds_think;
+			}
+		}
+
+		e = find(e, classname, "play_sound_triggered");
+	}
+};
+
 void() LoadSaveGameCallback =
 {
 	local entity e;
@@ -442,7 +463,7 @@ void() LoadSaveGameCallback =
 	e.nextthink = time + 0.1;
 	
 	FindAndReadGlobalGravity();
-
+	RestartLoopSounds();
 	loadsavegamecallback_done = 1;
 } 
 //johnfitz
