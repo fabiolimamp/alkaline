@@ -349,6 +349,35 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	ApplyMultiDamage ();
 };
 
+void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
+{
+	local	vector direction;
+	local vector plane_normal;
+	//float bullet;
+	makevectors(vectoangles(dir));
+
+
+	ClearMultiDamage();
+	while (shotcount > 0)
+	{
+		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+
+		traceline (org, org + direction*2048, FALSE, self);
+		if (trace_fraction != 1.0) {
+			plane_normal = trace_plane_normal;
+			//JIM
+			TraceAttack(4, direction);
+
+
+			placebullethole(trace_endpos, plane_normal, trace_ent);
+
+		}
+		shotcount = shotcount - 1;
+		
+	}
+	ApplyMultiDamage ();
+};
+
 /*
 ================
 W_FireShotgun
