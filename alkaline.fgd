@@ -1103,7 +1103,8 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 	- Spike: 9
 	- Superspike: 18
 	- Laser: 15
-	- Rocket: 60"
+	- Rocket: 60
+	- Voreball: 20"
 	speed(integer) : "Custom projectile speed" : : "Defaults:
 	- Spike/Superspike/rocket: 500
 	- Laser: 600"
@@ -1112,6 +1113,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 		1 : "Superspike" : 0
 		2 : "Laser" : 0
 		4 : "Rocket" : 0
+		8 : "Voreball" : 0
 	]
 ]
 

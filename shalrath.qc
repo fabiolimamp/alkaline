@@ -127,7 +127,6 @@ void() ShalMissileTouch;
 void() ShalHome;
 void() ShalMissile =
 {
-	local	entity 	missile;
 	local	vector	dir;
 	local	float	dist, flytime;
 
@@ -140,22 +139,22 @@ void() ShalMissile =
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 
-	missile = spawn ();
-	missile.owner = self;
+	newmis = spawn ();
+	newmis.owner = self;
 
-	missile.solid = SOLID_BBOX;
-	missile.movetype = MOVETYPE_FLYMISSILE;
-	setmodel (missile, "progs/v_spike.mdl");
+	newmis.solid = SOLID_BBOX;
+	newmis.movetype = MOVETYPE_FLYMISSILE;
+	setmodel (newmis, "progs/v_spike.mdl");
 
-	setsize (missile, '0 0 0', '0 0 0');		
-	missile.flags = missile.flags | FL_PROJECTILE;
-	missile.origin = self.origin + '0 0 10';
-	missile.velocity = dir * 400;
-	missile.avelocity = '300 300 300';
-	missile.nextthink = flytime + time;
-	missile.think = ShalHome;
-	missile.enemy = self.enemy;
-	missile.touch = ShalMissileTouch;
+	setsize (newmis, '0 0 0', '0 0 0');		
+	newmis.flags = newmis.flags | FL_PROJECTILE;
+	newmis.origin = self.origin + '0 0 10';
+	newmis.velocity = dir * 400;
+	newmis.avelocity = '300 300 300';
+	newmis.nextthink = flytime + time;
+	newmis.think = ShalHome;
+	newmis.enemy = self.enemy;
+	newmis.touch = ShalMissileTouch;
 };
 
 void() ShalHome =
@@ -167,6 +166,13 @@ void() ShalHome =
 		remove(self);
 		return;
 	}
+
+	if (self.attack_finished && time > self.attack_finished) {
+		self.think = ShalMissileTouch;
+		self.nextthink = time + 0.1;
+		return;
+	}
+
 	dir = normalize(vtemp - self.origin);
 	if (skill == 3)
 		self.velocity = dir * 350;
@@ -182,8 +188,11 @@ void() ShalMissileTouch =
 		return;		// don't explode on owner
 
 	if (other.classname == "monster_zombie")
-		T_Damage (other, self, self, 110);	
-	T_RadiusDamage (self, self.owner, 40, world);
+		T_Damage (other, self, self, 110);
+
+	self.dmg = zeroconvertdefault(self.dmg, 40);
+
+	T_RadiusDamage (self, self.owner, self.dmg, world);
 	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
 	BecomeExplosion();

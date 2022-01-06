@@ -154,12 +154,15 @@ void() misc_explobox2 =
 float TRAP_SUPERSPIKE = 1;
 float TRAP_LASER = 2;
 float TRAP_ROCKET = 4;
+float TRAP_VOREBALL = 8;
 
 void(vector org, vector vec) LaunchLaser;
-
+void() ShalMissile;
 void() spikeshooter_use =
 {
 	local float spd, damage;
+
+	if (self.estate != STATE_ACTIVE) return;
 
 	if (self.spawnflags & TRAP_LASER)
 	{
@@ -174,6 +177,16 @@ void() spikeshooter_use =
 		launch_rocket (self.origin, self.movedir);
 		spd = 500;
 		damage = 60;
+	}
+	else if (self.spawnflags & TRAP_VOREBALL)
+	{
+		ShalMissile();
+		newmis.enemy = findClosest(self.origin, classname, "player");
+		newmis.attack_finished = time + 10;
+		damage = 20;
+		spd = 200;
+		setorigin(newmis, self.origin);
+		//sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 	}
 	else
 	{
@@ -196,9 +209,9 @@ void() spikeshooter_use =
 
 void() shooter_think =
 {
-	spikeshooter_use ();
+	spikeshooter_use();
 	self.nextthink = time + self.wait;
-	newmis.velocity = self.movedir * 500;
+	//newmis.velocity = self.movedir * 500;
 };
 
 
@@ -218,6 +231,11 @@ void() trap_spikeshooter =
 		precache_sound ("enforcer/enfire.wav");
 		precache_sound ("enforcer/enfstop.wav");
 	}
+	else if (self.spawnflags & TRAP_VOREBALL) {
+		precache_model("progs/v_spike.mdl");
+		
+		precache_sound("shalrath/attack2.wav");
+	}
 	// spike and rocket sounds precached in weapons.qc
 	// models in world.qc
 };
@@ -234,7 +252,7 @@ void() trap_shooter =
 	
 	if (self.wait == 0)
 		self.wait = 1;
-	self.nextthink = self.nextthink + self.wait + self.ltime;
+	self.nextthink = self.nextthink + self.wait + time;
 	self.think = shooter_think;
 };
 
