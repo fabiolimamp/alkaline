@@ -588,6 +588,9 @@ misc_sparks
 ===============================================================================
 */
 
+float SPARKS_BLUE = 2;
+float SPARKS_PALE = 4;
+
 void()	sparks_fade1 = [0, sparks_fade2] {self.alpha = 0.8; self.nextthink = time + 0.05;};
 void()	sparks_fade2 = [0, sparks_fade3] {self.alpha = 0.6; self.nextthink = time + 0.05;};
 void()	sparks_fade3 = [0, sparks_fade4] {self.alpha = 0.4; self.nextthink = time + 0.05;};
@@ -601,63 +604,74 @@ void() sparks_use =
 		self.spawnflags = self.spawnflags + START_OFF;
 };
 
-void() make_sparks;
+void() misc_sparks_think;
 
 void() spark_turnofflight = 
 {
 	SUB_UseTargets();
-	self.think = make_sparks;
+	self.think = misc_sparks_think;
 	self.nextthink = time + (random() + 0.5)*self.wait - 0.15;
 }
 
-void() make_sparks =
+void(vector org, float qt, float color, vector vel) spawnsparks = {
+	local float i;
+	i = -0.25*qt + random()*0.5*qt;
+	while (i < qt)
+	{
+		
+		local entity spark;
+		spark = spawn();
+		spark.owner = self;
+		setmodel (spark, "progs/spark.mdl");
+		setorigin (spark, org);
+		spark.movetype = MOVETYPE_BOUNCE;
+		spark.solid = SOLID_TRIGGER;
+		spark.gravity = 0.3;
+		spark.velocity_x = vel_x -40 + random() * 80;
+		spark.velocity_y = vel_y -40 + random() * 80;
+		spark.velocity_z = vel_z -40 + random() * 80;
+		spark.avelocity = '3000 3000 3000';
+		spark.nextthink = time + 0.5 + 1.5*random();
+		spark.think = sparks_fade1;
+		spark.classname = "spark";
+		
+		if (random() < 0.33)
+			spark.skin = 0;
+		else if (random() < 0.5)
+			spark.skin = 1;
+		else
+			spark.skin = 2;
+			
+		if (color == SPARKS_PALE)
+			spark.skin = spark.skin + 6;
+		else if (color == SPARKS_BLUE)
+			spark.skin = spark.skin + 3;
+		
+		setsize (spark, '0 0 0', '0 0 0');
+		i = i + 1;
+	}
+}
+
+void() misc_sparks_think =
 {
-	  
 	if (self.spawnflags & START_OFF)
 	{
 		self.nextthink = time + 0.1;
-		self.think = make_sparks;
+		self.think = misc_sparks_think;
 	}
 	else
 	{
-		local float i;
-		i = -0.25*self.cnt + random()*0.5*self.cnt;
-		while (i < self.cnt)
-		{
-			
-			local entity spark;
-			spark = spawn();
-			spark.owner = self;
-			setmodel (spark, "progs/spark.mdl");
-			setorigin (spark, self.origin);
-			spark.movetype = MOVETYPE_BOUNCE;
-			spark.solid = SOLID_TRIGGER;
-			spark.gravity = 0.3;
-			spark.velocity_x = -40 + random() * 80;
-			spark.velocity_y = -40 + random() * 80;
-			spark.velocity_z = -40 + random() * 80;
-			spark.avelocity = '3000 3000 3000';
-			spark.nextthink = time + 0.5 + 1.5*random();
-			spark.think = sparks_fade1;
-			spark.classname = "spark";
-			
-			if (random() < 0.33)
-				spark.skin = 0;
-			else if (random() < 0.5)
-				spark.skin = 1;
-			else
-				spark.skin = 2;
-				
-			if (self.spawnflags & SPARKS_PALE)
-				spark.skin = spark.skin + 6;
-			else if (self.spawnflags & SPARKS_BLUE)
-				spark.skin = spark.skin + 3;
-			
-			setsize (spark, '0 0 0', '0 0 0');
-			i = i + 1;
-		}
+		float color;
+		if (self.spawnflags & SPARKS_PALE)
+			color = SPARKS_PALE;
+		else if (self.spawnflags & SPARKS_BLUE)
+			color = SPARKS_BLUE;
+
+		spawnsparks(self.origin, self.cnt, color, '0 0 0');
+
 		if (self.sounds == 1)
 			sound (self, CHAN_AUTO, "misc/spark.wav", 1, ATTN_STATIC);
+
 		SUB_UseTargets();
 		self.nextthink = time + 0.1 + random() * 0.1;
 		self.think = spark_turnofflight;
@@ -697,7 +711,7 @@ void() misc_sparks =
 	
 	self.use = sparks_use;
 	self.nextthink = time + random()*0.1;
-	self.think = make_sparks;
+	self.think = misc_sparks_think;
 };
 
 /*

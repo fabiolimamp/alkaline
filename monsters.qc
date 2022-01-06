@@ -155,7 +155,8 @@ void() spawn_monster = {
 	if (!(self.spawnflags & MONSTER_SPAWNSILENT))
 		spawn_tfog (self.origin);	
 
-	self.flags = self.flags - FL_SPAWNMONSTER;
+	self.flags = self.flags - FL_UNSPAWNEDMONSTER;
+	self.flags = self.flags | FL_SPAWNEDMONSTER;
 
 	if (self.spawnflags & MONSTER_COUNTONSPAWN) {
 		add_monster_total(1);
@@ -167,7 +168,7 @@ void() spawn_monster = {
 
 void(entity e, void() go_function) init_spawned_monster = {
 
-	e.flags = e.flags | FL_SPAWNMONSTER;
+	e.flags = e.flags | FL_UNSPAWNEDMONSTER;
 	
 	hide_spawned_monster_entity(e);
 
@@ -249,7 +250,7 @@ void() walkmonster_start_go =
 {
 
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
-	droptofloor();
+	if (!(self.flags & FL_SPAWNEDMONSTER)) droptofloor();
 	
 	if (!walkmove(0,0))
 	{
@@ -463,6 +464,7 @@ void() monster_spawned_trytostart = {
 		self.owner.count++; // total monsters spawned
 	}
 
+	self.flags = self.flags | FL_SPAWNEDMONSTER; // sets the monster's spawntriggered flag to check for droptofloor later
 	self.start_function(self);
 
 	if (!(self.spawnflags & MONSTER_SPAWNSILENT)) // shows telefog by default

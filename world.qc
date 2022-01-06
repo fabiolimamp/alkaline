@@ -370,6 +370,8 @@ void() worldspawn =
 	precache_model ("progs/jumpblue.mdl");
 	precache_model ("progs/jumpgold.mdl");
 
+	precache_model ("progs/spark.mdl");
+
 	//
 	// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
 	// Moved to lights.qc -- bmFbr
@@ -391,7 +393,9 @@ void() worldspawn =
 	linkdoor_e.think = LinkDoors2;
 	linkdoor_e.nextthink = time + 0.03;
 
-
+	flickercontroller = spawn();
+	flickercontroller.think = flickercontroller_think;
+	flickercontroller.nextthink = time + 0.1;
 
 };
 
@@ -418,6 +422,27 @@ void() smoke_firstthink;
 void() FindAndReadGlobalGravity;
 void() update_bulletholes;
 
+void() RestartLoopSounds_think = {
+	sound(self, self.impulse, self.noise, self.volume, self.speed);
+};
+
+void() RestartLoopSounds = {
+	dprint("Restarting sound loops...\n");
+	entity e;
+	e = find(world, classname, "play_sound_triggered");
+	while (e) {
+
+		if (e.spawnflags & 3 == 3) {
+			if (e.state == 1) {
+				e.nextthink = time + 0.2;
+				e.think = RestartLoopSounds_think;
+			}
+		}
+
+		e = find(e, classname, "play_sound_triggered");
+	}
+};
+
 void() LoadSaveGameCallback =
 {
 	local entity e;
@@ -438,7 +463,7 @@ void() LoadSaveGameCallback =
 	e.nextthink = time + 0.1;
 	
 	FindAndReadGlobalGravity();
-
+	RestartLoopSounds();
 	loadsavegamecallback_done = 1;
 } 
 //johnfitz

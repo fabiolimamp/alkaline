@@ -1,4 +1,4 @@
-string	VERSION_S				= "Alkaline v1.1.1";
+string	VERSION_S				= "Alkaline v1.1.2 Beta 2";
 string	BUILD_DATE				= __DATE__;
 string	BUILD_TIME				= __TIME__;
 
@@ -18,11 +18,12 @@ float	FL_ONGROUND				= 512;		// standing on something
 float	FL_PARTIALGROUND		= 1024;		// not all corners are valid
 float	FL_WATERJUMP			= 2048;		// player jumping out of water
 float	FL_JUMPRELEASED			= 4096;		// for jump debouncing
-float 	FL_SPAWNMONSTER			= 8192; 	// triggered spawn monsters
+float 	FL_UNSPAWNEDMONSTER		= 8192; 	// unspawned triggered spawn monsters
 float 	FL_PACIFIST				= 16384;	// monsters that don't fight (usually run away)
 float 	FL_PROJECTILE			= 32768;	// projectile entities, like lasers, plasma, rockets, spikes, etc
 float 	FL_NOCENTERPRINT		= 65536;	// don't centerprint entity's message field when its targets are used
 float 	FL_IGNOREDATTACK		= 131072; 	// monsters won't get angry at this entity when attacked by it
+float 	FL_SPAWNEDMONSTER		= 262144; 	// spawned trigger spawn monsters
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves
@@ -312,8 +313,6 @@ float 	AS_DODGING     = 5; // hipnotic's centroid
 
 float FLOYD_ROLLING = 2;
 float FLOYD_ASLEEP = 4;
-float SPARKS_BLUE = 2;
-float SPARKS_PALE = 4;
 float BREAKABLE_NO_MONSTERS = 1;
 
 

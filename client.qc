@@ -615,7 +615,6 @@ called each time a player is spawned
 void() DecodeLevelParms;
 void() PlayerDie;
 
-
 void() PutClientInServer =
 {
 	local	entity spot;
@@ -646,14 +645,19 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 	self.customkeys = 0;  // support for item_key_custom -- iw
 	self.jboots_finished = 0;	//jcr jboots timed
-	
+
 	StopBurning(self);//johnfitz -- reset burning	
 
 	DecodeLevelParms ();
 	
 	spot = SelectSpawnPoint ();
 	
-	if (spot.classname == "info_player_start_test") TakeAndGiveWeapons(self, spot);
+	if (spot.classname == "info_player_start_test") {
+		TakeAndGiveWeapons(self, spot);
+		if (spot.spawnflags & 1) self.flags = self.flags | FL_GODMODE;
+		if (spot.spawnflags & 2) self.movetype = MOVETYPE_NOCLIP;
+		if (spot.spawnflags & 4) self.flags = self.flags | FL_NOTARGET;
+	}
 	
 	W_SetCurrentAmmo ();
 
@@ -705,7 +709,10 @@ void() PutClientInServer =
 
 	spawn_tdeath (self.origin, self);
 
-
+	self.healthcontroller = spawn();
+	self.healthcontroller.owner = self;
+	self.healthcontroller.think = healthcontroller_think;
+	self.healthcontroller.nextthink = time + 1;
 
 
 

@@ -147,6 +147,7 @@ W_FirePlasma
 void() W_FirePlasma =
 {
   local entity missile;
+  vector org;
   
   // Now it only shoots once per cell... Just to make it not so overpowered
   self.currentammo = self.ammo_cells = self.ammo_cells - 1;
@@ -182,7 +183,11 @@ void() W_FirePlasma =
   setmodel (missile, "progs/pbullet.mdl");   // Plasma bullet model
   setsize (missile, '0 0 0', '0 0 0');
   //setorigin (missile, self.origin + v_forward*8 + '0 0 10' + v_right*10);
-  setorigin (missile, self.origin + v_forward*12 + '0 0 10');
+
+  org = self.origin + '0 0 10';
+  traceline(org, org + v_forward * 24, FALSE, self);
+  //setorigin (missile, org + v_forward*12);
+  setorigin (missile, org + v_forward*24 * trace_fraction);
 };
 
 // Added the plasma gun... Drop it in like any other guns.
