@@ -158,6 +158,72 @@ float TRAP_VOREBALL = 8;
 
 void(vector org, vector vec) LaunchLaser;
 void() ShalMissile;
+void() ShalMissileTouch;
+
+void() ShalMisTouchEnt = {
+
+	if (other.solid == SOLID_BSP) {
+		//dprint("touched bsp, returning...\n");
+		return;
+	}
+	
+	if (other.classname == "shalmissiletf") {
+		//dprint("touched other missile, returning...\n");
+		return;
+	}
+
+	if (other.flags & FL_PROJECTILE)
+		return;
+
+	dprint2(other.classname, "\n");
+	
+	self.touch = SUB_Null;
+	self.owner.touch = SUB_Null;
+
+	if (other.classname == "monster_zombie")
+		T_Damage (other, self.owner, self.owner, 110);
+
+	self.owner.dmg = zeroconvertdefault(self.owner.dmg, 40);
+
+	T_RadiusDamage (self.owner, self.owner.owner, self.owner.dmg, self);
+
+	sound (self.owner, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
+	SUB_CallAsSelf(BecomeExplosion, self.owner);
+
+	remove(self);
+};
+
+void() ShalMisTouchWorld = {
+	if (other.solid != SOLID_BSP)
+		return;
+	
+	self.touch = SUB_Null;
+	self.trigger_field.touch = SUB_Null;
+
+	self.dmg = zeroconvertdefault(self.dmg, 40);
+
+	T_RadiusDamage(self, self.owner, self.dmg, self.trigger_field);
+	
+	remove(self.trigger_field);
+
+	sound(self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
+	BecomeExplosion();
+}
+
+void() ShalMisTfThink = {
+	if (self.owner.trigger_field != self) {
+		remove(self);
+		return;
+	}
+	self.nextthink = time + 0.05;
+	setorigin(self, self.owner.origin);
+}
+
+void() ShalMisTfDie = {
+	other = self.owner.enemy;
+	ShalMisTouchEnt();
+}
+
 void() spikeshooter_use =
 {
 	local float spd, damage;
@@ -181,11 +247,38 @@ void() spikeshooter_use =
 	else if (self.spawnflags & TRAP_VOREBALL)
 	{
 		ShalMissile();
-		newmis.enemy = findClosest(self.origin, classname, "player");
-		newmis.attack_finished = time + 10;
 		damage = 20;
 		spd = 200;
+
+		newmis.enemy = findClosest(self.origin, classname, "player");
+		newmis.attack_finished = time + 10;
+		newmis.movetype = MOVETYPE_FLY;
 		setorigin(newmis, self.origin);
+		setsize(newmis, '0 0 0', '0 0 0');	
+		newmis.touch = ShalMisTouchWorld;
+
+		entity e;
+		e = spawn();
+		e.think = ShalMisTfThink;
+		e.nextthink = time + 0.1;
+		e.touch = ShalMisTouchEnt;
+		
+		e.health = zeroconvertdefault(self.health, 30);
+		if (e.health) {
+			e.takedamage = DAMAGE_AIM;
+			e.th_die = ShalMisTfDie;
+			e.solid = SOLID_BBOX;
+		}
+		else {
+			e.solid = SOLID_TRIGGER;
+		}
+		e.movetype = MOVETYPE_FLY;
+		e.owner = newmis;
+		newmis.trigger_field = e;
+		setorigin(e, newmis.origin);
+		setsize (e, '-16 -16 -16', '16 16 16');
+		
+		e.classname = "shalmissiletf";
 		//sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 	}
 	else
