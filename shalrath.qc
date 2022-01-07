@@ -140,6 +140,7 @@ void() ShalMissile =
 	sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 
 	newmis = spawn ();
+	newmis.classname = "shalmissile";
 	newmis.owner = self;
 
 	newmis.solid = SOLID_BBOX;
@@ -168,7 +169,7 @@ void() ShalHome =
 	}
 
 	if (self.attack_finished && time > self.attack_finished) {
-		self.think = ShalMissileTouch;
+		self.think = self.touch;
 		self.nextthink = time + 0.1;
 		return;
 	}

@@ -1028,6 +1028,9 @@ Don't shake hands with this crazy bastard!" []
 "Edie, 500 health points." []
 
 
+@PointClass size(-16 -16 -2, 16 16 16) model({"path":"progs/alkturret_main.mdl"}) = monster_turret :
+"Turret, 120 health points." []
+
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 
@@ -1120,6 +1123,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 	speed(integer) : "Custom projectile speed" : : "Defaults:
 	- Spike/Superspike/rocket: 500
 	- Laser: 600"
+	health(integer) : "Voreball health. -1 makes it non-shootable." : 30
 	spawnflags(Flags) = 
 	[
 		1 : "Superspike" : 0
