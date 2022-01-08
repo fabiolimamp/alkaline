@@ -167,7 +167,7 @@ void() ShalMisTouchEnt = {
 		return;
 	}
 	
-	if (other.classname == "shalmissiletf") {
+	if (other.classname == "shalmissiletf" || other.classname == "shalmissile") {
 		//dprint("touched other missile, returning...\n");
 		return;
 	}
