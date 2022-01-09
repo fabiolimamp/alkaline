@@ -103,5 +103,6 @@ plasma.qc
 hipholes.qc
 
 monster_turret.qc
+chaingunner.qc
 
 test.qc
