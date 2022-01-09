@@ -169,10 +169,12 @@ void() ShalHome =
 	}
 
 	if (self.attack_finished && time > self.attack_finished) {
-		self.think = self.touch;
-		self.nextthink = time + 0.1;
+		//dprint("Lifetime finished\n");
+		other = self.enemy;
+		self.touch();
 		return;
 	}
+	//dprint5("Voreball tracking entity: ", self.enemy.classname, " (", vtos(vtemp), ")\n");
 
 	dir = normalize(vtemp - self.origin);
 	if (skill == 3)

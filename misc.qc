@@ -175,7 +175,7 @@ void() ShalMisTouchEnt = {
 	if (other.flags & FL_PROJECTILE)
 		return;
 
-	dprint2(other.classname, "\n");
+	//dprint3("T.field touched entity: ", other.classname, "\n");
 	
 	self.touch = SUB_Null;
 	self.owner.touch = SUB_Null;
@@ -196,6 +196,8 @@ void() ShalMisTouchEnt = {
 void() ShalMisTouchWorld = {
 	if (other.solid != SOLID_BSP)
 		return;
+
+	//dprint3("Projectile touched entity: ", other.classname, "\n");
 	
 	self.touch = SUB_Null;
 	self.trigger_field.touch = SUB_Null;
@@ -250,17 +252,23 @@ void() spikeshooter_use =
 		damage = 20;
 		spd = 200;
 
-		newmis.enemy = findClosest(self.origin, classname, "player");
+		if (activator.flags & FL_CLIENT && activator.health > 0)
+			newmis.enemy = activator;
+		else
+			newmis.enemy = findClosest(self.origin, classname, "player");
+
 		newmis.attack_finished = time + 10;
 		newmis.movetype = MOVETYPE_FLY;
 		setorigin(newmis, self.origin);
 		setsize(newmis, '0 0 0', '0 0 0');	
 		newmis.touch = ShalMisTouchWorld;
+		newmis.nextthink = time + 0.2;
+		
 
 		entity e;
 		e = spawn();
 		e.think = ShalMisTfThink;
-		e.nextthink = time + 0.1;
+		e.nextthink = time + 0.05;
 		e.touch = ShalMisTouchEnt;
 		
 		e.health = zeroconvertdefault(self.health, 30);
