@@ -552,11 +552,7 @@ void() ThrowExplosion =
 	new.movetype = MOVETYPE_NONE;
 	new.solid = SOLID_NOT;
 	
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+	fx_explosion_particle(self.origin);
 	new.think = BecomeExplosion;
 	new.nextthink = time + 0.1;
 	new.flags = 0;
@@ -596,15 +592,7 @@ void() hunter_explode =
 	//do damage
 	T_RadiusDamage (self, self, 100, world);
 	
-	//remove hunter as an explosion sprite
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
-	//BecomeExplosion ();
-
-	fx_explode();
+	TriggerExplosion();
 	SUB_Hide();
 
 };

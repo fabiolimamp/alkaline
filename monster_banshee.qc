@@ -22,11 +22,8 @@ void() Projectile_Hit =
 
 	self.origin = self.origin - 8 * normalize(self.velocity);
 
-	WriteByte(MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte(MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord(MSG_BROADCAST, self.origin_x);
-	WriteCoord(MSG_BROADCAST, self.origin_y);
-	WriteCoord(MSG_BROADCAST, self.origin_z);
+	fx_explosion_particle(self.origin);
+	
 	if (!(other.health))
 		BecomeExplosion();
 	else

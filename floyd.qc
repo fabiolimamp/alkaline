@@ -302,14 +302,10 @@ void () floyd_explode =
 		gibs = gibs - 1;
 	}
 	
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+	fx_explosion_particle(self.origin);
 
 	//BecomeExplosion ();
-	//fx_explode();
+	//TriggerExplosion();
 
 	if (!(self.spawnflags & FLOYD_ROLLING)) //don't throw head if you're on your back, cuz it looks funny
 		ThrowFloydHead ("progs/h_floyd.mdl", self.health);

@@ -178,12 +178,6 @@ void() ProximityExplode =
 {
 	T_RadiusDamage (self, self.owner, 95, world);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
-
 	BecomeExplosion ();
 };
 
