@@ -336,6 +336,7 @@ void() trap_spikeshooter =
 	else if (self.spawnflags & TRAP_VOREBALL) {
 		//precache_model("progs/v_spike_red.mdl");
 		precache_model("progs/v_spike_green.mdl");
+		precache_model("progs/v_spike.mdl");
 		
 		precache_sound("shalrath/attack2.wav");
 	}
