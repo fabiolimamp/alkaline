@@ -259,6 +259,7 @@ void() spikeshooter_use =
 
 		newmis.attack_finished = time + 10;
 		newmis.movetype = MOVETYPE_FLY;
+		setmodel(newmis, "progs/v_spike_green.mdl");
 		setorigin(newmis, self.origin);
 		setsize(newmis, '0 0 0', '0 0 0');	
 		newmis.touch = ShalMisTouchWorld;
@@ -333,7 +334,8 @@ void() trap_spikeshooter =
 		precache_sound ("enforcer/enfstop.wav");
 	}
 	else if (self.spawnflags & TRAP_VOREBALL) {
-		precache_model("progs/v_spike.mdl");
+		//precache_model("progs/v_spike_red.mdl");
+		precache_model("progs/v_spike_green.mdl");
 		
 		precache_sound("shalrath/attack2.wav");
 	}
