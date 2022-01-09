@@ -6,14 +6,13 @@ FX
 ================================================================
 */
 
-void(vector org) gunshot =
+inline void(vector org) gunshot =
 {
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_GUNSHOT);
 	WriteCoord (MSG_BROADCAST, org_x);
 	WriteCoord (MSG_BROADCAST, org_y);
 	WriteCoord (MSG_BROADCAST, org_z);
-	//dprint("gunshot\n");
 }
 
 void(vector a, vector b, entity who) fx_beam =
@@ -29,6 +28,13 @@ void(vector a, vector b, entity who) fx_beam =
 	WriteCoord (MSG_BROADCAST, b_z);
 }
 
+inline void(vector org) fx_explosion_particle = {
+	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
+	WriteCoord (MSG_BROADCAST, org_x);
+	WriteCoord (MSG_BROADCAST, org_y);
+	WriteCoord (MSG_BROADCAST, org_z);
+}
 
 void()	s_explode1	=	[0,		s_explode2] {}
 void()	s_explode2	=	[1,		s_explode3] {}
@@ -37,6 +43,13 @@ void()	s_explode4	=	[3,		s_explode5] {}
 void()	s_explode5	=	[4,		s_explode6] {}
 void()	s_explode6	=	[5,		SUB_Remove] {}
 
+/*
+========
+BecomeBlast
+
+Turns self into the animating blast sprite only (no sounds/particles).
+========
+*/
 void() BecomeBlast = 
 {
 	self.movetype = MOVETYPE_FLY;
@@ -68,29 +81,46 @@ void() BecomeBlast =
 	s_explode1 ();
 }
 
-void() BecomeExplosion =
-{
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
-	BecomeBlast();
-}
-
-inline void() fx_explode =
-{
-	kaboom(self.origin, 0, self, 0);
-}
 
 /*
 ========
-kaboom
+BecomeExplosion
 
-for making explosions when and where you please
+Turns self into a complete explosion - with blast sprite, particles and sound effect.
+Entity gets removed at the end.
+Damage must be applied separately.
 ========
 */
-entity(vector org, float damg, entity parent, float multi) kaboom =
+void() BecomeExplosion =
+{
+	fx_explosion_particle(self.origin);
+	BecomeBlast();
+}
+
+
+/*
+========
+TriggerExplosion
+
+Spawns a complete, damage-less explosion at self's origin.
+Doesn't affect triggering entity.
+========
+*/
+inline void() TriggerExplosion =
+{
+	SpawnExplosion(self.origin, 0, self, 0);
+}
+
+
+/*
+========
+SpawnExplosion
+
+Spawns and returns a complete explosion entity at the specified origin.
+Can have radius damage.
+========
+*/
+entity(vector org, float damg, entity parent, float multi) SpawnExplosion =
 {
 	local entity boom;
 	
@@ -99,7 +129,6 @@ entity(vector org, float damg, entity parent, float multi) kaboom =
 	boom.nextthink = time;
 	boom.think = BecomeExplosion;
 	
-	//if (damg > 0) T_RadiusMultiDamage (boom, parent, damg, boom, multi);
 	if (damg > 0) T_RadiusDamage (boom, parent, damg, boom);
 	
 	return boom;
@@ -143,11 +172,7 @@ void() FuelTankExplode =
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	sound(self, CHAN_AUTO, "weapons/fuelexp.wav", 1, ATTN_NORM);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, self.origin_x);
-	WriteCoord (MSG_BROADCAST, self.origin_y);
-	WriteCoord (MSG_BROADCAST, self.origin_z);
+	fx_explosion_particle(self.origin);
 
 	Fire_bomb(self.origin, dir);
 	Fire_bomb(self.origin, dir);
@@ -169,14 +194,6 @@ void(vector org, vector dir) Fire_bomb =
 	setorigin(newmis, org);
 	setmodel(newmis, "progs/d_explod.spr");
 	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);
-	/*WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
-	WriteCoord (MSG_BROADCAST, newmis.origin_x);
-	WriteCoord (MSG_BROADCAST, newmis.origin_y);
-	WriteCoord (MSG_BROADCAST, newmis.origin_z);*/
-
-	//if (random() > 0.5)	x = -1;
-	//else x = 1;
 
 	newmis.nextthink = time;
 	newmis.think = d_explode1;
@@ -722,7 +739,7 @@ void() target_explosion_use =
 	playercount_convert(count);
 	if (self.count == 1 && self.delay == 0)
 	{
-		kaboom(self.origin, self.dmg, self, 0);
+		SpawnExplosion(self.origin, self.dmg, self, 0);
 		return;
 	}
 	

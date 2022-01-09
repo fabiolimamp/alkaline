@@ -245,8 +245,9 @@ void( entity client, float density) skyfog_set;
 // fx.qc
 //
 void(vector a, vector b, entity who) fx_beam;
-entity(vector org, float damg, entity parent, float multi) kaboom;
+entity(vector org, float damg, entity parent, float multi) SpawnExplosion;
 void() BecomeExplosion;
+void(vector org) fx_explosion_particle;
 void(vector org) gunshot;
 
 //

@@ -131,7 +131,7 @@ void() spider_die2 = {
 	ThrowGib(SPIDER_MODEL_GIB, self.health - 40 - random() * 40);
 	ThrowHead(SPIDER_MODEL_GIB, self.health - 40 - random() * 40);
 
-	fx_explode();
+	TriggerExplosion();
 };
 
 void() spider_die = {

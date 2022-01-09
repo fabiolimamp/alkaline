@@ -541,16 +541,16 @@ void() torm_death = [ 98, torm_death ] {
 		setorigin(self, self.origin);
 	}
 	else if (self.walkframe == 30) {
-		kaboom(self.origin + '0 0 16', 0, self, 0);
+		SpawnExplosion(self.origin + '0 0 16', 0, self, 0);
 	}
 	else if (self.walkframe == 34) {
-		kaboom(self.origin + '16 0 16', 0, self, 0);
+		SpawnExplosion(self.origin + '16 0 16', 0, self, 0);
 	}
 	else if (self.walkframe == 36) {
-		kaboom(self.origin + '0 16 32', 0, self, 0);
+		SpawnExplosion(self.origin + '0 16 32', 0, self, 0);
 	}
 	else if (self.walkframe == 40) {
-		kaboom(self.origin, 80, self, 0);
+		SpawnExplosion(self.origin, 80, self, 0);
 
 		self.nextthink = -1;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
