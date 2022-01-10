@@ -167,7 +167,7 @@ void()	chain_stand7	=[	$stand7,	chain_stand1	] {ai_stand();};
 void()	chain_walk1	=[	$walk1 ,	chain_walk2	]
 {
 	if (random() < 0.2)
-		sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+		sound (self, CHAN_VOICE, "chaingunner/chain_idle.wav", 1, ATTN_IDLE);
 	ai_walk(2);
 };
 void()	chain_walk2		=[	$walk2 ,	chain_walk3		] {ai_walk(4);};
@@ -192,7 +192,7 @@ void()	chain_run1	=[	$run1  ,	chain_run2	] {
 	self.yaw_speed = 20;
 	ai_run(18 * chain_RUN_SPEED);
 	if (random() < 0.1)
-		sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
+		sound (self, CHAN_VOICE, "chaingunner/chain_idle.wav", 1, ATTN_IDLE);
 };
 void()	chain_run2	=[	$run2  ,	chain_run3	] {ai_run(14 * chain_RUN_SPEED);};
 void()	chain_run3	=[	$run3  ,	chain_run4	] {ai_run(7 * chain_RUN_SPEED);};
@@ -258,11 +258,9 @@ void(entity attacker, float damage)	chain_pain =
 	if (random()*150 > damage)
 		return;		// didn't flinch
 		
-	if (r < 0.5)
-		sound (self, CHAN_VOICE, "dread/dread_pain1.wav", 1, ATTN_NORM);
-	else
-		sound (self, CHAN_VOICE, "dread/dread_pain2.wav", 1, ATTN_NORM);
-
+	
+	sound (self, CHAN_VOICE, "chaingunner/chain_pain.wav", 1, ATTN_NORM);
+	
 
 	if ((damage > 50 && r > 0.2) || damage > 80)
 	{
@@ -342,8 +340,15 @@ void() chain_die =
 	}
 	else // regular death
 	{
+		float rnd;
+		rnd = random();
 
-		sound (self, CHAN_VOICE, "dread/dread_death.wav", 1, ATTN_NORM);
+		if (rnd < 0.33)
+			sound (self, CHAN_VOICE, "chaingunner/chain_death1.wav", 1, ATTN_NORM);
+		else if (rnd < 0.66)
+			sound (self, CHAN_VOICE, "chaingunner/chain_death2.wav", 1, ATTN_NORM);
+		else
+			sound (self, CHAN_VOICE, "chaingunner/chain_death3.wav", 1, ATTN_NORM);
 		if (self.health < 30 && random() > 0.2)
 			chain_fdie1 ();
 		else
@@ -353,10 +358,14 @@ void() chain_die =
 };
 
 void() chain_sight = {
-	if (random() > 0.5)
-		sound (self, CHAN_VOICE, "dread/dread_sight.wav", 1, ATTN_NORM);
+	float rnd;
+	rnd = random();
+	if (rnd < 0.33)
+		sound (self, CHAN_VOICE, "chaingunner/chain_sight1.wav", 1, ATTN_NORM);
+	else if (rnd < 0.66)
+		sound (self, CHAN_VOICE, "chaingunner/chain_sight2.wav", 1, ATTN_NORM);
 	else
-		sound (self, CHAN_VOICE, "dread/dread_sight2.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "chaingunner/chain_sight3.wav", 1, ATTN_NORM);
 }
 
 /*QUAKED monster_dreadnaught (1 0 0) (-16 -16 -24) (16 16 40) AMBUSH
@@ -415,19 +424,15 @@ void() monster_chaingunner =
 	precache_model2 ("progs/chaingunner.mdl");
 	precache_model2 ("progs/h_dread.mdl");
 
-	precache_sound2 ("dread/dread_death.wav");
-	precache_sound2 ("enforcer/idle1.wav");
-	precache_sound2 ("dread/dread_pain1.wav");
-	precache_sound2 ("dread/dread_pain2.wav");
-	precache_sound2 ("dread/dread_sight.wav");
-	precache_sound2 ("dread/dread_sight2.wav");
-	
-	precache_sound ("dread/flameon.wav");
-	precache_sound ("dread/flameoff.wav");
-	precache_sound ("misc/null.wav");
-	
-	precache_model ("progs/s_flame.spr");
-	
+	precache_sound2 ("chaingunner/chain_death1.wav");
+	precache_sound2 ("chaingunner/chain_death2.wav");
+	precache_sound2 ("chaingunner/chain_death3.wav");
+	precache_sound2 ("chaingunner/chain_idle.wav");
+	precache_sound2 ("chaingunner/chain_pain.wav");
+	precache_sound2 ("chaingunner/chain_sight1.wav");
+	precache_sound2 ("chaingunner/chain_sight2.wav");
+	precache_sound2 ("chaingunner/chain_sight3.wav");
+		
 	self.cmins = '-16 -16 -24';
 	self.cmaxs = '16 16 40';
 	
