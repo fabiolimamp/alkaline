@@ -1031,6 +1031,8 @@ Don't shake hands with this crazy bastard!" []
 @PointClass size(-16 -16 -2, 16 16 16) model({"path":"progs/alkturret_main.mdl"}) = monster_turret :
 "Turret, 120 health points." []
 
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/chaingunner.mdl"}) = monster_chaingunner : "Chaingunner, 250 health points." []
+
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 
