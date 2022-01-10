@@ -43,29 +43,106 @@ $frame paind11 paind12 paind13 paind14 paind15 paind16 paind17 paind18 paind19
 
 //============================================================================
 
-void() chain_fire = {
-	self.effects = self.effects | EF_MUZZLEFLASH;
+float() ChaingunnerCheckAttack =
+{
+	//local vector	spot1, spot2;	
+	local entity	targ;
+	local float		chance;
+
+
+	targ = SUB_entEnemyTarget();
+
+	if (!canshoot(targ))
+		return FALSE;
+
+	//if (enemy_range == RANGE_MELEE)
+	//	return FALSE;
+		
+	if (time < self.attack_finished)
+		return FALSE;
+		
+	if (enemy_range == RANGE_FAR)
+		return FALSE;
+		
+	if (enemy_range == RANGE_MELEE)
+	{
+		chance = 0.9;
+		self.attack_finished = 0;
+	}
+	else if (enemy_range == RANGE_NEAR)
+	{
+		if (self.th_melee)
+			chance = 0.2;
+		else
+			chance = 0.4;
+	}
+	else if (enemy_range == RANGE_MID)
+	{
+		if (self.th_melee)
+			chance = 0.05;
+		else
+			chance = 0.1;
+	}
+	else
+		chance = 0;
+
+	if (self.goalentity.classname == "path_angry") chance = chance * 0.2;
 	
-	makevectors(self.angles);
-	FireBullets2(1, self.origin /*+ v_forward*56*/, v_forward, '0.06 0.02 0');
+	if (random () < chance)
+	{
+		self.th_missile ();
+		SUB_AttackFinished(2*random());
+		return TRUE;
+	}
+
+	return FALSE;
 };
 
+
+void() chain_fire = {
+	self.effects = self.effects | EF_MUZZLEFLASH;
+	vector ang, angtoenemy;
+	angtoenemy = vectoangles(self.origin - SUB_entEnemyTarget().origin);
+	ang = self.angles;
+	ang_x = angtoenemy_x;
+	makevectors(ang);
+	FireBullets2(1, self.origin /*+ v_forward*56*/, v_forward, '0.07 0.02 0');
+};
+
+void() chain_change_yaw = {
+	entity enem;
+
+	enem = SUB_entEnemyTarget();
+
+	self.ideal_yaw = vectoyaw(enem.origin + (enem.velocity*0.1) - self.origin);
+	ChangeYaw();
+}
+
 void()	chain_atk1	=[	$attack1,	chain_atk2	] {
-	self.attack_finished = time + 2 + random()*2;
-	ai_face();};
-void()	chain_atk2	=[	$attack2,	chain_atk3	] {ai_face();};
-void()	chain_atk3	=[	$attack3,	chain_atk4	] {ai_face();};
-void()	chain_atk4	=[	$attack4,	chain_atk5	] {ai_face();};
-void()	chain_atk5	=[	$attack5,	chain_atk6	] {ai_face();};
+	self.rad_time = time + 2 + random()*2;
+	chain_change_yaw();};
+void()	chain_atk2	=[	$attack2,	chain_atk3	] {chain_change_yaw();};
+void()	chain_atk3	=[	$attack3,	chain_atk4	] {chain_change_yaw();};
+void()	chain_atk4	=[	$attack4,	chain_atk5	] {chain_change_yaw();};
+void()	chain_atk5	=[	$attack5,	chain_atk6	] {chain_change_yaw();};
 void()	chain_atk6	=[	$attack6,	chain_atk7	] {
-	self.yaw_speed = 8;
+	
+	if (startskill == SKILL_EASY) self.yaw_speed = 4;
+	else if (startskill == SKILL_NORMAL) self.yaw_speed = 5;
+	else if (startskill == SKILL_HARD) self.yaw_speed = 8;
+	else self.yaw_speed = 10;
+
 	sound (self, CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);
 	chain_fire();
-	ai_face();
+	chain_change_yaw();
 	
-	if (self.attack_finished > time && self.enemy.health > 0 )
+	
+	if (self.rad_time > time &&
+		self.enemy.health > 0 &&
+		fabs(self.angles_y - self.ideal_yaw) < 30
+	)
 		self.think = chain_atk5;
-	//self.attack_finished = time + 0.3; //1 + random();
+
 };
 void()	chain_atk7	=[	$attack7,	chain_atk8	] {};
 void()	chain_atk8	=[	$attack8,	chain_atk9	] {};
@@ -207,16 +284,6 @@ void(entity attacker, float damage)	chain_pain =
 		self.pain_finished = time + 2;
 		chain_painc1 ();
 	}
-	/*
-	if (self.attack_finished > time) //turn off flame sound
-	{
-		sound (self, CHAN_WEAPON, "dread/flameoff.wav", 1, ATTN_NORM);
-	}
-	else //play sound anyway to be sure the channel is silent
-	{
-		sound (self, CHAN_WEAPON, "misc/null.wav", 0, ATTN_NORM);
-	}
-	*/
 };
 
 //============================================================================
@@ -320,10 +387,10 @@ void(entity e) monster_chaingunner_start =
 	self.th_run = chain_run1;
 	self.th_pain = chain_pain;
 	self.th_die = chain_die;
-	self.th_melee = chain_atk1;
+	self.th_missile = chain_atk1;
 	self.th_sight = chain_sight;
+	self.th_checkattack = ChaingunnerCheckAttack;
 	
-	self.missle = world;
 	
 	if (!self.yaw_speed)
 		self.yaw_speed = 20; //make him turn faster than most monsters (harder to circle-strafe)
