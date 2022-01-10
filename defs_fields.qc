@@ -297,6 +297,7 @@ FIELDS
 .float		air_finished;	// when time > air_finished, start drowning
 .float		bubble_count;	// keeps track of the number of bubbles
 .string		deathtype;		// keeps track of how the player died
+.float 		offground_start; // last time the player was on ground
 
 .float 		wantedgravity; // thanks Spike!
 
