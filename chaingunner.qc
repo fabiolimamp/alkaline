@@ -331,7 +331,7 @@ void() chain_die =
 	{
 		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_dread.mdl", self.health);
+		ThrowHead ("progs/h_chaingunner.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -422,7 +422,7 @@ void() monster_chaingunner =
 		return;
 	}
 	precache_model2 ("progs/chaingunner.mdl");
-	precache_model2 ("progs/h_dread.mdl");
+	precache_model2 ("progs/h_chaingunner.mdl");
 
 	precache_sound2 ("chaingunner/chain_death1.wav");
 	precache_sound2 ("chaingunner/chain_death2.wav");
