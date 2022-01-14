@@ -645,7 +645,7 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 	self.customkeys = 0;  // support for item_key_custom -- iw
 	self.jboots_finished = 0;	//jcr jboots timed
-	self.offground_start = -1;
+	self.offground_start = 0;
 
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -1016,8 +1016,8 @@ void() PlayerJump =
 
 
 	if (self.jboots_rechargelimit) {	//JCR jump boots equipped jump logic
-
-		if (self.flags & FL_ONGROUND || time < self.offground_start + 0.2)	{
+		
+		if (self.flags & FL_ONGROUND)	{
 			if (!(self.flags & FL_JUMPRELEASED))
 				return;
 
@@ -1031,6 +1031,8 @@ void() PlayerJump =
 			self.velocity_z = (self.velocity_z + 270);
 		}
 		else {
+			if (time < self.offground_start + 0.2) return;
+
 			if (self.jboots_rechargelimit == -1 || self.jboots_ammo >= 1 || self.jboots_onground) {	//Conditions for airjumping.
 			
 				if (!(self.flags & FL_JUMPRELEASED))
@@ -1698,10 +1700,10 @@ void() PlayerPostThink =
 
 	if (!(self.flags & FL_ONGROUND)){
 		self.jump_flag = self.velocity_z;
-		if (self.offground_start == -1) self.offground_start = time;
+		if (!self.offground_start) self.offground_start = time;
 	}
 	else
-		self.offground_start = -1;
+		self.offground_start = 0;
 
 	CheckPowerups ();
 
