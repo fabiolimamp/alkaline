@@ -1,4 +1,4 @@
-string	VERSION_S				= "Alkaline v1.1.2 Beta 2";
+string	VERSION_S				= "Alkaline v1.1.2 Beta 3";
 string	BUILD_DATE				= __DATE__;
 string	BUILD_TIME				= __TIME__;
 
