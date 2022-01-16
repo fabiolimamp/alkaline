@@ -2113,6 +2113,7 @@ Using the destination's 'count' field, you can define which order they'll be sel
 		1 : "Player only" : 0
 		2 : "No portal sound" : 0
 		4 : "Stealth teleport out" : 0
+		8 : "Monsters only" : 0
 	]
 	style(choices) : "Multiple destination mode" : 0 = [
 		0 : "First"
