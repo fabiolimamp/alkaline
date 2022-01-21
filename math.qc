@@ -313,47 +313,59 @@ vector(float offset_amt) RandomOffset =
 };
 
 
+// normalizes an angle vector to the 0/+359 range
 vector(vector ang) normalizeAngles = {
-   while (ang_x > 360)
-      ang_x = ang_x - 360;
 
-   while (ang_x < 0)
-      ang_x = ang_x + 360;
+	ang_x = ang_x - floor(ang_x/360) * 360;
+	ang_y = ang_y - floor(ang_y/360) * 360;
+	ang_z = ang_z - floor(ang_z/360) * 360;
 
-   while (ang_y > 360)
-      ang_y = ang_y - 360;
+	/*
+	while (ang_x > 360)
+		ang_x = ang_x - 360;
 
-   while (ang_y < 0)
-      ang_y = ang_y + 360;
+	while (ang_x < 0)
+		ang_x = ang_x + 360;
 
-   while (ang_z > 360)
-      ang_z = ang_z - 360;
+	while (ang_y > 360)
+		ang_y = ang_y - 360;
 
-   while (ang_z < 0)
-      ang_z = ang_z + 360;
+	while (ang_y < 0)
+		ang_y = ang_y + 360;
 
-   return ang;
+	while (ang_z > 360)
+		ang_z = ang_z - 360;
+
+	while (ang_z < 0)
+		ang_z = ang_z + 360;
+	*/
+	return ang;
 };
 
-
+// normalizes an angle vector to the -180/+179 range
 vector(vector ang) normalizeAngles180 = {
-   while (ang_x > 180)
-      ang_x = ang_x - 360;
+	ang_x = ((ang_x+180) - floor((ang_x+180)/360) * 360) - 180;
+	ang_y = ((ang_y+180) - floor((ang_y+180)/360) * 360) - 180;
+	ang_z = ((ang_z+180) - floor((ang_z+180)/360) * 360) - 180;
 
-   while (ang_x < -180)
-      ang_x = ang_x + 360;
+	/*
+	while (ang_x > 180)
+		ang_x = ang_x - 360;
 
-   while (ang_y > 180)
-      ang_y = ang_y - 360;
+	while (ang_x < -180)
+		ang_x = ang_x + 360;
 
-   while (ang_y < -180)
-      ang_y = ang_y + 360;
+	while (ang_y > 180)
+		ang_y = ang_y - 360;
 
-   while (ang_z > 180)
-      ang_z = ang_z - 360;
+	while (ang_y < -180)
+		ang_y = ang_y + 360;
 
-   while (ang_z < -180)
-      ang_z = ang_z + 360;
+	while (ang_z > 180)
+		ang_z = ang_z - 360;
 
-   return ang;
+	while (ang_z < -180)
+		ang_z = ang_z + 360;
+	*/
+	return ang;
 };
