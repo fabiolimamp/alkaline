@@ -1,7 +1,3 @@
-void (vector org) spawn_tfog;
-void() W_SetCurrentAmmo;
-void() weapon_plasmagun;
-
 /* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
 BE .8 .3 .4 IN COLOR */
 
@@ -332,6 +328,10 @@ void() health_touch =
 	
 	if (self.healtype == 2) // Megahealth?  Ignore max_health...
 	{
+		// if the healthcontroller is gone for some reason (it shouldn't), recreate it
+		if (other.healthcontroller.classname != "healthcontroller")
+			SUB_CallAsSelf(CreateHealthController, other);
+
 		other.healthcontroller.nextthink = time + 1; //resets rot controller's nextthink so it first happens exactly 1s after
 		if (other.health >= 250)
 			return;
@@ -378,8 +378,6 @@ ARMOR
 
 ===============================================================================
 */
-
-void() armor_touch;
 
 void() armor_touch =
 {

@@ -620,6 +620,15 @@ entity() SelectSpawnPoint =
 	return spot;
 };
 
+
+void() CreateHealthController = {
+	self.healthcontroller = spawn();
+	self.healthcontroller.owner = self;
+	self.healthcontroller.think = healthcontroller_think;
+	self.healthcontroller.nextthink = time + 1;
+	self.healthcontroller.classname = "healthcontroller";
+}
+
 /*
 ===========
 PutClientInServer
@@ -725,12 +734,7 @@ void() PutClientInServer =
 
 	spawn_tdeath (self.origin, self);
 
-	self.healthcontroller = spawn();
-	self.healthcontroller.owner = self;
-	self.healthcontroller.think = healthcontroller_think;
-	self.healthcontroller.nextthink = time + 1;
-
-
+	CreateHealthController();
 
 	self.cshift_set = 0;
 	self.cshift_cleared = 0;
