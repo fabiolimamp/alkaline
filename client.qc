@@ -60,7 +60,7 @@ void() SetChangeParms =
 
 // remove items
 	self.items = self.items - (self.items & 
-		(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD)
+		(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA)
 	);
 	
 // cap super health
@@ -82,14 +82,6 @@ void() SetChangeParms =
 	parm9 = self.armortype * 100;
 	parm10 = self.weapons;
 	
-	// jump boots persists across levels
-	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
-	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
-
-	parm12 = playerstart_id;
-
-	parm15 = mapvar[0];
-	parm16 = mapvar[1];
 };
 
 void() SetNewParms =
