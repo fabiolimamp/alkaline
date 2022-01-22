@@ -33,10 +33,27 @@ void() info_intermission =
 float(float weapons, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
 float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms;
 
+// engine sysdef function. Called automatically for every client on map change
 void() SetChangeParms =
 {
-	if (self.health <= 0)
-	{
+	// mapvars and playerstart id for the next map are always passed down
+	parm12 = playerstart_id;
+	parm15 = mapvar[0];
+	parm16 = mapvar[1];
+
+	// set by changelevel_touch if trigger_changelevel has a "reset items on map change" flag
+	if (reset_items_on_map_change) {
+		SetNewParms ();
+		return;
+	}
+
+	// jump boots persists across levels. even if player is dead on map change
+	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
+	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
+	
+
+	// player dead, reset inventory? why?
+	if (self.health <= 0) {
 		SetNewParms ();
 		return;
 	}
@@ -369,6 +386,12 @@ void() changelevel_touch =
 
 	if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
 		write_mapvar(self.jump_flag, MAPV_WRITE_ON);
+
+
+	// "reset items on map change" flag
+	if (self.flags & 2) reset_items_on_map_change = TRUE;
+	else reset_items_on_map_change = FALSE;
+	
 
 	playerstart_id = self.count;
 

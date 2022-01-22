@@ -2048,6 +2048,10 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 By giving the changelevel a 'count' value, the next map will start on a info_player_start/info_player_coop with a matching 'count' field. If no matching player start ID is found, it'll fall back to the first start spot found.
 
 You can define a mapvar to be automatically enabled when the level changes through the 'jump_flag' key.
+
+Flags:
+- 'No intermission': skips level stats and loads the next map instantly.
+- 'Reset items on map change': clears players' inventory before loading the next map.
 "
 [
 	map(string) : "New map name"
@@ -2058,6 +2062,7 @@ You can define a mapvar to be automatically enabled when the level changes throu
 	spawnflags(flags) =
 	[
 		1: "No Intermission" : 0
+		2: "Reset items on map change" : 0
 	]
 ]
 

@@ -192,6 +192,7 @@ float mapvar[2];				// Map variables stored in savefile
 nosave float mapvar_cvar;
 
 float playerstart_id;
+float reset_items_on_map_change;
 
 entity flickercontroller;
 
