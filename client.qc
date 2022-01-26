@@ -381,7 +381,7 @@ void() changelevel_touch =
 
 
 	// "reset items on map change" flag
-	if (self.flags & 2) reset_items_on_map_change = TRUE;
+	if (self.spawnflags & 2) reset_items_on_map_change = TRUE;
 	else reset_items_on_map_change = FALSE;
 	
 
