@@ -33,17 +33,34 @@ void() info_intermission =
 float(float weapons, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
 float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms;
 
+// engine sysdef function. Called automatically for every client on map change
 void() SetChangeParms =
 {
-	if (self.health <= 0)
-	{
+	// mapvars and playerstart id for the next map are always passed down
+	parm12 = playerstart_id;
+	parm15 = mapvar[0];
+	parm16 = mapvar[1];
+
+	// set by changelevel_touch if trigger_changelevel has a "reset items on map change" flag
+	if (reset_items_on_map_change) {
+		SetNewParms ();
+		return;
+	}
+
+	// jump boots persists across levels. even if player is dead on map change
+	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
+	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
+	
+
+	// player dead, reset inventory? why?
+	if (self.health <= 0) {
 		SetNewParms ();
 		return;
 	}
 
 // remove items
 	self.items = self.items - (self.items & 
-		(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD)
+		(IT_KEY1 | IT_KEY2 | IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA)
 	);
 	
 // cap super health
@@ -65,14 +82,6 @@ void() SetChangeParms =
 	parm9 = self.armortype * 100;
 	parm10 = self.weapons;
 	
-	// jump boots persists across levels
-	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
-	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
-
-	parm12 = playerstart_id;
-
-	parm15 = mapvar[0];
-	parm16 = mapvar[1];
 };
 
 void() SetNewParms =
@@ -370,6 +379,12 @@ void() changelevel_touch =
 	if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
 		write_mapvar(self.jump_flag, MAPV_WRITE_ON);
 
+
+	// "reset items on map change" flag
+	if (self.spawnflags & 2) reset_items_on_map_change = TRUE;
+	else reset_items_on_map_change = FALSE;
+	
+
 	playerstart_id = self.count;
 
 	nextmap = self.map;
@@ -605,6 +620,15 @@ entity() SelectSpawnPoint =
 	return spot;
 };
 
+
+void() CreateHealthController = {
+	self.healthcontroller = spawn();
+	self.healthcontroller.owner = self;
+	self.healthcontroller.think = healthcontroller_think;
+	self.healthcontroller.nextthink = time + 1;
+	self.healthcontroller.classname = "healthcontroller";
+}
+
 /*
 ===========
 PutClientInServer
@@ -645,7 +669,7 @@ void() PutClientInServer =
 	self.invincible_time = 0;
 	self.customkeys = 0;  // support for item_key_custom -- iw
 	self.jboots_finished = 0;	//jcr jboots timed
-	self.offground_start = -1;
+	self.offground_start = 0;
 
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -710,12 +734,7 @@ void() PutClientInServer =
 
 	spawn_tdeath (self.origin, self);
 
-	self.healthcontroller = spawn();
-	self.healthcontroller.owner = self;
-	self.healthcontroller.think = healthcontroller_think;
-	self.healthcontroller.nextthink = time + 1;
-
-
+	CreateHealthController();
 
 	self.cshift_set = 0;
 	self.cshift_cleared = 0;
@@ -1016,8 +1035,8 @@ void() PlayerJump =
 
 
 	if (self.jboots_rechargelimit) {	//JCR jump boots equipped jump logic
-
-		if (self.flags & FL_ONGROUND || time < self.offground_start + 0.2)	{
+		
+		if (self.flags & FL_ONGROUND)	{
 			if (!(self.flags & FL_JUMPRELEASED))
 				return;
 
@@ -1031,6 +1050,8 @@ void() PlayerJump =
 			self.velocity_z = (self.velocity_z + 270);
 		}
 		else {
+			if (time < self.offground_start + 0.2) return;
+
 			if (self.jboots_rechargelimit == -1 || self.jboots_ammo >= 1 || self.jboots_onground) {	//Conditions for airjumping.
 			
 				if (!(self.flags & FL_JUMPRELEASED))
@@ -1698,10 +1719,10 @@ void() PlayerPostThink =
 
 	if (!(self.flags & FL_ONGROUND)){
 		self.jump_flag = self.velocity_z;
-		if (self.offground_start == -1) self.offground_start = time;
+		if (!self.offground_start) self.offground_start = time;
 	}
 	else
-		self.offground_start = -1;
+		self.offground_start = 0;
 
 	CheckPowerups ();
 

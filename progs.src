@@ -1,7 +1,14 @@
 ../progs.dat
 
+// automatically compiles the CSQC progs at the end
+#pragma sourcefile csprogs.src
+
+// no need to declare function prototypes yay
+#pragma autoproto 
+
 defs_sysglobals.qc
 defs_fields.qc
+defs_versionstring.qc
 defs_consts.qc
 defs_prototypes.qc
 
@@ -104,5 +111,6 @@ hipholes.qc
 
 monster_turret.qc
 chaingunner.qc
+
 
 test.qc

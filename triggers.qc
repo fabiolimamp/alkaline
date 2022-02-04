@@ -329,6 +329,7 @@ TELEPORT TRIGGERS
 float	PLAYER_ONLY	= 1;
 float	SILENT = 2;
 float TELE_STEALTH = 4;
+float TELE_MONSTER_ONLY = 8;
 /*float RANDOM = 4;
 float MONSTER_ONLY = 16;
 float TELE_DD = 32;*/
@@ -515,7 +516,12 @@ void() teleport_touch =
 		if (other.classname != "player")
 			return;
 	}
-
+	
+	if (self.spawnflags & TELE_MONSTER_ONLY)
+	{
+		if (!(other.flags & FL_MONSTER))
+			return;
+	}
 	// only teleport living creatures
 	if (other.health <= 0 || other.solid != SOLID_SLIDEBOX)
 		return;
