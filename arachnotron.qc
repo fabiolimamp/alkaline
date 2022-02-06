@@ -330,7 +330,7 @@ void() art_fire = {
 
 	en = self.enemy;
 	
-	dir = en.origin + (en.velocity * clamp(vlen(self.origin - en.origin)/600, 0, 0.6));
+	dir = en.origin + (en.velocity * clamp(vlen(self.origin - en.origin)/600, 0, 1));
 	dir = normalize (dir - self.origin);
 	
 	makevectors(self.angles);
