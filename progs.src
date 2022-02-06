@@ -89,6 +89,8 @@ edie.qc
 
 lostsoul.qc
 gargoyle.qc
+chaingunner.qc
+arachnotron.qc
 
 monster_frogman.qc // Malice
 monster_banshee.qc // Malice
@@ -110,8 +112,6 @@ plasma.qc
 hipholes.qc
 
 monster_turret.qc
-chaingunner.qc
-arachnotron.qc
 
 
 test.qc
