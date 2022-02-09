@@ -42,7 +42,7 @@ $frame death21 death22 death23 death24
 
 
 void() art_stand1 = [ $idle1,	art_stand2	] {
-	local float r;
+	/*local float r;
 	if (!(self.spawnflags & MONSTER_NOIDLESOUND)) {
 		r = random();
 		if (r < 0.1) {
@@ -51,7 +51,7 @@ void() art_stand1 = [ $idle1,	art_stand2	] {
 		else if (r > 0.9) {
 			sound(self, CHAN_VOICE, "arachnofloyd/idle2.wav", 1, ATTN_IDLE);
 		}
-	}
+	}*/
 	ai_stand();
 };
 void()	art_stand2	=[	$idle2,		art_stand3	] {ai_stand();};
@@ -83,13 +83,13 @@ void()	art_stand27	=[	$idle27,	art_stand28 ] {ai_stand();};
 void()	art_stand28	=[	$idle28,	art_stand1 ] {ai_stand();};
 
 
-void()	art_walk1	=[	$walk1,		art_walk2	] {sound (self, CHAN_VOICE, "arachnotron/artwalk.wav", 1, ATTN_IDLE);ai_walk(8);};
+void()	art_walk1	=[	$walk1,		art_walk2	] {sound (self, CHAN_BODY, "arachnotron/artwalk.wav", 1, ATTN_IDLE);ai_walk(8);};
 void()	art_walk2	=[	$walk2,		art_walk3	] {ai_walk(4);};
 void()	art_walk3	=[	$walk3,		art_walk4	] {ai_walk(2);};
 void()	art_walk4	=[	$walk4,		art_walk5	] {ai_walk(0);};
 void()	art_walk5	=[	$walk5,		art_walk6	] {ai_walk(10);};
 void()	art_walk6	=[	$walk6,		art_walk7	] {ai_walk(10);};
-void()	art_walk7	=[	$walk7,		art_walk8	] {sound (self, CHAN_VOICE, "arachnotron/artwalk.wav", 1, ATTN_IDLE);ai_walk(3);};
+void()	art_walk7	=[	$walk7,		art_walk8	] {sound (self, CHAN_BODY, "arachnotron/artwalk.wav", 1, ATTN_IDLE);ai_walk(3);};
 void()	art_walk8	=[	$walk8,		art_walk9	] {ai_walk(0);};
 void()	art_walk9	=[	$walk9,		art_walk10	] {ai_walk(10);};
 void()	art_walk10	=[	$walk10,	art_walk11	] {ai_walk(7);};
@@ -109,16 +109,16 @@ void() check_onground = {
 
 void()	art_run1	=[	$walk1,		art_run2	] {check_onground();ai_run(8); self.nextthink = time + 0.075; };
 void()	art_run2	=[	$walk2,		art_run3	] {check_onground();ai_run(4); self.nextthink = time + 0.075;};
-void()	art_run3	=[	$walk3,		art_run4	] {check_onground();ai_run(2); self.nextthink = time + 0.075; sound(self, CHAN_VOICE, "arachnotron/artwalk.wav", 1, ATTN_IDLE);};
+void()	art_run3	=[	$walk3,		art_run4	] {check_onground();ai_run(2); self.nextthink = time + 0.075; sound(self, CHAN_BODY, "arachnotron/artwalk.wav", 1, ATTN_IDLE);};
 void()	art_run4	=[	$walk4,		art_run5	] {check_onground();ai_run(0); self.nextthink = time + 0.075;};
 void()	art_run5	=[	$walk5,		art_run6	] {check_onground();ai_run(10); self.nextthink = time + 0.075;};
 void()	art_run6	=[	$walk6,		art_run7	] {check_onground();ai_run(10); self.nextthink = time + 0.075;};
 void()	art_run7	=[	$walk7,		art_run8	] {check_onground();ai_run(3); self.nextthink = time + 0.075; };
-void()	art_run8	=[	$walk8,		art_run9	] {check_onground();ai_run(0); self.nextthink = time + 0.075; sound(self, CHAN_VOICE, "arachnotron/artwalk.wav", 1, ATTN_IDLE);};
+void()	art_run8	=[	$walk8,		art_run9	] {check_onground();ai_run(0); self.nextthink = time + 0.075; sound(self, CHAN_BODY, "arachnotron/artwalk.wav", 1, ATTN_IDLE);};
 void()	art_run9	=[	$walk9,		art_run10	] {check_onground();ai_run(10); self.nextthink = time + 0.075;};
 void()	art_run10	=[	$walk10,	art_run11	] {check_onground();ai_run(7); self.nextthink = time + 0.075;};
 void()	art_run11	=[	$walk11,	art_run12	] {check_onground();ai_run(3); self.nextthink = time + 0.075;};
-void()	art_run12	=[	$walk12,	art_run13	] {check_onground();ai_run(0); self.nextthink = time + 0.075; sound(self, CHAN_VOICE, "arachnotron/artwalk.wav", 1, ATTN_IDLE);};
+void()	art_run12	=[	$walk12,	art_run13	] {check_onground();ai_run(0); self.nextthink = time + 0.075; sound(self, CHAN_BODY, "arachnotron/artwalk.wav", 1, ATTN_IDLE);};
 void()	art_run13	=[	$walk13,	art_run14	] {check_onground();ai_run(10); self.nextthink = time + 0.075;};
 void()	art_run14	=[	$walk14,	art_run1	] {check_onground();ai_run(10); self.nextthink = time + 0.075;};
 
@@ -260,7 +260,7 @@ void()	art_leap5	=[	$leap5,		art_leap6	] {ai_face();};
 void()	art_leap6	=[	$leap6,		art_leap7	] {ai_face();
 
 	self.yaw_speed = 20;
-	sound (self, CHAN_VOICE, "arachnofloyd/leap.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "arachnotron/artleap.wav", 0.7, ATTN_NORM);
 	makevectors(self.angles);
 	self.flags = self.flags - FL_ONGROUND;
 	self.origin_z = self.origin_z + 16;
@@ -347,7 +347,7 @@ void() art_face_ahead =
 	ChangeYaw ();
 };
 
-void()	art_light1	=[	$light1,		art_light2	] {ai_face(); self.cnt = 0; sound (self, CHAN_WEAPON, "arachnotron/artcharge.wav", 0.7, ATTN_NORM);};
+void()	art_light1	=[	$light1,		art_light2	] {ai_face(); self.cnt = 0; sound(self, CHAN_VOICE, "arachnotron/artcharge.wav", 0.7, ATTN_NORM);};
 void()	art_light2	=[	$light2,		art_light3	] {ai_face();};
 void()	art_light3	=[	$light3,		art_light4	] {ai_face();};
 void()	art_light4	=[	$light4,		art_light5	] {ai_face();};
@@ -368,7 +368,7 @@ void()	art_light10	=[	$light10,		art_light11	] {ai_face();};
 void()	art_light11	=[	$light11,		art_light12	] {ai_face();};
 void()	art_light12 =[	$light12,		art_run1	] {
 	ai_face();
-	self.attack_finished = time + 3;
+	self.attack_finished = time + 2 + random();
 };
 
 
@@ -490,7 +490,7 @@ void() monster_arachnotron = {
 	precache_model("progs/arachnotron_gib_body.mdl");
 	precache_model("progs/arachnotron_gib_gun.mdl");
 	
-	precache_sound("arachnofloyd/leap.wav");
+	precache_sound("arachnotron/artleap.wav");
 	precache_sound("arachnotron/artsight.wav");
 	precache_sound("arachnotron/artdeath.wav");
 	precache_sound("arachnotron/artpain.wav");
