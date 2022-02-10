@@ -206,12 +206,12 @@ void() ogre_rock_fire =
 {
 	local vector org;
 
-	self.effects = self.effects | EF_MUZZLEFLASH;
+	//self.effects = self.effects | EF_MUZZLEFLASH;
 	makevectors (self.angles);
 	
-	org = self.origin + v_forward * 30 + v_right * 0.5 + '0 0 16';
+	org = self.origin + v_forward * 40 + v_right * 18 + v_up * 20;
 
-	OgreFireRocket(org, self.enemy.origin - self.origin);
+	OgreFireRocket(org, self.enemy.origin + self.enemy.view_ofs - org);
 };
 
 /*
@@ -337,9 +337,14 @@ void() ogre_walk14	=[	$walk14,	ogre_walk15	] {ai_walk(3);};
 void() ogre_walk15	=[	$walk15,	ogre_walk16	] {ai_walk(3);};
 void() ogre_walk16	=[	$walk16,	ogre_walk1	] {ai_walk(4);};
 
-void() ogre_run1	=[	$run1,		ogre_run2	] {ai_run(9);
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
+void() ogre_run1	=[	$run1,		ogre_run2	] {
+	if (self.classname == "monster_ogre_marksman") {
+		ogrem_run1();
+		return;
+	}
+	ai_run(9);
+	if (random() < 0.2)
+		sound (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
 };
 void() ogre_run2	=[	$run2,		ogre_run3	] {ai_run(12);};
 void() ogre_run3	=[	$run3,		ogre_run4	] {ai_run(8);};
@@ -348,6 +353,20 @@ void() ogre_run5	=[	$run5,		ogre_run6	] {ai_run(16);};
 void() ogre_run6	=[	$run6,		ogre_run7	] {ai_run(4);};
 void() ogre_run7	=[	$run7,		ogre_run8	] {ai_run(13);};
 void() ogre_run8	=[	$run8,		ogre_run1	] {ai_run(24);};
+
+
+void() ogrem_run1	=[	$run1,		ogrem_run2	] {ai_run(4);
+if (random() < 0.2)
+	sound (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
+};
+void() ogrem_run2	=[	$run2,		ogrem_run3	] {ai_run(10);};
+void() ogrem_run3	=[	$run3,		ogrem_run4	] {ai_run(12);};
+void() ogrem_run4	=[	$run4,		ogrem_run5	] {ai_run(16);};
+void() ogrem_run5	=[	$run5,		ogrem_run6	] {ai_run(12);};
+void() ogrem_run6	=[	$run6,		ogrem_run7	] {ai_run(12);};
+void() ogrem_run7	=[	$run7,		ogrem_run8	] {ai_run(4);};
+void() ogrem_run8	=[	$run8,		ogrem_run1	] {ai_run(10);};
+
 
 void() ogre_swing1	=[	$swing1,		ogre_swing2	] {ai_charge(11);
 sound (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM);
