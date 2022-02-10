@@ -99,6 +99,7 @@ void()	axe_stand11	=[	$axstnd11,	axe_stand12	] {ai_stand();};
 void()	axe_stand12	=[	$axstnd12,	axe_stand1	] {ai_stand();};
 
 void()	axe_run1	=[	$axrun1,		axe_run2	] {
+	self.state = 1; // running
 if (random() < 0.2)
 	sound (self, CHAN_VOICE, "knight/idle.wav", 1,  ATTN_IDLE);
 ai_run(25);};
@@ -201,6 +202,7 @@ void()	axe_atk =
 	local float r;
 	if (self.pain_finished > time)
 		return;
+	self.state = 2; //attacking
 	r = random();
 	
 	if (r < 0.25)
@@ -234,7 +236,7 @@ void(entity attacker, float damage)	axe_pain =
 		return;
 
 	sound (self, CHAN_VOICE, "knight/khurt.wav", 1, ATTN_NORM);
-
+	self.state = 3; // pain state
 	axe_pain1 ();
 	self.pain_finished = time + 0.75;
 };
@@ -268,22 +270,21 @@ void()	axe_diea9	=[	$deatha9,	axe_diea10	] {};
 void()	axe_diea10	=[	$deatha10,	axe_diea11	] {};
 void()	axe_diea11	=[	$deatha11,	axe_diea11] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
-void()	axe_diec1	=[	$deathc1,	axe_diec2	] {};
-void()	axe_diec2	=[	$deathc2,	axe_diec3	] {};
-void()	axe_diec3	=[	$deathc3,	axe_diec4	] 
-{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
-void()	axe_diec4	=[	$deathc4,	axe_diec5	] {};
-void()	axe_diec5	=[	$deathc5,	axe_diec6	] {};
-void()	axe_diec6	=[	$deathc6,	axe_diec7	] {};
-void()	axe_diec7	=[	$deathc7,	axe_diec8	] {};
-void()	axe_diec8	=[	$deathc8,	axe_diec9	] {};
-void()	axe_diec9	=[	$deathc9,	axe_diec10	] {};
-void()	axe_diec10	=[	$deathc10,	axe_diec11	] {};
-void()	axe_diec11	=[	$deathc11,	axe_diec12	] {};
-void()	axe_diec12	=[	$deathc12,	axe_diec13	] {};
-void()	axe_diec13	=[	$deathc13,	axe_diec14	] {};
-void()	axe_diec14	=[	$deathc14,	axe_diec15	] {};
-void()	axe_diec15	=[	$deathc15,	axe_diec15] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	axe_diec1	=[	$deathc1,	axe_diec2	] {self.nextthink = time + 0.075; ai_painforward(10);};
+void()	axe_diec2	=[	$deathc2,	axe_diec3	] {self.nextthink = time + 0.075; ai_painforward(10);};
+void()	axe_diec3	=[	$deathc3,	axe_diec4	] {self.nextthink = time + 0.075; ai_painforward(7); self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
+void()	axe_diec4	=[	$deathc4,	axe_diec5	] {self.nextthink = time + 0.075; ai_painforward(7);};
+void()	axe_diec5	=[	$deathc5,	axe_diec6	] {self.nextthink = time + 0.075; ai_painforward(5);};
+void()	axe_diec6	=[	$deathc6,	axe_diec7	] {self.nextthink = time + 0.1; ai_painforward(5);};
+void()	axe_diec7	=[	$deathc7,	axe_diec8	] {self.nextthink = time + 0.1; ai_painforward(5);};
+void()	axe_diec8	=[	$deathc8,	axe_diec9	] {self.nextthink = time + 0.1; ai_painforward(5);};
+void()	axe_diec9	=[	$deathc9,	axe_diec10	] {self.nextthink = time + 0.1; };
+void()	axe_diec10	=[	$deathc10,	axe_diec11	] {self.nextthink = time + 0.075; };
+void()	axe_diec11	=[	$deathc11,	axe_diec12	] {self.nextthink = time + 0.075; };
+void()	axe_diec12	=[	$deathc12,	axe_diec13	] {self.nextthink = time + 0.075; };
+void()	axe_diec13	=[	$deathc13,	axe_diec14	] {self.nextthink = time + 0.075; };
+void()	axe_diec14	=[	$deathc14,	axe_diec15	] {self.nextthink = time + 0.075; };
+void()	axe_diec15	=[	$deathc15,	axe_diec15] {self.nextthink = time + 0.075; self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
 
 void()	axe_died1	=[	$deathd1,	axe_died2	] {};
@@ -312,7 +313,7 @@ void()	axe_diee9	=[	$deathe9,	axe_diee9] {self.think = SUB_MakeNotSolid; self.ne
 
 void() axe_die =
 {
-// check for gib
+	// check for gib
 	if (self.health < -30)
 	{
 		self.skin = 0;
@@ -330,7 +331,8 @@ void() axe_die =
 	float rnd = random();
 
 	sound (self, CHAN_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
-	if (self.health < -24)
+	//if (self.health < -22)
+	if ((self.state == 2) && self.health < -15)
 		axe_diec1();
 	else if (rnd < 0.25)
 		axe_die1 ();
