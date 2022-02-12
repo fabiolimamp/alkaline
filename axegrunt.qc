@@ -6,13 +6,12 @@ Suitable replacement for knight in base maps.  Grunts a lot.
 
 ==============================================================================
 */
-//0-1
-$frame skip1 skip2
+
 
 //
 // running axe
-//2-5
-$frame axrun1 axrun2 axrun3 axrun4
+//0-5
+$frame axrun1 axrun2 axrun3 axrun4 axrun5 axrun6
 
 
 //
@@ -105,19 +104,20 @@ if (random() < 0.2)
 ai_run(25);};
 void()	axe_run2	=[	$axrun2,		axe_run3	] {ai_run(18);};
 void()	axe_run3	=[	$axrun3,		axe_run4	] {ai_run(12);};
-void()	axe_run4	=[	$axrun4,		axe_run1	] {ai_run(12);};
-//void()	axe_run5	=[	$axrun5,		axe_run6	] {ai_run(18);};
-//void()	axe_run6	=[	$axrun6,		axe_run1	] {ai_run(12);};
+void()	axe_run4	=[	$axrun4,		axe_run5	] {ai_run(25);};
+void()	axe_run5	=[	$axrun5,		axe_run6	] {ai_run(18);};
+void()	axe_run6	=[	$axrun6,		axe_run1	] {ai_run(12);};
 
-void()    axe_walk1    =[    $rockrun1,        axe_walk2    ] {
+
+void()    axe_walk1    =[    $rockrun1,        axe_walk2    ] {self.nextthink = time + 0.15;
 if (random() < 0.2)
     sound (self, CHAN_VOICE, "soldier/idle.wav", 1,  ATTN_IDLE);
-ai_walk(8);};
-void()    axe_walk2    =[    $rockrun2,        axe_walk3    ] {ai_walk(6);};
-void()    axe_walk3    =[    $rockrun3,        axe_walk4    ] {ai_walk(3);};
-void()    axe_walk4    =[    $rockrun4,        axe_walk5    ] {ai_walk(8);};
-void()    axe_walk5    =[    $rockrun5,        axe_walk6    ] {ai_walk(6);};
-void()    axe_walk6    =[    $rockrun6,        axe_walk1    ] {ai_walk(3);};
+ai_walk(12);};
+void()    axe_walk2    =[    $rockrun2,        axe_walk3    ] {self.nextthink = time + 0.15;ai_walk(9);};
+void()    axe_walk3    =[    $rockrun3,        axe_walk4    ] {self.nextthink = time + 0.15;ai_walk(4);};
+void()    axe_walk4    =[    $rockrun4,        axe_walk5    ] {self.nextthink = time + 0.15;ai_walk(12);};
+void()    axe_walk5    =[    $rockrun5,        axe_walk6    ] {self.nextthink = time + 0.15;ai_walk(9);};
+void()    axe_walk6    =[    $rockrun6,        axe_walk1    ] {self.nextthink = time + 0.15;ai_walk(4);};
 
 //===========================================================================
 
@@ -270,15 +270,15 @@ void()	axe_diea9	=[	$deatha9,	axe_diea10	] {};
 void()	axe_diea10	=[	$deatha10,	axe_diea11	] {};
 void()	axe_diea11	=[	$deatha11,	axe_diea11] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
-void()	axe_diec1	=[	$deathc1,	axe_diec2	] {self.nextthink = time + 0.075; ai_painforward(10);};
-void()	axe_diec2	=[	$deathc2,	axe_diec3	] {self.nextthink = time + 0.075; ai_painforward(10);};
-void()	axe_diec3	=[	$deathc3,	axe_diec4	] {self.nextthink = time + 0.075; ai_painforward(7); self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
-void()	axe_diec4	=[	$deathc4,	axe_diec5	] {self.nextthink = time + 0.075; ai_painforward(7);};
-void()	axe_diec5	=[	$deathc5,	axe_diec6	] {self.nextthink = time + 0.075; ai_painforward(5);};
-void()	axe_diec6	=[	$deathc6,	axe_diec7	] {self.nextthink = time + 0.1; ai_painforward(5);};
-void()	axe_diec7	=[	$deathc7,	axe_diec8	] {self.nextthink = time + 0.1; ai_painforward(5);};
-void()	axe_diec8	=[	$deathc8,	axe_diec9	] {self.nextthink = time + 0.1; ai_painforward(5);};
-void()	axe_diec9	=[	$deathc9,	axe_diec10	] {self.nextthink = time + 0.1; };
+void()	axe_diec1	=[	$deathc1,	axe_diec2	] {self.nextthink = time + 0.075; ai_painforward(12);};
+void()	axe_diec2	=[	$deathc2,	axe_diec3	] {self.nextthink = time + 0.075; ai_painforward(12);};
+void()	axe_diec3	=[	$deathc3,	axe_diec4	] {self.nextthink = time + 0.075; ai_painforward(9); self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
+void()	axe_diec4	=[	$deathc4,	axe_diec5	] {self.nextthink = time + 0.075; ai_painforward(9);};
+void()	axe_diec5	=[	$deathc5,	axe_diec6	] {self.nextthink = time + 0.075; ai_painforward(8);};
+void()	axe_diec6	=[	$deathc6,	axe_diec7	] {self.nextthink = time + 0.1; ai_painforward(8);};
+void()	axe_diec7	=[	$deathc7,	axe_diec8	] {self.nextthink = time + 0.1; ai_painforward(6);};
+void()	axe_diec8	=[	$deathc8,	axe_diec9	] {self.nextthink = time + 0.1; ai_painforward(6);};
+void()	axe_diec9	=[	$deathc9,	axe_diec10	] {self.nextthink = time + 0.1; ai_painforward(5);};
 void()	axe_diec10	=[	$deathc10,	axe_diec11	] {self.nextthink = time + 0.075; };
 void()	axe_diec11	=[	$deathc11,	axe_diec12	] {self.nextthink = time + 0.075; };
 void()	axe_diec12	=[	$deathc12,	axe_diec13	] {self.nextthink = time + 0.075; };
@@ -313,7 +313,9 @@ void()	axe_diee9	=[	$deathe9,	axe_diee9] {self.think = SUB_MakeNotSolid; self.ne
 
 void() axe_die =
 {
-	// check for gib
+	//axe_diec1();
+	//return;
+
 	if (self.health < -30)
 	{
 		self.skin = 0;
@@ -331,7 +333,7 @@ void() axe_die =
 	float rnd = random();
 
 	sound (self, CHAN_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
-	//if (self.health < -22)
+	
 	if ((self.state == 2) && self.health < -15)
 		axe_diec1();
 	else if (rnd < 0.25)
@@ -362,7 +364,7 @@ void(entity e) monster_axegrunt_start =
 
 	setmodel (self, "progs/axegrunt.mdl");
 
-	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -26', '0 0 -26');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
 
 	self.health = 75;
@@ -403,10 +405,10 @@ void() monster_axegrunt =
 	precache_sound ("knight/idle.wav");
 	precache_sound ("soldier/idle.wav");
 
-	self.cmins = '-16 -16 -26';
-	self.cmaxs = '16 16 38';
+	self.cmins = '-16 -16 -24';
+	self.cmaxs = '16 16 40';
 	
-	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -26', '0 0 -26');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
