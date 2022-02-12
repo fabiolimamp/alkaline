@@ -246,7 +246,7 @@ void() spikeshooter_use =
 		spd = 500;
 		damage = 60;
 	}
-	else if (FALSE)//(self.spawnflags & TRAP_VOREBALL)
+	else if (self.spawnflags & TRAP_VOREBALL)
 	{
 		ShalMissile();
 		damage = 20;
@@ -339,6 +339,8 @@ void() trap_spikeshooter =
 		precache_model("progs/v_spike.mdl");
 		
 		precache_sound("shalrath/attack2.wav");
+
+		if (self.obituary == "") self.obituary = "played catch with a homing ball";
 	}
 	// spike and rocket sounds precached in weapons.qc
 	// models in world.qc
