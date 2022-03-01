@@ -123,8 +123,7 @@ void() OgreGrenadeExplode =
 {
 	if (!self.dmg) self.dmg = 40;
 	T_RadiusDamage (self, self.owner, self.dmg, world);
-	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
-
+	
 	BecomeExplosion();
 };
 

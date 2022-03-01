@@ -261,6 +261,7 @@ FIELDS
 .float inpain;		// zombie
 .float followingpath;
 .entity startpath;
+.entity nextbumper;
 
 // edie
 .float multiplier; 

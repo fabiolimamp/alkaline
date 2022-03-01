@@ -559,19 +559,19 @@ float() FindTarget =
 
 void(float dist) ai_run_path = {
 
-	movetogoal (dist);
+	movetogoal2 (dist);
 }
 
 //=============================================================================
 
 void(float dist) ai_forward =
 {
-	walkmove (self.angles_y, dist);
+	walkmove2 (self.angles_y, dist);
 };
 
 void(float dist) ai_back =
 {
-	walkmove ( (self.angles_y+180), dist);
+	walkmove2 ( (self.angles_y+180), dist);
 };
 
 
@@ -604,7 +604,7 @@ stagger back a bit
 */
 void(float dist) ai_painforward =
 {
-	walkmove (self.angles_y, dist); //johnfitz changed so movement is based on current yaw, not ideal_yaw, to match animation
+	walkmove2 (self.angles_y, dist); //johnfitz changed so movement is based on current yaw, not ideal_yaw, to match animation
 };
 
 /*
@@ -621,11 +621,6 @@ void(float dist) ai_walk =
 
 	movedist = dist;
 	
-	if (self.classname == "monster_dragon")
-	{
-		movetogoal (dist);
-		return;
-	}
 	// check for noticing a player
 	if (FindTarget ())
 		return;
@@ -647,7 +642,7 @@ void(float dist) ai_walk =
 		}
 	}
 	
-	movetogoal (dist);
+	movetogoal2 (dist);
 };
 
 
@@ -925,12 +920,12 @@ void() ai_run_slide =
 	else
 		ofs = -90;
 	
-	if (walkmove (self.ideal_yaw + ofs, movedist))
+	if (walkmove2 (self.ideal_yaw + ofs, movedist))
 		return;
 		
 	self.lefty = 1 - self.lefty;
 	
-	walkmove (self.ideal_yaw - ofs, movedist);
+	walkmove2 (self.ideal_yaw - ofs, movedist);
 };
 
 
@@ -1031,7 +1026,7 @@ void(float dist) ai_run =
 	else if (self.attack_state == AS_SLIDING) self.attack_state = 0;
 
 	// head straight in
-	movetogoal (dist);		// done in C code...
+	movetogoal2 (dist);		// done in C code...
 };
 
 /*
@@ -1097,12 +1092,12 @@ void(float dist) ai_run_away =
 	else if(enemy_range <= RANGE_MELEE)
 	{
 		self.angles_y = self.ideal_yaw;
-		walkmove(self.ideal_yaw, dist);
+		walkmove2(self.ideal_yaw, dist);
 		return;
 	}
 	
 // head straight in
-	movetogoal (dist);		// done in C code...
+	movetogoal2 (dist);		// done in C code...
 };
 
 
@@ -1133,7 +1128,7 @@ float(entity targ) range;
 void(float d) ai_charge =
 {
 	ai_face ();	
-	movetogoal (d);		// done in C code...
+	movetogoal2 (d);		// done in C code...
 };
 
 void() ai_charge_side =
@@ -1152,7 +1147,7 @@ void() ai_charge_side =
 	dtemp = enem.origin - 30*v_right;
 	heading = vectoyaw(dtemp - self.origin);
 	
-	walkmove(heading, 20);
+	walkmove2(heading, 20);
 };
 
 
