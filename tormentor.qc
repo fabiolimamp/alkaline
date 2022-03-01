@@ -539,6 +539,7 @@ void() torm_death = [ 98, torm_death ] {
 	if (self.walkframe == 3) {
 		self.solid = SOLID_TRIGGER;
 		setorigin(self, self.origin);
+		SUB_ClearBumpers();
 	}
 	else if (self.walkframe == 30) {
 		SpawnExplosion(self.origin + '0 0 16', 0, self, 0);
@@ -603,6 +604,24 @@ void(entity e) monster_tormentor_start = {
 	else
 		torm_ahead_divider = 3;
 
+	SUB_AddBumper('-32 -32 120', TRUE);
+	SUB_AddBumper('-32 32 120', TRUE);
+	SUB_AddBumper('32 -32 120', TRUE);
+	SUB_AddBumper('32 32 120', TRUE);
+	SUB_AddBumper('32 0 120', TRUE);
+	SUB_AddBumper('-32 0 120', TRUE);
+	SUB_AddBumper('0 32 120', TRUE);
+	SUB_AddBumper('0 -32 120', TRUE);
+
+
+	SUB_AddBumper('-32 -32 104', TRUE);
+	SUB_AddBumper('-32 32 104', TRUE);
+	SUB_AddBumper('32 -32 104', TRUE);
+	SUB_AddBumper('32 32 104', TRUE);
+	SUB_AddBumper('32 0 104', TRUE);
+	SUB_AddBumper('-32 0 104', TRUE);
+	SUB_AddBumper('0 32 104', TRUE);
+	SUB_AddBumper('0 -32 104', TRUE);
 
 	self.th_stand = torm_stand1;
 	self.th_walk = torm_walk1;
