@@ -8,6 +8,8 @@
 
 float mathlib_accuracy;
 
+float M_PI = 3.14159265;
+
 // Forward declarations
 float(float value, float minValue, float maxValue) clamp;
 float(float a, float b) mod;

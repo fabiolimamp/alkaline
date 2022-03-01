@@ -14,7 +14,7 @@ defs_prototypes.qc
 
 math.qc
 utility.qc
-
+move.qc
 
 subs.qc
 ai_enemytarget.qc
