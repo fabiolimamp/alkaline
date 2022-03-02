@@ -1638,9 +1638,9 @@ void() item_backpack = {
 	self.flags = FL_ITEM;
 	self.solid = SOLID_TRIGGER;
 	self.movetype = MOVETYPE_TOSS;
-	precache_model("progs/supbkpack.mdl");
-	setmodel (self, "progs/supbkpack.mdl");
-	setsize (self, '-16 -16 0', '16 16 56');
+	precache_model("progs/uacbackpack.mdl");
+	setmodel (self, "progs/uacbackpack.mdl");
+	setsize (self, '-16 -16 -16', '16 16 40');
 
 	self.touch = BackpackTouch;
 };
