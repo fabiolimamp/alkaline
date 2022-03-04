@@ -1786,6 +1786,16 @@ Spawnflags:
 	last_frame2(integer) : "Last frame sequence (moving). Use -1 for frame 0"
 	frtime(float) : "Frame time (stopped)" : "0.1"
 	frtime2(float) : "Frame time (moving)" : "0.1"
+	animtype(choices) : "Animation type (stopped)" : 1 =
+	[
+		1 : "One way"
+		2 : "Back and forth"
+	]
+	animtype2(choices) : "Animation type (moving)" : 1 =
+	[
+		1 : "One way"
+		2 : "Back and forth"
+	]
 	multiplier(integer) : "Turning speed" : 1 : "Turning speed multiplier. Set to -1 to turn instantly"
 	noise1(string) : "Custom moving loop sound (if set, overrides 'sounds')"
 	noise(string) : "Custom stopping sound (if set, overrides 'sounds')"
@@ -1806,11 +1816,14 @@ Check each field's description for more details.
 "
 [
 	target(target_source) : "Next waypoint target"
+	target2(target_source) : "Target2"
+	target3(target_source) : "Target3"
+	target4(target_source) : "Target4"
 	wait(float) : "Wait" : : "Waiting time at this point.
 - A positive value directly sets a waiting time in seconds.
 - A 0 value (or not defined) uses the 'pausetime' field value in the func_train (which defaults to 0s).
 - A -1 value makes the train to stop at this point.
-- A -2 value forces the train to not wait here even when 'pausetime' is set on the func_train.
+- A -2 value forces the train to pass through even when 'pausetime' is set on the func_train.
 "
 	speed(integer) : "Speed" : : "Sets a new speed for the train to move from this point onwards."
 ]

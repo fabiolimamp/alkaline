@@ -362,6 +362,7 @@ FIELDS
 .float 		first_frame, last_frame; // misc_model
 .float 		first_frame2, last_frame2; // misc_modeltrain
 .float 		frtime, frtime2;
+.float 		animtype, animtype2;
 //
 // subs
 //
