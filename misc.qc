@@ -1036,6 +1036,7 @@ trigger_textstory
 =============================================================
 */
 float TEXTSTORY_SILENT = 1;
+float TEXTSTORY_NOFADE = 2;
 
 void(entity controller) textstory_hide = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
@@ -1046,6 +1047,8 @@ void(entity controller) textstory_hide = {
 	if (controller.noise2) 
 		sound(self.enemy, CHAN_BODY, controller.noise2, 1, ATTN_NORM);
 	
+	if (!(controller.spawnflags & TEXTSTORY_NOFADE))
+		csf_fade_clear(self.enemy, 0.5, 110);
 };
 
 void(entity controller) textstory_show = {
@@ -1055,8 +1058,14 @@ void(entity controller) textstory_show = {
 	
 	centerprint_builtin(self.enemy, controller.message);
 
-	if (!self.state && controller.noise1) 
-		sound(self.enemy, CHAN_BODY, controller.noise1, 1, ATTN_NORM);
+	if (!self.state) {
+		if (controller.noise1)
+			sound(self.enemy, CHAN_BODY, controller.noise1, 1, ATTN_NORM);
+
+		if (!(controller.spawnflags & TEXTSTORY_NOFADE))
+			csf_fade(self.enemy, 160, '0 0 0', 1, 110);
+	}
+
 
 	self.state = 1;
 };

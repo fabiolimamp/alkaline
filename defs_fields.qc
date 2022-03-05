@@ -599,3 +599,10 @@ FIELDS
 .float attack_speed;
 .float attack_rage;
 .float attack_chance;
+
+// cshift controller
+
+.entity csfcontroller;
+.vector csf_color, csf_color_prev;
+.float csf_density, csf_density_prev;
+.float csf_priority, csf_priority_prev;

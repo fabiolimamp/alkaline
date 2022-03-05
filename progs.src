@@ -20,6 +20,7 @@ subs.qc
 ai_enemytarget.qc
 ai.qc
 combat.qc
+cshift.qc
 items.qc
 keylock.qc
 weapons.qc

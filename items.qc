@@ -1300,6 +1300,7 @@ void() powerup_touch =
 		other.trif_time = 1;
 		other.trif_finished = time + 30;
 		T_Heal(other, 100, 1);
+		csf_set(other, 32, '96 192 224', 100);
 		other.healthcontroller.nextthink = time + 1;
 	}
 
