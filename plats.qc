@@ -230,9 +230,7 @@ void() func_plat =
 // TRAINS
 //============================================================================
 
-void() train_next;
-void() func_train_find;
-
+float TRAIN_RETRIGGER = 1;
 float TRAIN_MOVEONTRIGGER = 2; 
 float TRAIN_STOPONTRIGGER = 4;
 float TRAIN_NONSOLID = 8;
@@ -245,6 +243,9 @@ float TRAIN_NEXT_CONTINUE = 2; // force continue on the next path_corner (ignore
 
 float TRAIN_STYLE_SINGLEANIM = 1;
 
+float TRAIN_ANIMTYPE_FORWARD = 1;
+float TRAIN_ANIMTYPE_BACKFORTH = 2;
+
 void() train_blocked = {
 	if (time < self.attack_finished) return;
 
@@ -252,18 +253,27 @@ void() train_blocked = {
 	T_Damage (other, self, self, self.dmg);
 };
 
+
+// Use function for when the train is stopped.
+// Makes the train continue on path_corners with wait -1,
+// or forces a continue if the "move on trigger" spawnflag is set.
 void() train_use = {
+
 	if (self.spawnflags & TRAIN_MOVEONTRIGGER || self.wait < 0) {
 		train_next();
 		return;
 	}
 	
+	// Train has already moved after startup, and has no "stop on trigger" flag,
+	// so ignore activation.
 	if (self.think != func_train_find && self.cnt != TRAIN_NEXT_STOP)
-		return;		// already activated
+		return;
 
 	train_next();
 };
 
+// Use function for when the train is moving.
+// Forces a stop or an instant continue on the next path_corner depending on the spawnflag set
 void() train_moving_use = {
 	if (self.spawnflags & TRAIN_MOVEONTRIGGER || self.wait < 0)
 		self.cnt = TRAIN_NEXT_CONTINUE;
@@ -271,6 +281,7 @@ void() train_moving_use = {
 		self.cnt = TRAIN_NEXT_STOP;
 }
 
+// path_corner has been reached, so decide what to do next
 void() train_wait = {
 	float localtime;
 	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
@@ -279,8 +290,8 @@ void() train_wait = {
 	self.use = train_use; //ready to be re-triggered
 
 	// from Copper
-	// trains now fire their pathcorners' targets on arrival
-	// if a player is riding the train, treat them as activator
+	// Trains now fire their path_corners' targets on arrival.
+	// If a player is riding the train, treat them as activator.
 	activator = nextent(world);
 	while (!EntitiesTouching(self,activator) && activator.classname == "player")
 		activator = nextent(activator);
@@ -290,21 +301,52 @@ void() train_wait = {
 
 	if (self.enemy.speed) self.speed2 = self.enemy.speed; // sets the speed from the current path_corner
 
+	// copies the modeltrain animation parameters set in the path_corner, if any
+	if (self.classname == "misc_modeltrain") {
+		if (self.enemy.first_frame) self.first_frame = self.enemy.first_frame;
+		if (self.enemy.last_frame) self.last_frame = self.enemy.last_frame;
+		if (self.enemy.first_frame2) self.first_frame2 = self.enemy.first_frame2;
+		if (self.enemy.last_frame2) self.last_frame2 = self.enemy.last_frame2;
+		if (self.enemy.frtime) self.frtime = self.enemy.frtime;
+		if (self.enemy.frtime2) self.frtime2 = self.enemy.frtime2;
+		if (self.enemy.animtype) self.animtype = self.enemy.animtype;
+		if (self.enemy.animtype2) self.animtype2 = self.enemy.animtype2;
+		if (self.enemy.multiplier) self.multiplier = self.enemy.multiplier;
+	}
+
 	self.think = train_next;
-	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT) {
+
+	// train is moving normally and path_corner has a wait set, so pause for that time.
+	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT && !(self.spawnflags & TRAIN_RETRIGGER)) {
+		// state: stopped
 		self.state = 0;
 		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
 		self.nextthink = localtime + self.wait;
-		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
+
+		//play stopping sound. If path_corner has a custom sound, play that instead
+		if (self.enemy.noise != "") sound(self, CHAN_WEAPON, self.enemy.noise, 1, ATTN_NORM);
+		else sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); 
 	}
-	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) {
-		if (self.noise2 != "") sound(self, CHAN_WEAPON, self.noise2, 1, ATTN_NORM);
+	// train is moving normally and path_corner has no wait time,
+	// or has been forced to move instantly through a triggering.
+	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait && !(self.spawnflags & TRAIN_RETRIGGER)) {
+
+		//play "passing by" sound, if any. If path_corner has a custom one, play that instead
+		if (self.enemy.noise2 != "") sound(self, CHAN_WEAPON, self.enemy.noise2, 1, ATTN_NORM);
+		else if (self.noise2 != "") sound(self, CHAN_WEAPON, self.noise2, 1, ATTN_NORM);
+		
 		self.nextthink = -1; // move instantly
 		train_next();
 	}
+	// path_corner has wait -1, or train has been forced to stop through a triggering.
 	else {
-		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); //play stopping sound
+		//play stopping sound. If path_corner has a custom sound, play that instead
+		if (self.enemy.noise != "") sound(self, CHAN_WEAPON, self.enemy.noise, 1, ATTN_NORM);
+		else sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM); 
+
+		// state: stopped
 		self.state = 0;
+
 		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
 		self.nextthink = -1;
 	}
@@ -312,6 +354,7 @@ void() train_wait = {
 	
 };
 
+// searches for the next path_corner and sends the train on its way
 void() train_next = {
 	local entity	targ;
 	vector destang, displ;
@@ -323,10 +366,14 @@ void() train_next = {
 
 	self.target = targ.target;
 	
+	// gets the wait time from the upcoming path_corner if set
 	if (targ.wait){
+		// wait -2 on the path_corner forces it to continue moving (no wait),
+		// even if the train has a default wait time
 		if (targ.wait == -2) self.wait = 0;
 		else self.wait = targ.wait;
 	}
+	// uses train's current wait time otherwise
 	else
 		self.wait = self.pausetime;
 
@@ -336,17 +383,21 @@ void() train_next = {
 	
 	if(!(!self.wait && self.cnt == TRAIN_NEXT_CONTINUE)) self.cnt = TRAIN_NEXT_WAIT;
 
-	self.use = train_moving_use; //store up any premature triggerings until current movement is finished
+	//store up any premature triggerings until current movement is finished
+	self.use = train_moving_use; 
 
-	if (self.classname == "misc_modeltrain" && !(self.spawnflags & TRAIN_NOROTATE)) {
-		destang = vectoangles(targ.origin - self.origin);
-		if (self.spawnflags & TRAIN_ROTATEY) {
-			destang_x = self.angles_x;
-			destang_z = self.angles_z;
+	if (self.classname == "misc_modeltrain") {
+		if (!(self.spawnflags & TRAIN_NOROTATE)) {
+			destang = vectoangles(targ.origin - self.origin);
+			if (self.spawnflags & TRAIN_ROTATEY) {
+				destang_x = self.angles_x;
+				destang_z = self.angles_z;
+			}
+			if (self.multiplier > 0) SUB_CalcAngleMoveController(destang, self.speed2*self.multiplier, SUB_Null, self.rotatecontroller);
+			else self.angles = destang;
 		}
-		if (self.multiplier > 0) SUB_CalcAngleMoveController(destang, self.speed2*self.multiplier, SUB_Null, self.rotatecontroller);
-		else self.angles = destang;
 	}
+
 	if (!self.state) {
 		self.state = 1;
 		if (self.classname == "misc_modeltrain" && self.style != TRAIN_STYLE_SINGLEANIM)
@@ -358,6 +409,7 @@ void() train_next = {
 	SUB_CalcMove(targ.origin - displ, self.speed2, train_wait);
 };
 
+// searches for the first path_corner after the train entity is initialized
 void() func_train_find = {
 	local entity	targ;
 	float localtime;
@@ -398,6 +450,7 @@ sounds
 */
 void() func_train =
 {	
+
 	if (!self.speed)
 		self.speed = 100;
 	if (!self.target)
@@ -411,16 +464,16 @@ void() func_train =
 
 
 	if (self.sounds == 1) {
-		if (!self.noise || self.noise == "") self.noise = ("plats/train2.wav");
-		if (!self.noise1 || self.noise1 == "") self.noise1 = ("plats/train1.wav");
+		if (self.noise == "") self.noise = ("plats/train2.wav");
+		if (self.noise1 == "") self.noise1 = ("plats/train1.wav");
 	}
 	else if (self.sounds == 2) { // base door sound
-		if (!self.noise || self.noise == "") self.noise = "doors/hydro2.wav";
-		if (!self.noise1 || self.noise1 == "") self.noise1 = "doors/hydro1.wav";
+		if (self.noise == "") self.noise = "doors/hydro2.wav";
+		if (self.noise1 == "") self.noise1 = "doors/hydro1.wav";
 	}
 	else {
-		if (!self.noise || self.noise == "") self.noise = ("misc/null.wav");
-		if (!self.noise1 || self.noise1 == "") self.noise1 = ("misc/null.wav");
+		if (self.noise == "") self.noise = ("misc/null.wav");
+		if (self.noise1 == "") self.noise1 = ("misc/null.wav");
 	}
 
 	precache_sound(self.noise);
@@ -458,49 +511,62 @@ void() func_train =
 	self.speed2 = self.speed;
 };
 
+
+//===================================================
+
+
 void() animcontroller_think = {
 	entity tr;
 	tr = self.owner;
 	
-	float first, last;
+	float first, last, step, atype, dir, nextframe;
 
-	if (self.state != tr.state && tr.style != TRAIN_STYLE_SINGLEANIM) { // changed animation
-		if (tr.state) { // started moving
+	// train just went from stopped to moving or vice-versa,
+	// and have both animations set
+	if (self.state != tr.state && tr.style != TRAIN_STYLE_SINGLEANIM) {
+		if (tr.state) { // just started moving
 			tr.frame = zeroconvert(tr.first_frame2);
 		}
 		else { // just stopped
 			tr.frame = zeroconvert(tr.first_frame);
 		}
-
+		tr.distance = 1; // reset back/forth status
 		self.state = tr.state;
 	}
 	
 	else {
-		if (self.state && tr.style != TRAIN_STYLE_SINGLEANIM) { // moving animation
+		if (self.state && tr.style != TRAIN_STYLE_SINGLEANIM) { // moving train animation, if set
 			first = zeroconvert(tr.first_frame2);
 			last = zeroconvert(tr.last_frame2);
+			atype = tr.animtype2;
 		}
-		else { // stopped animation
+		else { // stopped/default train animation
 			first = zeroconvert(tr.first_frame);
 			last = zeroconvert(tr.last_frame);
+			atype = tr.animtype;
 		}
 
-		if (first > last) { // reverse direction
-			if (tr.frame <= last) {
-				tr.frame = first; // range ended, return to first
-			}
-			else {
-				tr.frame--;
+		if (first > last) step = dir = -1; // reverse direction
+		else step = dir = 1;
+
+		// back-and-forth is going the other way, so invert the step's signal
+		if (tr.distance < 0) step = step * (-1);
+		
+		nextframe = tr.frame + step;
+
+		if (atype == TRAIN_ANIMTYPE_BACKFORTH){
+			if (dir > 0 && (nextframe > last || nextframe < first) ||
+				dir < 0 && (nextframe > first || nextframe < last)
+			) {
+				nextframe = tr.frame - step;
+				tr.distance = tr.distance * (-1);
 			}
 		}
-		else {
-			if (tr.frame >= last) {
-				tr.frame = first; // range ended, return to first
-			}
-			else {
-				tr.frame++;
-			}
-		}
+
+		if (dir > 0) nextframe = wrap(nextframe, first, last);
+		else nextframe = wrap(nextframe, last, first);
+		
+		tr.frame = nextframe;
 
 	}
 
@@ -510,7 +576,7 @@ void() animcontroller_think = {
 };
 
 void() misc_modeltrain = {
-	//self.spawnflags = self.spawnflags | TRAIN_NONSOLID;
+
 	precache_model(self.mdl);
 
 	func_train();
@@ -523,6 +589,7 @@ void() misc_modeltrain = {
 		if (self.cmaxs == VEC_ORIGIN) self.cmaxs = '8 8 8';
 	}
 
+	self.movetype = MOVETYPE_NOCLIP;
 	setmodel (self, self.mdl);
 	setsize (self, self.cmins , self.cmaxs);
 	setorigin (self, self.origin);
@@ -542,6 +609,8 @@ void() misc_modeltrain = {
 	anim.think = animcontroller_think;
 	anim.nextthink = time + 0.2;
 
+	self.distance = 1;
+
 	if (!self.frtime) self.frtime = 0.1;
 	if (!self.frtime2) self.frtime2 = self.frtime;
 	if (!self.multiplier) self.multiplier = 1;
@@ -550,15 +619,19 @@ void() misc_modeltrain = {
 	// make sure all first and last frame fields are filled
 	if (self.first_frame && !self.last_frame) self.last_frame = self.first_frame;
 	else if (!self.first_frame && self.last_frame) self.first_frame = self.last_frame;
-
+	
 	if (self.first_frame2 && !self.last_frame2) self.last_frame2 = self.first_frame2;
 	else if (!self.first_frame2 && self.last_frame2) self.first_frame2 = self.last_frame2;
 
 	if (!self.first_frame2) self.style = TRAIN_STYLE_SINGLEANIM;
 
+	if (!self.animtype) self.animtype = TRAIN_ANIMTYPE_FORWARD;
+	if (!self.animtype2) self.animtype2 = self.animtype;
+
 	self.frame = self.first_frame;
 
 };
+
 
 /*QUAKED misc_teleporttrain (0 .5 .8) (-8 -8 -8) (8 8 8)
 This is used for the final bos

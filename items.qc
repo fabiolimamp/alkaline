@@ -846,6 +846,22 @@ void() weapon_laser_gun =
 	setsize (self, '-16 -16 0', '16 16 56');
 	StartItem ();
 };
+
+
+void() weapon_plasmagun =
+{
+	if (!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_plasma.mdl");
+	setmodel (self, "progs/g_plasma.mdl");
+	self.weapon = WEAPON_PLASMA;
+	self.classname = "weapon_plasmagun";
+	self.netname = "Plasma Rifle";
+	self.touch = weapon_touch;
+  	if (!self.ammo_cells) self.ammo_cells = 15;
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+};
+
+
 /*
 ===============================================================================
 
@@ -1300,6 +1316,7 @@ void() powerup_touch =
 		other.trif_time = 1;
 		other.trif_finished = time + 30;
 		T_Heal(other, 100, 1);
+		csf_set(other, 32, '96 192 224', 100);
 		other.healthcontroller.nextthink = time + 1;
 	}
 

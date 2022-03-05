@@ -1,16 +1,18 @@
 ../progs.dat
 
+// no need to declare function prototypes yay
+#pragma autoproto 
+
 // automatically compiles the CSQC progs at the end
 #pragma sourcefile csprogs.src
 
-// no need to declare function prototypes yay
-#pragma autoproto 
+
 
 defs_sysglobals.qc
 defs_fields.qc
 defs_versionstring.qc
 defs_consts.qc
-defs_prototypes.qc
+defs_builtins.qc
 
 math.qc
 utility.qc
@@ -20,9 +22,12 @@ subs.qc
 ai_enemytarget.qc
 ai.qc
 combat.qc
+cshift.qc
 items.qc
 keylock.qc
-weapons.qc
+weapons_fire.qc
+weapons_use.qc
+impulses.qc
 world.qc
 client.qc
 player.qc
@@ -107,11 +112,9 @@ func_bob.qc
 
 gravity.qc
 
-plasma.qc
-
 hipholes.qc
 
 monster_turret.qc
 
 
-test.qc
+//test.qc

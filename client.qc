@@ -1232,16 +1232,14 @@ void() PlayerPreThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
-	if ((!self.cshift_set && !self.cshift_cleared) || !gameloaded) {
-		stuffcmd(self, "v_cshift\n");
-		self.cshift_cleared = 1;
-	}
+
 	gameloaded = 1;
 	self.light_lev = 0; // resets dimlight flags for powerups/status effects
-	self.cshift_set = 0; //checked later in PlayerPostThink for cshift changes
-
-	if (cleanUpClientStuff)
+	
+	if (cleanUpClientStuff) {
 		fog_setFromEnt( self, self );
+		csf_apply(self);
+	}
 	
 	if (intermission_running)
 	{
@@ -1322,6 +1320,11 @@ void() PlayerPreThink =
 	if (self.jboots_rechargelimit && (self.flags & FL_ONGROUND))		//jcr jboots prethink for onground checking
 		self.jboots_onground = TRUE;
 	
+	// sanity check for cshift every few frames
+	if (framecount & 4) {
+		if (self.csf_priority == 0 && self.csf_density > 0)
+			csf_clear_all(self);
+	}
 };
 	
 /*
@@ -1414,18 +1417,11 @@ void() CheckPowerups =
 			self.items = self.items - IT_TRIFECTA;
 			self.trif_finished = 0;
 			self.trif_time = 0;
+			csf_clear(self, 100);
 		}
-		if (self.trif_finished > time) {
 
+		if (self.trif_finished > time) {
 			self.light_lev = self.light_lev | DIMLIGHT_TRIF;
-			stuffcmd(self, "v_cshift 96 192 224 32 \n");
-			self.cshift_set = 1;
-			self.cshift_cleared = 0;
-		}
-		else {
-			//self.light_lev = self.light_lev - (self.light_lev & DIMLIGHT_TRIF);	
-			self.cshift_set = 0;
-			self.cshift_cleared = 0;
 		}
 	
 	}
@@ -1591,9 +1587,7 @@ void(entity e) StopBurning = {
 	if (e.burning_finished) {
 		e.burning_finished = 0;
 		e.burning_time = 0;
-		// sets v_cshift to be cleared at the end of the frame
-		e.cshift_set = 0;
-		e.cshift_cleared = 0;
+		csf_clear(e, 90);
 	}
 };
 
@@ -1637,12 +1631,9 @@ void() CheckBurning = {
 				
 			if (a > 110)
 				a = 220 - a;
-				
-			stuffcmd (self, "v_cshift 200 50 0 ");
-			stuffcmd (self, ftos(a));
-			stuffcmd (self, "\n");
-			self.cshift_set = 1;
-			self.cshift_cleared = 0;
+
+			csf_set(self, a, '200 50 0', 90);
+
 			self.light_lev = self.light_lev | DIMLIGHT_BURNING;
 		}
 	}
@@ -1726,10 +1717,6 @@ void() PlayerPostThink =
 
 	CheckPowerups ();
 
-	if (!self.cshift_set && !self.cshift_cleared) {
-		stuffcmd(self, "v_cshift\n");
-		self.cshift_cleared = 1;
-	}
 
 	if (self.light_lev)
 		self.effects = self.effects | EF_DIMLIGHT;

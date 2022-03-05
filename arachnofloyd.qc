@@ -38,19 +38,27 @@ $frame death1 death2 death3 death4 death5 death6 death7 death8 death9 death10
 $frame death11 death12 death13 death14 death15 death16 death17 death18 death19 death20
 $frame death21 death22 death23
 
+void(float num) arf_step = {
+	if (num == 1)
+		sound (self, 5, "arachnofloyd/step1.wav", 1, 1.5);
+	else
+		sound (self, 5, "arachnofloyd/step2.wav", 1, 1.5);
+}
+
+void() arf_whirr = {
+	sound (self, CHAN_BODY, "arachnofloyd/whirr1.wav", 1, ATTN_IDLE);
+}
+
+//-----------------------------------------------------------------------------
 
 void()	arf_stand1	=[	$idle1,	arf_stand2	] {
-	local float r;
 	if(!(self.spawnflags & MONSTER_NOIDLESOUND)) {
-		r = random();
-		if (r < 0.1) {	
+		if (random() < 0.1) 	
 			sound (self, CHAN_VOICE, "arachnofloyd/idle1.wav", 1, ATTN_IDLE);
-		}
-		else if (r > 0.9) {
+		else
 			sound (self, CHAN_VOICE, "arachnofloyd/idle2.wav", 1, ATTN_IDLE);
-		}
 	}
-ai_stand();	
+	ai_stand();	
 };
 void()	arf_stand2	=[	$idle2,		arf_stand3	] {ai_stand();};
 void()	arf_stand3	=[	$idle3,		arf_stand4	] {ai_stand();};
@@ -80,78 +88,52 @@ void()	arf_stand26	=[	$idle26,	arf_stand27 ] {ai_stand();};
 void()	arf_stand27	=[	$idle27,	arf_stand1 ] {ai_stand();};
 
 
-void()	arf_walk1	=[	$walk1,		arf_walk2	] {sound (self, CHAN_VOICE, "arachnofloyd/whirr1.wav", 1, ATTN_IDLE);ai_walk(8);};
-void()	arf_walk2	=[	$walk2,		arf_walk3	] {ai_walk(8);};
-void()	arf_walk3	=[	$walk3,		arf_walk4	] {sound (self, CHAN_VOICE, "arachnofloyd/step1.wav", 1, ATTN_IDLE);ai_walk(10);};
-void()	arf_walk4	=[	$walk4,		arf_walk5	] {ai_walk(10);};
-void()	arf_walk5	=[	$walk5,		arf_walk6	] {ai_walk(10);};
-void()	arf_walk6	=[	$walk6,		arf_walk7	] {ai_walk(10);};
-void()	arf_walk7	=[	$walk7,		arf_walk8	] {sound (self, CHAN_VOICE, "arachnofloyd/whirr1.wav", 1, ATTN_IDLE);ai_walk(8);};
+
+void()	arf_walk1	=[	$walk1,		arf_walk2	] {ai_walk(10);};
+void()	arf_walk2	=[	$walk2,		arf_walk3	] {ai_walk(4); arf_whirr();};
+void()	arf_walk3	=[	$walk3,		arf_walk4	] {ai_walk(2);};
+void()	arf_walk4	=[	$walk4,		arf_walk5	] {ai_walk(0); arf_step(1);};
+void()	arf_walk5	=[	$walk5,		arf_walk6	] {ai_walk(4);};
+void()	arf_walk6	=[	$walk6,		arf_walk7	] {ai_walk(8);};
+void()	arf_walk7	=[	$walk7,		arf_walk8	] {ai_walk(8);};
 void()	arf_walk8	=[	$walk8,		arf_walk9	] {ai_walk(8);};
-void()	arf_walk9	=[	$walk9,		arf_walk10	] {sound (self, CHAN_VOICE, "arachnofloyd/step2.wav", 1, ATTN_IDLE);ai_walk(10);};
-void()	arf_walk10	=[	$walk10,	arf_walk11	] {ai_walk(10);};
-void()	arf_walk11	=[	$walk11,	arf_walk12	] {ai_walk(10);};
-void()	arf_walk12	=[	$walk12,	arf_walk13	] {ai_walk(10);};
-void()	arf_walk13	=[	$walk13,	arf_walk14	] {ai_walk(10);};
-void()	arf_walk14	=[	$walk14,	arf_walk1	] {ai_walk(10);};
+void()	arf_walk9	=[	$walk9,		arf_walk10	] {ai_walk(8);};
+void()	arf_walk10	=[	$walk10,	arf_walk11	] {ai_walk(8); arf_whirr();};
+void()	arf_walk11	=[	$walk11,	arf_walk12	] {ai_walk(4);};
+void()	arf_walk12	=[	$walk12,	arf_walk13	] {ai_walk(2); arf_step(2);};
+void()	arf_walk13	=[	$walk13,	arf_walk14	] {ai_walk(0);};
+void()	arf_walk14	=[	$walk14,	arf_walk1	] {ai_walk(4);};
 
 
-void() check_onground =
-{
-if (self.flags & FL_ONGROUND)
-	{
-	self.touch = SUB_Null;
-	}
-else	
-	{
-	return;
-	}
-	
-
+void() check_onground = {
+	if (self.flags & FL_ONGROUND) self.touch = SUB_Null;
 }
 
+void(float dist) arf_run_fr = {
+	check_onground();
+	ai_run(dist);
+	self.nextthink = time + 0.075; 
+};
 
-void()	arf_run1	=[	$walk1,		arf_run2	] {check_onground();sound (self, CHAN_VOICE, "arachnofloyd/whirr1.wav", 1, ATTN_IDLE);ai_run(8);};
-void()	arf_run2	=[	$walk2,		arf_run3	] {check_onground();ai_run(8);};
-void()	arf_run3	=[	$walk3,		arf_run4	] {check_onground();sound (self, CHAN_VOICE, "arachnofloyd/step1.wav", 1, ATTN_IDLE);ai_run(12);};
-void()	arf_run4	=[	$walk4,		arf_run5	] {check_onground();ai_run(12);};
-void()	arf_run5	=[	$walk5,		arf_run6	] {check_onground();ai_run(12);};
-void()	arf_run6	=[	$walk6,		arf_run7	] {check_onground();ai_run(12);};
-void()	arf_run7	=[	$walk7,		arf_run8	] {check_onground();sound (self, CHAN_VOICE, "arachnofloyd/whirr1.wav", 1, ATTN_IDLE);ai_run(8);};
-void()	arf_run8	=[	$walk8,		arf_run9	] {check_onground();ai_run(8);};
-void()	arf_run9	=[	$walk9,		arf_run10	] {check_onground();sound (self, CHAN_VOICE, "arachnofloyd/step2.wav", 1, ATTN_IDLE);ai_run(12);};
-void()	arf_run10	=[	$walk10,	arf_run11	] {check_onground();ai_run(12);};
-void()	arf_run11	=[	$walk11,	arf_run12	] {check_onground();ai_run(12);};
-void()	arf_run12	=[	$walk12,	arf_run13	] {check_onground();ai_run(12);};
-void()	arf_run13	=[	$walk13,	arf_run14	] {check_onground();ai_run(12);};
-void()	arf_run14	=[	$walk14,	arf_run1	] {check_onground();ai_run(12);};
+void()	arf_run1	=[	$walk1,		arf_run2	] {arf_run_fr(12); arf_whirr();};
+void()	arf_run2	=[	$walk2,		arf_run3	] {arf_run_fr(8);};
+void()	arf_run3	=[	$walk3,		arf_run4	] {arf_run_fr(4);};
+void()	arf_run4	=[	$walk4,		arf_run5	] {arf_run_fr(0); arf_step(1);};
+void()	arf_run5	=[	$walk5,		arf_run6	] {arf_run_fr(0);};
+void()	arf_run6	=[	$walk6,		arf_run7	] {arf_run_fr(4);};
+void()	arf_run7	=[	$walk7,		arf_run8	] {arf_run_fr(12);};
+void()	arf_run8	=[	$walk8,		arf_run9	] {arf_run_fr(12);};
+void()	arf_run9	=[	$walk9,		arf_run10	] {arf_run_fr(12); arf_whirr();};
+void()	arf_run10	=[	$walk10,	arf_run11	] {arf_run_fr(12);};
+void()	arf_run11	=[	$walk11,	arf_run12	] {arf_run_fr(6);};
+void()	arf_run12	=[	$walk12,	arf_run13	] {arf_run_fr(2); arf_step(2);};
+void()	arf_run13	=[	$walk13,	arf_run14	] {arf_run_fr(0);};
+void()	arf_run14	=[	$walk14,	arf_run1	] {arf_run_fr(6);};
 
-void() arf_die;
 
-void()	arf_die1	=[	$death1,	arf_die2	] {};
-void()	arf_die2	=[	$death2,	arf_die3	] {};
-void()	arf_die3	=[	$death3,	arf_die4	] {self.solid = SOLID_NOT;};
-void()	arf_die4	=[	$death4,	arf_die5	] {};
-void()	arf_die5	=[	$death5,	arf_die6	] {};
-void()	arf_die6	=[	$death6,	arf_die7	] {};
-void()	arf_die7	=[	$death7,	arf_die8	] {};
-void()	arf_die8	=[	$death8,	arf_die9	] {};
-void()	arf_die9	=[	$death9,	arf_die10	] {};
-void()	arf_die10	=[	$death10,	arf_die11	] {};
-void()	arf_die11	=[	$death11,	arf_die12	] {};
-void()	arf_die12	=[	$death12,	arf_die13	] {};
-void()	arf_die13	=[	$death13,	arf_die14	] {};
-void()	arf_die14	=[	$death14,	arf_die15	] {};
-void()	arf_die15 	=[	$death15,	arf_die16	] {};
-void()	arf_die16 	=[	$death16,	arf_die17	] {};
-void()	arf_die17 	=[	$death17,	arf_die18	] {};
-void()	arf_die18 	=[	$death18,	arf_die19	] {};
-void()	arf_die19 	=[	$death19,	arf_die20	] {};
-void()	arf_die20 	=[	$death20,	arf_die21 	] {};
-void()	arf_die21 	=[	$death21,	arf_die22 	] {};
-void()	arf_die22 	=[	$death22,	arf_die23 	] {};
-void()	arf_die23	=[	$death23,	arf_die23 	] {self.health = -61; arf_die();};
 
+
+//-----------------------------------------------------------------------------
 
 void()	arf_paina1	=[	$paina1,		arf_paina2	] {};
 void()	arf_paina2	=[	$paina2,		arf_paina3	] {};
@@ -183,102 +165,117 @@ void()	arf_painb17 	=[	$painb17,	arf_painb18	] {};
 void()	arf_painb18 	=[	$painb18,	arf_painb19	] {};
 void()	arf_painb19 	=[	$painb19,	arf_run1	] {};
 
-void(entity attacker, float damage)	arf_pain =
-{
+void(entity attacker, float damage)	arf_pain = {
 
-local float r;
-r = random();
-
+	local float r;
+	r = random();
 
 	if (self.health <= 0)
-		return;		// allready dying, don't go into pain frame
+		return;		// already dying, don't go into pain frame
 
 	if (random()*200 > damage)
 		return;		// didn't flinch
 
 	if (self.pain_finished > time)
 		return;
+
 	self.pain_finished = time + 2;
 		
-	if (r < 0.5) 
-	{	
+	if (r < 0.5) {	
 		arf_paina1();
-		sound (self, CHAN_VOICE, "arachnofloyd/pain1.wav", 1, ATTN_IDLE);
+		sound (self, CHAN_VOICE, "arachnofloyd/pain1.wav", 1, ATTN_NORM);
 	}
-	else
-	{
+	else {
 		arf_painb1();
-		sound (self, CHAN_VOICE, "arachnofloyd/pain2.wav", 1, ATTN_IDLE);
+		sound (self, CHAN_VOICE, "arachnofloyd/pain2.wav", 1, ATTN_NORM);
 	}
 	
 };
 
 
-void() arf_die =
-{
-	if (self.health < -60)
-	{
+//-----------------------------------------------------------------------------
 
-		sound (self, CHAN_VOICE, "arachnofloyd/death1.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_arach.mdl", self.health);
-		ThrowGib ("progs/fgib1.mdl", self.health);
-		ThrowGib ("progs/fgib1.mdl", self.health);
-		ThrowGib ("progs/fgib1.mdl", self.health);
-		ThrowGib ("progs/fgib1.mdl", self.health);
-		ThrowGib ("progs/fgib1.mdl", self.health);
+void() arf_explode = {
+	sound (self, CHAN_VOICE, "arachnofloyd/death1.wav", 1, ATTN_NORM);
+	ThrowHead ("progs/h_arach.mdl", self.health);
+	ThrowGib ("progs/fgib1.mdl", self.health);
+	ThrowGib ("progs/fgib1.mdl", self.health);
+	ThrowGib ("progs/fgib1.mdl", self.health);
+	ThrowGib ("progs/fgib1.mdl", self.health);
+	ThrowGib ("progs/fgib1.mdl", self.health);
 
-		//BecomeExplosion ();
-		TriggerExplosion();
+	TriggerExplosion();
+}
 
-	}
-	else
-	{
-		// regular death
-		sound (self, CHAN_VOICE, "arachnofloyd/death2.wav", 1, ATTN_NORM);
-		arf_die1();	
+void() arf_die = {
+	// gib
+	if (self.health < -60) {
+		arf_explode();
+		return;
 	}
 
+	// regular death
+	sound (self, CHAN_VOICE, "arachnofloyd/death2.wav", 1, ATTN_NORM);
+	arf_die1();
 }
 
 
-void() arf_touch_jump =
-{
-		if (other.classname == "player")
-		{
-		if (other.pain_finished > time)
-			return;
-		}
+
+void()	arf_die1	=[	$death1,	arf_die2	] {};
+void()	arf_die2	=[	$death2,	arf_die3	] {};
+void()	arf_die3	=[	$death3,	arf_die4	] {self.solid = SOLID_NOT;};
+void()	arf_die4	=[	$death4,	arf_die5	] {};
+void()	arf_die5	=[	$death5,	arf_die6	] {};
+void()	arf_die6	=[	$death6,	arf_die7	] {};
+void()	arf_die7	=[	$death7,	arf_die8	] {};
+void()	arf_die8	=[	$death8,	arf_die9	] {};
+void()	arf_die9	=[	$death9,	arf_die10	] {};
+void()	arf_die10	=[	$death10,	arf_die11	] {};
+void()	arf_die11	=[	$death11,	arf_die12	] {};
+void()	arf_die12	=[	$death12,	arf_die13	] {};
+void()	arf_die13	=[	$death13,	arf_die14	] {};
+void()	arf_die14	=[	$death14,	arf_die15	] {};
+void()	arf_die15 	=[	$death15,	arf_die16	] {};
+void()	arf_die16 	=[	$death16,	arf_die17	] {};
+void()	arf_die17 	=[	$death17,	arf_die18	] {};
+void()	arf_die18 	=[	$death18,	arf_die19	] {};
+void()	arf_die19 	=[	$death19,	arf_die20	] {};
+void()	arf_die20 	=[	$death20,	arf_die21 	] {};
+void()	arf_die21 	=[	$death21,	arf_die22 	] {};
+void()	arf_die22 	=[	$death22,	arf_die23 	] {};
+void()	arf_die23	=[	$death23,	arf_die23 	] {arf_explode();};
 
 
-	if (other.takedamage)
-	{
+
+//-----------------------------------------------------------------------------
+
+void() arf_touch_jump = {
+	if (other.classname == "player") {
+		if (other.pain_finished > time) return;
+	}
+
+	if (other.takedamage) {
 		T_Damage (other, self, self, 60);
 		// stop the player from taking damage every frame
 		other.pain_finished = time + 1;
 	}
-
-	return;
 };
-
-
 
 void()	arf_leap1	=[	$leap1,		arf_leap2	] {self.yaw_speed = 30;ai_face();};
 void()	arf_leap2	=[	$leap2,		arf_leap3	] {ai_face();};
 void()	arf_leap3	=[	$leap3,		arf_leap4	] {ai_face();};
 void()	arf_leap4	=[	$leap4,		arf_leap5	] {ai_face();};
 void()	arf_leap5	=[	$leap5,		arf_leap6	] {ai_face();};
-void()	arf_leap6	=[	$leap6,		arf_leap7	] 
-{ai_face();
-
-self.yaw_speed = 20;
-sound (self, CHAN_VOICE, "arachnofloyd/leap.wav", 1, ATTN_NORM);
-makevectors(self.angles);
-self.flags = self.flags - FL_ONGROUND;
-self.origin_z = self.origin_z + 16;
-self.velocity = '0 0 0';
-self.velocity = self.velocity + v_forward * 400;
-self.velocity_z = self.velocity_z + 275;
-self.touch = arf_touch_jump;
+void()	arf_leap6	=[	$leap6,		arf_leap7	] {ai_face();
+	self.yaw_speed = 20;
+	sound (self, CHAN_VOICE, "arachnofloyd/leap.wav", 0.7, ATTN_NORM);
+	makevectors(self.angles);
+	self.flags = self.flags - FL_ONGROUND;
+	self.origin_z = self.origin_z + 16;
+	self.velocity = '0 0 0';
+	self.velocity = self.velocity + v_forward * 400;
+	self.velocity_z = self.velocity_z + 275;
+	self.touch = arf_touch_jump;
 };
 void()	arf_leap7	=[	$leap7,		arf_leap8	] {check_onground();};
 void()	arf_leap8	=[	$leap8,		arf_leap9	] {check_onground();};
@@ -287,7 +284,12 @@ void()	arf_leap10	=[	$leap10,	arf_leap11	] {check_onground();};
 void()	arf_leap11 	=[	$leap11,	arf_run1	] {self.attack_finished = time + 2; check_onground();};
 
 
-void(float offs) arf_Lightning =
+
+//-----------------------------------------------------------------------------
+
+
+
+void(float offs) arf_fire_lightning =
 {
 	local	vector	org, org2, dir;
 	
@@ -305,98 +307,61 @@ void(float offs) arf_Lightning =
 	LightningDamage (org, trace_endpos, self, 8);
 };
 
-
-
-void()	arf_light1	=[	$light1,		arf_light2	] 
-{
-	ai_face();
-	local entity o;
-
+void(float fr) arf_charge_lightning = {
 	self.effects = self.effects | EF_MUZZLEFLASH;
-	o = spawn();
-	self.sibling = o;
+	makevectors(self.sibling.angles);
+	self.sibling.origin = self.origin + v_forward * 48 + v_up * -56 + v_right * -12;
+	setorigin (self.sibling, self.sibling.origin);
+	self.sibling.angles = self.angles;
+	if (fr == 1) sound (self, CHAN_VOICE, "misc/power.wav", 1, ATTN_NORM);
+}
+
+void() arf_lightning_think = {
+	if (time > self.attack_finished) {
+		arf_lightning_remove(self);
+		return;
+	}
+
+	if (self.frame >= 2) self.frame = 0;
+	else self.frame++;
+
+	self.nextthink = time + 0.05;
+}
+
+void(entity lt) arf_lightning_remove = {
+	if (lt.owner.sibling == self) lt.owner.sibling = world;
+	remove(lt);
+}
+
+void()	arf_light1	=[$light1, arf_light2] {
+	ai_face();
+	
+	self.sibling = spawn();
+	self.sibling.owner = self;
+	self.sibling.nextthink = time + 0.05;
+	self.sibling.think = arf_lightning_think;
+	self.sibling.attack_finished = time + 0.7;
 	setmodel (self.sibling, "progs/s_light.mdl");
-	setorigin (self.sibling, self.origin);
-	self.sibling.angles = self.angles;
-	makevectors(self.sibling.angles);
-	self.sibling.origin = self.sibling.origin + v_forward * 48 + v_up * -56 + v_right * -12;
-	self.sibling.angles = self.angles;
-	self.sibling.nextthink = time + 0.7;
-	self.sibling.think = SUB_Remove;
-	self.sibling.frame = 1;
-	sound (self, CHAN_VOICE, "misc/power.wav", 1, ATTN_NORM);	
+
+	arf_charge_lightning(1);
 };
-void()	arf_light2	=[	$light2,		arf_light3	] 
-{
+void()	arf_light2	=[	$light2,		arf_light3	] {ai_face(); arf_charge_lightning(2);};
+void()	arf_light3	=[	$light3,		arf_light4	] {ai_face(); arf_charge_lightning(1);};
+void()	arf_light4	=[	$light4,		arf_light5	] {ai_face(); arf_charge_lightning(2);};
+void()	arf_light5	=[	$light5,		arf_light6	] {ai_face(); arf_charge_lightning(1);};
+void()	arf_light6	=[	$light6,		arf_light7	] {ai_face(); arf_charge_lightning(2);};
+void()	arf_light7	=[	$light7,		arf_light8	] {
 	ai_face();
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	self.sibling.frame = 2;
-	setorigin (self.sibling, self.origin);
-	self.sibling.angles = self.angles;
-	makevectors(self.sibling.angles);
-	self.sibling.origin = self.sibling.origin + v_forward * 48 + v_up * -56 + v_right * -12;
-	self.sibling.angles = self.angles;	
-};
-void()	arf_light3	=[	$light3,		arf_light4	] 
-{
-	ai_face();
-	sound (self, CHAN_VOICE, "misc/power.wav", 1, ATTN_NORM);
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	self.sibling.frame = 1;
-	setorigin (self.sibling, self.origin);
-	self.sibling.angles = self.angles;
-	makevectors(self.sibling.angles);
-	self.sibling.origin = self.sibling.origin + v_forward * 48 + v_up * -56 + v_right * -12;
-	self.sibling.angles = self.angles;
-};
-void()	arf_light4	=[	$light4,		arf_light5	] 
-{
-	ai_face();
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	self.sibling.frame = 2;
-	setorigin (self.sibling, self.origin);
-	self.sibling.angles = self.angles;
-	makevectors(self.sibling.angles);
-	self.sibling.origin = self.sibling.origin + v_forward * 48 + v_up * -56 + v_right * -12;
-	self.sibling.angles = self.angles;
-};
-void()	arf_light5	=[	$light5,		arf_light6	] 
-{
-	ai_face();
-	sound (self, CHAN_VOICE, "misc/power.wav", 1, ATTN_NORM);
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	self.sibling.frame = 1;
-	setorigin (self.sibling, self.origin);
-	self.sibling.angles = self.angles;
-	makevectors(self.sibling.angles);
-	self.sibling.origin = self.sibling.origin + v_forward * 48 + v_up * -56 + v_right * -12;
-	self.sibling.angles = self.angles;
-};
-void()	arf_light6	=[	$light6,		arf_light7	] 
-{
-	ai_face();
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	self.sibling.frame = 2;
-	setorigin (self.sibling, self.origin);
-	self.sibling.angles = self.angles;
-	makevectors(self.sibling.angles);
-	self.sibling.origin = self.sibling.origin + v_forward * 48 + v_up * -56 + v_right * -12;
-	self.sibling.angles = self.angles;
-};
-void()	arf_light7	=[	$light7,		arf_light8	] 
-{
-	ai_face();
-	remove(self.sibling);
+	//remove(self.sibling);
 	sound (self, CHAN_WEAPON, "shambler/sboom.wav", 1, ATTN_NORM);
-	arf_Lightning(1);
+	arf_fire_lightning(1);
 };
-void()	arf_light8	=[	$light8,		arf_light9	] {ai_face();arf_Lightning(-1);};
-void()	arf_light9	=[	$light9,		arf_light10	] {ai_face();arf_Lightning(1);};
-void()	arf_light10	=[	$light10,		arf_light11	] {ai_face();arf_Lightning(-1);};
-void()	arf_light11 =[	$light11,		arf_run1	] 
-{
+void()	arf_light8	=[	$light8,		arf_light9	] {ai_face(); arf_fire_lightning(-1);};
+void()	arf_light9	=[	$light9,		arf_light10	] {ai_face(); arf_fire_lightning(1);};
+void()	arf_light10	=[	$light10,		arf_light11	] {ai_face(); arf_fire_lightning(-1);};
+void()	arf_light11 =[	$light11,		arf_run1	] {
 	ai_face();
-	arf_Lightning(1);
+	arf_fire_lightning(1);
 	self.attack_finished = time + 3.25;
 };
 

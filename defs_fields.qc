@@ -362,6 +362,7 @@ FIELDS
 .float 		first_frame, last_frame; // misc_model
 .float 		first_frame2, last_frame2; // misc_modeltrain
 .float 		frtime, frtime2;
+.float 		animtype, animtype2;
 //
 // subs
 //
@@ -598,3 +599,10 @@ FIELDS
 .float attack_speed;
 .float attack_rage;
 .float attack_chance;
+
+// cshift controller
+
+.entity csfcontroller;
+.vector csf_color, csf_color_prev;
+.float csf_density, csf_density_prev;
+.float csf_priority, csf_priority_prev;

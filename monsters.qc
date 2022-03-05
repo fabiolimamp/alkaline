@@ -432,7 +432,8 @@ void() walkpacifist_start = {pacifist_start(walkmonster_start_go);};
 void() monster_spawned_trytostart = {
 	local entity nearby;
 
-	if (self.cnt > 15) { // tries to spawn for a few seconds, if not successful remove itself
+	if (self.cnt > 45) { // tries to spawn for a few seconds, if not successful remove itself
+		dprint2(self.classname, " spawner: Monster couldn't spawn, giving up\n");
 		remove(self);
 		return;
 	}
@@ -444,7 +445,7 @@ void() monster_spawned_trytostart = {
 
 	while (nearby)	{
 		if (nearby.takedamage) {
-			dprint(self.classname);dprint(" spawner: Monster waiting to spawn\n");
+			dprint2(self.classname, " spawner: Monster spawn blocked, will try again in 1s\n");
 			self.nextthink = time + 1; //delay the spawn by 1 second and try again;
 			self.cnt++;
 			return;
