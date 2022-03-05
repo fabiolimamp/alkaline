@@ -151,6 +151,7 @@ float(string s) checkextension		= #99;		// check cvar("pr_checkextension") befor
 // CSQC
 void(float num, float type, .__variant fld) clientstat = #232;
 
+/*
 //
 // subs.qc
 //
@@ -270,3 +271,4 @@ void() mapvar_reset;
 void() display_mapvar;
 void(float mapv_indx, float mapv_val) write_mapvar;
 float(float mapv_indx) read_mapvar;
+*/
