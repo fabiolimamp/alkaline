@@ -27,7 +27,7 @@ void() HIP_LaserTouch =
 			self.dmg = self.dmg / 2;
         }
 		spawn_touchblood (self.dmg);
-		T_Damage (other, self, self.lastvictim, self.dmg);
+		T_Damage(other, self, self.lastvictim, self.dmg);
     }
 	else if ((self.cnt == 3) || (random()<0.15))
     {

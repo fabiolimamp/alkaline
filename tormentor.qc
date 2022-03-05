@@ -289,7 +289,7 @@ void() torm_smallshot_touch = {
 	org = self.origin - 8*normalize(self.velocity);
 
 	if (other.health)
-		T_Damage (other, self, self.owner, 15);
+		T_Damage(other, self, self.owner, 15);
 		
 	T_RadiusDamage (self, self, 15, other);		//Additional radial damage 
 	

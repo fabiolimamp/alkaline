@@ -73,7 +73,7 @@ void() edie_SpikeTouch =
 	
 	if (other.health)
 	{
-		T_Damage (other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg );
 		spawn_touchblood (18);
 	}
 	else

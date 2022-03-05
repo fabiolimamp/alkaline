@@ -87,7 +87,7 @@ void() FLaser_Touch =
 	if (other.health)
 	{
 		ImpactSpawn (org, self.velocity*0.2, 15, other.bloodtype);
-		T_Damage (other, self, self.owner, 15);
+		T_Damage(other, self, self.owner, 15);
 	}
 	else
 	{

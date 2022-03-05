@@ -843,15 +843,13 @@ Keys
 	dmg(integer) : "Splash damage" : 0
 ]
 */
-void() target_explosion =
-{
-	//if (!SUB_ShouldSpawn()) return;
+void() target_explosion = {
 	self.count = zeroconvertdefault(self.count, 1);
 	self.use = target_explosion_use;
 	if (!self.wait)
 		self.wait = 1;
-	if (self.deathtype == string_null)
-		self.deathtype = "joins the smithereens";
+	if (self.obituary == string_null)
+		self.obituary = "joins the smithereens";
 }
 
 //============================================================================

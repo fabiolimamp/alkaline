@@ -359,7 +359,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 							
 							fx_beam(inflictor.origin, trace_endpos, self);
 							
-							T_Damage (head, inflictor, attacker, points);
+							T_Damage(head, inflictor, attacker, points);
 						}
 				}
 			}
@@ -405,9 +405,9 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 					if (CanDamage (head, inflictor))
 					{	// shambler takes half damage from all explosions
 						if (head.classname == "monster_shambler" || head.classname == "monster_bambler")						
-							T_Damage (head, inflictor, attacker, points*0.5);
+							T_Damage(head, inflictor, attacker, points*0.5);
 						else
-							T_Damage (head, inflictor, attacker, points);
+							T_Damage(head, inflictor, attacker, points);
 					}
 				}
 			}
@@ -443,9 +443,9 @@ void(entity attacker, float damage) T_BeamDamage =
 				if (CanDamage (head, attacker))
 				{
 					if (head.classname == "monster_shambler")						
-						T_Damage (head, attacker, attacker, points*0.5);
+						T_Damage(head, attacker, attacker, points*0.5);
 					else
-						T_Damage (head, attacker, attacker, points);
+						T_Damage(head, attacker, attacker, points);
 				}
 			}
 		}

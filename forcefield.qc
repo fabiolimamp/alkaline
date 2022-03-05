@@ -115,7 +115,7 @@ void() forcefield_touch =	{
 		return;
 
 	self.attack_finished = self.ltime + 0.5;
-	T_Damage (other, self, self, self.dmg);
+	T_Damage(other, self, self, self.dmg);
 };
 
 void() forcefield_use = {

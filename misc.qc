@@ -43,7 +43,7 @@ void() fire_fly =
 
 void() fire_touch =
 {
-	if (other.health) T_Damage (other, self, self, 20);
+	if (other.health) T_Damage(other, self, self, 20);
 	remove(self);
 };
 
@@ -181,7 +181,7 @@ void() ShalMisTouchEnt = {
 	self.owner.touch = SUB_Null;
 
 	if (other.classname == "monster_zombie")
-		T_Damage (other, self.owner, self.owner, 110);
+		T_Damage(other, self.owner, self.owner, 110);
 
 	self.owner.dmg = zeroconvertdefault(self.owner.dmg, 40);
 
@@ -604,7 +604,7 @@ void () blocker_touch =
 	if (time < self.attack_finished)
 		return;
 	self.attack_finished = time + 0.5;
-	T_Damage (other, self, self, self.dmg);
+	T_Damage(other, self, self, self.dmg);
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
    };
 

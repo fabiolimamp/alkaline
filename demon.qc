@@ -316,7 +316,7 @@ void(float side)	Demon_Melee =
 	sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
 	
 	ldmg = 10 + 5*random();
-	T_Damage (self.enemy, self, self, ldmg);	
+	T_Damage(self.enemy, self, self, ldmg);	
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -342,7 +342,7 @@ void(float side)	Mutant_Melee =
 	sound (self, CHAN_WEAPON, "mutant/mutatck2.wav", 1, ATTN_NORM);
     	
 	ldmg = 5 + 2*random();
-	T_Damage (self.enemy, self, self, ldmg);	
+	T_Damage(self.enemy, self, self, ldmg);	
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -361,7 +361,7 @@ void()	Demon_JumpTouch =
 		{
 			if (self.classname == "monster_mutant") ldmg = 25 + 10*random();
 			else ldmg = 40 + 10*random();
-			T_Damage (other, self, self, ldmg);	
+			T_Damage(other, self, self, ldmg);	
 		}
 	}
 

@@ -191,7 +191,7 @@ void() ShalMissileTouch =
 		return;		// don't explode on owner
 
 	if (other.classname == "monster_zombie")
-		T_Damage (other, self, self, 110);
+		T_Damage(other, self, self, 110);
 
 	self.dmg = zeroconvertdefault(self.dmg, 40);
 

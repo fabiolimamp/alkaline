@@ -96,9 +96,9 @@ void() hunter_shot_touch =
 	if (other.health)
 	{
 		if ((other.classname == "monster_zombie") || (other.classname == "monster_dog"))
-			T_Damage (other, self, self.owner, 70);	//Instagib zombies and dogs
+			T_Damage(other, self, self.owner, 70);	//Instagib zombies and dogs
 		else
-			T_Damage (other, self, self.owner, 10);
+			T_Damage(other, self, self.owner, 10);
 	}
 		
 	T_RadiusDamage (self, self, 20, world);		//Additional radial damage 
@@ -182,7 +182,7 @@ local float 	ldmg;
 		
 	ldmg = (random() + random() + random()) * 10;
 
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg);
 	
 	sound (self, CHAN_VOICE, "hunter/smash.wav", 1, ATTN_NORM);
 	

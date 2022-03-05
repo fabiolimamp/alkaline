@@ -365,7 +365,7 @@ void() changelevel_touch =
 
 	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
 	{
-		T_Damage (other, self, self, 50000);
+		T_Damage(other, self, self, 50000);
 		return;
 	}
 
@@ -1135,7 +1135,7 @@ void() WaterMove =
 			if (self.dmg > 15)
 				self.dmg = 10;
 			self.deathtype = "drowning"; //johnfitz
-			T_Damage (self, world, world, self.dmg);
+			T_Damage(self, world, world, self.dmg);
 			self.pain_finished = time + 1;
 		}
 	}
@@ -1160,7 +1160,7 @@ void() WaterMove =
 			else
 				self.dmgtime = time + 0.2;
 
-			T_Damage (self, world, world, 10*self.waterlevel);
+			T_Damage(self, world, world, 10*self.waterlevel);
 		}
 	}
 	else if (self.watertype == CONTENT_SLIME)
@@ -1168,7 +1168,7 @@ void() WaterMove =
 		if (self.dmgtime < time && self.radsuit_finished < time)
 		{
 			self.dmgtime = time + 1;
-			T_Damage (self, world, world, 4*self.waterlevel);
+			T_Damage(self, world, world, 4*self.waterlevel);
 		}
 	}
 	
@@ -1616,7 +1616,7 @@ void() CheckBurning = {
 			//apply damage
 			if (self.burning_time < time) {
 				self.deathtype = "burning";
-				T_Damage (self, world, world, 1);
+				T_Damage(self, world, world, 1);
 				self.burning_time = time + 1;
 			}
 			
@@ -1699,7 +1699,7 @@ void() PlayerPostThink =
 		else if (self.jump_flag < -650)
 		{
 			self.deathtype = "falling"; //johnfitz -- moved before T_Damage call
-			T_Damage (self, world, world, 5); 
+			T_Damage(self, world, world, 5); 
 			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 		}
 		else

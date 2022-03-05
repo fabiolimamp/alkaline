@@ -345,7 +345,7 @@ void() func_laser_touch = {
 		return;
 
 	if (other.takedamage && self.attack_finished < time) {
-		T_Damage (other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg);
 		self.attack_finished = time + 0.1;
 	}
 
@@ -730,7 +730,7 @@ void() smoke_touch =
 
 	if (self.dmg > 0 && other.health)
 	{
-		T_Damage (other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg);
 		self.dmg = 0;
 	}	
 	self.velocity = '0 0 0'; //FIXME: can't set velocity in a touch function

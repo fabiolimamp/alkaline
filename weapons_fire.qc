@@ -20,7 +20,7 @@ void() W_FireAxe =
 		trace_ent.axhitme = 1;
 
 		ImpactSpawn(org, '0 0 0', 20, trace_ent.bloodtype);
-		T_Damage (trace_ent, self, self, 20);
+		T_Damage(trace_ent, self, self, 20);
 		
 		//johnfitz -- make clank sound when hitting brushmodels
 		if (trace_ent.movetype == MOVETYPE_PUSH || trace_ent.movetype == MOVETYPE_NONE)
@@ -81,9 +81,9 @@ void() W_FireSaw =
 		}
 
 		if (deathmatch == 0)
-			T_Damage (ent, self, self, 24);
+			T_Damage(ent, self, self, 24);
 		else
-			T_Damage (ent, self, self, 30);
+			T_Damage(ent, self, self, 30);
 		
 		ent.velocity = ent.velocity * 0.5;
 		sound (self, CHAN_WEAPON, "weapons/sawguts.wav", 1, ATTN_NORM);
@@ -119,7 +119,7 @@ void() ApplyMultiDamage =
 {
 	if (!multi_ent)
 		return;
-	T_Damage (multi_ent, self, self, multi_damage);
+	T_Damage(multi_ent, self, self, multi_damage);
 };
 
 void(entity hit, float damage) AddMultiDamage =
@@ -333,7 +333,7 @@ void() T_MissileTouch =
 	{
 		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
 			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg );
 	}
 
 	// don't do radius damage to the other, because all the damage
@@ -366,7 +366,7 @@ void() T_MissileTouchArma =
 	{
 		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
 			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg );
 	}
 
 	// don't do radius damage to the other, because all the damage
@@ -458,7 +458,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
 
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage);
 		if (self.classname == "player")
 		{
 			if (other.classname == "player")
@@ -471,7 +471,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage);
 	}
 	e2 = trace_ent;
 
@@ -479,7 +479,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage);
 	}
 };
 
@@ -846,7 +846,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadius
 
 			if (points > 0) {
 				if (CanDamage (head, inflictor) && head.waterlevel > 0)
-					T_Damage (head, inflictor, attacker, points);
+					T_Damage(head, inflictor, attacker, points);
 			}
 		}
 

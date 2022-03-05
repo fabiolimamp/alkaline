@@ -386,7 +386,7 @@ void() tdeath_touch =
 			self.classname = "teledeath2";
 		if (self.owner.classname != "player")
 		{	// other monsters explode themselves
-			T_Damage (self.owner, self, self, 50000);
+			T_Damage(self.owner, self, self, 50000);
 			return;
 		}
 		
@@ -394,7 +394,7 @@ void() tdeath_touch =
 
 	if (other.health)
 	{
-		T_Damage (other, self, self, 50000);
+		T_Damage(other, self, self, 50000);
 	}
 };
 
@@ -760,7 +760,7 @@ void() hurt_touch =
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;
-		T_Damage (other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg);
 		self.think = hurt_on;
 		self.nextthink = time + self.wait;
 	}
@@ -795,7 +795,7 @@ void() hurt_think = {
 	if (self.owner.health <= 0 || self.attack_finished < time) {
 		if (self.attack_finished < time) {
 			if (self.dmg_save < self.dmg) 
-				T_Damage (self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save);
+				T_Damage(self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save);
 		}
 		self.owner.hurtcontroller = world;
 		remove(self);
@@ -813,7 +813,7 @@ void() hurt_think = {
 		}
 		else {
 			take = floor(self.dmg_take);
-			T_Damage (self.owner, self.enemy, self.enemy, take);
+			T_Damage(self.owner, self.enemy, self.enemy, take);
 		}
 		
 		self.dmg_save += take;
@@ -1086,7 +1086,7 @@ void() trigger_void_touch =
 			other.trif_finished = 0;
 		}
 
-		T_Damage (other, self, self, other.health + 1000);
+		T_Damage(other, self, self, other.health + 1000);
 		
 		// moved the following check to the Killed function
 		//if (other.flags & FL_MONSTER)

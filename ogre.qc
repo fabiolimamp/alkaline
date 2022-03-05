@@ -158,7 +158,7 @@ void() Ogre_Rocket_Touch =
 	
 	if (other.health)
 	{
-		T_Damage (other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg );
 	}
 
 	// don't do radius damage to the other, because all the damage
@@ -284,7 +284,7 @@ local float 	ldmg;
 		return;
 		
 	ldmg = (random() + random() + random()) * 4;
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg);
 	
 	if (side)
 	{

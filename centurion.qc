@@ -55,7 +55,7 @@ void() centurion_missle_touch =
 	if (other.takedamage)
 	{
 		spawn_touchblood (CENT_DAMAGE);
-		T_Damage (other, self, self.owner, CENT_DAMAGE);
+		T_Damage(other, self, self.owner, CENT_DAMAGE);
 	}
 	else
 	{
