@@ -1994,7 +1994,9 @@ void() ImpulseCommands =
 		ToggleAutosave();
 	if (self.impulse == 40)
 		ResetModSettings();
-
+	if (self.impulse == 41)
+		csf_clear_all(self);
+	
 	if (self.impulse == 128)
 		printVersionConsole(self);
 		//centerprint(self, VERSION_S);
