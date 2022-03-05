@@ -6,7 +6,7 @@ FX
 ================================================================
 */
 
-inline void(vector org) gunshot =
+void(vector org) gunshot =
 {
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_GUNSHOT);
@@ -28,7 +28,8 @@ void(vector a, vector b, entity who) fx_beam =
 	WriteCoord (MSG_BROADCAST, b_z);
 }
 
-inline void(vector org) fx_explosion_particle = {
+// explosion particle effect. Also fires up explosion sound automatically
+void(vector org) fx_explosion_particle = {
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
 	WriteCoord (MSG_BROADCAST, org_x);
@@ -106,7 +107,7 @@ Spawns a complete, damage-less explosion at self's origin.
 Doesn't affect triggering entity.
 ========
 */
-inline void() TriggerExplosion =
+void() TriggerExplosion =
 {
 	SpawnExplosion(self.origin, 0, self, 0);
 }
@@ -201,6 +202,70 @@ void(vector org, vector dir) Fire_bomb =
 	newmis.velocity_y = crandom() * 400;
 	newmis.velocity_z = random() * 200;
 };
+
+
+/*
+================
+Impact spawn functions
+================
+*/
+
+// SpawnBlood and SpawnChunk kept intact only for plug-in compatibility with eventual ported code from other mods
+// All new code should implement ImpactSpawn instead
+// --bmFbr
+
+void(vector org, vector vel, float damage) SpawnBlood = {
+	particle (org, vel*0.1, 73, damage*2);
+};
+
+void(vector org, vector vel) SpawnChunk = {
+	particle (org, vel*0.02, 0, 10);
+};
+
+void(vector org, vector vel, float damage, float bloodtype) ImpactSpawn = {
+	if(bloodtype == SPAWN_CHUNK)
+		SpawnChunk(org, vel);
+	else if(bloodtype == SPAWN_DIRT)
+		particle (org, vel*0.05, 25, damage*2);
+	else if(bloodtype == SPAWN_YELLOWSPARK)
+		particle (org, vel*0.1, 105, damage);
+	else if(bloodtype == SPAWN_WHITESPARK)
+		particle (org, vel*0.1, 9, damage);
+	else // blood should always be default, so it works either with .bloodtype = 1 (explicit) or 0 (unset)
+		SpawnBlood(org, vel, damage);
+};
+
+
+/*
+================
+spawn_touchblood
+================
+*/
+
+
+vector() wall_velocity =
+{
+	local vector	vel;
+	
+	vel = normalize (self.velocity);
+	vel = normalize(vel + v_up*(random()- 0.5) + v_right*(random()- 0.5));
+	vel = vel + 2*trace_plane_normal;
+	vel = vel * 200;
+	
+	return vel;
+};
+
+
+void(float damage) spawn_touchblood =
+{
+	local vector	vel;
+
+	vel = wall_velocity () * 0.2;
+
+	ImpactSpawn(self.origin + vel*0.01, vel, damage, other.bloodtype);	
+};
+
+
 
 //=============================================================================
 

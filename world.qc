@@ -6,96 +6,6 @@ void() InitBulletHoles;
 void() main =
 {
 	dprint ("main function\n");
-	
-// these are just commands the the prog compiler to copy these files
-
-	precache_file ("progs.dat");
-	precache_file ("gfx.wad");
-	precache_file ("quake.rc");
-	precache_file ("default.cfg");
-
-	precache_file ("end1.bin");
-	precache_file2 ("end2.bin");
-
-	precache_file ("demo1.dem");
-	precache_file ("demo2.dem");
-	precache_file ("demo3.dem");
-
-//
-// these are all of the lumps from the cached.ls files
-//
-	precache_file ("gfx/palette.lmp");
-	precache_file ("gfx/colormap.lmp");
-
-	precache_file2 ("gfx/pop.lmp");
-
-	precache_file ("gfx/complete.lmp");
-	precache_file ("gfx/inter.lmp");
-
-	precache_file ("gfx/ranking.lmp");
-	precache_file ("gfx/vidmodes.lmp");
-	precache_file ("gfx/finale.lmp");
-	precache_file ("gfx/conback.lmp");
-	precache_file ("gfx/qplaque.lmp");
-
-	precache_file ("gfx/menudot1.lmp");
-	precache_file ("gfx/menudot2.lmp");
-	precache_file ("gfx/menudot3.lmp");
-	precache_file ("gfx/menudot4.lmp");
-	precache_file ("gfx/menudot5.lmp");
-	precache_file ("gfx/menudot6.lmp");
-
-	precache_file ("gfx/menuplyr.lmp");
-	precache_file ("gfx/bigbox.lmp");
-	precache_file ("gfx/dim_modm.lmp");
-	precache_file ("gfx/dim_drct.lmp");
-	precache_file ("gfx/dim_ipx.lmp");
-	precache_file ("gfx/dim_tcp.lmp");
-	precache_file ("gfx/dim_mult.lmp");
-	precache_file ("gfx/mainmenu.lmp");
-	
-	precache_file ("gfx/box_tl.lmp");
-	precache_file ("gfx/box_tm.lmp");
-	precache_file ("gfx/box_tr.lmp");
-	
-	precache_file ("gfx/box_ml.lmp");
-	precache_file ("gfx/box_mm.lmp");
-	precache_file ("gfx/box_mm2.lmp");
-	precache_file ("gfx/box_mr.lmp");
-	
-	precache_file ("gfx/box_bl.lmp");
-	precache_file ("gfx/box_bm.lmp");
-	precache_file ("gfx/box_br.lmp");
-	
-	precache_file ("gfx/sp_menu.lmp");
-	precache_file ("gfx/ttl_sgl.lmp");
-	precache_file ("gfx/ttl_main.lmp");
-	precache_file ("gfx/ttl_cstm.lmp");
-	
-	precache_file ("gfx/mp_menu.lmp");
-	
-	precache_file ("gfx/netmen1.lmp");
-	precache_file ("gfx/netmen2.lmp");
-	precache_file ("gfx/netmen3.lmp");
-	precache_file ("gfx/netmen4.lmp");
-	precache_file ("gfx/netmen5.lmp");
-	
-	precache_file ("gfx/sell.lmp");
-	
-	precache_file ("gfx/help0.lmp");
-	precache_file ("gfx/help1.lmp");
-	precache_file ("gfx/help2.lmp");
-	precache_file ("gfx/help3.lmp");
-	precache_file ("gfx/help4.lmp");
-	precache_file ("gfx/help5.lmp");
-
-	precache_file ("gfx/pause.lmp");
-	precache_file ("gfx/loading.lmp");
-
-	precache_file ("gfx/p_option.lmp");
-	precache_file ("gfx/p_load.lmp");
-	precache_file ("gfx/p_save.lmp");
-	precache_file ("gfx/p_multi.lmp");
 
 // sounds loaded by C code
 	precache_sound ("misc/menu1.wav");
@@ -107,54 +17,6 @@ void() main =
 // mainly added to quell a warning	
 	precache_sound ("vomitus/v_sight1.wav");
 
-// shareware
-	precache_file ("maps/start.bsp");
-
-	precache_file ("maps/e1m1.bsp");
-	precache_file ("maps/e1m2.bsp");
-	precache_file ("maps/e1m3.bsp");
-	precache_file ("maps/e1m4.bsp");
-	precache_file ("maps/e1m5.bsp");
-	precache_file ("maps/e1m6.bsp");
-	precache_file ("maps/e1m7.bsp");
-	precache_file ("maps/e1m8.bsp");
-
-// registered
-	precache_file2 ("gfx/pop.lmp");
-
-	precache_file2 ("maps/e2m1.bsp");
-	precache_file2 ("maps/e2m2.bsp");
-	precache_file2 ("maps/e2m3.bsp");
-	precache_file2 ("maps/e2m4.bsp");
-	precache_file2 ("maps/e2m5.bsp");
-	precache_file2 ("maps/e2m6.bsp");
-	precache_file2 ("maps/e2m7.bsp");
-
-	precache_file2 ("maps/e3m1.bsp");
-	precache_file2 ("maps/e3m2.bsp");
-	precache_file2 ("maps/e3m3.bsp");
-	precache_file2 ("maps/e3m4.bsp");
-	precache_file2 ("maps/e3m5.bsp");
-	precache_file2 ("maps/e3m6.bsp");
-	precache_file2 ("maps/e3m7.bsp");
-
-	precache_file2 ("maps/e4m1.bsp");
-	precache_file2 ("maps/e4m2.bsp");
-	precache_file2 ("maps/e4m3.bsp");
-	precache_file2 ("maps/e4m4.bsp");
-	precache_file2 ("maps/e4m5.bsp");
-	precache_file2 ("maps/e4m6.bsp");
-	precache_file2 ("maps/e4m7.bsp");
-	precache_file2 ("maps/e4m8.bsp");
-
-	precache_file2 ("maps/end.bsp");
-
-	precache_file2 ("maps/dm1.bsp");
-	precache_file2 ("maps/dm2.bsp");
-	precache_file2 ("maps/dm3.bsp");
-	precache_file2 ("maps/dm4.bsp");
-	precache_file2 ("maps/dm5.bsp");
-	precache_file2 ("maps/dm6.bsp");
 };
 
 
@@ -190,7 +52,7 @@ void() worldspawn =
 	}
 
 	InitBodyQue ();
-//JIM
+
    	InitBulletHoles();
    
 // custom map attributes
@@ -211,7 +73,30 @@ void() worldspawn =
 // the area based ambient sounds MUST be the first precache_sounds
 
 // player precaches	
-	W_Precache ();			// get weapon precaches
+	precache_sound ("weapons/r_exp3.wav");		// new rocket explosion
+	precache_sound ("weapons/rocket1i.wav");	// spike gun
+	precache_sound ("weapons/sgun1.wav");
+	precache_sound ("weapons/guncock.wav");		// player shotgun
+	precache_sound ("weapons/ric1.wav");		// ricochet (used in c code)
+	precache_sound ("weapons/ric2.wav");		// ricochet (used in c code)
+	precache_sound ("weapons/ric3.wav");		// ricochet (used in c code)
+	precache_sound ("weapons/spike2.wav");		// super spikes
+	precache_sound ("weapons/tink1.wav");		// spikes tink (used in c code)
+	precache_sound ("weapons/grenade.wav");		// grenade launcher
+	precache_sound ("weapons/bounce.wav");		// grenade bounce
+	precache_sound ("weapons/shotgn2.wav");		// super shotgun
+	precache_sound ("weapons/axhit4.wav");		// extra axe sound for melee - greenwood
+	precache_sound ("weapons/spindn_click.wav");		// super nailgun spindown click
+	
+	precache_sound ("enforcer/enfstop.wav");	// laser cannon
+	
+	precache_sound ("hipweap/laserg.wav");		// laser cannon
+	precache_sound ("hipweap/laserric.wav");	// laser cannon ricochet
+	precache_sound ("hipweap/proxwarn.wav");	// proximity bomb
+	precache_sound ("hipweap/proxbomb.wav");	// proximity bomb
+	
+	precache_sound ("weapons/dsfirxpl.wav");   // for plasma hit
+	precache_sound ("weapons/dsplasma.wav");    // plasma firing
 
 // sounds used from C physics code
 	precache_sound ("demon/dland2.wav");		// landing thud
@@ -372,6 +257,11 @@ void() worldspawn =
 
 	precache_model ("progs/spark.mdl");
 
+	precache_model ("progs/pbullet.mdl");      // Plasma bullet model
+	precache_model ("progs/g_plasma.mdl");     // Plasma gun item
+	precache_model ("progs/v_plasma.mdl");     // Plasma being used
+	precache_model ("progs/s_plasma_new.spr");     // Plasma explosion sprite
+
 	//
 	// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
 	// Moved to lights.qc -- bmFbr
@@ -418,9 +308,6 @@ void() ResetPlayerLoopingSounds =
 
 //johnfitz -- new stuff for loadsavegame callback function
 nosave float loadsavegamecallback_done;
-void() smoke_firstthink;
-void() FindAndReadGlobalGravity;
-void() update_bulletholes;
 
 void() RestartLoopSounds_think = {
 	sound(self, self.impulse, self.noise, self.volume, self.speed);
