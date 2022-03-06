@@ -334,7 +334,7 @@ void()  drn_die7         =[      $base1,        drn_die7       ]
 
 
 void() drn_die = {
-	if (self.health < -40) 
+	if (self.health < -40 || (self.deathtype == DMGTYPE_EXPLOSION && self.health < -10)) 
 		drn_die7();
 	else
 		drn_die1();
