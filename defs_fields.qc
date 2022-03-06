@@ -586,7 +586,6 @@ FIELDS
 
 
 // AD monsters
-
 .float lostsearch;
 .entity lostenemy;
 .float losttimer;
@@ -601,8 +600,8 @@ FIELDS
 .float attack_rage;
 .float attack_chance;
 
-// cshift controller
 
+// cshift controller
 .entity csfcontroller;
 .vector csf_color, csf_color_prev;
 .float csf_density, csf_density_prev;

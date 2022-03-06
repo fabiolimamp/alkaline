@@ -140,15 +140,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 
 	if (!targ.takedamage)
 		return;
-		
-	//johnfitz -- some func_breakables ignore monster damage
-	if (targ.classname == "func_breakable")
-	{
-		if (targ.spawnflags & BREAKABLE_NO_MONSTERS && attacker.flags & FL_MONSTER)
-			return;
-	}
-	//johnfitz
-		
+
 	// used by buttons and triggers to set activator for target firing
 	damage_attacker = attacker;
 
@@ -170,13 +162,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		ignore_armor = FALSE;
 	//johnfitz
 
+	take = damage;
 	// save damage based on the target's armor level
-	if (ignore_armor)  //johnfitz -- some damage doesn't deplete armor
-	{
-		save = 0;
-	}
-	else
-	{
+	if (targ.armortype && !ignore_armor){
 		save = ceil(targ.armortype*damage);
 		if (save >= targ.armorvalue)
 		{
@@ -184,10 +172,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 			targ.armortype = 0;	// lost all armor
 			targ.items = targ.items - (targ.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3));
 		}
+		targ.armorvalue = targ.armorvalue - save;
+		take = ceil(damage-save);
 	}	
-
-	targ.armorvalue = targ.armorvalue - save;
-	take = ceil(damage-save);
 
 	// checks if entity has a custom damage calculation function
 	if (targ.th_damage)	{
