@@ -93,6 +93,7 @@ float BREAKABLE_CONCRETE = 2;
 float BREAKABLE_GLASS = 3;
 
 float BREAKABLE_ALWAYS_SHOOTABLE = 2;
+float BREAKABLE_ONLY_EXPLOSION = 4;
 
 void() make_breakable_debris = {
 	local float i;
@@ -174,10 +175,16 @@ void() func_breakable_use = {
 };
 
 float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) func_breakable_damage = {
+	float ret;
+	ret = damage;
+
 	if (self.spawnflags & BREAKABLE_NO_MONSTERS && attacker.flags & FL_MONSTER)
-		return 0;
-	else
-		return damage;
+		ret = 0;		
+
+	if (self.spawnflags & BREAKABLE_ONLY_EXPLOSION && !(dmgtype & DMGTYPE_EXPLOSION))	
+		ret = 0;
+
+	return ret;
 }
 
 /*QUAKED func_breakable (0 .5 .8) ? NO_MONSTERS

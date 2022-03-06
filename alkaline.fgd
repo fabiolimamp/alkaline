@@ -305,6 +305,7 @@ NO_MONSTERS: object ignores damage from monsters"
 	[
 		1 : "No monsters" : 0
 		2 : "Always shootable" : 0
+		4 : "Explosion only" : 0
 	]
 
 ]
