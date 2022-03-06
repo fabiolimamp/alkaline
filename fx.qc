@@ -130,7 +130,7 @@ entity(vector org, float damg, entity parent, float multi) SpawnExplosion =
 	boom.nextthink = time;
 	boom.think = BecomeExplosion;
 	
-	if (damg > 0) T_RadiusDamage (boom, parent, damg, boom);
+	if (damg > 0) T_RadiusDamage (boom, parent, damg, boom, DMGTYPE_EXPLOSION);
 	
 	return boom;
 }
@@ -792,7 +792,7 @@ void(float attack, float sustain, float release, float str) screenshake_oneshot 
 void() target_explosion_go =
 {
 	//if (self.dmg) T_RadiusMultiDamage (self, self, self.dmg, self, 0);
-	if (self.dmg) T_RadiusDamage (self, self, self.dmg, self);
+	if (self.dmg) T_RadiusDamage (self, self, self.dmg, self, DMGTYPE_EXPLOSION);
 	BecomeExplosion();
 }
 
@@ -816,7 +816,6 @@ void() target_explosion_use =
 		bewm.think = target_explosion_go;
 		bewm.nextthink = time + tnext;
 		bewm.dmg = self.dmg;
-		bewm.deathtype = self.deathtype;
 		tnext += self.wait + random() * self.rand;
 	}
 }
@@ -830,7 +829,6 @@ Keys
 "wait" Static time to wait between explosions
 "rand" Random time to wait before explosions (will sum both)
 "dmg" Do splash damage, default 0
-"deathtype" death message if the player is killed by your horrible trap
 */
 /*FGD
 @Pointclass base(Targetname, Appearflags, Deathtype) color(0 128 224) size(16 16 16) = target_explosion : 

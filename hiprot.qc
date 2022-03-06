@@ -313,7 +313,7 @@ ROTATE_TOGGLE = allows the rotation to be toggled on/off
 
 ROTATE_START_ON = wether the entity is spinning when spawned.  If ROTATE_TOGGLE is 0, entity can be turned on, but not off.
 
-If "deathtype" is set with a string, this is the message that will appear when a player is killed by the train.
+If "obituary" is set with a string, this is the message that will appear when a player is killed by the train.
 
 "rotate" is the rate to rotate.
 "target" is the center of rotation.
@@ -707,7 +707,7 @@ Trains are moving platforms that players can ride.
 If the train is the target of a button or trigger, it will not begin moving until activated.
 The func_rotate_train entity is the center of rotation of all objects targeted by it.
 
-If "deathtype" is set with a string, this is the message that will appear when a player is killed by the train.
+If "obituary" is set with a string, this is the message that will appear when a player is killed by the train.
 
 speed	default 100
 dmg      default  0
@@ -797,12 +797,12 @@ void() movewall_touch =
 
    if ( self.dmg )
       {
-      T_Damage(other, self, self.owner, self.dmg);
+      T_Damage(other, self, self.owner, self.dmg, DMGTYPE_CRUSH);
       self.owner.attack_finished = time + 0.5;
       }
    else if ( self.owner.dmg )
       {
-      T_Damage(other, self, self.owner, self.owner.dmg);
+      T_Damage(other, self, self.owner, self.owner.dmg, DMGTYPE_CRUSH);
       self.owner.attack_finished = time + 0.5;
       }
    };
@@ -826,12 +826,12 @@ void() movewall_blocked =
 
    if ( self.dmg )
       {
-      T_Damage(other, self, self.owner, self.dmg);
+      T_Damage(other, self, self.owner, self.dmg, DMGTYPE_CRUSH);
       self.owner.attack_finished = time + 0.5;
       }
    else if ( self.owner.dmg )
       {
-      T_Damage(other, self, self.owner, self.owner.dmg);
+      T_Damage(other, self, self.owner, self.owner.dmg, DMGTYPE_CRUSH);
       self.owner.attack_finished = time + 0.5;
       }
    };

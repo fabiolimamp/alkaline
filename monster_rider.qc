@@ -354,7 +354,7 @@ void() rider_rail_shoot =
 	//if !(visible(self.enemy))
 	//	return;
 		
-	//T_Damage(self.enemy, self, self, 50);
+	//T_Damage(self.enemy, self, self, 50, DMGTYPE_BALLISTIC);
 
 	makevectors(self.angles);
 	src = self.origin + '0 0 16' + v_right * 10 + v_forward * 2;
@@ -370,7 +370,7 @@ void() rider_rail_shoot =
 	traceline(src, shotdest, FALSE, self);
 	
 	if (trace_fraction < 1) {
-		if (trace_ent.health > 0) T_Damage(trace_ent, self, self, 50);
+		if (trace_ent.health > 0) T_Damage(trace_ent, self, self, 50, DMGTYPE_BALLISTIC);
 	}
 
 	shotdistance = vlen(src - trace_endpos);

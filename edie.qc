@@ -73,7 +73,7 @@ void() edie_SpikeTouch =
 	
 	if (other.health)
 	{
-		T_Damage(other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg, DMGTYPE_BALLISTIC);
 		spawn_touchblood (18);
 	}
 	else
@@ -502,9 +502,9 @@ void(float dist, float kickback, float dmg) edie_melee_hit =
 			if (dist_front < 100 && visible(e)) {
 								
 				if (e == self.enemy) 
-					T_Damage(e, self, self, dmg);
+					T_Damage(e, self, self, dmg, DMGTYPE_MELEE);
 				else
-					T_Damage(e, self, self, dmg * 0.25);
+					T_Damage(e, self, self, dmg * 0.25, DMGTYPE_MELEE);
 
 				if (self.gug_slapped == 0) {
 					sound(self, CHAN_WEAPON, "edie/mangle.wav", 1, ATTN_NORM);

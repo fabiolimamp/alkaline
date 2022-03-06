@@ -241,7 +241,7 @@ FIELDS
 .void()		th_sight;
 .void()		th_wake;
 .float()	th_checkattack;
-.float(entity inflictor, entity attacker, float damage, float orig_damage) th_damage;
+.float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) th_damage;
 
 .void(entity mon)	start_function;
 
@@ -298,7 +298,7 @@ FIELDS
 .float		swim_flag;		// player swimming sound flag
 .float		air_finished;	// when time > air_finished, start drowning
 .float		bubble_count;	// keeps track of the number of bubbles
-.string		deathtype;		// keeps track of how the player died
+.float		deathtype;		// keeps track of how the player died
 .float 		offground_start; // last time the player was on ground
 
 .float 		wantedgravity; // thanks Spike!
@@ -459,6 +459,7 @@ FIELDS
 
 .float		burning_finished;
 .float		burning_time;
+.entity 	burning_attacker;
 
 .float		dismemberment;	//used by hunter.qc
 

@@ -122,7 +122,7 @@ float(float theta, vector dest) IterateElevation =
 void() OgreGrenadeExplode =
 {
 	if (!self.dmg) self.dmg = 40;
-	T_RadiusDamage (self, self.owner, self.dmg, world);
+	T_RadiusDamage (self, self.owner, self.dmg, world, DMGTYPE_EXPLOSION);
 	
 	BecomeExplosion();
 };
@@ -158,12 +158,12 @@ void() Ogre_Rocket_Touch =
 	
 	if (other.health)
 	{
-		T_Damage(other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 	}
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 50, other);	// greenwood modify the 50 here to change splash damage
+	T_RadiusDamage (self, self.owner, 50, other, DMGTYPE_EXPLOSION);	// greenwood modify the 50 here to change splash damage
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -284,7 +284,7 @@ local float 	ldmg;
 		return;
 		
 	ldmg = (random() + random() + random()) * 4;
-	T_Damage(self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 	
 	if (side)
 	{

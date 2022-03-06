@@ -344,6 +344,20 @@ float FS_TYPECUSTOM = 9;	// Defined/precached by monster
 float FS_FLYING = 10;		// Exclusion, no happy feet!
 
 
+// Damage types
+float DMGTYPE_EXPLOSION = 1; // boom
+float DMGTYPE_FALL = 2;
+float DMGTYPE_DROWN = 4;
+float DMGTYPE_LAVA = 8;
+float DMGTYPE_SLIME = 16;
+float DMGTYPE_BALLISTIC = 32; // shells and spikes
+float DMGTYPE_ELECTRIC = 64; // lightning, plasma, laser, blaster
+float DMGTYPE_BURN = 128;
+float DMGTYPE_TOXIC = 256;
+float DMGTYPE_CRUSH = 512;
+float DMGTYPE_MELEE = 1024;
+float DMGTYPE_INSTANT = 2048; //void, telefrag
+
 //
 // CSQC
 //

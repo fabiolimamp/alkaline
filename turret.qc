@@ -254,6 +254,8 @@ void() func_turret =
 	setmodel (self, self.model);
 	self.use = turret_use;
 	
+	if (!self.obituary) self.obituary = "was blasted by a turret";
+	
 	if (!self.speed)
 		self.speed = 100;
 

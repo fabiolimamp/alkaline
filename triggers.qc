@@ -386,7 +386,7 @@ void() tdeath_touch =
 			self.classname = "teledeath2";
 		if (self.owner.classname != "player")
 		{	// other monsters explode themselves
-			T_Damage(self.owner, self, self, 50000);
+			T_Damage(self.owner, self, self, 50000, DMGTYPE_INSTANT);
 			return;
 		}
 		
@@ -394,7 +394,7 @@ void() tdeath_touch =
 
 	if (other.health)
 	{
-		T_Damage(other, self, self, 50000);
+		T_Damage(other, self, self, 50000, DMGTYPE_INSTANT);
 	}
 };
 
@@ -760,7 +760,7 @@ void() hurt_touch =
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;
-		T_Damage(other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg, self.style);
 		self.think = hurt_on;
 		self.nextthink = time + self.wait;
 	}
@@ -795,7 +795,7 @@ void() hurt_think = {
 	if (self.owner.health <= 0 || self.attack_finished < time) {
 		if (self.attack_finished < time) {
 			if (self.dmg_save < self.dmg) 
-				T_Damage(self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save);
+				T_Damage(self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save, self.style);
 		}
 		self.owner.hurtcontroller = world;
 		remove(self);
@@ -813,7 +813,7 @@ void() hurt_think = {
 		}
 		else {
 			take = floor(self.dmg_take);
-			T_Damage(self.owner, self.enemy, self.enemy, take);
+			T_Damage(self.owner, self.enemy, self.enemy, take, self.style);
 		}
 		
 		self.dmg_save += take;
@@ -823,7 +823,7 @@ void() hurt_think = {
 	self.nextthink = time + 0.1;
 };
 
-void(entity tgt, float totaldmg, float duration) hurt_start = {
+void(entity tgt, float totaldmg, float duration, float dmgtype) hurt_start = {
 	entity controller;
 	if (self.spawnflags & 1 && tgt.flags & FL_CLIENT)
 		return;
@@ -849,6 +849,7 @@ void(entity tgt, float totaldmg, float duration) hurt_start = {
 		controller.attack_finished = time + duration;
 		controller.dmg = totaldmg;
 		controller.delay = duration;
+		controller.style = dmgtype;
 
 		controller.think = hurt_think;
 		controller.nextthink = time + 0.1;
@@ -862,7 +863,7 @@ void(string name, .string fld) hurt_find = {
 	t = find(world, fld, name);
 
 	while (t) {
-		hurt_start(t, self.dmg, self.speed);
+		hurt_start(t, self.dmg, self.speed, self.style);
 
 		t = find(t, fld, name);
 	}
@@ -896,7 +897,7 @@ void() hurt_use = {
 	}
 
 	if (!has_target) {
-		hurt_start(activator, self.dmg, self.speed);
+		hurt_start(activator, self.dmg, self.speed, self.style);
 	}
 
 
@@ -1086,7 +1087,7 @@ void() trigger_void_touch =
 			other.trif_finished = 0;
 		}
 
-		T_Damage(other, self, self, other.health + 1000);
+		T_Damage(other, self, self, other.health + 1000, DMGTYPE_INSTANT);
 		
 		// moved the following check to the Killed function
 		//if (other.flags & FL_MONSTER)

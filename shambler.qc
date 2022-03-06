@@ -106,7 +106,7 @@ void() sham_smash10    =[      $smash10,      sham_smash11   ] {
 		return;
 		
 	ldmg = (random() + random() + random()) * 40;
-	T_Damage(self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_ELECTRIC);
 	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
 
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);
@@ -132,7 +132,7 @@ void(float side) ShamClaw =
 		return;
 		
 	ldmg = (random() + random() + random()) * 20;
-	T_Damage(self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
 
 	if (side) {
@@ -272,6 +272,12 @@ void(entity attacker, float damage)	sham_pain =
 	sham_pain1 ();
 };
 
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) shambler_customdamage = {
+	if (dmgtype == DMGTYPE_EXPLOSION)
+		return damage * 0.5;
+	else
+		return damage;
+}
 
 //============================================================================
 
@@ -403,6 +409,7 @@ void(entity e) monster_shambler_start =
 	self.th_pain = sham_pain;
 	self.th_sight = sham_sight;
 	self.th_checkattack = ShamCheckAttack;
+	self.th_damage = shambler_customdamage;
 	
 	walkmonster_start();
 

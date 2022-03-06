@@ -1,9 +1,3 @@
-void() movetarget_f;
-void() t_movetarget;
-void() knight_attack;
-
-void(entity etemp, entity stemp, entity stemp, float dmg) T_Damage;
-
 float	enemy_vis, enemy_infront, enemy_range;
 float	enemy_yaw;
 /*
@@ -1173,7 +1167,7 @@ void() ai_melee =
 		return;
 		
 	ldmg = (random() + random() + random()) * 3;
-	T_Damage(enem, self, self, ldmg);
+	T_Damage(enem, self, self, ldmg, DMGTYPE_MELEE);
 };
 
 
@@ -1196,5 +1190,5 @@ void() ai_melee_side =
 	if (!CanDamage (enem, self))
 		return;
 	ldmg = (random() + random() + random()) * 3;
-	T_Damage(enem, self, self, ldmg);
+	T_Damage(enem, self, self, ldmg, DMGTYPE_MELEE);
 };

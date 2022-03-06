@@ -248,9 +248,6 @@
 	skyfog_density2(string) : "End Skyfog Density" 
 ]
      
-@baseclass = Deathtype [ deathtype(string) : "Obituary message" ]
-
-
 
 @baseclass = Blood [
 	bloodtype(choices) : "Blood type" : : "Type of particle effect spawned when hit." = [
@@ -406,7 +403,7 @@ STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once d
 @PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
 "Creates an entity that continually rotates.  Can be toggled on and off if targeted."
 [
-	deathtype(string) : "Death message"
+	obituary(string) : "Death message"
 	rotate(integer) : "Speed" : 40
 	target(string) : "Center of rotation"
 	speed(integer) : "Acceleration" : 5 : "How long the entity takes to go from standing still to full speed and vice-versa."
@@ -443,7 +440,7 @@ The func_rotate_train entity is the center of rotation of all objects targeted b
 		0 : "No sounds"
 		1 : "Ratchet metal"
 	]
-	deathtype(string) : "Death message"
+	obituary(string) : "Death message"
 	speed(integer) : "Speed" : 100
 	dmg(integer) : "Damage if blocked" : 0
 	path(target_destination) : "Target path_rotate" : : "First path_rotate which will be the starting position"

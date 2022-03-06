@@ -259,7 +259,7 @@ void () func_explobox_explode =
 
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	T_RadiusDamage (self, self, self.dmg, world);
+	T_RadiusDamage(self, self, self.dmg, world, DMGTYPE_EXPLOSION);
 	
 	activator = self.enemy;
 	SUB_UseTargets();
@@ -308,6 +308,7 @@ void () func_explobox =
 
 	self.use = func_explobox_die;
 	self.th_die = func_explobox_die;
+	if (!self.obituary) self.obituary = "blew up";
 	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 };
 
@@ -345,7 +346,7 @@ void() func_laser_touch = {
 		return;
 
 	if (other.takedamage && self.attack_finished < time) {
-		T_Damage(other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg, DMGTYPE_ELECTRIC);
 		self.attack_finished = time + 0.1;
 	}
 
@@ -449,6 +450,8 @@ void () func_laser =
 	self.use = func_laser_use;
 
 	self.touch = func_laser_touch;
+
+	if (!self.obituary) self.obituary = "looked into laser with remaining eye";
 
 	// lasers shouldn't get bulletholes
 	self.nobullets = zeroconvertdefault(self.nobullets, 1);
@@ -730,7 +733,7 @@ void() smoke_touch =
 
 	if (self.dmg > 0 && other.health)
 	{
-		T_Damage(other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg, DMGTYPE_BURN);
 		self.dmg = 0;
 	}	
 	self.velocity = '0 0 0'; //FIXME: can't set velocity in a touch function
@@ -872,6 +875,7 @@ void() misc_smoke =
 	self.use = smoke_use;
 	self.nextthink = time + 0.5;
 	self.think = smoke_firstthink;
+	self.obituary = "was steamed alive";
 };
 
 

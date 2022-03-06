@@ -24,7 +24,7 @@ void() eel_pitch_change =
 	if ( pointcontents ( self.origin ) != CONTENT_WATER )
 	{
 		droptofloor();
-		T_Damage( self, world, world, 6);
+		T_Damage( self, world, world, 6, 0);
 		return;
 	}
 	

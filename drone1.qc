@@ -47,7 +47,7 @@ void() DLaser_Touch =
 	if (other.health)
 	{
 		ImpactSpawn (org, self.velocity*0.2, 15, other.bloodtype);
-        T_Damage(other, self, self.owner, 10); // reduced (Speedy)
+        T_Damage(other, self, self.owner, 10, DMGTYPE_ELECTRIC); // reduced (Speedy)
 	}
 	else
 	{
@@ -323,7 +323,7 @@ void()  drn_die7         =[      $base1,        drn_die7       ]
 	ThrowGib ("progs/drngib3.mdl", -65);
 
 	self.nextthink = time + 2.5; // OUM - gives time to play death sound before going bang
-    T_RadiusDamage (self, self, 80, world); // reduced (Speedy)
+    T_RadiusDamage (self, self, 80, world, DMGTYPE_EXPLOSION); // reduced (Speedy)
 	self.origin = self.origin - 8*normalize(self.velocity);
 
 	//BecomeExplosion ();
@@ -342,7 +342,7 @@ void() drn_die = {
 
 void() DroneTouch = {
 	if (other.takedamage) {
-        T_Damage(self, other, other, self.health + 41); //explode instantly
+        T_Damage(self, other, other, self.health + 41, DMGTYPE_EXPLOSION); //explode instantly
 	}
 
 };

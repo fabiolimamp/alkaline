@@ -191,11 +191,11 @@ void() ShalMissileTouch =
 		return;		// don't explode on owner
 
 	if (other.classname == "monster_zombie")
-		T_Damage(other, self, self, 110);
+		T_Damage(other, self, self, 110, DMGTYPE_EXPLOSION);
 
 	self.dmg = zeroconvertdefault(self.dmg, 40);
 
-	T_RadiusDamage (self, self.owner, self.dmg, world);
+	T_RadiusDamage (self, self.owner, self.dmg, world, DMGTYPE_EXPLOSION);
 	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
 	BecomeExplosion();

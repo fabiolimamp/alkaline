@@ -129,7 +129,7 @@ The damage is coming from inflictor, but get mad at attacker
 This should be the only function that ever reduces health.
 ============
 */
-void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
+void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype) T_Damage =
 {
 	local	vector	dir;
 	local	entity	oldself;
@@ -137,12 +137,6 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	local	float	take;
 	local 	float	blocked_by_biosuit; //johnfitz
 	local 	float	ignore_armor; //johnfitz
-	local 	string	death_type; //johnfitz
-	
-	//johnfitz -- make sure targ.deathtype doesn't keep stale info after this function is done
-	death_type = targ.deathtype;
-	targ.deathtype = "";
-	//johnfitz
 
 	if (!targ.takedamage)
 		return;
@@ -155,28 +149,28 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	}
 	//johnfitz
 		
-// used by buttons and triggers to set activator for target firing
+	// used by buttons and triggers to set activator for target firing
 	damage_attacker = attacker;
 
-// check for quad damage powerup on the attacker
+	// check for quad damage powerup on the attacker
 	if ((attacker.super_damage_finished > time) || (attacker.trif_finished > time))
 		damage = damage * 4;
 		
-//johnfitz -- special rules for some damage types
+	//johnfitz -- special rules for some damage types
 	 //biosuit protects against burning and steam
-	if (targ.radsuit_finished > time && (death_type == "burning" || attacker.classname == "smoke"))
+	if (targ.radsuit_finished > time && dmgtype & DMGTYPE_BURN)
 		blocked_by_biosuit = TRUE;
 	else
 		blocked_by_biosuit = FALSE;
 
 	//don't deplete armor if drowning/burning, or protected by biosuit/pentagram/godmode (note: in ID1 pentagram/godmode doesn't actually protect your armor)
-	if (death_type == "burning" || death_type == "drowning" || blocked_by_biosuit || targ.invincible_finished >= time || targ.trif_finished >= time || targ.flags & FL_GODMODE)
+	if (dmgtype & DMGTYPE_BURN || dmgtype & DMGTYPE_DROWN || blocked_by_biosuit || targ.invincible_finished >= time || targ.trif_finished >= time || targ.flags & FL_GODMODE)
 		ignore_armor = TRUE;
 	else
 		ignore_armor = FALSE;
-//johnfitz
+	//johnfitz
 
-// save damage based on the target's armor level
+	// save damage based on the target's armor level
 	if (ignore_armor)  //johnfitz -- some damage doesn't deplete armor
 	{
 		save = 0;
@@ -199,9 +193,9 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 	if (targ.th_damage)	{
 		oldself = self;
 		self = targ;
-		take = self.th_damage(inflictor, attacker, take, damage);
+		take = self.th_damage(inflictor, attacker, take, damage, dmgtype);
 		self = oldself;
-		if (take == 0) return;
+		if (take <= 0) return;
 	}
 
 	// add to the damage total for clients, which will be sent as a single
@@ -271,9 +265,8 @@ void(entity targ, entity inflictor, entity attacker, float damage) T_Damage =
 
 	if (targ.health <= 0)
 	{
-		targ.deathtype = death_type; //johnfitz
+		targ.deathtype = dmgtype;
 		Killed (targ, attacker);
-		targ.deathtype = ""; //johnfitz
 		return;
 	}
 
@@ -359,7 +352,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 							
 							fx_beam(inflictor.origin, trace_endpos, self);
 							
-							T_Damage(head, inflictor, attacker, points);
+							T_Damage(head, inflictor, attacker, points, DMGTYPE_ELECTRIC);
 						}
 				}
 			}
@@ -373,7 +366,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 T_RadiusDamage
 ============
 */
-void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDamage =
+void(entity inflictor, entity attacker, float damage, entity ignore, float dmgtype) T_RadiusDamage =
 {
 	local	float 	points;
 	local	entity	head;
@@ -402,12 +395,8 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 				//johnfitz
 				if (points > 0)
 				{
-					if (CanDamage (head, inflictor))
-					{	// shambler takes half damage from all explosions
-						if (head.classname == "monster_shambler" || head.classname == "monster_bambler")						
-							T_Damage(head, inflictor, attacker, points*0.5);
-						else
-							T_Damage(head, inflictor, attacker, points);
+					if (CanDamage (head, inflictor)) {
+						T_Damage(head, inflictor, attacker, points, dmgtype);
 					}
 				}
 			}
@@ -417,10 +406,12 @@ void(entity inflictor, entity attacker, float damage, entity ignore) T_RadiusDam
 };
 
 /*
+Unused?
 ============
 T_BeamDamage
 ============
 */
+/*
 void(entity attacker, float damage) T_BeamDamage =
 {
 	local	float 	points;
@@ -452,4 +443,4 @@ void(entity attacker, float damage) T_BeamDamage =
 		head = head.chain;
 	}
 };
-
+*/

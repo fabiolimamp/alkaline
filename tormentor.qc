@@ -114,7 +114,7 @@ void(float dist) torm_sting_hit = {
 			return;
 
 		if (vlen(self.enemy.origin - self.origin) < dist) {
-			T_Damage(self.enemy, self, self, 8);
+			T_Damage(self.enemy, self, self, 8, DMGTYPE_MELEE);
 		}
 	}
 };
@@ -141,7 +141,7 @@ void() torm_slap_hit = {
 	if (infront(self.enemy)) {
 		if (vlen(self.enemy.origin - self.origin) < 128 && CanDamage(self.enemy, self)) {
 			sound(self, CHAN_WEAPON, "tormentor/punch_hit.wav", 1, ATTN_NORM);
-			T_Damage(self.enemy, self, self, 40);
+			T_Damage(self.enemy, self, self, 40, DMGTYPE_MELEE);
 			makevectors(self.angles);
 
 			if (!(self.enemy.flags & FL_ONGROUND))
@@ -193,13 +193,13 @@ void() torm_largeshot_touch = {
 		return;
 	}
 	if (other.health) {
-		T_Damage(other, self, self.owner, 60);
+		T_Damage(other, self, self.owner, 60, DMGTYPE_EXPLOSION);
 		if (other.classname == "player") {
 			other.velocity = ((other.velocity + (self.velocity * 0.2)) + '0 0 120');
 			other.flags = (other.flags - (other.flags & FL_ONGROUND));
 		}
 	}
-	T_RadiusDamage (self, self.owner, 60, other);
+	T_RadiusDamage (self, self.owner, 60, other, DMGTYPE_EXPLOSION);
 
 	BecomeExplosion();
 };
@@ -289,9 +289,9 @@ void() torm_smallshot_touch = {
 	org = self.origin - 8*normalize(self.velocity);
 
 	if (other.health)
-		T_Damage(other, self, self.owner, 15);
+		T_Damage(other, self, self.owner, 15, DMGTYPE_BALLISTIC);
 		
-	T_RadiusDamage (self, self, 15, other);		//Additional radial damage 
+	T_RadiusDamage (self, self, 15, other, DMGTYPE_EXPLOSION);		//Additional radial damage 
 	
 	become_big_bullet_explosion();	//ball explosion effect
 };
@@ -518,7 +518,7 @@ float() torm_CheckAttack = {
 };
 
 // only takes 1/5 of the damage while blocking
-float(entity inflictor, entity attacker, float damage, float orig_damage) torm_customdamage = {
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) torm_customdamage = {
 	if (self.state == 1) {
 		return damage * 0.2;
 	}

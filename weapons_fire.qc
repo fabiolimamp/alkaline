@@ -20,7 +20,7 @@ void() W_FireAxe =
 		trace_ent.axhitme = 1;
 
 		ImpactSpawn(org, '0 0 0', 20, trace_ent.bloodtype);
-		T_Damage(trace_ent, self, self, 20);
+		T_Damage(trace_ent, self, self, 20, DMGTYPE_MELEE);
 		
 		//johnfitz -- make clank sound when hitting brushmodels
 		if (trace_ent.movetype == MOVETYPE_PUSH || trace_ent.movetype == MOVETYPE_NONE)
@@ -81,9 +81,9 @@ void() W_FireSaw =
 		}
 
 		if (deathmatch == 0)
-			T_Damage(ent, self, self, 24);
+			T_Damage(ent, self, self, 24, DMGTYPE_MELEE);
 		else
-			T_Damage(ent, self, self, 30);
+			T_Damage(ent, self, self, 30, DMGTYPE_MELEE);
 		
 		ent.velocity = ent.velocity * 0.5;
 		sound (self, CHAN_WEAPON, "weapons/sawguts.wav", 1, ATTN_NORM);
@@ -119,7 +119,7 @@ void() ApplyMultiDamage =
 {
 	if (!multi_ent)
 		return;
-	T_Damage(multi_ent, self, self, multi_damage);
+	T_Damage(multi_ent, self, self, multi_damage, DMGTYPE_BALLISTIC);
 };
 
 void(entity hit, float damage) AddMultiDamage =
@@ -331,14 +331,12 @@ void() T_MissileTouch =
 	
 	if (other.health)
 	{
-		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
-			damg = damg * 0.5;	// mostly immune
-		T_Damage(other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 	}
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, rdamg, other);
+	T_RadiusDamage (self, self.owner, rdamg, other, DMGTYPE_EXPLOSION);
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -366,12 +364,12 @@ void() T_MissileTouchArma =
 	{
 		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
 			damg = damg * 0.5;	// mostly immune
-		T_Damage(other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 	}
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, 50, other);	// reduced splash (orig. 120), for better gameplay
+	T_RadiusDamage (self, self.owner, 50, other, DMGTYPE_EXPLOSION);	// reduced splash (orig. 120), for better gameplay
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
@@ -458,7 +456,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
 
-		T_Damage(trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
 		if (self.classname == "player")
 		{
 			if (other.classname == "player")
@@ -471,7 +469,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage(trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
 	}
 	e2 = trace_ent;
 
@@ -479,7 +477,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage(trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
 	}
 };
 
@@ -512,7 +510,7 @@ void() W_FireLightning =
 					{
 					if (victim.waterlevel > 0)
 						{
-						T_Damage(victim, self,self, 35*cells);					
+						T_Damage(victim, self,self, 35*cells, DMGTYPE_ELECTRIC);					
 						}
 					}	
 				}
@@ -561,7 +559,7 @@ void() GrenadeExplode =
 		return;
 	}
 
-	T_RadiusDamage (self, self.owner, 120, world);
+	T_RadiusDamage (self, self.owner, 120, world, DMGTYPE_EXPLOSION);
 
 	BecomeExplosion ();
 };
@@ -745,7 +743,7 @@ void() spike_touch =
 	{
 		damage = zeroconvertdefault(self.dmg, 9);
 		spawn_touchblood(damage);
-		T_Damage(other, self, self.owner, damage);
+		T_Damage(other, self, self.owner, damage, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
@@ -793,7 +791,7 @@ void() superspike_touch =
 	{
 		damage = zeroconvertdefault(self.dmg, 18);
 		spawn_touchblood(damage);
-		T_Damage(other, self, self.owner, damage);
+		T_Damage(other, self, self.owner, damage, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
@@ -846,7 +844,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadius
 
 			if (points > 0) {
 				if (CanDamage (head, inflictor) && head.waterlevel > 0)
-					T_Damage(head, inflictor, attacker, points);
+					T_Damage(head, inflictor, attacker, points, DMGTYPE_ELECTRIC);
 			}
 		}
 
@@ -899,7 +897,7 @@ void() T_PlasmaTouch = {
 	damg = 17;
 
 	if (other.health)
-		T_Damage(other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg, DMGTYPE_ELECTRIC);
 	
 
 	// Moves the plasma bullet backwards after hitting.. Otherwise the 

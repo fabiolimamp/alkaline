@@ -163,7 +163,7 @@ void() probe_pulsetouch =
 	if (other.health)
 	{
 		ImpactSpawn(org, self.velocity * 0.2, 15, other.bloodtype);
-		T_Damage(other, self, self.owner, 12);
+		T_Damage(other, self, self.owner, 12, DMGTYPE_ELECTRIC);
 	}
 	else
 	{

@@ -142,7 +142,7 @@ void() ZombieGrenadeTouch =
 		return;		// don't explode on owner
 	if (other.takedamage)
 	{
-		T_Damage(other, self, self.owner, 10 );
+		T_Damage(other, self, self.owner, 10, DMGTYPE_MELEE);
 		sound (self, CHAN_WEAPON, "zombie/z_hit.wav", 1, ATTN_NORM);
 		remove (self);
 		return;

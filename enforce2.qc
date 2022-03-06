@@ -54,7 +54,7 @@ void() menf_satck1;
 //--------------------------------------------------------------------
 void() DrunkExplode =
 {
-	T_RadiusDamage (self, self.owner, 30, world);
+	T_RadiusDamage (self, self.owner, 30, world, DMGTYPE_EXPLOSION);
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
 	BecomeBlast();
