@@ -313,8 +313,7 @@ void() T_MissileTouch =
 	if (other == self.owner)
 		return;		// don't explode on owner
 
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
+	if (pointcontents(self.origin) == CONTENT_SKY)	{
 		remove(self);
 		return;
 	}
@@ -330,52 +329,17 @@ void() T_MissileTouch =
 	}
 	
 	if (other.health)
-	{
 		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
-	}
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
 	T_RadiusDamage (self, self.owner, rdamg, other, DMGTYPE_EXPLOSION);
 
-//	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	self.origin = self.origin - 8*normalize(self.velocity);
-
-
-	BecomeExplosion ();
-};
-
-void() T_MissileTouchArma =
-{
-	local float	damg;
-
-	if (other == self.owner)
-		return;		// don't explode on owner
-
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
-		return;
-	}
-
-	damg = 50 + random()*20;	// reduced damage (orig. 100), for better gameplay
-	
-	if (other.health)
-	{
-		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
-			damg = damg * 0.5;	// mostly immune
-		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
-	}
-
-	// don't do radius damage to the other, because all the damage
-	// was done in the impact
-	T_RadiusDamage (self, self.owner, 50, other, DMGTYPE_EXPLOSION);	// reduced splash (orig. 120), for better gameplay
-
-//	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
 
 	BecomeExplosion ();
 };
+
 
 /*
 ================

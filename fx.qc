@@ -107,7 +107,7 @@ Spawns a complete, damage-less explosion at self's origin.
 Doesn't affect triggering entity.
 ========
 */
-void() TriggerExplosion =
+inline void() TriggerExplosion =
 {
 	SpawnExplosion(self.origin, 0, self, 0);
 }
