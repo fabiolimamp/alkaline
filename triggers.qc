@@ -1410,6 +1410,141 @@ float FILTER_OP_GTE = 4;
 float FILTER_OP_BITMASK_AND = 5;
 float FILTER_OP_BITMASK_OR = 6;
 
+
+
+float(entity targ, entity filter) filter_entity = {
+	filter.state = 0;
+
+	if (filter.estate != STATE_ACTIVE) return FALSE;
+
+	float targfloat;
+	string targstring;
+
+	float fieldtype, op, result;
+
+	if (filter.include != "") {
+		targ = find(world, targetname, filter.include);
+		if (!targ) targ = find(world, targetname2, filter.include);
+		if (!targ) return FALSE;
+	}
+
+
+	op = filter.weapon;
+
+	switch (filter.style) {
+		case FILTER_FIELD_STATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.state;
+			break;
+
+		case FILTER_FIELD_ESTATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.estate;
+			break;
+
+		case FILTER_FIELD_HEALTH:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.health;
+			break;
+
+		case FILTER_FIELD_COUNT:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.count;
+			break;
+
+		case FILTER_FIELD_CNT:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.cnt;
+			break;
+
+		case FILTER_FIELD_WEAPON:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.weapon;
+			break;
+
+		case FILTER_FIELD_FLAGS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.flags;
+			break;
+
+		case FILTER_FIELD_SPAWNFLAGS: 
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.spawnflags;
+			break;
+
+		case FILTER_FIELD_ITEMS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.items;
+			break;
+
+		case FILTER_FIELD_WEAPONS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.weapons;
+			break;
+
+		case FILTER_FIELD_CLASSNAME:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.classname;
+			break;
+
+		case FILTER_FIELD_DOOR_GROUPSTATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.owner.groupstate;
+			break;
+
+		case FILTER_FIELD_TARGETNAME:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.targetname;
+			break;
+
+		case FILTER_FIELD_TARGETNAME2:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.targetname2;
+			break;
+			
+		case FILTER_FIELD_TYPE:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.type;
+			break;
+	}
+	result = 0;
+
+	if (fieldtype == FILTER_FIELDTYPE_FLOAT) {
+		if 		(op == FILTER_OP_EQUALS) 		{if (targfloat == filter.count) result = 1;}
+		else if (op == FILTER_OP_LT) 			{if (targfloat <  filter.count) result = 1;}
+		else if (op == FILTER_OP_LTE) 			{if (targfloat <= filter.count) result = 1;}
+		else if (op == FILTER_OP_GT) 			{if (targfloat >  filter.count) result = 1;}
+		else if (op == FILTER_OP_GTE) 			{if (targfloat >= filter.count) result = 1;}
+		else if (op == FILTER_OP_BITMASK_AND)	{if (targfloat &  filter.count) result = 1;}
+		else if (op == FILTER_OP_BITMASK_OR)	{if (targfloat |  filter.count) result = 1;}
+		else 									{if (targfloat == filter.count) result = 1;}
+	}
+	else if (fieldtype == FILTER_FIELDTYPE_FLAG) {
+		if 		(op == FILTER_OP_EQUALS) 		{if (targfloat == filter.aflag) result = 1;}
+		else if (op == FILTER_OP_BITMASK_AND)	{if (targfloat &  filter.aflag) result = 1;}
+		else if (op == FILTER_OP_BITMASK_OR)	{if (targfloat |  filter.aflag) result = 1;}
+		else 									{if (targfloat == filter.aflag) result = 1;}
+	}
+	else if (fieldtype == FILTER_FIELDTYPE_STRING) {
+		if (targstring == filter.type) result = 1;
+	}
+	else {
+		objerror ("invalid fieldtype");
+		return FALSE;
+	}
+
+	if (filter.spawnflags & 1) result = 1 - result; // negate
+
+	//dprint2(targstring, "\n");
+	//dprint2(ftos(result),"\n");
+
+	if (result) 
+		return TRUE;
+	else
+		return FALSE;
+};
+
+
 void() trigger_filter_use = {
 	self.state = 0;
 

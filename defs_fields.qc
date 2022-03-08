@@ -606,3 +606,10 @@ FIELDS
 .vector csf_color, csf_color_prev;
 .float csf_density, csf_density_prev;
 .float csf_priority, csf_priority_prev;
+
+
+//
+.string attackerfilter;
+.string inflictorfilter;
+.string touchfilter;
+.float damagedby;

@@ -137,6 +137,8 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	local	float	take;
 	local 	float	blocked_by_biosuit; //johnfitz
 	local 	float	ignore_armor; //johnfitz
+	float filtered;
+	entity filter;
 
 	if (!targ.takedamage)
 		return;
@@ -161,6 +163,47 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	else
 		ignore_armor = FALSE;
 	//johnfitz
+
+	if (targ.attackerfilter != "") {
+
+		filtered = TRUE;
+
+		filter = find(world, targetname, targ.attackerfilter);
+		while (filter && filtered) {
+			filtered = filter_entity(attacker, filter);
+
+			if (filter.target)
+				filter = find(world, targetname, filter.target);
+			else
+				filter = world;
+		}
+
+		if (!filtered)
+			return;
+	}
+
+	if (targ.inflictorfilter != "") {
+
+		filtered = TRUE;
+
+		filter = find(world, targetname, targ.inflictorfilter);
+		while (filter && filtered) {
+			filtered = filter_entity(inflictor, filter);
+
+			if (filter.target)
+				filter = find(world, targetname, filter.target);
+			else
+				filter = world;
+		}
+
+		if (!filtered)
+			return;
+	}
+
+	if (targ.damagedby) {
+		if (!(dmgtype & targ.damagedby))
+			return;
+	}
 
 	take = damage;
 	// save damage based on the target's armor level
