@@ -345,7 +345,7 @@ float FS_FLYING = 10;		// Exclusion, no happy feet!
 
 
 // Damage types
-float DMGTYPE_EXPLOSION = 1; // boom
+float DMGTYPE_GENERIC = 1;
 float DMGTYPE_FALL = 2;
 float DMGTYPE_DROWN = 4;
 float DMGTYPE_LAVA = 8;
@@ -357,6 +357,7 @@ float DMGTYPE_TOXIC = 256;
 float DMGTYPE_CRUSH = 512;
 float DMGTYPE_MELEE = 1024;
 float DMGTYPE_INSTANT = 2048; //void, telefrag
+float DMGTYPE_EXPLOSION = 4096; // boom
 
 //
 // CSQC

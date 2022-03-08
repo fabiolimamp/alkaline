@@ -365,7 +365,7 @@ void() changelevel_touch =
 
 	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
 	{
-		T_Damage(other, self, self, 50000, 0);
+		T_Damage(other, self, self, 50000, DMGTYPE_INSTANT);
 		return;
 	}
 
