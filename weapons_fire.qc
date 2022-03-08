@@ -14,6 +14,8 @@ void() W_FireAxe =
 	if (trace_fraction == 1.0)
 		return;
 	
+	self.show_hostile = time + 1; // hit something, so alert monsters
+
 	org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage) {

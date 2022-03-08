@@ -204,6 +204,7 @@ void() W_Attack =
 
 	if (self.weapon == WEAPON_AXE)
 	{
+		self.show_hostile = 0; // will only be set if the axe hits something
 		sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
 		player_axe();
 		self.attack_finished = time + 0.5;
