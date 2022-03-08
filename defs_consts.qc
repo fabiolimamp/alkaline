@@ -345,12 +345,12 @@ float FS_FLYING = 10;		// Exclusion, no happy feet!
 
 
 // Damage types
-float DMGTYPE_GENERIC = 1;
+float DMGTYPE_GENERIC = 1; // just a fallback, avoid using this one
 float DMGTYPE_FALL = 2;
-float DMGTYPE_DROWN = 4;
-float DMGTYPE_LAVA = 8;
-float DMGTYPE_SLIME = 16;
-float DMGTYPE_BALLISTIC = 32; // shells and spikes
+float DMGTYPE_DROWN = 4; // liquid only
+float DMGTYPE_LAVA = 8; // liquid only
+float DMGTYPE_SLIME = 16; // liquid only
+float DMGTYPE_BALLISTIC = 32; // shells and spikes and bullety things
 float DMGTYPE_ELECTRIC = 64; // lightning, plasma, laser, blaster
 float DMGTYPE_BURN = 128;
 float DMGTYPE_TOXIC = 256;
