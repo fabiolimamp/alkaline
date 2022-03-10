@@ -161,6 +161,8 @@ nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
 nosave float cleanUpClientStuff;
 nosave float gamestarted;
 
+entity lastspawn;
+
 
 // simple kex detection, thanks Lunaran
 float isKex; // running the quake rerelease

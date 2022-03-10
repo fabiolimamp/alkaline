@@ -20,7 +20,52 @@ void() main =
 };
 
 
-entity	lastspawn;
+//=================================================
+// EndFrame code from Preach
+//=================================================
+entity backstop;
+float prevframe;
+
+entity() spawn = {
+	local entity e;
+	e = spawn_builtin();
+	if(nextent(e) != world)
+		return e;
+	// e is now the last entity on the list
+	// so we need to swap it with the backstop
+	local entity f;
+	f = backstop;
+	f.think = e.think;
+	f.nextthink = e.nextthink;
+	f.classname = e.classname;
+	 
+	e.think = EndFrame;
+	e.nextthink = 0.05;
+	e.classname = "backstop";
+	backstop = e;
+	
+	return f;
+}
+
+void() CreateBackstop = {
+	local entity e, f, head;
+	//begin our list with the temp backstop
+	e = f = head = backstop;
+	// spawn() already contains the code to make a backstop
+	// so we just burn off enough entities that one appears
+	// at the back
+	do {
+		f = spawn();
+		e.chain = f;
+		e = e.chain;
+	} while(nextent(backstop) != world);
+
+	while (head != f) {
+		e = head;
+		head = e.chain;
+		remove(e);
+	}
+}
 
 //=======================
 /*QUAKED worldspawn (0 0 0) ?
@@ -53,7 +98,7 @@ void() worldspawn =
 
 	InitBodyQue ();
 
-   	InitBulletHoles();
+	InitBulletHoles();
    
 // custom map attributes
 	if (self.model == "maps/e1m8.bsp")
@@ -361,6 +406,13 @@ void() StartFrame =
 	skill = cvar("skill");
 	framecount = framecount + 1;
 
+	if(framecount == 1)
+		CreateBackstop();
+
+	bprint("StartFrame call at time ");
+	bprint(ftos(time));
+	bprint("\n");
+
 	if (cleanUpClientStuff)
 		cleanUpClientStuff -= 1;
 	else if (!gamestarted && framecount > 2)
@@ -370,8 +422,7 @@ void() StartFrame =
 		
 		gamestarted = TRUE;
 	}
-	if (framecount > 2)
-		update_bulletholes();
+
 
 	//johnfitz -- new stuff for LoadSaveGameCallback function
 	if (framecount == 3)
@@ -380,8 +431,26 @@ void() StartFrame =
 	if(!loadsavegamecallback_done && framecount > 3)
 		LoadSaveGameCallback();
 	//johnfitz
+
 };
 
+void() EndFrame = {
+	if (prevframe == framecount)
+		return;
+
+	prevframe = framecount;
+	// set ourselves up to think again next frame
+	self.nextthink = time;
+	// prevent accidental modification of the backstop
+	self = world;
+	
+	if (framecount > 2)
+		update_bulletholes();
+   // demonstrate the function
+	bprint("EndFrame call at time ");
+	bprint(ftos(time));
+	bprint("\n");
+}
 /*
 ==============================================================================
 
