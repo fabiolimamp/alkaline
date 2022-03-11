@@ -6,10 +6,6 @@ Mega Enforcer
 ============================================================================
 */
 
-$cd id1/models/enforcer
-$origin 0 -6 24
-$base base		
-$skin skin
 
 $frame stand1 stand2 stand3 stand4 stand5 stand6 stand7
 
@@ -43,12 +39,6 @@ $frame attackp1 attackp2 attackp3 attackp4 attackp5 attackp6 attackp7
 
 $frame fieldon1 fieldon2 fieldon3 fieldon4 fieldon5 fieldon6 fieldon7
 
-//dhm - prototype needed for new attack sequence
-void() menf_atk13;
-void() menf_atk1;
-void() menf_satck1;
-//where does sf64_teledeath function exist in the zer source code??
-//void() sf64_teledeath;
 
 
 //--------------------------------------------------------------------
@@ -304,13 +294,17 @@ void() megaenforcer_fire = {
 };
 
 void(float play_sound) menf_shield_on = {
-	if (play_sound && self.takedamage != DAMAGE_NO) sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); 
-	self.takedamage = DAMAGE_NO;
+	if (play_sound && self.takedamage != DAMAGE_NO) sound (self, 5, "me/me_son.wav", 1, ATTN_NORM);
+	//self.takedamage = DAMAGE_NO;
+	self.state = 1;
+	self.bloodtype = SPAWN_YELLOWSPARK;
 };
 
 void(float play_sound) menf_shield_off = {
 	if (play_sound && self.takedamage != DAMAGE_AIM) sound (self, 6, "me/me_soff.wav", 1, ATTN_NORM);
-	self.takedamage = DAMAGE_AIM;
+	//self.takedamage = DAMAGE_AIM;
+	self.state = 0;
+	self.bloodtype = SPAWN_BLOOD;
 };
 
 //============================================================================
@@ -449,16 +443,21 @@ void()	menf_paind19	=[	$paind19,	menf_run1	] {};
 
 void(entity attacker, float damage)	menf_pain =
 {
-	local float r;
+	local float r, shielded;
 
 	if (self.health < self.max_health * 0.25) 		self.skin = 3;
 	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
 	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
 
-	if (self.pain_finished > time || self.health > 120)
+	if (self.pain_finished > time || self.health > 120 || !self.state)
 		return;
 
-	r = random ();
+	
+	shielded = self.state;
+
+	menf_shield_off(FALSE);
+
+	r = random();
 	
 	if (r < 0.3)
 		sound (self, CHAN_VOICE, "me/mepain1.wav", 1, ATTN_NORM);
@@ -468,6 +467,21 @@ void(entity attacker, float damage)	menf_pain =
 		sound (self, CHAN_VOICE, "me/mepain3.wav", 1, ATTN_NORM);
 
 	r = random ();
+
+	if (shielded) dprint("Shielded\n");
+	else dprint("Not shielded\n");
+	// long pain animation if stunned from explosion
+	if (shielded) {
+		if (damage >= 7) {
+			self.pain_finished = time + 2;
+			menf_paind1 ();
+		}
+		else {
+			self.pain_finished = time + 1;
+			menf_painb1 ();
+		}
+		return;
+	}
 
 	if (r < 0.2)
 	{
@@ -553,6 +567,22 @@ void() menf_die =
 	}
 };
 
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) menf_damage = {
+
+	if (self.state == 1) {
+		// Shields are up, ignore everything except explosions.
+		// Only 15% of the damage passes through.
+		// Smallish explosions are ignored too
+		if (dmgtype == DMGTYPE_EXPLOSION && damage >= 20)
+			return damage * 0.15;
+		else
+			return 0;
+	}
+	else
+		return damage;
+
+};
+
 void() menf_sight = {
 	local float rsnd;
 	rsnd = rint(random() * 2);			
@@ -581,6 +611,7 @@ void(entity e) monster_me_start =
 	self.th_die = menf_die;
 	self.th_missile = megaenforcer_fire;
 	self.th_sight = menf_sight;
+	self.th_damage = menf_damage;
 
 
 	self.solid = SOLID_SLIDEBOX;
@@ -595,7 +626,8 @@ void(entity e) monster_me_start =
 	if (self.obituary == "") self.obituary = "was vaporized by a Mega-enforcer";
 
 	walkmonster_start();
-	self.takedamage = DAMAGE_NO;
+
+	menf_shield_off(FALSE);
 
 	self = oself;
 };
