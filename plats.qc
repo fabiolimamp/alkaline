@@ -293,7 +293,7 @@ void() train_wait = {
 	// Trains now fire their path_corners' targets on arrival.
 	// If a player is riding the train, treat them as activator.
 	activator = nextent(world);
-	while (!EntitiesTouching(self,activator) && activator.classname == "player")
+	while (!SolidsTouching(self,activator) && activator.classname == "player")
 		activator = nextent(activator);
 	if (activator.classname != "player")
 		activator = nextent(world);	// default to player1 wherever they are

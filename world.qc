@@ -27,20 +27,20 @@ entity backstop;
 float prevframe;
 
 entity() spawn = {
-	local entity e;
+	entity e;
 	e = spawn_builtin();
-	if(nextent(e) != world)
+	if (nextent(e) != world)
 		return e;
 	// e is now the last entity on the list
 	// so we need to swap it with the backstop
-	local entity f;
+	entity f;
 	f = backstop;
 	f.think = e.think;
 	f.nextthink = e.nextthink;
 	f.classname = e.classname;
 	 
 	e.think = EndFrame;
-	e.nextthink = 0.05;
+	e.nextthink = time;
 	e.classname = "backstop";
 	backstop = e;
 	
@@ -48,7 +48,7 @@ entity() spawn = {
 }
 
 void() CreateBackstop = {
-	local entity e, f, head;
+	entity e, f, head;
 	//begin our list with the temp backstop
 	e = f = head = backstop;
 	// spawn() already contains the code to make a backstop
@@ -58,7 +58,7 @@ void() CreateBackstop = {
 		f = spawn();
 		e.chain = f;
 		e = e.chain;
-	} while(nextent(backstop) != world);
+	} while (nextent(backstop) != world);
 
 	while (head != f) {
 		e = head;
@@ -82,6 +82,8 @@ World Types:
 void() worldspawn =
 {
 	local entity linkdoor_e;
+
+	backstop = spawn_builtin();
 
 	lastspawn = world;
 	
@@ -406,15 +408,11 @@ void() StartFrame =
 	skill = cvar("skill");
 	framecount = framecount + 1;
 
-	if(framecount == 1)
-		CreateBackstop();
-
-	bprint("StartFrame call at time ");
-	bprint(ftos(time));
-	bprint("\n");
+	// todo: unify all this logic -bmFbr
 
 	if (cleanUpClientStuff)
 		cleanUpClientStuff -= 1;
+
 	else if (!gamestarted && framecount > 2)
 	{
 		if (framecount != 3)
@@ -432,24 +430,39 @@ void() StartFrame =
 		LoadSaveGameCallback();
 	//johnfitz
 
+	if(framecount == 1)
+		CreateBackstop();
+
 };
 
 void() EndFrame = {
-	if (prevframe == framecount)
+	//dprint("---------------EndFrame Start--------------------\n");
+	//dprint3("Frame: ", ftos(framecount),"\n");
+	if (prevframe == framecount) {
+	//	dprint("Frame already ran, falling back\n");
+	//	dprint("---------------EndFrame End--------------------\n");
 		return;
+	}
+
+	//eprint(backstop);
+	//if(!nextent(backstop)) dprint("Backstop is last\n");
+	//else dprint("\bWARNING!!\b Backstop is not last\n");
 
 	prevframe = framecount;
 	// set ourselves up to think again next frame
-	self.nextthink = time;
+	backstop.nextthink = time;// + 0.05;
 	// prevent accidental modification of the backstop
 	self = world;
 	
-	if (framecount > 2)
-		update_bulletholes();
-   // demonstrate the function
-	bprint("EndFrame call at time ");
-	bprint(ftos(time));
-	bprint("\n");
+	if (framecount <= 2) {
+		//dprint("First frames\n");
+		//dprint("---------------EndFrame End--------------------\n");
+		return;
+	}
+
+	update_bulletholes();
+	//checkWaterBrush();
+	//dprint("---------------EndFrame End Success----------------\n");
 }
 /*
 ==============================================================================
@@ -470,15 +483,20 @@ void() InitBodyQue =
 {
 //	local entity	e;
 	
-	bodyque_head = spawn();
-	bodyque_head.classname = "bodyque";
-	bodyque_head.owner = spawn();
-	bodyque_head.owner.classname = "bodyque";
-	bodyque_head.owner.owner = spawn();
-	bodyque_head.owner.owner.classname = "bodyque";
-	bodyque_head.owner.owner.owner = spawn();
-	bodyque_head.owner.owner.owner.classname = "bodyque";
-	bodyque_head.owner.owner.owner.owner = bodyque_head;
+    local entity    e;
+    e = spawn();
+    bodyque_head = e;
+    bodyque_head.classname = "bodyque";
+    e = spawn();
+    bodyque_head.owner = e;
+    bodyque_head.owner.classname = "bodyque";
+    e = spawn();
+    bodyque_head.owner.owner = e;
+    bodyque_head.owner.owner.classname = "bodyque";
+    e = spawn();
+    bodyque_head.owner.owner.owner = e;
+    bodyque_head.owner.owner.owner.classname = "bodyque";
+    bodyque_head.owner.owner.owner.owner = bodyque_head;
 };
 
 

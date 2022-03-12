@@ -1325,6 +1325,8 @@ void() PlayerPreThink =
 		if (self.csf_priority == 0 && self.csf_density > 0)
 			csf_clear_all(self);
 	}
+
+	checkSelfInWaterBrush();
 };
 	
 /*
@@ -1653,6 +1655,8 @@ void() PlayerPostThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
+	checkSelfInWaterBrush();
+	
 	if (self.flags & FL_CLIENT) {
 		mapvar_cvar = TRUE;			// Map Variable are live
 	}

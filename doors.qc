@@ -631,7 +631,7 @@ void(entity door, float ldcount) setupTriggerField = {
 	self = oself;
 }
 
-float (entity e1, entity e2) EntitiesTouching =
+float (entity e1, entity e2) SolidsTouching =
 {
 	if (e1.mins_x > e2.maxs_x) {
 		return FALSE;
@@ -737,7 +737,7 @@ void(entity d1, float ldcount) LinkDoorsEntity = {
 	
 	while (d2) {
 		if (!(d1.owner && d2.owner) && !(d2.spawnflags & DOOR_DONT_LINK) && d2 != d1) {
-			if ((EntitiesTouching(d1,d2) && !d1.groupname && !d2.groupname) || (d1.groupname && d2.groupname == d1.groupname)) {
+			if ((SolidsTouching(d1,d2) && !d1.groupname && !d2.groupname) || (d1.groupname && d2.groupname == d1.groupname)) {
 				
 				if(!d1.owner && !d2.owner) { // if neither door has an owner then start a new group with d1 as master
 					d1.owner = d1;
