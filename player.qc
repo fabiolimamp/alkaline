@@ -312,7 +312,7 @@ void() player_chainsaw6   =[$sawatt2, player_run  ]
 
 
 void() player_nail = {
-	if (!self.button0) {
+	if (!self.button0 || self.weapon != WEAPON_NAILGUN) {
 		player_run();
 		return;
 	}
