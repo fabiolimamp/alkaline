@@ -43,7 +43,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_SUPER_SHOTGUN)
 	{
 		self.currentammo = self.ammo_shells;
-		self.weaponmodel = "progs/v_shot2.mdl";
+		self.weaponmodel = "progs/v_shot2_40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
@@ -78,7 +78,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
-		self.weaponmodel = "progs/v_rock.mdl";
+		self.weaponmodel = "progs/v_rock_40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
@@ -239,7 +239,7 @@ void() W_Attack =
 	}
 	else if (self.weapon == WEAPON_PROXIMITY_GUN)
 	{
-		player_grenade1();
+		player_proxgrenade1();
 		W_FireProximityGrenade();
 		self.attack_finished = time + 0.6;
 	}

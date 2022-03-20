@@ -142,7 +142,8 @@ void(.float fld) playercount_convert =
 		self.fld = clients;
 }
 
-
+// sets nextthink time
+inline void(float t) nxth = {self.nextthink = time + t;};
 
 // wonderful stuffcmd code from Honey by czg
 

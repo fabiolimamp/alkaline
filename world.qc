@@ -266,16 +266,13 @@ void() worldspawn =
 	precache_model ("progs/s_light.spr");	// light bulb
 
 	precache_model ("progs/v_alkaxe20fps.mdl");
-	precache_model ("progs/v_shot.mdl");
 	precache_model ("progs/v_shot40fps.mdl");
 	precache_model ("progs/v_nail_alk40fps.mdl");
 	precache_model ("progs/v_nail3.mdl");
-	precache_model ("progs/v_rock.mdl");
-	precache_model ("progs/v_shot2.mdl");
+	precache_model ("progs/v_rock_40fps.mdl");
+	precache_model ("progs/v_shot2_40fps.mdl");
 	precache_model ("progs/v_nail2.mdl");
-	precache_model ("progs/v_rock2.mdl");
 	precache_model ("progs/v_rock2_40fps.mdl");
-	precache_model ("progs/v_laserg.mdl");
 	precache_model ("progs/v_laserg40fps.mdl");
 	precache_model ("progs/v_saw.mdl");		//dhm - Chainsaw
 	precache_model ("progs/v_mine.mdl");

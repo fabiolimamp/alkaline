@@ -885,7 +885,6 @@ void() W_FirePlasma =
 	local entity missile;
 	vector org;
 
-	// Now it only shoots once per cell... Just to make it not so overpowered
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
 	// Taken from Doom...
@@ -895,26 +894,20 @@ void() W_FirePlasma =
 
 	missile = spawn();
 	missile.owner = self;
-	missile.movetype = MOVETYPE_FLYMISSILE;    // Like a rocket
+	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_BBOX;
 	missile.classname = "plasma";
 	missile.flags = missile.flags | FL_PROJECTILE;
 
-	// set plasma bullet speed. (Basically AIM with some random)  
-
-	if (time < self.lastshot + 0.07) self.shotcount = min(self.shotcount + 1, 7);
-	else { // if (time < self.lastshot + 1.07) {
-		self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
-	}
-	//else self.shotcount = 1;
-
-	//dprint2(ftos(self.shotcount),"\n");
-
+	// shot spread increases the longer you hold the trigger,
+	// and slowly recovers after that -bmFbr
+	if (time < self.lastshot + 0.065) self.shotcount = min(self.shotcount + 1, 6);
+	else self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
+	
 	makevectors (self.v_angle);
-	missile.velocity = aim(self, 1000);
-	missile.velocity = missile.velocity * 1000;
-	missile.velocity = missile.velocity + ( crandom() * 50 * (self.shotcount/7) * v_right );
-	missile.velocity = missile.velocity + ( crandom() * 50 * (self.shotcount/7) * v_up );
+	missile.velocity = aim(self, 1000) * 1000;
+	missile.velocity = missile.velocity + (crandom() * 50 * (self.shotcount*self.shotcount/36) * v_right );
+	missile.velocity = missile.velocity + (crandom() * 50 * (self.shotcount*self.shotcount/36) * v_up );
 	missile.angles = vectoangles(missile.velocity);
 	missile.avelocity = '300 300 300';  
 
