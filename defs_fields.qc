@@ -305,6 +305,8 @@ FIELDS
 
 .float 		wantedgravity; // thanks Spike!
 
+.float 		shotcount, lastshot;
+
 .float	healamount, healtype;
 
 .float steptype, steplast, altsteptype, altsteplast;

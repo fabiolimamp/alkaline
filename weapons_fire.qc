@@ -893,7 +893,7 @@ void() W_FirePlasma =
 
 	self.punchangle_x = -2;
 
-	missile = spawn ();
+	missile = spawn();
 	missile.owner = self;
 	missile.movetype = MOVETYPE_FLYMISSILE;    // Like a rocket
 	missile.solid = SOLID_BBOX;
@@ -902,11 +902,19 @@ void() W_FirePlasma =
 
 	// set plasma bullet speed. (Basically AIM with some random)  
 
+	if (time < self.lastshot + 0.07) self.shotcount = min(self.shotcount + 1, 7);
+	else { // if (time < self.lastshot + 1.07) {
+		self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
+	}
+	//else self.shotcount = 1;
+
+	//dprint2(ftos(self.shotcount),"\n");
+
 	makevectors (self.v_angle);
 	missile.velocity = aim(self, 1000);
 	missile.velocity = missile.velocity * 1000;
-	missile.velocity = missile.velocity + ( crandom() * 50 * v_right );
-	missile.velocity = missile.velocity + ( crandom() * 50 * v_up );
+	missile.velocity = missile.velocity + ( crandom() * 50 * (self.shotcount/7) * v_right );
+	missile.velocity = missile.velocity + ( crandom() * 50 * (self.shotcount/7) * v_up );
 	missile.angles = vectoangles(missile.velocity);
 	missile.avelocity = '300 300 300';  
 
@@ -924,4 +932,6 @@ void() W_FirePlasma =
 	traceline(org, org + v_forward * 24, FALSE, self);
 	//setorigin (missile, org + v_forward*12);
 	setorigin (missile, org + v_forward*24 * trace_fraction);
+
+	self.lastshot = time;
 };

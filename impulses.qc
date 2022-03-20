@@ -432,46 +432,18 @@ Called every frame so impulse events can be handled as well as possible
 */
 void() W_WeaponFrame =
 {
-	if (time < self.attack_finished)
-		return;
 
 	if (self.impulse) //johnfitz
 		ImpulseCommands();
-	
+
+	if (time < self.attack_finished)
+		return;
+
 // check for attack
-	if (self.button0)
-	{
-		SuperDamageSound ();
+	if (self.button0) {
 		W_Attack ();
 	}
 };
 
-/*
-========
-SuperDamageSound
-
-Plays sound if needed
-========
-*/
-void() SuperDamageSound =
-{
-	if ((self.super_damage_finished > time) || (self.trif_finished > time))
-	{
-		if (self.super_sound < time)
-		{
-			
-			if(self.trif_finished > time) {
-				sound(self, CHAN_BODY, "items/trifecta3.wav", 1, ATTN_NORM);
-				self.super_sound = time + 0.7;
-			}
-			else{
-				sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
-				self.super_sound = time + 1;
-			}
-			
-		}
-	}
-	return;
-};
 
 

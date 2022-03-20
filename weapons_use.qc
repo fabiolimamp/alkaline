@@ -36,7 +36,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_SHOTGUN)
 	{
 		self.currentammo = self.ammo_shells;
-		self.weaponmodel = "progs/v_shot.mdl";
+		self.weaponmodel = "progs/v_shot40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
@@ -64,7 +64,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_LASER_CANNON)
 	{
 		self.currentammo = self.ammo_cells;
-		self.weaponmodel = "progs/v_laserg.mdl";
+		self.weaponmodel = "progs/v_laserg40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
 	}
@@ -92,7 +92,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
-		self.weaponmodel = "progs/v_rock2.mdl";
+		self.weaponmodel = "progs/v_rock2_40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
@@ -217,27 +217,29 @@ void() W_Attack =
 	}
 	else if (self.weapon == WEAPON_SUPER_SHOTGUN)
 	{
-		player_shot1 ();
+		player_sshot1 ();
 		W_FireSuperShotgun ();
 		self.attack_finished = time + 0.7;
 	}
 	else if (self.weapon == WEAPON_NAILGUN)
 	{
 		player_nail ();
+		// projectile firing is done through the animation function
 	}
 	else if (self.weapon == WEAPON_SUPER_NAILGUN)
 	{
 		player_super_nail ();
+		// projectile firing is done through the animation function
 	}
 	else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 	{
-		player_rocket1();
+		player_grenade1();
 		W_FireGrenade();
 		self.attack_finished = time + 0.6;
 	}
 	else if (self.weapon == WEAPON_PROXIMITY_GUN)
 	{
-		player_rocket1();
+		player_grenade1();
 		W_FireProximityGrenade();
 		self.attack_finished = time + 0.6;
 	}
@@ -256,6 +258,7 @@ void() W_Attack =
 	else if (self.weapon == WEAPON_LASER_CANNON)
 	{
 		player_laser1();
+		// projectile firing is done through the animation function
 	}
 	else if (self.weapon == WEAPON_PLASMA)
 	{
@@ -269,7 +272,40 @@ void() W_Attack =
 		self.attack_finished = time + 0.55;
 		sound (self, CHAN_AUTO, "weapons/sawatck.wav", 1, ATTN_NORM);
 	}
+	else return;
+
+	SuperDamageSound ();
+	
 };
+
+/*
+========
+SuperDamageSound
+
+Plays sound if needed
+========
+*/
+void() SuperDamageSound =
+{
+	if ((self.super_damage_finished > time) || (self.trif_finished > time))
+	{
+		if (self.super_sound < time)
+		{
+			
+			if(self.trif_finished > time) {
+				sound(self, CHAN_BODY, "items/trifecta3.wav", 1, ATTN_NORM);
+				self.super_sound = time + 0.7;
+			}
+			else{
+				sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
+				self.super_sound = time + 1;
+			}
+			
+		}
+	}
+	return;
+};
+
 
 /*
 ============
