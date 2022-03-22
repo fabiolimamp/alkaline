@@ -142,33 +142,13 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 	self.walkframe = self.walkframe + 1;	
 };
 
-void() player_super_nail_spindown = {
 
-	// thinks run at 4x the usual speed while spinning down,
-	// so only update every 4 weaponframes
-	if (self.weaponframe % 4 == 0) {
-		if (self.walkframe == 6)
-			self.walkframe = 0;
-		self.frame = $axrun1 + self.walkframe;
-		
-		self.walkframe = self.walkframe + 1;
-
-		if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND && !intermission_running) {
-			// Need to be moving before feet sounds
-			float spd;
-			spd = vlen([self.velocity_x, self.velocity_y, 0]);
-			if (spd > 50) {
-				play_footstep(FALSE, clamp(spd, 0, 320)/320);
-			}
-		}
-	}
-}
 
 void()	player_run =[	$rockrun1,	player_run	]
 {
 	if (!self.velocity_x && !self.velocity_y)
 	{
-		self.walkframe=0;
+		self.walkframe = 0;
 		player_stand1();
 		return;
 	}
@@ -178,17 +158,17 @@ void()	player_run =[	$rockrun1,	player_run	]
 		return;
 	}
 
-	if (self.weapon == WEAPON_CHAINSAW)
-	{
+	if (self.weapon == WEAPON_CHAINSAW) {
 		self.weaponframe = self.weaponframe + 1;
-		if(self.weaponframe >= 5)
-		{
+		if (self.weaponframe >= 5) {
 			self.weaponframe = 0;
 			if (self.view_ofs != '0 0 0')
 				sound (self, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_NORM);
 		}
+
 		if (self.walkframe == 6)
 			self.walkframe = 0;
+
 		self.frame = $sawrun1 + self.walkframe;
 		self.walkframe = self.walkframe + 1;
 		return;
@@ -196,14 +176,12 @@ void()	player_run =[	$rockrun1,	player_run	]
 	
 	self.weaponframe = 0;
 
-	if (self.weapon == WEAPON_AXE)
-	{
+	if (self.weapon == WEAPON_AXE) {
 		if (self.walkframe == 6)
 			self.walkframe = 0;
 		self.frame = $axrun1 + self.walkframe;
 	}
-	else
-	{
+	else {
 		if (self.walkframe == 6)
 			self.walkframe = 0;
 		self.frame = self.frame + self.walkframe;
@@ -307,43 +285,22 @@ void() player_axe = {
 
 //============================================================================
 
-void() player_chainsaw1   =[$sawatt1, player_chainsaw2 ] 
-{
-	self.weaponframe=5; 
-	W_FireSaw();
-};
-void() player_chainsaw2   =[$sawatt2, player_chainsaw3 ] 
-{
-	self.weaponframe=6;
-	if (!self.button0)
-	{
+void() player_chainsaw1   =[$sawatt1, player_chainsaw2 ] {self.weaponframe = 5; W_FireSaw();};
+void() player_chainsaw2   =[$sawatt2, player_chainsaw3 ] {self.weaponframe = 6;
+	if (!self.button0) {
 		player_run ();
 		return;
 	}
 };
-void() player_chainsaw3   =[$sawatt1, player_chainsaw4 ] 
-{
-	self.weaponframe=7;
-	W_FireSaw();
-};
-void() player_chainsaw4   =[$sawatt2, player_chainsaw5 ] 
-{
-	self.weaponframe=8;
-	if (!self.button0)
-	{
+void() player_chainsaw3   =[$sawatt1, player_chainsaw4 ] {self.weaponframe = 7; W_FireSaw();};
+void() player_chainsaw4   =[$sawatt2, player_chainsaw5 ] {self.weaponframe = 8;
+	if (!self.button0) {
 		player_run ();
 		return;
 	}
 };
-void() player_chainsaw5   =[$sawatt1, player_chainsaw6 ]
-{
-	self.weaponframe=9;
-	W_FireSaw();
-};
-void() player_chainsaw6   =[$sawatt2, player_run  ]
-{
-	self.weaponframe=10;
-};
+void() player_chainsaw5   =[$sawatt1, player_chainsaw6 ] {self.weaponframe = 9; W_FireSaw();};
+void() player_chainsaw6   =[$sawatt2, player_run  ] {self.weaponframe=10;};
 
 //============================================================================
 
@@ -381,24 +338,6 @@ void() player_nail = {
 	self.nextthink = time + 0.025;
 }
 
-void() super_nail_spindown = {
-
-	self.weaponframe += 1;
-	player_run();
-	
-	if (self.weaponframe == 25) sound (self, 7, "weapons/spindn_click.wav", 0.15, ATTN_NORM);
-	if (self.weaponframe == 48) sound (self, 7, "weapons/spindn_click.wav", 0.3, ATTN_NORM);
-
-	if (self.weaponframe < 51) {
-		self.think = super_nail_spindown;
-		self.nextthink = time + 0.025;
-	}	
-	else {
-		self.cnt = 0;
-	}
-}
-
-
 void() player_super_nail = {
 
 	self.weaponframe = self.weaponframe + 1;	
@@ -433,6 +372,48 @@ void() player_super_nail = {
 	self.think = player_super_nail;
 	self.nextthink = time + 0.025;
 }
+
+// same as player_run but while spinning down
+void() player_super_nail_spindown = {
+
+	// thinks run at 4x the usual speed while spinning down,
+	// so only update every 4 weaponframes
+	if (self.weaponframe % 4 == 0) {
+		if (self.walkframe == 6)
+			self.walkframe = 0;
+		self.frame = $axrun1 + self.walkframe;
+		
+		self.walkframe = self.walkframe + 1;
+
+		if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND && !intermission_running) {
+			// Need to be moving before feet sounds
+			float spd;
+			spd = vlen([self.velocity_x, self.velocity_y, 0]);
+			if (spd > 50) {
+				play_footstep(FALSE, clamp(spd, 0, 320)/320);
+			}
+		}
+	}
+}
+
+void() super_nail_spindown = {
+
+	self.weaponframe += 1;
+	player_run();
+	
+	if (self.weaponframe == 25) sound (self, 7, "weapons/spindn_click.wav", 0.15, ATTN_NORM);
+	if (self.weaponframe == 48) sound (self, 7, "weapons/spindn_click.wav", 0.3, ATTN_NORM);
+
+	if (self.weaponframe < 51) {
+		self.think = super_nail_spindown;
+		self.nextthink = time + 0.025;
+	}	
+	else {
+		self.cnt = 0;
+	}
+}
+
+
 
 
 void() player_light1   =[$light1, player_light2  ] 

@@ -320,7 +320,6 @@ void() W_ChangeWeapon =
 	local float item;
 	
 	noammo = 0;
-	self.weaponframe = 0;
 
 	if (self.impulse == 1) {
 		if (!(self.weapons & WEAPON_AXE) && (self.weapons & WEAPON_CHAINSAW)) { // has the saw but not the axe
@@ -362,10 +361,10 @@ void() W_ChangeWeapon =
 			weap = WEAPON_PROXIMITY_GUN;
 		}
 		else {
-			if(self.weapons & WEAPON_GRENADE_LAUNCHER){
+			if (self.weapons & WEAPON_GRENADE_LAUNCHER){
 				weap = WEAPON_GRENADE_LAUNCHER;
 			}
-			else if(self.weapons & WEAPON_PROXIMITY_GUN){
+			else if (self.weapons & WEAPON_PROXIMITY_GUN){
 				weap = WEAPON_PROXIMITY_GUN;
 			}
 		}
@@ -446,8 +445,7 @@ void() W_ChangeWeapon =
 	
 	self.impulse = 0;
 	
-
-	if(weap) {
+	if (weap) {
 		if (!(self.weapons & weap)) {	// don't have the weapon or the ammo
 			sprint (self, "no weapon.\n");
 			return;
@@ -463,6 +461,7 @@ void() W_ChangeWeapon =
 //
 // set weapon, set ammo
 //
+	if (self.weapon != weap) self.weaponframe = 0;
 	self.weapon = weap;
 
 	W_SetCurrentAmmo ();

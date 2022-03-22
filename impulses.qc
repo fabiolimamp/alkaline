@@ -363,21 +363,28 @@ ImpulseCommands
 
 void() ImpulseCommands =
 {
-	if (self.impulse >= 1 && self.impulse <= 8)
-		W_ChangeWeapon();
-	
-	if (self.impulse >= 224 && self.impulse <= 235)
-		W_ChangeWeapon();
-	
+	if (self.impulse >= 1 && self.impulse <= 8){
+		if (time < self.attack_finished) return;
+		else W_ChangeWeapon();
+	}
+	if (self.impulse >= 224 && self.impulse <= 235) {
+		if (time < self.attack_finished) return;
+		else W_ChangeWeapon();
+	}
+	if (self.impulse == 10) {
+		if (time < self.attack_finished) return;
+		else CycleWeaponCommand();
+	}
+	if (self.impulse == 12) {
+		if (time < self.attack_finished) return;
+		else CycleWeaponReverseCommand();
+	}
+
 	if (self.impulse == 9)
 		GiveAllCommand();
-
-	if (self.impulse == 10)
-		CycleWeaponCommand();
 	if (self.impulse == 11)
 		ServerflagsCommand();
-	if (self.impulse == 12)
-		CycleWeaponReverseCommand();
+
 	if (self.impulse == 13)
 		GiveWeaponsCommand();
 	if (self.impulse >= 91 && self.impulse <= 99)
