@@ -180,6 +180,11 @@ float(float v) anglemod =
     return v - floor(v/360) * 360;
 }
 
+float(float v) anglemod180 =
+{
+    return v - floor((v+180)/360) * 360;
+}
+
 float(float anga, float angb) angledif =
 {
     float dif;
@@ -346,9 +351,9 @@ vector(vector ang) normalizeAngles = {
 
 // normalizes an angle vector to the -180/+179 range
 vector(vector ang) normalizeAngles180 = {
-	ang_x = ((ang_x+180) - floor((ang_x+180)/360) * 360) - 180;
-	ang_y = ((ang_y+180) - floor((ang_y+180)/360) * 360) - 180;
-	ang_z = ((ang_z+180) - floor((ang_z+180)/360) * 360) - 180;
+	ang_x = ang_x - floor((ang_x+180)/360) * 360;
+	ang_y = ang_y - floor((ang_y+180)/360) * 360;
+	ang_z = ang_z - floor((ang_z+180)/360) * 360;
 
 	/*
 	while (ang_x > 180)

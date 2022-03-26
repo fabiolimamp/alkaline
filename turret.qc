@@ -3,6 +3,7 @@ float TURRET_STATE_INACTIVE = 0;
 float TURRET_STATE_ACTIVATING = 1;
 float TURRET_STATE_ACTIVE = 2;
 float TURRET_STATE_DEACTIVATING = 3;
+float TURRET_STATE_IDLE = 4;
 
 /*
 ===============================================================================

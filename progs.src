@@ -109,6 +109,6 @@ gravity.qc
 
 hipholes.qc
 
-//monster_turret.qc
+monster_turret.qc
 
 test.qc
