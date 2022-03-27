@@ -5,11 +5,7 @@ SHAL-RATH
 
 ==============================================================================
 */
-$cd id1/models/shalrath
-$origin 0 0 24
-$base base
-$skin skin
-$scale 0.7
+
 
 $frame attack1 attack2 attack3 attack4 attack5 attack6 attack7 attack8
 $frame attack9 attack10 attack11
@@ -18,47 +14,47 @@ $frame pain1 pain2 pain3 pain4 pain5
 
 $frame death1 death2 death3 death4 death5 death6 death7
 
+$frame stand1
+
 $frame	walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10
-$frame	walk11 walk12
+$frame	walk11
 
 void() ShalMissile;
-void() shal_stand     =[      $walk1,       shal_stand    ] {ai_stand();};
+void() shal_stand     =[      $stand1,       shal_stand    ] {ai_stand();}; // stand1 is a framegroup, animates automatically
 
-void() shal_walk1     =[      $walk2,       shal_walk2    ] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
-ai_walk(6);};
-void() shal_walk2     =[      $walk3,       shal_walk3    ] {ai_walk(4);};
-void() shal_walk3     =[      $walk4,       shal_walk4    ] {ai_walk(0);};
-void() shal_walk4     =[      $walk5,       shal_walk5    ] {ai_walk(0);};
-void() shal_walk5     =[      $walk6,       shal_walk6    ] {ai_walk(0);};
-void() shal_walk6     =[      $walk7,       shal_walk7    ] {ai_walk(0);};
-void() shal_walk7     =[      $walk8,       shal_walk8    ] {ai_walk(5);};
-void() shal_walk8     =[      $walk9,       shal_walk9    ] {ai_walk(6);};
-void() shal_walk9     =[      $walk10,       shal_walk10    ] {ai_walk(5);};
-void() shal_walk10    =[      $walk11,       shal_walk11    ] {ai_walk(0);};
-void() shal_walk11    =[      $walk12,       shal_walk12    ] {ai_walk(4);};
-void() shal_walk12    =[      $walk1,       shal_walk1    ] {ai_walk(5);};
 
-void() shal_run1     =[      $walk2,       shal_run2    ] {
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
-ai_run(6);};
-void() shal_run2     =[      $walk3,       shal_run3    ] {ai_run(4);};
-void() shal_run3     =[      $walk4,       shal_run4    ] {ai_run(0);};
-void() shal_run4     =[      $walk5,       shal_run5    ] {ai_run(0);};
-void() shal_run5     =[      $walk6,       shal_run6    ] {ai_run(0);};
-void() shal_run6     =[      $walk7,       shal_run7    ] {ai_run(0);};
-void() shal_run7     =[      $walk8,       shal_run8    ] {ai_run(5);};
-void() shal_run8     =[      $walk9,       shal_run9    ] {ai_run(6);};
-void() shal_run9     =[      $walk10,       shal_run10    ] {ai_run(5);};
-void() shal_run10    =[      $walk11,       shal_run11    ] {ai_run(0);};
-void() shal_run11    =[      $walk12,       shal_run12    ] {ai_run(4);};
-void() shal_run12    =[      $walk1,       shal_run1    ] {ai_run(5);};
+void() shal_walk1     =[      $walk1,       shal_walk2    ] {ai_walk(4);};
+void() shal_walk2     =[      $walk2,       shal_walk3    ] {ai_walk(6);
+	if (random() < 0.2)	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);};
+void() shal_walk3     =[      $walk3,       shal_walk4    ] {ai_walk(0);};
+void() shal_walk4     =[      $walk4,       shal_walk5    ] {ai_walk(0);};
+void() shal_walk5     =[      $walk5,       shal_walk6    ] {ai_walk(0);};
+void() shal_walk6     =[      $walk6,       shal_walk7    ] {ai_walk(0);};
+void() shal_walk7     =[      $walk7,       shal_walk8    ] {ai_walk(5);};
+void() shal_walk8     =[      $walk8,       shal_walk9    ] {ai_walk(6);};
+void() shal_walk9     =[      $walk9,       shal_walk10    ] {ai_walk(5);};
+void() shal_walk10    =[      $walk10,       shal_walk11    ] {ai_walk(0);};
+void() shal_walk11    =[      $walk11,       shal_walk1    ] {ai_walk(4);};
 
-void() shal_attack1     =[      $attack1,       shal_attack2    ] {
-sound (self, CHAN_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
-ai_face();
+
+
+void() shal_run1     =[      $walk1,       shal_run2    ] {ai_run(6);
+	if (random() < 0.2)	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+};
+void() shal_run2     =[      $walk2,       shal_run3    ] {ai_run(4);};
+void() shal_run3     =[      $walk3,       shal_run4    ] {ai_run(0);};
+void() shal_run4     =[      $walk4,       shal_run5    ] {ai_run(0);};
+void() shal_run5     =[      $walk5,       shal_run6    ] {ai_run(0);};
+void() shal_run6     =[      $walk6,       shal_run7    ] {ai_run(0);};
+void() shal_run7     =[      $walk7,       shal_run8    ] {ai_run(5);};
+void() shal_run8     =[      $walk8,       shal_run9    ] {ai_run(6);};
+void() shal_run9     =[      $walk9,       shal_run10    ] {ai_run(5);};
+void() shal_run10    =[      $walk10,       shal_run11    ] {ai_run(0);};
+void() shal_run11    =[      $walk11,       shal_run1    ] {ai_run(4);};
+
+
+void() shal_attack1     =[      $attack1,       shal_attack2    ] {ai_face();
+	sound (self, CHAN_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
 };
 void() shal_attack2     =[      $attack2,       shal_attack3    ] {ai_face();};
 void() shal_attack3     =[      $attack3,       shal_attack4    ] {ai_face();};
@@ -71,11 +67,32 @@ void() shal_attack9     =[      $attack9,       shal_attack10   ] {ShalMissile()
 void() shal_attack10    =[      $attack10,      shal_attack11   ] {ai_face();};
 void() shal_attack11    =[      $attack11,      shal_run1   ] {};
 
+
+//========================================================
+
 void() shal_pain1       =[      $pain1, shal_pain2      ] {};
 void() shal_pain2       =[      $pain2, shal_pain3      ] {};
 void() shal_pain3       =[      $pain3, shal_pain4      ] {};
 void() shal_pain4       =[      $pain4, shal_pain5      ] {};
 void() shal_pain5       =[      $pain5, shal_run1      ] {};
+
+void(entity attacker, float damage) shalrath_pain =
+{
+	if (self.health < self.max_health * 0.05)	self.skin = 3;
+	else if (self.health < self.max_health * 0.4)	self.skin = 2;
+	else if (self.health < self.max_health * 0.8)	self.skin = 1;
+
+	if (self.pain_finished > time)
+		return;
+
+	sound (self, CHAN_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
+	shal_pain1();
+	self.pain_finished = time + 3;
+};
+
+
+//========================================================
+
 
 void() shal_death1      =[      $death1,        shal_death2     ] {};
 void() shal_death2      =[      $death2,        shal_death3     ] {};
@@ -85,22 +102,12 @@ void() shal_death5      =[      $death5,        shal_death6     ] {};
 void() shal_death6      =[      $death6,        shal_death7     ] {};
 void() shal_death7      =[      $death7,        shal_death7    ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
 
-
-void(entity attacker, float damage) shalrath_pain =
-{
-	if (self.pain_finished > time)
-		return;
-
-	sound (self, CHAN_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
-	shal_pain1();
-	self.pain_finished = time + 3;
-};
-
 void() shalrath_die =
 {
 // check for gib
 	if (self.health < -90)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_shal.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -111,6 +118,7 @@ void() shalrath_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		return;
 	}
+	self.skin = 3;
 
 	sound (self, CHAN_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
 	shal_death1();
@@ -220,7 +228,7 @@ void(entity e) monster_shalrath_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	
-	setmodel (self, "progs/shalrath.mdl");
+	setmodel (self, "progs/shalrath_old.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
@@ -253,7 +261,7 @@ void() monster_shalrath =
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/shalrath.mdl");
+	precache_model2 ("progs/shalrath_old.mdl");
 	precache_model2 ("progs/h_shal.mdl");
 	precache_model2 ("progs/v_spike.mdl");
 	

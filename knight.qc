@@ -147,6 +147,9 @@ void(entity attacker, float damage)	knight_pain =
 {
 	local float r;
 
+	if (self.health < self.max_health * 0.4)	self.skin = 2;
+	else if (self.health < self.max_health * 0.9)	self.skin = 1;
+
 	if (self.pain_finished > time)
 		return;
 
@@ -223,7 +226,7 @@ void() knight_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		return;
 	}
-
+	self.skin = 2;
 // regular death
 	sound (self, CHAN_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
 	if (random() < 0.5)
@@ -263,7 +266,7 @@ void(entity e) monster_knight_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/knight.mdl");
+	setmodel (self, "progs/knight_old.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
@@ -295,7 +298,7 @@ void() monster_knight =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/knight.mdl");
+	precache_model ("progs/knight_old.mdl");
 	precache_model ("progs/h_knight.mdl");
 
 	precache_sound ("knight/kdeath.wav");

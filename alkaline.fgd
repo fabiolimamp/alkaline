@@ -853,7 +853,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 "Dog (Rottweiler), 25 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model(
-	{{spawnflags & 8 -> 	"progs/ogre.mdl", "progs/ogre_alk.mdl"}}
+	{{spawnflags & 8 -> 	"progs/ogre_old.mdl", "progs/ogre_alk.mdl"}}
 ) = monster_ogre :
 "Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
 	spawnflags(flags) =
@@ -865,11 +865,11 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
 "Ogre Marksman, 200 health points." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight.mdl"}) = monster_knight :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
 "Knight, 75 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({{
-	spawnflags & 8 -> 	"progs/hknight.mdl", "progs/sknight.mdl"
+	spawnflags & 8 -> 	"progs/hknight_old.mdl", "progs/sknight.mdl"
 	}}
 ) = monster_hell_knight :
 "Sabre Knight, 250 health points. Original Death Knight available through the respective spawnflag." [
@@ -891,7 +891,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 ]
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({{
-	spawnflags & 8 -> "progs/demon.mdl", "progs/demon_alk.mdl"
+	spawnflags & 8 -> "progs/demon_old.mdl", "progs/demon_alk.mdl"
 	}}
 ) = monster_demon1 :
 "Fiend (Demon), 300 health points. Original Fiend available through the respective spawnflag." [
@@ -922,7 +922,7 @@ Only event_lightning can kill him." []
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
 "Enforcer, 80 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 48) model({"path":"progs/shalrath.mdl"}) = monster_shalrath :
+@PointClass base(Monster) size(-32 -32 -24, 32 32 48) model({"path":"progs/shalrath_old.mdl"}) = monster_shalrath :
 "Vore (Shalrath), 400 health points." []
 
 @PointClass base(Monster) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_tarbaby :

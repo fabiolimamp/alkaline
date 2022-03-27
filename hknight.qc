@@ -6,11 +6,6 @@ KNIGHT
 ==============================================================================
 */
 
-$cd id1/models/knight2
-$origin 0 0 24
-$base base
-$skin skin
-
 $frame stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8 stand9
 
 $frame walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9
@@ -52,12 +47,9 @@ $frame magicc1 magicc2 magicc3 magicc4 magicc5 magicc6 magicc7 magicc8
 $frame magicc9 magicc10 magicc11
 
 
-void() hknight_char_a1;
-void() hknight_run1;
-void() hk_idle_sound;
 
-void(float offset) hknight_shot =
-{
+
+void(float offset) hknight_shot = {
 	local	vector	offang;
 	local	vector	org, vec;
 	
@@ -83,32 +75,30 @@ void(float offset) hknight_shot =
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
 };
 
-void() CheckForCharge =
-{
-// check for mad charge
-if (!enemy_vis)
-	return;
-if (time < self.attack_finished)
-	return;	
-if ( fabs(self.origin_z - self.enemy.origin_z) > 20)
-	return;		// too much height change
-if ( vlen (self.origin - self.enemy.origin) < 80)
-	return;		// use regular attack
+void() CheckForCharge = {
+	// check for mad charge
+	if (!enemy_vis)
+		return;
+	if (time < self.attack_finished)
+		return;	
+	if ( fabs(self.origin_z - self.enemy.origin_z) > 20)
+		return;		// too much height change
+	if ( vlen (self.origin - self.enemy.origin) < 80)
+		return;		// use regular attack
 
-// charge		
+	// charge
 	SUB_AttackFinished (2);
 	hknight_char_a1 ();
 
 };
 
-void() CheckContinueCharge =
-{
-	if (time > self.attack_finished)
-	{
+void() CheckContinueCharge = {
+	if (time > self.attack_finished) {
 		SUB_AttackFinished (3);
 		hknight_run1 ();
 		return;		// done charging
 	}
+
 	if (random() > 0.5)
 		sound (self, CHAN_WEAPON, "knight/sword2.wav", 1, ATTN_NORM);
 	else
@@ -129,9 +119,7 @@ void()	hknight_stand9	=[	$stand9,	hknight_stand1	] {ai_stand();};
 
 //===========================================================================
 
-void()	hknight_walk1	=[	$walk1,		hknight_walk2	] {
-hk_idle_sound();
-ai_walk(2);};
+void()	hknight_walk1	=[	$walk1,		hknight_walk2	] {ai_walk(2); hk_idle_sound();};
 void()	hknight_walk2	=[	$walk2,		hknight_walk3	] {ai_walk(5);};
 void()	hknight_walk3	=[	$walk3,		hknight_walk4	] {ai_walk(5);};
 void()	hknight_walk4	=[	$walk4,		hknight_walk5	] {ai_walk(4);};
@@ -154,9 +142,7 @@ void()	hknight_walk20	=[	$walk20,	hknight_walk1	] {ai_walk(2);};
 
 //===========================================================================
 
-void()	hknight_run1	=[	$run1,		hknight_run2	] {
-hk_idle_sound();
-ai_run (20); CheckForCharge (); };
+void()	hknight_run1	=[	$run1,		hknight_run2	] {ai_run (20); CheckForCharge(); hk_idle_sound();};
 void()	hknight_run2	=[	$run2,		hknight_run3	] {ai_run(25);};
 void()	hknight_run3	=[	$run3,		hknight_run4	] {ai_run(18);};
 void()	hknight_run4	=[	$run4,		hknight_run5	] {ai_run(16);};
@@ -165,66 +151,6 @@ void()	hknight_run6	=[	$run6,		hknight_run7	] {ai_run(25);};
 void()	hknight_run7	=[	$run7,		hknight_run8	] {ai_run(21);};
 void()	hknight_run8	=[	$run8,		hknight_run1	] {ai_run(13);};
 
-//============================================================================
-
-void()	hknight_pain1	=[	$pain1,		hknight_pain2	] {sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);};
-void()	hknight_pain2	=[	$pain2,		hknight_pain3	] {};
-void()	hknight_pain3	=[	$pain3,		hknight_pain4	] {};
-void()	hknight_pain4	=[	$pain4,		hknight_pain5	] {};
-void()	hknight_pain5	=[	$pain5,		hknight_run1	] {};
-
-//============================================================================
-
-void()	hknight_die1	=[	$death1,	hknight_die2	] {ai_forward(10);};
-void()	hknight_die2	=[	$death2,	hknight_die3	] {ai_forward(8);};
-void()	hknight_die3	=[	$death3,	hknight_die4	]
-{self.solid = SOLID_TRIGGER; setorigin(self, self.origin); ai_forward(7);};
-void()	hknight_die4	=[	$death4,	hknight_die5	] {};
-void()	hknight_die5	=[	$death5,	hknight_die6	] {};
-void()	hknight_die6	=[	$death6,	hknight_die7	] {};
-void()	hknight_die7	=[	$death7,	hknight_die8	] {};
-void()	hknight_die8	=[	$death8,	hknight_die9	] {ai_forward(10);};
-void()	hknight_die9	=[	$death9,	hknight_die10	] {ai_forward(11);};
-void()	hknight_die10	=[	$death10,	hknight_die11	] {};
-void()	hknight_die11	=[	$death11,	hknight_die12	] {};
-void()	hknight_die12	=[	$death12,	hknight_die12	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
-
-void()	hknight_dieb1	=[	$deathb1,	hknight_dieb2	] {};
-void()	hknight_dieb2	=[	$deathb2,	hknight_dieb3	] {};
-void()	hknight_dieb3	=[	$deathb3,	hknight_dieb4	]
-{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
-void()	hknight_dieb4	=[	$deathb4,	hknight_dieb5	] {};
-void()	hknight_dieb5	=[	$deathb5,	hknight_dieb6	] {};
-void()	hknight_dieb6	=[	$deathb6,	hknight_dieb7	] {};
-void()	hknight_dieb7	=[	$deathb7,	hknight_dieb8	] {};
-void()	hknight_dieb8	=[	$deathb8,	hknight_dieb9	] {};
-void()	hknight_dieb9	=[	$deathb9,	hknight_dieb9	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
-
-void() hknight_die =
-{
-// check for gib
-	if (self.health < -40)
-	{
-		self.skin = 0;
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_hellkn.mdl", self.health);
-		else ThrowHead ("progs/h_sabrkn.mdl", self.health);
-		ThrowGib ("progs/gib1.mdl", self.health);
-		ThrowGib ("progs/gib1.mdl", self.health);
-		ThrowGib ("progs/gib2.mdl", self.health);
-		ThrowGib ("progs/gib3.mdl", self.health);
-		ThrowGib ("progs/gib3.mdl", self.health);
-		return;
-	}
-
-	if (!(self.spawnflags & MONSTER_ORIGINAL)) self.skin = 4;
-// regular death
-	sound (self, CHAN_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
-	if (random() > 0.5)
-		hknight_die1 ();
-	else
-		hknight_dieb1 ();
-};
 
 
 //============================================================================
@@ -295,8 +221,7 @@ void()	hknight_char_a16=[	$char_a16,	hknight_run1	] {ai_charge(13);};
 
 //===========================================================================
 
-void()	hknight_char_b1	=[	$char_b1,	hknight_char_b2	]
-{CheckContinueCharge (); ai_charge(23); ai_melee();};
+void()	hknight_char_b1	=[	$char_b1,	hknight_char_b2	] {ai_charge(23); ai_melee(); CheckContinueCharge (); };
 void()	hknight_char_b2	=[	$char_b2,	hknight_char_b3	] {ai_charge(17); ai_melee();};
 void()	hknight_char_b3	=[	$char_b3,	hknight_char_b4	] {ai_charge(12); ai_melee();};
 void()	hknight_char_b4	=[	$char_b4,	hknight_char_b5	] {ai_charge(22); ai_melee();};
@@ -357,19 +282,79 @@ void()	hknight_watk22	=[	$w_attack22,	hknight_run1	] {ai_charge(3);};
 
 //============================================================================
 
-void() hk_idle_sound =
-{
+void()	hknight_pain1	=[	$pain1,		hknight_pain2	] {sound (self, CHAN_VOICE, "hknight/pain1.wav", 1, ATTN_NORM);};
+void()	hknight_pain2	=[	$pain2,		hknight_pain3	] {};
+void()	hknight_pain3	=[	$pain3,		hknight_pain4	] {};
+void()	hknight_pain4	=[	$pain4,		hknight_pain5	] {};
+void()	hknight_pain5	=[	$pain5,		hknight_run1	] {};
+
+//============================================================================
+
+void()	hknight_die1	=[	$death1,	hknight_die2	] {ai_forward(10);};
+void()	hknight_die2	=[	$death2,	hknight_die3	] {ai_forward(8);};
+void()	hknight_die3	=[	$death3,	hknight_die4	]
+{self.solid = SOLID_TRIGGER; setorigin(self, self.origin); ai_forward(7);};
+void()	hknight_die4	=[	$death4,	hknight_die5	] {};
+void()	hknight_die5	=[	$death5,	hknight_die6	] {};
+void()	hknight_die6	=[	$death6,	hknight_die7	] {};
+void()	hknight_die7	=[	$death7,	hknight_die8	] {};
+void()	hknight_die8	=[	$death8,	hknight_die9	] {ai_forward(10);};
+void()	hknight_die9	=[	$death9,	hknight_die10	] {ai_forward(11);};
+void()	hknight_die10	=[	$death10,	hknight_die11	] {};
+void()	hknight_die11	=[	$death11,	hknight_die12	] {};
+void()	hknight_die12	=[	$death12,	hknight_die12	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+
+void()	hknight_dieb1	=[	$deathb1,	hknight_dieb2	] {};
+void()	hknight_dieb2	=[	$deathb2,	hknight_dieb3	] {};
+void()	hknight_dieb3	=[	$deathb3,	hknight_dieb4	]
+{self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
+void()	hknight_dieb4	=[	$deathb4,	hknight_dieb5	] {};
+void()	hknight_dieb5	=[	$deathb5,	hknight_dieb6	] {};
+void()	hknight_dieb6	=[	$deathb6,	hknight_dieb7	] {};
+void()	hknight_dieb7	=[	$deathb7,	hknight_dieb8	] {};
+void()	hknight_dieb8	=[	$deathb8,	hknight_dieb9	] {};
+void()	hknight_dieb9	=[	$deathb9,	hknight_dieb9	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+
+void() hknight_die = {
+// check for gib
+	if (self.health < -40) {
+		self.skin = 0;
+		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+
+		if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_hellkn.mdl", self.health);
+		else ThrowHead ("progs/h_sabrkn.mdl", self.health);
+
+		ThrowGib ("progs/gib1.mdl", self.health);
+		ThrowGib ("progs/gib1.mdl", self.health);
+		ThrowGib ("progs/gib2.mdl", self.health);
+		ThrowGib ("progs/gib3.mdl", self.health);
+		ThrowGib ("progs/gib3.mdl", self.health);
+		return;
+	}
+
+	//if (!(self.spawnflags & MONSTER_ORIGINAL))
+	self.skin = 4;
+	
+	// regular death
+	sound (self, CHAN_VOICE, "hknight/death1.wav", 1, ATTN_NORM);
+	if (random() > 0.5)
+		hknight_die1 ();
+	else
+		hknight_dieb1 ();
+};
+//============================================================================
+
+void() hk_idle_sound = {
 	if (random() < 0.2)
 		sound (self, CHAN_VOICE, "hknight/idle.wav", 1, ATTN_NORM);
 };
 
-void(entity attacker, float damage)	hknight_pain =
-{
-	if (!(self.spawnflags & MONSTER_ORIGINAL)) {
+void(entity attacker, float damage)	hknight_pain = {
+	//if (!(self.spawnflags & MONSTER_ORIGINAL)) {
 		if (self.health < self.max_health * 0.3)	self.skin = 3;
 		else if (self.health < self.max_health * 0.6)	self.skin = 2;
 		else if (self.health < self.max_health * 0.85)	self.skin = 1;
-	}
+	//}
 
 	if (self.pain_finished > time)
 		return;
@@ -392,8 +377,7 @@ void(entity attacker, float damage)	hknight_pain =
 
 float	hknight_type;
 
-void() hknight_melee =
-{
+void() hknight_melee = {
 	hknight_type = hknight_type + 1;
 
 	sound (self, CHAN_WEAPON, "hknight/slash1.wav", 1, ATTN_NORM);
@@ -401,8 +385,7 @@ void() hknight_melee =
 		hknight_slice1 ();
 	else if (hknight_type == 2)
 		hknight_smash1 ();
-	else if (hknight_type == 3)
-	{
+	else if (hknight_type == 3) {
 		hknight_watk1 ();
 		hknight_type = 0;
 	}
@@ -416,8 +399,7 @@ void() hknight_sight = {
 
 /*QUAKED monster_hell_knight (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
-void(entity e) monster_hell_knight_start =
-{
+void(entity e) monster_hell_knight_start = {
 	local entity oself;
 
 	oself = self;
@@ -426,7 +408,7 @@ void(entity e) monster_hell_knight_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	if (self.spawnflags & MONSTER_ORIGINAL) setmodel (self, "progs/hknight.mdl");
+	if (self.spawnflags & MONSTER_ORIGINAL) setmodel (self, "progs/hknight_old.mdl");
 	else setmodel (self, "progs/sknight.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
@@ -456,8 +438,7 @@ void() monster_hell_knight_spawner = {
 	monster_spawner(monster_hell_knight_start);
 };
 
-void() monster_hell_knight =
-{
+void() monster_hell_knight = {
 	if (deathmatch)
 	{
 		remove(self);
@@ -465,7 +446,7 @@ void() monster_hell_knight =
 	}
 
 	if (self.spawnflags & MONSTER_ORIGINAL) {
-		precache_model2 ("progs/hknight.mdl");
+		precache_model2 ("progs/hknight_old.mdl");
 		precache_model2 ("progs/h_hellkn.mdl");
 		precache_model2 ("progs/k_spike.mdl");
 		precache_sound2 ("hknight/sight1.wav");
