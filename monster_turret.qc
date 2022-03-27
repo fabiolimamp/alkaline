@@ -5,7 +5,7 @@ float M_TURRET_MIN_PITCH = -50;
 float TURRET_IDLE_TIME = 3;
 float TURRET_DEACTIVATE_TIME = 24;
 
-void() monster_turret_think;
+float TURRET_DONTSLEEP = 1;
 
 void(vector ang) monster_turret_shoot = {
 	self.trigger_field.effects = self.trigger_field.effects | EF_MUZZLEFLASH;
@@ -65,9 +65,9 @@ float() monster_turret_findtarget =
 	return TRUE;
 };
 
-void() monster_turret_fire = {
+void() monster_turret_shoot_think = {
 	self.nextthink = time + 0.1;
-	self.think = monster_turret_fire;
+	self.think = monster_turret_shoot_think;
 
 	// time since last attack
 	self.air_finished = time;
@@ -75,7 +75,7 @@ void() monster_turret_fire = {
 	if (self.frame < 14) self.frame = 14;
 	else if (self.frame >= 21) {
 		if (self.cnt <= 0) {
-			monster_turret_think();
+			monster_turret_active_think();
 			return;
 		}
 		else {
@@ -96,9 +96,9 @@ void() monster_turret_fire = {
 	else self.frame++;
 };*/
 
-void() monster_turret_deploy = {
+void() monster_turret_deploy_think = {
 	self.nextthink = time + 0.1;
-	self.think = monster_turret_deploy;
+	self.think = monster_turret_deploy_think;
 
 	if (self.frame < 2 || self.frame > 12) {
 		self.frame = 2;
@@ -109,14 +109,14 @@ void() monster_turret_deploy = {
 	self.sibling.frame = self.frame;
 
 	if (self.frame == 12) {
-		self.state = TURRET_STATE_ACTIVE;
-		self.think = monster_turret_think;
+		self.state = TURRET_STATE_IDLE;
+		self.think = monster_turret_active_think;
 	}
 };
 
-void() monster_turret_disable = {
+void() monster_turret_disable_think = {
 	self.nextthink = time + 0.1;
-	self.think = monster_turret_disable;
+	self.think = monster_turret_disable_think;
 
 	if (self.angles_x) return;
 
@@ -135,19 +135,25 @@ void() monster_turret_disable = {
 };
 
 void() monster_turret_inactive_think = {
+	if (self.targetname != "")
+		return;
+
 	self.nextthink = time + 0.1;
 	self.think = monster_turret_inactive_think;
+	
+
 
 	if (monster_turret_findtarget()) {
 		if (vlen(self.enemy.origin - self.origin) < 512){
-			monster_turret_deploy();
+			setsize(self, '-16 -16 -16', '16 16 2');
+			monster_turret_deploy_think();
 		}
 	}
 };
 
-void() monster_turret_think = {
+void() monster_turret_active_think = {
 	self.nextthink = time + 0.1;
-	self.think = monster_turret_think;
+	self.think = monster_turret_active_think;
 	self.frame = 13;
 
 	if (monster_turret_findtarget() && time > self.attack_finished) {
@@ -156,7 +162,7 @@ void() monster_turret_think = {
 
 		self.attack_finished = time + 3 + random()*1;
 		self.cnt = 3;
-		monster_turret_fire();
+		monster_turret_shoot_think();
 		return;
 	}
 
@@ -169,9 +175,10 @@ void() monster_turret_think = {
 		return;
 	}
 
-	if (time > self.air_finished + TURRET_DEACTIVATE_TIME) {
+	if (time > self.air_finished + TURRET_DEACTIVATE_TIME && !(self.spawnflags && TURRET_DONTSLEEP)) {
 		self.state = TURRET_STATE_DEACTIVATING;
-		monster_turret_disable();
+		setsize(self, '-16 -16 -8', '16 16 2');
+		monster_turret_disable_think();
 		return;
 	}
 
@@ -183,6 +190,8 @@ void() monster_turret_think = {
 		return;
 	}
 };
+
+//---------------------------------------------------------------------------------------------------------
 
 void() monster_turret_helper_think = {
 	self.nextthink = time + 0.025;
@@ -199,20 +208,16 @@ void() monster_turret_helper_think = {
 		addang = cos((time - self.air_finished + TURRET_IDLE_TIME) * 15)*45;
 		ang_y = self.old_angles_y + addang;
 		ang_x = 0;
-
-		//dprint2(ftos(addang), "\n");
-		
-		
 	}
 	else if (self.state == TURRET_STATE_ACTIVE) {
 		//turn towards enemy
 		ang = vectoangles(self.enemy.origin + self.enemy.view_ofs - self.origin);
 
 	}
-	else if (self.state == TURRET_STATE_DEACTIVATING){
+	/*else if (self.state == TURRET_STATE_DEACTIVATING){
 		ang = self.angles;
 		ang_x = 0;
-	}
+	}*/
 	else
 		return;
 		
@@ -296,7 +301,21 @@ void() monster_turret_die = {
 	self.nextthink = time + 0.3;
 	self.velocity = '0 0 -40';
 
+	activator = self.enemy;
+	SUB_UseTargets();
+
 	setorigin(self, self.origin);
+};
+
+//---------------------------------------------------------------------------------------------------------
+
+void() monster_turret_use = {
+	//dprint3("Used turret. State: ", ftos(self.state), "\n");
+	if (self.state == TURRET_STATE_INACTIVE) {
+		setsize(self, '-16 -16 -16', '16 16 2');
+		self.old_angles = self.angles;
+		monster_turret_deploy_think();
+	}
 };
 
 //---------------------------------------------------------------------------------------------------------
@@ -318,34 +337,46 @@ void() monster_turret = {
 
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_NONE;
-	//setorigin(self, self.origin + '0 0 14');
+
 	setorigin(self, self.origin);
 	setmodel(self, "progs/alkturret_main_v2.mdl");
-	setsize(self, '-16 -16 -16', '16 16 2');
+	setsize(self, '-16 -16 -8', '16 16 2');
+	
 	self.frame = 0;
 	self.think = monster_turret_inactive_think;
 	self.nextthink = time + 0.1;
 
 	self.sibling = spawn();
-	setmodel(self.sibling, "progs/alkturret_base_v2.mdl");
-	//setorigin(self.sibling, self.origin - '0 0 12');
+
 	setorigin(self.sibling, self.origin);
+	setmodel(self.sibling, "progs/alkturret_base_v2.mdl");
 	setsize(self.sibling, VEC_ORIGIN, VEC_ORIGIN);
 
 
 	self.trigger_field = spawn();
 	self.trigger_field.owner = self;
-	self.trigger_field.nextthink = 0.1;
+	self.trigger_field.nextthink = 0.025;
 	self.trigger_field.think = monster_turret_helper_think;
 	self.trigger_field.classname = "turret";
 	self.trigger_field.angles = self.angles;
+
+	setorigin(self.trigger_field, self.origin);
 	setmodel(self.trigger_field, "progs/misc_empty.mdl");
 	setsize(self.trigger_field, VEC_ORIGIN, VEC_ORIGIN);
-	setorigin(self.trigger_field, self.origin);
-
+	
+	self.use = monster_turret_use;
 	self.th_die = monster_turret_die;
 	self.takedamage = DAMAGE_AIM;
 	self.bloodtype = SPAWN_YELLOWSPARK;
+
+	if (self.spawnflags & TURRET_DONTSLEEP && self.targetname == "") {
+		setsize(self, '-16 -16 -16', '16 16 2');
+		self.frame = 13;
+		self.sibling.frame = 13;
+		self.state = TURRET_STATE_IDLE;
+		self.old_angles = self.angles;
+		self.think = monster_turret_active_think;
+	}
 
 	//self.state = TURRET_STATE_ACTIVE;
 };
