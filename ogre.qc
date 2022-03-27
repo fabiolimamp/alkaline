@@ -140,16 +140,14 @@ void() Ogre_Rocket_Touch = {
 	if (other == self.owner)
 		return;		// don't explode on owner
 
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
+	if (pointcontents(self.origin) == CONTENT_SKY) {
 		remove(self);
 		return;
 	}
 
 	damg = 50;	// greenwood modify this to change damage on direct hit
 	
-	if (other.health)
-	{
+	if (other.health) {
 		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 	}
 
@@ -608,8 +606,7 @@ The player is in view, so decide to move or launch an attack
 Returns FALSE if movement should continue
 ============
 */
-float() OgreCheckAttack =
-{
+float() OgreCheckAttack = {
 	local vector	spot1, spot2;	
 	local entity	targ;
 	local float		chance;

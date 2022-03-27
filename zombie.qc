@@ -337,8 +337,8 @@ void() zombie_paind12	=[	$paind12,	zombie_paind13	] {};
 void() zombie_paind13	=[	$paind13,	zombie_run1	] {};
 
 void() zombie_paine1	=[	$paine1,	zombie_paine2	] {
-sound (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM);
-self.health = 60;
+	sound (self, CHAN_VOICE, "zombie/z_pain.wav", 1, ATTN_NORM);
+	self.health = 60;
 };
 void() zombie_paine2	=[	$paine2,	zombie_paine3	] {ai_pain(8);};
 void() zombie_paine3	=[	$paine3,	zombie_paine4	] {ai_pain(5);};
@@ -349,21 +349,23 @@ void() zombie_paine7	=[	$paine7,	zombie_paine8	] {ai_pain(1);};
 void() zombie_paine8	=[	$paine8,	zombie_paine9	] {ai_pain(1);};
 void() zombie_paine9	=[	$paine9,	zombie_paine10	] {ai_pain(2);};
 void() zombie_paine10	=[	$paine10,	zombie_paine11	] {
-sound (self, CHAN_BODY, "zombie/z_fall.wav", 1, ATTN_NORM);
-self.solid = SOLID_NOT;
+	sound (self, CHAN_BODY, "zombie/z_fall.wav", 1, ATTN_NORM);
+	self.solid = SOLID_NOT;
+	//self.solid = SOLID_TRIGGER;
+	setorigin(self, self.origin); // relink
 };
 void() zombie_paine11	=[	$paine11,	zombie_paine12	] {self.nextthink = self.nextthink + 5;self.health = 60;};
 void() zombie_paine12	=[	$paine12,	zombie_paine13	]{
-// see if ok to stand up
-self.health = 60;
-sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
-self.solid = SOLID_SLIDEBOX;
-if (!walkmove (0, 0))
-{
-	self.think = zombie_paine11;
-	self.solid = SOLID_NOT;
-	return;
-}
+	// see if ok to stand up
+	self.health = 60;
+	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
+	self.solid = SOLID_SLIDEBOX;
+
+	if (!walkmove(0, 0)) {
+		self.think = zombie_paine11;
+		self.solid = SOLID_NOT;
+		return;
+	}
 };
 void() zombie_paine13	=[	$paine13,	zombie_paine14	] {};
 void() zombie_paine14	=[	$paine14,	zombie_paine15	] {};

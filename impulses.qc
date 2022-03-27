@@ -361,8 +361,8 @@ ImpulseCommands
 ============
 */
 
-void() ImpulseCommands =
-{
+void() ImpulseCommands = {
+	// weapon changing must not occur until attack_finished time has passed
 	if (self.impulse >= 1 && self.impulse <= 8){
 		if (time < self.attack_finished) return;
 		else W_ChangeWeapon();
