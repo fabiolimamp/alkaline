@@ -527,10 +527,7 @@ void()	player_rocket28 =	[$rockatt6, player_rocket29	] {self.weaponframe=28; nxt
 void()	player_rocket29 =	[$rockatt6, player_rocket30	] {self.weaponframe=29; nxth(0.025);};
 void()	player_rocket30 =	[$rockatt6, player_rocket31	] {self.weaponframe=30; nxth(0.025);};
 void()	player_rocket31 =	[$rockatt6, player_rocket32	] {self.weaponframe=31; nxth(0.025);};
-void()	player_rocket32 =	[$rockatt6, player_rocket33	] {self.weaponframe=32; nxth(0.025);};
-void()	player_rocket33 =	[$rockatt6, player_rocket34	] {self.weaponframe=33; nxth(0.025);};
-void()	player_rocket34 =	[$rockatt6, player_rocket35	] {self.weaponframe=34; nxth(0.025);};
-void()	player_rocket35 =	[$rockatt6, player_run		] {self.weaponframe=35; nxth(0.025);};
+void()	player_rocket32 =	[$rockatt6, player_run	] {self.weaponframe=32; nxth(0.025);};
 
 
 void(float num_bubbles) DeathBubbles;
