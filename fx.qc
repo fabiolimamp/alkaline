@@ -224,7 +224,8 @@ void(vector org, vector vel) SpawnChunk = {
 
 void(vector org, vector vel, float damage, float bloodtype) ImpactSpawn = {
 	if(bloodtype == SPAWN_CHUNK)
-		SpawnChunk(org, vel);
+		//SpawnChunk(org, vel);
+		gunshot(org);
 	else if(bloodtype == SPAWN_DIRT)
 		particle (org, vel*0.05, 25, damage*2);
 	else if(bloodtype == SPAWN_YELLOWSPARK)
