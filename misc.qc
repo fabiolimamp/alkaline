@@ -1217,3 +1217,85 @@ void() target_textstory = {
 
 	self.use = target_textstory_use;
 };
+
+
+/*
+=============================================================
+
+func_fade
+
+=============================================================
+*/
+
+void() func_fade = {
+
+	self.solid = SOLID_NOT;
+	self.movetype = MOVETYPE_NOCLIP; // MOVETYPE_NONE doesn't think
+
+	setmodel(self, self.model);
+
+	self.alpha1 = defaultFl(self.alpha, 1);
+	self.alpha2 += 0.000001;
+	self.alpha = self.alpha2;
+
+	if (self.switchshadstyle) {
+		lightstyle(self.switchshadstyle, "m");
+	}
+
+	self.think = func_fade_start;
+	self.nextthink = time + 0.025;
+
+};
+
+void() func_fade_start = {
+	self.dest = (self.absmin + self.absmax)/2;
+	
+	if (self.target != "") {
+		entity e = find(world, targetname, self.target);
+
+		if (e)
+			self.dest = e.origin;
+	}
+	
+	self.think = func_fade_think;
+	self.nextthink = time + 0.05;
+};
+
+void() func_fade_think = {
+	self.nextthink = time + 0.05;
+
+	entity pl;
+	float closest, dist, perc;
+	
+	closest = 1000000000;
+
+	pl = find(world, classname, "player");
+	
+	while (pl) {
+		dist = vlen(pl.origin - self.dest);
+		if (dist < closest) closest = dist;
+		pl = find(pl, classname, "player");
+	}
+
+	//dprint3("Distance: ", ftos(closest), "\n");
+	if (closest < self.waitmax + 64) {
+		perc = clamp(1 - (closest - self.waitmin)/(self.waitmax - self.waitmin), 0, 1);
+		func_fade_setfade(perc);
+
+		self.attack_finished = time + 0.2;
+	}
+	else if (time < self.attack_finished) {
+		func_fade_setfade(0);
+	}
+
+};
+
+void(float perc) func_fade_setfade = {
+	//dprint3("Percent: ", ftos(perc), "\n");
+	self.alpha = (self.alpha1 - self.alpha2) * perc + self.alpha2;
+	
+	if (self.switchshadstyle) {
+		float step = rint((1 - perc) * 12);
+		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(step));
+	}
+};

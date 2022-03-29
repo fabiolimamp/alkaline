@@ -330,7 +330,7 @@ FIELDS
 //
 // doors, etc
 //
-.vector		dest, dest1, dest2;
+.vector		dest, dest1, dest2, dest3;
 .float		wait;			// time from firing to restarting
 .float		delay;	// time from activation to firing
 .entity		trigger_field;	// door's trigger entity
@@ -458,7 +458,7 @@ FIELDS
 .float		burningsound;
 .float		gravity;
 .float		color;
-.float		alpha, alpha2;
+.float		alpha, alpha1, alpha2;
 .entity		missle;
 
 .float		burning_finished;
