@@ -213,6 +213,7 @@ FIELDS
 .float		worldtype;	// 0=medieval 1=metal 2=base
 
 .string		killtarget;
+.string 	sky;
 
 //
 // quakeed fields
@@ -540,7 +541,7 @@ FIELDS
 .float 		maxdelay, mindelay, lastclose, lastopen, movingback;
 .vector		cmins, cmaxs;
 .float 		groupstate;
-.float 		prevgroupstate = burning_time;
+.float 		prevgroupstate;
 .string 	groupname;
 .entity 	lastenemy = oldenemy;
 .float  	doorlooped = count;

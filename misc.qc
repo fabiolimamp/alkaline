@@ -1256,7 +1256,7 @@ void() func_fade_start = {
 		if (e)
 			self.dest = e.origin;
 	}
-	
+
 	self.think = func_fade_think;
 	self.nextthink = time + 0.05;
 };
@@ -1298,4 +1298,36 @@ void(float perc) func_fade_setfade = {
 		float step = rint((1 - perc) * 12);
 		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(step));
 	}
+};
+
+
+
+/*
+=============================================================
+
+target_skybox
+
+=============================================================
+*/
+
+void(entity cl) skybox_apply = {
+	dprint3("Applying skybox '", cl.sky, "' to client\n");
+	stuffcmd(cl, "sky ");
+	stuffcmd(cl, cl.sky);
+	stuffcmd(cl, "\n");
+};
+
+void() target_skybox_use = {
+	string skyname;
+	if (!(activator.flags & FL_CLIENT)) return;
+
+	if (self.sky != "") skyname = self.sky;
+	else skyname = world.sky;
+	
+	activator.sky = skyname;
+	skybox_apply(activator);
+};
+
+void() target_skybox = {
+	self.use = target_skybox_use;
 };

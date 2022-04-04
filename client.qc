@@ -670,6 +670,7 @@ void() PutClientInServer =
 	self.customkeys = 0;  // support for item_key_custom -- iw
 	self.jboots_finished = 0;	//jcr jboots timed
 	self.offground_start = 0;
+	self.sky = world.sky;
 
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -1239,6 +1240,7 @@ void() PlayerPreThink =
 	if (cleanUpClientStuff) {
 		fog_setFromEnt( self, self );
 		csf_apply(self);
+		if (self.sky != world.sky) skybox_apply(self);
 	}
 	
 	if (intermission_running)
