@@ -1325,11 +1325,24 @@ void(entity cl) skybox_apply = {
 
 void() target_skybox_use = {
 	string skyname;
-	if (!(activator.flags & FL_CLIENT)) return;
+	if (!(activator.flags & FL_CLIENT) && !(self.spawnflags & 1))
+		return;
 
 	if (self.sky != "") skyname = self.sky;
 	else skyname = world.sky;
 	
+	if (self.spawnflags & 1) {
+		entity pl;
+		pl = find(world, classname, "player");
+		
+		while (pl) {
+			pl.sky = skyname;
+			skybox_apply(pl);
+			pl = find(pl, classname, "player");
+		}
+		return;
+	}
+
 	activator.sky = skyname;
 	skybox_apply(activator);
 };

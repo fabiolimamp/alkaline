@@ -2334,6 +2334,19 @@ The activator's bbox can be changed as well by activating spawnflag 1.
 	]
 ]
 
+@PointClass base(Appearflags, Targetname) = target_skybox : "Sets a skybox for the activating player when triggered.
+
+'sky' defines the skybox name to apply. Leaving it empty resets the skybox to the map's default.
+
+The 'All players' spawnflag changes it for all connected players instead of only the activator.
+" 
+[
+	sky(string) : "Skybox name"
+	spawnflags(flags) = [
+		1 : "All players"
+	]
+]
+
 @PointClass base(Appearflags, Targetname) = target_startpath : "Makes a monster start following a path upon this entity being triggered. Works with both path_corner and path_angry. 'target' is the monster's name, and 'target2' is the destination path.
 
 If 'target2' is a path_corner, the monster will start walking towards it only when not angry. If it's a path_angry, on the other hand, it'll only do it while angry at something.
