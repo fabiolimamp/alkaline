@@ -309,6 +309,8 @@ void() worldspawn =
 	precache_model ("progs/v_plasma.mdl");     // Plasma being used
 	precache_model ("progs/s_plasma_new.spr");     // Plasma explosion sprite
 
+	precache_model ("progs/pellet_tracer_short.mdl");
+
 	//
 	// Setup light animation tables. 'a' is total darkness, 'z' is maxbright.
 	// Moved to lights.qc -- bmFbr

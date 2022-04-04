@@ -147,6 +147,39 @@ BULLETS
 ==============================================================================
 */
 
+void() tracer_think = {
+	if (time > self.attack_finished || self.frame >= 4) {
+		remove(self);
+		return;
+	}
+
+	self.frame++;
+	self.nextthink = time + 0.02;
+};
+
+
+void(vector org, vector direction, vector dest) drawTracer = {
+
+	newmis = spawn();
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLY;
+	newmis.solid = SOLID_NOT;
+
+	newmis.angles = vectoangles(direction);
+	
+	newmis.classname = "tracer";
+	newmis.think = tracer_think;
+	newmis.nextthink = time + 0.02;
+	newmis.alpha = 0.8;
+	newmis.attack_finished = time + vlen(org - dest)/2200;
+		
+	setmodel (newmis, "progs/pellet_tracer_short.mdl");  //Precache model in WORLD.QC
+	setsize (newmis, '0 0 0', '0 0 0');
+	setorigin (newmis, org);
+
+	newmis.velocity = direction * 2000;
+};
+
 /*
 ================
 TraceAttack
@@ -208,11 +241,13 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (src, src + direction*2048, FALSE, self);
+
+		drawTracer(src, direction, trace_endpos);
+
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
 			//JIM
 			TraceAttack(4, direction);
-
 
 			placebullethole(trace_endpos, plane_normal, trace_ent);
 
@@ -237,11 +272,13 @@ void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (org, org + direction*2048, FALSE, self);
+
+		drawTracer(org, direction, trace_endpos);
+		
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
 			//JIM
 			TraceAttack(4, direction);
-
 
 			placebullethole(trace_endpos, plane_normal, trace_ent);
 
