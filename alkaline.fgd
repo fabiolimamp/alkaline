@@ -1685,6 +1685,18 @@ dmg is the amount of damage to cause when touched."
 	]
 ]
 
+@SolidClass base(Appearflags, SwitchShadow) = func_fade : "A non-solid entity that smoothly fades in/out according to a configurable distance. By default the origin coordinate is the bmodel's midpoint, but you can set a custom origin by pointing 'target' to an info_notnull point entity.
+
+If switchable shadows are on, they'll fade together with the entity.
+"
+[
+	alpha(integer) : "Full on visibility" : 1 : "Maximum visibility when player gets close. Use a fraction value between 0-1."
+	alpha2(integer) : "Full off visibility" : 0 : "Minimum visibility when player goes farther. Use a fraction value between 0-1."
+	target(target_destination) : "Custom origin" : : "Point it to an info_notnull entity to set a custom origin it'll be tested against."
+	waitmin(integer) : "Full on distance" : 192
+	waitmax(integer) : "Full off distance" : 384
+]
+
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
 @SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.

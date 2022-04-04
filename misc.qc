@@ -1238,6 +1238,9 @@ void() func_fade = {
 	self.alpha2 += 0.000001;
 	self.alpha = self.alpha2;
 
+	self.waitmin = defaultFl(self.waitmin, 192);
+	self.waitmax = defaultFl(self.waitmax, 384);
+
 	if (self.switchshadstyle) {
 		lightstyle(self.switchshadstyle, "m");
 	}
@@ -1256,7 +1259,9 @@ void() func_fade_start = {
 		if (e)
 			self.dest = e.origin;
 	}
-
+	if (self.switchshadstyle) {
+		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(0));
+	}
 	self.think = func_fade_think;
 	self.nextthink = time + 0.05;
 };
@@ -1278,7 +1283,7 @@ void() func_fade_think = {
 	}
 
 	//dprint3("Distance: ", ftos(closest), "\n");
-	if (closest < self.waitmax + 64) {
+	if (closest < self.waitmax + 128) {
 		perc = clamp(1 - (closest - self.waitmin)/(self.waitmax - self.waitmin), 0, 1);
 		func_fade_setfade(perc);
 
@@ -1287,6 +1292,7 @@ void() func_fade_think = {
 	else if (time < self.attack_finished) {
 		func_fade_setfade(0);
 	}
+	else self.nextthink = time + 0.2;
 
 };
 
