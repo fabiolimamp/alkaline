@@ -101,12 +101,19 @@ float() ChaingunnerCheckAttack =
 
 void() chain_fire = {
 	self.effects = self.effects | EF_MUZZLEFLASH;
-	vector ang, angtoenemy;
-	angtoenemy = vectoangles(self.origin - SUB_entEnemyTarget().origin);
-	ang = self.angles;
+	vector ang, angtoenemy, shotorigin;
+
+	// Get the shot origin relative to model
+	makevectors(self.angles);
+	shotorigin = self.origin + v_forward*16 + v_up*16 + v_right*10;
+
+	// Determine the shot direction
+	angtoenemy = vectoangles(shotorigin - (SUB_entEnemyTarget().origin + SUB_entEnemyTarget().view_ofs));
+	ang_y = self.angles_y;
 	ang_x = angtoenemy_x;
 	makevectors(ang);
-	FireBullets2(1, self.origin + v_forward*16 + v_up*16 + v_right*10, v_forward, '0.07 0.02 0');
+	
+	FireBullets2(1, shotorigin, v_forward, '0.07 0.02 0');
 };
 
 void() chain_change_yaw = {
