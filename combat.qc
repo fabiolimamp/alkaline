@@ -382,7 +382,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 							
 							fx_beam(inflictor.origin, trace_endpos, self);
 							
-							T_Damage(head, inflictor, attacker, points, DMGTYPE_ELECTRIC);
+							T_Damage(head, inflictor, attacker, points, DMGTYPE_ENERGY);
 						}
 				}
 			}

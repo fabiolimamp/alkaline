@@ -106,7 +106,7 @@ void() sham_smash10    =[      $smash10,      sham_smash11   ] {
 		return;
 		
 	ldmg = (random() + random() + random()) * 40;
-	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_ELECTRIC);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_ENERGY);
 	sound (self, CHAN_VOICE, "shambler/smack.wav", 1, ATTN_NORM);
 
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);

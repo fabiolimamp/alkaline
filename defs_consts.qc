@@ -351,13 +351,14 @@ float DMGTYPE_DROWN = 4; // liquid only
 float DMGTYPE_LAVA = 8; // liquid only
 float DMGTYPE_SLIME = 16; // liquid only
 float DMGTYPE_BALLISTIC = 32; // shells and spikes and bullety things
-float DMGTYPE_ELECTRIC = 64; // lightning, plasma, laser, blaster
+float DMGTYPE_ENERGY = 64; // lightning, plasma, laser, blaster
 float DMGTYPE_BURN = 128;
 float DMGTYPE_TOXIC = 256;
 float DMGTYPE_CRUSH = 512;
 float DMGTYPE_MELEE = 1024;
 float DMGTYPE_INSTANT = 2048; //void, telefrag
 float DMGTYPE_EXPLOSION = 4096; // boom
+float DMGTYPE_BURN_LONG = 8192; // keeps on burning for a few seconds
 
 //
 // CSQC

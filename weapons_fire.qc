@@ -459,7 +459,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
 
-		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
 		if (self.classname == "player")
 		{
 			if (other.classname == "player")
@@ -472,7 +472,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
 	}
 	e2 = trace_ent;
 
@@ -480,7 +480,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
 	}
 };
 
@@ -513,7 +513,7 @@ void() W_FireLightning =
 					{
 					if (victim.waterlevel > 0)
 						{
-						T_Damage(victim, self,self, 35*cells, DMGTYPE_ELECTRIC);					
+						T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
 						}
 					}	
 				}
@@ -847,7 +847,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadius
 
 			if (points > 0) {
 				if (CanDamage (head, inflictor) && head.waterlevel > 0)
-					T_Damage(head, inflictor, attacker, points, DMGTYPE_ELECTRIC);
+					T_Damage(head, inflictor, attacker, points, DMGTYPE_ENERGY);
 			}
 		}
 
@@ -900,7 +900,7 @@ void() T_PlasmaTouch = {
 	damg = 17;
 
 	if (other.health)
-		T_Damage(other, self, self.owner, damg, DMGTYPE_ELECTRIC);
+		T_Damage(other, self, self.owner, damg, DMGTYPE_ENERGY);
 	
 
 	// Moves the plasma bullet backwards after hitting.. Otherwise the 
