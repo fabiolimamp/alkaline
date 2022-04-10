@@ -1,6 +1,3 @@
-void() ban_fire_still;
-
-
 void() Projectile_Hit = 
 {
 	local vector org;
@@ -16,9 +13,9 @@ void() Projectile_Hit =
 
 	if (other.health) {
 		ImpactSpawn(org, self.velocity * 0.2, 15, other.bloodtype);
-		T_Damage(other, self, self.owner, 10);
+		T_Damage(other, self, self.owner, 10, DMGTYPE_EXPLOSION);
 	}
-	T_RadiusDamage(self, self, 20, self);
+	T_RadiusDamage(self, self, 20, self, DMGTYPE_EXPLOSION);
 
 	self.origin = self.origin - 8 * normalize(self.velocity);
 
@@ -269,7 +266,7 @@ void() banshee_run12 = 	[31, banshee_run1]	{banshee_run_frame();
 
 void() ban_fire_walk_frame = {
 	ChangeYaw();
-	walkmove(self.angles_y, 14);
+	walkmove2(self.angles_y, 14);
 	banshee_think();
 };
 
@@ -290,7 +287,7 @@ void() ban_fire_walk13 = 	[55, banshee_run1]		{ban_fire_walk_frame(); SUB_Attack
 
 void() ban_stomp_walk = {
 	ChangeYaw();
-	walkmove(self.angles_y, 14);
+	walkmove2(self.angles_y, 14);
 	banshee_think();
 };
 
@@ -302,7 +299,7 @@ void() ban_stomp5 = 	[79, ban_stomp6]	{banshee_think(); };
 void() ban_stomp6 = 	[80, ban_stomp7]	{ChangeYaw(); banshee_think();
 	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	FuelTankExplode();
-	T_RadiusDamage(self, self, 100, self);
+	T_RadiusDamage(self, self, 100, self, DMGTYPE_MELEE);
 };
 void() ban_stomp7 = 	[81, ban_stomp8]	{banshee_think(); };
 void() ban_stomp8 = 	[82, ban_stomp9]	{banshee_think(); };
@@ -402,7 +399,7 @@ void() banshee_repulse_attack = {
 			}
 			head = head.chain;
 		}
-		T_RadiusDamage(self, self, 60, self);
+		T_RadiusDamage(self, self, 60, self, DMGTYPE_MELEE);
 		self.state = STATE_TOP;
 		SUB_AttackFinished(0.1);
 	}

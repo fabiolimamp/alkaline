@@ -72,7 +72,7 @@ void()	OgreB_SmashTouch =
 		if ( vlen(self.velocity) > 300 )
 		{
 			ldmg = (random() + random() + random()) * 4;
-			T_Damage (other, self, self, ldmg);	
+			T_Damage(other, self, self, ldmg, DMGTYPE_MELEE);	
 			
 			//knock em back
 			self.enemy.velocity_z = self.enemy.velocity_z + 25 + (random() * 250);
@@ -125,7 +125,7 @@ local float 	ldmg;
 		return;
 		
 	ldmg = (random() + random() + random()) * 4;
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 	
 	if (side)
 	{

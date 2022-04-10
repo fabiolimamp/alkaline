@@ -361,23 +361,30 @@ ImpulseCommands
 ============
 */
 
-void() ImpulseCommands =
-{
-	if (self.impulse >= 1 && self.impulse <= 8)
-		W_ChangeWeapon();
-	
-	if (self.impulse >= 224 && self.impulse <= 235)
-		W_ChangeWeapon();
-	
+void() ImpulseCommands = {
+	// weapon changing must not occur until attack_finished time has passed
+	if (self.impulse >= 1 && self.impulse <= 8){
+		if (time < self.attack_finished) return;
+		else W_ChangeWeapon();
+	}
+	if (self.impulse >= 224 && self.impulse <= 235) {
+		if (time < self.attack_finished) return;
+		else W_ChangeWeapon();
+	}
+	if (self.impulse == 10) {
+		if (time < self.attack_finished) return;
+		else CycleWeaponCommand();
+	}
+	if (self.impulse == 12) {
+		if (time < self.attack_finished) return;
+		else CycleWeaponReverseCommand();
+	}
+
 	if (self.impulse == 9)
 		GiveAllCommand();
-
-	if (self.impulse == 10)
-		CycleWeaponCommand();
 	if (self.impulse == 11)
 		ServerflagsCommand();
-	if (self.impulse == 12)
-		CycleWeaponReverseCommand();
+
 	if (self.impulse == 13)
 		GiveWeaponsCommand();
 	if (self.impulse >= 91 && self.impulse <= 99)
@@ -432,46 +439,18 @@ Called every frame so impulse events can be handled as well as possible
 */
 void() W_WeaponFrame =
 {
-	if (time < self.attack_finished)
-		return;
 
 	if (self.impulse) //johnfitz
 		ImpulseCommands();
-	
+
+	if (time < self.attack_finished)
+		return;
+
 // check for attack
-	if (self.button0)
-	{
-		SuperDamageSound ();
+	if (self.button0) {
 		W_Attack ();
 	}
 };
 
-/*
-========
-SuperDamageSound
-
-Plays sound if needed
-========
-*/
-void() SuperDamageSound =
-{
-	if ((self.super_damage_finished > time) || (self.trif_finished > time))
-	{
-		if (self.super_sound < time)
-		{
-			
-			if(self.trif_finished > time) {
-				sound(self, CHAN_BODY, "items/trifecta3.wav", 1, ATTN_NORM);
-				self.super_sound = time + 0.7;
-			}
-			else{
-				sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
-				self.super_sound = time + 1;
-			}
-			
-		}
-	}
-	return;
-};
 
 

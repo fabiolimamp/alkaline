@@ -365,7 +365,7 @@ void() changelevel_touch =
 
 	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
 	{
-		T_Damage (other, self, self, 50000);
+		T_Damage(other, self, self, 50000, DMGTYPE_INSTANT);
 		return;
 	}
 
@@ -643,6 +643,7 @@ void() PutClientInServer =
 {
 	local	entity spot;
 
+	dprint5("\b[CLIENT]\b Connected at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
 
 	if(!client_ent) client_ent = self; //client_ent will be the first player to enter
 	
@@ -670,6 +671,7 @@ void() PutClientInServer =
 	self.customkeys = 0;  // support for item_key_custom -- iw
 	self.jboots_finished = 0;	//jcr jboots timed
 	self.offground_start = 0;
+	self.sky = world.sky;
 
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -1134,8 +1136,8 @@ void() WaterMove =
 			self.dmg = self.dmg + 2;
 			if (self.dmg > 15)
 				self.dmg = 10;
-			self.deathtype = "drowning"; //johnfitz
-			T_Damage (self, world, world, self.dmg);
+			
+			T_Damage(self, world, world, self.dmg, DMGTYPE_DROWN);
 			self.pain_finished = time + 1;
 		}
 	}
@@ -1160,7 +1162,7 @@ void() WaterMove =
 			else
 				self.dmgtime = time + 0.2;
 
-			T_Damage (self, world, world, 10*self.waterlevel);
+			T_Damage(self, world, world, 10*self.waterlevel, DMGTYPE_LAVA);
 		}
 	}
 	else if (self.watertype == CONTENT_SLIME)
@@ -1168,7 +1170,7 @@ void() WaterMove =
 		if (self.dmgtime < time && self.radsuit_finished < time)
 		{
 			self.dmgtime = time + 1;
-			T_Damage (self, world, world, 4*self.waterlevel);
+			T_Damage(self, world, world, 4*self.waterlevel, DMGTYPE_SLIME);
 		}
 	}
 	
@@ -1239,6 +1241,7 @@ void() PlayerPreThink =
 	if (cleanUpClientStuff) {
 		fog_setFromEnt( self, self );
 		csf_apply(self);
+		if (self.sky != world.sky) skybox_apply(self);
 	}
 	
 	if (intermission_running)
@@ -1325,6 +1328,10 @@ void() PlayerPreThink =
 		if (self.csf_priority == 0 && self.csf_density > 0)
 			csf_clear_all(self);
 	}
+
+	checkSelfInWaterBrush();
+
+	//dprint3("Player waterlevel: ", ftos(self.waterlevel), "\n");
 };
 	
 /*
@@ -1557,23 +1564,24 @@ void() CheckPowerups =
 StartBurning -- johnfitz
 ================
 */
-void(entity e, float dur) StartBurning = {
-	if (e.classname != "player")
+void(entity tgt, entity attacker, float dur) StartBurning = {
+	if (tgt.classname != "player")
 		return;
 
-	if (e.waterlevel >= 3)
+	if (tgt.waterlevel >= 3)
 		return;
 
-	if (e.radsuit_finished > time)
+	if (tgt.radsuit_finished > time)
 		return;
 
-	if (e.invincible_finished > time)
+	if (tgt.invincible_finished > time)
 		return;
 		
-	if (e.trif_finished > time)
+	if (tgt.trif_finished > time)
 		return;		
 		
-	e.burning_finished = time + dur;
+	tgt.burning_finished = time + dur;
+	tgt.burning_attacker = attacker;
 };
 
 /*
@@ -1587,6 +1595,7 @@ void(entity e) StopBurning = {
 	if (e.burning_finished) {
 		e.burning_finished = 0;
 		e.burning_time = 0;
+		e.burning_attacker = world;
 		csf_clear(e, 90);
 	}
 };
@@ -1615,8 +1624,8 @@ void() CheckBurning = {
 		else {		
 			//apply damage
 			if (self.burning_time < time) {
-				self.deathtype = "burning";
-				T_Damage (self, world, world, 1);
+				self.deathtype = DMGTYPE_BURN;
+				T_Damage(self, self.burning_attacker, self.burning_attacker, 1, DMGTYPE_BURN);
 				self.burning_time = time + 1;
 			}
 			
@@ -1651,6 +1660,8 @@ void() PlayerPostThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
+	checkSelfInWaterBrush();
+	
 	if (self.flags & FL_CLIENT) {
 		mapvar_cvar = TRUE;			// Map Variable are live
 	}
@@ -1698,8 +1709,7 @@ void() PlayerPostThink =
 			sound (self, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
 		else if (self.jump_flag < -650)
 		{
-			self.deathtype = "falling"; //johnfitz -- moved before T_Damage call
-			T_Damage (self, world, world, 5); 
+			T_Damage(self, world, world, 5, DMGTYPE_FALL); 
 			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
 		}
 		else
@@ -1947,7 +1957,7 @@ void(entity targ, entity attacker) ClientObituary =
 			targ.frags = targ.frags - 1;
 			bprint (targ.netname);
 
-			// attacker has an obituary message? (all monsters have one by default)
+			// attacker has an obituary message?
 			if (attacker.obituary != "")
 			{
 				bprint(" ");
@@ -1956,68 +1966,22 @@ void(entity targ, entity attacker) ClientObituary =
 				return;
 			}
 			
-			//johnfitz new obituaries
-			if (attacker.classname == "smoke")
-			{
-				if (random() < 0.5)
-					bprint (" was steamed alive\n");
-				else
-					bprint (" was scalded to death\n");
-				return;
-			}
-			if (targ.deathtype == "burning")
-			{
-				//this only works because the only way to catch fire is when a Dreadnaught attacks you
-				bprint (" was incinerated by a Dreadnaught\n");
-				return;
-			}
-			if (attacker.classname == "func_laser")
-			{
-				bprint (" looked into laser with remaining eye\n");
-				return;
-			}
-			if (attacker.classname == "func_turret")
-			{
-				bprint (" was blasted by a turret\n");
-				return;
-			}
-			//johnfitz
 
-			// tricks and traps
-			if (attacker.classname == "explo_box")
-			{
-				bprint (" blew up\n");
-				return;
-			}
+			// movers
 			if (attacker.solid == SOLID_BSP && attacker != world)
 			{	
 				bprint (" was squished\n");
 				return;
 			}
-			if (attacker.classname == "trap_shooter" || attacker.classname == "trap_spikeshooter")
-			{
-				if (attacker.spawnflags & 2) // TRAP_LASER		
-					bprint (" was zapped by a frickin' laser beam\n");
-				else if (attacker.spawnflags & 4) // TRAP_ROCKET
-					bprint (" rode a rocket\n");
-				else
-					bprint (" was spiked\n");
-				return;
-			}
-			if (attacker.classname == "fireball")
-			{
-				bprint (" ate a lavaball\n");
-				return;
-			}
+
 			if (attacker.classname == "trigger_changelevel")
 			{
 				bprint (" tried to leave\n");
 				return;
 			}
 			
-			// in-water deaths
-			rnum = targ.watertype;
-			if (rnum == -3)
+
+			if (targ.deathtype == DMGTYPE_DROWN)
 			{
 				if (random() < 0.5)
 					bprint (" sleeps with the fishes\n");
@@ -2025,7 +1989,8 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" sucks it down\n");
 				return;
 			}
-			else if (rnum == -4)
+
+			if (targ.deathtype == DMGTYPE_SLIME)
 			{
 				if (random() < 0.5)
 					bprint (" gulped a load of slime\n");
@@ -2033,7 +1998,8 @@ void(entity targ, entity attacker) ClientObituary =
 					bprint (" can't exist on slime alone\n");
 				return;
 			}
-			else if (rnum == -5)
+
+			if (targ.deathtype == DMGTYPE_LAVA)
 			{
 				if (targ.health < -15)
 				{
@@ -2048,9 +2014,8 @@ void(entity targ, entity attacker) ClientObituary =
 			}
 
 			// fell to their death?
-			if (targ.deathtype == "falling")
+			if (targ.deathtype == DMGTYPE_FALL)
 			{
-				targ.deathtype = "";
 				bprint (" fell to his death\n");
 				return;
 			}

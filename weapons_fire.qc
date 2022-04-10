@@ -14,13 +14,15 @@ void() W_FireAxe =
 	if (trace_fraction == 1.0)
 		return;
 	
+	self.show_hostile = time + 1; // hit something, so alert monsters
+
 	org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage) {
 		trace_ent.axhitme = 1;
 
 		ImpactSpawn(org, '0 0 0', 20, trace_ent.bloodtype);
-		T_Damage (trace_ent, self, self, 20);
+		T_Damage(trace_ent, self, self, 20, DMGTYPE_MELEE);
 		
 		//johnfitz -- make clank sound when hitting brushmodels
 		if (trace_ent.movetype == MOVETYPE_PUSH || trace_ent.movetype == MOVETYPE_NONE)
@@ -81,9 +83,9 @@ void() W_FireSaw =
 		}
 
 		if (deathmatch == 0)
-			T_Damage (ent, self, self, 24);
+			T_Damage(ent, self, self, 24, DMGTYPE_MELEE);
 		else
-			T_Damage (ent, self, self, 30);
+			T_Damage(ent, self, self, 30, DMGTYPE_MELEE);
 		
 		ent.velocity = ent.velocity * 0.5;
 		sound (self, CHAN_WEAPON, "weapons/sawguts.wav", 1, ATTN_NORM);
@@ -119,7 +121,7 @@ void() ApplyMultiDamage =
 {
 	if (!multi_ent)
 		return;
-	T_Damage (multi_ent, self, self, multi_damage);
+	T_Damage(multi_ent, self, self, multi_damage, DMGTYPE_BALLISTIC);
 };
 
 void(entity hit, float damage) AddMultiDamage =
@@ -144,6 +146,39 @@ BULLETS
 
 ==============================================================================
 */
+
+void() tracer_think = {
+	if (time > self.attack_finished || self.frame >= 4) {
+		remove(self);
+		return;
+	}
+
+	self.frame++;
+	self.nextthink = time + 0.02;
+};
+
+
+void(vector org, vector direction, vector dest) drawTracer = {
+
+	newmis = spawn();
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLY;
+	newmis.solid = SOLID_NOT;
+
+	newmis.angles = vectoangles(direction);
+	
+	newmis.classname = "tracer";
+	newmis.think = tracer_think;
+	newmis.nextthink = time + 0.02;
+	newmis.alpha = 0.8;
+	newmis.attack_finished = time + vlen(org - dest)/2200;
+		
+	setmodel (newmis, "progs/pellet_tracer_short.mdl");  //Precache model in WORLD.QC
+	setsize (newmis, '0 0 0', '0 0 0');
+	setorigin (newmis, org);
+
+	newmis.velocity = direction * 2000;
+};
 
 /*
 ================
@@ -206,11 +241,13 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (src, src + direction*2048, FALSE, self);
+
+		if (!(self.flags & FL_CLIENT)) drawTracer(src, direction, trace_endpos);
+
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
 			//JIM
 			TraceAttack(4, direction);
-
 
 			placebullethole(trace_endpos, plane_normal, trace_ent);
 
@@ -235,11 +272,13 @@ void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
 		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (org, org + direction*2048, FALSE, self);
+
+		if (!(self.flags & FL_CLIENT)) drawTracer(org, direction, trace_endpos);
+		
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
 			//JIM
 			TraceAttack(4, direction);
-
 
 			placebullethole(trace_endpos, plane_normal, trace_ent);
 
@@ -313,8 +352,7 @@ void() T_MissileTouch =
 	if (other == self.owner)
 		return;		// don't explode on owner
 
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
+	if (pointcontents(self.origin) == CONTENT_SKY)	{
 		remove(self);
 		return;
 	}
@@ -330,54 +368,17 @@ void() T_MissileTouch =
 	}
 	
 	if (other.health)
-	{
-		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
-			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
-	}
+		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
-	T_RadiusDamage (self, self.owner, rdamg, other);
+	T_RadiusDamage (self, self.owner, rdamg, other, DMGTYPE_EXPLOSION);
 
-//	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	self.origin = self.origin - 8*normalize(self.velocity);
-
-
-	BecomeExplosion ();
-};
-
-void() T_MissileTouchArma =
-{
-	local float	damg;
-
-	if (other == self.owner)
-		return;		// don't explode on owner
-
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
-		return;
-	}
-
-	damg = 50 + random()*20;	// reduced damage (orig. 100), for better gameplay
-	
-	if (other.health)
-	{
-		if (other.classname == "monster_shambler" || other.classname == "monster_bambler")
-			damg = damg * 0.5;	// mostly immune
-		T_Damage (other, self, self.owner, damg );
-	}
-
-	// don't do radius damage to the other, because all the damage
-	// was done in the impact
-	T_RadiusDamage (self, self.owner, 50, other);	// reduced splash (orig. 120), for better gameplay
-
-//	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(self.velocity);
 
 	BecomeExplosion ();
 };
+
 
 /*
 ================
@@ -458,7 +459,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
 
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
 		if (self.classname == "player")
 		{
 			if (other.classname == "player")
@@ -471,7 +472,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
 	}
 	e2 = trace_ent;
 
@@ -479,7 +480,7 @@ void(vector p1, vector p2, entity from, float damage) LightningDamage =
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
 	{
 		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage (trace_ent, from, from, damage);
+		T_Damage(trace_ent, from, from, damage, DMGTYPE_ELECTRIC);
 	}
 };
 
@@ -512,7 +513,7 @@ void() W_FireLightning =
 					{
 					if (victim.waterlevel > 0)
 						{
-						T_Damage(victim, self,self, 35*cells);					
+						T_Damage(victim, self,self, 35*cells, DMGTYPE_ELECTRIC);					
 						}
 					}	
 				}
@@ -561,7 +562,7 @@ void() GrenadeExplode =
 		return;
 	}
 
-	T_RadiusDamage (self, self.owner, 120, world);
+	T_RadiusDamage (self, self.owner, 120, world, DMGTYPE_EXPLOSION);
 
 	BecomeExplosion ();
 };
@@ -745,7 +746,7 @@ void() spike_touch =
 	{
 		damage = zeroconvertdefault(self.dmg, 9);
 		spawn_touchblood(damage);
-		T_Damage(other, self, self.owner, damage);
+		T_Damage(other, self, self.owner, damage, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
@@ -793,7 +794,7 @@ void() superspike_touch =
 	{
 		damage = zeroconvertdefault(self.dmg, 18);
 		spawn_touchblood(damage);
-		T_Damage(other, self, self.owner, damage);
+		T_Damage(other, self, self.owner, damage, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
@@ -846,7 +847,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadius
 
 			if (points > 0) {
 				if (CanDamage (head, inflictor) && head.waterlevel > 0)
-					T_Damage (head, inflictor, attacker, points);
+					T_Damage(head, inflictor, attacker, points, DMGTYPE_ELECTRIC);
 			}
 		}
 
@@ -899,7 +900,7 @@ void() T_PlasmaTouch = {
 	damg = 17;
 
 	if (other.health)
-		T_Damage(other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg, DMGTYPE_ELECTRIC);
 	
 
 	// Moves the plasma bullet backwards after hitting.. Otherwise the 
@@ -921,7 +922,6 @@ void() W_FirePlasma =
 	local entity missile;
 	vector org;
 
-	// Now it only shoots once per cell... Just to make it not so overpowered
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
 	// Taken from Doom...
@@ -929,20 +929,22 @@ void() W_FirePlasma =
 
 	self.punchangle_x = -2;
 
-	missile = spawn ();
+	missile = spawn();
 	missile.owner = self;
-	missile.movetype = MOVETYPE_FLYMISSILE;    // Like a rocket
+	missile.movetype = MOVETYPE_FLYMISSILE;
 	missile.solid = SOLID_BBOX;
 	missile.classname = "plasma";
 	missile.flags = missile.flags | FL_PROJECTILE;
 
-	// set plasma bullet speed. (Basically AIM with some random)  
-
+	// shot spread increases the longer you hold the trigger,
+	// and slowly recovers after that -bmFbr
+	if (time < self.lastshot + 0.065) self.shotcount = min(self.shotcount + 1, 6);
+	else self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
+	
 	makevectors (self.v_angle);
-	missile.velocity = aim(self, 1000);
-	missile.velocity = missile.velocity * 1000;
-	missile.velocity = missile.velocity + ( crandom() * 50 * v_right );
-	missile.velocity = missile.velocity + ( crandom() * 50 * v_up );
+	missile.velocity = aim(self, 1000) * 1000;
+	missile.velocity = missile.velocity + (crandom() * 50 * (self.shotcount*self.shotcount/36) * v_right );
+	missile.velocity = missile.velocity + (crandom() * 50 * (self.shotcount*self.shotcount/36) * v_up );
 	missile.angles = vectoangles(missile.velocity);
 	missile.avelocity = '300 300 300';  
 
@@ -960,4 +962,6 @@ void() W_FirePlasma =
 	traceline(org, org + v_forward * 24, FALSE, self);
 	//setorigin (missile, org + v_forward*12);
 	setorigin (missile, org + v_forward*24 * trace_fraction);
+
+	self.lastshot = time;
 };

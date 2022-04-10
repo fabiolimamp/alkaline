@@ -3,6 +3,7 @@ float TURRET_STATE_INACTIVE = 0;
 float TURRET_STATE_ACTIVATING = 1;
 float TURRET_STATE_ACTIVE = 2;
 float TURRET_STATE_DEACTIVATING = 3;
+float TURRET_STATE_IDLE = 4;
 
 /*
 ===============================================================================
@@ -253,6 +254,8 @@ void() func_turret =
 	setorigin (self, self.origin);	
 	setmodel (self, self.model);
 	self.use = turret_use;
+	
+	if (!self.obituary) self.obituary = "was blasted by a turret";
 	
 	if (!self.speed)
 		self.speed = 100;

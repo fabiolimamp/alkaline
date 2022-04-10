@@ -153,6 +153,12 @@ void(entity attacker, float damage)	demon1_pain =
 	if (self.classname == "monster_mutant") {
 		if (self.health < self.max_health * 0.6) self.skin = 1;
 	}
+	
+	if (self.classname == "monster_demon1" && self.spawnflags & MONSTER_ORIGINAL) {
+		if (self.health < self.max_health * 0.05)	self.skin = 3;
+		else if (self.health < self.max_health * 0.4)	self.skin = 2;
+		else if (self.health < self.max_health * 0.8)	self.skin = 1;
+	}
 
 	if (self.touch == Demon_JumpTouch)
 		return;
@@ -206,6 +212,7 @@ void() demon_die =
 	}
 
 	if (self.classname == "monster_mutant") self.skin = 1;
+	else if (self.classname == "monster_demon1" && self.spawnflags & MONSTER_ORIGINAL) self.skin = 3;
 
 // regular death
 	demon1_die1 ();
@@ -303,7 +310,7 @@ void(float side)	Demon_Melee =
 	local vector	delta;
 	
 	ai_face ();
-	walkmove (self.ideal_yaw, 12);	// allow a little closing
+	walkmove2 (self.ideal_yaw, 12);	// allow a little closing
 
 	delta = self.enemy.origin - self.origin;
 	
@@ -316,7 +323,7 @@ void(float side)	Demon_Melee =
 	sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
 	
 	ldmg = 10 + 5*random();
-	T_Damage (self.enemy, self, self, ldmg);	
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);	
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -328,7 +335,7 @@ void(float side)	Mutant_Melee =
 	local vector	delta;
 	
 	ai_face ();
-	walkmove (self.ideal_yaw, 12);	// allow a little closing
+	walkmove2 (self.ideal_yaw, 12);	// allow a little closing
 
 	delta = self.enemy.origin - self.origin;
 	
@@ -342,7 +349,7 @@ void(float side)	Mutant_Melee =
 	sound (self, CHAN_WEAPON, "mutant/mutatck2.wav", 1, ATTN_NORM);
     	
 	ldmg = 5 + 2*random();
-	T_Damage (self.enemy, self, self, ldmg);	
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);	
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
@@ -361,7 +368,7 @@ void()	Demon_JumpTouch =
 		{
 			if (self.classname == "monster_mutant") ldmg = 25 + 10*random();
 			else ldmg = 40 + 10*random();
-			T_Damage (other, self, self, ldmg);	
+			T_Damage(other, self, self, ldmg, DMGTYPE_MELEE);	
 		}
 	}
 
@@ -405,7 +412,7 @@ void(entity e) monster_demon1_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	if (self.spawnflags & MONSTER_ORIGINAL)
-		setmodel (self, "progs/demon.mdl");
+		setmodel (self, "progs/demon_old.mdl");
 	else
 		setmodel (self, "progs/demon_alk.mdl");
 
@@ -475,7 +482,7 @@ void() monster_demon1 =
 		return;
 	}
 	if (self.spawnflags & MONSTER_ORIGINAL) {
-		precache_model ("progs/demon.mdl");
+		precache_model ("progs/demon_old.mdl");
 		precache_model ("progs/h_demon.mdl");
 	}
 	else {

@@ -93,9 +93,9 @@ float BREAKABLE_CONCRETE = 2;
 float BREAKABLE_GLASS = 3;
 
 float BREAKABLE_ALWAYS_SHOOTABLE = 2;
+float BREAKABLE_ONLY_EXPLOSION = 4;
 
-void() make_breakable_debris =
-{
+void() make_breakable_debris = {
 	local float i;
 	i = 0;
 	while (i < self.cnt)
@@ -106,8 +106,8 @@ void() make_breakable_debris =
 		new.origin_x = (self.maxs_x - self.mins_x)*random() + self.mins_x;
 		new.origin_y = (self.maxs_y - self.mins_y)*random() + self.mins_y;
 		new.origin_z = (self.maxs_z - self.mins_z)*random() + self.mins_z;
-		setmodel (new, self.mdl);
-		setsize (new, '0 0 0', '0 0 0');
+		setmodel(new, self.mdl);
+		setsize(new, '0 0 0', '0 0 0');
 		new.velocity = VelocityForDamage (self.health*2);
 		new.movetype = MOVETYPE_BOUNCE;
 		new.solid = SOLID_NOT;
@@ -151,31 +151,41 @@ void() make_breakable_debris =
 	
 };
 
-void () func_breakable_die =
-{
+void() func_breakable_die = {
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-	self.origin = ((self.absmin + self.absmax) * 0.5);
-	setorigin (self, self.origin);	
-	make_breakable_debris ();
+	self.origin = (self.absmin + self.absmax) * 0.5;
+	setorigin(self, self.origin);	
+	make_breakable_debris();
 
 	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
 	
-	remove (self);
+	remove(self);
 };
 
-void () func_breakable_killed =
-{
+void() func_breakable_killed = {
 	activator = damage_attacker;
-	SUB_UseTargets ();
+	SUB_UseTargets();
 	func_breakable_die ();
 };
 
-void () func_breakable_use =
-{
-	activator = other;
-	SUB_UseTargets ();
+void() func_breakable_use = {
+	//activator = other;
+	SUB_UseTargets();
 	func_breakable_die ();
 };
+
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) func_breakable_damage = {
+	float ret;
+	ret = damage;
+
+	if (self.spawnflags & BREAKABLE_NO_MONSTERS && attacker.flags & FL_MONSTER)
+		ret = 0;		
+
+	if (self.spawnflags & BREAKABLE_ONLY_EXPLOSION && !(dmgtype & DMGTYPE_EXPLOSION))	
+		ret = 0;
+
+	return ret;
+}
 
 /*QUAKED func_breakable (0 .5 .8) ? NO_MONSTERS
 A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable.
@@ -192,7 +202,7 @@ NO_MONSTERS: object ignores damage from monsters
 2 = concrete
 3 = glass
 */
-void () func_breakable =
+void() func_breakable =
 {
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
@@ -236,6 +246,7 @@ void () func_breakable =
 	
 		
 	self.use = func_breakable_use;
+	self.th_damage = func_breakable_damage;
 
 	if (self.targetname == "" || (self.targetname != "" && (self.spawnflags & BREAKABLE_ALWAYS_SHOOTABLE))) {
 		self.takedamage = DAMAGE_YES;
@@ -259,7 +270,7 @@ void () func_explobox_explode =
 
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	T_RadiusDamage (self, self, self.dmg, world);
+	T_RadiusDamage(self, self, self.dmg, world, DMGTYPE_EXPLOSION);
 	
 	activator = self.enemy;
 	SUB_UseTargets();
@@ -308,6 +319,7 @@ void () func_explobox =
 
 	self.use = func_explobox_die;
 	self.th_die = func_explobox_die;
+	if (!self.obituary) self.obituary = "blew up";
 	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 };
 
@@ -345,7 +357,7 @@ void() func_laser_touch = {
 		return;
 
 	if (other.takedamage && self.attack_finished < time) {
-		T_Damage (other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg, DMGTYPE_ELECTRIC);
 		self.attack_finished = time + 0.1;
 	}
 
@@ -449,6 +461,8 @@ void () func_laser =
 	self.use = func_laser_use;
 
 	self.touch = func_laser_touch;
+
+	if (!self.obituary) self.obituary = "looked into laser with remaining eye";
 
 	// lasers shouldn't get bulletholes
 	self.nobullets = zeroconvertdefault(self.nobullets, 1);
@@ -730,7 +744,7 @@ void() smoke_touch =
 
 	if (self.dmg > 0 && other.health)
 	{
-		T_Damage (other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg, DMGTYPE_BURN);
 		self.dmg = 0;
 	}	
 	self.velocity = '0 0 0'; //FIXME: can't set velocity in a touch function
@@ -872,6 +886,7 @@ void() misc_smoke =
 	self.use = smoke_use;
 	self.nextthink = time + 0.5;
 	self.think = smoke_firstthink;
+	self.obituary = "was steamed alive";
 };
 
 

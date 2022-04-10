@@ -55,7 +55,7 @@ void() centurion_missle_touch =
 	if (other.takedamage)
 	{
 		spawn_touchblood (CENT_DAMAGE);
-		T_Damage (other, self, self.owner, CENT_DAMAGE);
+		T_Damage(other, self, self.owner, CENT_DAMAGE, DMGTYPE_BALLISTIC);
 	}
 	else
 	{
@@ -269,8 +269,8 @@ void() cent_combatmove = {
 	}
 	
 	// Use movetogoal when walkmove fails, because it is the only way to get around obstacles
-	if (!walkmove (dir, CENT_RUNSPEED))
-		movetogoal(CENT_RUNSPEED);
+	if (!walkmove2 (dir, CENT_RUNSPEED))
+		movetogoal2(CENT_RUNSPEED);
 		
 	// Restore enemy's correct origin
 	enem.origin_z = enem.origin_z - 1000 * self.height;

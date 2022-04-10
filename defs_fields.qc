@@ -161,6 +161,8 @@ nosave float *world_sounds;  //via Spike fun times! nosave=noclobber
 nosave float cleanUpClientStuff;
 nosave float gamestarted;
 
+entity lastspawn;
+
 
 // simple kex detection, thanks Lunaran
 float isKex; // running the quake rerelease
@@ -211,6 +213,7 @@ FIELDS
 .float		worldtype;	// 0=medieval 1=metal 2=base
 
 .string		killtarget;
+.string 	sky;
 
 //
 // quakeed fields
@@ -241,7 +244,7 @@ FIELDS
 .void()		th_sight;
 .void()		th_wake;
 .float()	th_checkattack;
-.float(entity inflictor, entity attacker, float damage, float orig_damage) th_damage;
+.float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) th_damage;
 
 .void(entity mon)	start_function;
 
@@ -298,10 +301,12 @@ FIELDS
 .float		swim_flag;		// player swimming sound flag
 .float		air_finished;	// when time > air_finished, start drowning
 .float		bubble_count;	// keeps track of the number of bubbles
-.string		deathtype;		// keeps track of how the player died
+.float		deathtype;		// keeps track of how the player died
 .float 		offground_start; // last time the player was on ground
 
 .float 		wantedgravity; // thanks Spike!
+
+.float 		shotcount, lastshot;
 
 .float	healamount, healtype;
 
@@ -326,7 +331,7 @@ FIELDS
 //
 // doors, etc
 //
-.vector		dest, dest1, dest2;
+.vector		dest, dest1, dest2, dest3;
 .float		wait;			// time from firing to restarting
 .float		delay;	// time from activation to firing
 .entity		trigger_field;	// door's trigger entity
@@ -454,11 +459,12 @@ FIELDS
 .float		burningsound;
 .float		gravity;
 .float		color;
-.float		alpha, alpha2;
+.float		alpha, alpha1, alpha2;
 .entity		missle;
 
 .float		burning_finished;
 .float		burning_time;
+.entity 	burning_attacker;
 
 .float		dismemberment;	//used by hunter.qc
 
@@ -535,7 +541,7 @@ FIELDS
 .float 		maxdelay, mindelay, lastclose, lastopen, movingback;
 .vector		cmins, cmaxs;
 .float 		groupstate;
-.float 		prevgroupstate = burning_time;
+.float 		prevgroupstate;
 .string 	groupname;
 .entity 	lastenemy = oldenemy;
 .float  	doorlooped = count;
@@ -585,7 +591,6 @@ FIELDS
 
 
 // AD monsters
-
 .float lostsearch;
 .entity lostenemy;
 .float losttimer;
@@ -600,9 +605,22 @@ FIELDS
 .float attack_rage;
 .float attack_chance;
 
-// cshift controller
 
+// cshift controller
 .entity csfcontroller;
 .vector csf_color, csf_color_prev;
 .float csf_density, csf_density_prev;
 .float csf_priority, csf_priority_prev;
+
+
+//
+.string attackerfilter;
+.string inflictorfilter;
+.string touchfilter;
+.float damagedby;
+
+
+.string liquidbrush;
+.float liquidtype;
+.vector liquidcolor;
+.float liquiddensity;

@@ -163,7 +163,7 @@ void() probe_pulsetouch =
 	if (other.health)
 	{
 		ImpactSpawn(org, self.velocity * 0.2, 15, other.bloodtype);
-		T_Damage(other, self, self.owner, 12);
+		T_Damage(other, self, self.owner, 12, DMGTYPE_ELECTRIC);
 	}
 	else
 	{
@@ -390,7 +390,7 @@ void() probe_run13 = 	[12, probe_run1] 	{probe_run_frame();
 
 void() probe_watk_frame = {
 	ChangeYaw();
-	walkmove(self.angles_y, 14);
+	walkmove2(self.angles_y, 14);
 	probe_think();
 }
 

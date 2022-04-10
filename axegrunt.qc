@@ -138,7 +138,7 @@ void( vector dir ) axe_chop =
 	if (!CanDamage (self.enemy, self))
 		return;
 	ldmg = (random() + random() + random()) * 2;
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 
 	toss = v_forward * dir_x + v_right * dir_y + v_up * dir_z;
 	self.enemy.velocity = self.enemy.velocity + toss;

@@ -146,7 +146,7 @@ void() poon_bang =
 	sound(self, CHAN_WEAPON, "frogman/impact.wav", 1, ATTN_NORM);
 	if (other.health)
 	{
-		T_Damage(other, self, self.owner, 30);
+		T_Damage(other, self, self.owner, 30, DMGTYPE_BALLISTIC);
 		remove(self);
 	}
 };

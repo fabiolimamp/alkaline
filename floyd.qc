@@ -87,7 +87,7 @@ void() FLaser_Touch =
 	if (other.health)
 	{
 		ImpactSpawn (org, self.velocity*0.2, 15, other.bloodtype);
-		T_Damage (other, self, self.owner, 15);
+		T_Damage(other, self, self.owner, 15, DMGTYPE_ELECTRIC);
 	}
 	else
 	{
@@ -291,7 +291,7 @@ void () floyd_explode =
 {
 	local float gibs;
 
-	T_RadiusDamage (self, self, 100, world);
+	T_RadiusDamage (self, self, 100, world, DMGTYPE_EXPLOSION);
 	if (self.health > -50) self.health = -50;
 
 	//gibs
@@ -480,7 +480,7 @@ void() floyd_asleep_start = {
 
 	self.flags = self.flags | FL_MONSTER;
 
-	if (!walkmove(0,0))
+	if (!walkmove2(0,0))
 	{
 		dprint ("walkmonster in wall at: ");
 		dprint (vtos(self.origin));

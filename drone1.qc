@@ -47,7 +47,7 @@ void() DLaser_Touch =
 	if (other.health)
 	{
 		ImpactSpawn (org, self.velocity*0.2, 15, other.bloodtype);
-        T_Damage (other, self, self.owner, 10); // reduced (Speedy)
+		T_Damage(other, self, self.owner, 10, DMGTYPE_ELECTRIC); // reduced (Speedy)
 	}
 	else
 	{
@@ -59,7 +59,7 @@ void() DLaser_Touch =
 
 void(vector org, vector vec) LaunchDLaser =
 {
-    if (self.classname == "monster_drone")
+	if (self.classname == "monster_drone")
 		sound (self, CHAN_WEAPON, "drone/enfire.wav", 1, ATTN_NORM);
 
 	vec = normalize(vec);
@@ -83,7 +83,7 @@ void(vector org, vector vec) LaunchDLaser =
 
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
-        newmis.touch = DLaser_Touch;
+		newmis.touch = DLaser_Touch;
 };
 
 
@@ -232,10 +232,10 @@ void() drn_run =
 {
 	local float	r;
 	r = random();
-        if (r < 0.5)
-        drn_runa1 ();
-        else
-        drn_runb1 ();
+		if (r < 0.5)
+		drn_runa1 ();
+		else
+		drn_runb1 ();
 };
 
 
@@ -284,26 +284,26 @@ void()  drn_painb5       =[      $pab4,         drn_run         ] {};
 void(entity attacker, float damage) drn_pain =
 {
 	if (random() > 0.75)
-        sound (self, CHAN_VOICE, "drone/drnpain2.wav", 1, ATTN_NORM);
+		sound (self, CHAN_VOICE, "drone/drnpain2.wav", 1, ATTN_NORM);
 	else
 		sound (self, CHAN_VOICE, "drone/drnpain.wav", 1, ATTN_NORM);
 
-        ThrowGib ("progs/spike.mdl", -10);
+		ThrowGib ("progs/spike.mdl", -10);
 	if (random() > 0.5)
-                drn_paina1 ();
+		drn_paina1 ();
 	else
-                drn_painb1 ();
+		drn_painb1 ();
 };
 
 
 
 
 void()  drn_die1        =[      $paa5,            drn_die2      ] {self.takedamage = DAMAGE_NO;
-sound (self, CHAN_VOICE, "drone/drndeth.wav", 1, ATTN_NORM);
-self.velocity_x = -200 + 400*random();
-self.velocity_y = -200 + 400*random();
-self.velocity_z = 100 +  100*random();
-self.flags = self.flags - (self.flags & FL_ONGROUND);
+	sound (self, CHAN_VOICE, "drone/drndeth.wav", 1, ATTN_NORM);
+	self.velocity_x = -200 + 400*random();
+	self.velocity_y = -200 + 400*random();
+	self.velocity_z = 100 +  100*random();
+	self.flags = self.flags - (self.flags & FL_ONGROUND);
 };
 void()  drn_die2         =[      $paa1,         drn_die3       ] {};
 void()  drn_die3         =[      $paa2,         drn_die4       ] {};
@@ -313,28 +313,27 @@ void()  drn_die6         =[      $paa5,         drn_die7       ] {};
 void()  drn_die7         =[      $base1,        drn_die7       ]
 {
 /*
-        ThrowGib ("progs/spike.mdl", -100, self.dest);
-        ThrowGib ("progs/spike.mdl", -100, self.dest);
-        ThrowGib ("progs/spike.mdl", -100, self.dest);
-        ThrowGib ("progs/spike.mdl", -100, self.dest);
+		ThrowGib ("progs/spike.mdl", -100, self.dest);
+		ThrowGib ("progs/spike.mdl", -100, self.dest);
+		ThrowGib ("progs/spike.mdl", -100, self.dest);
+		ThrowGib ("progs/spike.mdl", -100, self.dest);
 */
 	ThrowGib ("progs/drngib1.mdl", -65);
 	ThrowGib ("progs/drngib2.mdl", -65);
-	ThrowGib ("progs/drngib3.mdl", -65);
+	ThrowHead ("progs/drngib3.mdl", -65);
 
 	self.nextthink = time + 2.5; // OUM - gives time to play death sound before going bang
-    T_RadiusDamage (self, self, 80, world); // reduced (Speedy)
+	T_RadiusDamage (self, self, 80, world, DMGTYPE_EXPLOSION); // reduced (Speedy)
 	self.origin = self.origin - 8*normalize(self.velocity);
 
-	//BecomeExplosion ();
 	TriggerExplosion();
-	SUB_Hide();
+	//SUB_Hide();
 	
 };
 
 
 void() drn_die = {
-	if (self.health < -40) 
+	if (self.health < -40 || (self.deathtype == DMGTYPE_EXPLOSION && self.health < -10)) 
 		drn_die7();
 	else
 		drn_die1();
@@ -342,7 +341,7 @@ void() drn_die = {
 
 void() DroneTouch = {
 	if (other.takedamage) {
-        T_Damage(self, other, other, self.health + 41); //explode instantly
+		T_Damage(self, other, other, self.health + 41, DMGTYPE_EXPLOSION); //explode instantly
 	}
 
 };
@@ -365,9 +364,9 @@ void(entity e) monster_drone_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-    setmodel (self, "progs/drone1.mdl");
+	setmodel (self, "progs/drone1.mdl");
 
-    if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 0', '0 0 0');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 0', '0 0 0');
 	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health = 100;

@@ -124,7 +124,7 @@ void() Attack_With_Tail =
 		return;
 
 	ldmg = (random() + random() + random()) * 40;
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 	sound (self, CHAN_WEAPON, "shambler/smack.wav", 1, ATTN_NORM);
 
 	SpawnMeatSpray (self.origin + v_forward*16, crandom() * 50 * v_right);
@@ -163,12 +163,12 @@ void() scourge_think = {
 
 void(float dist) ai_right =
 {
-	walkmove ( (self.angles_y+90), dist);
+	walkmove2 ( (self.angles_y+90), dist);
 };
 
 void(float dist) ai_left =
 {
-	walkmove ( (self.angles_y+270), dist);
+	walkmove2 ( (self.angles_y+270), dist);
 };
 //============================================================================
 

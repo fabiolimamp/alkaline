@@ -122,7 +122,7 @@ void() plat_crush =
 {
 //dprint ("plat_crush\n");
 
-	T_Damage (other, self, self, 1);
+	T_Damage(other, self, self, 1, DMGTYPE_CRUSH);
 	
 	if (self.state == STATE_UP)
 		plat_go_down ();
@@ -250,7 +250,7 @@ void() train_blocked = {
 	if (time < self.attack_finished) return;
 
 	self.attack_finished = time + 0.5;
-	T_Damage (other, self, self, self.dmg);
+	T_Damage(other, self, self, self.dmg, DMGTYPE_CRUSH);
 };
 
 
@@ -293,7 +293,7 @@ void() train_wait = {
 	// Trains now fire their path_corners' targets on arrival.
 	// If a player is riding the train, treat them as activator.
 	activator = nextent(world);
-	while (!EntitiesTouching(self,activator) && activator.classname == "player")
+	while (!SolidsTouching(self,activator) && activator.classname == "player")
 		activator = nextent(activator);
 	if (activator.classname != "player")
 		activator = nextent(world);	// default to player1 wherever they are

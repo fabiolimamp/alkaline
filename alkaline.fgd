@@ -248,9 +248,6 @@
 	skyfog_density2(string) : "End Skyfog Density" 
 ]
      
-@baseclass = Deathtype [ deathtype(string) : "Obituary message" ]
-
-
 
 @baseclass = Blood [
 	bloodtype(choices) : "Blood type" : : "Type of particle effect spawned when hit." = [
@@ -308,6 +305,7 @@ NO_MONSTERS: object ignores damage from monsters"
 	[
 		1 : "No monsters" : 0
 		2 : "Always shootable" : 0
+		4 : "Explosion only" : 0
 	]
 
 ]
@@ -406,7 +404,7 @@ STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once d
 @PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
 "Creates an entity that continually rotates.  Can be toggled on and off if targeted."
 [
-	deathtype(string) : "Death message"
+	obituary(string) : "Death message"
 	rotate(integer) : "Speed" : 40
 	target(string) : "Center of rotation"
 	speed(integer) : "Acceleration" : 5 : "How long the entity takes to go from standing still to full speed and vice-versa."
@@ -443,7 +441,7 @@ The func_rotate_train entity is the center of rotation of all objects targeted b
 		0 : "No sounds"
 		1 : "Ratchet metal"
 	]
-	deathtype(string) : "Death message"
+	obituary(string) : "Death message"
 	speed(integer) : "Speed" : 100
 	dmg(integer) : "Damage if blocked" : 0
 	path(target_destination) : "Target path_rotate" : : "First path_rotate which will be the starting position"
@@ -855,7 +853,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 "Dog (Rottweiler), 25 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model(
-	{{spawnflags & 8 -> 	"progs/ogre.mdl", "progs/ogre_alk.mdl"}}
+	{{spawnflags & 8 -> 	"progs/ogre_old.mdl", "progs/ogre_alk.mdl"}}
 ) = monster_ogre :
 "Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
 	spawnflags(flags) =
@@ -867,11 +865,11 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
 "Ogre Marksman, 200 health points." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight.mdl"}) = monster_knight :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
 "Knight, 75 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({{
-	spawnflags & 8 -> 	"progs/hknight.mdl", "progs/sknight.mdl"
+	spawnflags & 8 -> 	"progs/hknight_old.mdl", "progs/sknight.mdl"
 	}}
 ) = monster_hell_knight :
 "Sabre Knight, 250 health points. Original Death Knight available through the respective spawnflag." [
@@ -893,7 +891,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 ]
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({{
-	spawnflags & 8 -> "progs/demon.mdl", "progs/demon_alk.mdl"
+	spawnflags & 8 -> "progs/demon_old.mdl", "progs/demon_alk.mdl"
 	}}
 ) = monster_demon1 :
 "Fiend (Demon), 300 health points. Original Fiend available through the respective spawnflag." [
@@ -924,7 +922,7 @@ Only event_lightning can kill him." []
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
 "Enforcer, 80 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 48) model({"path":"progs/shalrath.mdl"}) = monster_shalrath :
+@PointClass base(Monster) size(-32 -32 -24, 32 32 48) model({"path":"progs/shalrath_old.mdl"}) = monster_shalrath :
 "Vore (Shalrath), 400 health points." []
 
 @PointClass base(Monster) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_tarbaby :
@@ -1028,8 +1026,8 @@ Don't shake hands with this crazy bastard!" []
 "Edie, 500 health points." []
 
 
-//@PointClass size(-16 -16 -2, 16 16 16) model({"path":"progs/alkturret_main.mdl"}) = monster_turret :
-//"Turret, 120 health points." []
+@PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base.mdl"}) = monster_turret :
+"Turret, 120 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/chaingunner.mdl"}) = monster_chaingunner : "Chaingunner, 250 health points." []
 
@@ -1705,6 +1703,51 @@ dmg is the amount of damage to cause when touched."
 	]
 ]
 
+@SolidClass base(Appearflags, Targetname, SwitchShadow) = func_fade : "A non-solid entity that smoothly fades in/out.
+It has two operating methods: by proximity and by trigger.
+
+---------------------------------------
+Proximity
+
+Default mode. The closer the player gets, the more visible the brush becomes, and vice versa.
+'waitmin' sets the inner fade distance - in other words, if the player gets closer than that the brush will be totally visible. 'waitmax' on the other hand defines the maximum distance before the brush fades away completely.
+
+You can invert the close/far fading behavior with the 'Reverse' spawnflag, so the brush will disappear as the player gets closer.
+
+The 'target' field can point to an entity to acts as custom origin to check for player proximity. An info_notnull point entity can be used as target. If 'target' is unset (or no entity is found under that name), the origin's coordinate will be the brush's midpoint.
+
+---------------------------------------
+Trigger
+
+When given a targetname, it'll operate in trigger mode. Just target the func_fade entity to toggle it on/off. The fade time can be changed through the 'speed' key.
+
+It can be set to start visible through the 'Start on' spawnflag.
+
+---------------------------------------
+Other options
+
+'alpha' and 'alpha2' set the maximum and minimum visibility respectively, in a 0-1 range.
+
+The 'target2' field can be used to target a light entity, so it will fade in/out together with the brush.
+
+If switchable shadows are on, they'll fade together as well.
+
+"
+[
+	alpha(integer) : "Full on visibility" : 1 : "Maximum visibility when player gets close. Use a fraction value between 0-1."
+	alpha2(integer) : "Full off visibility" : 0 : "Minimum visibility when player goes farther. Use a fraction value between 0-1."
+	target(target_destination) : "Custom origin (only for proximity mode)" : : "Point it to an info_notnull entity to set a custom origin it'll be tested against."
+	target2(target_destination) : "Light to fade" : : "Point it to a light entity to make it fade with the brush."
+	waitmin(integer) : "Full on distance (only for proximity mode)" : 192
+	waitmax(integer) : "Full off distance (only for proximity mode)" : 384
+	speed(string) : "Fade speed in seconds (only for trigger mode)" : "0.5"
+	spawnflags(flags) =
+	[
+		1 : "Reverse" : 0 : "Reverses the proximity fading behavior (closer = disappears)"
+		2 : "Start on" : 0 : "Brush starts in visible state (when given a targetname)"
+	]
+]
+
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
 @SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
@@ -2339,6 +2382,19 @@ The activator's bbox can be changed as well by activating spawnflag 1.
 	spawnflags(flags) = [
 		1 : "Change activator's size"
 		2 : "Restore monsters' original bbox"
+	]
+]
+
+@PointClass base(Appearflags, Targetname) = target_skybox : "Sets a skybox for the activating player when triggered.
+
+'sky' defines the skybox name to apply. Leaving it empty resets the skybox to the map's default.
+
+The 'All players' spawnflag changes it for all connected players instead of only the activator.
+" 
+[
+	sky(string) : "Skybox name"
+	spawnflags(flags) = [
+		1 : "All players"
 	]
 ]
 

@@ -386,7 +386,7 @@ void() tdeath_touch =
 			self.classname = "teledeath2";
 		if (self.owner.classname != "player")
 		{	// other monsters explode themselves
-			T_Damage (self.owner, self, self, 50000);
+			T_Damage(self.owner, self, self, 50000, DMGTYPE_INSTANT);
 			return;
 		}
 		
@@ -394,7 +394,7 @@ void() tdeath_touch =
 
 	if (other.health)
 	{
-		T_Damage (other, self, self, 50000);
+		T_Damage(other, self, self, 50000, DMGTYPE_INSTANT);
 	}
 };
 
@@ -760,7 +760,7 @@ void() hurt_touch =
 	if (other.takedamage)
 	{
 		self.solid = SOLID_NOT;
-		T_Damage (other, self, self, self.dmg);
+		T_Damage(other, self, self, self.dmg, self.style);
 		self.think = hurt_on;
 		self.nextthink = time + self.wait;
 	}
@@ -795,7 +795,7 @@ void() hurt_think = {
 	if (self.owner.health <= 0 || self.attack_finished < time) {
 		if (self.attack_finished < time) {
 			if (self.dmg_save < self.dmg) 
-				T_Damage (self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save);
+				T_Damage(self.owner, self.enemy, self.enemy, self.dmg - self.dmg_save, self.style);
 		}
 		self.owner.hurtcontroller = world;
 		remove(self);
@@ -813,7 +813,7 @@ void() hurt_think = {
 		}
 		else {
 			take = floor(self.dmg_take);
-			T_Damage (self.owner, self.enemy, self.enemy, take);
+			T_Damage(self.owner, self.enemy, self.enemy, take, self.style);
 		}
 		
 		self.dmg_save += take;
@@ -823,7 +823,7 @@ void() hurt_think = {
 	self.nextthink = time + 0.1;
 };
 
-void(entity tgt, float totaldmg, float duration) hurt_start = {
+void(entity tgt, float totaldmg, float duration, float dmgtype) hurt_start = {
 	entity controller;
 	if (self.spawnflags & 1 && tgt.flags & FL_CLIENT)
 		return;
@@ -849,6 +849,7 @@ void(entity tgt, float totaldmg, float duration) hurt_start = {
 		controller.attack_finished = time + duration;
 		controller.dmg = totaldmg;
 		controller.delay = duration;
+		controller.style = dmgtype;
 
 		controller.think = hurt_think;
 		controller.nextthink = time + 0.1;
@@ -862,7 +863,7 @@ void(string name, .string fld) hurt_find = {
 	t = find(world, fld, name);
 
 	while (t) {
-		hurt_start(t, self.dmg, self.speed);
+		hurt_start(t, self.dmg, self.speed, self.style);
 
 		t = find(t, fld, name);
 	}
@@ -896,7 +897,7 @@ void() hurt_use = {
 	}
 
 	if (!has_target) {
-		hurt_start(activator, self.dmg, self.speed);
+		hurt_start(activator, self.dmg, self.speed, self.style);
 	}
 
 
@@ -1086,7 +1087,7 @@ void() trigger_void_touch =
 			other.trif_finished = 0;
 		}
 
-		T_Damage (other, self, self, other.health + 1000);
+		T_Damage(other, self, self, other.health + 1000, DMGTYPE_INSTANT);
 		
 		// moved the following check to the Killed function
 		//if (other.flags & FL_MONSTER)
@@ -1408,6 +1409,141 @@ float FILTER_OP_GT = 3;
 float FILTER_OP_GTE = 4;
 float FILTER_OP_BITMASK_AND = 5;
 float FILTER_OP_BITMASK_OR = 6;
+
+
+
+float(entity targ, entity filter) filter_entity = {
+	filter.state = 0;
+
+	if (filter.estate != STATE_ACTIVE) return FALSE;
+
+	float targfloat;
+	string targstring;
+
+	float fieldtype, op, result;
+
+	if (filter.include != "") {
+		targ = find(world, targetname, filter.include);
+		if (!targ) targ = find(world, targetname2, filter.include);
+		if (!targ) return FALSE;
+	}
+
+
+	op = filter.weapon;
+
+	switch (filter.style) {
+		case FILTER_FIELD_STATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.state;
+			break;
+
+		case FILTER_FIELD_ESTATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.estate;
+			break;
+
+		case FILTER_FIELD_HEALTH:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.health;
+			break;
+
+		case FILTER_FIELD_COUNT:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.count;
+			break;
+
+		case FILTER_FIELD_CNT:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.cnt;
+			break;
+
+		case FILTER_FIELD_WEAPON:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.weapon;
+			break;
+
+		case FILTER_FIELD_FLAGS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.flags;
+			break;
+
+		case FILTER_FIELD_SPAWNFLAGS: 
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.spawnflags;
+			break;
+
+		case FILTER_FIELD_ITEMS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.items;
+			break;
+
+		case FILTER_FIELD_WEAPONS:
+			fieldtype = FILTER_FIELDTYPE_FLAG;
+			targfloat = targ.weapons;
+			break;
+
+		case FILTER_FIELD_CLASSNAME:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.classname;
+			break;
+
+		case FILTER_FIELD_DOOR_GROUPSTATE:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.owner.groupstate;
+			break;
+
+		case FILTER_FIELD_TARGETNAME:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.targetname;
+			break;
+
+		case FILTER_FIELD_TARGETNAME2:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.targetname2;
+			break;
+			
+		case FILTER_FIELD_TYPE:
+			fieldtype = FILTER_FIELDTYPE_STRING;
+			targstring = targ.type;
+			break;
+	}
+	result = 0;
+
+	if (fieldtype == FILTER_FIELDTYPE_FLOAT) {
+		if 		(op == FILTER_OP_EQUALS) 		{if (targfloat == filter.count) result = 1;}
+		else if (op == FILTER_OP_LT) 			{if (targfloat <  filter.count) result = 1;}
+		else if (op == FILTER_OP_LTE) 			{if (targfloat <= filter.count) result = 1;}
+		else if (op == FILTER_OP_GT) 			{if (targfloat >  filter.count) result = 1;}
+		else if (op == FILTER_OP_GTE) 			{if (targfloat >= filter.count) result = 1;}
+		else if (op == FILTER_OP_BITMASK_AND)	{if (targfloat &  filter.count) result = 1;}
+		else if (op == FILTER_OP_BITMASK_OR)	{if (targfloat |  filter.count) result = 1;}
+		else 									{if (targfloat == filter.count) result = 1;}
+	}
+	else if (fieldtype == FILTER_FIELDTYPE_FLAG) {
+		if 		(op == FILTER_OP_EQUALS) 		{if (targfloat == filter.aflag) result = 1;}
+		else if (op == FILTER_OP_BITMASK_AND)	{if (targfloat &  filter.aflag) result = 1;}
+		else if (op == FILTER_OP_BITMASK_OR)	{if (targfloat |  filter.aflag) result = 1;}
+		else 									{if (targfloat == filter.aflag) result = 1;}
+	}
+	else if (fieldtype == FILTER_FIELDTYPE_STRING) {
+		if (targstring == filter.type) result = 1;
+	}
+	else {
+		objerror ("invalid fieldtype");
+		return FALSE;
+	}
+
+	if (filter.spawnflags & 1) result = 1 - result; // negate
+
+	//dprint2(targstring, "\n");
+	//dprint2(ftos(result),"\n");
+
+	if (result) 
+		return TRUE;
+	else
+		return FALSE;
+};
+
 
 void() trigger_filter_use = {
 	self.state = 0;

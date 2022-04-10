@@ -125,7 +125,7 @@ void() spider_run7 =	[16, spider_run8]		{ai_run(14*self.speed); spider_swalk();}
 void() spider_run8 =	[17, spider_run1]		{ai_run(15*self.speed);};
 
 void() spider_die2 = {
-	T_RadiusDamage(self, self, 80, self);
+	T_RadiusDamage(self, self, 80, self, DMGTYPE_EXPLOSION);
 
 	ThrowGib(SPIDER_MODEL_GIB, self.health - 40 - random() * 40);
 	ThrowGib(SPIDER_MODEL_GIB, self.health - 40 - random() * 40);
@@ -140,7 +140,7 @@ void() spider_die = {
 };
 
 void() spider_blowup = {
-	T_Damage(self, self, self, self.health);
+	T_Damage(self, self, self, self.health, DMGTYPE_EXPLOSION);
 };
 
 void() spider_melee = {

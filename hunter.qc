@@ -95,13 +95,13 @@ void() hunter_shot_touch =
 
 	if (other.health)
 	{
-		if ((other.classname == "monster_zombie") || (other.classname == "monster_dog"))
-			T_Damage (other, self, self.owner, 70);	//Instagib zombies and dogs
+		if (other.classname == "monster_zombie" || other.classname == "monster_dog")
+			T_Damage(other, self, self.owner, 70, DMGTYPE_BALLISTIC);	//Instagib zombies and dogs
 		else
-			T_Damage (other, self, self.owner, 10);
+			T_Damage(other, self, self.owner, 10, DMGTYPE_BALLISTIC);
 	}
 		
-	T_RadiusDamage (self, self, 20, world);		//Additional radial damage 
+	T_RadiusDamage (self, self, 20, world, DMGTYPE_EXPLOSION);		//Additional radial damage 
 	
 	become_big_bullet_explosion();	//ball explosion effect
 };
@@ -182,7 +182,7 @@ local float 	ldmg;
 		
 	ldmg = (random() + random() + random()) * 10;
 
-	T_Damage (self.enemy, self, self, ldmg);
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 	
 	sound (self, CHAN_VOICE, "hunter/smash.wav", 1, ATTN_NORM);
 	
@@ -590,7 +590,7 @@ void() hunter_explode =
 	}
 	
 	//do damage
-	T_RadiusDamage (self, self, 100, world);
+	T_RadiusDamage (self, self, 100, world, DMGTYPE_EXPLOSION);
 	
 	TriggerExplosion();
 	SUB_Hide();

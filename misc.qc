@@ -4,15 +4,13 @@
 Lava Balls
 */
 
-void() fire_fly;
-void() fire_touch;
 void() misc_fireball =
 {
-	
 	precache_model ("progs/lavaball.mdl");
 	self.classname = "fireball";
 	self.nextthink = time + (random() * 5);
 	self.think = fire_fly;
+	if (!self.obituary) self.obituary = "ate a lavaball";
 	if (!self.speed)
 		self.speed = 1000;
 };
@@ -43,7 +41,7 @@ void() fire_fly =
 
 void() fire_touch =
 {
-	if (other.health) T_Damage (other, self, self, 20);
+	if (other.health) T_Damage(other, self, self, 20, DMGTYPE_BURN);
 	remove(self);
 };
 
@@ -61,7 +59,7 @@ void() barrel_explode =
 	
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	T_RadiusDamage (self, self, self.dmg, world);
+	T_RadiusDamage (self, self, self.dmg, world, DMGTYPE_EXPLOSION);
 
 	activator = self.enemy;
 	SUB_UseTargets();
@@ -96,6 +94,7 @@ void() misc_explobox =
 	precache_sound ("weapons/r_exp3.wav");
 	if (!self.health) self.health = 20;
 	if (!self.dmg) self.dmg = 160;
+	if (!self.obituary) self.obituary = "blew up";
 	self.th_die = barrel_die;
 	self.use = barrel_die;
 	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
@@ -131,6 +130,7 @@ void() misc_explobox2 =
 	precache_sound ("weapons/r_exp3.wav");
 	if (!self.health) self.health = 20;
 	if (!self.dmg) self.dmg = 160;
+	if (!self.obituary) self.obituary = "blew up";
 	self.th_die = barrel_explode;
 	self.use = barrel_explode;
 	
@@ -181,11 +181,11 @@ void() ShalMisTouchEnt = {
 	self.owner.touch = SUB_Null;
 
 	if (other.classname == "monster_zombie")
-		T_Damage (other, self.owner, self.owner, 110);
+		T_Damage(other, self.owner, self.owner, 110, DMGTYPE_EXPLOSION);
 
 	self.owner.dmg = zeroconvertdefault(self.owner.dmg, 40);
 
-	T_RadiusDamage (self.owner, self.owner.owner, self.owner.dmg, self);
+	T_RadiusDamage (self.owner, self.owner.owner, self.owner.dmg, self, DMGTYPE_EXPLOSION);
 
 	sound (self.owner, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	SUB_CallAsSelf(BecomeExplosion, self.owner);
@@ -204,7 +204,7 @@ void() ShalMisTouchWorld = {
 
 	self.dmg = zeroconvertdefault(self.dmg, 40);
 
-	T_RadiusDamage(self, self.owner, self.dmg, self.trigger_field);
+	T_RadiusDamage(self, self.owner, self.dmg, self.trigger_field, DMGTYPE_EXPLOSION);
 	
 	remove(self.trigger_field);
 
@@ -327,6 +327,14 @@ void() trap_spikeshooter =
 {
 	SetMovedir ();
 	self.use = spikeshooter_use;
+
+	if (!self.obituary) {
+		if (self.spawnflags & TRAP_LASER) self.obituary = "was zapped by a frickin' laser beam";
+		else if (self.spawnflags & TRAP_ROCKET) self.obituary = "rode a rocket";
+		else if (self.spawnflags & TRAP_VOREBALL) self.obituary = "played catch with a homing ball";
+		else self.obituary = "was spiked";
+	}
+
 	if (self.spawnflags & TRAP_LASER)
 	{
 		precache_model ("progs/laser.mdl");
@@ -607,7 +615,7 @@ void () blocker_touch =
 	if (time < self.attack_finished)
 		return;
 	self.attack_finished = time + 0.5;
-	T_Damage (other, self, self, self.dmg);
+	T_Damage(other, self, self, self.dmg, DMGTYPE_CRUSH);
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
    };
 
@@ -1211,4 +1219,208 @@ void() target_textstory = {
 		self.wait = 5;
 
 	self.use = target_textstory_use;
+};
+
+
+/*
+=============================================================
+
+func_fade
+
+=============================================================
+*/
+
+float FUNC_FADE_REVERSE = 1;
+float FUNC_FADE_START_ON = 2;
+
+void() func_fade = {
+
+	self.solid = SOLID_NOT;
+	self.movetype = MOVETYPE_NOCLIP; 
+
+	setmodel(self, self.model);
+
+	self.alpha1 = defaultFl(self.alpha, 1);
+	self.alpha2 += 0.000001;
+	self.alpha = self.alpha2;
+
+	self.waitmin = defaultFl(self.waitmin, 192);
+	self.waitmax = defaultFl(self.waitmax, 384);
+
+	// invert the distances if min > max
+	if (self.waitmin > self.waitmax) {
+		float tmpwait = self.waitmax;
+		self.waitmax = self.waitmin;
+		self.waitmin = tmpwait;
+	}
+
+	if (self.switchshadstyle) {
+		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(12));
+	}
+
+	self.think = func_fade_start;
+	self.nextthink = time + 0.025;
+
+	self.use = func_fade_use;
+	self.speed = zeroconvertdefault(self.speed, 1);
+	
+	// increment per think frame @ 40fps
+	if (!self.speed) self.delay = 1;
+	else self.delay = clamp(1/(self.speed / 0.025), 0, 1);
+
+};
+
+void() func_fade_start = {
+	self.dest = (self.absmin + self.absmax)/2;
+	entity e;
+
+	// custom origin point
+	if (self.target != "") {
+		e = find(world, targetname, self.target);
+
+		if (e)
+			self.dest = e.origin;
+	}
+
+	// light to fade in/out together
+	if (self.target2 != "") {
+		e = find(world, targetname, self.target2);
+
+		if (e && e.style)
+			self.style = e.style;
+	}
+
+
+	if (self.spawnflags & FUNC_FADE_START_ON) {
+		func_fade_setfade(1);
+		self.state = 1;
+	}
+	else
+		func_fade_setfade(0);
+
+
+	if (self.targetname == "") {
+		self.think = func_fade_think_distance;
+		self.nextthink = time + 0.05;
+	}
+	
+};
+
+void() func_fade_think_distance = {
+	self.nextthink = time + 0.05;
+
+	entity pl;
+	float closest, dist, perc;
+	
+	closest = 1000000000;
+
+	pl = find(world, classname, "player");
+	
+	while (pl) {
+		dist = vlen(pl.origin - self.dest);
+		if (dist < closest) closest = dist;
+		pl = find(pl, classname, "player");
+	}
+
+	//dprint3("Distance: ", ftos(closest), "\n");
+	if (closest < self.waitmax + 128) {
+		perc = clamp(1 - (closest - self.waitmin)/(self.waitmax - self.waitmin), 0, 1);
+		func_fade_setfade(perc);
+
+		self.attack_finished = time + 0.2;
+	}
+	else if (time < self.attack_finished) {
+		func_fade_setfade(0);
+	}
+	else self.nextthink = time + 0.2;
+
+};
+
+
+void() func_fade_use = {
+	self.state = !self.state;
+	//dprint3("State: ", ftos(self.state), "\n");
+	func_fade_think_timed();
+};
+
+void() func_fade_think_timed = {
+	float perc;
+
+	if (self.state) // going to on
+		perc = self.light_lev + self.delay;
+	else
+		perc = self.light_lev - self.delay;
+
+	perc = clamp(perc, 0, 1);
+
+	func_fade_setfade(perc);
+
+	if (perc != 0 && perc != 1) {
+		self.think = func_fade_think_timed;
+		self.nextthink = time + 0.025;
+	}
+}
+
+void(float perc) func_fade_setfade = {
+	//dprint3("Percent: ", ftos(perc), "\n");
+	self.light_lev = perc;
+
+	if (self.spawnflags & FUNC_FADE_REVERSE) perc = 1 - perc;
+
+	self.alpha = (self.alpha1 - self.alpha2) * perc + self.alpha2;
+
+	if (self.style) {
+		float step1 = rint(perc * 12);
+		lightstyle(self.style, lightstyle_fade_lookup(step1));
+	}
+
+	if (self.switchshadstyle) {
+		float step2 = rint((1 - perc) * 12);
+		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(step2));
+	}
+};
+
+
+
+/*
+=============================================================
+
+target_skybox
+
+=============================================================
+*/
+
+void(entity cl) skybox_apply = {
+	dprint3("Applying skybox '", cl.sky, "' to client\n");
+	stuffcmd(cl, "sky ");
+	stuffcmd(cl, cl.sky);
+	stuffcmd(cl, "\n");
+};
+
+void() target_skybox_use = {
+	string skyname;
+	if (!(activator.flags & FL_CLIENT) && !(self.spawnflags & 1))
+		return;
+
+	if (self.sky != "") skyname = self.sky;
+	else skyname = world.sky;
+	
+	if (self.spawnflags & 1) {
+		entity pl;
+		pl = find(world, classname, "player");
+		
+		while (pl) {
+			pl.sky = skyname;
+			skybox_apply(pl);
+			pl = find(pl, classname, "player");
+		}
+		return;
+	}
+
+	activator.sky = skyname;
+	skybox_apply(activator);
+};
+
+void() target_skybox = {
+	self.use = target_skybox_use;
 };

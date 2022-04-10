@@ -142,33 +142,13 @@ void()	player_stand1 =[	$axstnd1,	player_stand1	]
 	self.walkframe = self.walkframe + 1;	
 };
 
-void() player_super_nail_spindown = {
 
-	// thinks run at 4x the usual speed while spinning down,
-	// so only update every 4 weaponframes
-	if (self.weaponframe % 4 == 0) {
-		if (self.walkframe == 6)
-			self.walkframe = 0;
-		self.frame = $axrun1 + self.walkframe;
-		
-		self.walkframe = self.walkframe + 1;
-
-		if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND && !intermission_running) {
-			// Need to be moving before feet sounds
-			float spd;
-			spd = vlen([self.velocity_x, self.velocity_y, 0]);
-			if (spd > 50) {
-				play_footstep(FALSE, clamp(spd, 0, 320)/320);
-			}
-		}
-	}
-}
 
 void()	player_run =[	$rockrun1,	player_run	]
 {
 	if (!self.velocity_x && !self.velocity_y)
 	{
-		self.walkframe=0;
+		self.walkframe = 0;
 		player_stand1();
 		return;
 	}
@@ -178,17 +158,17 @@ void()	player_run =[	$rockrun1,	player_run	]
 		return;
 	}
 
-	if (self.weapon == WEAPON_CHAINSAW)
-	{
+	if (self.weapon == WEAPON_CHAINSAW) {
 		self.weaponframe = self.weaponframe + 1;
-		if(self.weaponframe >= 5)
-		{
+		if (self.weaponframe >= 5) {
 			self.weaponframe = 0;
 			if (self.view_ofs != '0 0 0')
 				sound (self, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_NORM);
 		}
+
 		if (self.walkframe == 6)
 			self.walkframe = 0;
+
 		self.frame = $sawrun1 + self.walkframe;
 		self.walkframe = self.walkframe + 1;
 		return;
@@ -196,14 +176,12 @@ void()	player_run =[	$rockrun1,	player_run	]
 	
 	self.weaponframe = 0;
 
-	if (self.weapon == WEAPON_AXE)
-	{
+	if (self.weapon == WEAPON_AXE) {
 		if (self.walkframe == 6)
 			self.walkframe = 0;
 		self.frame = $axrun1 + self.walkframe;
 	}
-	else
-	{
+	else {
 		if (self.walkframe == 6)
 			self.walkframe = 0;
 		self.frame = self.frame + self.walkframe;
@@ -221,19 +199,56 @@ void()	player_run =[	$rockrun1,	player_run	]
 	}
 };
 
+void()	player_shot1 =	[$shotatt1, player_shot2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};
+void()	player_shot2 =	[$shotatt1, player_shot3	] {self.weaponframe=2; nxth(0.025);};
+void()	player_shot3 =	[$shotatt1, player_shot4	] {self.weaponframe=3; nxth(0.025);};
+void()	player_shot4 =	[$shotatt1, player_shot5	] {self.weaponframe=4; nxth(0.025);};
+void()	player_shot5 =	[$shotatt2, player_shot6	] {self.weaponframe=5; nxth(0.025);};
+void()	player_shot6 =	[$shotatt2, player_shot7	] {self.weaponframe=6; nxth(0.025);};
+void()	player_shot7 =	[$shotatt2, player_shot8	] {self.weaponframe=7; nxth(0.025);};
+void()	player_shot8 =	[$shotatt2, player_shot9	] {self.weaponframe=8; nxth(0.025);};
+void()	player_shot9 =	[$shotatt3, player_shot10	] {self.weaponframe=9; nxth(0.025);};
+void()	player_shot10 =	[$shotatt3, player_shot11	] {self.weaponframe=10; nxth(0.025);};
+void()	player_shot11 =	[$shotatt3, player_shot12	] {self.weaponframe=11; nxth(0.025);};
+void()	player_shot12 =	[$shotatt3, player_shot13	] {self.weaponframe=12; nxth(0.025);};
+void()	player_shot13 =	[$shotatt4, player_shot14	] {self.weaponframe=13; nxth(0.025);};
+void()	player_shot14 =	[$shotatt4, player_shot15	] {self.weaponframe=14; nxth(0.025);};
+void()	player_shot15 =	[$shotatt4, player_shot16	] {self.weaponframe=15; nxth(0.025);};
+void()	player_shot16 =	[$shotatt4, player_shot17	] {self.weaponframe=16; nxth(0.025);};
+void()	player_shot17 =	[$shotatt5, player_shot18	] {self.weaponframe=17; nxth(0.025);};
+void()	player_shot18 =	[$shotatt5, player_shot19	] {self.weaponframe=18; nxth(0.025);};
+void()	player_shot19 =	[$shotatt5, player_shot20	] {self.weaponframe=19; nxth(0.025);};
+void()	player_shot20 =	[$shotatt5, player_shot21	] {self.weaponframe=20; nxth(0.025);};
+void()	player_shot21 =	[$shotatt6, player_shot22	] {self.weaponframe=21; nxth(0.025);};
+void()	player_shot22 =	[$shotatt6, player_shot23	] {self.weaponframe=22; nxth(0.025);};
+void()	player_shot23 =	[$shotatt6, player_shot24	] {self.weaponframe=23; nxth(0.025);};
+void()	player_shot24 =	[$shotatt6, player_run		] {self.weaponframe=24; nxth(0.025);};
 
-void()	player_shot1 =	[$shotatt1, player_shot2	] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
-void()	player_shot2 =	[$shotatt2, player_shot3	] {self.weaponframe=2;};
-void()	player_shot3 =	[$shotatt3, player_shot4	] {self.weaponframe=3;};
-void()	player_shot4 =	[$shotatt4, player_shot5	] {self.weaponframe=4;};
-void()	player_shot5 =	[$shotatt5, player_shot6	] {self.weaponframe=5;};
-void()	player_shot6 =	[$shotatt6, player_run	] {self.weaponframe=6;};
 
-void()	player_plasma1 =	[$shotatt1, player_plasma2	] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
-void()	player_plasma2 =	[$shotatt2, player_plasma3	] {self.weaponframe=2;};
-void()	player_plasma3 =	[$shotatt3, player_run	] {self.weaponframe=3;};
+
+void()	player_sshot1 =	[$shotatt1, player_sshot2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};
+void()	player_sshot2 =	[$shotatt1, player_sshot3	] {self.weaponframe=2; nxth(0.025);};
+void()	player_sshot3 =	[$shotatt1, player_sshot4	] {self.weaponframe=3; nxth(0.025);};
+void()	player_sshot4 =	[$shotatt2, player_sshot5	] {self.weaponframe=4; nxth(0.025);};
+void()	player_sshot5 =	[$shotatt2, player_sshot6	] {self.weaponframe=5; nxth(0.025);};
+void()	player_sshot6 =	[$shotatt2, player_sshot7	] {self.weaponframe=6; nxth(0.025);};
+void()	player_sshot7 =	[$shotatt2, player_sshot8	] {self.weaponframe=7; nxth(0.025);};
+void()	player_sshot8 =	[$shotatt3, player_sshot9	] {self.weaponframe=8; nxth(0.025);};
+void()	player_sshot9 =	[$shotatt3, player_sshot10	] {self.weaponframe=9; nxth(0.025);};
+void()	player_sshot10 =	[$shotatt3, player_sshot11	] {self.weaponframe=10; nxth(0.025);};
+void()	player_sshot11 =	[$shotatt4, player_sshot12	] {self.weaponframe=11; nxth(0.025);};
+void()	player_sshot12 =	[$shotatt4, player_sshot13	] {self.weaponframe=12; nxth(0.025);};
+void()	player_sshot13 =	[$shotatt4, player_sshot14	] {self.weaponframe=13; nxth(0.025);};
+void()	player_sshot14 =	[$shotatt5, player_sshot15	] {self.weaponframe=14; nxth(0.025);};
+void()	player_sshot15 =	[$shotatt5, player_sshot16	] {self.weaponframe=15; nxth(0.025);};
+void()	player_sshot16 =	[$shotatt5, player_sshot17	] {self.weaponframe=16; nxth(0.025);};
+void()	player_sshot17 =	[$shotatt5, player_sshot18	] {self.weaponframe=17; nxth(0.025);};
+void()	player_sshot18 =	[$shotatt6, player_sshot19	] {self.weaponframe=18; nxth(0.025);};
+void()	player_sshot19 =	[$shotatt6, player_sshot20	] {self.weaponframe=19; nxth(0.025);};
+void()	player_sshot20 =	[$shotatt6, player_sshot21	] {self.weaponframe=20; nxth(0.025);};
+void()	player_sshot21 =	[$shotatt6, player_run		] {self.weaponframe=21; nxth(0.025);};
+
+
 
 void() player_axe = {
 	if (!self.weaponframe) {
@@ -270,49 +285,28 @@ void() player_axe = {
 
 //============================================================================
 
-void() player_chainsaw1   =[$sawatt1, player_chainsaw2 ] 
-{
-	self.weaponframe=5; 
-	W_FireSaw();
-};
-void() player_chainsaw2   =[$sawatt2, player_chainsaw3 ] 
-{
-	self.weaponframe=6;
-	if (!self.button0)
-	{
+void() player_chainsaw1   =[$sawatt1, player_chainsaw2 ] {self.weaponframe = 5; W_FireSaw();};
+void() player_chainsaw2   =[$sawatt2, player_chainsaw3 ] {self.weaponframe = 6;
+	if (!self.button0) {
 		player_run ();
 		return;
 	}
 };
-void() player_chainsaw3   =[$sawatt1, player_chainsaw4 ] 
-{
-	self.weaponframe=7;
-	W_FireSaw();
-};
-void() player_chainsaw4   =[$sawatt2, player_chainsaw5 ] 
-{
-	self.weaponframe=8;
-	if (!self.button0)
-	{
+void() player_chainsaw3   =[$sawatt1, player_chainsaw4 ] {self.weaponframe = 7; W_FireSaw();};
+void() player_chainsaw4   =[$sawatt2, player_chainsaw5 ] {self.weaponframe = 8;
+	if (!self.button0) {
 		player_run ();
 		return;
 	}
 };
-void() player_chainsaw5   =[$sawatt1, player_chainsaw6 ]
-{
-	self.weaponframe=9;
-	W_FireSaw();
-};
-void() player_chainsaw6   =[$sawatt2, player_run  ]
-{
-	self.weaponframe=10;
-};
+void() player_chainsaw5   =[$sawatt1, player_chainsaw6 ] {self.weaponframe = 9; W_FireSaw();};
+void() player_chainsaw6   =[$sawatt2, player_run  ] {self.weaponframe=10;};
 
 //============================================================================
 
 
 void() player_nail = {
-	if (!self.button0) {
+	if (!self.button0 || self.weapon != WEAPON_NAILGUN) {
 		player_run();
 		return;
 	}
@@ -343,24 +337,6 @@ void() player_nail = {
 	self.think = player_nail;
 	self.nextthink = time + 0.025;
 }
-
-void() super_nail_spindown = {
-
-	self.weaponframe += 1;
-	player_run();
-	
-	if (self.weaponframe == 25) sound (self, 7, "weapons/spindn_click.wav", 0.15, ATTN_NORM);
-	if (self.weaponframe == 48) sound (self, 7, "weapons/spindn_click.wav", 0.3, ATTN_NORM);
-
-	if (self.weaponframe < 51) {
-		self.think = super_nail_spindown;
-		self.nextthink = time + 0.025;
-	}	
-	else {
-		self.cnt = 0;
-	}
-}
-
 
 void() player_super_nail = {
 
@@ -397,6 +373,48 @@ void() player_super_nail = {
 	self.nextthink = time + 0.025;
 }
 
+// same as player_run but while spinning down
+void() player_super_nail_spindown = {
+
+	// thinks run at 4x the usual speed while spinning down,
+	// so only update every 4 weaponframes
+	if (self.weaponframe % 4 == 0) {
+		if (self.walkframe == 6)
+			self.walkframe = 0;
+		self.frame = $axrun1 + self.walkframe;
+		
+		self.walkframe = self.walkframe + 1;
+
+		if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND && !intermission_running) {
+			// Need to be moving before feet sounds
+			float spd;
+			spd = vlen([self.velocity_x, self.velocity_y, 0]);
+			if (spd > 50) {
+				play_footstep(FALSE, clamp(spd, 0, 320)/320);
+			}
+		}
+	}
+}
+
+void() super_nail_spindown = {
+
+	self.weaponframe += 1;
+	player_run();
+	
+	if (self.weaponframe == 25) sound (self, 7, "weapons/spindn_click.wav", 0.15, ATTN_NORM);
+	if (self.weaponframe == 48) sound (self, 7, "weapons/spindn_click.wav", 0.3, ATTN_NORM);
+
+	if (self.weaponframe < 51) {
+		self.think = super_nail_spindown;
+		self.nextthink = time + 0.025;
+	}	
+	else {
+		self.cnt = 0;
+	}
+}
+
+
+
 
 void() player_light1   =[$light1, player_light2  ] 
 {
@@ -427,27 +445,91 @@ void() player_light2   =[$light2, player_light1  ]
 
 //============================================================================
 
-//MED 10/18/96 added HIPSWEAPONS
-//void() player_laser1   =[$nailatt1, player_laser2  ] {self.attack_finished = time + 0.1;self.weaponframe=1;self.nextthink = time + 0.09;HIP_FireLaser(0);};
-//void() player_laser2   =[$nailatt2, player_laser4  ] {self.attack_finished = time + 0.1;self.weaponframe=2;self.nextthink = time + 0.09;};
-//void() player_laser3   =[$nailatt1, player_laser4  ] {self.attack_finished = time + 0.1;self.weaponframe=3;self.nextthink = time + 0.09;};
-//void() player_laser4   =[$nailatt2, player_laser5  ] {self.attack_finished = time + 0.1;self.weaponframe=4;self.nextthink = time + 0.09;HIP_FireLaser(1);};
-//void() player_laser5   =[$nailatt1, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=5;self.nextthink = time + 0.09;};
-//void() player_laser6   =[$nailatt2, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=6;self.nextthink = time + 0.09;};
-void() player_laser1   =[$nailatt1, player_laser3  ] {self.attack_finished = time + 0.1;self.weaponframe=1;self.nextthink = time + 0.1;HIP_FireLaser(0);};
-void() player_laser2   =[$nailatt2, player_laser3  ] {self.attack_finished = time + 0.1;self.weaponframe=2;self.nextthink = time + 0.1;};
-void() player_laser3   =[$nailatt2, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=4;self.nextthink = time + 0.1;HIP_FireLaser(1);};
-void() player_laser4   =[$nailatt1, player_laser1  ] {self.attack_finished = time + 0.1;self.weaponframe=5;self.nextthink = time + 0.1;};
+void() player_laser1   =[$nailatt1, player_laser2  ] {self.attack_finished = time + 0.1; self.weaponframe=1; nxth(0.025); HIP_FireLaser(0);};
+void() player_laser2   =[$nailatt1, player_laser3  ] {self.weaponframe=2; nxth(0.025);};
+void() player_laser3   =[$nailatt1, player_laser4  ] {self.weaponframe=3; nxth(0.025);};
+void() player_laser4   =[$nailatt1, player_laser5  ] {self.weaponframe=4; nxth(0.025);};
+void() player_laser5   =[$nailatt2, player_laser6  ] {self.attack_finished = time + 0.1; self.weaponframe=5; nxth(0.025); HIP_FireLaser(1);};
+void() player_laser6   =[$nailatt2, player_laser7  ] {self.weaponframe=6; nxth(0.025);};
+void() player_laser7   =[$nailatt2, player_laser8  ] {self.weaponframe=7; nxth(0.025);};
+void() player_laser8   =[$nailatt2, player_run  ] {self.weaponframe=8; nxth(0.025);};
+
 //============================================================================
 
+void()	player_plasma1 =	[$shotatt1, player_plasma2	] {self.weaponframe=1; nxth(0.05); self.effects = self.effects | EF_MUZZLEFLASH;};
+void()	player_plasma2 =	[$shotatt1, player_plasma3	] {self.weaponframe=2; nxth(0.05);};
+void()	player_plasma3 =	[$shotatt3, player_run		] {self.weaponframe=1; nxth(0.1);};
 
-void() player_rocket1   =[$rockatt1, player_rocket2  ] {self.weaponframe=1;
-self.effects = self.effects | EF_MUZZLEFLASH;};
-void() player_rocket2   =[$rockatt2, player_rocket3  ] {self.weaponframe=2;};
-void() player_rocket3   =[$rockatt3, player_rocket4  ] {self.weaponframe=3;};
-void() player_rocket4   =[$rockatt4, player_rocket5  ] {self.weaponframe=4;};
-void() player_rocket5   =[$rockatt5, player_rocket6  ] {self.weaponframe=5;};
-void() player_rocket6   =[$rockatt6, player_run  ] {self.weaponframe=6;};
+
+
+void() player_proxgrenade1   =[$rockatt1, player_proxgrenade2  ] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH;};
+void() player_proxgrenade2   =[$rockatt2, player_proxgrenade3  ] {self.weaponframe=2;};
+void() player_proxgrenade3   =[$rockatt3, player_proxgrenade4  ] {self.weaponframe=3;};
+void() player_proxgrenade4   =[$rockatt4, player_proxgrenade5  ] {self.weaponframe=4;};
+void() player_proxgrenade5   =[$rockatt5, player_proxgrenade6  ] {self.weaponframe=5;};
+void() player_proxgrenade6   =[$rockatt6, player_run  ] {self.weaponframe=6;};
+
+
+void()	player_grenade1 =	[$rockatt1, player_grenade2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};
+void()	player_grenade2 =	[$rockatt1, player_grenade3	] {self.weaponframe=2; nxth(0.025);};
+void()	player_grenade3 =	[$rockatt1, player_grenade4	] {self.weaponframe=3; nxth(0.025);};
+void()	player_grenade4 =	[$rockatt1, player_grenade5	] {self.weaponframe=4; nxth(0.025);};
+void()	player_grenade5 =	[$rockatt2, player_grenade6	] {self.weaponframe=5; nxth(0.025);};
+void()	player_grenade6 =	[$rockatt2, player_grenade7	] {self.weaponframe=6; nxth(0.025);};
+void()	player_grenade7 =	[$rockatt2, player_grenade8	] {self.weaponframe=7; nxth(0.025);};
+void()	player_grenade8 =	[$rockatt2, player_grenade9	] {self.weaponframe=8; nxth(0.025);};
+void()	player_grenade9 =	[$rockatt3, player_grenade10	] {self.weaponframe=9; nxth(0.025);};
+void()	player_grenade10 =	[$rockatt3, player_grenade11	] {self.weaponframe=10; nxth(0.025);};
+void()	player_grenade11 =	[$rockatt3, player_grenade12	] {self.weaponframe=11; nxth(0.025);};
+void()	player_grenade12 =	[$rockatt3, player_grenade13	] {self.weaponframe=12; nxth(0.025);};
+void()	player_grenade13 =	[$rockatt4, player_grenade14	] {self.weaponframe=13; nxth(0.025);};
+void()	player_grenade14 =	[$rockatt4, player_grenade15	] {self.weaponframe=14; nxth(0.025);};
+void()	player_grenade15 =	[$rockatt4, player_grenade16	] {self.weaponframe=15; nxth(0.025);};
+void()	player_grenade16 =	[$rockatt4, player_grenade17	] {self.weaponframe=16; nxth(0.025);};
+void()	player_grenade17 =	[$rockatt5, player_grenade18	] {self.weaponframe=17; nxth(0.025);};
+void()	player_grenade18 =	[$rockatt5, player_grenade19	] {self.weaponframe=18; nxth(0.025);};
+void()	player_grenade19 =	[$rockatt5, player_grenade20	] {self.weaponframe=19; nxth(0.025);};
+void()	player_grenade20 =	[$rockatt5, player_grenade21	] {self.weaponframe=20; nxth(0.025);};
+void()	player_grenade21 =	[$rockatt6, player_grenade22	] {self.weaponframe=21; nxth(0.025);};
+void()	player_grenade22 =	[$rockatt6, player_grenade23	] {self.weaponframe=22; nxth(0.025);};
+void()	player_grenade23 =	[$rockatt6, player_grenade24	] {self.weaponframe=23; nxth(0.025);};
+void()	player_grenade24 =	[$rockatt6, player_run		] {self.weaponframe=24; nxth(0.025);};
+
+
+void()	player_rocket1 =	[$rockatt1, player_rocket2	] {self.weaponframe=1; nxth(0.025);};
+void()	player_rocket2 =	[$rockatt1, player_rocket3	] {self.weaponframe=2; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};
+void()	player_rocket3 =	[$rockatt1, player_rocket4	] {self.weaponframe=3; nxth(0.025);};
+void()	player_rocket4 =	[$rockatt1, player_rocket5	] {self.weaponframe=4; nxth(0.025);};
+void()	player_rocket5 =	[$rockatt2, player_rocket6	] {self.weaponframe=5; nxth(0.025);};
+void()	player_rocket6 =	[$rockatt2, player_rocket7	] {self.weaponframe=6; nxth(0.025);};
+void()	player_rocket7 =	[$rockatt2, player_rocket8	] {self.weaponframe=7; nxth(0.025);};
+void()	player_rocket8 =	[$rockatt2, player_rocket9	] {self.weaponframe=8; nxth(0.025);};
+void()	player_rocket9 =	[$rockatt3, player_rocket10	] {self.weaponframe=9; nxth(0.025);};
+void()	player_rocket10 =	[$rockatt3, player_rocket11	] {self.weaponframe=10; nxth(0.025);};
+void()	player_rocket11 =	[$rockatt3, player_rocket12	] {self.weaponframe=11; nxth(0.025);};
+void()	player_rocket12 =	[$rockatt3, player_rocket13	] {self.weaponframe=12; nxth(0.025);};
+void()	player_rocket13 =	[$rockatt4, player_rocket14	] {self.weaponframe=13; nxth(0.025);};
+void()	player_rocket14 =	[$rockatt4, player_rocket15	] {self.weaponframe=14; nxth(0.025);};
+void()	player_rocket15 =	[$rockatt4, player_rocket16	] {self.weaponframe=15; nxth(0.025);};
+void()	player_rocket16 =	[$rockatt4, player_rocket17	] {self.weaponframe=16; nxth(0.025);};
+void()	player_rocket17 =	[$rockatt4, player_rocket18	] {self.weaponframe=17; nxth(0.025);};
+void()	player_rocket18 =	[$rockatt4, player_rocket19	] {self.weaponframe=18; nxth(0.025);};
+void()	player_rocket19 =	[$rockatt5, player_rocket20	] {self.weaponframe=19; nxth(0.025);};
+void()	player_rocket20 =	[$rockatt5, player_rocket21	] {self.weaponframe=20; nxth(0.025);};
+void()	player_rocket21 =	[$rockatt5, player_rocket22	] {self.weaponframe=21; nxth(0.025);};
+void()	player_rocket22 =	[$rockatt5, player_rocket23	] {self.weaponframe=22; nxth(0.025);};
+void()	player_rocket23 =	[$rockatt5, player_rocket24	] {self.weaponframe=23; nxth(0.025);};
+void()	player_rocket24 =	[$rockatt5, player_rocket25	] {self.weaponframe=24; nxth(0.025);};
+void()	player_rocket25 =	[$rockatt6, player_rocket26	] {self.weaponframe=25; nxth(0.025);};
+void()	player_rocket26 =	[$rockatt6, player_rocket27	] {self.weaponframe=26; nxth(0.025);};
+void()	player_rocket27 =	[$rockatt6, player_rocket28	] {self.weaponframe=27; nxth(0.025);};
+void()	player_rocket28 =	[$rockatt6, player_rocket29	] {self.weaponframe=28; nxth(0.025);};
+void()	player_rocket29 =	[$rockatt6, player_rocket30	] {self.weaponframe=29; nxth(0.025);};
+void()	player_rocket30 =	[$rockatt6, player_rocket31	] {self.weaponframe=30; nxth(0.025);};
+void()	player_rocket31 =	[$rockatt6, player_rocket32	] {self.weaponframe=31; nxth(0.025);};
+void()	player_rocket32 =	[$rockatt6, player_run	] {self.weaponframe=32; nxth(0.025);};
+
+
 void(float num_bubbles) DeathBubbles;
 
 void() PainSound =

@@ -50,11 +50,11 @@ void() flame_touch =
 	if (self.dmg > 0 && other.health > 0)
 	{
 		//direct damage
-		T_Damage (other, self, self.owner, self.dmg);
+		T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN);
 		self.dmg = 0;
 		
 		//start the DoT effect
-		StartBurning(other, 5*skill + 4 + 2*random());
+		StartBurning(other, self.owner, 5*skill + 4 + 2*random());
 	}
 };
 

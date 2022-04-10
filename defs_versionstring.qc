@@ -1,1 +1,1 @@
-string VERSION_S = "Alkaline v1.1.2";
+string VERSION_S = "Alkaline v1.2 beta";
