@@ -347,7 +347,7 @@ BecomeExplosion moved to fx.qc
 
 void() T_MissileTouch =
 {
-	local float	damg, rdamg;
+	local float	damg, rdamg, dmgtype;
 
 	if (other == self.owner)
 		return;		// don't explode on owner
@@ -367,11 +367,16 @@ void() T_MissileTouch =
 		rdamg = 120;
 	}
 	
-	if (other.health)
-		T_Damage(other, self, self.owner, damg, DMGTYPE_EXPLOSION);
+	// custom damage type
 
+	dmgtype = defaultFl(self.damagetype, DMGTYPE_EXPLOSION);
+
+	if (other.health)
+		T_Damage(other, self, self.owner, damg, dmgtype);
+	
 	// don't do radius damage to the other, because all the damage
-	// was done in the impact
+	// was done in the impact.
+	// Radius damage type will always be EXPLOSION
 	T_RadiusDamage (self, self.owner, rdamg, other, DMGTYPE_EXPLOSION);
 
 	self.origin = self.origin - 8*normalize(self.velocity);
