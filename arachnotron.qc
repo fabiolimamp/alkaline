@@ -290,7 +290,7 @@ void() artPlasmaTouch =
 	damg = 15;
 
 	if (other.health)
-		T_Damage(other, self, self.owner, damg, DMGTYPE_ELECTRIC);
+		T_Damage(other, self, self.owner, damg, DMGTYPE_ENERGY);
 	
 
 	// Moves the plasma bullet backwards after hitting.. Otherwise the 
