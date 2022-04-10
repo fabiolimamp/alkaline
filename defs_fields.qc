@@ -624,3 +624,5 @@ FIELDS
 .float liquidtype;
 .vector liquidcolor;
 .float liquiddensity;
+
+.float damagetype;
