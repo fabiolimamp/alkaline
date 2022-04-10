@@ -331,6 +331,9 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 			self.pain_finished = time + 5;		
 	}
 
+	if (dmgtype == DMGTYPE_BURN_LONG && self.flags & FL_CLIENT)
+		StartBurning(self, attacker, 5*startskill + 4 + 2*random());
+
 	self = oldself;
 };
 
