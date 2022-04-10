@@ -183,6 +183,8 @@ float numbulletholes, numbulletsframe;
 
 float nofootsteps;
 float noautosaves;
+float notracers;
+float playertracers;
 
 // gravity
 entity current_gravity_ent;

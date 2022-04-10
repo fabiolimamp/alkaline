@@ -159,6 +159,11 @@ void() tracer_think = {
 
 
 void(vector org, vector direction, vector dest) drawTracer = {
+	if (notracers)
+		return;
+
+	if ((self.flags & FL_CLIENT) && !playertracers)
+		return;
 
 	newmis = spawn();
 	newmis.owner = self;
@@ -242,7 +247,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 
 		traceline (src, src + direction*2048, FALSE, self);
 
-		if (!(self.flags & FL_CLIENT)) drawTracer(src, direction, trace_endpos);
+		drawTracer(src, direction, trace_endpos);
 
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
@@ -273,7 +278,7 @@ void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
 
 		traceline (org, org + direction*2048, FALSE, self);
 
-		if (!(self.flags & FL_CLIENT)) drawTracer(org, direction, trace_endpos);
+		drawTracer(org, direction, trace_endpos);
 		
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;

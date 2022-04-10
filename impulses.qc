@@ -321,6 +321,37 @@ void() ToggleAutosave = {
 	}
 };
 
+void() ToggleTracers = {
+	float tmp1;
+	tmp1 = cvar("temp1");
+	if (notracers) {
+		bprint("Tracers: enabled\n");
+		notracers = 0;
+		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOTRACERS)));
+	}
+	else {
+		bprint("Tracers: disabled\n");
+		notracers = 1;
+		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOTRACERS));
+	}
+};
+
+void() TogglePlayerTracers = {
+	float tmp1;
+	tmp1 = cvar("temp1");
+	if (playertracers) {
+		bprint("Player tracers: disabled\n");
+		playertracers = 0;
+		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_PLAYERTRACERS)));
+	}
+	else {
+		bprint("Player tracers: enabled\n");
+		playertracers = 1;
+		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_PLAYERTRACERS));
+	}
+};
+
+
 void() ResetModSettings = {
 	cvar_set("temp1", 0);
 	bprint("Mod settings reset to default\n");
@@ -400,6 +431,10 @@ void() ImpulseCommands = {
 		ResetModSettings();
 	if (self.impulse == 41)
 		csf_clear_all(self);
+	if (self.impulse == 42)
+		ToggleTracers();
+	if (self.impulse == 43)
+		TogglePlayerTracers();
 
 	if (self.impulse == 128)
 		printVersionConsole(self);

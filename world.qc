@@ -112,6 +112,8 @@ void() worldspawn =
 	tmp1 = cvar("temp1");
 	if (tmp1 & TEMPSETTINGS_NOFOOTSTEPS) nofootsteps = 1;
 	if (tmp1 & TEMPSETTINGS_NOAUTOSAVES) noautosaves = 1;
+	if (tmp1 & TEMPSETTINGS_NOTRACERS) notracers = 1;
+	if (tmp1 & TEMPSETTINGS_PLAYERTRACERS) playertracers = 1;
 
 	startskill = cvar("skill");
 	developer = cvar("developer");
