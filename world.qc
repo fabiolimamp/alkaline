@@ -432,8 +432,10 @@ void() StartFrame =
 		LoadSaveGameCallback();
 	//johnfitz
 
-	if(framecount == 1)
+	if(framecount == 1) {
+		startupWaterBrushes();
 		CreateBackstop();
+	}
 
 };
 

@@ -1685,16 +1685,49 @@ dmg is the amount of damage to cause when touched."
 	]
 ]
 
-@SolidClass base(Appearflags, SwitchShadow) = func_fade : "A non-solid entity that smoothly fades in/out according to a configurable distance. By default the origin coordinate is the bmodel's midpoint, but you can set a custom origin by pointing 'target' to an info_notnull point entity.
+@SolidClass base(Appearflags, Targetname, SwitchShadow) = func_fade : "A non-solid entity that smoothly fades in/out.
+It has two operating methods: by proximity and by trigger.
 
-If switchable shadows are on, they'll fade together with the entity.
+---------------------------------------
+Proximity
+
+Default mode. The closer the player gets, the more visible the brush becomes, and vice versa.
+'waitmin' sets the inner fade distance - in other words, if the player gets closer than that the brush will be totally visible. 'waitmax' on the other hand defines the maximum distance before the brush fades away completely.
+
+You can invert the close/far fading behavior with the 'Reverse' spawnflag, so the brush will disappear as the player gets closer.
+
+The 'target' field can point to an entity to acts as custom origin to check for player proximity. An info_notnull point entity can be used as target. If 'target' is unset (or no entity is found under that name), the origin's coordinate will be the brush's midpoint.
+
+---------------------------------------
+Trigger
+
+When given a targetname, it'll operate in trigger mode. Just target the func_fade entity to toggle it on/off. The fade time can be changed through the 'speed' key.
+
+It can be set to start visible through the 'Start on' spawnflag.
+
+---------------------------------------
+Other options
+
+'alpha' and 'alpha2' set the maximum and minimum visibility respectively, in a 0-1 range.
+
+The 'target2' field can be used to target a light entity, so it will fade in/out together with the brush.
+
+If switchable shadows are on, they'll fade together as well.
+
 "
 [
 	alpha(integer) : "Full on visibility" : 1 : "Maximum visibility when player gets close. Use a fraction value between 0-1."
 	alpha2(integer) : "Full off visibility" : 0 : "Minimum visibility when player goes farther. Use a fraction value between 0-1."
-	target(target_destination) : "Custom origin" : : "Point it to an info_notnull entity to set a custom origin it'll be tested against."
-	waitmin(integer) : "Full on distance" : 192
-	waitmax(integer) : "Full off distance" : 384
+	target(target_destination) : "Custom origin (only for proximity mode)" : : "Point it to an info_notnull entity to set a custom origin it'll be tested against."
+	target2(target_destination) : "Light to fade" : : "Point it to a light entity to make it fade with the brush."
+	waitmin(integer) : "Full on distance (only for proximity mode)" : 192
+	waitmax(integer) : "Full off distance (only for proximity mode)" : 384
+	speed(string) : "Fade speed in seconds (only for trigger mode)" : "0.5"
+	spawnflags(flags) =
+	[
+		1 : "Reverse" : 0 : "Reverses the proximity fading behavior (closer = disappears)"
+		2 : "Start on" : 0 : "Brush starts in visible state (when given a targetname)"
+	]
 ]
 
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []

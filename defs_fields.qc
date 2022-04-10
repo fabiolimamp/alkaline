@@ -618,3 +618,9 @@ FIELDS
 .string inflictorfilter;
 .string touchfilter;
 .float damagedby;
+
+
+.string liquidbrush;
+.float liquidtype;
+.vector liquidcolor;
+.float liquiddensity;

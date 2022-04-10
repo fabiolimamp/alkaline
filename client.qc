@@ -1329,6 +1329,8 @@ void() PlayerPreThink =
 	}
 
 	checkSelfInWaterBrush();
+
+	//dprint3("Player waterlevel: ", ftos(self.waterlevel), "\n");
 };
 	
 /*

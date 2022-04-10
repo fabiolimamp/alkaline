@@ -1227,10 +1227,13 @@ func_fade
 =============================================================
 */
 
+float FUNC_FADE_REVERSE = 1;
+float FUNC_FADE_START_ON = 2;
+
 void() func_fade = {
 
 	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_NOCLIP; // MOVETYPE_NONE doesn't think
+	self.movetype = MOVETYPE_NOCLIP; 
 
 	setmodel(self, self.model);
 
@@ -1241,32 +1244,66 @@ void() func_fade = {
 	self.waitmin = defaultFl(self.waitmin, 192);
 	self.waitmax = defaultFl(self.waitmax, 384);
 
+	// invert the distances if min > max
+	if (self.waitmin > self.waitmax) {
+		float tmpwait = self.waitmax;
+		self.waitmax = self.waitmin;
+		self.waitmin = tmpwait;
+	}
+
 	if (self.switchshadstyle) {
-		lightstyle(self.switchshadstyle, "m");
+		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(12));
 	}
 
 	self.think = func_fade_start;
 	self.nextthink = time + 0.025;
 
+	self.use = func_fade_use;
+	self.speed = zeroconvertdefault(self.speed, 1);
+	
+	// increment per think frame @ 40fps
+	if (!self.speed) self.delay = 1;
+	else self.delay = clamp(1/(self.speed / 0.025), 0, 1);
+
 };
 
 void() func_fade_start = {
 	self.dest = (self.absmin + self.absmax)/2;
-	
+	entity e;
+
+	// custom origin point
 	if (self.target != "") {
-		entity e = find(world, targetname, self.target);
+		e = find(world, targetname, self.target);
 
 		if (e)
 			self.dest = e.origin;
 	}
-	if (self.switchshadstyle) {
-		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(0));
+
+	// light to fade in/out together
+	if (self.target2 != "") {
+		e = find(world, targetname, self.target2);
+
+		if (e && e.style)
+			self.style = e.style;
 	}
-	self.think = func_fade_think;
-	self.nextthink = time + 0.05;
+
+
+	if (self.spawnflags & FUNC_FADE_START_ON) {
+		func_fade_setfade(1);
+		self.state = 1;
+	}
+	else
+		func_fade_setfade(0);
+
+
+	if (self.targetname == "") {
+		self.think = func_fade_think_distance;
+		self.nextthink = time + 0.05;
+	}
+	
 };
 
-void() func_fade_think = {
+void() func_fade_think_distance = {
 	self.nextthink = time + 0.05;
 
 	entity pl;
@@ -1296,13 +1333,47 @@ void() func_fade_think = {
 
 };
 
+
+void() func_fade_use = {
+	self.state = !self.state;
+	//dprint3("State: ", ftos(self.state), "\n");
+	func_fade_think_timed();
+};
+
+void() func_fade_think_timed = {
+	float perc;
+
+	if (self.state) // going to on
+		perc = self.light_lev + self.delay;
+	else
+		perc = self.light_lev - self.delay;
+
+	perc = clamp(perc, 0, 1);
+
+	func_fade_setfade(perc);
+
+	if (perc != 0 && perc != 1) {
+		self.think = func_fade_think_timed;
+		self.nextthink = time + 0.025;
+	}
+}
+
 void(float perc) func_fade_setfade = {
 	//dprint3("Percent: ", ftos(perc), "\n");
+	self.light_lev = perc;
+
+	if (self.spawnflags & FUNC_FADE_REVERSE) perc = 1 - perc;
+
 	self.alpha = (self.alpha1 - self.alpha2) * perc + self.alpha2;
-	
+
+	if (self.style) {
+		float step1 = rint(perc * 12);
+		lightstyle(self.style, lightstyle_fade_lookup(step1));
+	}
+
 	if (self.switchshadstyle) {
-		float step = rint((1 - perc) * 12);
-		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(step));
+		float step2 = rint((1 - perc) * 12);
+		lightstyle(self.switchshadstyle, lightstyle_fade_lookup(step2));
 	}
 };
 

@@ -242,7 +242,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 
 		traceline (src, src + direction*2048, FALSE, self);
 
-		drawTracer(src, direction, trace_endpos);
+		if (!(self.flags & FL_CLIENT)) drawTracer(src, direction, trace_endpos);
 
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
@@ -273,7 +273,7 @@ void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
 
 		traceline (org, org + direction*2048, FALSE, self);
 
-		drawTracer(org, direction, trace_endpos);
+		if (!(self.flags & FL_CLIENT)) drawTracer(org, direction, trace_endpos);
 		
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
