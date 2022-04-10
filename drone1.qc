@@ -47,7 +47,7 @@ void() DLaser_Touch =
 	if (other.health)
 	{
 		ImpactSpawn (org, self.velocity*0.2, 15, other.bloodtype);
-		T_Damage(other, self, self.owner, 10, DMGTYPE_ELECTRIC); // reduced (Speedy)
+		T_Damage(other, self, self.owner, 10, DMGTYPE_ENERGY); // reduced (Speedy)
 	}
 	else
 	{

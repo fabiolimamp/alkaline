@@ -43,18 +43,11 @@ void() flame_touch =
 		return;	// trigger field, do nothing
 
 	self.movedir = '0 0 0';
-	
-	if (other.classname == "monster_dreadnaught")
-		return; // these guys have flame-proof suits
-		
-	if (self.dmg > 0 && other.health > 0)
-	{
+
+	if (self.dmg > 0 && other.health > 0){
 		//direct damage
-		T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN);
+		T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN_LONG);
 		self.dmg = 0;
-		
-		//start the DoT effect
-		StartBurning(other, self.owner, 5*skill + 4 + 2*random());
 	}
 };
 
@@ -251,6 +244,15 @@ void(entity attacker, float damage)	dread_pain =
 	}
 };
 
+
+// these guys have flame-proof suits
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) dread_damage = {
+	if (dmgtype == DMGTYPE_BURN || dmgtype == DMGTYPE_BURN_LONG)
+		return 0;
+	else
+		return damage;
+};
+
 //============================================================================
 
 
@@ -325,6 +327,7 @@ void() dread_sight = {
 		sound (self, CHAN_VOICE, "dread/dread_sight2.wav", 1, ATTN_NORM);
 }
 
+
 /*QUAKED monster_dreadnaught (1 0 0) (-16 -16 -24) (16 16 40) AMBUSH
 Dreadnaught, 150 health points.
 
@@ -355,6 +358,7 @@ void(entity e) monster_dreadnaught_start =
 	self.th_die = dread_die;
 	self.th_melee = dread_atk1;
 	self.th_sight = dread_sight;
+	self.th_damage = dread_damage;
 	
 	self.missle = world;
 	
