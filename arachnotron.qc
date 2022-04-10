@@ -244,7 +244,7 @@ void() art_touch_jump = {
 	}
 
 	if (other.takedamage) {
-		T_Damage (other, self, self, 60);
+		T_Damage (other, self, self, 60, DMGTYPE_MELEE);
 		// stop the player from taking damage every frame
 		other.pain_finished = time + 1;
 	}
@@ -290,7 +290,7 @@ void() artPlasmaTouch =
 	damg = 15;
 
 	if (other.health)
-		T_Damage(other, self, self.owner, damg );
+		T_Damage(other, self, self.owner, damg, DMGTYPE_ELECTRIC);
 	
 
 	// Moves the plasma bullet backwards after hitting.. Otherwise the 
