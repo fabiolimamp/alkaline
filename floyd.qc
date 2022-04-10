@@ -480,7 +480,7 @@ void() floyd_asleep_start = {
 
 	self.flags = self.flags | FL_MONSTER;
 
-	if (!walkmove(0,0))
+	if (!walkmove2(0,0))
 	{
 		dprint ("walkmonster in wall at: ");
 		dprint (vtos(self.origin));

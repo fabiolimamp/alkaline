@@ -361,7 +361,7 @@ void() zombie_paine12	=[	$paine12,	zombie_paine13	]{
 	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
 	self.solid = SOLID_SLIDEBOX;
 
-	if (!walkmove(0, 0)) {
+	if (!walkmove2(0, 0)) {
 		self.think = zombie_paine11;
 		self.solid = SOLID_NOT;
 		return;

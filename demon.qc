@@ -310,7 +310,7 @@ void(float side)	Demon_Melee =
 	local vector	delta;
 	
 	ai_face ();
-	walkmove (self.ideal_yaw, 12);	// allow a little closing
+	walkmove2 (self.ideal_yaw, 12);	// allow a little closing
 
 	delta = self.enemy.origin - self.origin;
 	
@@ -335,7 +335,7 @@ void(float side)	Mutant_Melee =
 	local vector	delta;
 	
 	ai_face ();
-	walkmove (self.ideal_yaw, 12);	// allow a little closing
+	walkmove2 (self.ideal_yaw, 12);	// allow a little closing
 
 	delta = self.enemy.origin - self.origin;
 	

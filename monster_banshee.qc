@@ -266,7 +266,7 @@ void() banshee_run12 = 	[31, banshee_run1]	{banshee_run_frame();
 
 void() ban_fire_walk_frame = {
 	ChangeYaw();
-	walkmove(self.angles_y, 14);
+	walkmove2(self.angles_y, 14);
 	banshee_think();
 };
 
@@ -287,7 +287,7 @@ void() ban_fire_walk13 = 	[55, banshee_run1]		{ban_fire_walk_frame(); SUB_Attack
 
 void() ban_stomp_walk = {
 	ChangeYaw();
-	walkmove(self.angles_y, 14);
+	walkmove2(self.angles_y, 14);
 	banshee_think();
 };
 

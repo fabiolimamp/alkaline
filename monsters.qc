@@ -252,7 +252,7 @@ void() walkmonster_start_go =
 	self.origin_z = self.origin_z + 1;	// raise off floor a bit
 	if (!(self.flags & FL_SPAWNEDMONSTER)) droptofloor();
 	
-	if (!walkmove(0,0))
+	if (!walkmove2(0,0))
 	{
 		dprint ("walkmonster in wall at: ");
 		dprint (vtos(self.origin));
@@ -320,7 +320,7 @@ void() flymonster_start_go =
 	self.flags = self.flags | FL_FLY;
 	self.flags = self.flags | FL_MONSTER;
 
-	if (!walkmove(0,0))
+	if (!walkmove2(0,0))
 	{
 		dprint ("flymonster in wall at: ");
 		dprint (vtos(self.origin));

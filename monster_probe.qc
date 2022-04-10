@@ -390,7 +390,7 @@ void() probe_run13 = 	[12, probe_run1] 	{probe_run_frame();
 
 void() probe_watk_frame = {
 	ChangeYaw();
-	walkmove(self.angles_y, 14);
+	walkmove2(self.angles_y, 14);
 	probe_think();
 }
 

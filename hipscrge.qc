@@ -163,12 +163,12 @@ void() scourge_think = {
 
 void(float dist) ai_right =
 {
-	walkmove ( (self.angles_y+90), dist);
+	walkmove2 ( (self.angles_y+90), dist);
 };
 
 void(float dist) ai_left =
 {
-	walkmove ( (self.angles_y+270), dist);
+	walkmove2 ( (self.angles_y+270), dist);
 };
 //============================================================================
 
