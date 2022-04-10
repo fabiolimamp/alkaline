@@ -198,10 +198,11 @@ void() garg_fbthrow =
 
 	launch_rocket(org, dir);
 
+	newmis.damagetype = DMGTYPE_BURN_LONG;
 	newmis.velocity = dir * spd;
 	setmodel(newmis, "progs/proj_gargball.mdl");
 	setsize(newmis, VEC_ORIGIN, VEC_ORIGIN);
-	newmis.dmg = 20 + random()*10;
+	newmis.dmg = 10 + random()*10;
 };
 
 //----------------------------------------------------------------------
@@ -388,8 +389,8 @@ void() garg_die =
 	// Perching gargoyles need to blow up in gibs
 	// In an awkward pose that does not go well into death animations
 	if (self.health < -70 || self.spawnflags & MON_GARGOYLE_PERCH) {
-		dprint2(ftos(self.health), "\n");
-		dprint2(ftos(self.spawnflags & MON_GARGOYLE_PERCH), "\n");
+		//dprint2(ftos(self.health), "\n");
+		//dprint2(ftos(self.spawnflags & MON_GARGOYLE_PERCH), "\n");
 
 		ThrowHead("progs/h_gargoyle.mdl", self.health);
 		ThrowGib ("progs/gib_gargwing1.mdl", self.health);
@@ -400,6 +401,7 @@ void() garg_die =
 	
 	sound (self, CHAN_VOICE, "gargoyle/death1.wav", 1, ATTN_NORM);
 	self.movetype = MOVETYPE_TOSS;			// Affected by gravity
+	setorigin(self, self.origin);
 	self.velocity_x = -200 + 400*random();
 	self.velocity_y = -200 + 400*random();
 	self.velocity_z = 100 + 100*random();
