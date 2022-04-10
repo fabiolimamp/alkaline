@@ -643,6 +643,7 @@ void() PutClientInServer =
 {
 	local	entity spot;
 
+	dprint5("\b[CLIENT]\b Connected at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
 
 	if(!client_ent) client_ent = self; //client_ent will be the first player to enter
 	
