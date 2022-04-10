@@ -106,7 +106,7 @@ void() chain_fire = {
 	ang = self.angles;
 	ang_x = angtoenemy_x;
 	makevectors(ang);
-	FireBullets2(1, self.origin /*+ v_forward*56*/, v_forward, '0.07 0.02 0');
+	FireBullets2(1, self.origin + v_forward*16 + v_up*16 + v_right*10, v_forward, '0.07 0.02 0');
 };
 
 void() chain_change_yaw = {
