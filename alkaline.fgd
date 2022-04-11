@@ -1115,7 +1115,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 		1 : "Superspike" : 0
 		2 : "Laser" : 0
 		4 : "Rocket" : 0
-		//8 : "Voreball" : 0
+		8 : "Voreball" : 0
 	]
 ]
 
