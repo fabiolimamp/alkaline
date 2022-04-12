@@ -150,6 +150,7 @@ body {
 	<li>
 		<a href="#solids">Solids</a>
 		<ul>
+			<li><a href="#liquids">Dynamic liquids</a></li>
 			<li><a href="#breakables">Breakables</a></li>
 			<li><a href="#togglable-brushes">Walls and togglable brushes</a></li>
 			<li><a href="#misc_model">misc_model</a></li>
@@ -158,6 +159,7 @@ body {
 			<li><a href="#laser">Laser</a></li>
 			<li><a href="#ladders">Ladders</a></li>
 			<li><a href="#bobbing">Bobbing brushes</a></li>
+			<li><a href="#func_fade">Fading brushes</a></li>
 		</ul>
 	</li>
 
@@ -640,7 +642,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <p>You can, for example, relay a trigger only if a door or plat is in a certain position, or if a targeted enemy is alive or dead or below a certain health amount, or if the player is carrying some specific weapon or item, or if the activator is a certain type of weapon projectile - the possibilites are almost endless.</p>
 
-<p>In case you're filtering to activate only in case if it's a specific weapon projectile (like a grenade for example), you can make the targets fire with the activating entity's owner as the activator with the spawnflag <strong>Relay activator as owner</strong> - say, if the trigger is activated by a player's grenade, it'll fire with the player as activator, instead of the grenade itself.</p>
+<p>In case you're filtering to activate only in case if it's a specific weapon projectile (like a grenade for example), you can make the targets fire with the activating entity's owner as the activator with the spawnflag <strong>Relay owner as activator</strong> - say, if the trigger is activated by a player's grenade, it'll fire with the player as activator, instead of the grenade itself.</p>
 
 <p>There are various fields available to test, selectable through the <strong>style</strong> key. They all fall into three field types (float, flag and string), and for each there's a set of operations available to evaluate, selectable through the <strong>weapon</strong> key.</p>
 
@@ -667,7 +669,37 @@ Also, the state of the last evaluation is stored in this entity's <strong>state<
 <p>Changes the targeted entity's <strong>count</strong> field. Targets both targetname and targetname2 fields.
 Can be used with a <strong>trigger_filter</strong> to dinamically change its float comparing value, or to reset/change a <strong>trigger_counter</strong>'s current use count.</p>
 
-<p>You can either replace the current value with a new one, or add to/subtract from it (using a positive or negative <strong>count</strong>), by selecting into the <strong>style</strong> field.</p>
+<p>You can either replace the current value with a new one, add to/subtract from it (using a positive or negative <strong>count</strong>), or toggle the current value between 0 and 1, by selecting into the <strong>style</strong> field.</p>
+
+<h3 id="damage-filters">Damage filters</h3>
+<p>Any damageable entity - be it shootable buttons, doors, breakables, or any monster - can filter out whatever entity is trying to hit them through a specially-set <strong>trigger_filter</strong> entity. </p> 
+
+<p>There are two ways of filtering, and for each you must add a speciic key pointing to the trigger_filter entity that will handle the filtering.</p>
+<ul>
+	<li><strong>Filter by attacker</strong>: the entity that's commanding the attack - a specific monster, or a player. You can filter out to a certain monster class for example, or only to player clients to successfully damage your target. Add an <strong>attackerfilter</strong> key pointing to the trigger_filter.</li>
+	<li><strong>Filter by inflictor</strong>: the entity that's actually dealing the damage - usually a projectile, such as a spike, a grenade or a rocket. With it you can filter out a specific projectile type for example. Add an <strong>inflictorfilter</strong> key pointing to the trigger_filter.</li>
+</ul>
+
+<h4>Filter by attack type</h4>
+<p>Another way to filter is by attack type. This is simpler to setup and doesn't require any trigger_filter entity.</p>
+<p>All attacks in Alkaline are flagged with some attack type, as follows:</p>
+
+<pre><code>float DMGTYPE_FALL = 2; // fall damage
+float DMGTYPE_DROWN = 4; // damage from drowning
+float DMGTYPE_LAVA = 8; // damage from lava liquid volumes
+float DMGTYPE_SLIME = 16; // damage from slime liquid volumes
+float DMGTYPE_BALLISTIC = 32; // shells and spikes and bullety things
+float DMGTYPE_ENERGY = 64; // lightning, plasma, laser, blaster
+float DMGTYPE_BURN = 128; // fire and hot stuff in general
+float DMGTYPE_TOXIC = 256; // 
+float DMGTYPE_CRUSH = 512; // crushing attacks, usually from movers
+float DMGTYPE_MELEE = 1024; // melee attacks
+float DMGTYPE_INSTANT = 2048; // void, telefrag
+float DMGTYPE_EXPLOSION = 4096; // general explosions
+float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few seconds
+</code></pre>
+
+<p>By adding a <strong>damagedby</strong> key to your entity, and assigning one of the above flags to it (or a sum of values if you want more than one), the entity will only get hit by those attack types.</p>
 
 <hr>
 <h2 id="shadows">Shadows</h2>
@@ -748,6 +780,15 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 
 <h2 id="solids">Solids</h2>
 
+<h3 id="liquids">Dynamic liquids</h3>
+<p>You can turn any solid brush, such as a togglable func_door or a func_train, into a dynamic liquid brush. Add a <strong>liquidbrush 1</strong> key to it and see the magic happens.</p>
+
+<p>There are two caveats with this system to keep in mind, due to engine limitations. First, there's no way to get water monsters to swim into it. Walking and flying monsters behave normally though. Second, you won't get the water warp screen effect while submerged, only the screen tint.</p>
+
+<p>Adding a <strong>liquidtype</strong> key turns it into slime (liquidtype 1), or lava (liquidtype 2).</p>
+
+<p>By default, the screen tint RBG values are the same as standard liquids on Quakespasm. You can override that through the <strong>liquidcolor</strong> key ("R G B" values in a 0-255 range), and the blend density through <strong>liquiddensity</strong> (also 0-255).</p>
+
 <h3 id="breakables">Breakables</h3>
 <p>A <strong>func_breakable</strong> is a visible object that can be destroyed by shooting it. If it has a targetname, it will only be destroyed by targeting it.</p>
 <p>You have 4 debris variations, each with a different debris model and accompanying sound effect (<strong>style</strong> key). You can also customize which particle effect will be spawned when the breakable get shot (<strong>bloodtype</strong> key).</p>
@@ -781,6 +822,33 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 <h3 id="bobbing">Bobbing</h3>
 <p>You can create entities that gently moves back and forth in any direction. <strong>func_bob</strong> is a brush entity, and <strong>misc_bob</strong> is a point entity that uses external models.</p>
 
+<h3 id="func_fade">Fading brushes</h3>
+<p><strong>func_fade</strong> is a non-solid entity that smoothly fades in/out. It has two operating methods: by proximity and by trigger.</p>
+
+<h4>Proximity</h4>
+
+<p>Default mode. The closer the player gets, the more visible the brush becomes, and vice versa.
+'waitmin' sets the inner fade distance - in other words, if the player gets closer than that the brush will be totally visible. 'waitmax' on the other hand defines the maximum distance before the brush fades away completely.</p>
+
+<p>You can invert the close/far fading behavior with the 'Reverse' spawnflag, so the brush will disappear as the player gets closer.</p>
+
+<p>The 'target' field can point to an entity to act as custom origin to check for player proximity. An info_notnull point entity can be used as target. If 'target' is unset (or no entity is found under that name), the origin's coordinate will be the brush's midpoint.</p>
+
+
+<h4>Trigger</h4>
+
+<p>When given a targetname, it'll operate in trigger mode. Just target the func_fade entity to toggle it on/off. The fade time can be changed through the 'speed' key.</p>
+
+It can be set to start visible through the 'Start on' spawnflag.
+</p>
+
+<h4>Other options</h4>
+
+<p>'alpha' and 'alpha2' set the maximum and minimum visibility respectively, in a 0-1 range.</p>
+
+<p>The 'target2' field can be used to target a light entity, so it will fade in/out together with the brush.</p>
+
+<p>If switchable shadows are on, they'll fade together as well.</p>
 
 <hr>
 
@@ -836,7 +904,7 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 </blockquote>
 
 <h3 id="text-story">Story texts</h3>
-<p>To show long story texts, for logs, terminals, books, etc., you can use the <strong>trigger_textstory</strong> brush entity. It shows a message that remains on-screen while the player is inside the trigger volume.</p>
+<p>To show long story texts, for logs, terminals, books, etc., you can use the <strong>trigger_textstory</strong> brush entity. It shows a message that remains on-screen while the player is inside the trigger volume. The screen background also gets a slighty dark tint, that can optionally be disabled through a spawnflag.</p>
 <p>You can set it to be show the message only when the player is facing a certain angle within the trigger. Set the central angle with <strong>mangle</strong>, and the maximum angle offset with <strong>view_ofs</strong> (both in 'pitch way 0' format).</p>
 <p>You can define custom sounds as well, both for when the message is shown (<strong>noise1</strong>) and when it fades away (<strong>noise2</strong>). Use "misc/talk.wav" for the default centerprint beep.</p>
 <p>There's a point entity variant called <strong>target_textstory</strong>. When triggered, it'll show the message on-screen for the duration defined in <strong>wait</strong>.</p>
@@ -852,6 +920,7 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 	<li><strong>Teleport fog:</strong> Targeting a <strong>target_telefog</strong> produces a teleport fog effect when triggered, sounds and all.</li>
 	<li><strong>Particle splash:</strong> <strong>misc_splash</strong> produces a continuous particle splash for waterfalls.</li>
 	<li><strong>Bullet holes:</strong> adding a <strong>nobullets</strong> with a value of 1 to any brush entity prevents it from getting bulletholes.</li>
+	<li><strong>Skybox trigger:</strong> <strong>target_skybox</strong> changes the skybox for the activating player.</li>
 </ul>
 
 <hr>
