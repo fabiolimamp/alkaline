@@ -27,8 +27,9 @@ void() checkSelfInWaterBrush = {
 		if (lvl) {
 			self.waterlevel = lvl;
 
-			if (!e.liquidtype) self.watertype = CONTENT_WATER;
-			else self.watertype = e.liquidtype;
+			if (e.liquidtype == LIQUID_LAVA) self.watertype = CONTENT_LAVA;
+			else if (e.liquidtype == LIQUID_SLIME) self.watertype = CONTENT_SLIME;
+			else self.watertype = CONTENT_WATER;
 
 			self.flags = self.flags | FL_INWATER;
 
