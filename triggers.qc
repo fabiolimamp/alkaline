@@ -1141,8 +1141,6 @@ void(entity plr, float removeditems, float removedweapons) removeitems_go = {
 	if (removeditems & IT_TRIFECTA & self.items) {
 		self.trif_finished = 0;
 		self.trif_time = 0;
-		self.cshift_set = 0;
-		self.cshift_cleared = 0;
 	}
 	if (removeditems & IT_QUAD & self.items) {
 		self.super_damage_finished = 0;

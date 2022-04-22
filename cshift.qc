@@ -5,7 +5,7 @@ Priority-based. If the color being set has a lower priority than the current one
 It also stores the immediately lower priority if set. 
 
 Remarks:
-- Backgroud fade from textstory is 110, from the trifecta is 100, and burning status is 90
+- Backgroud fade from textstory is 110, from the trifecta is 100, burning status is 90, and dynamic liquids is 70
 - Priority 0 should *always* reset colors
 
 *************************************************/
