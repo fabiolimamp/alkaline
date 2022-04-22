@@ -343,9 +343,6 @@ void() execute_changelevel =
 		other.punchangle = '0 0 0';
 		setorigin (other, pos.origin);
 		fog_setFromEnt(other, pos);
-		// clear v_cshift on the next frame
-		//other.cshift_set = 0;
-		//other.cshift_cleared = 0;
 		other = find (other, classname, "player");
 	}	
 
@@ -737,9 +734,6 @@ void() PutClientInServer =
 	spawn_tdeath (self.origin, self);
 
 	CreateHealthController();
-
-	//self.cshift_set = 0;
-	//self.cshift_cleared = 0;
 };
 
 
@@ -947,8 +941,6 @@ void() PlayerRessurect =
 	stuffcmd (self, "bf\n");
 	sound (self, CHAN_VOICE, "items/protect.wav", 1, ATTN_NORM);
 
-	//self.cshift_cleared = 0;
-	//self.cshift_set = 0;
 }
 
 void() PlayerDeathThink =
