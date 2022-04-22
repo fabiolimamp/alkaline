@@ -112,8 +112,7 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 	if (!tspeed)
 		objerror("No speed is defined!");
 
-	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
-	else localtime = time;
+	localtime = getLocalTime();
 
 	self.think1 = func;
 	self.finaldest = tdest;

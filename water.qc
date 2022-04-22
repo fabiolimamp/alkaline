@@ -69,7 +69,7 @@ void() checkSelfInWaterBrush = {
 
 float(vector org) pointcontents2 = {
 	float pc = pointcontents(org);
-	
+
 	if (pc != CONTENT_EMPTY) return pc;
 
 	entity e;
@@ -120,3 +120,20 @@ float (entity e, entity brush) getWaterLevel = {
 	//dprint3("Applied waterlevel: ", ftos(lvl), "\n");
 	return lvl;
 };
+
+float (vector org, entity brush) getWaterTouch = {
+	if (org_x > brush.absmax_x) 
+		return 0;
+	if (org_x < brush.absmin_x)
+		return 0;
+	if (org_y > brush.absmax_y)
+		return 0;
+	if (org_y < brush.absmin_y)
+		return 0;
+	if (org_z > brush.absmax_z)
+		return 0;
+	if (org_z < brush.absmin_z)
+		return 0;
+
+	return 1;
+}

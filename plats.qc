@@ -283,9 +283,6 @@ void() train_moving_use = {
 
 // path_corner has been reached, so decide what to do next
 void() train_wait = {
-	float localtime;
-	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
-	else localtime = time;
 
 	self.use = train_use; //ready to be re-triggered
 
@@ -321,7 +318,7 @@ void() train_wait = {
 		// state: stopped
 		self.state = 0;
 		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
-		self.nextthink = localtime + self.wait;
+		self.nextthink = getLocalTime() + self.wait;
 
 		//play stopping sound. If path_corner has a custom sound, play that instead
 		if (self.enemy.noise != "") sound(self, CHAN_WEAPON, self.enemy.noise, 1, ATTN_NORM);
@@ -412,11 +409,7 @@ void() train_next = {
 // searches for the first path_corner after the train entity is initialized
 void() func_train_find = {
 	local entity	targ;
-	float localtime;
 	vector displ;
-
-	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
-	else localtime = time;
 
 	targ = find(world, targetname, self.target);
 	self.target = targ.target;
@@ -428,7 +421,7 @@ void() func_train_find = {
 
 	if (!self.targetname)
 	{	// not triggered, so start immediately
-		self.nextthink = localtime + 0.1;
+		self.nextthink = getLocalTime() + 0.1;
 		self.think = train_next;
 	}
 };

@@ -75,6 +75,20 @@ float(float in, float def) zeroconvertdefault =
 }
 
 
+/*
+Gets the correct time value depending on entity movetype. MOVETYPE_PUSH ents needs to use
+'self.ltime' instead of simply 'time' for setting thinks
+*/
+float() getLocalTime = {
+	if (self.movetype == MOVETYPE_PUSH) return self.ltime;
+	else return time;
+}
+
+float(entity e) getEntityTime = {
+	if (e.movetype == MOVETYPE_PUSH) return e.ltime;
+	else return time;
+}
+
 
 entity(vector org, .string fld, string match) findClosest = {
 	entity closest, next;
