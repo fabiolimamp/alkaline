@@ -884,7 +884,7 @@ void() Plasma_Watercheck = {
   
 	float pc;
 
-	pc = pointcontents(self.origin);
+	pc = pointcontents2(self.origin);
 	if (pc == CONTENT_WATER || pc == CONTENT_SLIME || pc == CONTENT_LAVA) {
 		sound(self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_NORM);
 

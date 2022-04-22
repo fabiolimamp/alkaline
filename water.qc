@@ -67,6 +67,29 @@ void() checkSelfInWaterBrush = {
 	}
 }
 
+float(vector org) pointcontents2 = {
+	float pc = pointcontents(org);
+	
+	if (pc != CONTENT_EMPTY) return pc;
+
+	entity e;
+	float touched;
+
+	e = find(world, liquidbrush, "1");
+
+	while (e) {
+		touched = getWaterTouch(org, e);
+		if (touched) {
+			if (e.liquidtype == LIQUID_LAVA) return CONTENT_LAVA;
+			else if (e.liquidtype == LIQUID_SLIME) return CONTENT_SLIME;
+			else return CONTENT_WATER;
+		}
+
+		e = find(e, liquidbrush, "1");
+	}
+	return CONTENT_EMPTY;
+}
+
 
 float (entity e, entity brush) getWaterLevel = {
 	// horizontal axes checked against entity's origin

@@ -21,7 +21,7 @@ void() swimmonster_start;
 
 void() eel_pitch_change =
 {
-	if ( pointcontents ( self.origin ) != CONTENT_WATER )
+	if ( pointcontents2 ( self.origin ) != CONTENT_WATER )
 	{
 		droptofloor();
 		T_Damage( self, world, world, 6, DMGTYPE_CRUSH);
