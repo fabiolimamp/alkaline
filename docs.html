@@ -482,7 +482,9 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <li><strong>trigger_mapvar_write</strong>: Writes a value to a specified mapvar. Can either set to on, to off, or toggle the current mapvar value.</li>
 <li><strong>trigger_mapvar_read</strong>: Tests a mapvar against a specified value, and relays the trigger if the condition is met. When given a targetname, it'll read/relay when triggered. Otherwise, it'll fire automatically once after the map starts - good for modifying map structures or enabling/disabling triggers right from the start.</li>
 </ul>
-<p>Also, you can define a mapvar to be enabled automatically in <strong>trigger_changelevel</strong> entities when the player goes through it.</p>
+<p>Besides these two entities, all triggers can be set a <strong>mapvar</strong> field pointing to a mapvar ID, so that the trigger will only fire if the specified mapvar is set to true.</p>
+
+<p>You can also define a mapvar to be enabled automatically in <strong>trigger_changelevel</strong> entities when the player goes through it.</p>
 
 <h3 id="mapstart">Multiple map starting spots</h3>
 <p>You can have multiple player start spots in your map. <strong>trigger_changelevel</strong> entities accept a <strong>count</strong> key, which on the next map will try to direct the player to an <strong>info_player_start</strong> spot with a matching <strong>count</strong> value. That's also true for coop starts.</p>
@@ -907,7 +909,8 @@ It can be set to start visible through the 'Start on' spawnflag.
 <p>To show long story texts, for logs, terminals, books, etc., you can use the <strong>trigger_textstory</strong> brush entity. It shows a message that remains on-screen while the player is inside the trigger volume. The screen background also gets a slighty dark tint, that can optionally be disabled through a spawnflag.</p>
 <p>You can set it to be show the message only when the player is facing a certain angle within the trigger. Set the central angle with <strong>mangle</strong>, and the maximum angle offset with <strong>view_ofs</strong> (both in 'pitch way 0' format).</p>
 <p>You can define custom sounds as well, both for when the message is shown (<strong>noise1</strong>) and when it fades away (<strong>noise2</strong>). Use "misc/talk.wav" for the default centerprint beep.</p>
-<p>There's a point entity variant called <strong>target_textstory</strong>. When triggered, it'll show the message on-screen for the duration defined in <strong>wait</strong>.</p>
+<p>There's a point entity variant called <strong>target_textstory</strong>. When triggered, it'll show the message on-screen for the duration defined in <strong>wait</strong>. This variant gets the screen tint disabled by default, but it can be re-enabled through a spawnflag.</p>
+<p>Story text entities also can have different messages according to a mapvar filter. Setting the <strong>mapvar</strong> field to it will make it show the text under <strong>message2</strong> when the specified mapvar is active.</p>
 
 
 <h3 id="other-effects">Other effects</h3>

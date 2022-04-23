@@ -31,7 +31,7 @@ void() mapvar_reset = {
 	
 	mapv_bank = 0;
 	while (mapv_bank < MAPV_BLCK) {
-		mapvar[mapv_bank] = 0;
+		mapvars[mapv_bank] = 0;
 		mapv_bank = mapv_bank + 1;
 	}
 };
@@ -48,7 +48,7 @@ float(float mapv_indx) read_mapvar = {
 	if (mapv_bank < 0 || mapv_bank >= MAPV_BLCK) mapv_bank = 0;
 	if (mapv_cell < 0 || mapv_cell >= MAPV_BITS) mapv_cell = 0;
 	// Find bitflag mask value
-	mapv_bit = mapvar[mapv_bank] & bitflags[mapv_cell];
+	mapv_bit = mapvars[mapv_bank] & bitflags[mapv_cell];
 	
 
 	if (mapv_bit > 0) return TRUE;
@@ -69,14 +69,14 @@ void(float mapv_indx, float mapv_val) write_mapvar =
 	if (mapv_cell < 0 || mapv_cell >= MAPV_BITS) mapv_cell = 0;
 	
 	// get the current flag value
-	curr_bits = mapvar[mapv_bank] & bitflags[mapv_cell];
+	curr_bits = mapvars[mapv_bank] & bitflags[mapv_cell];
 
 	if (mapv_val == MAPV_WRITE_ON || (mapv_val == MAPV_WRITE_TOGGLE && !curr_bits)) {
-		mapvar[mapv_bank] = mapvar[mapv_bank] | bitflags[mapv_cell];
+		mapvars[mapv_bank] = mapvars[mapv_bank] | bitflags[mapv_cell];
 		dprint3("Set mapvar #", ftos(mapv_indx), " to 1\n");
 	}
 	else {
-		mapvar[mapv_bank] = mapvar[mapv_bank] - (mapvar[mapv_bank] & bitflags[mapv_cell]);
+		mapvars[mapv_bank] = mapvars[mapv_bank] - (mapvars[mapv_bank] & bitflags[mapv_cell]);
 		dprint3("Set mapvar #", ftos(mapv_indx), " to 0\n");
 	}
 };

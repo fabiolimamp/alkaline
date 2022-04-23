@@ -2591,10 +2591,13 @@ You can set it to be show the message only when the player is facing a certain a
 	mangle(string) : "Central view angle" : : "Central point of the viewcone, in 'pitch yaw 0' format"
 	view_ofs(string) : "Maximum angle offset" : : "Angle offsets from the central viewcone point in each direction, in 'pitch yaw 0' format"
 	message(string) : "Message" : : "Message to show on-screen."
+	message2(string) : "Mapvar message" : : "Message to show on-screen when the mapvar set through the 'mapvar' field is active."
+	mapvar(integer) : "Mapvar filter" : : "If the specified mapvar is true, show 'message2' instead of 'message'"
 	noise1(string) : "Activate sound" : "misc/talk.wav" : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
 	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
 	spawnflags(flags) = [
 		1: "Silent"
+		2: "Don't fade background"
 	]
 ]
 
@@ -2606,10 +2609,13 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 [
 	wait(integer) : "Message duration" : 5
 	message(string) : "Message" : : "Message to show on-screen."
+	message2(string) : "Mapvar message" : : "Message to show on-screen when the mapvar set through the 'mapvar' field is active."
+	mapvar(integer) : "Mapvar filter" : : "If the specified mapvar is true, show 'message2' instead of 'message'"
 	noise1(string) : "Activate sound" : "misc/talk.wav" : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
 	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
 	spawnflags(flags) = [
 		1: "Silent"
+		2: "Fade background"
 	]
 ]
 

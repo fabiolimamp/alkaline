@@ -1063,8 +1063,16 @@ void(entity controller) textstory_show = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
 
 	self.enemy.suppressCenterPrint = TRUE;
-	
-	centerprint_builtin(self.enemy, controller.message);
+	string msg;
+
+	if (controller.mapvar && read_mapvar(controller.mapvar)){
+		msg = controller.message2;
+	}
+	else {
+		msg = controller.message;
+	}
+
+	centerprint_builtin(self.enemy, msg);
 
 	if (!self.state) {
 		if (controller.noise1)
@@ -1206,6 +1214,11 @@ void() target_textstory = {
 		self.noise1 = "";
 		self.noise2 = "";
 	}
+
+	if (self.spawnflags & TEXTSTORY_NOFADE)
+		self.spawnflags = self.spawnflags - TEXTSTORY_NOFADE;
+	else
+		self.spawnflags = self.spawnflags | TEXTSTORY_NOFADE;
 
 	if (self.noise1 != "")
 		precache_sound (self.noise1);

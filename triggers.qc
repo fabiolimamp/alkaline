@@ -65,6 +65,9 @@ void() multi_trigger =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+
 	if (self.classname == "trigger_secret")
 	{
 		if (self.enemy.classname != "player")
@@ -124,6 +127,9 @@ void() multi_touch =
 		return;
 
 	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
 	// if the trigger has an angles field, check player's facing direction.
@@ -272,6 +278,9 @@ void() counter_use =
 //	local string junk;
 
 	if (self.estate != STATE_ACTIVE) return;
+
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
 
 	self.count = self.count - 1;
 	if (self.count < 0)
@@ -506,6 +515,9 @@ void() teleport_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+	
 	if (self.targetname != "" && self.is_waiting != -1)	{
 		if (self.nextthink < time)
 			return;		// not fired yet
@@ -653,6 +665,8 @@ trigger_setskill
 void() trigger_skill_touch =
 {
 	if (self.estate != STATE_ACTIVE) return;
+	
+	if (self.mapvar && !read_mapvar(self.mapvar)) return;
 
 	if (other.classname != "player")
 		return;
@@ -703,6 +717,9 @@ void() trigger_onlyregistered_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+
 	self.attack_finished = time + 2;
 	if (cvar("registered"))
 	{
@@ -750,7 +767,8 @@ void() hurt_touch =
 {
 	if (self.estate != STATE_ACTIVE)
 		return;
-	
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
 	if (self.spawnflags & 1 && other.flags & FL_CLIENT)
 		return;
 	
@@ -872,7 +890,8 @@ void(string name, .string fld) hurt_find = {
 void() hurt_use = {
 	if (self.estate != STATE_ACTIVE)
 		return;
-
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
 	float has_target;
 
 	if (self.target && self.target != "") {
@@ -921,6 +940,8 @@ float PUSH_SILENT = 2;
 void() trigger_push_touch =
 {
 	if (self.estate != STATE_ACTIVE)
+		return;
+	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
 	if (other.classname == "grenade")
@@ -976,6 +997,8 @@ trigger_monsterjump
 void() trigger_monsterjump_touch =
 {
 	if (self.estate != STATE_ACTIVE)
+		return;
+	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
 	if(!self.count)
@@ -1040,6 +1063,8 @@ void() trigger_void_touch =
 {	
 	// back out if trigger is inactive
 	if (self.estate != STATE_ACTIVE)
+		return;
+	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
 	// ignore monsters if spawnflag is set
@@ -1177,7 +1202,8 @@ void() trigger_removeitems_touch = {
 		return;
 	if (self.estate != STATE_ACTIVE)
 		return;
-
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
 	removeitems_go (other, self.items, self.weapons);
 
 	if(self.count > 0)
@@ -1203,7 +1229,9 @@ void() target_removeitems_use = {
 
 	if (self.estate != STATE_ACTIVE)
 		return;
-
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+	
 	removeitems_go (activator, self.items, self.weapons);
 
 	if(self.count > 0)
@@ -1703,6 +1731,8 @@ trigger_everything
 
 void() trigger_everything_touch = {
 	if (self.estate != STATE_ACTIVE) return;
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
 
 	if (time < self.attack_finished) return;
 

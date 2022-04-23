@@ -192,7 +192,7 @@ entity current_gravity_ent;
 
 // mapvars
 float bitflags[24];				// Bitflag values
-float mapvar[2];				// Map variables stored in savefile
+float mapvars[2];				// Map variables stored in savefile
 nosave float mapvar_cvar;
 
 float playerstart_id;
@@ -387,6 +387,7 @@ FIELDS
 .string exclude = map;
 
 .void()		dormant_use;
+.float 		mapvar;
 
 //
 // plats / doors / buttons

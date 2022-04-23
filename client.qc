@@ -38,8 +38,8 @@ void() SetChangeParms =
 {
 	// mapvars and playerstart id for the next map are always passed down
 	parm12 = playerstart_id;
-	parm15 = mapvar[0];
-	parm16 = mapvar[1];
+	parm15 = mapvars[0];
+	parm16 = mapvars[1];
 
 	// set by changelevel_touch if trigger_changelevel has a "reset items on map change" flag
 	if (reset_items_on_map_change) {
@@ -163,8 +163,8 @@ void() DecodeLevelParms =
 	playerstart_id = parm12;
 
 	if (!prev_mapvar_cvar) {
-		mapvar[0] = parm15;
-		mapvar[1] = parm16;
+		mapvars[0] = parm15;
+		mapvars[1] = parm16;
 	}
 
 	TakeAndGiveWeapons(self, world);
