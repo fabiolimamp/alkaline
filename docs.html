@@ -120,6 +120,7 @@ body {
 			<li><a href="#trigger_filter">trigger_filter</a></li>
 			<li><a href="#trigger_everything">trigger_everything</a></li>
 			<li><a href="#target_setcount">target_setcount</a></li>
+			<li><a href="#damage-filters">Damage filters</a></li>
 		</ul>
 	</li>
 	
@@ -308,14 +309,18 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 </ul>
 
 <h3 id="scientists">Scientists</h3>
-<p>Poor scientists that have nothing to do with the Ranger's struggles through eldridtch dimensions. They won't fight, just keep doing their jobs, or run aimlessly in panic. Select that behaviour through the spawnflag <strong>Ignore player</strong>.</p>
+<p>Poor scientists that have nothing to do with the Ranger's struggles through eldridtch dimensions. Deployed with the <strong>misc_scientist</strong> entity. They won't fight, just keep doing their jobs, or run aimlessly in panic. Select that behaviour through the spawnflag <strong>Ignore player</strong>.</p>
 <p>Set <strong>wait</strong> and <strong>angle</strong> on path_corners for them to stop and work.</p>
 <p>By default they won't count into total monster count, unless you set <strong>Count After Spawn</strong> flag.</p>
+
+<h3 id="turrets">Turrets</h3>
+<p>Ceiling-installed turrets, bearing menacing hitscan cannons. Place them with the <strong>monster_turret</strong> entity. If a player gets closer than 512 units, they'll deploy and start firing. If they lose sight of their target, they stay in an "active search" state for 30s, when they retract and go back to sleep. Activating the <strong>Don't sleep</strong> spawnflag prevents them from doing that.</p>
+<p>Turrets don't count towards total monster count/kill.</p>
 
 <h3 id="health-triggers">Health Triggers</h3>
 <p>By activating the <strong>Health trigger</strong> spawnflag, the monster will fire <strong>target2</strong>, <strong>target3</strong> and <strong>target4</strong> when it takes 25%, 50% and 75% damage, respectively. Only <strong>target</strong> will be fired immediately when the monster dies in this case.</p>
 
-<p>You don't have to assign targets to each health trigger level, just the ones you need. So, for example, you can ignore <strong>target2</strong> and <strong>target3</strong> if you only need a trigger to fire at 75% damage. Also, all assigned targets WILL fire when their thresholds have passed, even if they happen at the same frame - so if you gib or 1-hit-kill an enemy for example, all its remaining targets will be fired at the same time.</p>
+<p>You don't have to assign targets to each health trigger level, just the ones you need. So, for example, you can ignore <strong>target2</strong> and <strong>target3</strong> if you only need a trigger to fire at 75% damage. Also, all assigned targets WILL fire when their thresholds have passed, even if they happen at the same frame - so if you insta-gib an enemy for example, all its remaining targets will be fired at the same time.</p>
 
 
 
@@ -475,12 +480,12 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>Refer to the in-editor documentation for both <strong>trigger_teleport</strong> and <strong>info_teleport_destination</strong> for more info.</p>
 
 <h3 id="mapvars">Mapvars</h3>
-<p>Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track completion progress on mapjams for example. You have a total of 44 flags availabe to use, each identified by a number in the 1-44 range.
+<p>Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track individual map completion progress on hub maps for example. You have a total of 44 flags availabe to use, each identified by a number in the 1-44 range.
 </p>
 <p>You can access them through 2 point entities:</p>
 <ul>
 <li><strong>trigger_mapvar_write</strong>: Writes a value to a specified mapvar. Can either set to on, to off, or toggle the current mapvar value.</li>
-<li><strong>trigger_mapvar_read</strong>: Tests a mapvar against a specified value, and relays the trigger if the condition is met. When given a targetname, it'll read/relay when triggered. Otherwise, it'll fire automatically once after the map starts - good for modifying map structures or enabling/disabling triggers right from the start.</li>
+<li><strong>trigger_mapvar_read</strong>: Tests a mapvar against a specified value, and relays the trigger if the condition is met. When given a targetname, it'll do that only when triggered. Otherwise, it'll fire automatically once after the map starts - good for modifying map structures or enabling/disabling triggers right from the start.</li>
 </ul>
 <p>Besides these two entities, all triggers can be set a <strong>mapvar</strong> field pointing to a mapvar ID, so that the trigger will only fire if the specified mapvar is set to true.</p>
 
@@ -602,7 +607,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <li><strong>Stop on trigger</strong> spawnflag will stop the train at the next path_corner when triggered. Trigger it again to resume.</li>
 </ul>
-<p>The flags above are mutually exclusive and will cause an objerror when selected simultaneously.</p>
+<p>The "Move on trigger"/"Stop on trigger" flags are mutually exclusive and will cause an objerror when selected simultaneously.</p>
 
 <h3 id="modeltrain">Model trains</h3>
 <p><strong>misc_modeltrain</strong> works the same way as a func_train, but for using with external models.</p>
@@ -674,7 +679,7 @@ Can be used with a <strong>trigger_filter</strong> to dinamically change its flo
 <p>You can either replace the current value with a new one, add to/subtract from it (using a positive or negative <strong>count</strong>), or toggle the current value between 0 and 1, by selecting into the <strong>style</strong> field.</p>
 
 <h3 id="damage-filters">Damage filters</h3>
-<p>Any damageable entity - be it shootable buttons, doors, breakables, or any monster - can filter out whatever entity is trying to hit them through a specially-set <strong>trigger_filter</strong> entity. </p> 
+<p>Any damageable entity - be it shootable buttons, doors, breakables, or any monster - can filter out whatever entity is trying to hit them through a specially-set <a href="#trigger_filter">trigger_filter</a> entity. </p> 
 
 <p>There are two ways of filtering, and for each you must add a speciic key pointing to the trigger_filter entity that will handle the filtering.</p>
 <ul>
@@ -793,7 +798,8 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 
 <h3 id="breakables">Breakables</h3>
 <p>A <strong>func_breakable</strong> is a visible object that can be destroyed by shooting it. If it has a targetname, it will only be destroyed by targeting it.</p>
-<p>You have 4 debris variations, each with a different debris model and accompanying sound effect (<strong>style</strong> key). You can also customize which particle effect will be spawned when the breakable get shot (<strong>bloodtype</strong> key).</p>
+<p>You have 4 debris variations, each with a different debris model and accompanying sound effect (<strong>style</strong> key).<p>
+<p>A custom debris model can be set through the <strong>mdl</strong> key. You can also customize which particle effect will be spawned when the breakable get shot (<strong>bloodtype</strong> key).</p>
 
 <h3 id="togglable-brushes">Walls and togglable brushes</h3>
 <p>There are 2 togglable brush entities:</p>
@@ -830,25 +836,25 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 <h4>Proximity</h4>
 
 <p>Default mode. The closer the player gets, the more visible the brush becomes, and vice versa.
-'waitmin' sets the inner fade distance - in other words, if the player gets closer than that the brush will be totally visible. 'waitmax' on the other hand defines the maximum distance before the brush fades away completely.</p>
+<strong>waitmin</strong> sets the inner fade distance - in other words, if the player gets closer than that the brush will be totally visible. <strong>waitmax</strong> on the other hand defines the maximum distance before the brush fades away completely.</p>
 
-<p>You can invert the close/far fading behavior with the 'Reverse' spawnflag, so the brush will disappear as the player gets closer.</p>
+<p>You can invert the close/far fading behavior with the "Reverse" spawnflag, so the brush will disappear as the player gets closer instead.</p>
 
-<p>The 'target' field can point to an entity to act as custom origin to check for player proximity. An info_notnull point entity can be used as target. If 'target' is unset (or no entity is found under that name), the origin's coordinate will be the brush's midpoint.</p>
+<p>The <strong>target</strong> field can point to an entity to act as custom origin to check for player proximity. An info_notnull point entity can be used as target. If target is unset (or no entity is found under that name), the origin's coordinate will be the brush's midpoint.</p>
 
 
 <h4>Trigger</h4>
 
-<p>When given a targetname, it'll operate in trigger mode. Just target the func_fade entity to toggle it on/off. The fade time can be changed through the 'speed' key.</p>
+<p>When given a <strong>targetname</strong>, it'll operate in trigger mode. Just target the func_fade entity to toggle it on/off. The fade time can be changed through the <strong>speed</strong> key.</p>
 
-It can be set to start visible through the 'Start on' spawnflag.
+It can be set to start visible through the "Start on" spawnflag.
 </p>
 
 <h4>Other options</h4>
 
-<p>'alpha' and 'alpha2' set the maximum and minimum visibility respectively, in a 0-1 range.</p>
+<p><strong>alpha</strong> and <strong>alpha2</strong> set the maximum and minimum visibility respectively, in a 0-1 range.</p>
 
-<p>The 'target2' field can be used to target a light entity, so it will fade in/out together with the brush.</p>
+<p>The <strong>target2</strong> field can be used to target a light entity, so it will fade in/out together with the brush.</p>
 
 <p>If switchable shadows are on, they'll fade together as well.</p>
 

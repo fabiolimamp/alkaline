@@ -1015,7 +1015,11 @@ Don't shake hands with this crazy bastard!" []
 
 
 @PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base.mdl"}) = monster_turret :
-"Turret, 120 health points." []
+"Turret, 50 health points." [
+	spawnflags(flags) =	[
+		1 : "Don't sleep" : 0
+	]
+]
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
