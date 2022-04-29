@@ -59,7 +59,7 @@ void() door_blocked = {
 	T_Damage(other, self, self, self.dmg, DMGTYPE_CRUSH);
 
 	float crushing = (self.wait < 0 || (self.spawnflags & DOOR_CRUSHING));
-	dprint3("Door ", ftos(self.doornum), " blocked!\n");
+	//dprint3("Door ", ftos(self.doornum), " blocked!\n");
 	entity oself, starte;
 	oself = starte = self;
 	do {
@@ -120,9 +120,8 @@ void() door_move_top = {
 
 	if (!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_stop_sound();
 
-	//self.laststopped = getLocalTime();
 	self.lastopen = getLocalTime();
-	dprint3("Door ", ftos(self.doornum), " opened\n");
+	//dprint3("Door ", ftos(self.doornum), " opened\n");
 	self.state = STATE_TOP;
 }
 
@@ -233,7 +232,8 @@ void() door_move_down = {
 	self.owner.groupstate = STATE_DOWN;
 
 	SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
-	//dprint5("Door ", ftos(self.doornum), " started moving down at frame ", ftos(framecount), "\n");
+	//dprint4("Door ", ftos(self.doornum), " started moving down at frame ", ftos(framecount));
+	//dprint5(", ltime: ", ftos(self.ltime), ", time: ", ftos(time), "\n");
 	if (self.switchshadstyle) {
 		shadow = self.shadowcontroller;
 		oldself = self;
@@ -258,7 +258,7 @@ void() door_go_down = {
 	float localtime = getLocalTime();
 
 	if (self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
-
+	//dprint2(ftos(time), "\n");
 	//dprint2("Door ", ftos(self.doornum));
 	//if (self == self.owner) dprint(" (owner)");
 	// Door group is still moving the other way
@@ -292,7 +292,8 @@ void() door_go_down = {
 		// All doors should pass through think for consistency,
 		// otherwise some flags are set when they're not supposed to
 		self.think = door_move_down;
-		self.nextthink = localtime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + self.delay2;
+		if (self.owner == self) self.nextthink = localtime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + self.delay2;
+		else self.nextthink = localtime + DOOR_MIN_THINK_TIME*2 + (self.owner.maxdelay + self.owner.mindelay - self.delay) + self.delay2;
 		//self.movementstart = localtime;
 		//dprint3(" normal movement, will start moving in ", ftos(self.nextthink - localtime), "\n");
 	}
