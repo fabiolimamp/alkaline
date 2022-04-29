@@ -30,13 +30,6 @@ void() SUB_CheckWaiting = {
 		self.use = SUB_EndWaiting;
 		self.estate = STATE_INACTIVE;
 
-		dprint("Spawned a waiting ");
-		dprint(self.classname);
-		dprint(" with targetname ");
-		dprint(self.targetname);
-		dprint(" and target ");
-		dprint(self.target);
-		dprint("\n");
 	}
 };
 
@@ -1231,7 +1224,7 @@ void() target_removeitems_use = {
 		return;
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
-	
+
 	removeitems_go (activator, self.items, self.weapons);
 
 	if(self.count > 0)
