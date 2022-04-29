@@ -16,7 +16,7 @@ float DOOR_EXPANDED_TRIGGER_Y = 131072;
 float DOOR_REDUCED_TRIGGER_X = 262144;
 float DOOR_REDUCED_TRIGGER_Y = 524288;
 
-float DOOR_MIN_THINK_TIME = 0.013;
+float DOOR_MIN_THINK_TIME = 0.02;
 
 // maximum loop count for each LinkDoors entity before it spawns another
 float DOOR_LINK_MAXLOOPCOUNT = 1800; 
@@ -57,28 +57,41 @@ void() door_group_go_down;
 
 void() door_blocked = {
 	T_Damage(other, self, self, self.dmg, DMGTYPE_CRUSH);
-	
-	// if a door has a negative wait, it would never come back if blocked,
-	// so let it just squash the object to death real fast
-	if (self.wait >= 0 && !(self.spawnflags & DOOR_CRUSHING))
-	{
 
-		// stops all doors in the group immediately,
-		// so they won't keep moving/hurting until nextthink (usually a frame or so ahead)
-		entity oself, starte;
-		oself = starte = self;
-		do {
+	float crushing = (self.wait < 0 || (self.spawnflags & DOOR_CRUSHING));
+	dprint3("Door ", ftos(self.doornum), " blocked!\n");
+	entity oself, starte;
+	oself = starte = self;
+	do {
+		// crushing doors should stop the whole group's movement,,
+		// done by basically "rewinding" the other doors' movement at the current frame,
+		// except for the door itself
+		if (self != starte && !(self.doornum > starte.doornum && !crushing)) {
+			setorigin(self, self.origin - (self.velocity * frametime));
+			self.ltime -= frametime;
+		}
+		
+		// for non-crushing doors,
+		// all other doors in the group should stop immediately,
+		// so they won't keep moving/hurting until nextthink (usually a frame or so ahead).
+		if (!crushing) {
 			self.velocity = '0 0 0';
-			self.nextthink = -1;
-			self = self.enemy;
-		} while ( (self != starte) && (self != world) );
-		self = oself;
+			self.nextthink = 1000000000;
+		}
 
+		self = self.enemy;
+	} while ( (self != starte) && (self != world) );
+
+	self = oself;
+
+	if (!crushing)
+	{
 		if (self.owner.groupstate == STATE_DOWN)
 			door_group_go_up ();
 		else
 			door_group_go_down ();
 	}
+
 };
 
 void() door_start_sound = {
@@ -86,17 +99,30 @@ void() door_start_sound = {
 };
 
 void() door_stop_sound = {
+	// Forces ltime to keep ticking.
+	// We must also treat the hit_bottom think time reset here,
+	// because this function might also be called by a think time,
+	// so we cannot reset it previously.
+	// The if condition makes sure to reset the think time *only*
+	// if this function was called via think
+	if (self.think == door_stop_sound && self.nextthink <= getLocalTime()) {
+		self.nextthink = 10000000000;
+		self.think = SUB_Null;
+	}
 	sound (self, CHAN_VOICE, self.noise1, self.volume, ATTN_NORM);
 };
 
 void() door_move_top = {
+	// resets calcmove
 	self.velocity = '0 0 0';
 	setorigin(self, self.pos2);
-	self.nextthink = -1;
-	
+	self.nextthink = 10000000000; // forces ltime to keep ticking
+
 	if (!(self.spawnflags & DOOR_SOUND_DURING_DELAY)) door_stop_sound();
 
-	self.lastopen = time;
+	//self.laststopped = getLocalTime();
+	self.lastopen = getLocalTime();
+	dprint3("Door ", ftos(self.doornum), " opened\n");
 	self.state = STATE_TOP;
 }
 
@@ -104,47 +130,53 @@ void() door_hit_top = {
 	local entity starte, oself;
 
 	door_move_top();
-	
-	if (self.delay >= self.owner.maxdelay) { // this is the last door to open
 
+	if (self.owner.lasttoopen == self) { // this is the last door to open
+	//if (self.delay >= self.owner.maxdelay) { // this is the last door to open
+		//dprint3("Door ", ftos(self.doornum), " open movement ended, setting groupstate STATE_TOP\n");
+		self.owner.groupstate = STATE_TOP;
 
 		oself = self;
 		starte = self;
 		do {
+
 			if (self.spawnflags & DOOR_SOUND_DURING_DELAY) door_stop_sound();
 
 			// Force all doors to stop at their final top position and clear calcmove stuff.
-			// This should be a problem only with the master door, since its think function
-			// will be redefined now, but do it on every door in the group just to be sure.
-			if(self.state != STATE_TOP)
+			if (self.state != STATE_TOP)
 				door_move_top();
 
 			self = self.enemy;
 		} while ( (self != starte) && (self != world) );
 		self = oself;
 
-		self.owner.groupstate = STATE_TOP;
 
 		if (self.spawnflags & DOOR_TOGGLE)
 			return;		// don't come down automatically
 		
 		
 		self.owner.think = door_group_go_down;
-		self.owner.nextthink = self.owner.ltime + self.owner.wait;
+		self.owner.nextthink = getEntityTime(self.owner) + self.owner.wait;
 	}
 };
 
 void() door_hit_bottom = {
+	self.nextthink = 10000000000; // forces ltime to keep ticking
+
+	// if "sound during delay" is set, the close sound won't play until all doors have finished moving
 	if (self.spawnflags & DOOR_SOUND_DURING_DELAY) {
 		self.think = door_stop_sound;
-		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (self.delay - self.owner.mindelay);
+		self.nextthink = getLocalTime() + DOOR_MIN_THINK_TIME + (self.delay - self.owner.mindelay);
 	}
 	else door_stop_sound();
 
-	self.lastclose = time;
+	self.lastclose = getLocalTime();
 	self.state = STATE_BOTTOM;
+	//dprint3("Door ", ftos(self.doornum), " closed\n");
 
+	//if (self.owner.lasttoclose == self) { //this is the last door to close
 	if (self.delay <= self.owner.mindelay) { //this is the last door to close
+		//dprint3("Door ", ftos(self.doornum), " close movement ended, setting groupstate STATE_BOTTOM\n");
 		self.owner.groupstate = STATE_BOTTOM; 
 	}
 	
@@ -162,10 +194,10 @@ void() door_move_up = {
 	self.state = STATE_UP;
 	self.owner.groupstate = STATE_UP;
 	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
-	self.owner.activated = FALSE;
 
 	SUB_UseTargets();
 
+	//dprint5("Door ", ftos(self.doornum), " started moving up at frame ", ftos(framecount), "\n");
 	if (self.switchshadstyle) {
 		shadow = self.shadowcontroller;
 		oldself = self;
@@ -199,10 +231,9 @@ void() door_move_down = {
 		
 	self.state = STATE_DOWN;
 	self.owner.groupstate = STATE_DOWN;
-	self.owner.activated = FALSE;
-	
-	SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
 
+	SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
+	//dprint5("Door ", ftos(self.doornum), " started moving down at frame ", ftos(framecount), "\n");
 	if (self.switchshadstyle) {
 		shadow = self.shadowcontroller;
 		oldself = self;
@@ -223,95 +254,130 @@ void() door_move_down = {
 };
 
 void() door_go_down = {
-	//local float extradelay;
-	//local entity otherdoor;
+
+	float localtime = getLocalTime();
 
 	if (self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
 
-
+	//dprint2("Door ", ftos(self.doornum));
+	//if (self == self.owner) dprint(" (owner)");
 	// Door group is still moving the other way
-	if (self.owner.movingback) {  
-		// If this door has already stopped opening, wait the same time passed since then before closing again
+	if (self.owner.movingback) {
+		//if (self.lastcommanded != self.movementstart) 
+		//	self.movementstart = self.movementstart + (localtime - self.movementstart) - (localtime - self.lastcommanded);
+
+		// Door has already stopped opening, so wait the same time passed since it's stopped moving before closing again
 		if (self.state == STATE_TOP) { 
 			self.think = door_move_down;
-			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (time - self.lastopen);
+			self.nextthink = localtime + DOOR_MIN_THINK_TIME + (localtime - self.lastopen);
+
+			//dprint3(" was at top, will start moving in ", ftos(self.nextthink - localtime), "\n");
 		}
+		// Door still haven't began opening
+		/*else if (self.state == STATE_BOTTOM) {
+			self.think = door_move_down;
+			self.nextthink = localtime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + self.delay2 - (localtime - self.movementstart);
+
+			dprint3(" was at bottom, will start moving in ", ftos(self.nextthink - localtime), "\n");
+			//self.laststopped = localtime;
+		}*/
 		else { // If door is still moving, move the other way immediately
 			self.think = door_move_down;
-			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME;
+			self.nextthink = localtime + DOOR_MIN_THINK_TIME;
+
+			//dprint3(" was moving, will move the other way in ", ftos(self.nextthink - localtime), "\n");
 		}
 	} else {
-		// extra delay time for closing.
-		// using "doortowait" is deprecated, use delay2 to set an extra time directly
-		/*if (self.doortowait) {
-			otherdoor = find (world, targetname2, self.doortowait);
-
-			if (otherdoor && otherdoor.classname == "func_door") {
-				extradelay = vlen(otherdoor.pos1 - otherdoor.pos2) / otherdoor.speed2;
-			}
-		} else extradelay = self.delay2;
-		*/
-
 		// Normal movement.
 		// All doors should pass through think for consistency,
 		// otherwise some flags are set when they're not supposed to
 		self.think = door_move_down;
-		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + self.delay2;
+		self.nextthink = localtime + DOOR_MIN_THINK_TIME + (self.owner.maxdelay + self.owner.mindelay - self.delay) + self.delay2;
+		//self.movementstart = localtime;
+		//dprint3(" normal movement, will start moving in ", ftos(self.nextthink - localtime), "\n");
 	}
+	//self.lastcommanded = localtime;
+
 
 };
 
 void() door_go_up = {
-	if (self.owner.groupstate == STATE_UP)
-		return;		// already going up
-
+	//if (self.owner.groupstate == STATE_UP)
+	//	return;		// already going up
+	float localtime = getLocalTime();
 	if (self.spawnflags & DOOR_SOUND_DURING_DELAY) door_start_sound();
- 	
+
+	//dprint2("Door ", ftos(self.doornum));
+	//if (self == self.owner) dprint(" (owner)");
+
  	// door group is still moving the other way
 	if (self.owner.movingback) {
-
+		//if (self.lastcommanded != self.movementstart) 
+		//	self.movementstart = self.movementstart + self.opentime - (localtime - self.lastcommanded);
+		
 		// if this door has already stopped closing, wait the same time passed since that before opening 
 		if (self.state == STATE_BOTTOM){
 			self.think = door_move_up;
-			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + (time - self.lastclose);
-
+			self.nextthink = localtime + DOOR_MIN_THINK_TIME + (localtime - self.lastclose);
+			//dprint3(" was at bottom, will start moving in ", ftos(self.nextthink - localtime), "\n");
+			//self.laststopped = localtime;
 		}
+		/*else if (self.state == STATE_TOP){
+			self.think = door_move_up;
+			self.nextthink = localtime + DOOR_MIN_THINK_TIME + self.delay - (localtime - self.movementstart);
+			dprint3(" was at top, will start moving in ", ftos(self.nextthink - localtime), "\n");
+			//self.laststopped = localtime;
+		}*/
 		else { // if door is still moving, move the other way immediately
 			self.think = door_move_up;
-			self.nextthink = self.ltime + DOOR_MIN_THINK_TIME;
+			self.nextthink = localtime + DOOR_MIN_THINK_TIME;
+			//dprint3(" was moving, will move the other way in ", ftos(self.nextthink - localtime), "\n");
 		}
 	} else {
 		// Normal movement.
 		// All doors should pass through think for consistency,
 		// otherwise some stuff's set when not supposed to
 		self.think = door_move_up;
-		self.nextthink = self.ltime + DOOR_MIN_THINK_TIME + self.delay;
+		self.nextthink = localtime + DOOR_MIN_THINK_TIME + self.delay;
+		//self.movementstart = localtime;
+		//dprint3(" normal movement, will start moving in ", ftos(self.nextthink - localtime), "\n");
 	}
-			
+	//self.lastcommanded = localtime;
+
+	//self.laststopped = localtime;
+	//dprint5("Up: ", ftos(getLocalTime()), ", ", ftos(self.nextthink), "\n");
 };
 
 void() door_group_go_up = {
 	local entity starte, oself;
-
-	if (self.owner.groupstate == STATE_TOP) {	// reset top wait time
-		self.owner.nextthink = self.owner.ltime + self.owner.wait;
+	
+	if (self.owner.groupstate == STATE_UP){
+		//dprint("Door group already moving up\n");
 		return;
 	}
-	
+
+	if (self.owner.groupstate == STATE_TOP) {	// reset top wait time
+		//dprint("Door group already at top, resetting wait time\n");
+		self.owner.nextthink = getEntityTime(self.owner) + self.owner.wait;
+		return;
+	}
+	//dprint3("------------------------------\nDoor group up started (frame ", ftos(framecount), ")\n");
 	// Door group is still moving the other way
 	if (self.owner.groupstate == STATE_DOWN) {
 		self.owner.movingback = TRUE;
+		//dprint("moving back up\n");
 	}
 
 	oself = self;
 	starte = self;
 	do {
-		door_go_up ();
+		door_go_up();
 		self = self.enemy;
 	} while ((self != starte) && (self != world));
 
 	self = oself;
 	self.owner.movingback = FALSE;
+	//dprint3("Door group up ended (frame ", ftos(framecount), ")\n------------------------------\n");
 };
 
 void() door_group_go_down = {
@@ -319,20 +385,25 @@ void() door_group_go_down = {
 
 	if (self.owner.groupstate == STATE_BOTTOM)
 		return;
+	
+	//dprint3("------------------------------\nDoor group down started (frame ", ftos(framecount), ")\n");
 
 	// Door group is still moving the other way
 	if (self.owner.groupstate == STATE_UP) {
 		self.owner.movingback = TRUE;
+		//dprint("moving back down\n");
 	}
 
 	oself = self;
 	starte = self;
 	do {
-		door_go_down ();
+		door_go_down();
 		self = self.enemy;
 	} while ( (self != starte) && (self != world) );
 
 	self = oself;
+	self.owner.movingback = FALSE;
+	//dprint3("Door group down ended (frame ", ftos(framecount), ")\n------------------------------\n");
 };
 
 /*
@@ -344,7 +415,7 @@ ACTIVATION FUNCTIONS
 */
 
 void() door_fire = {
-	local entity oself;
+	//local entity oself;
 
 	if (self.owner != self)
 		objerror("door_fire: self.owner != self");
@@ -355,7 +426,6 @@ void() door_fire = {
 	// self.noise4 is now played in keylock_try_to_unlock -- iw
 
 	self.message = string_null;		// no more message
-	oself = self;
 
 	if (self.spawnflags & DOOR_TOGGLE) {
 		if (self.owner.groupstate == STATE_UP || self.owner.groupstate == STATE_TOP) {
@@ -363,7 +433,6 @@ void() door_fire = {
 			return;
 		}
 	}
-	
 	// trigger all paired doors
 	door_group_go_up();
 };
@@ -385,11 +454,11 @@ void() door_use = {
 
 	// Prevents the group from being fired again on the same frame by other doors in the group.
 	// Can be more performant, but introduces a bug on reset top wait time.
-	// Might rethink this later --bmFbr
-	//if(!self.activated) {
-	//	self.activated = TRUE;
+	if (!self.activated || self.activated != framecount) {
+		self.activated = framecount;
 		door_fire ();
-	//}
+	}
+	
 	self = oself;
 };
 
@@ -624,7 +693,7 @@ void(entity door, float ldcount) setupTriggerField = {
 
 		else if (self.targetname == "" && !self.trigger_field) {
 			self.think = spawn_field_think;
-			self.nextthink = self.ltime + 1 - clamp(ldcount / 20, 0, 0.95);
+			self.nextthink = getLocalTime() + 1 - clamp(ldcount / 20, 0, 0.95);
 		}
 	}
 
@@ -729,7 +798,7 @@ void(entity d1, float ldcount) LinkDoorsEntity = {
 		d1.enemy = d1;
 		d1.lastenemy = d1;
 		d1.doorlooped = TRUE;
-		setupTriggerField(d1, ldcount);
+
 		return;
 	}
 	
@@ -762,6 +831,18 @@ void(entity d1, float ldcount) LinkDoorsEntity = {
 				// min and max group delay for open/close timings calculation
 				if (newdoor.delay > groupdoor.owner.maxdelay) groupdoor.owner.maxdelay = newdoor.delay;
 				if (newdoor.delay < groupdoor.owner.mindelay) groupdoor.owner.mindelay = newdoor.delay;
+
+
+				if (newdoor.opentime > groupdoor.owner.opentime) {
+					groupdoor.owner.opentime = newdoor.opentime;
+					groupdoor.owner.lasttoopen = newdoor;
+				}
+
+				if (newdoor.closetime > groupdoor.owner.closetime) {
+					groupdoor.owner.closetime = newdoor.closetime;
+					groupdoor.owner.lasttoclose = newdoor;
+				}
+
 
 				// expand trigger field if necessary
 				if (newdoor.mins_x < groupdoor.owner.cmins_x)
@@ -1001,16 +1082,15 @@ void() func_door = {
 	self.cmaxs = self.maxs;
 	self.cmins = self.mins;
 
-// LinkDoors can't be done until all of the doors have been spawned, so
-// the sizes can be detected properly.
+	// LinkDoors can't be done until all of the doors have been spawned, so
+	// the sizes can be detected properly.
 	// LinkDoors is now run on worldspawn
-	//self.think = LinkDoors;
-	//self.nextthink = self.ltime + 0.1;
+
 
 	self.dqplace = -1;
 
 		// creates a shadow controller entity for the door if it has switchable shadows
-	if(self.switchshadstyle) {
+	if (self.switchshadstyle) {
 		
 		shadow = spawn();
 		
@@ -1032,6 +1112,16 @@ void() func_door = {
 		
 		self = oldself;
 	}
+
+	float movelength = vlen(self.pos1 - self.pos2);
+	self.lasttoopen = self.lasttoclose = self;
+	self.opentime = (movelength/self.speed) + self.delay;
+	self.closetime = (movelength/self.speed) + self.delay + self.delay2;
+	
+	prevdoornum++;
+	//self.doornum = (float) (__variant) self;
+	self.doornum = prevdoornum;
+
 };
 
 /*

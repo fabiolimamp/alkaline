@@ -541,7 +541,9 @@ FIELDS
 //
 // new door features
 //
-.float 		maxdelay, mindelay, lastclose, lastopen, movingback;
+.float 		maxdelay, mindelay, lastopen, lastclose, movingback;
+.float opentime, closetime;
+.entity lasttoopen, lasttoclose;
 .vector		cmins, cmaxs;
 .float 		groupstate;
 .float 		prevgroupstate;
@@ -553,7 +555,8 @@ FIELDS
 //.string 	doortowait = wad;
 .float 		speed2;
 .float 		delay2;
-
+.float doornum;
+float prevdoornum;
 .entity ld_currentdoor = enemy;
 .entity ld_lastfound = oldenemy;
 .entity ld_nextdoor = owner;
