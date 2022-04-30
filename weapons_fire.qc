@@ -175,7 +175,7 @@ void(vector org, vector direction, vector dest) drawTracer = {
 	newmis.classname = "tracer";
 	newmis.think = tracer_think;
 	newmis.nextthink = time + 0.02;
-	newmis.alpha = 0.8;
+	newmis.alpha = 0.5;
 	newmis.attack_finished = time + vlen(org - dest)/2200;
 		
 	setmodel (newmis, "progs/pellet_tracer_short.mdl");  //Precache model in WORLD.QC
