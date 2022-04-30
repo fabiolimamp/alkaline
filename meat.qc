@@ -61,16 +61,36 @@ void(string gibname, float dm) ThrowGibArmagon =
 }
 
 
-
 void(string gibname, float dm) ThrowGib =
 {
 	local entity gib;
 	vector org;
+
 	// gibs have to be thinking ballistic projectiles to pass through monsterclip/notrace :(
 	org_x = self.origin_x + crandom()*self.size_x/3;
 	org_y = self.origin_y + crandom()*self.size_y/3;
 	org_z = self.origin_z + crandom()*self.size_z/3;
+
 	gib = toss_projectile(org, GibVelocityForHealth(dm), "gib");
+
+	if (self.dmg_inflictor) {
+			//dprint("inflictor found\n");
+			float pwr = clamp(dm * dm / 25, 10, 800);
+			//vel = clamp(fabs(dm), 1, 100) * 1.5;
+			vector addvel = normalize(self.origin - self.dmg_inflictor.origin) * pwr;
+			//dprint5("pwr: ", ftos(pwr), ", addvel: ", vtos(addvel), "\n");
+			addvel_x *= 2;
+			addvel_y *= 2;
+			gib.velocity += addvel;
+			float linvel = vlen(gib.velocity);
+
+			if (linvel > 550) {
+				gib.velocity *= 550 / linvel;
+			}
+			gib.velocity_z = min(200, gib.velocity_z);
+
+	}
+
 	MakeGib(gib, gibname);
 
 }
@@ -85,7 +105,25 @@ void(string gibname, float dm) ThrowHead =
 	self.touch = SUB_Null;
 	self.view_ofs = '0 0 8';
 	setsize (self, '-16 -16 0', '16 16 56');
+	//setsize (self, '0 0 0', '0 0 0');
 	self.velocity += GibVelocityForHealth(dm);
+
+	if (self.dmg_inflictor) {
+		float pwr = clamp(dm * dm / 25, 10, 800);
+		vector addvel = normalize(self.origin - self.dmg_inflictor.origin) * pwr;
+		addvel_x *= 2;
+		addvel_y *= 2;
+		
+		self.velocity += addvel;
+
+		float linvel = vlen(self.velocity);
+
+		if (linvel > 550) {
+			self.velocity *= 550 / linvel;
+		}
+		self.velocity_z = min(200, self.velocity_z);
+	}
+
 	self.origin_z = self.absmax_z - 24;
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	self.type = "head";

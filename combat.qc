@@ -53,15 +53,18 @@ float(entity targ, entity inflictor) CanDamage =
 Killed
 ============
 */
-void(entity targ, entity attacker) Killed =
+void(entity targ, entity inflictor, entity attacker) Killed =
 {
 	local entity oself;
 
 	oself = self;
 	self = targ;
 	
-	if (self.health < -99)
+	if ((self.health < -99) && (self.classname == "player"))
+	//if (self.health < -99)
 		self.health = -99;		// don't let sbar look bad if a player
+
+	self.dmg_inflictor = inflictor;
 
 	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE)
 	{	// doors, triggers, etc
@@ -296,7 +299,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	if (targ.health <= 0)
 	{
 		targ.deathtype = dmgtype;
-		Killed (targ, attacker);
+		Killed (targ, inflictor, attacker);
 		return;
 	}
 
