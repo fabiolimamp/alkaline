@@ -19,9 +19,9 @@ vector(float dm) GibVelocityForHealth =
 	local vector v;
 	local float	voom;
 
-	v_x = 150 * crandom();
-	v_y = 150 * crandom();
-	v_z = 150 + 150 * random();
+	v_x = 100 * crandom();
+	v_y = 100 * crandom();
+	v_z = 100 + 100 * random();
 
 	voom = max(1, min(10, dm * dm / 5000));
 	
@@ -65,13 +65,14 @@ void(string gibname, float dm) ThrowGibArmagon =
 void(string gibname, float dm) ThrowGib =
 {
 	local entity gib;
-
+	vector org;
 	// gibs have to be thinking ballistic projectiles to pass through monsterclip/notrace :(
-	gib = toss_projectile(self.origin, GibVelocityForHealth(dm), "gib");
+	org_x = self.origin_x + crandom()*self.size_x/3;
+	org_y = self.origin_y + crandom()*self.size_y/3;
+	org_z = self.origin_z + crandom()*self.size_z/3;
+	gib = toss_projectile(org, GibVelocityForHealth(dm), "gib");
 	MakeGib(gib, gibname);
-	
-	//changed by bmFbr, why was this being returned?
-	//return gib;
+
 }
 
 void(string gibname, float dm) ThrowHead =
