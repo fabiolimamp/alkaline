@@ -104,6 +104,7 @@
 
 // damage is accumulated through a frame. and sent as one single
 // message, so the super shotgun doesn't generate huge messages
+// dmg_take and dmg_save are cleared at each frame for clients
 .float		dmg_take;
 .float		dmg_save;
 .entity		dmg_inflictor;
@@ -632,3 +633,7 @@ float prevdoornum;
 .float liquiddensity;
 
 .float damagetype;
+
+.vector inflictor_origin;
+.float inflictor_movetype;
+.vector inflictor_vel;

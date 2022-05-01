@@ -53,7 +53,7 @@ float(entity targ, entity inflictor) CanDamage =
 Killed
 ============
 */
-void(entity targ, entity inflictor, entity attacker) Killed =
+void(entity targ, entity attacker) Killed =
 {
 	local entity oself;
 
@@ -63,8 +63,6 @@ void(entity targ, entity inflictor, entity attacker) Killed =
 	if ((self.health < -99) && (self.classname == "player"))
 	//if (self.health < -99)
 		self.health = -99;		// don't let sbar look bad if a player
-
-	self.dmg_inflictor = inflictor;
 
 	if (self.movetype == MOVETYPE_PUSH || self.movetype == MOVETYPE_NONE)
 	{	// doors, triggers, etc
@@ -154,7 +152,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		damage = damage * 4;
 		
 	//johnfitz -- special rules for some damage types
-	 //biosuit protects against burning and steam
+	//biosuit protects against burning and steam
 	if (targ.radsuit_finished > time && dmgtype & DMGTYPE_BURN)
 		blocked_by_biosuit = TRUE;
 	else
@@ -231,49 +229,53 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		if (take <= 0) return;
 	}
 
-	// add to the damage total for clients, which will be sent as a single
-	// message at the end of the frame
-	// FIXME: remove after combining shotgun blasts?
-	if (targ.flags & FL_CLIENT)
-	{
-		targ.dmg_take = targ.dmg_take + take;
-		targ.dmg_save = targ.dmg_save + save;
-		targ.dmg_inflictor = inflictor;
-	}
 
-// figure momentum add
-	if ( (inflictor != world) && (targ.movetype == MOVETYPE_WALK) && (inflictor.classname != "trigger_void"))
-	{
+	// figure momentum add
+	if ( (inflictor != world) && (targ.movetype == MOVETYPE_WALK) && (inflictor.classname != "trigger_void")) {
 		dir = targ.origin - (inflictor.absmin + inflictor.absmax) * 0.5;
 		dir = normalize(dir);
 		targ.velocity = targ.velocity + dir*damage*8;
 	}
 
-// check for godmode or invincibility
+	// check for godmode or invincibility
 	if (targ.flags & FL_GODMODE)
 		return;
-	if ((targ.invincible_finished >= time) || (targ.trif_finished >= time))
-	{
-		if (targ.invincible_sound < time && targ.invincible_finished >= time)
-		{
+	if ((targ.invincible_finished >= time) || (targ.trif_finished >= time)) {
+		if (targ.invincible_sound < time && targ.invincible_finished >= time) {
 			sound (self, CHAN_ITEM, "items/protect3.wav", 1, ATTN_NORM);
 			self.invincible_sound = time + 2;
 		}
 		return;
 	}
 	
-//johnfitz -- momentum added, can return now
+	//johnfitz -- momentum added, can return now
 	if (blocked_by_biosuit)
 		return;
-//johnfitz
+	//johnfitz
 
-// team play damage avoidance
-	if ( (teamplay == 1) && (targ.team > 0)&&(targ.team == attacker.team) )
+	// team play damage avoidance
+	if (teamplay == 1 && targ.team > 0 && targ.team == attacker.team)
 		return;
-		
+
+
 
 	// do the damage
 	targ.health = targ.health - take;
+
+	// add to the damage total for clients, which will be sent as a single
+	// message at the end of the frame
+	// both fields at cleared at each frame for clients
+	if (targ.flags & FL_CLIENT) {
+		targ.dmg_take = targ.dmg_take + take;
+		targ.dmg_save = targ.dmg_save + save;
+	}
+	
+	// store inflictor info
+	targ.dmg_inflictor = inflictor;
+	
+	targ.inflictor_origin = inflictor.origin;
+	targ.inflictor_movetype = inflictor.movetype;
+	targ.inflictor_vel = inflictor.velocity;
 	
 	// health-based triggering
 	if (targ.flags & FL_MONSTER && targ.spawnflags & MONSTER_HEALTHTRIGGER) {
@@ -296,19 +298,18 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		}
 	}
 
-	if (targ.health <= 0)
-	{
+
+	if (targ.health <= 0) {
 		targ.deathtype = dmgtype;
-		Killed (targ, inflictor, attacker);
+		Killed(targ, attacker);
 		return;
 	}
 
-// react to the damage
+	// react to the damage
 	oldself = self;
 	self = targ;
 
-	if ( (self.flags & FL_MONSTER) && attacker != world && !(attacker.flags & FL_IGNOREDATTACK))
-	{
+	if ( (self.flags & FL_MONSTER) && attacker != world && !(attacker.flags & FL_IGNOREDATTACK)) {
 	// get mad unless of the same class (except for soldiers)
 		if (self != attacker && attacker != SUB_entEnemyTarget() )
 		{
@@ -326,11 +327,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		}
 	}
 
-	if (self.th_pain)
-	{
+	if (self.th_pain) {
 		self.th_pain (attacker, take);
-	// nightmare mode monsters don't go into pain frames often
-		if (skill == 3)
+		// nightmare mode monsters don't go into pain frames often
+		if (skill == 3 && self.flags & FL_MONSTER)
 			self.pain_finished = time + 5;		
 	}
 
