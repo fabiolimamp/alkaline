@@ -382,9 +382,11 @@ void() T_MissileTouch =
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact.
 	// Radius damage type will always be EXPLOSION
+	vector prev_vel = self.velocity;
+	//self.velocity = '0 0 0';
 	T_RadiusDamage (self, self.owner, rdamg, other, DMGTYPE_EXPLOSION);
 
-	self.origin = self.origin - 8*normalize(self.velocity);
+	self.origin = self.origin - 8*normalize(prev_vel);
 
 	BecomeExplosion ();
 };

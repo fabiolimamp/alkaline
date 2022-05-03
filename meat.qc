@@ -75,9 +75,18 @@ vector(entity emitter, float dm) GibVelocityFromInflictor = {
 	
 	vector addvel = normalize(emitter.origin - emitter.inflictor_origin) * pwr;
 
-	addvel_x *= 2.5;
-	addvel_y *= 2.5;
+
 	addvel_z *= 0.7;
+
+	// explosions get a little more speed
+	if (emitter.deathtype == DMGTYPE_EXPLOSION) {
+		addvel_x *= 3;
+		addvel_y *= 3;
+	}
+	else {
+		addvel_x *= 2.2;
+		addvel_y *= 2.2;
+	}
 
 	// Add a bit of velocity from the projectile itself.
 	// For a more dramatic effect with high-speed and relatively

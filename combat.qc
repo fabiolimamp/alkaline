@@ -404,6 +404,8 @@ T_RadiusDamage
 */
 void(entity inflictor, entity attacker, float damage, entity ignore, float dmgtype) T_RadiusDamage =
 {
+	
+	if (dmgtype == DMGTYPE_EXPLOSION) T_GibDownedZombies(inflictor, attacker, damage+10);
 	local	float 	points;
 	local	entity	head;
 	local	vector	org;
