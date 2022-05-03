@@ -170,7 +170,7 @@ local float 	ldmg;
 
 	if (!self.enemy)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	ai_charge(10);

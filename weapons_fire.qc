@@ -856,7 +856,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadius
 				points = points * 0.5;
 
 			if (points > 0) {
-				if (CanDamage (head, inflictor) && head.waterlevel > 0)
+				if (CanDamage (head, inflictor.origin) && head.waterlevel > 0)
 					T_Damage(head, inflictor, attacker, points, DMGTYPE_ENERGY);
 			}
 		}

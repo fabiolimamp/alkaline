@@ -376,7 +376,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 			
 			if (points > 0)
 			{
-				if (CanDamage (head, inflictor))
+				if (CanDamage (head, inflictor.origin))
 				{	// eels take no damage from this attack
 					if (head.classname != "monster_eel" && 
 						(head.flags & FL_INWATER))
@@ -431,7 +431,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float dmgty
 				//johnfitz
 				if (points > 0)
 				{
-					if (CanDamage (head, inflictor)) {
+					if (CanDamage (head, inflictor.origin)) {
 						T_Damage(head, inflictor, attacker, points, dmgtype);
 					}
 				}
@@ -442,27 +442,24 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float dmgty
 };
 
 
-// from Copper
-void(vector org, float rad) T_GibDownedZombies =
-{
+// adapted from Copper
+void(entity inflictor, entity attacker, float rad) T_GibDownedZombies = {
 	if (rad < 72) return;	// not a big enough blast
 	entity head;
-	head = findradiusplus(org + '0 0 16', rad, type, "zombie");
+	head = findradiusplus(inflictor.origin + '0 0 16', rad, type, "downedzombie");
 	// look a little too high since we'll assume zombies are lower than their 
 	// actual origin, which is 24u off the ground
 	
-	while(head)
-	{
-		if (head.state == 1 &&	// on ground
-			head.solid == SOLID_NOT && // can't be hurt otherwise
-			CanDamage(head, org) &&	// in sight
-			rad - vlen(head.origin - org) > 0.5 * head.health	// close enough to hurt
+	while (head) {
+		if (head.solid == SOLID_NOT && // can't be hurt otherwise
+			CanDamage(head, inflictor.origin) &&	// in sight
+			rad - vlen(head.origin - inflictor.origin) > 0.5 * head.health	// close enough to hurt
 		) {
-			T_Damage (head, self, self, head.health + 10);
+			T_Damage(head, inflictor, attacker, head.health + 10, DMGTYPE_EXPLOSION);
 		}
 		head = head.chain;
 	}
-}
+};
 
 
 /*
@@ -491,7 +488,7 @@ void(entity attacker, float damage) T_BeamDamage =
 				points = points * 0.5;
 			if (points > 0)
 			{
-				if (CanDamage (head, attacker))
+				if (CanDamage (head, attacker.origin))
 				{
 					if (head.classname == "monster_shambler")						
 						T_Damage(head, attacker, attacker, points*0.5);

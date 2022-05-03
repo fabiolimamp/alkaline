@@ -48,7 +48,7 @@ float() ScourgeCheckAttack =
 
 	if (vlen(spot1 - spot2) <= 100 )
 		{
-			if (CanDamage (self.enemy, self))
+			if (CanDamage (self.enemy, self.origin))
 			{
 				self.attack_state = AS_MELEE;
 				return TRUE;
@@ -120,7 +120,7 @@ void() Attack_With_Tail =
 
 	if (vlen(delta) > 100)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	ldmg = (random() + random() + random()) * 40;

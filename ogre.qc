@@ -261,7 +261,7 @@ void(float side) chainsaw = {
 
 	if (!self.enemy)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	ai_charge(10);
@@ -615,7 +615,7 @@ float() OgreCheckAttack = {
 
 	if (enemy_range == RANGE_MELEE)
 	{
-		if (CanDamage (self.enemy, self))
+		if (CanDamage (self.enemy, self.origin))
 		{
 			self.attack_state = AS_MELEE;
 			return TRUE;

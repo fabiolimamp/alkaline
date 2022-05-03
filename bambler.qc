@@ -106,7 +106,7 @@ local float 	ldmg;
 
 	if (vlen(delta) > 100)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 		
 	ldmg = (random() + random() + random()) * 40;

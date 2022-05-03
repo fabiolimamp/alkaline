@@ -89,6 +89,27 @@ float(entity e) getEntityTime = {
 	else return time;
 }
 
+// findradius only works on solid entities, because apparently it's only for explosions
+entity(vector point, float rad, .string fld, string match) findradiusplus =
+{
+	entity head, prev;
+	prev = world;
+	head = find(world, fld, match);
+	
+	float found = 0;
+	
+	while(head)
+	{
+		if ( vlen(point - head.origin) <= rad )
+		{
+			head.chain = prev;		
+			prev = head;
+			found += 1;
+		}
+		head = find(head, fld, match);
+	}
+	return prev;
+}
 
 entity(vector org, .string fld, string match) findClosest = {
 	entity closest, next;
