@@ -199,6 +199,7 @@ void() torm_largeshot_touch = {
 			other.flags = (other.flags - (other.flags & FL_ONGROUND));
 		}
 	}
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self.owner, 60, other, DMGTYPE_EXPLOSION);
 
 	BecomeExplosion();
@@ -290,7 +291,8 @@ void() torm_smallshot_touch = {
 
 	if (other.health)
 		T_Damage(other, self, self.owner, 15, DMGTYPE_BALLISTIC);
-		
+
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self, 15, other, DMGTYPE_EXPLOSION);		//Additional radial damage 
 	
 	become_big_bullet_explosion();	//ball explosion effect

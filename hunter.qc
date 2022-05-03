@@ -100,7 +100,7 @@ void() hunter_shot_touch =
 		else
 			T_Damage(other, self, self.owner, 10, DMGTYPE_BALLISTIC);
 	}
-		
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self, 20, world, DMGTYPE_EXPLOSION);		//Additional radial damage 
 	
 	become_big_bullet_explosion();	//ball explosion effect

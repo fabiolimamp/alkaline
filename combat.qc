@@ -15,12 +15,12 @@ Returns true if the inflictor can directly damage the target.  Used for
 explosions and melee attacks.
 ============
 */
-float(entity targ, entity inflictor) CanDamage =
+float(entity targ, vector org) CanDamage =
 {
 // bmodels need special checking because their origin is 0,0,0
 	if (targ.movetype == MOVETYPE_PUSH)
 	{
-		traceline(inflictor.origin, 0.5 * (targ.absmin + targ.absmax), TRUE, self);
+		traceline(org, 0.5 * (targ.absmin + targ.absmax), TRUE, self);
 		if (trace_fraction == 1)
 			return TRUE;
 		if (trace_ent == targ)
@@ -28,19 +28,19 @@ float(entity targ, entity inflictor) CanDamage =
 		return FALSE;
 	}
 	
-	traceline(inflictor.origin, targ.origin, TRUE, self);
+	traceline(org, targ.origin, TRUE, self);
 	if (trace_fraction == 1)
 		return TRUE;
-	traceline(inflictor.origin, targ.origin + '15 15 0', TRUE, self);
+	traceline(org, targ.origin + '15 15 0', TRUE, self);
 	if (trace_fraction == 1)
 		return TRUE;
-	traceline(inflictor.origin, targ.origin + '-15 -15 0', TRUE, self);
+	traceline(org, targ.origin + '-15 -15 0', TRUE, self);
 	if (trace_fraction == 1)
 		return TRUE;
-	traceline(inflictor.origin, targ.origin + '-15 15 0', TRUE, self);
+	traceline(org, targ.origin + '-15 15 0', TRUE, self);
 	if (trace_fraction == 1)
 		return TRUE;
-	traceline(inflictor.origin, targ.origin + '15 -15 0', TRUE, self);
+	traceline(org, targ.origin + '15 -15 0', TRUE, self);
 	if (trace_fraction == 1)
 		return TRUE;
 
@@ -440,6 +440,30 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float dmgty
 		head = head.chain;
 	}
 };
+
+
+// from Copper
+void(vector org, float rad) T_GibDownedZombies =
+{
+	if (rad < 72) return;	// not a big enough blast
+	entity head;
+	head = findradiusplus(org + '0 0 16', rad, type, "zombie");
+	// look a little too high since we'll assume zombies are lower than their 
+	// actual origin, which is 24u off the ground
+	
+	while(head)
+	{
+		if (head.state == 1 &&	// on ground
+			head.solid == SOLID_NOT && // can't be hurt otherwise
+			CanDamage(head, org) &&	// in sight
+			rad - vlen(head.origin - org) > 0.5 * head.health	// close enough to hurt
+		) {
+			T_Damage (head, self, self, head.health + 10);
+		}
+		head = head.chain;
+	}
+}
+
 
 /*
 Unused?
