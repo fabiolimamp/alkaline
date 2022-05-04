@@ -194,8 +194,8 @@ void() teleport_touch =
 {
 	local entity	t;
 	local vector	org;
-	local vector	tAngle, pAngle, outAngle, anglevel;
-	local float vAngleX, lenvel;
+	local vector	tAngle, pAngle, outAngle;
+	local float vAngleX;
 
 	if (self.estate != STATE_ACTIVE)
 		return;
@@ -252,11 +252,8 @@ void() teleport_touch =
 		vAngleX = other.v_angle_x;
 		
 		if (tAngle != '0 0 0') {
-			lenvel = vlen(other.velocity);
-			anglevel = vectoangles(other.velocity) + tAngle;
-
-			makevectors(anglevel);
-			other.velocity = v_forward * lenvel;
+			makevectors(vectoangles(other.velocity) + tAngle);
+			other.velocity = v_forward * vlen(other.velocity);
 			other.velocity_z *= -1;
 		}
 
@@ -265,7 +262,8 @@ void() teleport_touch =
 	else outAngle = tAngle;
 
 	makevectors (outAngle);
-	org = t.origin + 32 * v_forward;
+	vector outAngleForward = v_forward;
+	org = t.origin + 32 * outAngleForward;
 
 	if(!(t.spawnflags & TELEDEST_STEALTH || t.style == TELEDEST_STYLE_INSTANT)) spawn_tfog (org);
 	spawn_tdeath(t.origin, other);
@@ -274,12 +272,27 @@ void() teleport_touch =
 	if (!other.health && other.flags & FL_CLIENT)
 	{
 		other.origin = t.origin;
-		other.velocity = (v_forward * other.velocity_x) + (v_forward * other.velocity_y);
+		other.velocity = (outAngleForward * other.velocity_x) + (outAngleForward * other.velocity_y);
 		return;
 	}
 
+	vector neworg;
 	if (t.style == TELEDEST_STYLE_INSTANT) {
-		vector neworg = other.origin - self.absmin + t.absmin;
+		vector teleMid = (self.absmin + self.absmax)/2;
+		vector destMid = (t.absmin + t.absmax)/2;
+
+		// rotates destination point around mangle
+		if (t.mangle) {
+			vector offs = other.origin - teleMid;
+			makevectors(vectoangles(offs) + t.mangle);
+			offs = v_forward * vlen(offs);
+			offs_z *= -1;
+
+			neworg = destMid + offs;
+		}
+		else
+			neworg = other.origin - teleMid + destMid;
+
 		// projectiles and gibs must have their models removed for a few frames
 		// otherwise effect trails may lerp when the destination is close enough
 		if (other.flags & FL_PROJECTILE || other.classname == "gib") {
@@ -315,7 +328,6 @@ void() teleport_touch =
 	
 
 	other.angles = outAngle;
-
 	if (other.classname == "player")
 	{
 		fog_setFromEnt(other, t);
@@ -323,13 +335,13 @@ void() teleport_touch =
 			other.angles_x = vAngleX; // reset vertical view angle, engine bug?
 
 		other.fixangle = 1;		// turn this way immediately
-		other.teleport_time = time + 0.7;
+		if (t.style != TELEDEST_STYLE_INSTANT) other.teleport_time = time + 0.7;
 
 		if (other.flags & FL_ONGROUND)
 			other.flags = other.flags - FL_ONGROUND;
 
 		if (t.style != TELEDEST_STYLE_INSTANT)
-			other.velocity = v_forward * 300;
+			other.velocity = outAngleForward * 300;
 
 
 	}
