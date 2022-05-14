@@ -10,7 +10,7 @@ float	PLAYER_ONLY	= 1;
 float	SILENT = 2;
 float TELE_STEALTH = 4;
 float TELE_MONSTER_ONLY = 8;
-float TELE_INSTANT = 16;
+float TELE_PLAYERTRIGGERED = 16;
 
 
 float TELEPORT_STYLE_FIRST = 0;
@@ -18,7 +18,9 @@ float TELEPORT_STYLE_RANDOM = 1;
 float TELEPORT_STYLE_CYCLE = 2;
 
 float TELEDEST_KEEPANGLE = 1;
+float TELEDEST_KEEPPITCH = 2;
 float TELEDEST_STEALTH = 4;
+float TELEDEST_KEEPVELOCITY = 8;
 
 float TELEDEST_STYLE_NORMAL = 0;
 float TELEDEST_STYLE_INSTANT = 1;
@@ -193,9 +195,14 @@ void() restoreModel = {
 void() teleport_touch =
 {
 	local entity	t;
-	local vector	org;
-	local vector	tAngle, pAngle, outAngle;
+	local vector	tAngle, pAngle;
 	local float vAngleX;
+
+	if (other.flags & FL_NEVERTELEPORT)
+		return;
+
+	if (other.solid == SOLID_BSP)
+		return;
 
 	if (self.estate != STATE_ACTIVE)
 		return;
@@ -208,16 +215,21 @@ void() teleport_touch =
 			return;		// not fired yet
 	}
 
-	if (self.spawnflags & PLAYER_ONLY)
-	{
-		if (other.classname != "player")
+	if (self.spawnflags & PLAYER_ONLY) {
+		if (!(other.flags & FL_CLIENT))
 			return;
 	}
 	
-	if (self.spawnflags & TELE_MONSTER_ONLY)
-	{
+	if (self.spawnflags & TELE_MONSTER_ONLY) {
 		if (!(other.flags & FL_MONSTER))
 			return;
+	}
+
+	if (self.spawnflags & TELE_PLAYERTRIGGERED && self.nextthink < time) {
+		if (other.flags & FL_CLIENT)
+			teleport_use();
+			
+		return;
 	}
 
 	// only teleport living creatures
@@ -240,63 +252,81 @@ void() teleport_touch =
 	SUB_UseTargets();
 
 	// put a tfog where the player was
-	if(!(self.spawnflags & TELE_STEALTH || t.style == TELEDEST_STYLE_INSTANT)) spawn_tfog (other.origin);
+	if (!(self.spawnflags & TELE_STEALTH || t.spawnflags & TELEDEST_STEALTH))
+		spawn_tfog (other.origin);
 
-	// spawn a tfog flash in front of the destination
 	
-	tAngle = [t.mangle_x, t.mangle_y, 0];
-	pAngle = [other.angles_x, other.angles_y, 0];
+	tAngle = [t.mangle_x, t.mangle_y, t.mangle_z];
 
-	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT){
-		outAngle = tAngle + pAngle;
-		vAngleX = other.v_angle_x;
-		
-		if (tAngle != '0 0 0') {
-			makevectors(vectoangles(other.velocity) + tAngle);
-			other.velocity = v_forward * vlen(other.velocity);
-			other.velocity_z *= -1;
-		}
+	// entity is a client, so take the angles from v_angle instead
+	if (other.flags & FL_CLIENT)
+		pAngle = [-other.v_angle_x, other.v_angle_y, other.v_angle_z]; // v_angle has +pitch as down instead of up
+	else
+		pAngle = other.angles;
 
+	// stores the original v_angle pitch for players
+	vAngleX = other.v_angle_x;
 
+	makevectors([tAngle_x, tAngle_y, tAngle_z]);
+	vector t_forward = v_forward;
+	vector t_right = v_right;
+	vector t_up = v_up;
+
+	makevectors([-pAngle_x, pAngle_y, pAngle_z]);
+	vector p_forward = v_forward;
+	vector p_right = v_right;
+	vector p_up = v_up;
+
+	// offsets the current angle by the destination's mangle,
+	// if the destination is a instant brush, or the info_destination has a
+	// "keep angle" flag
+	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT) 
+		other.angles = vectoangles(t_forward*p_forward_x - t_right*p_forward_y + t_up*p_forward_z);
+	else
+		other.angles = tAngle;
+
+	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT || t.spawnflags & TELEDEST_KEEPVELOCITY) 
+		other.velocity = t_forward*other.velocity_x - t_right*other.velocity_y + t_up*other.velocity_z;
+
+	// only players, projectiles and gibs maintain their pitch and roll angles
+	// everything else gets set to what it was before
+	if (!(other.flags & (FL_PROJECTILE + FL_CLIENT)) && other.classname != "gib") {
+		other.angles_x = pAngle_x;
+		other.angles_z = pAngle_z;
 	}
-	else outAngle = tAngle;
 
-	makevectors (outAngle);
-	vector outAngleForward = v_forward;
-	org = t.origin + 32 * outAngleForward;
 
-	if(!(t.spawnflags & TELEDEST_STEALTH || t.style == TELEDEST_STYLE_INSTANT)) spawn_tfog (org);
 	spawn_tdeath(t.origin, other);
 
-// move the player and lock him down for a little while
+	// move the player and lock him down for a little while
 	if (!other.health && other.flags & FL_CLIENT)
 	{
 		other.origin = t.origin;
-		other.velocity = (outAngleForward * other.velocity_x) + (outAngleForward * other.velocity_y);
+		other.velocity = (p_forward * other.velocity_x) + (p_forward * other.velocity_y);
 		return;
 	}
 
 	vector neworg;
+
+	// instant teleports need a little more math
 	if (t.style == TELEDEST_STYLE_INSTANT) {
 		vector teleMid = (self.absmin + self.absmax)/2;
 		vector destMid = (t.absmin + t.absmax)/2;
 
 		// rotates destination point around mangle
-		if (t.mangle) {
+		if (tAngle) {
 			vector offs = other.origin - teleMid;
-			makevectors(vectoangles(offs) + t.mangle);
-			offs = v_forward * vlen(offs);
-			offs_z *= -1;
-
-			neworg = destMid + offs;
+			neworg = destMid + t_forward*offs_x - t_right*offs_y + t_up*offs_z;
 		}
 		else
 			neworg = other.origin - teleMid + destMid;
 
+		setorigin(other, neworg);
+
 		// projectiles and gibs must have their models removed for a few frames
 		// otherwise effect trails may lerp when the destination is close enough
 		if (other.flags & FL_PROJECTILE || other.classname == "gib") {
-			// there was a controller attached already, give a little more time
+			// there was a controller attached already, so give it a little more time
 			if (other.aiment.classname == "mdlcontroller") {
 				other.aiment.nextthink = time + 0.05;
 			}
@@ -319,32 +349,62 @@ void() teleport_touch =
 				setsize(other, mdlctrl.cmins, mdlctrl.cmaxs);
 			}
 		}
-		setorigin (other, neworg);
-
 	}
+	// standard info_teleport_destination
 	else
 		setorigin (other, t.origin);
 	
-	
+	// spawn a tfog flash in front of the destination
+	if (!(self.spawnflags & TELE_STEALTH || t.spawnflags & TELEDEST_STEALTH))
+		spawn_tfog (other.origin + 32 * t_forward);
 
-	other.angles = outAngle;
+	
 	if (other.classname == "player")
 	{
 		fog_setFromEnt(other, t);
-		if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT)
-			other.angles_x = vAngleX; // reset vertical view angle, engine bug?
 
-		other.fixangle = 1;		// turn this way immediately
+		if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT){
+			// When a changing player's angles field on a frame with fixangle set to 1,
+			// the set angles get passed to the v_angle field on the next frame.
+			// That means I need to invert the X component (pitch angle), because
+			// +pitch in v_angle points up, and in angles points down
+			other.angles_x *= -1;
+
+			if (t.spawnflags & TELEDEST_KEEPPITCH)
+				other.angles_x = vAngleX;
+			else {
+				// YEAH MATH
+				// Calculates the roll for the player's view angle,
+				// to compensate for the destination's horizontal plane 
+				// potentially being at an angle.
+				// At this point angles already follow the v_angle
+				// convention, so no X inversion is necessary
+				makevectors(other.angles);
+				other.angles_z = atan2(v_right*t_up, v_up*t_up);
+			}
+		}
+
+		// turn this way immediately
+		other.fixangle = 1;
+		other.above = 1;
+
+		// lock the player's controls for some time
 		if (t.style != TELEDEST_STYLE_INSTANT) other.teleport_time = time + 0.7;
 
 		if (other.flags & FL_ONGROUND)
 			other.flags = other.flags - FL_ONGROUND;
 
-		if (t.style != TELEDEST_STYLE_INSTANT)
-			other.velocity = outAngleForward * 300;
+
+		if (t.style != TELEDEST_STYLE_INSTANT && !(t.spawnflags & TELEDEST_KEEPANGLE)){
+			if (!(t.spawnflags & TELEDEST_KEEPVELOCITY))
+				other.velocity = t_forward * 300;
+			else	
+				other.velocity = t_forward * vlen(other.velocity);
+		} 
 
 
 	}
+	//dprint3("After: ", vtos(other.angles),"\n");
 	other.flags = other.flags - other.flags & FL_ONGROUND;
 };
 
@@ -398,6 +458,23 @@ void() trigger_teleport =
 
 
 void() trigger_teleport_instadestination = {
-	InitTrigger();
+	if (!self.targetname)
+		objerror ("no targetname");
+
+	self.flags |= FL_NEVERTELEPORT;
+	
+	self.solid = SOLID_TRIGGER;
+	setmodel(self, self.model);	// set size and link into world
+	self.movetype = MOVETYPE_NONE;
+	self.modelindex = 0;
+	self.model = "";
+
 	self.style = TELEDEST_STYLE_INSTANT;
+
+	SetAngles();
+
+	if (!self.mangle && self.angles) self.mangle = self.angles;
+
+	// flips the stealth flag
+	self.spawnflags ^= TELEDEST_STEALTH;
 };

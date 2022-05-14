@@ -357,6 +357,12 @@ void() ResetModSettings = {
 	bprint("Mod settings reset to default\n");
 };
 
+void() ResetPlayerZ = {
+	self.angles_z = 0;
+	self.angles_x = self.v_angle_x;
+	self.fixangle = 1;
+}
+
 /*void() ToggleAutosave =
 {
 	entity e = world;
@@ -445,6 +451,8 @@ void() ImpulseCommands = {
 		display_mapvar();
 	if (self.impulse == 200)
 		dev_reveal();
+	if (self.impulse == 201)
+		ResetPlayerZ();
 
 	if (self.impulse == 252)
 		RingCheat();

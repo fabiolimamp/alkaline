@@ -37,7 +37,7 @@ vector(float num) SinCos =
     
     angle = '0 1 0' * num;
     makevectors(angle);
-    result = Vector(v_forward_y, v_forward_x, v_forward_x / v_forward_y);   // technically SinCosTan
+    result = [v_forward_y, v_forward_x, v_forward_x / v_forward_y];   // technically SinCosTan
     
     v_forward = vf;
     v_up = vu;
@@ -78,13 +78,21 @@ float(float y, float x) atan2 =
 
 vector(vector v) vabs =
 {
-    return Vector(fabs(v_x),fabs(v_y),fabs(v_z));
+    return [fabs(v_x),fabs(v_y),fabs(v_z)];
 }
 
 
 vector(vector a, vector b) vec_scale =
 {
-    return Vector(a_x * b_x, a_y * b_y, a_z * b_z);
+    return [a_x * b_x, a_y * b_y, a_z * b_z];
+}
+
+vector(vector a, vector b) cross_product = {
+    vector ret;
+    ret_x = a_y*b_z - a_z*b_y;
+    ret_y = a_z*b_x - a_x*b_z;
+    ret_z = a_x*b_y - a_y*b_x;
+    return ret;
 }
 
 /*

@@ -1229,7 +1229,7 @@ void() PlayerPreThink =
 
 	gameloaded = 1;
 	self.light_lev = 0; // resets dimlight flags for powerups/status effects
-	
+
 	if (cleanUpClientStuff) {
 		fog_setFromEnt( self, self );
 		csf_apply(self);
@@ -1724,6 +1724,26 @@ void() PlayerPostThink =
 		self.effects = self.effects | EF_DIMLIGHT;
 	else
 		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+
+	if (cvar("scratch2")) {
+		self.angles_z = cvar("scratch2");
+		self.angles_x = self.v_angle_x;
+		self.fixangle = 1;
+		cvar_set("scratch2", 0);
+	}
+	
+	if (self.v_angle_z) {
+		//dprint3("v_angle_z: ", ftos(self.v_angle_z), "\n");
+		if (fabs(self.v_angle_z) < 0.5) {
+			self.angles_z = 0;
+		//	dprint("z_angle ended! ----------------\n");
+		}
+		else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*(fabs(self.v_angle_z)/40 + 0.2);
+		//else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*0.5;
+
+		self.angles_x = self.v_angle_x;
+		self.fixangle = 1;
+	}
 };
 
 

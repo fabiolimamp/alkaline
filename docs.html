@@ -68,12 +68,11 @@ body {
 			<li><a href="#trigger_repeat">Repeater/timer trigger</a></li>
 			<li><a href="#monsterjumps">Monsterjumps</a></li>
 			<li><a href="#hurt">Hurt triggers</a></li>
-			<li><a href="#stealth-teleport">Stealth teleport</a></li>
-			<li><a href="#multiple-destinations">Multiple teleport destinations</a></li>
 			<li><a href="#mapvars">Mapvars</a></li>
 			<li><a href="#mapstart">Multiple map starting spots</a></li>
 		</ul>
 	</li>
+
 	<li>
 		<a href="#doors">Doors</a>
 		<ul>
@@ -101,6 +100,14 @@ body {
 	<li><a href="#trains">Trains</a>
 		<ul>
 			<li><a href="#modeltrain">Model trains</a></li>
+		</ul>
+	</li>
+
+	<li>
+		<a href="#teleports">Teleporters</a>
+		<ul>
+			<li><a href="#stealth-teleport">Stealth teleport</a></li>
+			<li><a href="#multiple-destinations">Multiple teleport destinations</a></li>
 		</ul>
 	</li>
 
@@ -466,19 +473,6 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <p>The new <strong>target_hurt</strong> entity is a point version of that. It hurts any entity activating it, or the entities defined in its target-target4 fields.</p>
 
-<h3 id="stealth-teleport">Stealth teleport</h3>
-<p>Stealth mode can be set on both <strong>trigger_teleport</strong> (when teleporting out) and <strong>info_teleport_destination</strong> (when teleporting in).</p>
-
-<h3 id="multiple-destinations">Multiple teleport destinations</h3>
-<p>A single <strong>trigger_teleport</strong> can target multiple <strong>info_teleport_destination</strong> entities with the same targetname.</p>
-<p>There are 3 ways in which the trigger can deal with that:</p>
-<ul>
-<li><strong>First</strong> mode (default): always selects the destination with the lowest <strong>count</strong> value. This way you can disable a specific destination with a <strong>target_setstate</strong> when you want the teleport to target the next one;</li>
-<li><strong>Random</strong> mode: selects a destination randomly;</li>
-<li><strong>Cycle</strong> mode: goes sequentially through destinations every time the teleport is used, according to their <strong>count</strong> field ordering.</li>
-</ul>
-<p>Refer to the in-editor documentation for both <strong>trigger_teleport</strong> and <strong>info_teleport_destination</strong> for more info.</p>
-
 <h3 id="mapvars">Mapvars</h3>
 <p>Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track individual map completion progress on hub maps for example. You have a total of 44 flags availabe to use, each identified by a number in the 1-44 range.
 </p>
@@ -494,9 +488,10 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <h3 id="mapstart">Multiple map starting spots</h3>
 <p>You can have multiple player start spots in your map. <strong>trigger_changelevel</strong> entities accept a <strong>count</strong> key, which on the next map will try to direct the player to an <strong>info_player_start</strong> spot with a matching <strong>count</strong> value. That's also true for coop starts.</p>
 
-<hr>
 
+<hr>
 <h2 id="doors">Doors</h2>
+
 <p>The good old <strong>func_door</strong> in Alkaline has been completely revamped.</p>
 
 <h3 id="door-distance-angle">Distance and angle</h3>
@@ -615,6 +610,31 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>You can define two different frame ranges and animation speeds, for when the model is stopped and moving. If you don't need different stopped/moving animations, only setting <strong>first_frame</strong>/<strong>last_frame</strong>/<strong>frtime</strong> is enough. If you don't need any animation at all, just set <strong>first_frame</strong> to the desired frame and all other fields can go blank.</p>
 <p>Make sure to check the in-editor documentation for more details on other specific options.</p>
 
+
+<hr>
+<h2 id="teleports">Teleports</h2>
+
+<h3 id="multiple-destinations">Multiple/random teleport destinations</h3>
+<p>A single <strong>trigger_teleport</strong> can target multiple <strong>info_teleport_destination</strong> entities with the same targetname.</p>
+<p>There are 3 ways in which the trigger can deal with that:</p>
+<ul>
+<li><strong>First</strong> mode (default): always selects the destination with the lowest <strong>count</strong> value. This way you can disable a specific destination with a <strong>target_setstate</strong> when you want the teleport to target the next one;</li>
+<li><strong>Random</strong> mode: selects a destination randomly;</li>
+<li><strong>Cycle</strong> mode: goes sequentially through destinations every time the teleport is used, according to their <strong>count</strong> field ordering.</li>
+</ul>
+<p>Refer to the in-editor documentation for both <strong>trigger_teleport</strong> and <strong>info_teleport_destination</strong> for more info.</p>
+
+
+<h3 id="instant-teleport">Instant teleporters</h3>
+<p>Alkaline now has instant teleporters, that seamlessly move whatever touches the trigger_teleport into another similar-sized brush entity, <strong>trigger_teleport_instadestination</strong>, instead of the info_teleport_destination point entity. It teleports everything - players, monsters, items, weapon projectiles, even gibs and dead bodies, while keeping their angle and movement relative to the teleport's orientation - even pitch angle. This allows for huge amount of mind-bending scenarios.</p>
+<p>Standard, point-entity based destination	teleports can also keep their relative entry angle and/or velocity by using the respective spawnflags into a <strong>info_teleport_destination</strong>.
+</p>
+
+<h3 id="stealth-teleport">Stealth teleport</h3>
+<p>Stealth mode can be set on either <strong>trigger_teleport</strong> or <strong>info_teleport_destination</strong>. When that flag is set, the teleport effect/sound (AKA telefog) won't be spawned when something gets through.</p>
+<p>Due to their nature, instant teleporters won't show a telefog by default, but you can force it back on by enabling the respective spawnflag into the <strong>trigger_teleport_instadestination</strong> entity.
+
+
 <hr>
 
 <h2 id="state-system">State System</h2>
@@ -639,9 +659,11 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>Also similar to Copper, buttons depress themselves when disabled and cannot be activated.</p>
 <p>If the button have a <strong>wait -1</strong> value (that is, it's a press-once button), when re-enabled it'll reset back to its un-pressed state regardless if it had been activated before. You can change that using the spawnflag <strong>Don't reset button state</strong>, in which case it'll revert to its previous state when re-enabled.</p>
 
-<hr>
 
+
+<hr>
 <h2 id="advanced-triggering">Advanced triggering</h2>
+
 <p>Alkaline has some very advanced scripting through some specialized entites.</p>
 
 <h3 id="trigger_filter">trigger_filter</h3>

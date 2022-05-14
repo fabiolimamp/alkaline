@@ -551,20 +551,6 @@ You can override initial weapon/ammo loadout for this specific spot.
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
 @PointClass base(PlayerClass) = info_player_deathmatch : "DM start" []
 
-@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog) = info_teleport_destination : "Teleport destination.
-
-- 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
-
-- 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'angle' field.
-
-- 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
-" [
-	spawnflags(flags) = [
-		1: "Free angle"
-		4: "Stealth teleport in"
-	]
-	count(integer) : "Group order"
-]
 @PointClass = info_null : "info_null (spotlight target)"
 [
 	targetname(target_source) : "Name" 
@@ -2177,8 +2163,9 @@ Using the destination's 'count' field, you can define which order they'll be sel
 	[
 		1 : "Player only" : 0
 		2 : "No portal sound" : 0
-		4 : "Stealth teleport out" : 0
+		4 : "No teleport effect" : 0
 		8 : "Monsters only" : 0
+		16: "Player-triggered" : 0
 	]
 	style(choices) : "Multiple destination mode" : 0 = [
 		0 : "First"
@@ -2187,7 +2174,8 @@ Using the destination's 'count' field, you can define which order they'll be sel
 	]
 ]
 
-@SolidClass base(Targetname, Fog, Appearflags) = trigger_teleport_instadestination : "Teleport destination.
+
+@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog, Appearflags) = info_teleport_destination : "Teleport destination.
 
 - 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
 
@@ -2195,8 +2183,30 @@ Using the destination's 'count' field, you can define which order they'll be sel
 
 - 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
 " [
+	spawnflags(flags) = [
+		1: "Free angle"
+		2: "Preserve pitch angle"
+		4: "No teleport effect"
+		8: "Preserve velocity"
+	]
+	count(integer) : "Group order"
+]
+
+@SolidClass base(Targetname, Fog, Appearflags) = trigger_teleport_instadestination : "Instant teleport destination.
+
+- 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
+
+- 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'mangle' field ('pitch yaw 0').
+
+- 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
+" [
 	count(integer) : "Group order"
 	mangle(string) : "Angle offset"
+	spawnflags(flags) = [
+		2: "Preserve pitch angle"
+		4: "Show teleport effect"
+		//8: "Preserve velocity"
+	]
 ]
 
 
