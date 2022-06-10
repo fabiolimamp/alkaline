@@ -632,6 +632,8 @@ float prevdoornum;
 .vector liquidcolor;
 .float liquiddensity;
 
+.float prevgravity;
+
 .float damagetype;
 
 .vector inflictor_origin;

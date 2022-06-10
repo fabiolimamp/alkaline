@@ -31,11 +31,14 @@ void() checkSelfInWaterBrush = {
 			else if (e.liquidtype == LIQUID_SLIME) self.watertype = CONTENT_SLIME;
 			else self.watertype = CONTENT_WATER;
 
-			self.flags = self.flags | FL_INWATER;
+			self.flags |= FL_INWATER;
 
 			if (self.flags & FL_CLIENT) {
 				float dens;
 				vector cl;
+
+				if !(self.flags & FL_INLIQUIDBRUSH)
+					self.prevgravity = self.gravity;
 
 				if (self.watertype == CONTENT_SLIME) {cl = '0 25 5'; dens = 150;}
 				else if (self.watertype == CONTENT_LAVA) {cl = '255 80 0'; dens = 150;}
@@ -45,7 +48,7 @@ void() checkSelfInWaterBrush = {
 				if (e.liquiddensity) dens = e.liquiddensity;
 
 				if (lvl >= 2) self.gravity = 0.000001;
-				else self.gravity = 1;
+				else self.gravity = self.prevgravity;
 
 				if (lvl >= 3){
 					csf_set(self, dens, cl, 70);
@@ -54,16 +57,26 @@ void() checkSelfInWaterBrush = {
 					csf_clear(self, 70);
 				}
 			}
+
+			self.flags |= FL_INLIQUIDBRUSH;
+
 			return;
 		}
-		else if (self.flags & FL_CLIENT) {
-			self.gravity = 1;
+
+		e = find(e, liquidbrush, "1");
+	}
+
+	// if the code came up to here, it means no liquid brush was touched in this frame,
+	// so turn off everything if the entity was in one at the previous frame
+	if (self.flags & FL_INLIQUIDBRUSH) {
+		if (self.flags & FL_CLIENT) {
 			csf_clear(self, 70);
+			self.gravity = self.prevgravity;
 			//self.watertype = CONTENT_EMPTY;
 			//self.waterlevel = 0;
 		}
 
-		e = find(e, liquidbrush, "1");
+		self.flags &~= FL_INLIQUIDBRUSH;
 	}
 }
 
