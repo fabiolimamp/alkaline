@@ -2181,7 +2181,7 @@ Using the destination's 'count' field, you can define which order they'll be sel
 
 - 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'angle' field.
 
-- 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
+- 'No teleport effect' flag: Don't draw the teleport fog effect when teleporting to this spot.
 " [
 	spawnflags(flags) = [
 		1: "Free angle"
