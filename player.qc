@@ -461,13 +461,30 @@ void()	player_plasma2 =	[$shotatt1, player_plasma3	] {self.weaponframe=2; nxth(0
 void()	player_plasma3 =	[$shotatt3, player_run		] {self.weaponframe=1; nxth(0.1);};
 
 
-
-void() player_proxgrenade1   =[$rockatt1, player_proxgrenade2  ] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH;};
-void() player_proxgrenade2   =[$rockatt2, player_proxgrenade3  ] {self.weaponframe=2;};
-void() player_proxgrenade3   =[$rockatt3, player_proxgrenade4  ] {self.weaponframe=3;};
-void() player_proxgrenade4   =[$rockatt4, player_proxgrenade5  ] {self.weaponframe=4;};
-void() player_proxgrenade5   =[$rockatt5, player_proxgrenade6  ] {self.weaponframe=5;};
-void() player_proxgrenade6   =[$rockatt6, player_run  ] {self.weaponframe=6;};
+void()	player_proxgrenade1 =	[$rockatt1, player_proxgrenade2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};
+void()	player_proxgrenade2 =	[$rockatt1, player_proxgrenade3	] {self.weaponframe=2; nxth(0.025);};
+void()	player_proxgrenade3 =	[$rockatt1, player_proxgrenade4	] {self.weaponframe=3; nxth(0.025);};
+void()	player_proxgrenade4 =	[$rockatt1, player_proxgrenade5	] {self.weaponframe=4; nxth(0.025);};
+void()	player_proxgrenade5 =	[$rockatt2, player_proxgrenade6	] {self.weaponframe=5; nxth(0.025);};
+void()	player_proxgrenade6 =	[$rockatt2, player_proxgrenade7	] {self.weaponframe=6; nxth(0.025);};
+void()	player_proxgrenade7 =	[$rockatt2, player_proxgrenade8	] {self.weaponframe=7; nxth(0.025);};
+void()	player_proxgrenade8 =	[$rockatt2, player_proxgrenade9	] {self.weaponframe=8; nxth(0.025);};
+void()	player_proxgrenade9 =	[$rockatt3, player_proxgrenade10	] {self.weaponframe=9; nxth(0.025);};
+void()	player_proxgrenade10 =	[$rockatt3, player_proxgrenade11	] {self.weaponframe=10; nxth(0.025);};
+void()	player_proxgrenade11 =	[$rockatt3, player_proxgrenade12	] {self.weaponframe=11; nxth(0.025);};
+void()	player_proxgrenade12 =	[$rockatt3, player_proxgrenade13	] {self.weaponframe=12; nxth(0.025);};
+void()	player_proxgrenade13 =	[$rockatt4, player_proxgrenade14	] {self.weaponframe=13; nxth(0.025);};
+void()	player_proxgrenade14 =	[$rockatt4, player_proxgrenade15	] {self.weaponframe=14; nxth(0.025);};
+void()	player_proxgrenade15 =	[$rockatt4, player_proxgrenade16	] {self.weaponframe=15; nxth(0.025);};
+void()	player_proxgrenade16 =	[$rockatt4, player_proxgrenade17	] {self.weaponframe=16; nxth(0.025);};
+void()	player_proxgrenade17 =	[$rockatt5, player_proxgrenade18	] {self.weaponframe=17; nxth(0.025);};
+void()	player_proxgrenade18 =	[$rockatt5, player_proxgrenade19	] {self.weaponframe=18; nxth(0.025);};
+void()	player_proxgrenade19 =	[$rockatt5, player_proxgrenade20	] {self.weaponframe=19; nxth(0.025);};
+void()	player_proxgrenade20 =	[$rockatt5, player_proxgrenade21	] {self.weaponframe=20; nxth(0.025);};
+void()	player_proxgrenade21 =	[$rockatt6, player_proxgrenade22	] {self.weaponframe=21; nxth(0.025);};
+void()	player_proxgrenade22 =	[$rockatt6, player_proxgrenade23	] {self.weaponframe=22; nxth(0.025);};
+void()	player_proxgrenade23 =	[$rockatt6, player_proxgrenade24	] {self.weaponframe=23; nxth(0.025);};
+void()	player_proxgrenade24 =	[$rockatt6, player_run		] {self.weaponframe=24; nxth(0.025);};
 
 
 void()	player_grenade1 =	[$rockatt1, player_grenade2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};

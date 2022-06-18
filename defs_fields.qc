@@ -182,6 +182,8 @@ entity lastbullet;
 float bulletmode;
 float numbulletholes, numbulletsframe;
 
+float	NumProximityGrenades;
+
 float nofootsteps;
 float noautosaves;
 float notracers;

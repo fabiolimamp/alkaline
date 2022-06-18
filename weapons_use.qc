@@ -85,7 +85,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_PROXIMITY_GUN)
 	{
 		self.currentammo = self.ammo_rockets;
-		self.weaponmodel = "progs/v_mine.mdl";
+		self.weaponmodel = "progs/v_mine_40fps.mdl";
 		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
