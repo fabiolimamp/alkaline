@@ -950,8 +950,12 @@ void() W_FirePlasma =
 
 	// shot spread increases the longer you hold the trigger,
 	// and slowly recovers after that -bmFbr
-	if (time < self.lastshot + 0.065) self.shotcount = min(self.shotcount + 1, 6);
+
+	// last projectile was shot continuously, so increase shot count
+	if (time < self.lastshot + 0.08) self.shotcount = min(self.shotcount + 1, 6);
 	else self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
+
+	dprint3("Count: ", ftos(self.shotcount), "\n");
 	
 	makevectors (self.v_angle);
 	missile.velocity = aim(self, 1000) * 1000;
