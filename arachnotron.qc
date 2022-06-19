@@ -392,7 +392,7 @@ float() artCheckAttack = {
 	dist = vlen(spot1 - spot2);
 
 	if (enemy_range == RANGE_MELEE || enemy_range == RANGE_NEAR) {
-		if (CanDamage(self.enemy, self)) {
+		if (CanDamage(self.enemy, self.origin)) {
 			if 	(dist > 200 && dist < 500) {
 				if (random() < 0.33)
 					self.attack_state = AS_MELEE;
