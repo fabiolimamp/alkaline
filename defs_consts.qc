@@ -23,6 +23,8 @@ float 	FL_PROJECTILE			= 32768;	// projectile entities, like lasers, plasma, roc
 float 	FL_NOCENTERPRINT		= 65536;	// don't centerprint entity's message field when its targets are used
 float 	FL_IGNOREDATTACK		= 131072; 	// monsters won't get angry at this entity when attacked by it
 float 	FL_SPAWNEDMONSTER		= 262144; 	// spawned trigger spawn monsters
+float 	FL_NEVERTELEPORT		= 524288; 	// never teleport
+float 	FL_INLIQUIDBRUSH		= 1048576;  // touching liquid brush
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves

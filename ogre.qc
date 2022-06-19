@@ -153,10 +153,12 @@ void() Ogre_Rocket_Touch = {
 
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact
+	vector prev_vel = self.velocity;
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self.owner, 50, other, DMGTYPE_EXPLOSION);	// greenwood modify the 50 here to change splash damage
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-	self.origin = self.origin - 8*normalize(self.velocity);
+	self.origin = self.origin - 8*normalize(prev_vel);
 
 	BecomeExplosion ();
 };
@@ -259,7 +261,7 @@ void(float side) chainsaw = {
 
 	if (!self.enemy)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	ai_charge(10);
@@ -613,7 +615,7 @@ float() OgreCheckAttack = {
 
 	if (enemy_range == RANGE_MELEE)
 	{
-		if (CanDamage (self.enemy, self))
+		if (CanDamage (self.enemy, self.origin))
 		{
 			self.attack_state = AS_MELEE;
 			return TRUE;

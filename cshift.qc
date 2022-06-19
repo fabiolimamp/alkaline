@@ -5,7 +5,7 @@ Priority-based. If the color being set has a lower priority than the current one
 It also stores the immediately lower priority if set. 
 
 Remarks:
-- Backgroud fade from textstory is 110, from the trifecta is 100, and burning status is 90
+- Backgroud fade from textstory is 110, from the trifecta is 100, burning status is 90, and dynamic liquids is 70
 - Priority 0 should *always* reset colors
 
 *************************************************/
@@ -64,8 +64,12 @@ void(entity client, float density, vector color, float pr) csf_set = {
 	if (client.csf_priority < pr)
 		csf_push(client);
 
-	csf_save(client, density, color, pr);
-	csf_apply(client);
+	if (client.csf_density == density && client.csf_color == color)
+		csf_save(client, density, color, pr);
+	else {
+		csf_save(client, density, color, pr);
+		csf_apply(client);
+	}
 }
 
 // overrides the current applied cshift without saving anything to previous
@@ -79,7 +83,7 @@ void(entity client, float density, vector color, float pr) csf_override = {
 
 // clears current cshift and restores the previous one if set
 void(entity client, float pr) csf_clear = {
-	
+
 	// current cshift has a higher priority than the one being cleared
 	if (client.csf_priority > pr) {
 		// if the previous, lower-priority cshift is the same or lower than the one trying to be set,

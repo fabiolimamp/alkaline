@@ -104,6 +104,7 @@
 
 // damage is accumulated through a frame. and sent as one single
 // message, so the super shotgun doesn't generate huge messages
+// dmg_take and dmg_save are cleared at each frame for clients
 .float		dmg_take;
 .float		dmg_save;
 .entity		dmg_inflictor;
@@ -181,6 +182,8 @@ entity lastbullet;
 float bulletmode;
 float numbulletholes, numbulletsframe;
 
+float	NumProximityGrenades;
+
 float nofootsteps;
 float noautosaves;
 float notracers;
@@ -192,7 +195,7 @@ entity current_gravity_ent;
 
 // mapvars
 float bitflags[24];				// Bitflag values
-float mapvar[2];				// Map variables stored in savefile
+float mapvars[2];				// Map variables stored in savefile
 nosave float mapvar_cvar;
 
 float playerstart_id;
@@ -293,7 +296,7 @@ FIELDS
 .float		trif_time;
 .float		rad_time;
 .float		fly_sound;
-.float 		cshift_set, cshift_cleared;
+//.float 		cshift_set, cshift_cleared;
 
 .float		axhitme;
 
@@ -387,6 +390,7 @@ FIELDS
 .string exclude = map;
 
 .void()		dormant_use;
+.float 		mapvar;
 
 //
 // plats / doors / buttons
@@ -540,7 +544,9 @@ FIELDS
 //
 // new door features
 //
-.float 		maxdelay, mindelay, lastclose, lastopen, movingback;
+.float 		maxdelay, mindelay, lastopen, lastclose, movingback;
+.float opentime, closetime;
+.entity lasttoopen, lasttoclose;
 .vector		cmins, cmaxs;
 .float 		groupstate;
 .float 		prevgroupstate;
@@ -552,7 +558,8 @@ FIELDS
 //.string 	doortowait = wad;
 .float 		speed2;
 .float 		delay2;
-
+.float doornum;
+float prevdoornum;
 .entity ld_currentdoor = enemy;
 .entity ld_lastfound = oldenemy;
 .entity ld_nextdoor = owner;
@@ -627,4 +634,10 @@ FIELDS
 .vector liquidcolor;
 .float liquiddensity;
 
+.float prevgravity;
+
 .float damagetype;
+
+.vector inflictor_origin;
+.float inflictor_movetype;
+.vector inflictor_vel;

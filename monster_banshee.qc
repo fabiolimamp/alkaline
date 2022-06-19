@@ -15,9 +15,12 @@ void() Projectile_Hit =
 		ImpactSpawn(org, self.velocity * 0.2, 15, other.bloodtype);
 		T_Damage(other, self, self.owner, 10, DMGTYPE_EXPLOSION);
 	}
+
+	vector prev_vel = self.velocity;
+	self.velocity = '0 0 0';
 	T_RadiusDamage(self, self, 20, self, DMGTYPE_EXPLOSION);
 
-	self.origin = self.origin - 8 * normalize(self.velocity);
+	self.origin = self.origin - 8 * normalize(prev_vel);
 
 	fx_explosion_particle(self.origin);
 	

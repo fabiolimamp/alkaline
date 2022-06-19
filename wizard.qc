@@ -357,6 +357,8 @@ void()	wiz_death1	=[	$death1,		wiz_death2	] {
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM);
 	else sound (self, CHAN_VOICE, "cyberscrag/wdeath.wav", 1, ATTN_NORM);
+
+	if (!(self.spawnflags & MONSTER_ORIGINAL)) self.touch = wiz_fall;
 };
 void()	wiz_death2	=[	$death2,		wiz_death3	] {};
 void()	wiz_death3	=[	$death3,		wiz_death4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
@@ -365,6 +367,13 @@ void()	wiz_death5	=[	$death5,		wiz_death6	] {};
 void()	wiz_death6	=[	$death6,		wiz_death7	] {};
 void()	wiz_death7	=[	$death7,		wiz_death8	] {};
 void()	wiz_death8	=[	$death8,		wiz_death8	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+
+void() wiz_fall = {
+	if (other.solid == SOLID_BSP) {
+		sound (self, CHAN_BODY, "cyberscrag/fall1.wav", 1, ATTN_NORM);
+		self.touch = SUB_Null;
+	}
+}
 
 void() wiz_die =
 {
@@ -497,6 +506,7 @@ void() monster_wizard =
 		precache_sound ("cyberscrag/widle2.wav");
 		precache_sound ("cyberscrag/wpain.wav");
 		precache_sound ("cyberscrag/wsight.wav");
+		precache_sound ("cyberscrag/fall1.wav");
 		precache_sound ("misc/metal_impact.wav");
 	}
 	precache_model ("progs/w_spike.mdl");

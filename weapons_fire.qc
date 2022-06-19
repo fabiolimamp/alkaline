@@ -175,7 +175,7 @@ void(vector org, vector direction, vector dest) drawTracer = {
 	newmis.classname = "tracer";
 	newmis.think = tracer_think;
 	newmis.nextthink = time + 0.02;
-	newmis.alpha = 0.8;
+	newmis.alpha = 0.5;
 	newmis.attack_finished = time + vlen(org - dest)/2200;
 		
 	setmodel (newmis, "progs/pellet_tracer_short.mdl");  //Precache model in WORLD.QC
@@ -382,9 +382,11 @@ void() T_MissileTouch =
 	// don't do radius damage to the other, because all the damage
 	// was done in the impact.
 	// Radius damage type will always be EXPLOSION
+	vector prev_vel = self.velocity;
+	//self.velocity = '0 0 0';
 	T_RadiusDamage (self, self.owner, rdamg, other, DMGTYPE_EXPLOSION);
 
-	self.origin = self.origin - 8*normalize(self.velocity);
+	self.origin = self.origin - 8*normalize(prev_vel);
 
 	BecomeExplosion ();
 };
@@ -856,7 +858,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore) WaterRadius
 				points = points * 0.5;
 
 			if (points > 0) {
-				if (CanDamage (head, inflictor) && head.waterlevel > 0)
+				if (CanDamage (head, inflictor.origin) && head.waterlevel > 0)
 					T_Damage(head, inflictor, attacker, points, DMGTYPE_ENERGY);
 			}
 		}
@@ -884,7 +886,7 @@ void() Plasma_Watercheck = {
   
 	float pc;
 
-	pc = pointcontents(self.origin);
+	pc = pointcontents2(self.origin);
 	if (pc == CONTENT_WATER || pc == CONTENT_SLIME || pc == CONTENT_LAVA) {
 		sound(self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_NORM);
 

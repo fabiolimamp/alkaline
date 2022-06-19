@@ -50,7 +50,7 @@ local float 	ldmg;
 
 	ai_charge(10);
 
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	delta = self.enemy.origin - self.origin;

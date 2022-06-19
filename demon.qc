@@ -317,7 +317,7 @@ void(float side)	Demon_Melee =
 	
 	if (vlen(delta) > 100)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
@@ -343,7 +343,7 @@ void(float side)	Mutant_Melee =
 	
 	if (vlen(delta) > 100)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	sound (self, CHAN_WEAPON, "mutant/mutatck2.wav", 1, ATTN_NORM);

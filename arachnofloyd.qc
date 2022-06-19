@@ -388,7 +388,7 @@ float() arfCheckAttack =
 
 	if ((enemy_range == RANGE_MELEE) || (enemy_range == RANGE_NEAR))
 	{
-		if (CanDamage (self.enemy, self))
+		if (CanDamage (self.enemy, self.origin))
 		{
 			if 	((vlen(spot1 - spot2) > 200) && (vlen(spot1 - spot2) < 500))
 				{

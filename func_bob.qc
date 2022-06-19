@@ -29,19 +29,18 @@ A SOLID bmodel that gently moves back and forth
 void() func_bob_timer =
 {
 	// Keep ticking in background, use local timer (faster)
+	float localtime = getLocalTime();
 	self.think = func_bob_timer;
 
-	if (self.bsporigin)
-		self.nextthink = self.ltime + 0.1;
-	else
-		self.nextthink = time + 0.1;
+
+	self.nextthink = localtime + 0.1;
 
 	// Has the cycle completed?
-	if (self.attack_timer < time)
+	if (self.attack_timer < localtime)
 	{
 		// Setup bob cycle and half way point for slowdown
-		self.attack_timer = time + self.count;
-		self.distance = time + (self.count * 0.5);
+		self.attack_timer = localtime + self.count;
+		self.distance = localtime + (self.count * 0.5);
 		// Flip direction of bmodel bob
 		self.lefty = 1 - self.lefty;
 		if (self.lefty < 1)
@@ -59,7 +58,7 @@ void() func_bob_timer =
 	if (self.lefty != -1)
 	{
 		// Slow down velocity (gradually)
-		if (self.distance < time)
+		if (self.distance < localtime)
 			self.velocity = self.velocity * self.waitmin2;
 		else
 		{
@@ -96,10 +95,7 @@ void() func_bob_on =
 	setsize (self, self.mins , self.maxs);
 
 	self.think = func_bob_timer;
-	if (self.bsporigin)
-		self.nextthink = self.ltime + 0.1 + self.delay;
-	else
-		self.nextthink = time + 0.1 + self.delay;
+	self.nextthink = getLocalTime() + 0.1 + self.delay;
 };
 
 //----------------------------------------------------------------------

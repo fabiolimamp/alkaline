@@ -44,6 +44,7 @@ $frame fieldon1 fieldon2 fieldon3 fieldon4 fieldon5 fieldon6 fieldon7
 //--------------------------------------------------------------------
 void() DrunkExplode =
 {
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self.owner, 30, world, DMGTYPE_EXPLOSION);
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 

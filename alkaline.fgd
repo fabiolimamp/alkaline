@@ -551,20 +551,6 @@ You can override initial weapon/ammo loadout for this specific spot.
 @PointClass base(PlayerClass) = info_player_start2 : "Player episode return point" []
 @PointClass base(PlayerClass) = info_player_deathmatch : "DM start" []
 
-@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog) = info_teleport_destination : "Teleport destination.
-
-- 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
-
-- 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'angle' field.
-
-- 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
-" [
-	spawnflags(flags) = [
-		1: "Free angle"
-		4: "Stealth teleport in"
-	]
-	count(integer) : "Group order"
-]
 @PointClass = info_null : "info_null (spotlight target)"
 [
 	targetname(target_source) : "Name" 
@@ -1027,7 +1013,11 @@ Don't shake hands with this crazy bastard!" []
 
 
 @PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base.mdl"}) = monster_turret :
-"Turret, 120 health points." []
+"Turret, 50 health points." [
+	spawnflags(flags) =	[
+		1 : "Don't sleep" : 0
+	]
+]
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/chaingunner.mdl"}) = monster_chaingunner : "Chaingunner, 250 health points." []
 
@@ -2191,8 +2181,9 @@ Using the destination's 'count' field, you can define which order they'll be sel
 	[
 		1 : "Player only" : 0
 		2 : "No portal sound" : 0
-		4 : "Stealth teleport out" : 0
+		4 : "No teleport effect" : 0
 		8 : "Monsters only" : 0
+		16: "Player-triggered" : 0
 	]
 	style(choices) : "Multiple destination mode" : 0 = [
 		0 : "First"
@@ -2200,6 +2191,42 @@ Using the destination's 'count' field, you can define which order they'll be sel
 		2 : "Cycle"
 	]
 ]
+
+
+@PointClass size(-16 -16 0, 16 16 64) base(Targetname, Fog, Appearflags) = info_teleport_destination : "Teleport destination.
+
+- 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
+
+- 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'angle' field.
+
+- 'No teleport effect' flag: Don't draw the teleport fog effect when teleporting to this spot.
+" [
+	spawnflags(flags) = [
+		1: "Free angle"
+		2: "Preserve pitch angle"
+		4: "No teleport effect"
+		8: "Preserve velocity"
+	]
+	count(integer) : "Group order"
+]
+
+@SolidClass base(Targetname, Fog, Appearflags) = trigger_teleport_instadestination : "Instant teleport destination.
+
+- 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
+
+- 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'mangle' field ('pitch yaw 0').
+
+- 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
+" [
+	count(integer) : "Group order"
+	mangle(string) : "Angle offset"
+	spawnflags(flags) = [
+		2: "Preserve pitch angle"
+		4: "Show teleport effect"
+		//8: "Preserve velocity"
+	]
+]
+
 
 @SolidClass = trigger_doortriggerfield : "Custom door trigger field." [
 	target(target_destination) : "Target door"
@@ -2609,10 +2636,13 @@ You can set it to be show the message only when the player is facing a certain a
 	mangle(string) : "Central view angle" : : "Central point of the viewcone, in 'pitch yaw 0' format"
 	view_ofs(string) : "Maximum angle offset" : : "Angle offsets from the central viewcone point in each direction, in 'pitch yaw 0' format"
 	message(string) : "Message" : : "Message to show on-screen."
+	message2(string) : "Mapvar message" : : "Message to show on-screen when the mapvar set through the 'mapvar' field is active."
+	mapvar(integer) : "Mapvar filter" : : "If the specified mapvar is true, show 'message2' instead of 'message'"
 	noise1(string) : "Activate sound" : "misc/talk.wav" : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
 	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
 	spawnflags(flags) = [
 		1: "Silent"
+		2: "Don't fade background"
 	]
 ]
 
@@ -2624,10 +2654,13 @@ Horizontal space is limited to 40 characters, so you must place linefeeds (\n) i
 [
 	wait(integer) : "Message duration" : 5
 	message(string) : "Message" : : "Message to show on-screen."
+	message2(string) : "Mapvar message" : : "Message to show on-screen when the mapvar set through the 'mapvar' field is active."
+	mapvar(integer) : "Mapvar filter" : : "If the specified mapvar is true, show 'message2' instead of 'message'"
 	noise1(string) : "Activate sound" : "misc/talk.wav" : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
 	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
 	spawnflags(flags) = [
 		1: "Silent"
+		2: "Fade background"
 	]
 ]
 

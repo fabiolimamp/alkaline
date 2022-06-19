@@ -36,6 +36,7 @@ monsters.qc
 doors.qc
 buttons.qc
 triggers.qc
+teleport.qc
 plats.qc
 doeplats.qc
 elvbutton.qc

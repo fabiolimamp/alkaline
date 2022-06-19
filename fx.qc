@@ -557,14 +557,14 @@ void() misc_particlefield_box =
 			if (y < x)
 			{	// sweeping down x
 				self.worldtype = 0;
-				self.dest = Vector(self.mangle_y, self.mangle_z, self.mangle_x);
-				self.pos1 = Vector(self.finaldest_y, self.finaldest_z, self.finaldest_x);
+				self.dest = [self.mangle_y, self.mangle_z, self.mangle_x];
+				self.pos1 = [self.finaldest_y, self.finaldest_z, self.finaldest_x];
 			}
 			else
 			{	// sweeping down y
 				self.worldtype = 1;
-				self.dest = Vector(self.mangle_x, self.mangle_z, self.mangle_y);
-				self.pos1 = Vector(self.finaldest_x, self.finaldest_z, self.finaldest_y);
+				self.dest = [self.mangle_x, self.mangle_z, self.mangle_y];
+				self.pos1 = [self.finaldest_x, self.finaldest_z, self.finaldest_y];
 			}
 		}
 		else
@@ -1023,7 +1023,7 @@ void() make_bubbles =
 
 void() bubble_split =
 {
-	if (pointcontents(self.origin + '0 0 8') != pointcontents(self.origin))
+	if (pointcontents2(self.origin + '0 0 8') != pointcontents2(self.origin))
 		return;
 		
 	entity	bubble;
@@ -1044,7 +1044,7 @@ void() bubble_bob =
 {
 	float		rnd1, rnd2, rnd3;
 
-	if (pointcontents(self.origin + '0 0 8') != pointcontents(self.origin))
+	if (pointcontents2(self.origin + '0 0 8') != pointcontents2(self.origin))
 	{
 		SUB_Remove();
 		return;

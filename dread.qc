@@ -55,7 +55,7 @@ void() flame_touch =
 void() flame_fly =
 {
 	self.frame = self.frame + 1;
-	if (self.frame > 7 || pointcontents(self.origin) != -1)
+	if (self.frame > 7 || pointcontents2(self.origin) != CONTENT_EMPTY)
 	{
 		if (self.owner.missle == self)
 			self.owner.missle = world;

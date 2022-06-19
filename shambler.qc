@@ -102,7 +102,7 @@ void() sham_smash10    =[      $smash10,      sham_smash11   ] {
 
 	if (vlen(delta) > 100)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 		
 	ldmg = (random() + random() + random()) * 40;
@@ -338,7 +338,7 @@ float() ShamCheckAttack =
 
 	if (enemy_range == RANGE_MELEE)
 	{
-		if (CanDamage (self.enemy, self))
+		if (CanDamage (self.enemy, self.origin))
 		{
 			self.attack_state = AS_MELEE;
 			return TRUE;

@@ -457,6 +457,7 @@ void() probe_gr_satk6 = [28, probe_plant1] {probe_think(); SUB_AttackFinished(0.
 void() bodydie = {
 	self.health = self.trigger_field.health;
 	self.origin = self.origin + '0 0 -32';
+	
 	FuelTankExplode();
 	if (self.trigger_field.style == ST_PROBE_GRENADE){
 		ThrowGib ("progs/probegren_gib1.mdl", self.health);
@@ -494,6 +495,12 @@ void() probe_die3 = [15, SUB_Hide] {
 	self.trigger_field.think = bodydie;
 	self.trigger_field.nextthink = time + 0.1;
 	self.trigger_field.frame = self.frame;
+
+	self.trigger_field.dmg_inflictor = self.dmg_inflictor;
+	self.trigger_field.inflictor_origin = self.inflictor_origin;
+	self.trigger_field.inflictor_movetype = self.inflictor_movetype;
+	self.trigger_field.inflictor_vel = self.inflictor_vel;
+
 	FuelTankExplode();	
 };
 

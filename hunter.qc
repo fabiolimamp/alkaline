@@ -100,7 +100,7 @@ void() hunter_shot_touch =
 		else
 			T_Damage(other, self, self.owner, 10, DMGTYPE_BALLISTIC);
 	}
-		
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self, 20, world, DMGTYPE_EXPLOSION);		//Additional radial damage 
 	
 	become_big_bullet_explosion();	//ball explosion effect
@@ -170,7 +170,7 @@ local float 	ldmg;
 
 	if (!self.enemy)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 
 	ai_charge(10);
@@ -582,9 +582,9 @@ void() hunter_explode =
 	
 	while (GibCount > 0)
 	{
-		ThrowGib ("progs/hunter_gibs.mdl", self.health * 1);
-		ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-		ThrowGib ("progs/hunter_gibs.mdl", self.health * 3);
+		ThrowGib ("progs/hunter_gibs.mdl", self.health*0.7);
+		ThrowGib ("progs/hunter_gibs.mdl", self.health*1.2);
+		ThrowGib ("progs/hunter_gibs.mdl", self.health*1.7);
 		ThrowExplosion();
 		GibCount = GibCount - 1;
 	}
@@ -614,7 +614,7 @@ void() hunter_death =
 	{
 		if (random() >= 0.6)
 		{
-			ThrowGib ("progs/h_hunter.mdl", self.health * 2);
+			ThrowGib ("progs/h_hunter.mdl", self.health);
 			ThrowExplosion();
 			hunter_die_hoff1();										//blow head off
 		}
@@ -626,8 +626,8 @@ void() hunter_death =
 		if (random() >= 0.9)
 		{
 			ThrowExplosion();
-			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health);
 			hunter_die_boff1();										//both arms
 		}
 		else
@@ -638,8 +638,8 @@ void() hunter_death =
 		if (random() >= 0.9)
 		{
 			ThrowExplosion();
-			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health);
 			hunter_die_boff1();										//both arms
 		}
 		else
@@ -649,13 +649,14 @@ void() hunter_death =
 	{
 		if (random() >= 0.6)
 			{
-				ThrowGib ("progs/h_hunter.mdl", self.health * 2);
+				ThrowGib ("progs/h_hunter.mdl", self.health);
 				ThrowExplosion();
 				hunter_die_hoff1();										//blow head off
 			}
 			else
 				hunter_die1 ();	
 	}
+	self.dmg_inflictor = world;
 };
 
 void() HunterIdleSound =	//ijed, play idlesound only if not AMBUSH, can also play it while stood
@@ -707,8 +708,8 @@ void(entity attacker, float damage)	hunter_pain	=
 		if (random() > TotalModifier)	//BAM!
 		{
 			ThrowExplosion();
-			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
-			ThrowGib ("progs/hunter_gibs.mdl", self.health * 2);
+			ThrowGib ("progs/hunter_gibs.mdl", damage);
+			ThrowGib ("progs/hunter_gibs.mdl", damage);
 			if (random() > 0.5) {
 				self.dismemberment = 1;
 				hunter_run_loff1();	//left arm

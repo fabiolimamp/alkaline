@@ -38,8 +38,8 @@ void() SetChangeParms =
 {
 	// mapvars and playerstart id for the next map are always passed down
 	parm12 = playerstart_id;
-	parm15 = mapvar[0];
-	parm16 = mapvar[1];
+	parm15 = mapvars[0];
+	parm16 = mapvars[1];
 
 	// set by changelevel_touch if trigger_changelevel has a "reset items on map change" flag
 	if (reset_items_on_map_change) {
@@ -163,8 +163,8 @@ void() DecodeLevelParms =
 	playerstart_id = parm12;
 
 	if (!prev_mapvar_cvar) {
-		mapvar[0] = parm15;
-		mapvar[1] = parm16;
+		mapvars[0] = parm15;
+		mapvars[1] = parm16;
 	}
 
 	TakeAndGiveWeapons(self, world);
@@ -343,9 +343,6 @@ void() execute_changelevel =
 		other.punchangle = '0 0 0';
 		setorigin (other, pos.origin);
 		fog_setFromEnt(other, pos);
-		// clear v_cshift on the next frame
-		other.cshift_set = 0;
-		other.cshift_cleared = 0;
 		other = find (other, classname, "player");
 	}	
 
@@ -737,9 +734,6 @@ void() PutClientInServer =
 	spawn_tdeath (self.origin, self);
 
 	CreateHealthController();
-
-	self.cshift_set = 0;
-	self.cshift_cleared = 0;
 };
 
 
@@ -947,8 +941,6 @@ void() PlayerRessurect =
 	stuffcmd (self, "bf\n");
 	sound (self, CHAN_VOICE, "items/protect.wav", 1, ATTN_NORM);
 
-	self.cshift_cleared = 0;
-	self.cshift_set = 0;
 }
 
 void() PlayerDeathThink =
@@ -1237,7 +1229,7 @@ void() PlayerPreThink =
 
 	gameloaded = 1;
 	self.light_lev = 0; // resets dimlight flags for powerups/status effects
-	
+
 	if (cleanUpClientStuff) {
 		fog_setFromEnt( self, self );
 		csf_apply(self);
@@ -1732,6 +1724,26 @@ void() PlayerPostThink =
 		self.effects = self.effects | EF_DIMLIGHT;
 	else
 		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
+
+	if (cvar("scratch2")) {
+		self.angles_z = cvar("scratch2");
+		self.angles_x = self.v_angle_x;
+		self.fixangle = 1;
+		cvar_set("scratch2", 0);
+	}
+	
+	if (self.v_angle_z) {
+		//dprint3("v_angle_z: ", ftos(self.v_angle_z), "\n");
+		if (fabs(self.v_angle_z) < 0.5) {
+			self.angles_z = 0;
+		//	dprint("z_angle ended! ----------------\n");
+		}
+		else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*(fabs(self.v_angle_z)/40 + 0.2);
+		//else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*0.5;
+
+		self.angles_x = self.v_angle_x;
+		self.fixangle = 1;
+	}
 };
 
 

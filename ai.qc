@@ -1187,7 +1187,7 @@ void() ai_melee_side =
 
 	if (vlen(delta) > 60)
 		return;
-	if (!CanDamage (enem, self))
+	if (!CanDamage (enem, self.origin))
 		return;
 	ldmg = (random() + random() + random()) * 3;
 	T_Damage(enem, self, self, ldmg, DMGTYPE_MELEE);

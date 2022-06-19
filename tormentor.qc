@@ -110,7 +110,7 @@ void(float dist) torm_sting_hit = {
 	makevectors(self.angles);
 	vec1 = normalize(self.enemy.origin - self.origin);
 	if (vlen(v_forward - vec1) < 0.2) {
-		if (!CanDamage(self.enemy, self))
+		if (!CanDamage(self.enemy, self.origin))
 			return;
 
 		if (vlen(self.enemy.origin - self.origin) < dist) {
@@ -139,7 +139,7 @@ void() torm_sting13    =[      61,       torm_run1	    ] {self.nextthink = time 
 
 void() torm_slap_hit = {
 	if (infront(self.enemy)) {
-		if (vlen(self.enemy.origin - self.origin) < 128 && CanDamage(self.enemy, self)) {
+		if (vlen(self.enemy.origin - self.origin) < 128 && CanDamage(self.enemy, self.origin)) {
 			sound(self, CHAN_WEAPON, "tormentor/punch_hit.wav", 1, ATTN_NORM);
 			T_Damage(self.enemy, self, self, 40, DMGTYPE_MELEE);
 			makevectors(self.angles);
@@ -199,6 +199,7 @@ void() torm_largeshot_touch = {
 			other.flags = (other.flags - (other.flags & FL_ONGROUND));
 		}
 	}
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self.owner, 60, other, DMGTYPE_EXPLOSION);
 
 	BecomeExplosion();
@@ -290,7 +291,8 @@ void() torm_smallshot_touch = {
 
 	if (other.health)
 		T_Damage(other, self, self.owner, 15, DMGTYPE_BALLISTIC);
-		
+
+	self.velocity = '0 0 0';
 	T_RadiusDamage (self, self, 15, other, DMGTYPE_EXPLOSION);		//Additional radial damage 
 	
 	become_big_bullet_explosion();	//ball explosion effect
@@ -486,7 +488,7 @@ float() torm_CheckAttack = {
 	dist = vlen(self.origin - targ.origin);
 
 	if (dist <= 192) {	// melee attack
-		if (CanDamage(targ, self)) {
+		if (CanDamage(targ, self.origin)) {
 			//self.th_melee ();
 			self.attack_state = AS_MELEE;
 			return TRUE;

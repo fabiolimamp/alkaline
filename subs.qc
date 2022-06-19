@@ -25,7 +25,7 @@ void() SUB_RemoveSoon =
 
 
 void() SUB_MakeNotSolid = {
-	self.solid = SOLID_NOT;
+	//self.solid = SOLID_NOT;
 };
 
 /*
@@ -67,6 +67,13 @@ void() SetMovedir =
 	self.angles = '0 0 0';
 };
 
+void() SetAngles = {
+	if (self.angles == '0 -1 0')
+		self.angles = '90 0 0';
+	else if (self.angles == '0 -2 0')
+		self.angles = '-90 0 0';
+}
+
 /*
 ================
 InitTrigger
@@ -83,6 +90,7 @@ void() InitTrigger =
 	self.movetype = MOVETYPE_NONE;
 	self.modelindex = 0;
 	self.model = "";
+	self.flags |= FL_NEVERTELEPORT;
 };
 
 /*
@@ -112,8 +120,7 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 	if (!tspeed)
 		objerror("No speed is defined!");
 
-	if (self.movetype == MOVETYPE_PUSH) localtime = self.ltime;
-	else localtime = time;
+	localtime = getLocalTime();
 
 	self.think1 = func;
 	self.finaldest = tdest;

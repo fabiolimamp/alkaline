@@ -350,17 +350,18 @@ void() zombie_paine8	=[	$paine8,	zombie_paine9	] {ai_pain(1);};
 void() zombie_paine9	=[	$paine9,	zombie_paine10	] {ai_pain(2);};
 void() zombie_paine10	=[	$paine10,	zombie_paine11	] {
 	sound (self, CHAN_BODY, "zombie/z_fall.wav", 1, ATTN_NORM);
+	self.type = "downedzombie";
 	self.solid = SOLID_NOT;
 	//self.solid = SOLID_TRIGGER;
 	setorigin(self, self.origin); // relink
 };
-void() zombie_paine11	=[	$paine11,	zombie_paine12	] {self.nextthink = self.nextthink + 5;self.health = 60;};
+void() zombie_paine11	=[	$paine11,	zombie_paine12	] {self.nextthink = self.nextthink + 4.5 + random(); self.health = 60;};
 void() zombie_paine12	=[	$paine12,	zombie_paine13	]{
 	// see if ok to stand up
 	self.health = 60;
 	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
 	self.solid = SOLID_SLIDEBOX;
-
+	self.type = "";
 	if (!walkmove2(0, 0)) {
 		self.think = zombie_paine11;
 		self.solid = SOLID_NOT;
@@ -497,6 +498,8 @@ void(entity e) monster_zombie_start =
 	self.th_die = zombie_die;
 	self.th_missile = zombie_missile;
 	self.th_sight = zombie_sight;
+
+	self.type = "";
 
 	if (self.spawnflags & SPAWN_CRUCIFIED)
 	{

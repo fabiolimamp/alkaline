@@ -1,5 +1,4 @@
-void() HIP_LaserTouch =
-{
+void() HIP_LaserTouch = {
 	local vector org;
 	local vector spot1,spot2;
 	local vector oldvel;
@@ -20,30 +19,26 @@ void() HIP_LaserTouch =
 
 	org = self.origin;
 
-	if (other.health)
-    {
+	if (other.health) {
 		if (self.lastvictim == other)
-		{
 			self.dmg = self.dmg / 2;
-        }
+		
 		spawn_touchblood (self.dmg);
 		T_Damage(other, self, self.lastvictim, self.dmg, DMGTYPE_ENERGY);
-    }
-	else if ((self.cnt == 3) || (random()<0.15))
-    {
+	}
+	else if (self.cnt == 3 || random() < 0.15) {
 		gunshot(org);
-    }
-	else
-    {
+	}
+	else {
 //		self.dmg = 0.66 * self.dmg;
 		self.dmg = 0.9 * self.dmg;
 //		self.speed = 0.95 * self.speed;
-		self.velocity = oldvel+(2*trace_plane_normal);
+		self.velocity = oldvel + (2 * trace_plane_normal);
 		self.velocity = normalize(self.velocity);
 		self.velocity = self.speed * self.velocity;
 		self.old_velocity = self.velocity;
-		if (self.flags & FL_ONGROUND)
-			self.flags = self.flags - FL_ONGROUND;
+		self.flags &~= FL_ONGROUND;
+
 		r = random();
 		sound (self, CHAN_WEAPON, "hipweap/laserric.wav", 1, ATTN_STATIC);
 /*
@@ -55,29 +50,27 @@ void() HIP_LaserTouch =
 			sound (self, CHAN_WEAPON, "weapons/ric3.wav", 1, ATTN_STATIC);
 */
 		return;
-    }
+	}
 	sound (self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_STATIC);
 	remove(self);
 };
 
-void() HIP_LaserThink =
-{
-	if (time>self.attack_finished)
-	{
+void() HIP_LaserThink = {
+	if (time > self.attack_finished) {
 		remove(self);
 		return;
-    }
-	if (self.flags & FL_ONGROUND)
-		self.flags = self.flags - FL_ONGROUND;
+	}
+
+	self.flags &~= FL_ONGROUND;
+
 	self.velocity = self.old_velocity;
 	self.angles = vectoangles(self.velocity);
 	self.nextthink = time+0.1;
 };
 
-void(vector org, vector vec, float light) HIP_LaunchLaser =
-{
-//	sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);
-	sound (self ,CHAN_WEAPON, "hipweap/laserg.wav", 1, ATTN_NORM);
+void(vector org, vector vec, float light) HIP_LaunchLaser = {
+	
+	sound(self, CHAN_WEAPON, "hipweap/laserg.wav", 1, ATTN_NORM);
 
 	vec = normalize(vec);
 
@@ -92,10 +85,10 @@ void(vector org, vector vec, float light) HIP_LaunchLaser =
 	if (light)
 		newmis.effects = EF_DIMLIGHT;
 
-	setmodel (newmis, "progs/lasrspik.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');
+	setmodel(newmis, "progs/lasrspik.mdl");
+	setsize(newmis, '0 0 0', '0 0 0');
 
-	setorigin (newmis, org);
+	setorigin(newmis, org);
 
 	newmis.speed = 1000;
 	newmis.dmg = 18;
@@ -116,25 +109,24 @@ void(vector org, vector vec, float light) HIP_LaunchLaser =
 HIP_FireLaser
 =================
 */
-void(float stat) HIP_FireLaser =
-{
+void(float stat) HIP_FireLaser = {
 	local vector org;
 	local vector dir;
 	local vector out;
 	local float ofs;
 	local float aofs;
 
-	if (!self.button0)
-    {
+	if (!self.button0) {
 		player_run ();
 		return;
-    }
-	if (self.ammo_cells < 1)
-	{
+	}
+
+	if (self.ammo_cells < 1) {
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
 		return;
-    }
+	}
+
 	SuperDamageSound();
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	makevectors (self.v_angle);
@@ -147,144 +139,51 @@ void(float stat) HIP_FireLaser =
 //	org = self.origin + (1*v_forward);
 	dir = aim (self, 1000);
 	aofs = ofs * 0.707;
-	if (stat == 0)
-    {
+
+	if (stat == 0) {
 		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 		org = org + (aofs*v_right);
 		org = org - (aofs*v_up);
 		HIP_LaunchLaser(org, dir, 0);
 		org = org - (2*aofs*v_right);
 		HIP_LaunchLaser(org, dir, 0);
-    }
-	else if (stat == 1)
-    {
+	}
+	else if (stat == 1)	{
 		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 		org = org + (ofs*v_up);
-		if (random()<0.1)
-        {
+
+		if (random() < 0.1) {
 			HIP_LaunchLaser(org, dir, 1);
 			newmis.dmg = 25;
-        }
+		}
 		else
 			HIP_LaunchLaser(org, dir, 0);
-    }
+	}
+
 	self.punchangle_x = -1;
 };
 
-float	NumProximityGrenades;
-.entity	spawnmaster;
-
-void() ProximityExplode =
-{
-	T_RadiusDamage (self, self.owner, 95, world, DMGTYPE_EXPLOSION);
-
-	BecomeExplosion ();
-};
 
 /*
 ================
-ProximityGrenadeExplode
+Proximity/Multi-grenade hybrid
+- Uses up to 4 rockets per shot. If < 4, will spawn less mini-grenades
+- Direct hits on DAMAGE_AIM entities will trigger an explosion
+- Each explosion (including the direct one) deals 60 damage
+- If don't hit anything, sticks to the surface and wait for proximity, or a 15-25s timeout
 ================
 */
-void() ProximityGrenadeExplode =
-   {
-   self.takedamage = DAMAGE_NO;
-   NumProximityGrenades = NumProximityGrenades - 1;
-   self.nextthink = time + 0.1;
-   self.owner = self.lastvictim;
-   self.think = ProximityExplode;
-   };
 
-/*
-================
-ProximityGrenadeTouch
-================
-*/
-void() ProximityGrenadeTouch =
-   {
-   if (other == self)
-      return;
-   if (other.classname == self.classname)
-      return;
-   self.movetype = MOVETYPE_TOSS;
-   if (self.state == 1)
-      return;
-   if (vlen(other.velocity) > 0)
-      {
-      ProximityGrenadeExplode();
-      self.think();
-      return;
-      }
-   if (other.takedamage == DAMAGE_AIM)
-      {
-      ProximityGrenadeExplode();
-      self.think();
-      return;
-      }
-   sound (self, CHAN_WEAPON, "weapons/bounce.wav", 1, ATTN_NORM); // bounce sound
-   self.movetype = MOVETYPE_NONE;
-   setsize (self, '-8 -8 -8', '8 8 8');
-   self.state = 1;
-   self.spawnmaster = other;
-};
 
-/*
-================
-ProximityBomb
-================
-*/
-void() ProximityBomb =
-   {
-   local entity   head;
-   local float    blowup;
-
-   if ((time > self.delay) || (NumProximityGrenades > 15) || (vlen(self.spawnmaster.velocity)>0) )
-      {
-      ProximityGrenadeExplode();
-      self.think();
-      return;
-      }
-   self.owner = world;
-   self.takedamage = DAMAGE_YES;
-   head = findradius(self.origin, 140);
-   blowup = 0;
-
-   while (head)
-      {
-      if ((head != self) && (head.health > 0) && (head.flags & (FL_CLIENT|FL_MONSTER)) && (head.classname!=self.classname))
-         blowup = 1;
-      if ((head.classname == self.classname) && (head.state==0))
-         blowup = 1;
-      traceline(self.origin,head.origin,TRUE,self);
-      if (trace_fraction != 1.0)
-         blowup = 0;
-      if (blowup==1)
-         {
-         sound (self, CHAN_WEAPON, "hipweap/proxwarn.wav", 1, ATTN_NORM);
-         ProximityGrenadeExplode();
-         self.nextthink = time + 0.5;
-         return;
-         }
-      head = head.chain;
-      }
-   self.nextthink = time + 0.25;
-   };
-
-/*
-================
-W_FireProximityGrenade
-================
-*/
 void() W_FireProximityGrenade = {
 
 	NumProximityGrenades = NumProximityGrenades + 1;
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-
-	sound (self, CHAN_WEAPON, "hipweap/proxbomb.wav", 1, ATTN_NORM);
+	
+	sound(self, CHAN_WEAPON, "hipweap/proxbomb.wav", 1, ATTN_NORM);
 
 	self.punchangle_x = -2;
 
-	newmis = spawn ();
+	newmis = spawn();
 	newmis.owner = self;
 	newmis.lastvictim = self;
 	newmis.movetype = MOVETYPE_TOSS;
@@ -295,9 +194,19 @@ void() W_FireProximityGrenade = {
 	newmis.health = 5;
 	newmis.state = 0;
 
+	if (self.ammo_rockets < 4) {
+		newmis.count = self.ammo_rockets;
+		self.currentammo = self.ammo_rockets = 0;
+	}
+	else {
+		newmis.count = 4;
+		self.currentammo = self.ammo_rockets = self.ammo_rockets - 4;
+	}
+
+
 	// set newmis speed
 
-	makevectors (self.v_angle);
+	makevectors(self.v_angle);
 
 	if (self.v_angle_x)
 		newmis.velocity = v_forward*600 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
@@ -312,14 +221,191 @@ void() W_FireProximityGrenade = {
 	newmis.angles = vectoangles(newmis.velocity);
 
 	newmis.touch = ProximityGrenadeTouch;
+	newmis.th_die = ProximityGrenadeExplode;
+	
+	//newmis.think = ProximityGrenadeFly;
+	//newmis.nextthink = time + 2;
 
 	// set duration
-	newmis.nextthink = time + 2;
-	newmis.delay = time + 15 + (10*random());
-	newmis.think = ProximityBomb;
-	newmis.th_die = ProximityGrenadeExplode;
+	newmis.delay = time + 15 + 10*random();
+	
 
-	setmodel (newmis, "progs/proxbomb.mdl");
-	setorigin (newmis, self.origin);
-	setsize (newmis, '-1 -1 -1', '1 1 1');
+	setmodel(newmis, "progs/proxbomb.mdl");
+	setorigin(newmis, self.origin);
+	setsize(newmis, '-1 -1 -1', '1 1 1');
+};
+
+
+void() ProximityGrenadeExplode = {
+	sound(self, CHAN_WEAPON, "hipweap/proxwarn.wav", 1, ATTN_NORM);
+	self.takedamage = DAMAGE_NO;
+	//self.owner = self.lastvictim;
+	self.think = MultiGrenadeSpawn;	//self.think = ProximityExplode;
+	self.nextthink = time + 0.05;
+	self.touch = SUB_Null;
+	NumProximityGrenades--;
+};
+
+void() ProximityGrenadeTouch = {
+	if (other == self)
+		return;
+
+	if (other.classname == self.classname)
+		return;
+
+		
+	if (vlen(other.velocity) > 0) {
+		ProximityGrenadeExplode();
+		return;
+	}
+
+	if (other.takedamage == DAMAGE_AIM) {
+		SpawnExplosion(self.origin, 60, self, 0);
+
+		ProximityGrenadeExplode();
+		return;
+	}
+	
+	if (self.state == 1)
+		return;
+	
+	sound(self, CHAN_WEAPON, "weapons/bounce.wav", 1, ATTN_NORM); // bounce sound
+	self.think = ProximityGrenadeCheck;
+	self.nextthink = time + 0.5;
+	self.movetype = MOVETYPE_NONE;
+	setsize(self, '-8 -8 -8', '8 8 8');
+
+	setorigin(self, self.origin - (normalize(self.velocity) * 6));
+
+	self.state = 1;
+	//self.spawnmaster = other;
+};
+
+void() ProximityGrenadeCheck = {
+	local entity   head;
+	local float    blowup;
+
+	if (time > self.delay || NumProximityGrenades > 15) {
+		ProximityGrenadeExplode();
+		//self.think();
+		//self.nextthink = time + 0.05;
+		return;
+	}
+
+	self.owner = world;
+	self.takedamage = DAMAGE_YES;
+	head = findradius(self.origin, 140);
+	blowup = 0;
+
+	while (head) {
+		if (head != self && head.health > 0
+					&& (head.flags & (FL_CLIENT|FL_MONSTER))
+					&& head.classname != self.classname)
+			blowup = 1;
+
+		if (head.classname == self.classname && head.state == 0)
+			blowup = 1;
+
+		traceline(self.origin, head.origin, TRUE, self);
+
+		if (trace_fraction != 1.0)
+			blowup = 0;
+
+		if (blowup) {
+	 		ProximityGrenadeExplode();
+			self.nextthink = time + 0.2;
+			return;
+		}
+	  	head = head.chain;
+  	}
+	self.nextthink = time + 0.2;
+};
+
+void() MultiGrenadeSpawn = {
+	float ang = 360/self.count;
+	
+	while (self.count) {
+		MiniGrenadeLaunch((self.count-1) * ang);
+		self.count--;
+	}
+	
+	remove(self);
+};
+
+
+//--------------------------------------------ROUGE CODE
+
+void(float offsetAngle) MiniGrenadeLaunch = {
+	local	entity missile;//, mpuff;
+	local	float	tempRand;
+	
+	missile = spawn();
+	missile.owner = self.owner;
+	missile.movetype = MOVETYPE_BOUNCE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "MiniGrenade";
+		
+// set missile speed	
+	missile.v_angle = self.v_angle;
+	missile.v_angle_y = missile.v_angle_y + offsetAngle;
+	makevectors (missile.v_angle);
+		
+	missile.velocity = v_forward*100 + v_up*400;
+	tempRand = (crandom()*60) - 30;
+	missile.velocity = missile.velocity + tempRand * v_forward;
+	tempRand = (crandom()*40) - 20;
+	missile.velocity = missile.velocity + tempRand * v_right;
+	tempRand = (crandom()*60) - 30;
+	missile.velocity = missile.velocity + tempRand * v_up;
+
+	missile.avelocity = '300 300 300';
+	missile.angles = vectoangles(missile.velocity);
+	missile.touch = MiniGrenadeTouch;
+	missile.attack_finished = time + 0.25;
+	
+	setmodel(missile, "progs/mervup.mdl");
+	setsize(missile, '0 0 0', '0 0 0');		
+	setorigin(missile, self.origin);
+
+// set missile duration
+	missile.nextthink = time + 1 + (crandom() * 0.5);
+	missile.think = MiniGrenadeExplode;
+};
+
+void() MiniGrenadeTouch = {
+	if (time < self.attack_finished)
+		return;
+
+	if (other == self.owner)
+		return;		// don't explode on owner
+
+	if (other.takedamage == DAMAGE_AIM) {
+		if (self.classname == "MiniGrenade")
+			MiniGrenadeExplode();
+		else {
+			if (self.owner.classname == "player")
+				GrenadeExplode();
+			else
+				MiniGrenadeExplode();
+		}
+		return;
+	}
+	// bounce sound
+	sound(self, CHAN_WEAPON, "weapons/bounce.wav", 1, ATTN_NORM);	
+	if (self.velocity == '0 0 0')
+		self.avelocity = '0 0 0';
+};
+
+void() MiniGrenadeExplode = {
+	if (pointcontents(self.origin) == CONTENT_SKY) {
+		remove(self);
+		return;
+	}
+	
+	if (self.owner.classname == "player")
+		T_RadiusDamage(self, self.owner, 90, world, DMGTYPE_EXPLOSION);
+	else
+		T_RadiusDamage(self, self.owner, 60, world, DMGTYPE_EXPLOSION);
+		
+	BecomeExplosion();
 };

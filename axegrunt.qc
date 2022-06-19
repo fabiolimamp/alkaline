@@ -135,7 +135,7 @@ void( vector dir ) axe_chop =
 
 	if (vlen(delta) > 60)
 		return;
-	if (!CanDamage (self.enemy, self))
+	if (!CanDamage (self.enemy, self.origin))
 		return;
 	ldmg = (random() + random() + random()) * 2;
 	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
