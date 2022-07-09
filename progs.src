@@ -28,7 +28,8 @@ weapons_fire.qc
 weapons_use.qc
 impulses.qc
 world.qc
-client.qc
+client_level.qc
+client_frame.qc
 player.qc
 monsters.qc
 doors.qc
