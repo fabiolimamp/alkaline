@@ -350,8 +350,76 @@ void() execute_changelevel =
 };
 
 
-void() changelevel_touch =
-{
+	//do {
+	if (!self.goalentity) pos = FindIntermission(world);
+	else pos = FindNextIntermission(self.goalentity);
+
+	self.goalentity = pos;
+	//}
+	//while (pos.origin == self.origin); // don't pick the same intermission spot twice in a row
+		
+	self.pain_finished = time + 0.5;
+
+	self.angles = self.v_angle = pos.mangle;
+	self.fixangle = TRUE;		// turn this way immediately
+	setorigin(self, pos.origin);
+	fog_setFromEnt(self, pos);
+}
+
+
+/*
+============
+FindIntermission
+
+Returns the entity to view from
+============
+*/
+entity(entity start) FindIntermission = {
+	local	entity spot;
+	local	float cyc;
+
+// look for info_intermission first
+	spot = find (start, classname, "info_intermission");
+	if (spot)
+	{	// pick a random one
+		cyc = random() * 16;
+		while (cyc > 1)
+		{
+			spot = find(spot, classname, "info_intermission");
+			if (!spot)
+				spot = find(spot, classname, "info_intermission");
+			cyc = cyc - 1;
+		}
+		return spot;
+	}
+
+// then look for the start position
+	spot = find (world, classname, "info_player_start");
+	if (spot)
+		return spot;
+	
+// testinfo_player_start is only found in regioned levels
+	spot = find (world, classname, "testplayerstart");
+	if (spot)
+		return spot;
+	
+	objerror ("FindIntermission: no spot");
+	return spot; //shut up compiler
+};
+
+entity(entity start) FindNextIntermission = {
+	if (!start) return world;
+	if (start.classname != "info_intermission") return start;
+	
+	entity spot;
+	spot = find(start, classname, "info_intermission");	
+	if (!spot)
+		spot = find(world, classname, "info_intermission");
+	return spot;
+}
+
+
+void() changelevel_touch = {
 //	local entity	pos;
 	
 	if (other.classname != "player")
@@ -360,14 +428,12 @@ void() changelevel_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
-	if ((cvar("noexit") == 1) || ((cvar("noexit") == 2) && (mapname != "start")))
-	{
+	if (cvar("noexit") == 1 || (cvar("noexit") == 2 && mapname != "start")) {
 		T_Damage(other, self, self, 50000, DMGTYPE_INSTANT);
 		return;
 	}
 
-	if (coop || deathmatch)
-	{
+	if (coop || deathmatch) {
 		bprint (other.netname);
 		bprint (" exited the level\n");
 	}
@@ -384,7 +450,10 @@ void() changelevel_touch =
 
 	playerstart_id = self.count;
 
-	nextmap = self.map;
+	if (self.map == "")
+		nextmap = mapname;
+	else
+		nextmap = self.map;
 
 	//johnfitz -- add a serverflag so users spawn at info_player_start2 when returning to startmap
 	if (nextmap == "start")
@@ -416,10 +485,9 @@ void() changelevel_use = {
 /*QUAKED trigger_changelevel (0.5 0.5 0.5) ? NO_INTERMISSION
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
-void() trigger_changelevel =
-{
+void() trigger_changelevel = {
 	if (!self.map)
-		objerror ("chagnelevel trigger doesn't have map");
+		dprint("changelevel trigger doesn't have map, will return to the same map");
 	
 	InitTrigger ();
 	self.flags = self.flags | FL_NOCENTERPRINT;
