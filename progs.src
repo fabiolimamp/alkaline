@@ -7,7 +7,6 @@
 #pragma sourcefile csprogs.src
 
 
-
 defs_sysglobals.qc
 defs_fields.qc
 defs_versionstring.qc
@@ -31,7 +30,6 @@ impulses.qc
 world.qc
 client.qc
 player.qc
-mapvar.qc
 monsters.qc
 doors.qc
 buttons.qc
@@ -40,76 +38,71 @@ teleport.qc
 plats.qc
 doeplats.qc
 elvbutton.qc
-fx.qc
 misc.qc
 lights.qc
 forcefield.qc
 misc_model.qc
 ltrail.qc
-
-ogre.qc
-demon.qc
-shambler.qc
-arachnofloyd.qc
-knight.qc
-soldier.qc		// greenwood (nail grunt)
-wizard.qc
-dog.qc
-zombie.qc
-boss.qc
-
-tarbaby.qc		// registered
-hknight.qc		// registered
-fish.qc			// registered
-shalrath.qc		// registered
-enforcer.qc		// registered
-enforce2.qc		// zerstorer
-lieutenant.qc		// forwards compatible
-oldone.qc		// registered
-
-rubicon2.qc		// johnfitz
-dread.qc		// johnfitz
-floyd.qc		// johnfitz
-centurion.qc		// johnfitz
-turret.qc		// johnfitz
-
-hiprot.qc		// hipnotic
-
-hunter.qc		// ijed (RRP)
-ogreb.qc		// ijed (RRP)
-
-hip_expl.qc		// hipnotic
-hip_weapons.qc		// hipnotic
-hiparma.qc		// hipnotic
-hipscrge.qc		// hipnotic
-
-drone1.qc		// OUM
-axegrunt.qc		// Lunaran
-eel.qc			// Rogue
-bambler.qc		// greenwood
-tormentor.qc
-
-spider.qc
-
-edie.qc
-
-monster_frogman.qc // Malice
-monster_banshee.qc // Malice
-monster_rider.qc // Malice
-monster_probe.qc // Malice
+projectile.qc
+meat.qc
+func_bob.qc
+fx.qc
+fog.qc
+mapvar.qc
+gravity.qc
+water.qc
 
 misc_scientist.qc
 
-projectile.qc
-meat.qc
-fog.qc
+rubicon2.qc					// johnfitz
 
-func_bob.qc
+hiprot.qc					// hipnotic
+hip_expl.qc					// hipnotic
+hip_weapons.qc				// hipnotic
+hipholes.qc					// hipnotic
 
-gravity.qc
+monsters/ogre.qc
+monsters/demon.qc
+monsters/shambler.qc
+monsters/arachnofloyd.qc
+monsters/knight.qc
+monsters/soldier.qc			// greenwood (nail grunt)
+monsters/wizard.qc
+monsters/dog.qc
+monsters/zombie.qc
+monsters/boss.qc
 
-hipholes.qc
+monsters/tarbaby.qc			// registered
+monsters/hknight.qc			// registered
+monsters/fish.qc			// registered
+monsters/shalrath.qc		// registered
+monsters/enforcer.qc		// registered
+monsters/enforce2.qc		// zerstorer
+monsters/lieutenant.qc		// forwards compatible
+monsters/oldone.qc			// registered
 
-monster_turret.qc
+monsters/hiparma.qc			// hipnotic
+monsters/hipscrge.qc		// hipnotic
+monsters/eel.qc				// Rogue
 
-water.qc
+turret.qc					// johnfitz
+monsters/dread.qc			// johnfitz
+monsters/floyd.qc			// johnfitz
+monsters/centurion.qc		// johnfitz
+
+monsters/monster_frogman.qc // Malice
+monsters/monster_banshee.qc // Malice
+monsters/monster_rider.qc	// Malice
+monsters/monster_probe.qc	// Malice
+
+monsters/hunter.qc			// ijed (RRP)
+monsters/ogreb.qc			// ijed (RRP)
+
+monsters/drone1.qc			// OUM
+monsters/axegrunt.qc		// Lunaran
+monsters/bambler.qc			// greenwood
+monsters/tormentor.qc 		// bmFbr
+monsters/spider.qc 			// bmFbr
+monsters/edie.qc			// quoth
+monsters/monster_turret.qc
+
