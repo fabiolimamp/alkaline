@@ -435,11 +435,10 @@ trigger_hurt
 ==============================================================================
 */
 
-void() hurt_on =
-{
-	self.solid = SOLID_TRIGGER;
-	self.nextthink = -1;
-};
+
+void() hurt_retouch = {
+	force_retouch = 2;
+}
 
 void() hurt_touch =
 {
@@ -453,14 +452,25 @@ void() hurt_touch =
 	if (self.spawnflags & 2 && other.flags & FL_MONSTER)
 		return;
 
-	if (other.takedamage)
-	{
-		self.solid = SOLID_NOT;
+	if (time < other.hurt_started + self.wait)
+		return;
+
+	if (other.takedamage) {
 		T_Damage(other, self, self, self.dmg, self.style);
-		self.think = hurt_on;
-		self.nextthink = time + self.wait;
+		other.hurt_started = time;
 	}
 
+	// From Copper:
+	// this is not ideal but all the other solutions are also not ideal: monsters
+	// who stand still in a trigger hurt don't catch the trigger, so (for example)
+	// enforcers who plant and open fire will be immune to the hurt as long as they
+	// stay in one place
+	if (other.flags & FL_MONSTER && other.health > 0) {
+		// so we have to ask the engine to spam a collision test of everything vs
+		// everything else to catch them
+		self.think = hurt_retouch;
+		self.nextthink = time + self.wait;
+	}
 };
 
 /*QUAKED trigger_hurt (.5 .5 .5) ?
@@ -470,12 +480,14 @@ defalt dmg = 5
 */
 void() trigger_hurt =
 {
-	InitTrigger ();
+	InitTrigger();
 	self.touch = hurt_touch;
 	if(!self.wait) self.wait = 1;
 	if (!self.dmg)
 		self.dmg = 5;
 
+	// monsters won't react to this attack
+	self.flags |= FL_IGNOREDATTACK;
 	SUB_CheckWaiting();
 };
 
