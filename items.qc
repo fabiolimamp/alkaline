@@ -1,6 +1,3 @@
-/* ALL LIGHTS SHOULD BE 0 1 0 IN COLOR ALL OTHER ITEMS SHOULD
-BE .8 .3 .4 IN COLOR */
-
 float ITEM_SPAWNSILENT = 32;
 float ITEM_SPAWNED = 64;
 float ITEM_SUSPENDED = 128;
@@ -11,21 +8,20 @@ float ITEM_DONTDROP = 32768;
 // used to drop items from enemies
 float ITEM_DONTPRECACHE = 8388608; 
 
-void() SUB_regen =
-{
+void() SUB_regen = {
 	//self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
+
 	if (deathmatch || (self.spawnflags & ITEM_RESPAWNDM))	// Respawn with DM effects
 		sound (self, CHAN_VOICE, "items/itembk2.wav", 1, ATTN_NORM);	// play respawn sound
 	else
 		spawn_tfog (self.origin + self.particles_offset);	// play teleport sound and display particles
+
 	self.flicker = "";
 	self.alpha = 0;
 	setorigin (self, self.origin);
 };
 
-
-void(vector org, float qt, float color, vector vel) spawnsparks;
 
 // global entity that controls respawning items' flicker/spark effect
 // entities with ".flicker" set to "true" will be affected
@@ -80,8 +76,7 @@ void() healthcontroller_think = {
 // remember that SUB_Regen is already set on every item that can respawn, all we
 // need to do is give a nextthink time in order to trigger it
 
-void(entity whatitem, float defaultdelay) CheckItemRespawn =
-{
+void(entity whatitem, float defaultdelay) CheckItemRespawn = {
 	if (!whatitem.ritem)	// respawn item if true, otherwise abort
 		return;
 
@@ -142,16 +137,6 @@ void() DelaySpawnItem =
 };
 
 
-// Supa, restore old hull and lock movement
-void() RefreshHull =
-{
-	// setsize (self, self.dest, self.dest2);
-	setsize (self, '0 0 0', '32 32 56'); //dumptruck_ds -- fix for bounding boxes
-
-	self.movetype = MOVETYPE_NONE;
-	self.velocity = '0 0 0';
-};
-
 /*
 ================================
 ItemSize
@@ -159,8 +144,7 @@ jigger the origin and bounds of items with off-center origins so their models
 appear in the center of their bboxes using MATHS
 ================================
 */
-void() ItemSize =
-{
+void() ItemSize = {
 	if (self.mins != '0 0 0')
 		return;	// not a silly corner-bbox item
 
@@ -178,8 +162,7 @@ PlaceItem
 plants the object on the floor
 ============
 */
-void() PlaceItem =
-{
+void() PlaceItem = {
 	// local float	oldz;
 
 	self.mdl = self.model;		// so it can be restored on respawn
@@ -226,9 +209,8 @@ StartItem
 Sets the clipping size and plants the object on the floor
 ============
 */
-void() StartItem =
-{
-	if(self.itemstyle == ITEMSTYLE_MDL) ItemSize();
+void() StartItem = {
+	if (self.itemstyle == ITEMSTYLE_MDL) ItemSize();
 	self.nextthink = time + 0.2;	// items start after other solids
 	self.think = PlaceItem;
 };
@@ -250,13 +232,15 @@ float (entity e, float healamount, float ignore) T_Heal =
 //johnfitz
 
 	if (e.health <= 0)
-		return 0;
-	if ((!ignore) && (e.health >= other.max_health))
-		return 0;
+		return FALSE;
+
+	if (!ignore && e.health >= other.max_health)
+		return FALSE;
+
 	healamount = ceil(healamount);
 
 	e.health = e.health + healamount;
-	if ((!ignore) && (e.health >= other.max_health))
+	if (!ignore && e.health >= other.max_health)
 		e.health = other.max_health;
 		
 	if (e.health > 250)
@@ -264,7 +248,7 @@ float (entity e, float healamount, float ignore) T_Heal =
 		
 	StopBurning(e); //johnfitz -- healing will stop a player from burning
 		
-	return 1;
+	return TRUE;
 };
 
 /*QUAKED item_health (.3 .3 1) (0 0 0) (32 32 32) rotten megahealth
@@ -277,84 +261,71 @@ one point per second.
 
 float	H_ROTTEN = 1;
 float	H_MEGA = 2;
-void() health_touch;
-//void() item_megahealth_rot;
 
-
-void() item_health =
-{	
+void() item_health = {
 	local string model;
 	self.touch = health_touch;
-	if(!self.itemstyle) self.itemstyle = world.itemstyle;
+	if (!self.itemstyle) self.itemstyle = world.itemstyle;
 
-	if (self.spawnflags & H_ROTTEN)
-	{
-		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_h15.mdl";
+	if (self.spawnflags & H_ROTTEN) {
+		if (self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_h15.mdl";
 		else model = "maps/b_bh10.bsp";
 		self.noise = "items/r_item1.wav";
 		self.healamount = 15;
 		self.healtype = 0;
 	}
-	else if (self.spawnflags & H_MEGA)
-	{
-		if(self.itemstyle == ITEMSTYLE_MDL)	model = "progs/m_h100.mdl";
+	else if (self.spawnflags & H_MEGA) {
+		if (self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_h100.mdl";
 		else model = "maps/b_bh100.bsp";
 		self.noise = "items/r_item2.wav";
 		self.healamount = 100;
 		self.healtype = 2;
 	}
-	else
-	{
-		if(self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_h25.mdl";
+	else {
+		if (self.itemstyle == ITEMSTYLE_MDL) model = "progs/m_h25.mdl";
 		else model = "maps/b_bh25.bsp";
 		self.noise = "items/health1.wav";
 		self.healamount = 25;
 		self.healtype = 1;
 	}
+
 	precache_model(model);
 	setmodel(self, model);
 	precache_sound(self.noise);
 
-	setsize (self, '0 0 0', '32 32 56');
-	StartItem ();
+	setsize(self, '0 0 0', '32 32 56');
+	StartItem();
 };
 
 
-void() health_touch =
-{
-//	local	float amount;
-	local	string	s;
+void() health_touch = {
 	
 	if (other.classname != "player")
 		return;
 	
-	if (self.healtype == 2) // Megahealth?  Ignore max_health...
-	{
+	if (self.healtype == 2) { // Megahealth?  Ignore max_health...
+		if (!T_Heal(other, self.healamount, TRUE))
+			return;
+
 		// if the healthcontroller is gone for some reason (it shouldn't), recreate it
 		if (other.healthcontroller.classname != "healthcontroller")
 			SUB_CallAsSelf(CreateHealthController, other);
-
-		other.healthcontroller.nextthink = time + 1; //resets rot controller's nextthink so it first happens exactly 1s after
-		if (other.health >= 250)
-			return;
-		if (!T_Heal(other, self.healamount, 1))
-			return;
+		//resets health controller's nextthink so it first happens exactly 1s after this
+		other.healthcontroller.nextthink = time + 1; 
 	}
-	else
-	{
-		if (!T_Heal(other, self.healamount, 0))
+	else {
+		if (!T_Heal(other, self.healamount, FALSE))
 			return;
 	}
 	
 	sprint(other, "You receive ");
-	s = ftos(self.healamount);
-	sprint(other, s);
+	sprint(other, ftos(self.healamount));
 	sprint(other, " health\n");
 	
-// health touch sound
+	// health touch sound
 	sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 
-	stuffcmd (other, "bf\n");
+	stuffcmd(other, "bf\n");
 	
 	self.model = string_null;
 	self.solid = SOLID_NOT;
@@ -381,8 +352,7 @@ ARMOR
 ===============================================================================
 */
 
-void() armor_touch =
-{
+void() armor_touch = {
 	local	float	type, value, bit;
 	
 	if (other.health <= 0)
@@ -434,8 +404,8 @@ void() armor_touch =
 };
 
 
-void() shard_touch = // this from RMQ shard_touch
-{
+void() shard_touch = { // progs_dump
+
 	if (other.health <= 0)
 		return;
 	if (other.classname != "player")
@@ -449,7 +419,7 @@ void() shard_touch = // this from RMQ shard_touch
 		if (other.items & IT_ARMOR2 && other.armorvalue >= 175)	return;
 		if (other.items & IT_ARMOR3 && other.armorvalue >= 225)	return;
 
-		other.armorvalue = other.armorvalue + 5;	// was 2, RMQ team
+		other.armorvalue = other.armorvalue + 5; // was 2, RMQ team
 
 		// Supa, now cap armourvalue to bounds
 		if		(other.items & IT_ARMOR1 && other.armorvalue >= 125)	other.armorvalue = 125;
@@ -496,40 +466,37 @@ void() item_armor_shard = {
 	StartItem();
 };
 
-void() item_armor1 =
-{
+void() item_armor1 = {
 	self.touch = armor_touch;
-	precache_model ("progs/armor.mdl");
-	setmodel (self, "progs/armor.mdl");
+	precache_model("progs/armor.mdl");
+	setmodel(self, "progs/armor.mdl");
 	self.skin = 0;
-	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+	setsize(self, '-16 -16 0', '16 16 56');
+	StartItem();
 };
 
 /*QUAKED item_armor2 (0 .5 .8) (-16 -16 0) (16 16 32)
 */
 
-void() item_armor2 =
-{
+void() item_armor2 = {
 	self.touch = armor_touch;
-	precache_model ("progs/armor.mdl");
-	setmodel (self, "progs/armor.mdl");
+	precache_model("progs/armor.mdl");
+	setmodel(self, "progs/armor.mdl");
 	self.skin = 1;
-	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+	setsize(self, '-16 -16 0', '16 16 56');
+	StartItem();
 };
 
 /*QUAKED item_armorInv (0 .5 .8) (-16 -16 0) (16 16 32)
 */
 
-void() item_armorInv =
-{
+void() item_armorInv = {
 	self.touch = armor_touch;
-	precache_model ("progs/armor.mdl");
-	setmodel (self, "progs/armor.mdl");
+	precache_model("progs/armor.mdl");
+	setmodel(self, "progs/armor.mdl");
 	self.skin = 2;
-	setsize (self, '-16 -16 0', '16 16 56');
-	StartItem ();
+	setsize(self, '-16 -16 0', '16 16 56');
+	StartItem();
 };
 
 /*
@@ -872,10 +839,10 @@ AMMO
 ===============================================================================
 */
 
-void() ammo_touch =
-{
-local entity	stemp;
-local float		best;
+void() ammo_touch = {
+	entity stemp;
+	float best;
+	float prev_ammo, picked_amount;
 
 	if (other.classname != "player")
 		return;
@@ -890,41 +857,52 @@ local float		best;
 
 
 // shotgun
-	if (self.weapon == 1)
-	{
+	if (self.weapon == 1) {
 		if (other.ammo_shells >= 100)
 			return;
+		prev_ammo = other.ammo_shells;
 		other.ammo_shells = other.ammo_shells + self.aflag;
+		bound_other_ammo();
+		picked_amount = other.ammo_shells - prev_ammo;
 	}
 
 // spikes
-	if (self.weapon == 2)
-	{
+	if (self.weapon == 2) {
 		if (other.ammo_nails >= 200)
 			return;
+		prev_ammo = other.ammo_nails;
 		other.ammo_nails = other.ammo_nails + self.aflag;
+		bound_other_ammo();
+		picked_amount = other.ammo_nails - prev_ammo;
 	}
 
 //	rockets
-	if (self.weapon == 3)
-	{
+	if (self.weapon == 3) {
 		if (other.ammo_rockets >= 100)
 			return;
+
+		prev_ammo = other.ammo_rockets;
 		other.ammo_rockets = other.ammo_rockets + self.aflag;
+		bound_other_ammo();
+		picked_amount = other.ammo_rockets - prev_ammo;
 	}
 
 //	cells
-	if (self.weapon == 4)
-	{
+	if (self.weapon == 4) {
 		if (other.ammo_cells >= 100)
 			return;
+		prev_ammo = other.ammo_cells;
 		other.ammo_cells = other.ammo_cells + self.aflag;
+		bound_other_ammo();
+		picked_amount = other.ammo_cells - prev_ammo;
 	}
 
-	bound_other_ammo ();
 	
-	sprint (other, "You got the ");
+	sprint (other, "You got ");
+	sprint (other, ftos(picked_amount));
+	sprint (other, " ");
 	sprint (other, self.netname);
+	if (picked_amount > 1) sprint (other, "s");
 	sprint (other, "\n");
 // ammo touch sound
 	sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
@@ -932,8 +910,7 @@ local float		best;
 
 // change to a better weapon if appropriate
 
-	if ( other.weapon == best && (!(deathmatch)))
-	{
+	if (other.weapon == best && !deathmatch) {
 		stemp = self;
 		self = other;
 		self.weapon = W_BestWeapon();
@@ -957,6 +934,7 @@ local float		best;
 		CheckItemRespawn(self, 30);
 	else if (deathmatch == 1)
 		self.nextthink = time + 30;
+
 	self.think = SUB_regen;
 
 	activator = other;
@@ -993,7 +971,7 @@ void() item_shells =
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 1;
-	self.netname = "shells";
+	self.netname = "shell";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1023,7 +1001,7 @@ void() item_spikes =
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 2;
-	self.netname = "nails";
+	self.netname = "nail";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1053,7 +1031,7 @@ void() item_rockets =
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 3;
-	self.netname = "rockets";
+	self.netname = "rocket";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1084,7 +1062,7 @@ void() item_cells =
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model (model);
 	setmodel (self, model);
 	self.weapon = 4;
-	self.netname = "cells";
+	self.netname = "cell";
 	setsize (self, '0 0 0', '32 32 56');
 	StartItem ();
 };
@@ -1225,8 +1203,6 @@ POWERUPS
 
 ===============================================================================
 */
-
-void() powerup_touch;
 
 
 void() powerup_touch =
