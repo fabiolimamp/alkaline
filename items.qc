@@ -125,6 +125,12 @@ Makes a SPAWNED item ready for pickup on a trigger event - modified a bit -- dum
 void() DelaySpawnItem =
 {
 	self.solid = SOLID_TRIGGER;
+	
+	if (self.spawnflags & ITEM_SUSPENDED)
+		self.movetype = MOVETYPE_FLY;
+	else
+		self.movetype = MOVETYPE_TOSS;
+
 	setmodel (self, self.mdl);
 	setsize (self, self.pos1, self.pos2);
 
@@ -180,8 +186,7 @@ void() PlaceItem =
 	self.flags = FL_ITEM;
 	self.solid = SOLID_TRIGGER;
 
-	if ((self.spawnflags & ITEM_SUSPENDED)) 
-	{
+	if (self.spawnflags & ITEM_SUSPENDED) {
 		self.movetype = MOVETYPE_FLY;
 		self.velocity = '0 0 0';
 	}
@@ -193,24 +198,21 @@ void() PlaceItem =
 			setorigin (self, self.origin + '0 0 6');
 
 	//		oldz = self.origin_z;
-			if (!droptofloor())
-			{
-				dprint ("Bonus item fell out of level at ");
-				dprint (vtos(self.origin));
-				dprint ("\n");
+			if (!droptofloor()) {
+				dprint4(self.classname, " fell out of level at ", vtos(self.origin), "\n");
 				remove(self);
 				return;
 			}
 		}
 	}
 
-	if ((self.spawnflags & ITEM_SPAWNED))		// SPAWNED, gb
-	{
+	if (self.spawnflags & ITEM_SPAWNED) {
 		self.pos1 = self.mins;
 		self.pos2 = self.maxs;
 
 		self.model = "";
 		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_NONE;
 
 		self.use = DelaySpawnItem;
 	}
