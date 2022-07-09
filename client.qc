@@ -1,12 +1,3 @@
-
-// prototypes
-void () W_WeaponFrame;
-void() W_SetCurrentAmmo;
-void(entity attacker, float damage) player_pain;
-void() player_stand1;
-void (vector org) spawn_tfog;
-void (vector org, entity death_owner) spawn_tdeath;
-
 float	modelindex_eyes, modelindex_player;
 nosave float 	gameloaded;
 
@@ -26,16 +17,10 @@ string 	intermission_message;
 This is the camera point for the intermission.
 Use mangle instead of angle, so you can set pitch or roll as well as yaw.  'pitch yaw roll'
 */
-void() info_intermission =
-{
-};
-
-float(float weapons, float shells, float nails, float cells, float waterlevel) W_BestWeaponParms;
-float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms;
+void() info_intermission = {};
 
 // engine sysdef function. Called automatically for every client on map change
-void() SetChangeParms =
-{
+void() SetChangeParms = {
 	// mapvars and playerstart id for the next map are always passed down
 	parm12 = playerstart_id;
 	parm15 = mapvars[0];
@@ -84,8 +69,7 @@ void() SetChangeParms =
 	
 };
 
-void() SetNewParms =
-{
+void() SetNewParms = {
 	parm1 = WEAPON_SHOTGUN; // items + HUD weapons only, axe isn't needed here
 	parm2 = 100; // health
 	parm3 = 0; // armor value
@@ -134,8 +118,7 @@ void(entity cl, entity base) TakeAndGiveWeapons = {
 	}
 };
 
-void() DecodeLevelParms =
-{
+void() DecodeLevelParms = {
 	float prev_mapvar_cvar;
 	prev_mapvar_cvar = mapvar_cvar;
 
@@ -171,65 +154,21 @@ void() DecodeLevelParms =
 };
 
 
-void(entity client, string savename) autosave =
-{
+void(entity client, string savename) autosave = {
 	//autosavename = savename;
 	stuffcmd(client, "echo Autosaving...; wait; save ");
 	stuffcmd(client, savename);
 	stuffcmd(client, "\n");
 }
 
-/*
-============
-FindIntermission
-
-Returns the entity to view from
-============
-*/
-entity() FindIntermission =
-{
-	local	entity spot;
-	local	float cyc;
-
-// look for info_intermission first
-	spot = find (world, classname, "info_intermission");
-	if (spot)
-	{	// pick a random one
-		cyc = random() * 4;
-		while (cyc > 1)
-		{
-			spot = find (spot, classname, "info_intermission");
-			if (!spot)
-				spot = find (spot, classname, "info_intermission");
-			cyc = cyc - 1;
-		}
-		return spot;
-	}
-
-// then look for the start position
-	spot = find (world, classname, "info_player_start");
-	if (spot)
-		return spot;
-	
-// testinfo_player_start is only found in regioned levels
-	spot = find (world, classname, "testplayerstart");
-	if (spot)
-		return spot;
-	
-	objerror ("FindIntermission: no spot");
-	return spot; //shut up compiler
-};
-
 
 string nextmap;
-void() GotoNextMap =
-{
+void() GotoNextMap = {
 	if (cvar("samelevel"))	// if samelevel is set, stay on same level
 		changelevel (mapname);
 	else
 		changelevel (nextmap);
 };
-
 
 void() ExitIntermission =
 {
@@ -295,20 +234,23 @@ IntermissionThink
 When the player presses attack or jump, change to the next level
 ============
 */
-void() IntermissionThink =
-{
-	if (time < intermission_exittime)
-		return;
+void() IntermissionThink = {
 
 	if (!self.button0 && !self.button1 && !self.button2)
 		return;
-	
+
+	if (self.button0) {
+		if (time > self.pain_finished) nextIntermission();
+		return;
+	}
+
+	if (time < intermission_exittime)
+		return;
+
 	ExitIntermission ();
 };
 
-void() execute_changelevel =
-{
-	local entity	pos;
+void() execute_changelevel = {
 
 	intermission_running = 1;
 
@@ -327,28 +269,35 @@ void() execute_changelevel =
 	WriteByte (MSG_ALL, 3);
 	WriteByte (MSG_ALL, 3);
 	
-	pos = FindIntermission ();
-
+	
 	other = find (world, classname, "player");
-	while (other != world)
-	{
-		other.view_ofs = '0 0 0';
-		other.angles = other.v_angle = pos.mangle;
-		other.fixangle = TRUE;		// turn this way immediately
-		other.nextthink = time + 0.5;
+
+	while (other != world) {
 		other.takedamage = DAMAGE_NO;
 		other.solid = SOLID_NOT;
 		other.movetype = MOVETYPE_NONE;
-		other.modelindex = 0;
+		other.view_ofs = '0 0 0';
+
+		//from copper: origins don't update without a model
+		//other.modelindex = 0;
+		other.model = "";
+		other.weaponmodel = "";
+
 		other.punchangle = '0 0 0';
-		setorigin (other, pos.origin);
-		fog_setFromEnt(other, pos);
-		other = find (other, classname, "player");
+
+		other.nextthink = time + 0.5;
+
+		other.goalentity = world;
+		SUB_CallAsSelf(nextIntermission, other);
+
+		other = find(other, classname, "player");
 	}	
 
 	WriteByte (MSG_ALL, SVC_INTERMISSION);
 };
 
+void() nextIntermission = {
+	entity pos;
 
 	//do {
 	if (!self.goalentity) pos = FindIntermission(world);
@@ -509,8 +458,7 @@ void() trigger_changelevel = {
 void() set_suicide_frame;
 
 // called by ClientKill and DeadThink
-void() respawn =
-{
+void() respawn = {
 	if (coop)
 	{
 		// make a copy of the dead body for appearances sake
@@ -543,8 +491,7 @@ ClientKill
 Player entered the suicide command
 ============
 */
-void() ClientKill =
-{
+void() ClientKill = {
 	bprint (self.netname);
 	bprint (" suicides\n");
 	set_suicide_frame ();
@@ -553,8 +500,7 @@ void() ClientKill =
 	respawn ();
 };
 
-float(vector v) CheckSpawnPoint =
-{
+float(vector v) CheckSpawnPoint = {
 	return FALSE;
 };
 
@@ -582,8 +528,7 @@ entity(entity start, string findclass, float id) findSpawnPoint = {
 	return spot;
 };
 
-entity() SelectSpawnPoint =
-{
+entity() SelectSpawnPoint = {
 	local	entity spot;
 	local	entity thing;
 	local 	entity last_testplayerstart;
@@ -701,11 +646,8 @@ PutClientInServer
 called each time a player is spawned
 ============
 */
-void() DecodeLevelParms;
-void() PlayerDie;
 
-void() PutClientInServer =
-{
+void() PutClientInServer = {
 	local	entity spot;
 
 	dprint5("\b[CLIENT]\b Connected at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
