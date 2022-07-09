@@ -6,8 +6,8 @@ TELEPORT TRIGGERS
 ==============================================================================
 */
 
-float	PLAYER_ONLY	= 1;
-float	SILENT = 2;
+float PLAYER_ONLY	= 1;
+float SILENT = 2;
 float TELE_STEALTH = 4;
 float TELE_MONSTER_ONLY = 8;
 float TELE_PLAYERTRIGGERED = 16;
@@ -25,8 +25,7 @@ float TELEDEST_KEEPVELOCITY = 8;
 float TELEDEST_STYLE_NORMAL = 0;
 float TELEDEST_STYLE_INSTANT = 1;
 
-void() play_teleport =
-{
+void() play_teleport = {
 	local	float v;
 	local	string tmpstr;
 
@@ -46,12 +45,11 @@ void() play_teleport =
 	remove (self);
 };
 
-void(vector org) spawn_tfog =
-{
-	s = spawn ();
-	s.origin = org;
-	s.nextthink = time + 0.2;
-	s.think = play_teleport;
+void(vector org) spawn_tfog = {
+	entity telesound = spawn();
+	telesound.origin = org;
+	telesound.nextthink = time + 0.2;
+	telesound.think = play_teleport;
 
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_TELEPORT);
@@ -61,8 +59,7 @@ void(vector org) spawn_tfog =
 };
 
 
-void() tdeath_touch =
-{
+void() tdeath_touch = {
 	if (other == self.owner)
 		return;
 
@@ -86,9 +83,8 @@ void() tdeath_touch =
 };
 
 
-void(vector org, entity death_owner) spawn_tdeath =
-{
-local entity	death;
+void(vector org, entity death_owner) spawn_tdeath = {
+	entity death;
 
 	death = spawn();
 	death.classname = "teledeath";

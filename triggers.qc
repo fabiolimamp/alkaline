@@ -1,7 +1,4 @@
 
-entity s;
-
-
 void() trigger_reactivate =
 {
 	self.solid = SOLID_TRIGGER;
