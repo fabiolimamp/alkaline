@@ -569,7 +569,6 @@ void(float new) Deathmatch_Weapon =
 weapon_touch
 =============
 */
-float() W_BestWeapon;
 
 void() weapon_touch =
 {
