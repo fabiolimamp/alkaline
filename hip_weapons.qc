@@ -253,15 +253,15 @@ void() ProximityGrenadeTouch = {
 	if (other.classname == self.classname)
 		return;
 
-		
-	if (vlen(other.velocity) > 0) {
-		ProximityGrenadeExplode();
-		return;
-	}
 
 	if (other.takedamage == DAMAGE_AIM) {
 		SpawnExplosion(self.origin, 60, self, 0);
 
+		ProximityGrenadeExplode();
+		return;
+	}
+
+	if (vlen(other.velocity) > 0) {
 		ProximityGrenadeExplode();
 		return;
 	}
