@@ -239,13 +239,21 @@ returns 1 if the entity is visible to self, even if not infront ()
 float (entity targ) visible =
 {
 	local vector	spot1, spot2;
-	
+	float startinliquid, endinliquid;
+
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
 	traceline (spot1, spot2, TRUE, self);	// see through other monsters
 	
+	//if (trace_inopen && trace_inwater)
+
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
+	
+	if (pointcontents2(spot1) <= CONTENT_WATER) startinliquid = TRUE;
+	if (pointcontents2(trace_endpos) <= CONTENT_WATER) endinliquid = TRUE;
+	if (startinliquid != endinliquid)
+		return FALSE;
 
 	if (trace_fraction == 1)
 		return TRUE;
@@ -255,6 +263,7 @@ float (entity targ) visible =
 float (entity org, entity targ) visible2 =
 {
 	local vector	spot1, spot2;
+	float startinliquid, endinliquid;
 	
 	spot1 = org.origin + org.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
@@ -262,6 +271,11 @@ float (entity org, entity targ) visible2 =
 	
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
+
+	if (pointcontents2(spot1) <= CONTENT_WATER) startinliquid = TRUE;
+	if (pointcontents2(trace_endpos) <= CONTENT_WATER) endinliquid = TRUE;
+	if (startinliquid != endinliquid)
+		return FALSE;
 
 	if (trace_fraction == 1)
 		return TRUE;
@@ -278,6 +292,7 @@ returns 1 if there are no entities in the way of the shot
 float (entity targ) canshoot =
 {
 	local vector	spot1, spot2;
+	float startinliquid, endinliquid;
 	
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;
@@ -289,6 +304,11 @@ float (entity targ) canshoot =
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
 
+	if (pointcontents2(spot1) <= CONTENT_WATER) startinliquid = TRUE;
+	if (pointcontents2(trace_endpos) <= CONTENT_WATER) endinliquid = TRUE;
+	if (startinliquid != endinliquid)
+		return FALSE;
+	
 	return TRUE;
 };
 

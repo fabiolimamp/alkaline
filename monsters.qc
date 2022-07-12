@@ -380,7 +380,8 @@ void() swimmonster_start_go =
 
 	search_path_angry();
 
-	self.flags = self.flags | FL_SWIM;
+	self.flags = self.flags | FL_FLY | FL_SWIM2;
+	//self.flags = self.flags | FL_SWIM;
 	self.flags = self.flags | FL_MONSTER;
 
 	if (self.target)

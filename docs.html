@@ -810,9 +810,9 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 <h2 id="solids">Solids</h2>
 
 <h3 id="liquids">Dynamic liquids</h3>
-<p>You can turn any solid brush, such as a togglable func_door or a func_train, into a dynamic liquid brush. Add a <strong>liquidbrush 1</strong> key to it and see the magic happens.</p>
+<p>You can turn any solid brush, such as a togglable func_door or a func_train, into a dynamic liquid brush. Add a <strong>liquidbrush 1</strong> key to it and see the magic happens. You won't get the water warp screen effect while submerged, only the screen tint. Otherwise it should work as a normal liquid volume.</p>
 
-<p>There are two caveats with this system to keep in mind, due to engine limitations. First, there's no way to get water monsters to swim into it. Walking and flying monsters behave normally though. Second, you won't get the water warp screen effect while submerged, only the screen tint.</p>
+<p>A limitation about this system is that the dynamic liquid brushes' area of influence is determined by their bounding boxes, instead of the actual geometry, just like triggers.</p>
 
 <p>Adding a <strong>liquidtype</strong> key turns it into slime (liquidtype 1), or lava (liquidtype 2).</p>
 

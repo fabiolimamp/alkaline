@@ -202,6 +202,8 @@ float playerstart_id;
 float reset_items_on_map_change;
 
 entity flickercontroller;
+entity liquidbrushfirst;
+entity swimmonsterchecker;
 
 /*
 FIELDS
@@ -635,6 +637,8 @@ float prevdoornum;
 .float liquidtype;
 .vector liquidcolor;
 .float liquiddensity;
+.entity nextliquidbrush;
+.entity prevliquidbrush;
 
 .float prevgravity;
 

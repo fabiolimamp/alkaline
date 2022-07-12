@@ -25,6 +25,7 @@ float 	FL_IGNOREDATTACK		= 131072; 	// monsters won't get angry at this entity w
 float 	FL_SPAWNEDMONSTER		= 262144; 	// spawned trigger spawn monsters
 float 	FL_NEVERTELEPORT		= 524288; 	// never teleport
 float 	FL_INLIQUIDBRUSH		= 1048576;  // touching liquid brush
+float 	FL_SWIM2				= 2097152;	// use this instead of FL_SWIM for liquid brush compatibility
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves

@@ -339,6 +339,10 @@ void() worldspawn =
 	flickercontroller.think = flickercontroller_think;
 	flickercontroller.nextthink = time + 0.1;
 
+	swimmonsterchecker = spawn();
+	swimmonsterchecker.think = swimmonsterchecker_think;
+	swimmonsterchecker.nextthink = time + 0.05;
+
 };
 
 //johnfitz -- need to wait a bit before resetting burning/underwater sounds so client will be fully connected when we do

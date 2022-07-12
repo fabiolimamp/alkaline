@@ -384,6 +384,11 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 				WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 			}
 		}
+
+		// liquid brush list handling
+		if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
+		if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
+
 		remove (t);
 		t = find (t, matchfield, matchstring);
 	}

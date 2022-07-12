@@ -3,27 +3,54 @@ float LIQUID_SLIME = 1;
 float LIQUID_LAVA = 2;
 
 void() startupWaterBrushes = {
-	entity e;
+	entity e, prev;
 
 	e = find(world, liquidbrush, "1");
+	if (e) liquidbrushfirst = e;
 	while (e) {
 		e.solid = SOLID_NOT;
 		e.movetype = MOVETYPE_NOCLIP;
 		setorigin(e, e.origin);
 
+		prev = e;
 		e = find(e, liquidbrush, "1");
+		if (e) {
+			prev.nextliquidbrush = e;
+			e.prevliquidbrush = prev;
+		}
+
 	}
 };
+
+void() swimmonsterchecker_think = {
+	entity e;
+
+	e = nextent(world);
+	while (e) {
+		if (e.flags & (FL_MONSTER | FL_SWIM2) == FL_MONSTER | FL_SWIM2) {
+			if (e.health > 0) {
+				if (pointcontents2(e.origin) > CONTENT_WATER)
+					e.flags &~= FL_FLY;
+				else
+					e.flags |= FL_FLY;
+			}
+		}
+		e = nextent(e);
+	}
+	self.nextthink = time + 0.03;
+}
 
 
 void() checkSelfInWaterBrush = {
 	entity e;
 	float lvl;
-
-	e = find(world, liquidbrush, "1");
+	float prevlvl = self.waterlevel;
+	if (self.classname == "monster_fish") dprint4(self.targetname, ", previous waterlevel ", ftos(self.waterlevel), "\n");
+	//e = find(world, liquidbrush, "1");
+	e = liquidbrushfirst;
 
 	while (e) {
-		lvl = getWaterLevel(self, e);
+		lvl = getWaterLevelFromBrush(self, e);
 		if (lvl) {
 			self.waterlevel = lvl;
 
@@ -63,7 +90,8 @@ void() checkSelfInWaterBrush = {
 			return;
 		}
 
-		e = find(e, liquidbrush, "1");
+		//e = find(e, liquidbrush, "1");
+		e = e.nextliquidbrush;
 	}
 
 	// if the code came up to here, it means no liquid brush was touched in this frame,
@@ -88,8 +116,8 @@ float(vector org) pointcontents2 = {
 	entity e;
 	float touched;
 
-	e = find(world, liquidbrush, "1");
-
+	//e = find(world, liquidbrush, "1");
+	e = liquidbrushfirst;
 	while (e) {
 		touched = getWaterTouch(org, e);
 		if (touched) {
@@ -98,15 +126,17 @@ float(vector org) pointcontents2 = {
 			else return CONTENT_WATER;
 		}
 
-		e = find(e, liquidbrush, "1");
+		//e = find(e, liquidbrush, "1");
+		e = e.nextliquidbrush;
 	}
 	return CONTENT_EMPTY;
 }
 
-
-float (entity e, entity brush) getWaterLevel = {
-	// horizontal axes checked against entity's origin
-	// vertical axis checked against entity's bottom limit and view_ofs 
+// tests an entity against a water brush
+float (entity e, entity brush) getWaterLevelFromBrush = {
+	// same method as the engine's internal function:
+	// - horizontal axes checked against entity's origin
+	// - vertical axis checked against entity's bottom limit and view_ofs 
 	if (e.origin_x > brush.absmax_x) 
 		return 0;
 	if (e.origin_x < brush.absmin_x)
@@ -134,6 +164,7 @@ float (entity e, entity brush) getWaterLevel = {
 	return lvl;
 };
 
+// tests a point coordinate against a water brush
 float (vector org, entity brush) getWaterTouch = {
 	if (org_x > brush.absmax_x) 
 		return 0;

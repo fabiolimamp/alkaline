@@ -96,10 +96,8 @@ void(entity targ, entity attacker) Killed =
 
 	// fall to ground
 	self.movetype = MOVETYPE_STEP;
-	if (self.flags & FL_FLY)
-		self.flags = self.flags - FL_FLY;
-	if (self.flags & FL_SWIM)
-		self.flags = self.flags - FL_SWIM;
+	
+	self.flags &~= FL_FLY | FL_SWIM | FL_SWIM2;
 
 	monster_death_use();
 
