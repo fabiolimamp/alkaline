@@ -800,6 +800,8 @@ void(entity d1, float ldcount) LinkDoorsEntity = {
 		d1.lastenemy = d1;
 		d1.doorlooped = TRUE;
 
+		setupTriggerField(d1, ldcount);
+		
 		return;
 	}
 	
