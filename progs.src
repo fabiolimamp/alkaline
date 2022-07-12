@@ -58,7 +58,6 @@ misc_scientist.qc
 rubicon2.qc					// johnfitz
 
 hiprot.qc					// hipnotic
-hip_expl.qc					// hipnotic
 hip_weapons.qc				// hipnotic
 hipholes.qc					// hipnotic
 
@@ -78,12 +77,12 @@ monsters/hknight.qc			// registered
 monsters/fish.qc			// registered
 monsters/shalrath.qc		// registered
 monsters/enforcer.qc		// registered
-monsters/enforce2.qc		// zerstorer
+monsters/megaenforcer.qc	// zerstorer
 monsters/lieutenant.qc		// forwards compatible
 monsters/oldone.qc			// registered
 
-monsters/hiparma.qc			// hipnotic
-monsters/hipscrge.qc		// hipnotic
+monsters/armagon.qc			// hipnotic
+monsters/centroid.qc		// hipnotic
 monsters/eel.qc				// Rogue
 
 turret.qc					// johnfitz
@@ -97,9 +96,9 @@ monsters/monster_rider.qc	// Malice
 monsters/monster_probe.qc	// Malice
 
 monsters/hunter.qc			// ijed (RRP)
-monsters/ogreb.qc			// ijed (RRP)
+monsters/ogre_berserker.qc	// ijed (RRP)
 
-monsters/drone1.qc			// OUM
+monsters/drone.qc			// OUM
 monsters/axegrunt.qc		// Lunaran
 monsters/bambler.qc			// greenwood
 monsters/tormentor.qc 		// bmFbr

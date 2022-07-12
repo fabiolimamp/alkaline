@@ -37,6 +37,64 @@ $frame ldie7.asc ldie8.asc ldie9.asc ldie10.asc ldie11.asc ldie12.asc
 float ATTN_ARMAGON = 0.5;
 float SERVO_VOLUME = 0.5;
 
+
+void() multi_exploder_fire = {
+	entity temp;
+	entity expl;
+
+	self.nextthink = time + self.wait;
+
+	if (self.state == 0) {
+		self.state = 1;
+		self.duration = time + self.duration;
+
+		temp = self;
+		activator = other;
+		SUB_UseTargets();
+
+		self = temp;
+		other = self;
+	}
+	
+	if (time > self.duration) {
+		remove(self);
+		return;
+	}
+
+	expl = spawn();
+	expl.owner = self.owner;
+	expl.dmg = self.dmg;
+	expl.origin_x = self.absmin_x + (random() * (self.absmax_x - self.absmin_x));
+	expl.origin_y = self.absmin_y + (random() * (self.absmax_y - self.absmin_y));
+	expl.origin_z = self.absmin_z + (random() * (self.absmax_z - self.absmin_z));
+	sound (expl , CHAN_VOICE, "misc/shortexp.wav", self.volume, self.speed);
+	T_RadiusDamage (expl, self.owner, self.dmg, other, DMGTYPE_EXPLOSION);
+
+	temp = self;
+	self = expl;
+	BecomeExplosion();
+	self = temp;
+};
+
+void( vector loc, float rad, float damage, float dur, float pause, float vol) multi_explosion = {
+	local entity temp;
+
+	temp = self;
+	self = spawn();
+	self.origin = loc;
+	self.dmg = damage;
+	self.duration = dur;
+	self.wait = pause;
+	self.owner = world;
+	self.absmin = self.origin - (rad * '1 1 1');
+	self.absmax = self.origin + (rad * '1 1 1');
+	self.think = multi_exploder_fire;
+	self.volume = vol;
+	multi_exploder_fire();
+	self = temp;
+};
+
+
 void(float ofs, float turn) armagon_launch_missile = {
 	local vector   src, vec, targ;
 	local vector   ang;
