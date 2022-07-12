@@ -120,7 +120,7 @@ void() forcefield_touch =	{
 
 void() forcefield_use = {
    if (self.noise != "") sound(self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
-   dprint("forcefield used\n");
+   
    if(self.spawnflags & FORCEFIELD_PULSE) {
       forcefield_pulse();
    }

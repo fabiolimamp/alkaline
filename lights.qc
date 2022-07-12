@@ -545,7 +545,7 @@ void(float speed) misc_shadowcontroller_setsteps = {
 void() misc_shadowcontroller_use = {
 
 	if (self.shadowoff) {
-		dprint("Fade in:\n");
+		//dprint("Fade in:\n");
 
 		misc_shadowcontroller_setsteps(self.speed);
 
@@ -553,7 +553,7 @@ void() misc_shadowcontroller_use = {
 
 		self.shadowoff = 0;
 	} else {
-		dprint("Fade out:\n");
+		//dprint("Fade out:\n");
 
 		misc_shadowcontroller_setsteps(self.speed2);
 

@@ -482,9 +482,7 @@ void() floyd_asleep_start = {
 
 	if (!walkmove2(0,0))
 	{
-		dprint ("walkmonster in wall at: ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
+		dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
 	}
 	
 	add_monster_total(1);

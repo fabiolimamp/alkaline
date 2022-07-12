@@ -5,7 +5,6 @@ void() InitBulletHoles;
 
 void() main =
 {
-	dprint ("main function\n");
 
 // sounds loaded by C code
 	precache_sound ("misc/menu1.wav");

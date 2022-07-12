@@ -45,8 +45,7 @@ void() checkSelfInWaterBrush = {
 	entity e;
 	float lvl;
 	float prevlvl = self.waterlevel;
-	if (self.classname == "monster_fish") dprint4(self.targetname, ", previous waterlevel ", ftos(self.waterlevel), "\n");
-	//e = find(world, liquidbrush, "1");
+	
 	e = liquidbrushfirst;
 
 	while (e) {
@@ -90,7 +89,6 @@ void() checkSelfInWaterBrush = {
 			return;
 		}
 
-		//e = find(e, liquidbrush, "1");
 		e = e.nextliquidbrush;
 	}
 
@@ -116,7 +114,6 @@ float(vector org) pointcontents2 = {
 	entity e;
 	float touched;
 
-	//e = find(world, liquidbrush, "1");
 	e = liquidbrushfirst;
 	while (e) {
 		touched = getWaterTouch(org, e);
@@ -126,7 +123,6 @@ float(vector org) pointcontents2 = {
 			else return CONTENT_WATER;
 		}
 
-		//e = find(e, liquidbrush, "1");
 		e = e.nextliquidbrush;
 	}
 	return CONTENT_EMPTY;

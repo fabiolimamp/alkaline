@@ -48,6 +48,32 @@ void() W_FireAxe =
 //============================================================================
 
 
+void(vector org, float dist, float amount) bullethell = {
+	float step = 360/amount;
+	float yaw;
+	vector angs;
+
+	for (yaw = 0; yaw < 360; yaw += step) {
+		angs = [0, yaw, 0];
+		makevectors(angs);
+
+		newmis = spawn();
+		newmis.angles = angs;
+		newmis.velocity = v_forward * 600;
+
+		newmis.owner = self;
+		newmis.movetype = MOVETYPE_FLYMISSILE;
+		newmis.solid = SOLID_BBOX;
+		
+		newmis.nextthink = time + 5;
+		newmis.think = SUB_Remove;
+		newmis.touch = Laser_Touch;
+		
+		setmodel (newmis, "progs/laser.mdl");
+		setsize (newmis, '0 0 0', '0 0 0');
+		setorigin (newmis, org + v_forward * dist);
+	}
+}
 
 /*
 ================
@@ -954,8 +980,6 @@ void() W_FirePlasma =
 	// last projectile was shot continuously, so increase shot count
 	if (time < self.lastshot + 0.08) self.shotcount = min(self.shotcount + 1, 6);
 	else self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
-
-	dprint3("Count: ", ftos(self.shotcount), "\n");
 	
 	makevectors (self.v_angle);
 	missile.velocity = aim(self, 1000) * 1000;

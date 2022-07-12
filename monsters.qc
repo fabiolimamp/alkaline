@@ -1,14 +1,3 @@
-/* ALL MONSTERS SHOULD BE 1 0 0 IN COLOR */
-
-// name =[framenum,	nexttime, nextthink] {code}
-// expands to:
-// name ()
-// {
-//		self.frame=framenum;
-//		self.nextthink = time + nexttime;
-//		self.think = nextthink
-//		<code>
-// };
 
 void(float qt) add_monster_total = {
 	total_monsters += qt;
@@ -254,9 +243,7 @@ void() walkmonster_start_go =
 	
 	if (!walkmove2(0,0))
 	{
-		dprint ("walkmonster in wall at: ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
+		dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
 	}
 	
 	search_path_angry();
@@ -322,9 +309,7 @@ void() flymonster_start_go =
 
 	if (!walkmove2(0,0))
 	{
-		dprint ("flymonster in wall at: ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
+		dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
 	}
 
 	// path_angry doesn't work well with flying monsters

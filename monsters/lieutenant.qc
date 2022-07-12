@@ -103,7 +103,7 @@ void()	lth_run8	=[	$run8  ,	lth_run1	] {ai_run(11);
 	if (random() < 0.2)	sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
 };
 
-void()	lth_atk1	=[	$attack1,	lth_atk2	] {ai_face(); self.count = 0; dprint("restart\n");};
+void()	lth_atk1	=[	$attack1,	lth_atk2	] {ai_face(); self.count = 0;};
 void()	lth_atk2	=[	$attack2,	lth_atk3	] {ai_face();};
 void()	lth_atk3	=[	$attack3,	lth_atk4	] {ai_face();};
 void()	lth_atk4	=[	$attack4,	lth_atk5	] {ai_face();};
