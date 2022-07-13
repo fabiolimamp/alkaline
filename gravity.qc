@@ -8,33 +8,28 @@ trigger_globalgravity
 
 
 
-void(float g) SetGlobalGravity =
-{
+void(float g) SetGlobalGravity = {
 	cvar_set ("sv_gravity", ftos(g)); 
 	bprint("\n\n\n\n");
 };
 
-void() SetGlobalGravity_Use =
-{
+void() SetGlobalGravity_Use = {
 	current_gravity_ent = self;
 	
-	if(self.state)
-	{
+	if (self.state)	{
 		SetGlobalGravity(self.return_gravity);
 		self.state = 0;
 	}
-	else
-	{
+	else {
 		SetGlobalGravity(self.gravity);
 		self.state = 1;
 	}
 };
 
-void() trigger_globalgravity =
-{
-	if(!self.gravity)
+void() trigger_globalgravity = {
+	if (!self.gravity)
 	{
-		objerror ("gravity key not set!\n");
+		objerror("gravity key not set!\n");
 		remove(self);
 	}
 	
@@ -42,24 +37,16 @@ void() trigger_globalgravity =
 	self.state = 0;
 	self.use = SetGlobalGravity_Use;
 	
-	if(!self.return_gravity)
-	{
-		self.return_gravity = 800;
-	}
+	if (!self.return_gravity) self.return_gravity = 800;
+
 };
 
-void() FindAndReadGlobalGravity =
-{
-	if(current_gravity_ent != world && current_gravity_ent.classname == "gravity_global")
-	{
-		if(current_gravity_ent.state)
-		{
+void() FindAndReadGlobalGravity = {
+	if (current_gravity_ent != world && current_gravity_ent.classname == "gravity_global") {
+		if (current_gravity_ent.state)
 			SetGlobalGravity(current_gravity_ent.gravity);
-		}
 		else
-		{
 			SetGlobalGravity(current_gravity_ent.return_gravity);
-		}
 	}
 };
 
@@ -75,43 +62,35 @@ trigger_setgravity
 float DT_GRAVTOFF = 8;  // trigger will start off
 float DT_PLAYERONLY = 16;  // trigger will start off
 
-void() grav_toggle = 
-{ 
-	//dumptruck_ds based on hipnotic blocker_use
-	if ( !self.state )
-	{
-		self.state = 1;
-		self.solid = SOLID_TRIGGER;
-	}
-	else
-	{
-		self.state = 0;
-		self.solid = SOLID_NOT;
-	}
+void() trigger_gravity_use = { 
+	self.estate = !self.estate;
 };
 
 void() trigger_gravity_touch = {
-  // from Copper -- dumptruck_ds
-  // if (!CheckValidTouch()) return;
 	if (self.estate != STATE_ACTIVE) return;
 
-	local float temp_grav;
-
-	if (self.spawnflags & DT_PLAYERONLY && other.classname != "player")
+	if (self.spawnflags & DT_PLAYERONLY && !(other.flags & FL_CLIENT))
 		return;
+
+	float temp_grav;
 
 	if (self.gravity == -1)
 		temp_grav = 1;
 	else
 		temp_grav = self.gravity;
 
-	// the player's gravity is now managed in PlayerPreThink(), however
+	// the player's gravity is managed in PlayerPreThink(), however
 	// other entities don't have special gravity management, so their
 	// gravity is still set directly -- iw
-	if (other.classname == "player")
+	if (other.flags & FL_CLIENT)
 		other.wantedgravity = temp_grav;
-	else
+	else {
 		other.gravity = temp_grav;
+		
+		// dual-entity monsters need to have both parts changed
+		if (other.flags & FL_MONSTER && other.trigger_field)
+			other.trigger_field.gravity = temp_grav;
+	}
 };
 
 /*QUAKED trigger_setgravity (.5 .5 .5) ? X X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
@@ -138,36 +117,19 @@ set the gravity of a player
 
 */
 
-void() trigger_gravity_late_init = 
-{
-	self.solid = SOLID_NOT;
-	self.use = grav_toggle;
+void() trigger_setgravity = {
+	InitTrigger();
+
+	self.use = trigger_gravity_use;
 	self.touch = trigger_gravity_touch;
 
-	SUB_CheckWaiting();
-};
+	if (self.spawnflags & DT_GRAVTOFF)
+		self.estate = STATE_INACTIVE;
 
-void() trigger_setgravity = {
-
-	InitTrigger ();
-	self.solid = SOLID_TRIGGER;
-	
-	if ( self.spawnflags & DT_GRAVTOFF ) //dumptruck_ds
-	{
-		self.use = SUB_Null;
-		self.touch = SUB_Null;
-		self.nextthink = time + 1;
-		self.think = trigger_gravity_late_init;
-	}
-	else
-	{
-		self.use = grav_toggle; // dumptruck_ds
-		self.touch = trigger_gravity_touch;
-		self.state = 1;
-	}
-	
 	if (!self.gravity)
 		self.gravity = -1;
 	else
-		self.gravity = ((self.gravity - 1) / 100);
+		self.gravity = (self.gravity - 1) / 100;
+
+	SUB_CheckWaiting();
 };

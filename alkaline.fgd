@@ -2511,12 +2511,11 @@ Checking 'All clients' will affect all connected players.
 ]
 
 
-@SolidClass base(Appearflags) = trigger_setgravity : "Trigger: sets the gravity of a player or monsters
-
-gravity = what to set the players gravity to
+@SolidClass base(Appearflags, Targetname) = trigger_setgravity : "Sets the gravity of anything that touches it. Players, monsters, gibs, grenades, monster bodies, everything.
 
 If using multiple triggers, do not have them touching. Leave a 'buffer' between them.
 
+Value references for the 'gravity' field:
  - 0 (default) normal gravity
  - 1 no gravity
  - 2 almost no gravity
@@ -2532,7 +2531,7 @@ If using multiple triggers, do not have them touching. Leave a 'buffer' between 
 		8: "Start Off (can be toggled)" : 0
 		16: "Player only" : 0
 	]
-	gravity(integer) : "Gravity : Normal = 0" : 0
+	gravity(integer) : "Gravity" : 0
 ]
 
 
@@ -2560,10 +2559,15 @@ NOTE: You must specify either the silver or gold key by setting the relevant spa
 	]
 ]
 
-@PointClass base(Targetname) = trigger_globalgravity : "Trigger Global Gravity"
+@PointClass base(Targetname) = trigger_globalgravity :
+"Changes the global map gravity, on the same scale as the sv_gravity cvar.
+When triggered, toggles between 'Gravity' and 'Return Gravity' values.
+
+800 is Quake's default. For reference, e1m8 uses gravity 100.
+"
 [
 	gravity(integer) : "Gravity" : 800
-	return_gravity(integer) : "Return Gravity"
+	return_gravity(integer) : "Return Gravity" : 800
 ]
 
 @baseclass = WeaponsList [
