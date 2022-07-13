@@ -10,7 +10,7 @@ trigger_globalgravity
 
 void(float g) SetGlobalGravity = {
 	cvar_set ("sv_gravity", ftos(g)); 
-	bprint("\n\n\n\n");
+	if (!developer) bprint("\n\n\n\n");
 };
 
 void() SetGlobalGravity_Use = {
@@ -27,16 +27,14 @@ void() SetGlobalGravity_Use = {
 };
 
 void() trigger_globalgravity = {
-	if (!self.gravity)
-	{
-		objerror("gravity key not set!\n");
-		remove(self);
-	}
-	
 	self.classname = "gravity_global";
 	self.state = 0;
 	self.use = SetGlobalGravity_Use;
-	
+
+	if (!self.gravity) {
+		dprint3("Warning: trigger_globalgravity with no gravity set close to  ", vtos(self.absmin), "\n");
+		self.gravity = 800;
+	}
 	if (!self.return_gravity) self.return_gravity = 800;
 
 };
@@ -72,24 +70,18 @@ void() trigger_gravity_touch = {
 	if (self.spawnflags & DT_PLAYERONLY && !(other.flags & FL_CLIENT))
 		return;
 
-	float temp_grav;
-
-	if (self.gravity == -1)
-		temp_grav = 1;
-	else
-		temp_grav = self.gravity;
-
 	// the player's gravity is managed in PlayerPreThink(), however
 	// other entities don't have special gravity management, so their
 	// gravity is still set directly -- iw
-	if (other.flags & FL_CLIENT)
-		other.wantedgravity = temp_grav;
+	if (other.flags & FL_CLIENT) {
+		other.wantedgravity = self.gravity;
+	}
 	else {
-		other.gravity = temp_grav;
-		
+		other.gravity = self.gravity;
+
 		// dual-entity monsters need to have both parts changed
 		if (other.flags & FL_MONSTER && other.trigger_field)
-			other.trigger_field.gravity = temp_grav;
+			other.trigger_field.gravity = self.gravity;
 	}
 };
 
@@ -127,7 +119,7 @@ void() trigger_setgravity = {
 		self.estate = STATE_INACTIVE;
 
 	if (!self.gravity)
-		self.gravity = -1;
+		self.gravity = 1;
 	else
 		self.gravity = (self.gravity - 1) / 100;
 
