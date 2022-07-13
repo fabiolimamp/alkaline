@@ -2513,7 +2513,9 @@ Checking 'All clients' will affect all connected players.
 
 @SolidClass base(Appearflags, Targetname) = trigger_setgravity : "Sets the gravity of anything that touches it. Players, monsters, gibs, grenades, monster bodies, everything.
 
-If using multiple triggers, do not have them touching. Leave a 'buffer' between them.
+The amount of gravity can only be changed by touching another trigger_setgravity with a different setting. The gravity key defaults to 0 which is normal gravity. Lower numbers (e.g. 25) equal lower gravity. Setting 101 is normal gravity. Numbers above 101 will make the player “heavier”, i.e. harder to jump.
+
+If you want multiple trigger setgravity triggers in one room or area, make sure the brushes are not touching each other. This can cause the triggers not to work properly.
 
 Value references for the 'gravity' field:
  - 0 (default) normal gravity
@@ -2525,6 +2527,8 @@ Value references for the 'gravity' field:
  - 102 slightly higher gravity
  - ...
  - 1000 very high gravity
+
+
 "
 [
 	spawnflags(flags) = [
