@@ -681,7 +681,8 @@ void() misc_sparks_think =
 		else if (self.spawnflags & SPARKS_BLUE)
 			color = SPARKS_BLUE;
 
-		spawnsparks(self.origin, self.cnt, color, '0 0 0');
+		//spawnsparks(self.origin, self.cnt, color, '0 0 0');
+		spawnsparks(self.origin, self.cnt, color, self.movedir);
 
 		if (self.sounds == 1)
 			sound (self, CHAN_AUTO, "misc/spark.wav", 1, ATTN_STATIC);
