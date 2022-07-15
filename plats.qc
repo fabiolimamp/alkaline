@@ -635,7 +635,8 @@ void() misc_teleporttrain =
 		self.speed = 100;
 	if (!self.target)
 		objerror ("func_train without a target");
-
+	
+	self.speed2 = self.speed;
 	self.cnt = 1;
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_PUSH;

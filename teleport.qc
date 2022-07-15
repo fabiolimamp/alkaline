@@ -111,7 +111,12 @@ entity() teleport_getdestination = {
 
 		d = find(world, targetname, self.target);
 		while (d) {
-			if ((d.classname == "info_teleport_destination" || d.classname == "trigger_teleport_instadestination") && d.estate == STATE_ACTIVE) {
+			if (	(d.classname == "info_teleport_destination"
+					|| d.classname == "trigger_teleport_instadestination"
+					||  d.classname == "misc_teleporttrain"
+				)
+				&& d.estate == STATE_ACTIVE)
+			{
 				dests[i] = d;
 				i++;
 				totaldests++;
@@ -131,7 +136,12 @@ entity() teleport_getdestination = {
 		
 		d = find(world, targetname, self.target);
 		while (d) {
-			if ((d.classname == "info_teleport_destination" || d.classname == "trigger_teleport_instadestination") && d.estate == STATE_ACTIVE) {
+			if (	(d.classname == "info_teleport_destination"
+					|| d.classname == "trigger_teleport_instadestination"
+					||  d.classname == "misc_teleporttrain"
+				)
+				&& d.estate == STATE_ACTIVE)
+			{
 				if (dests[d.count]) {
 					dprint3("trigger_teleport (", vtos((self.mins + self.maxs)*0.5), "): destinations with the same count order at:\n");
 					dprint4(vtos(d.origin), " and ", vtos(dests[d.count].origin), "\n");
@@ -160,7 +170,12 @@ entity() teleport_getdestination = {
 		
 		d = find(world, targetname, self.target);
 		while (d) {
-			if ((d.classname == "info_teleport_destination" || d.classname == "trigger_teleport_instadestination") && d.estate == STATE_ACTIVE) {
+			if (	(d.classname == "info_teleport_destination"
+					|| d.classname == "trigger_teleport_instadestination"
+					||  d.classname == "misc_teleporttrain"
+				)
+				&& d.estate == STATE_ACTIVE)
+			{
 				if (dests[d.count]) {
 					dprint3("trigger_teleport (", vtos((self.mins + self.maxs)*0.5), "): destinations with the same count order at:\n");
 					dprint4(vtos(d.origin), " and ", vtos(dests[d.count].origin), "\n");
