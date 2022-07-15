@@ -28,7 +28,7 @@ void(vector a, vector b, entity who) fx_beam =
 	WriteCoord (MSG_BROADCAST, b_z);
 }
 
-// explosion particle effect. Also fires up explosion sound automatically
+// explosion particle effect. Also fires up explosion sound automatically as well as a dlight
 void(vector org) fx_explosion_particle = {
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
@@ -37,12 +37,31 @@ void(vector org) fx_explosion_particle = {
 	WriteCoord (MSG_BROADCAST, org_z);
 }
 
-void()	s_explode1	=	[0,		s_explode2] {}
-void()	s_explode2	=	[1,		s_explode3] {}
-void()	s_explode3	=	[2,		s_explode4] {}
-void()	s_explode4	=	[3,		s_explode5] {}
-void()	s_explode5	=	[4,		s_explode6] {}
-void()	s_explode6	=	[5,		SUB_Remove] {}
+// only the isolated particle effect
+void(vector org) fx_explosion_particle2 = {
+	particle(org, '0 0 0', 0, 255);
+}
+
+void()	s_explode1	=	[0,		s_explode2] {nxth(self.wait);}
+void()	s_explode2	=	[1,		s_explode3] {nxth(self.wait);}
+void()	s_explode3	=	[2,		s_explode4] {nxth(self.wait);}
+void()	s_explode4	=	[3,		s_explode5] {nxth(self.wait);}
+void()	s_explode5	=	[4,		s_explode6] {nxth(self.wait);}
+void()	s_explode6	=	[5,		SUB_Remove] {nxth(self.wait);}
+
+void()	s_explodelg1	=	[0,		s_explodelg2] {nxth(self.wait);}
+void()	s_explodelg2	=	[1,		s_explodelg3] {nxth(self.wait);}
+void()	s_explodelg3	=	[2,		s_explodelg4] {nxth(self.wait);}
+void()	s_explodelg4	=	[3,		s_explodelg5] {nxth(self.wait);}
+void()	s_explodelg5	=	[4,		s_explodelg6] {nxth(self.wait);}
+void()	s_explodelg6	=	[5,		s_explodelg7] {nxth(self.wait);}
+void()	s_explodelg7	=	[6,		s_explodelg8] {nxth(self.wait);}
+void()	s_explodelg8	=	[7,		s_explodelg9] {nxth(self.wait);}
+void()	s_explodelg9	=	[8,		s_explodelg10] {nxth(self.wait);}
+void()	s_explodelg10	=	[9,		s_explodelg11] {nxth(self.wait);}
+void()	s_explodelg11	=	[10,		s_explodelg12] {nxth(self.wait);}
+void()	s_explodelg12	=	[11,		s_explodelg13] {nxth(self.wait);}
+void()	s_explodelg13	=	[12,		SUB_Remove] {nxth(self.wait);}
 
 /*
 ========
@@ -56,15 +75,24 @@ void() BecomeBlast =
 	self.movetype = MOVETYPE_FLY;
 	self.solid = SOLID_TRIGGER;
 	self.flags -= self.flags & FL_ONGROUND;
-	self.classname = "explosion";
+	
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
 
-	if (other.classname == "monster_shambler")
+	if (other.classname == "monster_shambler"){
 		setmodel (self, "progs/s_explo2.spr");
-	else
+		self.wait = 0.05;
+	}
+	else if (self.classname == "grenade"){
 		setmodel (self, "progs/s_explod.spr");
+		self.wait = 0.05;
+	}
+	else {
+		setmodel (self, "progs/s_exp_small.spr");
+		self.wait = 0.1;
+	}
 
+	self.classname = "explosion";
 	setsize(self, '-8 -8 -8', '8 8 8');
 
 	// Correction for explosions happening on horizontal surfaces
@@ -75,11 +103,12 @@ void() BecomeBlast =
 		force_retouch = 2;
 
 	// moves explosion a bit off the ground
-	setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
+	if (self.model == "progs/s_explod.spr") setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
 
 	self.nextthink = time + 0.5;
 	self.think = SUB_Remove;
-	s_explode1 ();
+	if (self.model == "progs/s_explod.spr") s_explodelg1();
+	else s_explode1();
 }
 
 
