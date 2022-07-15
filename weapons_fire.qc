@@ -543,18 +543,11 @@ void() W_FireLightning =
 		self.ammo_cells = 0;
 		W_SetCurrentAmmo ();
 		victim = findradius(self.origin, 35*cells);
-		while (victim)
-		{
-			if (victim.classname != "monster_eel")
-				{
-				if (victim.takedamage)
-					{
-					if (victim.waterlevel > 0)
-						{
-						T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
-						}
-					}	
-				}
+		
+		while (victim) {
+			if (victim.classname != "monster_eel" && victim.takedamage && victim.waterlevel > 0) {
+				T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
+			}
 
 			victim = victim.chain;
 		}

@@ -434,7 +434,7 @@ When the player touches this, he gets sent to the map listed in the "map" variab
 */
 void() trigger_changelevel = {
 	if (!self.map)
-		dprint("changelevel trigger doesn't have map, will return to the same map");
+		dprint("changelevel trigger doesn't have map set, will return to the same map\n");
 	
 	InitTrigger ();
 	self.flags = self.flags | FL_NOCENTERPRINT;
