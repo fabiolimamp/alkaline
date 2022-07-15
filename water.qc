@@ -162,7 +162,7 @@ float(vector org) pointcontents2 = {
 
 	e = liquidbrushfirst;
 	while (e) {
-		touched = getWaterTouch(org, e);
+		touched = getTouch(org, e);
 		if (touched) {
 			touchedliquidbrush = TRUE;
 
@@ -208,19 +208,19 @@ float (entity e, entity brush) getWaterLevelFromBrush = {
 	return lvl;
 };
 
-// tests a point coordinate against a water brush
-float (vector org, entity brush) getWaterTouch = {
-	if (org_x > brush.absmax_x) 
+// tests a point coordinate against an entity bbox
+float (vector org, entity e) getTouch = {
+	if (org_x > e.absmax_x) 
 		return 0;
-	if (org_x < brush.absmin_x)
+	if (org_x < e.absmin_x)
 		return 0;
-	if (org_y > brush.absmax_y)
+	if (org_y > e.absmax_y)
 		return 0;
-	if (org_y < brush.absmin_y)
+	if (org_y < e.absmin_y)
 		return 0;
-	if (org_z > brush.absmax_z)
+	if (org_z > e.absmax_z)
 		return 0;
-	if (org_z < brush.absmin_z)
+	if (org_z < e.absmin_z)
 		return 0;
 
 	return 1;
