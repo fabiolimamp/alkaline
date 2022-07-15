@@ -234,7 +234,10 @@ When the player presses attack or jump, change to the next level
 */
 void() IntermissionThink = {
 	
-	if (self.cnt > 5) ExitIntermission();
+	if (self.cnt > 5) {
+		self.cnt = 0;
+		ExitIntermission();
+	}
 
 	if (time > self.attack_finished) self.cnt = 0;
 
