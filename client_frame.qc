@@ -487,7 +487,7 @@ void() PlayerPreThink =
 			csf_clear_all(self);
 	}
 
-	checkSelfInWaterBrush();
+	checkClientInWaterBrush();
 
 	//dprint3("Player waterlevel: ", ftos(self.waterlevel), "\n");
 };
@@ -818,7 +818,7 @@ void() PlayerPostThink =
 {
 //	local	float	mspeed, aspeed;
 //	local	float	r;
-	checkSelfInWaterBrush();
+	checkClientInWaterBrush();
 	
 	if (self.flags & FL_CLIENT) {
 		mapvar_cvar = TRUE;			// Map Variable are live

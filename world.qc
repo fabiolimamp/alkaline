@@ -338,10 +338,6 @@ void() worldspawn =
 	flickercontroller.think = flickercontroller_think;
 	flickercontroller.nextthink = time + 0.1;
 
-	swimmonsterchecker = spawn();
-	swimmonsterchecker.think = swimmonsterchecker_think;
-	swimmonsterchecker.nextthink = time + 0.05;
-
 };
 
 //johnfitz -- need to wait a bit before resetting burning/underwater sounds so client will be fully connected when we do
@@ -438,19 +434,23 @@ void() StartFrame =
 		LoadSaveGameCallback();
 	//johnfitz
 
-	if(framecount == 1) {
+	if (framecount == 1) {
 		startupWaterBrushes();
 		CreateBackstop();
+	}
+	
+	if (framecount >= 1) {
+		self = nextent(world);
+		while (self) {
+			entity_watercheck();
+			self = nextent(self);
+		}
 	}
 
 };
 
 void() EndFrame = {
-	//dprint("---------------EndFrame Start--------------------\n");
-	//dprint3("Frame: ", ftos(framecount),"\n");
 	if (prevframe == framecount) {
-	//	dprint("Frame already ran, falling back\n");
-	//	dprint("---------------EndFrame End--------------------\n");
 		return;
 	}
 
@@ -465,14 +465,17 @@ void() EndFrame = {
 	self = world;
 	
 	if (framecount <= 2) {
-		//dprint("First frames\n");
-		//dprint("---------------EndFrame End--------------------\n");
 		return;
 	}
 
 	update_bulletholes();
-	//checkWaterBrush();
-	//dprint("---------------EndFrame End Success----------------\n");
+
+	/*self = nextent(world);
+	while (self) {
+		entity_watercheck();
+		self = nextent(self);
+	}*/
+
 }
 /*
 ==============================================================================

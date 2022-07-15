@@ -203,7 +203,6 @@ float reset_items_on_map_change;
 
 entity flickercontroller;
 entity liquidbrushfirst;
-entity swimmonsterchecker;
 
 /*
 FIELDS
