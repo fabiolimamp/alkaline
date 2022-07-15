@@ -286,7 +286,7 @@ void() walkmonster_start_go =
 
 	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + random()*0.5 + 0.03;
 
 	if (self.spawnflags & MONSTER_SPAWNANGRY)
 		monster_use();
@@ -340,7 +340,7 @@ void() flymonster_start_go =
 
 	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + random()*0.5 + 0.03;
 
 	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };
@@ -390,7 +390,7 @@ void() swimmonster_start_go =
 
 	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + random()*0.5 + 0.03;
 
 	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };
