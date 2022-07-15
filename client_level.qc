@@ -233,14 +233,31 @@ When the player presses attack or jump, change to the next level
 ============
 */
 void() IntermissionThink = {
+	
+	if (self.cnt > 5) ExitIntermission();
 
-	if (!self.button0 && !self.button1 && !self.button2)
-		return;
+	if (time > self.attack_finished) self.cnt = 0;
 
-	if (self.button0) {
-		if (time > self.pain_finished) nextIntermission();
+	if (!self.button0 && !self.button1 && !self.button2) {
+		self.wait = 0;
 		return;
 	}
+
+	if (self.button0) {
+		if (self.wait) return;
+
+		if (time > self.pain_finished) {
+			nextIntermission();
+		}
+
+		if (time <= self.attack_finished || !self.cnt){
+			self.attack_finished = time + 0.25;
+			self.cnt++;
+		}
+		self.wait = 1;
+		return;
+	}
+
 
 	if (time < intermission_exittime)
 		return;
@@ -275,6 +292,8 @@ void() execute_changelevel = {
 		other.solid = SOLID_NOT;
 		other.movetype = MOVETYPE_NONE;
 		other.view_ofs = '0 0 0';
+		other.cnt = 0;
+		other.attack_finished = 0;
 
 		//from copper: origins don't update without a model
 		//other.modelindex = 0;
@@ -620,6 +639,7 @@ void() PutClientInServer = {
 	self.jboots_finished = 0;	//jcr jboots timed
 	self.offground_start = 0;
 	self.sky = world.sky;
+	self.connect_time = time;
 
 	StopBurning(self);//johnfitz -- reset burning	
 

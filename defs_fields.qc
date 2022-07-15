@@ -290,6 +290,7 @@ FIELDS
 .float		super_damage_finished;
 .float		trif_finished;
 .float		radsuit_finished;
+.float 		connect_time;
 
 .float		invincible_time, invincible_sound;
 .float		invisible_time, invisible_sound;

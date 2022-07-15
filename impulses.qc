@@ -490,7 +490,7 @@ void() W_WeaponFrame =
 		return;
 
 // check for attack
-	if (self.button0) {
+	if (self.button0 && time > self.connect_time + 0.2) {
 		W_Attack ();
 	}
 };
