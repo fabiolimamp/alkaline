@@ -181,18 +181,18 @@ void()	shockwave11	=[	10,	SUB_Remove	] {self.alpha = 0.6; self.nextthink = time 
 
 static float DEXPLODE_FRAMETIME = 0.03;
 
-void() d_explode1 = [0, d_explode2]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode2 = [1, d_explode3]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode3 = [2, d_explode4]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode4 = [3, d_explode5]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode5 = [4, d_explode6]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode6 = [5, d_explode7]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode7 = [6, d_explode8]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode8 = [7, d_explode9]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode9 = [8, d_explode10]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode10 = [9, d_explode11]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode11 = [10, d_explode12]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode12 = [11, d_explode13]{self.nextthink = time + DEXPLODE_FRAMETIME;};
+void() d_explode1 = [0, d_explode2]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode2 = [1, d_explode3]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode3 = [2, d_explode4]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode4 = [3, d_explode5]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode5 = [4, d_explode6]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode6 = [5, d_explode7]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode7 = [6, d_explode8]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode8 = [7, d_explode9]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode9 = [8, d_explode10]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode10 = [9, d_explode11]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode11 = [10, d_explode12]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode12 = [11, d_explode13]{nxth(DEXPLODE_FRAMETIME);};
 void() d_explode13 = [12, SUB_Remove]{};
 
 
