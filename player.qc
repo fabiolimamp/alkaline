@@ -685,23 +685,13 @@ void() player_died1;
 void() player_diee1;
 void() player_die_ax1;
 
-void() DeathBubblesSpawn =
-{
-local entity	bubble;
-	if (self.owner.waterlevel != 3)
+void() DeathBubblesSpawn = {
+	entity bubble;
+
+	if (self.owner.waterlevel < 3)
 		return;
-	bubble = spawn();
-	setmodel (bubble, "progs/s_bubble.spr");
-	setorigin (bubble, self.owner.origin + '0 0 24');
-	bubble.movetype = MOVETYPE_NOCLIP;
-	bubble.solid = SOLID_NOT;
-	bubble.velocity = '0 0 15';
-	bubble.nextthink = time + 0.5;
-	bubble.think = bubble_bob;
-	bubble.classname = "bubble";
-	bubble.frame = 0;
-	bubble.cnt = 0;
-	setsize (bubble, '-8 -8 -8', '8 8 8');
+	bubble = bubble_spawn(self.owner.origin + '0 0 24');
+	
 	self.nextthink = time + 0.1;
 	self.think = DeathBubblesSpawn;
 	self.air_finished = self.air_finished + 1;
@@ -709,9 +699,8 @@ local entity	bubble;
 		remove(self);
 };
 
-void(float num_bubbles) DeathBubbles =
-{
-local entity	bubble_spawner;
+void(float num_bubbles) DeathBubbles = {
+	entity bubble_spawner;
 	
 	bubble_spawner = spawn();
 	setorigin (bubble_spawner, self.origin);
@@ -722,7 +711,6 @@ local entity	bubble_spawner;
 	bubble_spawner.air_finished = 0;
 	bubble_spawner.owner = self;
 	bubble_spawner.bubble_count = num_bubbles;
-	return;
 };
 
 
