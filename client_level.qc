@@ -294,6 +294,7 @@ void() execute_changelevel = {
 		other.view_ofs = '0 0 0';
 		other.cnt = 0;
 		other.attack_finished = 0;
+		other.think = SUB_Null;
 
 		//from copper: origins don't update without a model
 		//other.modelindex = 0;
