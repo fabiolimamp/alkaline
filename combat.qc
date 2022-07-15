@@ -347,7 +347,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 {
 	local	float 	points;
 	local	float	radius;
-	local	entity	head;
+	local	entity	head, next;
 	local	vector	org;
 	local	vector	dir;
 
@@ -357,6 +357,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 	
 	while (head)
 	{
+		next = head.chain;
 		if (head.takedamage)
 		{
 			org = head.origin + (head.mins + head.maxs)*0.5;
@@ -391,7 +392,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 				}
 			}
 		}
-		head = head.chain;
+		head = next;
 	}
 };
 
@@ -405,13 +406,15 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float dmgty
 	
 	if (dmgtype == DMGTYPE_EXPLOSION) T_GibDownedZombies(inflictor, attacker, damage+10);
 	local	float 	points;
-	local	entity	head;
+	local	entity	head, next;
 	local	vector	org;
 
 	head = findradius(inflictor.origin, damage+40);
 	
 	while (head)
 	{
+		next = head.chain;
+
 		if (head != ignore)
 		{
 			if (head.takedamage)
@@ -437,7 +440,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float dmgty
 				}
 			}
 		}
-		head = head.chain;
+		head = next;
 	}
 };
 
