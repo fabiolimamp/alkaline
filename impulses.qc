@@ -149,6 +149,7 @@ void(float num) ImpulseTest = {
 	SUB_UseSpecificTarget(tgt_impulse_num, impulsetarget);
 };
 
+
 void() dev_reveal_touch = {
 	if (other == self.owner) return;
 	if (other) {
@@ -159,7 +160,6 @@ void() dev_reveal_touch = {
 	remove(self);
 }
 
-
 void() dev_reveal_think = {
 	if (time > self.lifetime_finished) {
 		remove(self);
@@ -168,7 +168,7 @@ void() dev_reveal_think = {
 
 	entity e = nextent(world);
 	while (e) {
-		if (e != self && e != self.owner && e.model != "" && getTouch(self.origin, e)) {
+		if (e != self && e != self.owner && e.model != "" && e.solid != SOLID_BSP && getTouch(self.origin, e)) {
 			dprint("----------------------------\n----------------------------\n");
 			eprint(e);
 			
@@ -178,40 +178,31 @@ void() dev_reveal_think = {
 		}
 		e = nextent(e);
 	}
+	if (vlen(self.velocity) < 1500) self.velocity *= 1.03;
 	self.nextthink = time + 0.015;
 
 }
 
-// adapted from Copper
+// original idea from Copper
 void() dev_reveal = {
 	vector org;
 
-	makevectors(self.v_angle);
 	org = self.origin + self.view_ofs;
 	entity e = spawn();
 	e.owner = self;
 	e.movetype = MOVETYPE_FLY;
 	e.solid = SOLID_TRIGGER;
 	setorigin(e, org);
-	setmodel(e, "progs/s_light.spr");
+	setmodel(e, "progs/s_bubble.spr");
 	setsize(e, '0 0 0', '0 0 0');
+	e.oldorigin = e.origin;
 	e.touch = dev_reveal_touch;
 	e.think = dev_reveal_think;
 	e.nextthink = time + 0.015;
-	e.velocity = v_forward * 1000;
+	makevectors(self.v_angle);
+	e.velocity = v_forward * 600;
 
 	e.lifetime_finished = time + 5;
-	//e.angles = self.v_angle;
-	//e.angles_x *= -1;
-
-	/*traceline (org, org + v_forward * 8192, FALSE, self);
-	if (trace_fraction < 1) {
-		if (trace_ent) {
-			dprint("----------------------------\n----------------------------\n");
-			eprint(trace_ent);
-		}
-		dprint5("\n-\n-\nFound ", trace_ent.classname, "; time: ", ftos(time), "\n");
-	}*/
 
 };
 
