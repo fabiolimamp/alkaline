@@ -242,7 +242,6 @@ to not lose track of current think functions.
 
 ===============
 */
-void() SUB_CalcAngleMoveDoneController;
 
 void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController =
 {
