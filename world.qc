@@ -171,11 +171,13 @@ void() worldspawn =
 	precache_sound ("weapons/lock4.wav");		// ammo pick up
 	precache_sound ("weapons/pkup.wav");		// weapon up
 	precache_sound ("items/armor1.wav");		// armor up
+	precache_sound ("items/armor_denied.wav");	// already got armor
 	precache_sound ("weapons/lhit.wav");		//lightning
 	precache_sound ("weapons/lstart.wav");		//lightning start
 	precache_sound ("items/damage3.wav");
 	precache_sound ("misc/null.wav");
 	precache_sound ("doors/alka_doorlocked.wav");
+	precache_sound ("doors/runetry.wav");
 
 	precache_sound ("weapons/sawidle.wav");		//chainsaw idle
 	precache_sound ("weapons/sawridle.wav");	//chainsaw idle

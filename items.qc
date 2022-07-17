@@ -378,8 +378,18 @@ void() armor_touch = {
 		value = 200;
 		bit = IT_ARMOR3;
 	}
-	if (other.armortype*other.armorvalue >= type*value)
+	if (other.armortype*other.armorvalue >= type*value){
+		if (!self.state) {
+			sprint (other, "You already got armor\n");
+
+			sound (other, CHAN_ITEM, "items/armor_denied.wav", 1, ATTN_NORM);
+
+			activator = other;
+			SUB_UseTargets();
+			self.state = 1;
+		}
 		return;
+	}
 		
 	other.armortype = type;
 	other.armorvalue = value;
@@ -399,8 +409,11 @@ void() armor_touch = {
 	sound(other, CHAN_ITEM, "items/armor1.wav", 1, ATTN_NORM);
 	stuffcmd(other, "bf\n");
 	
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+	if (!self.state) {
+		activator = other;
+		SUB_UseTargets();
+		self.state = 1;
+	}			// fire all targets / killtargets
 };
 
 
