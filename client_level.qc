@@ -290,19 +290,35 @@ void() execute_changelevel = {
 	
 	other = find (world, classname, "player");
 
-	while (other != world) {
+	while (other) {
 		other.takedamage = DAMAGE_NO;
 		other.solid = SOLID_NOT;
 		other.movetype = MOVETYPE_NONE;
 		other.view_ofs = '0 0 0';
+
+		// angry clicking control
 		other.cnt = 0;
 		other.attack_finished = 0;
+
+		// don't keep firing SNG/LG during intermission (speedrunners will hate it)
 		other.think = SUB_Null;
 
-		//from copper: origins don't update without a model
-		//other.modelindex = 0;
-		other.model = "";
+		// origins don't update without a model
+		// thanks Lunaran
+		setmodel(other, "progs/misc_empty.mdl");
+		setsize(other, '0 0 0', '0 0 0');
+
 		other.weaponmodel = "";
+
+		other.items &~= IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
+		other.super_damage_finished = 0;
+		other.radsuit_finished = 0;
+		other.invisible_finished = 0;
+		other.invincible_finished = 0;
+		other.invincible_time = 0;
+		other.trif_time = 0;
+		other.trif_finished = 0;
+		other.effects = 0;
 
 		other.punchangle = '0 0 0';
 
@@ -314,19 +330,17 @@ void() execute_changelevel = {
 		other = find(other, classname, "player");
 	}	
 
-	WriteByte (MSG_ALL, SVC_INTERMISSION);
+	WriteByte(MSG_ALL, SVC_INTERMISSION);
 };
 
 void() nextIntermission = {
 	entity pos;
 
-	//do {
-	if (!self.goalentity) pos = FindIntermission(world);
-	else pos = FindNextIntermission(self.goalentity);
+	if (!self.goalentity) pos = FindIntermission(world); // first intermission is random
+	else pos = FindNextIntermission(self.goalentity); // next ones are sequential
 
 	self.goalentity = pos;
-	//}
-	//while (pos.origin == self.origin); // don't pick the same intermission spot twice in a row
+
 		
 	self.pain_finished = time + 0.5;
 

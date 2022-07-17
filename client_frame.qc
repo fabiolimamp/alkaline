@@ -86,7 +86,7 @@ void() PlayerRessurect =
 	self.view_ofs = '0 0 22';
 	
 	//lose powerups
-	self.items = self.items - (self.items & (IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA) ); 
+	self.items &~= IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
@@ -347,7 +347,7 @@ void() WaterMove =
 		self.flags |= FL_INWATER;
 		self.dmgtime = 0;
 	}
-	
+
 	if (self.waterlevel >= 2 && self.jboots_rechargelimit) {
 		self.jboots_ammo = self.jboots_rechargelimit;
 	}
