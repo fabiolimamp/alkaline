@@ -867,6 +867,9 @@ void() PlayerPostThink =
 // check to see if player landed and play landing sound	
 	if ((self.jump_flag < -300) && (self.flags & FL_ONGROUND) && (self.health > 0))
 	{
+		if (self.jboots_rechargelimit == 1) self.jump_flag *= 0.75;
+		else if (self.jboots_rechargelimit >= 2 || self.jboots_rechargelimit == -1) self.jump_flag *= 0.5;
+
 		if (self.watertype == CONTENT_WATER)
 			sound (self, CHAN_BODY, "player/h2ojump.wav", 1, ATTN_NORM);
 		else if (self.jump_flag < -650)
