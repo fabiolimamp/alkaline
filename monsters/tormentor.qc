@@ -488,7 +488,9 @@ float() torm_CheckAttack = {
 	dist = vlen(self.origin - targ.origin);
 
 	if (dist <= 192) {	// melee attack
-		if (CanDamage(targ, self.origin)) {
+		if (CanDamage(targ, self.origin)
+			&& (dist < 120 || random() < 0.4))
+		{
 			//self.th_melee ();
 			self.attack_state = AS_MELEE;
 			return TRUE;
