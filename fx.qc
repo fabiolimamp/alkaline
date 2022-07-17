@@ -54,12 +54,12 @@ void()	s_explodesm1	=	[3,		s_explodesm2] {nxth(self.wait);}
 void()	s_explodesm2	=	[5,		s_explodesm3] {nxth(self.wait);}
 void()	s_explodesm3	=	[7,		s_explodesm4] {nxth(self.wait);}
 void()	s_explodesm4	=	[9,		s_explodesm5] {nxth(self.wait);}
-void()	s_explodesm5	=	[11,		s_explodesm6] {nxth(self.wait);}
-void()	s_explodesm6	=	[13,		s_explodesm7] {nxth(self.wait);}
-void()	s_explodesm7	=	[15,		s_explodesm8] {nxth(self.wait);}
-void()	s_explodesm8	=	[17,		s_explodesm9] {nxth(self.wait);}
-void()	s_explodesm9	=	[19,		s_explodesm10] {nxth(self.wait);}
-void()	s_explodesm10	=	[21,		s_explodesm11] {nxth(self.wait);}
+void()	s_explodesm5	=	[11,	s_explodesm6] {nxth(self.wait);}
+void()	s_explodesm6	=	[13,	s_explodesm7] {nxth(self.wait);}
+void()	s_explodesm7	=	[15,	s_explodesm8] {nxth(self.wait);}
+void()	s_explodesm8	=	[17,	s_explodesm9] {nxth(self.wait);}
+void()	s_explodesm9	=	[19,	s_explodesm10] {nxth(self.wait);}
+void()	s_explodesm10	=	[21,	s_explodesm11] {nxth(self.wait);}
 void()	s_explodesm11	=	[23,	s_explodesm12] {nxth(self.wait);}
 void()	s_explodesm12	=	[25,	s_explodesm13] {nxth(self.wait);}
 void()	s_explodesm13	=	[27,	SUB_Remove] {nxth(self.wait);}
@@ -105,7 +105,7 @@ void() BecomeBlast =
 	}
 	else {
 		//setmodel (self, "progs/s_exp_small.spr");
-		setmodel (self, "progs/s_expr_small_2.spr");
+		setmodel (self, "progs/s_exp_small_2.spr");
 		self.wait = 0.05;
 	}
 
@@ -120,11 +120,14 @@ void() BecomeBlast =
 		force_retouch = 2;
 
 	// moves explosion a bit off the ground
-	if (self.model == "progs/s_explod.spr") setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
+	//if (self.model == "progs/s_explod.spr")
+		setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
 
 	self.nextthink = time + 0.5;
 	self.think = SUB_Remove;
-	if (self.model == "progs/s_explod.spr") s_explodelg1();
+
+	if (self.model == "progs/s_explo2.spr") s_explode1();
+	else if (self.model == "progs/s_explod.spr") s_explodelg1();
 	else s_explodesm1();
 }
 
