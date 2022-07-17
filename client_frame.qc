@@ -344,10 +344,14 @@ void() WaterMove =
 		if (self.watertype == CONTENT_SLIME)
 			sound (self, CHAN_BODY, "player/slimbrn2.wav", 1, ATTN_NORM);
 
-		self.flags = self.flags + FL_INWATER;
+		self.flags |= FL_INWATER;
 		self.dmgtime = 0;
 	}
 	
+	if (self.waterlevel >= 2 && self.jboots_rechargelimit) {
+		self.jboots_ammo = self.jboots_rechargelimit;
+	}
+
 	if (! (self.flags & FL_WATERJUMP) )
 		self.velocity = self.velocity - 0.8*self.waterlevel*frametime*self.velocity;
 };
