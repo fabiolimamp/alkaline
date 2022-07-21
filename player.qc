@@ -379,7 +379,7 @@ void() player_super_nail_spindown = {
 	// thinks run at 4x the usual speed while spinning down,
 	// so only update every 4 weaponframes
 	if (self.weaponframe % 4 == 0) {
-		if (self.walkframe == 6)
+		if (self.walkframe >= 6)
 			self.walkframe = 0;
 		self.frame = $axrun1 + self.walkframe;
 		
@@ -419,9 +419,12 @@ void() super_nail_spindown = {
 void() player_light1   =[$light1, player_light2  ] 
 {
 	self.effects = self.effects | EF_MUZZLEFLASH;
+	
+	if (!self.button0) {
+		player_run();
+		return;
+	}
 
-	if (!self.button0)
-		{player_run ();return;}
 	self.weaponframe = self.weaponframe + 1;
 	if (self.weaponframe == 5)
 		self.weaponframe = 1;
