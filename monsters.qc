@@ -186,7 +186,7 @@ void(void() go_function) monster_start = {
 	else {
 		// delay drop to floor to make sure all doors have been spawned
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + 0.05 + random()*0.5;
 		self.think = go_function;
 
 		if (!(self.spawnflags & MONSTER_SPAWNER && !(self.spawnflags & MONSTER_COUNTONSPAWN))) add_monster_total(1);
