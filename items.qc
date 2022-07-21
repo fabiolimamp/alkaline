@@ -170,7 +170,7 @@ void() PlaceItem = {
 	self.solid = SOLID_TRIGGER;
 
 	if (self.spawnflags & ITEM_SUSPENDED) {
-		self.movetype = MOVETYPE_FLY;
+		self.movetype = MOVETYPE_NOCLIP;
 		self.velocity = '0 0 0';
 	}
 	else {
