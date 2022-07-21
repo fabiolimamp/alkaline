@@ -188,6 +188,7 @@ float nofootsteps;
 float noautosaves;
 float notracers;
 float playertracers;
+float oldgrenade;
 
 // gravity
 entity current_gravity_ent;

@@ -9,7 +9,7 @@ void() W_FireAxe =
 	local	vector	org;
 
 	makevectors (self.v_angle);
-	source = self.origin + '0 0 16';
+	source = self.origin + self.view_ofs - v_up*6;
 	traceline (source, source + v_forward*64, FALSE, self);
 	if (trace_fraction == 1.0)
 		return;
@@ -87,7 +87,7 @@ void() W_FireSaw =
 	local	entity	ent;
 
 	makevectors (self.v_angle);
-	source = self.origin + '0 0 16';
+	source = self.origin + self.view_ofs - v_up*6;
 	traceline (source, source + v_forward*64, FALSE, self);
 	if (trace_fraction == 1.0)
 		return;
@@ -459,9 +459,14 @@ void() W_FireRocket =
 
 	makevectors (self.v_angle);
 	dir = aim(self, 1000);
-	org = self.origin + v_forward*8 + '0 0 16';
-	
-	launch_rocket(org, dir);
+
+
+	org = self.origin + self.view_ofs - v_up*6;// '0 0 10';
+	traceline(org, org + v_forward * 24, FALSE, self);
+	launch_rocket(org + v_forward*24 * trace_fraction, dir);
+
+	//org = self.origin + v_forward*8 + self.view_ofs - v_up*6;
+	//launch_rocket(org, dir);
 
 };
 
@@ -658,8 +663,16 @@ void() W_FireGrenade =
 	missile.think = GrenadeExplode;
 
 	setmodel (missile, "progs/grenade.mdl");
-	setsize (missile, '0 0 0', '0 0 0');		
-	setorigin (missile, self.origin);
+	setsize (missile, '0 0 0', '0 0 0');
+
+	if (oldgrenade) {
+		setorigin (missile, self.origin);
+	}
+	else {
+		vector org = self.origin + self.view_ofs - v_up*12;// '0 0 10';
+		traceline(org, org + v_forward * 24, FALSE, self);
+		setorigin(missile, org + v_forward*24 * trace_fraction);
+	}
 };
 
 

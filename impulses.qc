@@ -390,6 +390,21 @@ void() TogglePlayerTracers = {
 	}
 };
 
+void() ToggleOldGrenade = {
+	float tmp1;
+	tmp1 = cvar("temp1");
+	if (oldgrenade) {
+		bprint("Old grenade style: disabled\n");
+		oldgrenade = 0;
+		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_OLDGRENADE)));
+	}
+	else {
+		bprint("Old grenade style: enabled\n");
+		oldgrenade = 1;
+		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_OLDGRENADE));
+	}
+}
+
 
 void() ResetModSettings = {
 	cvar_set("temp1", 0);
@@ -480,6 +495,8 @@ void() ImpulseCommands = {
 		ToggleTracers();
 	if (self.impulse == 43)
 		TogglePlayerTracers();
+	if (self.impulse == 44)
+		ToggleOldGrenade();
 
 	if (self.impulse == 128)
 		printVersionConsole(self);
