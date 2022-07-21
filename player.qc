@@ -326,8 +326,8 @@ void() player_nail = {
 		else 
 			self.frame += 1;
 
-		if (self.frame == $nailatt1) offs = 3;
-		else offs = -3;
+		if (self.frame == $nailatt1) offs = -3;
+		else offs = 3;
 		SuperDamageSound();
 		W_FireSpikes(offs);
 
