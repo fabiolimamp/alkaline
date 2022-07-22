@@ -252,7 +252,7 @@ void() frogmen_outcontrol =
 void() frogmen_die = 
 {
 	local float r;
-	if (self.health < -50) {
+	if (self.health < -40) {
 		self.skin = 0;
 		sound(self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead("progs/h_zombie.mdl", self.health);
@@ -265,22 +265,22 @@ void() frogmen_die =
 	}
 	self.skin = 3;
 
-	if (self.health > -30) {
+	if (self.health > -20) {
 		frogmen_death1();
 	}
 	else {
-		r = random();
-		if (r < 0.5) {
+		//r = random();
+		//if (r < 0.5) {
 			spinup1();
-		}
-		else {
+		//}
+		/*else {
 			self.angles_y = (0.5 - random()) * 360;
 			self.angles_x = 0;
 			self.angles_z = 0;
 			makevectors(self.angles);
 			self.old_angles = v_forward * 400 + v_forward * random() * 200;
 			spinover1();
-		}
+		}*/
 	}
 };
 
