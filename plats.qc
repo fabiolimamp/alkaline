@@ -353,13 +353,28 @@ void() train_wait = {
 
 // searches for the next path_corner and sends the train on its way
 void() train_next = {
-	local entity	targ;
+	entity targ, first;
 	vector destang, displ;
+	float loopcount;
 
-	targ = find(world, targetname, self.target);
-	
-	if (!targ || self.target == "")
-		objerror("train_next: no next target");
+	if (self.target == "") {
+		dprint("train_next: next target not set\n");
+		targ = self.enemy;
+	}
+	else {
+		first = targ = find(world, targetname, self.target);
+		
+		// loops if found path_corner isn't active
+		while (targ && targ.estate != STATE_ACTIVE && loopcount < 3) {
+			if (targ == first) loopcount++;
+			targ = find(world, targetname, targ.target);
+		}
+	}
+
+	if (!targ || loopcount >= 3) {
+		dprint("train_next: next target not found\n");
+		targ = self.enemy;
+	}
 
 	self.target = targ.target;
 	
@@ -378,7 +393,7 @@ void() train_next = {
 	
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	
-	if(!(!self.wait && self.cnt == TRAIN_NEXT_CONTINUE)) self.cnt = TRAIN_NEXT_WAIT;
+	if (!(!self.wait && self.cnt == TRAIN_NEXT_CONTINUE)) self.cnt = TRAIN_NEXT_WAIT;
 
 	//store up any premature triggerings until current movement is finished
 	self.use = train_moving_use; 

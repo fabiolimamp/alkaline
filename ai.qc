@@ -94,10 +94,21 @@ void() path_angry_touch = {
 
 	dprint2(other.classname, ": Touched path_angry... ");
 	//eprint(self);
-	entity next;
+	entity next, first;
 
-	if (self.owner.target) {	
-		next = find(world, targetname, self.owner.target);
+	if (self.owner.target) {
+
+		first = next = find(world, targetname, self.owner.target);
+
+		float loopcount;
+		
+		// loops if found path_corner isn't active
+		while (next && next.estate != STATE_ACTIVE && loopcount < 3) {
+			if (next == first) loopcount++;
+			next = find(world, targetname, next.target);
+		}
+
+		//next = find(world, targetname, self.owner.target);
 		other.goalentity = next;
 		dprint("Moving to next!\n");
 	}
@@ -139,9 +150,8 @@ Something has bumped into a movetarget.  If it is a monster
 moving towards it, change the next destination and continue.
 ==============
 */
-void() t_movetarget =
-{
-local entity	temp;
+void() t_movetarget = {
+	entity temp, targ, first;
 
 	if (other.movetarget != self)
 		return;
@@ -156,11 +166,20 @@ local entity	temp;
 	if (self.classname == "monster_ogre")
 		sound (self, CHAN_VOICE, "ogre/ogdrag.wav", 1, ATTN_IDLE);// play chainsaw drag sound
 
-//dprint ("t_movetarget\n");
-	self.goalentity = self.movetarget = find (world, targetname, other.target);
+	first = targ = find(world, targetname, other.target);
+
+	float loopcount;
+	
+	// loops if found path_corner isn't active
+	while (targ && targ.estate != STATE_ACTIVE && loopcount < 3) {
+		if (targ == first) loopcount++;
+		targ = find(world, targetname, targ.target);
+	}
+
+	self.goalentity = self.movetarget = targ;
+
 	self.ideal_yaw = vectoyaw(self.goalentity.origin - self.origin);
-	if (!self.movetarget || other.wait == -1)
-	{
+	if (!self.movetarget || other.wait == -1) {
 		self.pausetime = time + 999999;
 		self.th_stand ();
 		return;
@@ -168,14 +187,12 @@ local entity	temp;
 	
 	//if(self.flags & FL_PACIFIST)
 	{
-		if(other.wait > 0)
-		{
+		if (other.wait > 0) {
 			self.pausetime = time + other.wait;
 			self.th_stand ();
 		}
 		
-		if(other.angles)
-		{
+		if (other.angles) {
 			self.ideal_yaw = other.angles_y;
 		}
 	}
