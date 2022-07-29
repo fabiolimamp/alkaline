@@ -251,7 +251,6 @@ void() frogmen_outcontrol =
 
 void() frogmen_die = 
 {
-	local float r;
 	if (self.health < -40) {
 		self.skin = 0;
 		sound(self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
@@ -269,7 +268,7 @@ void() frogmen_die =
 		frogmen_death1();
 	}
 	else {
-		//r = random();
+		//float r = random();
 		//if (r < 0.5) {
 			spinup1();
 		//}
