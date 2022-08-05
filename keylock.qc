@@ -645,7 +645,6 @@ Finish initializing self as a key item.  -- iw
 */
 
 void() key_setsounds;
-void() key_touch;
 
 
 void() key_start =
@@ -703,7 +702,7 @@ void() key_touch =
 			sprint (other, self.netname);
 			sprint (other,"\n");
 
-			sound (other, CHAN_ITEM, self.noise1, 1, ATTN_NORM);
+			sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 
 			activator = other;
 			SUB_UseTargets();
