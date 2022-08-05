@@ -42,7 +42,7 @@ void() entity_watercheck = {
 			sound (self, CHAN_AUTO, "misc/h2ohit1.wav", 1, ATTN_NORM);
 		}*/
 		
-		if (self.flags & FL_MONSTER && self.health <= 0) {
+		if ((self.flags & FL_MONSTER && self.health <= 0) || self.classname == "gib") {
 			if (!self.prevgravity) self.prevgravity = self.gravity;
 			if (!self.gravity) self.gravity = 1;
 			if (self.gravity > 0.05) {
