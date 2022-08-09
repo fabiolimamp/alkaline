@@ -1,8 +1,3 @@
-
-void() InitBodyQue;
-//JIM
-void() InitBulletHoles;
-
 void() main =
 {
 
@@ -119,6 +114,13 @@ void() worldspawn =
 
 	world_sounds = &world.sounds;
 // the area based ambient sounds MUST be the first precache_sounds
+
+	precache_sound ("misc/menu1.wav");
+	precache_sound ("misc/menu2.wav");
+	precache_sound ("misc/menu3.wav");
+
+	precache_sound ("ambience/water1.wav");
+	precache_sound ("ambience/wind2.wav");
 
 // player precaches	
 	precache_sound ("weapons/r_exp3.wav");		// new rocket explosion
