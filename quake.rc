@@ -16,6 +16,8 @@ alias playertracers "impulse 43"
 alias resetalkalinesettings "impulse 40"
 
 alias resurrect "impulse 154"
+alias giveall "impulse 9"
+alias giveweapons "impulse 13"
 alias belt "impulse 252"
 alias suit "impulse 253"
 alias pentagram "impulse 254"
@@ -24,8 +26,7 @@ alias boots "impulse 222"
 alias bootstimed "impulse 221"
 alias bootsremove "impulse 223"
 
-alias giveall "impulse 9"
-alias giveweapons "impulse 13"
+
 alias alkversion "impulse 128"
 alias listmonsters "impulse 184"
 alias mapvars "impulse 185"
