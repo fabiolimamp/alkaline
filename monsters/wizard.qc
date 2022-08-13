@@ -103,7 +103,6 @@ float()	WizardCheckAttack =
 	enemy_vis = visible(SUB_entEnemyTarget());
 
 	if (!enemy_vis){
-		dprint("Not visible\n");
 		if(self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
 		return FALSE;
 	}

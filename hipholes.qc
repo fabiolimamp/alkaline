@@ -11,33 +11,9 @@
 float BULLETHOLES_MAX = 50;
 // maximum bulletholes spawned per frame
 float BULLETHOLES_MAXFRAME = 10;
+
 float BULLETHOLES_LIFETIME = 60;
 
-/*QUAKED wallsprite (0 1 0) (-8 -8 -8) (8 8 8)
-Places a sprite on a wall.  Angles should be opposite of face.
-
-"model" sprite to place on wall.  Default is "progs/s_blood1.spr".
-*/
-/*void() wallsprite = {
-	if (!self.model) {
-		self.model = "progs/s_blood1.spr";
-	}
-
-	precache_model(self.model);
-	setmodel(self, self.model);
-
-	// QuakeEd doesn't save up and down angles properly.
-	if (self.angles == '0 -1 0')
-		self.angles = '-90 0 0';
-	else if (self.angles == '0 -2 0')
-		self.angles = '90 0 0';
-
-	// Pull the sprite away from the wall slightly to
-	// get rid of z sort errors.
-	makevectors(self.angles);
-	setorigin( self, self.origin - ( v_forward * 0.2 ) );
-	makestatic (self);
-};*/
 
 void() InitBulletHoles = {
 	precache_model("progs/s_bullet_new.spr");

@@ -188,6 +188,7 @@ float nofootsteps;
 float noautosaves;
 float notracers;
 float playertracers;
+float oldgrenade;
 
 // gravity
 entity current_gravity_ent;
@@ -202,6 +203,7 @@ float playerstart_id;
 float reset_items_on_map_change;
 
 entity flickercontroller;
+entity liquidbrushfirst;
 
 /*
 FIELDS
@@ -289,6 +291,7 @@ FIELDS
 .float		super_damage_finished;
 .float		trif_finished;
 .float		radsuit_finished;
+.float 		connect_time;
 
 .float		invincible_time, invincible_sound;
 .float		invisible_time, invisible_sound;
@@ -308,6 +311,8 @@ FIELDS
 .float		bubble_count;	// keeps track of the number of bubbles
 .float		deathtype;		// keeps track of how the player died
 .float 		offground_start; // last time the player was on ground
+
+.float 		hurt_started; // timer for trigger_hurt
 
 .float 		wantedgravity; // thanks Spike!
 
@@ -633,6 +638,8 @@ float prevdoornum;
 .float liquidtype;
 .vector liquidcolor;
 .float liquiddensity;
+.entity nextliquidbrush;
+.entity prevliquidbrush;
 
 .float prevgravity;
 

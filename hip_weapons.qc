@@ -142,8 +142,7 @@ void(float stat) HIP_FireLaser = {
 
 	if (stat == 0) {
 		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-		org = org + (aofs*v_right);
-		org = org - (aofs*v_up);
+		org = org + aofs*v_right - aofs*v_up;
 		HIP_LaunchLaser(org, dir, 0);
 		org = org - (2*aofs*v_right);
 		HIP_LaunchLaser(org, dir, 0);
@@ -168,7 +167,7 @@ void(float stat) HIP_FireLaser = {
 ================
 Proximity/Multi-grenade hybrid
 - Uses up to 4 rockets per shot. If < 4, will spawn less mini-grenades
-- Direct hits on DAMAGE_AIM entities will trigger an explosion
+- Direct hits on DAMAGE_AIM entities will trigger an additional explosion
 - Each explosion (including the direct one) deals 60 damage
 - If don't hit anything, sticks to the surface and wait for proximity, or a 15-25s timeout
 ================
@@ -231,8 +230,16 @@ void() W_FireProximityGrenade = {
 	
 
 	setmodel(newmis, "progs/proxbomb.mdl");
-	setorigin(newmis, self.origin);
 	setsize(newmis, '-1 -1 -1', '1 1 1');
+
+	if (oldgrenade) {
+		setorigin (newmis, self.origin);
+	}
+	else {
+		vector org = self.origin + self.view_ofs - v_up*12;// '0 0 10';
+		traceline(org, org + v_forward * 24, FALSE, self);
+		setorigin(newmis, org + v_forward*24 * trace_fraction);
+	}
 };
 
 
@@ -253,15 +260,15 @@ void() ProximityGrenadeTouch = {
 	if (other.classname == self.classname)
 		return;
 
-		
-	if (vlen(other.velocity) > 0) {
-		ProximityGrenadeExplode();
-		return;
-	}
 
 	if (other.takedamage == DAMAGE_AIM) {
 		SpawnExplosion(self.origin, 60, self, 0);
 
+		ProximityGrenadeExplode();
+		return;
+	}
+
+	if (vlen(other.velocity) > 0) {
 		ProximityGrenadeExplode();
 		return;
 	}

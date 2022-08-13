@@ -212,12 +212,12 @@ void() CastLightning =
 void() sham_magic1     =[      $magic1,       sham_magic2    ] {ai_face(); sound (self, CHAN_WEAPON, "shambler/sattck1.wav", 1, ATTN_NORM);};
 void() sham_magic2     =[      $magic2,       sham_magic3    ] {ai_face();};
 void() sham_magic3     =[      $magic3,       sham_magic4    ] {ai_face();self.nextthink = self.nextthink + 0.2;
-	local entity o;
+	entity o;
 
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	ai_face();
-	self.owner = spawn();
-	o = self.owner;
+	o = spawn();
+	self.sibling = o;
 	setmodel (o, "progs/s_light.mdl");
 	setorigin (o, self.origin);
 	o.angles = self.angles;
@@ -226,14 +226,15 @@ void() sham_magic3     =[      $magic3,       sham_magic4    ] {ai_face();self.n
 };
 void() sham_magic4     =[      $magic4,       sham_magic5    ]{
 	self.effects = self.effects | EF_MUZZLEFLASH;
-	self.owner.frame = 1;
+	self.sibling.frame = 1;
 };
 void() sham_magic5     =[      $magic5,       sham_magic6    ]{
 	self.effects = self.effects | EF_MUZZLEFLASH;
-	self.owner.frame = 2;
+	self.sibling.frame = 2;
 };
 void() sham_magic6     =[      $magic6,       sham_magic9    ]{
-	remove (self.owner);
+	remove (self.sibling);
+	self.sibling = world;
 	CastLightning();
 	sound (self, CHAN_WEAPON, "shambler/sboom.wav", 1, ATTN_NORM);
 };

@@ -645,7 +645,6 @@ Finish initializing self as a key item.  -- iw
 */
 
 void() key_setsounds;
-void() key_touch;
 
 
 void() key_start =
@@ -696,12 +695,21 @@ void() key_touch =
 		return;
 	if (other.health <= 0)
 		return;
-	if (other.items & self.items)
-		return;
 
-// support for item_key_custom -- iw
-	if (HasKeys (other, self.items, self.customkeys))
+	if (HasKeys (other, self.items, self.customkeys)){
+		if (!self.state) {
+			sprint (other, "You already got the ");
+			sprint (other, self.netname);
+			sprint (other,"\n");
+
+			sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
+
+			activator = other;
+			SUB_UseTargets();
+			self.state = 1;
+		}
 		return;
+	}
 
 	sprint (other, "You got the ");
 	sprint (other, self.netname);
@@ -719,10 +727,11 @@ void() key_touch =
 		self.model = string_null;
 	}
 
-	activator = other;
-// fix key items firing their targets multiple times in coop -- iw
-	SUB_UseTargets();				// fire all targets / killtargets
-//	SUB_UseAndForgetTargets();
+	if (!self.state) {
+		activator = other;
+		SUB_UseTargets();
+		self.state = 1;
+	}
 };
 
 
@@ -737,16 +746,19 @@ void() key_setsounds =
 	if (world.worldtype == WORLDTYPE_METAL)
 	{
 		precache_sound ("misc/runekey.wav");
+		precache_sound ("doors/runetry.wav");
 		self.noise = "misc/runekey.wav";
 	}
 	else if (world.worldtype == WORLDTYPE_BASE)
 	{
-		precache_sound2 ("misc/basekey.wav");
+		precache_sound ("misc/basekey.wav");
+		precache_sound ("doors/basetry.wav");
 		self.noise = "misc/basekey.wav";
 	}
 	else
 	{
 		precache_sound ("misc/medkey.wav");
+		precache_sound ("doors/medtry.wav");
 		self.noise = "misc/medkey.wav";
 	}
 };

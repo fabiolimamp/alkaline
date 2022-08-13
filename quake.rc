@@ -2,16 +2,34 @@ exec default.cfg
 
 exec config.cfg
 
+sv_protocol 999
+sv_protocol FTE999
+sv_nqplayerphysics 1
+
 bind "F8" "echo Loading autosave...; wait; load auto"
 
+alias bulletholes "impulse 30"
+alias footsteps "impulse 31"
+alias autosaves "impulse 32"
+alias tracers "impulse 42"
+alias playertracers "impulse 43"
+alias resetalkalinesettings "impulse 40"
+
 alias resurrect "impulse 154"
+alias giveall "impulse 9"
+alias giveweapons "impulse 13"
 alias belt "impulse 252"
 alias suit "impulse 253"
 alias pentagram "impulse 254"
 alias quad "impulse 255"
-alias giveall "impulse 9"
-alias giveweapons "impulse 13"
+alias boots "impulse 222"
+alias bootstimed "impulse 221"
+alias bootsremove "impulse 223"
+
+
+alias alkversion "impulse 128"
 alias listmonsters "impulse 184"
+alias mapvars "impulse 185"
 alias reveal "impulse 200"
 alias impulsetest1 "impulse 91"
 alias impulsetest2 "impulse 92"
@@ -25,6 +43,8 @@ alias impulsetest9 "impulse 99"
 
 
 exec autoexec.cfg
+
+exec alkaline.cfg
 
 r_nolerp_list "progs/flame.mdl,progs/flame2.mdl"
 

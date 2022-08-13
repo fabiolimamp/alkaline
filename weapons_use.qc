@@ -134,13 +134,8 @@ float(float weapons, float shells, float nails, float cells, float waterlevel) W
 	return WEAPON_NO_WEAPON; //johnfitz
 };
 
-float() W_BestWeapon =
-{
-	local	float	weaps;
-	
-	weaps = self.weapons;
-
-	return W_BestWeaponParms(weaps, self.ammo_shells, self.ammo_nails, self.ammo_cells, self.waterlevel);
+float() W_BestWeapon = {
+	return W_BestWeaponParms(self.weapons, self.ammo_shells, self.ammo_nails, self.ammo_cells, self.waterlevel);
 };
 
 float(float currentweapon, float shells, float nails, float rockets, float cells) W_CheckAmmoParms = {
@@ -187,7 +182,9 @@ float() W_CheckNoAmmo =
 ============
 W_Attack
 
-Called when player presses the attack button.
+Called on each frame while the player
+is pressing the attack button, except if
+self.attack_finished timer hasn't passed.
 Fired from W_WeaponFrame (impulses.qc)
 ============
 */

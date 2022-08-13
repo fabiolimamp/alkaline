@@ -1,14 +1,3 @@
-/* ALL MONSTERS SHOULD BE 1 0 0 IN COLOR */
-
-// name =[framenum,	nexttime, nextthink] {code}
-// expands to:
-// name ()
-// {
-//		self.frame=framenum;
-//		self.nextthink = time + nexttime;
-//		self.think = nextthink
-//		<code>
-// };
 
 void(float qt) add_monster_total = {
 	total_monsters += qt;
@@ -197,7 +186,7 @@ void(void() go_function) monster_start = {
 	else {
 		// delay drop to floor to make sure all doors have been spawned
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + 0.05 + random()*0.5;
 		self.think = go_function;
 
 		if (!(self.spawnflags & MONSTER_SPAWNER && !(self.spawnflags & MONSTER_COUNTONSPAWN))) add_monster_total(1);
@@ -254,9 +243,7 @@ void() walkmonster_start_go =
 	
 	if (!walkmove2(0,0))
 	{
-		dprint ("walkmonster in wall at: ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
+		dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
 	}
 	
 	search_path_angry();
@@ -299,7 +286,7 @@ void() walkmonster_start_go =
 
 	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + random()*0.5 + 0.03;
 
 	if (self.spawnflags & MONSTER_SPAWNANGRY)
 		monster_use();
@@ -322,9 +309,7 @@ void() flymonster_start_go =
 
 	if (!walkmove2(0,0))
 	{
-		dprint ("flymonster in wall at: ");
-		dprint (vtos(self.origin));
-		dprint ("\n");
+		dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
 	}
 
 	// path_angry doesn't work well with flying monsters
@@ -355,7 +340,7 @@ void() flymonster_start_go =
 
 	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + random()*0.5 + 0.03;
 
 	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };
@@ -380,7 +365,8 @@ void() swimmonster_start_go =
 
 	search_path_angry();
 
-	self.flags = self.flags | FL_SWIM;
+	self.flags = self.flags | FL_FLY | FL_SWIM2;
+	//self.flags = self.flags | FL_SWIM;
 	self.flags = self.flags | FL_MONSTER;
 
 	if (self.target)
@@ -404,7 +390,7 @@ void() swimmonster_start_go =
 
 	if (!(self.spawnflags & MONSTER_SPAWNTRIGGERED))
 		// spread think times so they don't all happen at same time
-		self.nextthink = self.nextthink + random()*0.5;
+		self.nextthink = self.nextthink + random()*0.5 + 0.03;
 
 	if(self.spawnflags & MONSTER_SPAWNANGRY) monster_use();
 };

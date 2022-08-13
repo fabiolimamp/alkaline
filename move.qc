@@ -30,7 +30,7 @@ void(vector ofs, float fly) SUB_AddBumper = {
 	e.owner = self;
 	e.movetype = MOVETYPE_STEP;
 	//e.solid = SOLID_BBOX;
-	e.flags = self.flags & (FL_FLY | FL_SWIM);
+	e.flags = self.flags & (FL_FLY | FL_SWIM | FL_SWIM2);
 	if (fly) e.flags = e.flags | FL_FLY;
 	e.view_ofs = ofs;
 	e.think = bumperThink;
@@ -70,8 +70,37 @@ facing it.
 ======================
 */
 float(float yaw, float dist) walkmove2 = {
-	if (!self.nextbumper)
-		return walkmove(yaw, dist);
+	float pc;
+
+	if (!self.nextbumper) {
+		self.oldorigin = self.origin;
+		float ret;
+
+		ret = walkmove(yaw, dist);
+
+		if (ret && self.flags & FL_SWIM2) {
+			//checkSelfInWaterBrush();
+			//if (self.waterlevel < 3){
+			pc = pointcontents2(self.origin);
+			if (pc > CONTENT_WATER){
+				if (pointcontents2([self.origin_x, self.origin_y, self.oldorigin_z]) <= CONTENT_WATER) {
+					setorigin(self, [self.origin_x, self.origin_y, self.oldorigin_z]);
+					return TRUE;
+				}
+				
+				setorigin(self, self.oldorigin);
+
+				//if (pointcontents2(self.origin) > CONTENT_WATER)
+				//	self.flags &~= FL_FLY;
+
+				return FALSE;
+			}
+
+			//if (self.health) self.flags |= FL_FLY;
+		}
+		return ret;
+		
+	}
 
 
 	entity oself, bp;
@@ -86,6 +115,15 @@ float(float yaw, float dist) walkmove2 = {
 		oself = self;
 		self = bp;
 		movefail = movefail | !walkmove(yaw, dist);
+
+		if (self.flags & FL_SWIM2) {
+			//checkSelfInWaterBrush();
+			//if (self.waterlevel < 3)
+			pc = pointcontents2(self.origin);
+			if (pc > CONTENT_WATER)
+				movefail = TRUE;
+		}
+
 		self = oself;
 		
 		bp = bp.nextbumper;
@@ -198,7 +236,7 @@ void(entity enm, float dist) NewChaseDir = {
 	// a valid standing position at all
 
 	if (!checkbottom(self))
-		self.flags = self.flags & FL_PARTIALGROUND;
+		self.flags = self.flags | FL_PARTIALGROUND;
 
 }
 
@@ -218,7 +256,7 @@ float(entity goal, float dist) CloseEnough = {
 
 void(float dist) movetogoal2 = {
 	
-	if (!self.nextbumper) {
+	if (!self.nextbumper && !(self.flags & FL_SWIM2)) {
 		movetogoal(dist);
 		return;
 	}

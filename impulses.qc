@@ -20,6 +20,10 @@ void() GiveAllCommand =
 	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.impulse = 0;
 	W_SetCurrentAmmo ();
+
+	stuffcmd (self, "bf\n");
+	sprint(self, "You got everything\n");
+	sound (self, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
 };
 
 /*
@@ -43,6 +47,11 @@ void() GiveWeaponsCommand =
 	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.impulse = 0;
 	W_SetCurrentAmmo ();
+
+
+	stuffcmd (self, "bf\n");
+	sprint(self, "You got all weapons and ammo\n");
+	sound (self, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
 };
 
 /*
@@ -65,7 +74,10 @@ void() RingCheat =
 	self.invisible_time = 1;
 	self.invisible_finished = time + 30;
 	self.items = self.items | IT_INVISIBILITY;
-	dprint ("ring cheat\n");
+
+	stuffcmd (self, "bf\n");
+	sprint(self, "You got the Invisibility belt\n");
+	sound(self, CHAN_ITEM, "items/inv1.wav", 1, ATTN_NORM);
 };
 
 void() BiosuitCheat =
@@ -75,7 +87,10 @@ void() BiosuitCheat =
 	self.rad_time = 1;
 	self.radsuit_finished = time + 30;
 	self.items = self.items | IT_SUIT;
-	dprint ("biosuit cheat\n");
+
+	stuffcmd (self, "bf\n");
+	sprint(self, "You got the Biosuit\n");
+	sound(self, CHAN_ITEM, "items/suit.wav", 1, ATTN_NORM);
 };
 
 void() PentCheat =
@@ -85,7 +100,10 @@ void() PentCheat =
 	self.invincible_time = 1;
 	self.invincible_finished = time + 30;
 	self.items = self.items | IT_INVULNERABILITY;
-	dprint ("pent cheat\n");
+
+	stuffcmd (self, "bf\n");
+	sprint(self, "You got the Pentagram of Protection\n");
+	sound(self, CHAN_ITEM, "items/protect.wav", 1, ATTN_NORM);
 };
 //johnfitz
 
@@ -96,7 +114,10 @@ void() QuadCheat =
 	self.super_time = 1;
 	self.super_damage_finished = time + 30;
 	self.items = self.items | IT_QUAD;
-	dprint ("quad cheat\n");
+
+	stuffcmd (self, "bf\n");
+	sprint(self, "You got the Quad Damage\n");
+	sound(self, CHAN_ITEM, "items/damage.wav", 1, ATTN_NORM);
 };
 
 void() JBootsCheat = { //JCR superjump boot cheat
@@ -104,7 +125,7 @@ void() JBootsCheat = { //JCR superjump boot cheat
 
 	if (!self.jboots_rechargelimit) sprint(self, "You got the Jump Boots!\n");
 	else sprint(self, "Jump module added.\n");
-
+	stuffcmd (self, "bf\n");
 	sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
 
 	if (self.jboots_rechargelimit >= 3)
@@ -117,7 +138,7 @@ void() JBootsTimedCheat = { //JCR superjump boot cheat
 	self.items = self.items | IT_JBOOTS;
 
 	sprint(self, "You got the Super Jump Boots!\n");
-
+	stuffcmd (self, "bf\n");
 	sound(self, CHAN_BODY, "items/jboots_got.wav", 1, ATTN_NORM);
 
 	self.jboots_prevlimit = self.jboots_rechargelimit;
@@ -128,6 +149,8 @@ void() JBootsTimedCheat = { //JCR superjump boot cheat
 
 void() JBootsRemoveCheat = {
 	sprint(self, "Jump boots removed.\n");
+	stuffcmd (self, "bf\n");
+	sound(self, CHAN_BODY, "items/jboots_dry.wav", 1, ATTN_NORM);
 
 	self.items -= self.items & IT_JBOOTS;
 
@@ -149,21 +172,60 @@ void(float num) ImpulseTest = {
 	SUB_UseSpecificTarget(tgt_impulse_num, impulsetarget);
 };
 
-// adapted from Copper
+
+void() dev_reveal_touch = {
+	if (other == self.owner) return;
+	if (other) {
+		dprint("----------------------------\n----------------------------\n");
+		eprint(other);
+	}
+	dprint5("\n-\n-\nFound ", other.classname, "; time: ", ftos(time), "\n");
+	remove(self);
+}
+
+void() dev_reveal_think = {
+	if (time > self.lifetime_finished) {
+		remove(self);
+		return;
+	}
+
+	entity e = nextent(world);
+	while (e) {
+		if (e != self && e != self.owner && e.model != "" && e.solid != SOLID_BSP && getTouch(self.origin, e)) {
+			dprint("----------------------------\n----------------------------\n");
+			eprint(e);
+			
+			dprint5("\n-\n-\nFound ", e.classname, "; time: ", ftos(time), "\n");
+			remove(self);
+			return;
+		}
+		e = nextent(e);
+	}
+	if (vlen(self.velocity) < 1500) self.velocity *= 1.03;
+	self.nextthink = time + 0.015;
+
+}
+
+// original idea from Copper
 void() dev_reveal = {
 	vector org;
 
-	makevectors(self.v_angle);
 	org = self.origin + self.view_ofs;
-	traceline (org, org + v_forward * 8192, FALSE, self);
+	entity e = spawn();
+	e.owner = self;
+	e.movetype = MOVETYPE_FLY;
+	e.solid = SOLID_TRIGGER;
+	setorigin(e, org);
+	setmodel(e, "progs/s_bubble.spr");
+	setsize(e, '0 0 0', '0 0 0');
+	e.oldorigin = e.origin;
+	e.touch = dev_reveal_touch;
+	e.think = dev_reveal_think;
+	e.nextthink = time + 0.015;
+	makevectors(self.v_angle);
+	e.velocity = v_forward * 600;
 
-	if (trace_fraction < 1) {
-		if (trace_ent) {
-			dprint("----------------------------\n----------------------------\n");
-			eprint(trace_ent);
-		}
-		dprint5("\n-\n-\nFound ", trace_ent.classname, "; time: ", ftos(time), "\n");
-	}
+	e.lifetime_finished = time + 5;
 
 };
 
@@ -276,6 +338,7 @@ void() hide_bulletholes;
 
 void() ToggleBulletHole = {
 	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (bulletmode == 0) {
 		bprint("Bullet holes: enabled\n");
@@ -293,6 +356,7 @@ void() ToggleBulletHole = {
 
 void() ToggleFootsteps = {
 	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (nofootsteps) {
 		bprint("Footsteps: enabled\n");
@@ -308,6 +372,7 @@ void() ToggleFootsteps = {
 
 void() ToggleAutosave = {
 	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (noautosaves) {
 		bprint("Autosaves: enabled\n");
@@ -323,6 +388,7 @@ void() ToggleAutosave = {
 
 void() ToggleTracers = {
 	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (notracers) {
 		bprint("Tracers: enabled\n");
@@ -338,6 +404,7 @@ void() ToggleTracers = {
 
 void() TogglePlayerTracers = {
 	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (playertracers) {
 		bprint("Player tracers: disabled\n");
@@ -351,6 +418,22 @@ void() TogglePlayerTracers = {
 	}
 };
 
+void() ToggleOldGrenade = {
+	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	tmp1 = cvar("temp1");
+	if (oldgrenade) {
+		bprint("Old grenade style: disabled\n");
+		oldgrenade = 0;
+		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_OLDGRENADE)));
+	}
+	else {
+		bprint("Old grenade style: enabled\n");
+		oldgrenade = 1;
+		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_OLDGRENADE));
+	}
+}
+
 
 void() ResetModSettings = {
 	cvar_set("temp1", 0);
@@ -363,34 +446,6 @@ void() ResetPlayerZ = {
 	self.fixangle = 1;
 }
 
-/*void() ToggleAutosave =
-{
-	entity e = world;
-	float printed = FALSE;
-	do {
-		e = find(e, classname, "target_autosave");
-		if (!e) break;
-
-		if (e.use == target_autosave_use)
-		{
-			e.use = SUB_Null;
-			if (!printed)
-			{
-				bprint("Autosaves: disabled\n");
-				printed = TRUE;
-			}
-		} else {
-			e.use = target_autosave_use;
-			if (!printed)
-			{
-				bprint("Autosaves: enabled\n");
-				printed = TRUE;
-			}
-		}
-
-	} while (e != world);
-}*/
-
 /*
 ============
 ImpulseCommands
@@ -400,7 +455,7 @@ ImpulseCommands
 
 void() ImpulseCommands = {
 	// weapon changing must not occur until attack_finished time has passed
-	if (self.impulse >= 1 && self.impulse <= 8){
+	if (self.impulse >= 1 && self.impulse <= 8) {
 		if (time < self.attack_finished) return;
 		else W_ChangeWeapon();
 	}
@@ -441,6 +496,8 @@ void() ImpulseCommands = {
 		ToggleTracers();
 	if (self.impulse == 43)
 		TogglePlayerTracers();
+	if (self.impulse == 44)
+		ToggleOldGrenade();
 
 	if (self.impulse == 128)
 		printVersionConsole(self);
@@ -490,7 +547,7 @@ void() W_WeaponFrame =
 		return;
 
 // check for attack
-	if (self.button0) {
+	if (self.button0 && time > self.connect_time + 0.2) {
 		W_Attack ();
 	}
 };

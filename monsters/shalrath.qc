@@ -244,8 +244,7 @@ void(entity e) monster_shalrath_start =
 	self.th_missile = shal_attack1;
 	self.th_sight = shal_sight;
 
-	self.think = walkmonster_start;
-	self.nextthink = time + 0.1 + random ()*0.1;	
+	walkmonster_start();
 
 	self = oself;
 };

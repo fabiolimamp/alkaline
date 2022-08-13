@@ -242,7 +242,6 @@ to not lose track of current think functions.
 
 ===============
 */
-void() SUB_CalcAngleMoveDoneController;
 
 void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController =
 {
@@ -384,6 +383,11 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 				WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 			}
 		}
+
+		// liquid brush list handling
+		if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
+		if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
+
 		remove (t);
 		t = find (t, matchfield, matchstring);
 	}

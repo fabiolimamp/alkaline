@@ -9,7 +9,7 @@ void() W_FireAxe =
 	local	vector	org;
 
 	makevectors (self.v_angle);
-	source = self.origin + '0 0 16';
+	source = self.origin + self.view_ofs - v_up*6;
 	traceline (source, source + v_forward*64, FALSE, self);
 	if (trace_fraction == 1.0)
 		return;
@@ -48,6 +48,32 @@ void() W_FireAxe =
 //============================================================================
 
 
+void(vector org, float dist, float amount) bullethell = {
+	float step = 360/amount;
+	float yaw;
+	vector angs;
+
+	for (yaw = 0; yaw < 360; yaw += step) {
+		angs = [0, yaw, 0];
+		makevectors(angs);
+
+		newmis = spawn();
+		newmis.angles = angs;
+		newmis.velocity = v_forward * 600;
+
+		newmis.owner = self;
+		newmis.movetype = MOVETYPE_FLYMISSILE;
+		newmis.solid = SOLID_BBOX;
+		
+		newmis.nextthink = time + 5;
+		newmis.think = SUB_Remove;
+		newmis.touch = Laser_Touch;
+		
+		setmodel (newmis, "progs/laser.mdl");
+		setsize (newmis, '0 0 0', '0 0 0');
+		setorigin (newmis, org + v_forward * dist);
+	}
+}
 
 /*
 ================
@@ -61,7 +87,7 @@ void() W_FireSaw =
 	local	entity	ent;
 
 	makevectors (self.v_angle);
-	source = self.origin + '0 0 16';
+	source = self.origin + self.view_ofs - v_up*6;
 	traceline (source, source + v_forward*64, FALSE, self);
 	if (trace_fraction == 1.0)
 		return;
@@ -433,9 +459,14 @@ void() W_FireRocket =
 
 	makevectors (self.v_angle);
 	dir = aim(self, 1000);
-	org = self.origin + v_forward*8 + '0 0 16';
-	
-	launch_rocket(org, dir);
+
+
+	org = self.origin + self.view_ofs - v_up*6;// '0 0 10';
+	traceline(org, org + v_forward * 24, FALSE, self);
+	launch_rocket(org + v_forward*24 * trace_fraction, dir);
+
+	//org = self.origin + v_forward*8 + self.view_ofs - v_up*6;
+	//launch_rocket(org, dir);
 
 };
 
@@ -511,24 +542,16 @@ void() W_FireLightning =
 	}
 
 // explode if under water
-	if (self.waterlevel > 1)
-	{
+	if (self.waterlevel > 1) {
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
 		W_SetCurrentAmmo ();
 		victim = findradius(self.origin, 35*cells);
-		while (victim)
-		{
-			if (victim.classname != "monster_eel")
-				{
-				if (victim.takedamage)
-					{
-					if (victim.waterlevel > 0)
-						{
-						T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
-						}
-					}	
-				}
+		
+		while (victim) {
+			if (victim.classname != "monster_eel" && victim.takedamage && victim.waterlevel > 0) {
+				T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
+			}
 
 			victim = victim.chain;
 		}
@@ -640,8 +663,16 @@ void() W_FireGrenade =
 	missile.think = GrenadeExplode;
 
 	setmodel (missile, "progs/grenade.mdl");
-	setsize (missile, '0 0 0', '0 0 0');		
-	setorigin (missile, self.origin);
+	setsize (missile, '0 0 0', '0 0 0');
+
+	if (oldgrenade) {
+		setorigin (missile, self.origin);
+	}
+	else {
+		vector org = self.origin + self.view_ofs - v_up*12;// '0 0 10';
+		traceline(org, org + v_forward * 24, FALSE, self);
+		setorigin(missile, org + v_forward*24 * trace_fraction);
+	}
 };
 
 
@@ -692,7 +723,7 @@ void() W_FireSuperSpikes =
 	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
 	dir = aim (self, 1000);
 
-	org = self.origin + '0 0 16';
+	org = self.origin + self.view_ofs - v_up * 6;//'0 0 16';
 
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_spike (org + v_forward * 24 * trace_fraction , dir);
@@ -728,7 +759,7 @@ void(float ox) W_FireSpikes =
 	self.attack_finished = time + 0.2;
 	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
 
-	org = self.origin + self.view_ofs + v_up * -8 + v_right*ox;
+	org = self.origin + self.view_ofs - v_up * 8 + v_right*ox;
 	dir = aim (self, 1000);
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_spike (org + v_forward * 24 * trace_fraction, dir);
@@ -950,7 +981,9 @@ void() W_FirePlasma =
 
 	// shot spread increases the longer you hold the trigger,
 	// and slowly recovers after that -bmFbr
-	if (time < self.lastshot + 0.065) self.shotcount = min(self.shotcount + 1, 6);
+
+	// last projectile was shot continuously, so increase shot count
+	if (time < self.lastshot + 0.08) self.shotcount = min(self.shotcount + 1, 6);
 	else self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
 	
 	makevectors (self.v_angle);
@@ -970,7 +1003,7 @@ void() W_FirePlasma =
 	setsize (missile, '0 0 0', '0 0 0');
 	//setorigin (missile, self.origin + v_forward*8 + '0 0 10' + v_right*10);
 
-	org = self.origin + '0 0 10';
+	org = self.origin + self.view_ofs - v_up * 12;// '0 0 10';
 	traceline(org, org + v_forward * 24, FALSE, self);
 	//setorigin (missile, org + v_forward*12);
 	setorigin (missile, org + v_forward*24 * trace_fraction);

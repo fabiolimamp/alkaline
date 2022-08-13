@@ -8,23 +8,29 @@ float 	TRUE					= 1;
 float	FL_FLY					= 1;
 float	FL_SWIM					= 2;
 float	FL_CLIENT				= 8;		// set for all client edicts
+
 float	FL_INWATER				= 16;		// for enter / leave water splash
 float	FL_MONSTER				= 32;
 float	FL_GODMODE				= 64;		// player cheat
 float	FL_NOTARGET				= 128;		// player cheat
+
 float	FL_ITEM					= 256;		// extra wide size for bonus items
 float	FL_ONGROUND				= 512;		// standing on something
 float	FL_PARTIALGROUND		= 1024;		// not all corners are valid
 float	FL_WATERJUMP			= 2048;		// player jumping out of water
+
 float	FL_JUMPRELEASED			= 4096;		// for jump debouncing
 float 	FL_UNSPAWNEDMONSTER		= 8192; 	// unspawned triggered spawn monsters
 float 	FL_PACIFIST				= 16384;	// monsters that don't fight (usually run away)
 float 	FL_PROJECTILE			= 32768;	// projectile entities, like lasers, plasma, rockets, spikes, etc
+
 float 	FL_NOCENTERPRINT		= 65536;	// don't centerprint entity's message field when its targets are used
 float 	FL_IGNOREDATTACK		= 131072; 	// monsters won't get angry at this entity when attacked by it
 float 	FL_SPAWNEDMONSTER		= 262144; 	// spawned trigger spawn monsters
 float 	FL_NEVERTELEPORT		= 524288; 	// never teleport
+
 float 	FL_INLIQUIDBRUSH		= 1048576;  // touching liquid brush
+float 	FL_SWIM2				= 2097152;	// use this instead of FL_SWIM for liquid brush compatibility
 
 // edict.movetype values
 float	MOVETYPE_NONE			= 0;	// never moves
@@ -301,6 +307,7 @@ float TEMPSETTINGS_NOFOOTSTEPS = 2;
 float TEMPSETTINGS_NOAUTOSAVES = 4;
 float TEMPSETTINGS_NOTRACERS = 8;
 float TEMPSETTINGS_PLAYERTRACERS = 16;
+float TEMPSETTINGS_OLDGRENADE = 32;
 
 //
 // monster ai

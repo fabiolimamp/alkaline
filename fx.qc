@@ -28,7 +28,7 @@ void(vector a, vector b, entity who) fx_beam =
 	WriteCoord (MSG_BROADCAST, b_z);
 }
 
-// explosion particle effect. Also fires up explosion sound automatically
+// explosion particle effect. Also fires up explosion sound automatically as well as a dlight
 void(vector org) fx_explosion_particle = {
 	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_EXPLOSION);
@@ -37,12 +37,47 @@ void(vector org) fx_explosion_particle = {
 	WriteCoord (MSG_BROADCAST, org_z);
 }
 
-void()	s_explode1	=	[0,		s_explode2] {}
-void()	s_explode2	=	[1,		s_explode3] {}
-void()	s_explode3	=	[2,		s_explode4] {}
-void()	s_explode4	=	[3,		s_explode5] {}
-void()	s_explode5	=	[4,		s_explode6] {}
-void()	s_explode6	=	[5,		SUB_Remove] {}
+// only the isolated particle effect
+void(vector org) fx_explosion_particle2 = {
+	particle(org, '0 0 0', 0, 255);
+}
+
+void()	s_explode1	=	[0,		s_explode2] {nxth(self.wait);}
+void()	s_explode2	=	[1,		s_explode3] {nxth(self.wait);}
+void()	s_explode3	=	[2,		s_explode4] {nxth(self.wait);}
+void()	s_explode4	=	[3,		s_explode5] {nxth(self.wait);}
+void()	s_explode5	=	[4,		s_explode6] {nxth(self.wait);}
+void()	s_explode6	=	[5,		SUB_Remove] {nxth(self.wait);}
+
+
+void()	s_explodesm1	=	[3,		s_explodesm2] {nxth(self.wait);}
+void()	s_explodesm2	=	[5,		s_explodesm3] {nxth(self.wait);}
+void()	s_explodesm3	=	[7,		s_explodesm4] {nxth(self.wait);}
+void()	s_explodesm4	=	[9,		s_explodesm5] {nxth(self.wait);}
+void()	s_explodesm5	=	[11,	s_explodesm6] {nxth(self.wait);}
+void()	s_explodesm6	=	[13,	s_explodesm7] {nxth(self.wait);}
+void()	s_explodesm7	=	[15,	s_explodesm8] {nxth(self.wait);}
+void()	s_explodesm8	=	[17,	s_explodesm9] {nxth(self.wait);}
+void()	s_explodesm9	=	[19,	s_explodesm10] {nxth(self.wait);}
+void()	s_explodesm10	=	[21,	s_explodesm11] {nxth(self.wait);}
+void()	s_explodesm11	=	[23,	s_explodesm12] {nxth(self.wait);}
+void()	s_explodesm12	=	[25,	s_explodesm13] {nxth(self.wait);}
+void()	s_explodesm13	=	[27,	SUB_Remove] {nxth(self.wait);}
+
+
+void()	s_explodelg1	=	[0,		s_explodelg2] {nxth(self.wait);}
+void()	s_explodelg2	=	[1,		s_explodelg3] {nxth(self.wait);}
+void()	s_explodelg3	=	[2,		s_explodelg4] {nxth(self.wait);}
+void()	s_explodelg4	=	[3,		s_explodelg5] {nxth(self.wait);}
+void()	s_explodelg5	=	[4,		s_explodelg6] {nxth(self.wait);}
+void()	s_explodelg6	=	[5,		s_explodelg7] {nxth(self.wait);}
+void()	s_explodelg7	=	[6,		s_explodelg8] {nxth(self.wait);}
+void()	s_explodelg8	=	[7,		s_explodelg9] {nxth(self.wait);}
+void()	s_explodelg9	=	[8,		s_explodelg10] {nxth(self.wait);}
+void()	s_explodelg10	=	[9,		s_explodelg11] {nxth(self.wait);}
+void()	s_explodelg11	=	[10,	s_explodelg12] {nxth(self.wait);}
+void()	s_explodelg12	=	[11,	s_explodelg13] {nxth(self.wait);}
+void()	s_explodelg13	=	[12,	SUB_Remove] {nxth(self.wait);}
 
 /*
 ========
@@ -56,15 +91,25 @@ void() BecomeBlast =
 	self.movetype = MOVETYPE_FLY;
 	self.solid = SOLID_TRIGGER;
 	self.flags -= self.flags & FL_ONGROUND;
-	self.classname = "explosion";
+	
 	self.velocity = '0 0 0';
 	self.touch = SUB_Null;
 
-	if (other.classname == "monster_shambler")
+	if (other.classname == "monster_shambler"){
 		setmodel (self, "progs/s_explo2.spr");
-	else
+		self.wait = 0.05;
+	}
+	else if (self.classname == "grenade"){
 		setmodel (self, "progs/s_explod.spr");
+		self.wait = 0.05;
+	}
+	else {
+		//setmodel (self, "progs/s_exp_small.spr");
+		setmodel (self, "progs/s_exp_small_2.spr");
+		self.wait = 0.05;
+	}
 
+	self.classname = "explosion";
 	setsize(self, '-8 -8 -8', '8 8 8');
 
 	// Correction for explosions happening on horizontal surfaces
@@ -75,11 +120,15 @@ void() BecomeBlast =
 		force_retouch = 2;
 
 	// moves explosion a bit off the ground
-	setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
+	//if (self.model == "progs/s_explod.spr")
+		setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
 
 	self.nextthink = time + 0.5;
 	self.think = SUB_Remove;
-	s_explode1 ();
+
+	if (self.model == "progs/s_explo2.spr") s_explode1();
+	else if (self.model == "progs/s_explod.spr") s_explodelg1();
+	else s_explodesm1();
 }
 
 
@@ -152,18 +201,18 @@ void()	shockwave11	=[	10,	SUB_Remove	] {self.alpha = 0.6; self.nextthink = time 
 
 static float DEXPLODE_FRAMETIME = 0.03;
 
-void() d_explode1 = [0, d_explode2]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode2 = [1, d_explode3]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode3 = [2, d_explode4]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode4 = [3, d_explode5]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode5 = [4, d_explode6]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode6 = [5, d_explode7]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode7 = [6, d_explode8]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode8 = [7, d_explode9]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode9 = [8, d_explode10]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode10 = [9, d_explode11]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode11 = [10, d_explode12]{self.nextthink = time + DEXPLODE_FRAMETIME;};
-void() d_explode12 = [11, d_explode13]{self.nextthink = time + DEXPLODE_FRAMETIME;};
+void() d_explode1 = [0, d_explode2]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode2 = [1, d_explode3]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode3 = [2, d_explode4]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode4 = [3, d_explode5]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode5 = [4, d_explode6]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode6 = [5, d_explode7]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode7 = [6, d_explode8]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode8 = [7, d_explode9]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode9 = [8, d_explode10]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode10 = [9, d_explode11]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode11 = [10, d_explode12]{nxth(DEXPLODE_FRAMETIME);};
+void() d_explode12 = [11, d_explode13]{nxth(DEXPLODE_FRAMETIME);};
 void() d_explode13 = [12, SUB_Remove]{};
 
 

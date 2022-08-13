@@ -175,7 +175,7 @@ void() monster_turret_active_think = {
 		return;
 	}
 
-	if (time > self.air_finished + TURRET_DEACTIVATE_TIME && !(self.spawnflags && TURRET_DONTSLEEP)) {
+	if (time > self.air_finished + TURRET_DEACTIVATE_TIME && !(self.spawnflags & TURRET_DONTSLEEP)) {
 		self.state = TURRET_STATE_DEACTIVATING;
 		setsize(self, '-16 -16 -8', '16 16 2');
 		monster_turret_disable_think();
