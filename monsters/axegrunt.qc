@@ -235,7 +235,7 @@ void(entity attacker, float damage)	axe_pain =
 	if (self.pain_finished > time)
 		return;
 
-	sound (self, CHAN_VOICE, "knight/khurt.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "axegrunt/axgpain.wav", 1, ATTN_NORM);
 	self.state = 3; // pain state
 	axe_pain1 ();
 	self.pain_finished = time + 0.75;
@@ -332,7 +332,7 @@ void() axe_die =
 	self.skin = 3;
 	float rnd = random();
 
-	sound (self, CHAN_VOICE, "knight/kdeath.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "axegrunt/axgdeath.wav", 1, ATTN_NORM);
 	
 	if ((self.state == 2) && self.health < -15)
 		axe_diec1();
@@ -347,7 +347,7 @@ void() axe_die =
 };
 
 void() axe_sight = {
-	sound (self, CHAN_VOICE, "knight/ksight.wav", 1, ATTN_NORM);
+	sound (self, CHAN_VOICE, "axegrunt/axgsight.wav", 1, ATTN_NORM);
 };
 
 /*QUAKED monster_axegrunt (1 0 0) (-16 -16 -24) (16 16 40) Ambush
@@ -397,9 +397,9 @@ void() monster_axegrunt =
 	precache_model ("progs/axegrunt.mdl");
 	precache_model ("progs/h_guard.mdl");
 
-	precache_sound ("knight/kdeath.wav");
-	precache_sound ("knight/khurt.wav");
-	precache_sound ("knight/ksight.wav");
+	precache_sound ("axegrunt/axgdeath.wav");
+	precache_sound ("axegrunt/axgpain.wav");
+	precache_sound ("axegrunt/axgsight.wav");
 	precache_sound ("knight/sword1.wav");
 	precache_sound ("knight/sword2.wav");
 	precache_sound ("knight/idle.wav");
