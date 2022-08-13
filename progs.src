@@ -107,7 +107,7 @@ monsters/spider.qc 			// bmFbr
 monsters/edie.qc			// quoth
 monsters/monster_turret.qc
 
-lostsoul.qc
-gargoyle.qc
-chaingunner.qc
-arachnotron.qc
+monsters/lostsoul.qc		// sock/bmFbr
+monsters/gargoyle.qc		// sock/bmFbr
+monsters/chaingunner.qc		// bmFbr
+monsters/arachnotron.qc		// bmFbr

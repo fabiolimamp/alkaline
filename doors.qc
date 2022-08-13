@@ -610,7 +610,7 @@ void() door_touch =
 	if (self.owner.message != "")
 	{
 		centerprint (other, self.owner.message);
-		sound (other, CHAN_VOICE, "doors/alka_doorlocked.wav", 0.5, ATTN_NORM);
+		sound (other, CHAN_VOICE, "misc/talk.wav", 0.5, ATTN_NORM);
 	}
 
 
