@@ -21,28 +21,28 @@ float HUDFONT_RED = 2;		// index = index + 128
 vector HUDRGB_DEF = '1 1 1';
 
 string number[10] = {
-	"gfx/xnum_0",
-	"gfx/xnum_1",
-	"gfx/xnum_2",
-	"gfx/xnum_3",
-	"gfx/xnum_4",
-	"gfx/xnum_5",
-	"gfx/xnum_6",
-	"gfx/xnum_7",
-	"gfx/xnum_8",
-	"gfx/xnum_9"
+	"gfx/num_0",
+	"gfx/num_1",
+	"gfx/num_2",
+	"gfx/num_3",
+	"gfx/num_4",
+	"gfx/num_5",
+	"gfx/num_6",
+	"gfx/num_7",
+	"gfx/num_8",
+	"gfx/num_9"
 };
 string anumber[10] = {
-	"gfx/xanum_0",
-	"gfx/xanum_1",
-	"gfx/xanum_2",
-	"gfx/xanum_3",
-	"gfx/xanum_4",
-	"gfx/xanum_5",
-	"gfx/xanum_6",
-	"gfx/xanum_7",
-	"gfx/xanum_8",
-	"gfx/xanum_9"
+	"gfx/anum_0",
+	"gfx/anum_1",
+	"gfx/anum_2",
+	"gfx/anum_3",
+	"gfx/anum_4",
+	"gfx/anum_5",
+	"gfx/anum_6",
+	"gfx/anum_7",
+	"gfx/anum_8",
+	"gfx/anum_9"
 };
 
 string faceid[10] = {
@@ -327,20 +327,24 @@ void Hud_DrawSBar(vector pos)
 	
 
 	if (st_items & IT_TRIFECTA)	{
-		drawpic(pos + '16 0 0', "gfx/sb_aarmortri", '112 24 0', '1 1 1', 1, 0);
+		//drawpic(pos + '16 0 0', "gfx/sb_armortri", '112 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'16 0 0', "gfx/sb_armortri", '24 24 0', '1 1 1', 1, 0);
+		Hud_DrawLargeValue(pos+'48 0 0', 333, 667);
 	}
 	else if (st_items & IT_INVULNERABILITY) {
-		drawpic(pos + '16 0 0', "gfx/sb_aarmor666", '112 24 0', '1 1 1', 1, 0);
+		//drawpic(pos + '16 0 0', "gfx/sb_aarmor666", '112 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'16 0 0', "gfx/disc", '24 24 0', '1 1 1', 1, 0);
+		Hud_DrawLargeValue(pos+'48 0 0', 666, 667);
 	}
 	else {
 		if (st_items & IT_ARMOR3)
-			drawpic(pos+'16 0 0', "gfx/sb_aarmor3", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "gfx/sb_armor3", '24 24 0', '1 1 1', 1, 0);
 		else if (st_items & IT_ARMOR2)
-			drawpic(pos+'16 0 0', "gfx/sb_aarmor2", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "gfx/sb_armor2", '24 24 0', '1 1 1', 1, 0);
 		else if (st_items & IT_ARMOR1)
-			drawpic(pos+'16 0 0', "gfx/sb_aarmor1", '24 24 0', '1 1 1', 1, 0);
+			drawpic(pos+'16 0 0', "gfx/sb_armor1", '24 24 0', '1 1 1', 1, 0);
 
-		drawpic(pos+'40 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
+		//drawpic(pos+'40 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
 		//drawpic(pos+'40 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
 		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25);
 		//drawpic(pos+'120 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
@@ -348,21 +352,21 @@ void Hud_DrawSBar(vector pos)
 
 	Hud_DrawFace(pos+'176 0 0');
 	
-	drawpic(pos+'200 0 0', "gfx/numbk_health", '88 24 0', '1 1 1', 1, 0);
+	//drawpic(pos+'200 0 0', "gfx/numbk_health", '88 24 0', '1 1 1', 1, 0);
 	//drawpic(pos+'200 0 0', "gfx/numbk_l2", '8 24 0', '1 1 1', 1, 0);
 	Hud_DrawLargeValue(pos+'208 0 0', getstatf(STAT_HEALTH), 25);
 	//drawpic(pos+'280 0 0', "gfx/numbk_r2", '8 24 0', '1 1 1', 1, 0);
 
 	if (st_items & IT_SHELLS)
-		drawpic(pos+'336 0 0', "gfx/sb_ashells", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "gfx/sb_shells", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_NAILS)
-		drawpic(pos+'336 0 0', "gfx/sb_anails", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "gfx/sb_nails", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_ROCKETS)
-		drawpic(pos+'336 0 0', "gfx/sb_arocket", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'336 0 0', "gfx/sb_rocket", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_CELLS)
 		drawpic(pos+'336 0 0', "gfx/sb_cells", '24 24 0', '1 1 1', 1, 0);
 
-	drawpic(pos+'360 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
+	//drawpic(pos+'360 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
 	//drawpic(pos+'360 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
 	Hud_DrawLargeValue(pos+'368 0 0', getstatf(STAT_AMMO), 10);
 	//drawpic(pos+'440 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
@@ -452,7 +456,7 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 	local float nsecs, nmins;
 	
 	// Clear status bar ready for map info/scores
-	drawpic(pos, "gfx/alk_scorebar", [464, 24], '1 1 1', baralpha, 0);
+	drawpic(pos, "gfx/abs_scorebar", [464, 24], '1 1 1', baralpha, 0);
 
 	// Level designers Map name + Skill level name
 	map_str = strcat(world.message, " (", mapname, ")");
@@ -541,17 +545,18 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 	}
 
 	if (hudviewsize < 110) {
-		drawpic(pos - '0 48 0', "gfx/alk_ibar", '464 24 0', '1 1 1', baralpha, 0);
+		drawpic(pos - '0 48 0', "gfx/abs_ibar", '464 24 0', '1 1 1', baralpha, 0);
 		Hud_DrawIBar(pos - '-8 48 0');
 
 		if (!scoreboard) {
-			drawpic(pos - '0 24 0', "gfx/alk_sbar", '464 24 0', '1 1 1', baralpha, 0);
+			drawpic(pos - '0 24 0', "gfx/abs_sbar", '464 24 0', '1 1 1', baralpha, 0);
 			Hud_DrawSBar(pos - '0 24 0');
 		}
 	}
 	
 	else if (hudviewsize == 110 && !scoreboard) {
-		drawpic(pos - '0 24 0', "gfx/alk_sbar_solo", '464 24 0', '1 1 1', baralpha, 0);
+		//drawpic(pos - '0 24 0', "gfx/alk_sbar_solo", '464 24 0', '1 1 1', baralpha, 0);
+		drawpic(pos - '0 24 0', "gfx/abs_sbar", '464 24 0', '1 1 1', baralpha, 0);
 		Hud_DrawSBar(pos - '0 24 0');
 	}
 
