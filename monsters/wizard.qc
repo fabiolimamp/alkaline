@@ -211,7 +211,7 @@ void() Wiz_FastFire =
 	
 		vec = normalize(dst - self.origin);
 
-		if (self.owner.spawnflags & MONSTER_ORIGINAL)
+		if (self.owner.originalmonsters)
 			sound(self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
 		else 
 			sound(self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
@@ -233,7 +233,7 @@ void() Wiz_StartFast =
 {
 	local	entity	missile;
 	
-	if (self.spawnflags & MONSTER_ORIGINAL) 
+	if (self.originalmonsters) 
 		sound(self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
 	else
 		sound(self, CHAN_WEAPON, "cyberscrag/wattack.wav", 1, ATTN_NORM);
@@ -276,11 +276,11 @@ local float wr;
 	{
 	 	self.waitmin = time + 2;
 	 	if (wr > 4.5) {
-	 		if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/widle1.wav", 1, ATTN_IDLE);
+	 		if (self.originalmonsters) sound (self, CHAN_VOICE, "wizard/widle1.wav", 1, ATTN_IDLE);
 			else sound (self, CHAN_VOICE, "cyberscrag/widle1.wav", 1,  ATTN_IDLE);
 		}
 	 	if (wr < 1.5) {
-	 		if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/widle2.wav", 1, ATTN_IDLE);
+	 		if (self.originalmonsters) sound (self, CHAN_VOICE, "wizard/widle2.wav", 1, ATTN_IDLE);
 			else sound (self, CHAN_VOICE, "cyberscrag/widle2.wav", 1, ATTN_IDLE);
 	 	}
 	}
@@ -354,10 +354,10 @@ void()	wiz_death1	=[	$death1,		wiz_death2	] {
 	self.velocity_y = -200 + 400*random();
 	self.velocity_z = 100 + 100*random();
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
-	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "wizard/wdeath.wav", 1, ATTN_NORM);
 	else sound (self, CHAN_VOICE, "cyberscrag/wdeath.wav", 1, ATTN_NORM);
 
-	if (!(self.spawnflags & MONSTER_ORIGINAL)) self.touch = wiz_fall;
+	if (!self.originalmonsters) self.touch = wiz_fall;
 };
 void()	wiz_death2	=[	$death2,		wiz_death3	] {};
 void()	wiz_death3	=[	$death3,		wiz_death4	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
@@ -379,7 +379,7 @@ void() wiz_die =
 // check for gib
 	if (self.health < -40)
 	{
-		if (self.spawnflags & MONSTER_ORIGINAL) {
+		if (self.originalmonsters) {
 			// gib sound
 			sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 
@@ -406,7 +406,7 @@ void() wiz_die =
 
 void(entity attacker, float damage) Wiz_Pain =
 {
-	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM);
 	else sound (self, CHAN_VOICE, "cyberscrag/wpain.wav", 1, ATTN_NORM);
 
 	if (random()*70 > damage)
@@ -422,7 +422,7 @@ void() Wiz_Missile =
 };
 
 void() wiz_sight = {
-	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
 	else sound (self, CHAN_VOICE, "cyberscrag/wsight.wav", 1, ATTN_NORM);
 };
 
@@ -438,7 +438,7 @@ void(entity e) monster_wizard_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	if (self.spawnflags & MONSTER_ORIGINAL)	setmodel (self, "progs/wizard.mdl");
+	if (self.originalmonsters)	setmodel (self, "progs/wizard.mdl");
 	else setmodel (self, "progs/cyberscrag.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
@@ -446,11 +446,11 @@ void(entity e) monster_wizard_start =
 	
 	self.health = 80;
 	if (self.obituary == "") {
-		if (self.spawnflags & MONSTER_ORIGINAL) self.obituary = "was scragged by a Scrag";
+		if (self.originalmonsters) self.obituary = "was scragged by a Scrag";
 		else self.obituary = "was scorched by a CyberScrag";
 	}
 	
-	if (self.spawnflags & MONSTER_ORIGINAL) self.bloodtype = SPAWN_BLOOD;
+	if (self.originalmonsters) self.bloodtype = SPAWN_BLOOD;
 	else self.bloodtype = SPAWN_YELLOWSPARK;
 
 	self.th_stand = wiz_stand1;
@@ -479,7 +479,12 @@ void() monster_wizard =
 		return;
 	}
 	
-	if (self.spawnflags & MONSTER_ORIGINAL) {
+	if (
+		world.originalmonsters && !(self.spawnflags & MONSTER_ALK)
+		|| self.spawnflags & MONSTER_ORIGINAL
+	) self.originalmonsters = 1;
+	
+	if (self.originalmonsters) {
 		precache_model ("progs/wizard.mdl");
 		precache_model ("progs/h_wizard.mdl");
 

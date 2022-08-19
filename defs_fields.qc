@@ -221,7 +221,7 @@ FIELDS
 
 .string		killtarget;
 .string 	sky;
-
+.float 		originalmonsters;
 //
 // quakeed fields
 //

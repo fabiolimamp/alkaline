@@ -154,7 +154,7 @@ void(entity attacker, float damage)	demon1_pain =
 		if (self.health < self.max_health * 0.6) self.skin = 1;
 	}
 	
-	if (self.classname == "monster_demon1" && self.spawnflags & MONSTER_ORIGINAL) {
+	if (self.classname == "monster_demon1" && self.originalmonsters) {
 		if (self.health < self.max_health * 0.05)	self.skin = 3;
 		else if (self.health < self.max_health * 0.4)	self.skin = 2;
 		else if (self.health < self.max_health * 0.8)	self.skin = 1;
@@ -201,7 +201,7 @@ void() demon_die =
 		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		if (self.classname == "monster_mutant") ThrowHead ("progs/h_mutant.mdl", self.health);
-		else if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_demon.mdl", self.health);
+		else if (self.originalmonsters) ThrowHead ("progs/h_demon.mdl", self.health);
 		else  ThrowHead ("progs/h_demon_alk.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -212,7 +212,7 @@ void() demon_die =
 	}
 
 	if (self.classname == "monster_mutant") self.skin = 1;
-	else if (self.classname == "monster_demon1" && self.spawnflags & MONSTER_ORIGINAL) self.skin = 3;
+	else if (self.classname == "monster_demon1" && self.originalmonsters) self.skin = 3;
 
 // regular death
 	demon1_die1 ();
@@ -411,7 +411,7 @@ void(entity e) monster_demon1_start =
 
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
-	if (self.spawnflags & MONSTER_ORIGINAL)
+	if (self.originalmonsters)
 		setmodel (self, "progs/demon_old.mdl");
 	else
 		setmodel (self, "progs/demon_alk.mdl");
@@ -481,7 +481,13 @@ void() monster_demon1 =
 		remove(self);
 		return;
 	}
-	if (self.spawnflags & MONSTER_ORIGINAL) {
+
+	if (
+		world.originalmonsters && !(self.spawnflags & MONSTER_ALK)
+		|| self.spawnflags & MONSTER_ORIGINAL
+	) self.originalmonsters = 1;
+	
+	if (self.originalmonsters) {
 		precache_model ("progs/demon_old.mdl");
 		precache_model ("progs/h_demon.mdl");
 	}

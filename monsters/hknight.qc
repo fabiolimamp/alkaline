@@ -67,7 +67,7 @@ void(float offset) hknight_shot = {
 	launch_spike (org, vec);
 	newmis.classname = "knightspike";
 
-	if (self.spawnflags & MONSTER_ORIGINAL) setmodel(newmis, "progs/k_spike.mdl");
+	if (self.originalmonsters) setmodel(newmis, "progs/k_spike.mdl");
 	else setmodel(newmis, "progs/k_laserspike.mdl");
 
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
@@ -321,7 +321,7 @@ void() hknight_die = {
 		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 
-		if (self.spawnflags & MONSTER_ORIGINAL) ThrowHead ("progs/h_hellkn.mdl", self.health);
+		if (self.originalmonsters) ThrowHead ("progs/h_hellkn.mdl", self.health);
 		else ThrowHead ("progs/h_sabrkn.mdl", self.health);
 
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -393,7 +393,7 @@ void() hknight_melee = {
 
 void() hknight_sight = {
 
-	if (self.spawnflags & MONSTER_ORIGINAL) sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "hknight/sight1.wav", 1, ATTN_NORM);
 	else sound (self, CHAN_VOICE, "sknight/sight1.wav", 1, ATTN_NORM);
 };
 
@@ -408,7 +408,7 @@ void(entity e) monster_hell_knight_start = {
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	if (self.spawnflags & MONSTER_ORIGINAL) setmodel (self, "progs/hknight_old.mdl");
+	if (self.originalmonsters) setmodel (self, "progs/hknight_old.mdl");
 	else setmodel (self, "progs/sknight.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
@@ -416,7 +416,7 @@ void(entity e) monster_hell_knight_start = {
 	
 	self.health = 250;
 	if (self.obituary == "") {
-		if (self.spawnflags & MONSTER_ORIGINAL) self.obituary = "was slain by a Death Knight";
+		if (self.originalmonsters) self.obituary = "was slain by a Death Knight";
 		else self.obituary = "was slain by a Sabre Knight";
 	}
 
@@ -445,7 +445,12 @@ void() monster_hell_knight = {
 		return;
 	}
 
-	if (self.spawnflags & MONSTER_ORIGINAL) {
+	if (
+		world.originalmonsters && !(self.spawnflags & MONSTER_ALK)
+		|| self.spawnflags & MONSTER_ORIGINAL
+	) self.originalmonsters = 1;
+	
+	if (self.originalmonsters) {
 		precache_model2 ("progs/hknight_old.mdl");
 		precache_model2 ("progs/h_hellkn.mdl");
 		precache_model2 ("progs/k_spike.mdl");

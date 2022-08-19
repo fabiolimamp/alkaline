@@ -94,6 +94,11 @@
 		1 : "BSP item boxes, from RRP"
 		2 : "MDL item boxes, from Copper"
 	]
+
+	originalmonsters(choices) : "Default monster style" : : "Sets default monster style for certain monsters, like the Ogre and Death Knight." = [
+		0 : "Alkaline style"
+		1 : "Original style"
+	]
 ]
 
 //
@@ -844,7 +849,8 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 "Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
-		8 : "Original version" : 0
+		4 : "Force Alkaline version" : 0
+		8 : "Force original version" : 0
 	]
 ]
 
@@ -861,7 +867,8 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 "Sabre Knight, 250 health points. Original Death Knight available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
-		8 : "Original version" : 0
+		4 : "Force Alkaline version" : 0
+		8 : "Force original version" : 0
 	]
 ]
 
@@ -872,7 +879,8 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 "CyberScrag, 80 health points. Original Scrag available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
-		8 : "Original version" : 0
+		4 : "Force Alkaline version" : 0
+		8 : "Force original version" : 0
 	]
 ]
 
@@ -883,7 +891,8 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 "Fiend (Demon), 300 health points. Original Fiend available through the respective spawnflag." [
 	spawnflags(flags) =
 	[
-		8 : "Original version" : 0
+		4 : "Force Alkaline version" : 0
+		8 : "Force original version" : 0
 	]
 ]
 

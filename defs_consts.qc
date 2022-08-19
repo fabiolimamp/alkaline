@@ -282,6 +282,7 @@ float ITEMSTYLE_BSP = 1;
 float ITEMSTYLE_MDL = 2;
 
 // monsters
+float MONSTER_ALK = 4;
 float MONSTER_ORIGINAL = 8;
 float MONSTER_NOSIGHTSOUND = 16;
 float MONSTER_SPAWNANGRY = 32;
