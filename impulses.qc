@@ -344,13 +344,13 @@ void() ToggleBulletHole = {
 		bprint("Bullet holes: enabled\n");
 		bulletmode = 1;
 		show_bulletholes();
-		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOBULLETHOLES)));
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOBULLETHOLES)));
 	}
 	else {
 		bprint("Bullet holes: disabled\n");
 		bulletmode = 0;
 		hide_bulletholes();
-		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOBULLETHOLES));
+		cvar_set("saved1", ftos(tmp1 | TEMPSETTINGS_NOBULLETHOLES));
 	}
 };
 
@@ -361,82 +361,82 @@ void() ToggleFootsteps = {
 	if (nofootsteps) {
 		bprint("Footsteps: enabled\n");
 		nofootsteps = 0;
-		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOFOOTSTEPS)));
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOFOOTSTEPS)));
 	}
 	else {
 		bprint("Footsteps: disabled\n");
 		nofootsteps = 1;
-		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOFOOTSTEPS));
+		cvar_set("saved1", ftos(tmp1 | TEMPSETTINGS_NOFOOTSTEPS));
 	}
 };
 
 void() ToggleAutosave = {
 	float tmp1;
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
-	tmp1 = cvar("temp1");
+	tmp1 = cvar("saved1");
 	if (noautosaves) {
 		bprint("Autosaves: enabled\n");
 		noautosaves = 0;
-		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOAUTOSAVES)));
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOAUTOSAVES)));
 	}
 	else {
 		bprint("Autosaves: disabled\n");
 		noautosaves = 1;
-		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOAUTOSAVES));
+		cvar_set("saved1", ftos(tmp1 | TEMPSETTINGS_NOAUTOSAVES));
 	}
 };
 
 void() ToggleTracers = {
 	float tmp1;
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
-	tmp1 = cvar("temp1");
+	tmp1 = cvar("saved1");
 	if (notracers) {
 		bprint("Tracers: enabled\n");
 		notracers = 0;
-		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOTRACERS)));
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_NOTRACERS)));
 	}
 	else {
 		bprint("Tracers: disabled\n");
 		notracers = 1;
-		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_NOTRACERS));
+		cvar_set("saved1", ftos(tmp1 | TEMPSETTINGS_NOTRACERS));
 	}
 };
 
 void() TogglePlayerTracers = {
 	float tmp1;
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
-	tmp1 = cvar("temp1");
+	tmp1 = cvar("saved1");
 	if (playertracers) {
 		bprint("Player tracers: disabled\n");
 		playertracers = 0;
-		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_PLAYERTRACERS)));
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_PLAYERTRACERS)));
 	}
 	else {
 		bprint("Player tracers: enabled\n");
 		playertracers = 1;
-		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_PLAYERTRACERS));
+		cvar_set("saved1", ftos(tmp1 | TEMPSETTINGS_PLAYERTRACERS));
 	}
 };
 
 void() ToggleOldGrenade = {
 	float tmp1;
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
-	tmp1 = cvar("temp1");
+	tmp1 = cvar("saved1");
 	if (oldgrenade) {
 		bprint("Old grenade style: disabled\n");
 		oldgrenade = 0;
-		cvar_set("temp1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_OLDGRENADE)));
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & TEMPSETTINGS_OLDGRENADE)));
 	}
 	else {
 		bprint("Old grenade style: enabled\n");
 		oldgrenade = 1;
-		cvar_set("temp1", ftos(tmp1 | TEMPSETTINGS_OLDGRENADE));
+		cvar_set("saved1", ftos(tmp1 | TEMPSETTINGS_OLDGRENADE));
 	}
 }
 
 
 void() ResetModSettings = {
-	cvar_set("temp1", 0);
+	cvar_set("saved1", 0);
 	bprint("Mod settings reset to default\n");
 };
 
