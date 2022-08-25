@@ -194,6 +194,7 @@ void() worldspawn =
 	precache_sound ("items/damage3.wav");
 	precache_sound ("misc/null.wav");
 	precache_sound ("doors/alka_doorlocked.wav");
+	precache_sound ("doors/locked4.wav");
 	precache_sound ("doors/runetry.wav");
 
 	precache_sound ("weapons/sawidle.wav");		//chainsaw idle
