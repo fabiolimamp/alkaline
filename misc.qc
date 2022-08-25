@@ -1272,6 +1272,7 @@ void() func_fade = {
 	self.nextthink = time + 0.025;
 
 	self.use = func_fade_use;
+	self.th_setstate = func_fade_setstate;
 	self.speed = zeroconvertdefault(self.speed, 1);
 	
 	// increment per think frame @ 40fps
@@ -1281,7 +1282,9 @@ void() func_fade = {
 };
 
 void() func_fade_start = {
+	// default origin point for distance calculation
 	self.dest = (self.absmin + self.absmax)/2;
+
 	entity e;
 
 	// custom origin point
@@ -1316,15 +1319,60 @@ void() func_fade_start = {
 	
 };
 
+void(float newstate, float stateflags) func_fade_setstate = {
+	self.estate = newstate;
+	if (self.targetname == "")
+		func_fade_think_setstate();
+}
+
+void() func_fade_think_setstate = {
+	float closest, perc, playerperc, dist;
+
+	closest = 1000000000;
+
+	entity pl = find(world, classname, "player");
+	
+	while (pl) {
+		dist = vlen(pl.origin - self.dest);
+		if (dist < closest) closest = dist;
+		pl = find(pl, classname, "player");
+	}
+
+	playerperc = clamp(1 - (closest - self.waitmin)/(self.waitmax - self.waitmin), 0, 1);
+
+	if (!self.estate) // going to on
+		perc = self.light_lev + self.delay;
+	else
+		perc = self.light_lev - self.delay;
+
+	func_fade_setfade(perc);
+
+	if (perc <= 0 || perc >= 1 ||
+		(perc >= playerperc && !self.estate)
+		//|| (perc <= playerperc && self.estate)
+	) {
+		self.think = func_fade_think_distance;
+		self.nextthink = time + 0.05;
+	}
+	else {
+		self.think = func_fade_think_setstate;
+		self.nextthink = time + 0.025;
+	}
+
+}
+
 void() func_fade_think_distance = {
+
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	self.nextthink = time + 0.05;
 
-	entity pl;
 	float closest, dist, perc;
 	
 	closest = 1000000000;
 
-	pl = find(world, classname, "player");
+	entity pl = find(world, classname, "player");
 	
 	while (pl) {
 		dist = vlen(pl.origin - self.dest);
