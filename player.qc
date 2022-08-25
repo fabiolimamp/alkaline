@@ -545,8 +545,15 @@ void(float dmgtype) PainSound = {
 		return;
 	}
 
-// water pain sounds
-	
+	// HURT HURT HURT
+	if (dmgtype == DMGTYPE_LAVA || dmgtype == DMGTYPE_SLIME || dmgtype == DMGTYPE_BURN) {
+		if (random() > 0.5)
+			sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
+		else
+			sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
+		return;
+	}
+
 	// damage while underwater always makes drown sound, regardless of damage type
 	if (dmgtype == DMGTYPE_DROWN || self.waterlevel >= 3) {
 		DeathBubbles(1);
@@ -554,15 +561,6 @@ void(float dmgtype) PainSound = {
 			sound (self, CHAN_VOICE, "player/drown1.wav", 1, ATTN_NORM);
 		else
 			sound (self, CHAN_VOICE, "player/drown2.wav", 1, ATTN_NORM);
-		return;
-	}
-
-		
-	if (dmgtype == DMGTYPE_LAVA || dmgtype == DMGTYPE_SLIME || dmgtype == DMGTYPE_BURN || dmgtype == DMGTYPE_BURN/* || self.burning_finished > time*/) {
-		if (random() > 0.5)
-			sound (self, CHAN_VOICE, "player/lburn1.wav", 1, ATTN_NORM);
-		else
-			sound (self, CHAN_VOICE, "player/lburn2.wav", 1, ATTN_NORM);
 		return;
 	}
 
