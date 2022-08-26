@@ -218,6 +218,7 @@ void() knight_die =
 // check for gib
 	if (self.health < -40)
 	{
+		self.skin = 0;
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 		ThrowHead ("progs/h_knight.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
