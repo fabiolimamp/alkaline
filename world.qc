@@ -96,34 +96,41 @@ void() worldspawn =
 
 	InitBulletHoles();
    
-// custom map attributes
-	if (self.model == "maps/e1m8.bsp")
-		cvar_set ("sv_gravity", "100");
-	else
-		cvar_set ("sv_gravity", "800");
+	// custom map attributes
+	if (!self.gravity) {
+		if (self.model == "maps/e1m8.bsp") self.gravity = 100;
+		else self.gravity = 800;
+	}
+
+	cvar_set ("sv_gravity", ftos(self.gravity));
 
 	float options;
 	options = cvar("saved1");
-	if (options & TEMPSETTINGS_NOFOOTSTEPS) {
+	if (options & ALKSETTINGS_NOFOOTSTEPS) {
 		bprint("\bAlkaline options:\b Footsteps \bdisabled\b. Type \"footsteps\" to reenable it.\n");
 		nofootsteps = 1;
 	}
-	if (options & TEMPSETTINGS_NOAUTOSAVES) {
+	if (options & ALKSETTINGS_NOAUTOSAVES) {
 		bprint("\bAlkaline options:\b Autosaves \bdisabled\b. Type \"autosaves\" to reenable it.\n");
 		noautosaves = 1;
 	}
-	if (options & TEMPSETTINGS_NOTRACERS){
+	if (options & ALKSETTINGS_NOTRACERS){
 		bprint("\bAlkaline options:\b Bullet tracers \bdisabled\b. Type \"tracers\" to reenable it.\n");
 		notracers = 1;
 	}
-	if (options & TEMPSETTINGS_PLAYERTRACERS) {
+	if (options & ALKSETTINGS_PLAYERTRACERS) {
 		bprint("\bAlkaline options:\b Player tracers \benabled\b. Type \"playertracers\" to disable it.\n");
 		playertracers = 1;
 	}
 
-	if (cvar("scratch1") && !self.originalmonsters)
+	if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
 		self.originalmonsters = 1;
-	
+
+	if (!self.itemstyle) {
+		if (cvar("scratch1") & TEMPSETTINGS_FORCEMDLBOXES) self.itemstyle = ITEMSTYLE_MDL;
+		else self.itemstyle = ITEMSTYLE_BSP;
+	}
+
 	startskill = cvar("skill");
 	developer = cvar("developer");
 
@@ -343,8 +350,7 @@ void() worldspawn =
 	
 	// setup mapvar bit array
 	mapvar_setuparray();
-
-	if(!self.itemstyle) self.itemstyle = ITEMSTYLE_BSP;
+	
 
 	// defaults to base theme, because of course it does
 	if (!self.worldtype) self.worldtype = WORLDTYPE_BASE;
