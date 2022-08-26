@@ -496,6 +496,16 @@ void() door_killed = {
 	self = oself;
 };
 
+
+void(float newstate, float stateflags) door_setstate = {
+	float closealldoors;
+
+	if (stateflags & SETSTATE_CLOSEALLDOORS) closealldoors = 1;
+
+	if (newstate == STATE_ACTIVE) door_estate_unlock(self, closealldoors);
+	else door_estate_lock(self, closealldoors);
+};
+
 void(entity e, float closealldoors) door_estate_lock = {
 	local entity oself, next;
 
@@ -1004,6 +1014,7 @@ void() func_door = {
 
 	self.blocked = door_blocked;
 	self.use = door_use;
+	self.th_setstate = door_setstate;
 	
 	if (self.spawnflags & DOOR_SILVER_KEY)
 		keylock_set_silver_key ();

@@ -680,7 +680,7 @@ void(entity e) monster_ogre_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	if (self.spawnflags & MONSTER_ORIGINAL) setmodel (self, "progs/ogre_old.mdl");
+	if (self.originalmonsters) setmodel (self, "progs/ogre_old.mdl");
 	else setmodel (self, "progs/ogre_alk.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
@@ -715,7 +715,13 @@ void() monster_ogre = {
 		remove(self);
 		return;
 	}
-	if (self.spawnflags & MONSTER_ORIGINAL) precache_model ("progs/ogre_old.mdl");
+
+	if (
+		world.originalmonsters && !(self.spawnflags & MONSTER_ALK)
+		|| self.spawnflags & MONSTER_ORIGINAL
+	) self.originalmonsters = 1;
+
+	if (self.originalmonsters) precache_model ("progs/ogre_old.mdl");
 	else precache_model ("progs/ogre_alk.mdl");
 
 	precache_model ("progs/h_ogre.mdl");

@@ -485,6 +485,7 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	setorigin(e, self.origin);
 	e.angles = self.angles;
 	e.bloodtype = self.bloodtype;
+	e.originalmonsters = self.originalmonsters;
 	e.above = self.above;
 	e.cmins = self.cmins;
 	e.cmaxs = self.cmaxs;

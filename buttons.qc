@@ -51,6 +51,10 @@ void() button_fire =
 	SUB_CalcMove (self.pos2, self.speed, button_wait);
 };
 
+void(float newstate, float stateflags) button_setstate = {
+	if (newstate == STATE_ACTIVE) button_unlock(self, stateflags & SETSTATE_DONTRESETBUTTON);
+	else button_lock(self);
+}
 
 void() button_use =
 {
@@ -167,6 +171,7 @@ void() func_button =
 
 	self.blocked = button_blocked;
 	self.use = button_use;
+	self.th_setstate = button_setstate;
 
 	if (self.health)
 	{

@@ -1009,19 +1009,15 @@ float(entity e) entity_get_state = {
 };
 
 void(entity e, float state, float flags) entity_set_state = {
-	float closealldoors;
-
-	if(e.classname == "func_button") {
-		if (state == STATE_ACTIVE) button_unlock(e, flags & SETSTATE_DONTRESETBUTTON);
-		else button_lock(e);
+	
+	if (e.th_setstate){
+		entity oself = self;
+		self = e;
+		self.th_setstate(state, flags);
+		self = oself;
 	}
-	else if(e.classname == "func_door") {
-		if (flags & SETSTATE_CLOSEALLDOORS) closealldoors = 1;
-
-		if (state == STATE_ACTIVE) door_estate_unlock(e, closealldoors);
-		else door_estate_lock(e, closealldoors);
-	}
-	else e.estate = state;
+	else
+		e.estate = state;
 
 	if (e.is_waiting > 0 && state == STATE_ACTIVE) {
 		SUB_CallAsSelf(SUB_EndWaiting, e);

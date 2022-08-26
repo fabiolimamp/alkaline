@@ -325,7 +325,11 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 		}
 	}
 
-	if (self.th_pain) {
+
+	if (self.flags & FL_CLIENT) {
+		player_pain(attacker, take, dmgtype);
+	}
+	else if (self.th_pain) {
 		self.th_pain (attacker, take);
 		// nightmare mode monsters don't go into pain frames often
 		if (skill == 3 && self.flags & FL_MONSTER)

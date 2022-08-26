@@ -22,7 +22,7 @@ void() InitBulletHoles = {
 	lastbullet = world;
 	numbulletholes = 0;
 
-	if (cvar("temp1") & TEMPSETTINGS_NOBULLETHOLES) bulletmode = 0;
+	if (cvar("saved1") & TEMPSETTINGS_NOBULLETHOLES) bulletmode = 0;
 	else bulletmode = 1;
 };
 

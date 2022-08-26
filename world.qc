@@ -102,13 +102,28 @@ void() worldspawn =
 	else
 		cvar_set ("sv_gravity", "800");
 
-	float tmp1;
-	tmp1 = cvar("temp1");
-	if (tmp1 & TEMPSETTINGS_NOFOOTSTEPS) nofootsteps = 1;
-	if (tmp1 & TEMPSETTINGS_NOAUTOSAVES) noautosaves = 1;
-	if (tmp1 & TEMPSETTINGS_NOTRACERS) notracers = 1;
-	if (tmp1 & TEMPSETTINGS_PLAYERTRACERS) playertracers = 1;
+	float options;
+	options = cvar("saved1");
+	if (options & TEMPSETTINGS_NOFOOTSTEPS) {
+		bprint("\bAlkaline options:\b Footsteps \bdisabled\b. Type \"footsteps\" to reenable it.\n");
+		nofootsteps = 1;
+	}
+	if (options & TEMPSETTINGS_NOAUTOSAVES) {
+		bprint("\bAlkaline options:\b Autosaves \bdisabled\b. Type \"autosaves\" to reenable it.\n");
+		noautosaves = 1;
+	}
+	if (options & TEMPSETTINGS_NOTRACERS){
+		bprint("\bAlkaline options:\b Bullet tracers \bdisabled\b. Type \"tracers\" to reenable it.\n");
+		notracers = 1;
+	}
+	if (options & TEMPSETTINGS_PLAYERTRACERS) {
+		bprint("\bAlkaline options:\b Player tracers \benabled\b. Type \"playertracers\" to disable it.\n");
+		playertracers = 1;
+	}
 
+	if (cvar("scratch1") && !self.originalmonsters)
+		self.originalmonsters = 1;
+	
 	startskill = cvar("skill");
 	developer = cvar("developer");
 
@@ -179,6 +194,7 @@ void() worldspawn =
 	precache_sound ("items/damage3.wav");
 	precache_sound ("misc/null.wav");
 	precache_sound ("doors/alka_doorlocked.wav");
+	precache_sound ("doors/locked4.wav");
 	precache_sound ("doors/runetry.wav");
 
 	precache_sound ("weapons/sawidle.wav");		//chainsaw idle
