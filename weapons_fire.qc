@@ -190,7 +190,7 @@ void(vector org, vector direction, vector dest) drawTracer = {
 
 	if ((self.flags & FL_CLIENT) && !playertracers)
 		return;
-
+	float dist = vlen(org - dest);
 	newmis = spawn();
 	newmis.owner = self;
 	newmis.movetype = MOVETYPE_FLY;
@@ -202,13 +202,16 @@ void(vector org, vector direction, vector dest) drawTracer = {
 	newmis.think = tracer_think;
 	newmis.nextthink = time + 0.02;
 	newmis.alpha = 0.5;
-	newmis.attack_finished = time + vlen(org - dest)/2200;
-		
+	
+	newmis.velocity = direction * 1024;
+	newmis.attack_finished = time + dist/7500;
+	//newmis.attack_finished = time + dist/((dist*dist/120) + 3000);
+
 	setmodel (newmis, "progs/pellet_tracer_short.mdl");  //Precache model in WORLD.QC
 	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, org);
 
-	newmis.velocity = direction * 2000;
+	
 };
 
 /*
@@ -273,7 +276,8 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 
 		traceline (src, src + direction*2048, FALSE, self);
 
-		drawTracer(src, direction, trace_endpos);
+		if (!(vlen(src - trace_endpos) < 96 && trace_ent.solid == SOLID_BSP))
+			drawTracer(src, direction, trace_endpos);
 
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
@@ -304,7 +308,8 @@ void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
 
 		traceline (org, org + direction*2048, FALSE, self);
 
-		drawTracer(org, direction, trace_endpos);
+		if (!(vlen(org - trace_endpos) < 128 && trace_ent.solid == SOLID_BSP))
+			drawTracer(org, direction, trace_endpos);
 		
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
