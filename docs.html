@@ -596,6 +596,8 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <li>Setting <strong>pausetime</strong> on the train sets a default waiting time when a value is not defined in path_corners.</li>
 
+<li>Disabled path points (via a <a href="#state-system">target_setstate</a> entity) will be skipped by the train.</li>
+
 <li>The train can be given custom sounds through the <strong>noise</strong> and <strong>noise1</strong> keys.</li>
 
 <li><strong>Move on trigger</strong> spawnflag will force the train to resume its path when triggered, even when temporarily waiting at a path_corner.</li>
@@ -626,7 +628,7 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 
 <h3 id="instant-teleport">Instant teleporters</h3>
-<p>Alkaline now has instant teleporters, that seamlessly move whatever touches the trigger_teleport into another similar-sized brush entity, <strong>trigger_teleport_instadestination</strong>, instead of the info_teleport_destination point entity. It teleports everything - players, monsters, items, weapon projectiles, even gibs and dead bodies, while keeping their angle and movement relative to the teleport's orientation - even pitch angle. This allows for huge amount of mind-bending scenarios.</p>
+<p>Alkaline now has instant teleporters, that seamlessly move whatever touches the trigger_teleport into another similar-sized brush entity, <strong>trigger_teleport_instadestination</strong>, instead of the info_teleport_destination point entity. It teleports everything - players, monsters, items, weapon projectiles, gibs and dead bodies - while keeping their angle and movement relative to the teleport's orientation - even pitch angle. This allows for huge amount of mind-bending scenarios.</p>
 <p>Standard, point-entity based destination	teleports can also keep their relative entry angle and/or velocity by using the respective spawnflags into a <strong>info_teleport_destination</strong>.
 </p>
 
@@ -980,11 +982,22 @@ The activator's bounding box can be changed as well by activating spawnflag 1.</
 	<li><strong>info_player_start_test</strong> entity: developer-only map start (requires <strong>developer 1</strong> cvar to be set). You can set a custom loadout for this specific point. Also it'll always pick the last one created in the map if there's more than one.</li>
 	<li><strong>impulsetarget</strong> key: remote-control triggering. You can add a <strong>impulsetarget</strong> key to any entity and give it a value between 1 and 9, and it'll be triggered by the commands <strong>impulsetest1</strong> to <strong>impulsetest9</strong> (impulses 91 to 99). Useful to trigger some specific event in your map for testing purposes.</li>
 	<li><strong>listmonsters</strong> command (impulse 184): lists all monsters left alive in the map and their current positions. Good to find out where's that last hiding monster that keeps you from getting 100% kills.</li>
-	<li><strong>reveal</strong> command (impulse 200): Shows on the console information about the entity being pointed at. Only works with solid entities.</li>
+	<li><strong>reveal</strong> command (impulse 200): Shows on the console information about the entity being pointed at.</li>
+	<li><strong>alkversion</strong> command (impulse 128): Prints the current Alkaline progs version.</li>
+</ul>
+
+<p>Besides the features above, the following console commands toggle specific Alkaline settings, and are more player-oriented. Note that these are all saved in the config file, so they persist across sessions.</p>
+<ul>
+	<li><strong>bulletholes</strong> (impulse 30): Toggles bullethole spawning for hitscan weapons and nails. Default on.</li>
+	<li><strong>footsteps</strong> (impulse 31): Toggles player footstep sounds. Default on.</li>
+	<li><strong>autosaves</strong> (impulse 32): Toggles mapper-placed autosaves. Default on.</li>
+	<li><strong>tracers</strong> (impulse 42): Toggles bullet tracers for hitscan weapons. Default on.</li>
+	<li><strong>playertracers</strong> (impulse 43): Toggles bullet tracers for the player weapons as well. Default off.</li>
+	<li><strong>resetalkalinesettings</strong> (impulse 40): Resets all the options above to their default values.</li>
 </ul>
 
 <h3 id="cheats">Cheats commands</h3>
-<p>Besides the well-known Quake cheats, Alkaline adds some others.</p>
+<p>Alkaline adds some new cheat commands.</p>
 <p>Note that the old <strong>give #</strong> cheat to get a specific weapon won't work in this mod.</p>
 
 <ul>
