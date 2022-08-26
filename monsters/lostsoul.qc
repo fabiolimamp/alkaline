@@ -499,17 +499,29 @@ void(entity attacker, float damage) lost_pain = {
 
 //============================================================================
 
+void() lost_die1 = [ $pain1, lost_die2 ] {};
+void() lost_die2 = [ $pain2, lost_die2 ] {
+	// Lost souls explode when they die
+	T_RadiusDamage (self, self, 40, world, DMGTYPE_EXPLOSION);
+
+	sound (self, CHAN_VOICE, "lostsoul/death.wav", 1, ATTN_NORM);
+
+	entity exp = spawn();
+	setorigin(exp, self.origin);
+	SUB_CallAsSelf(BecomeBlast, exp);
+
+	SUB_Hide();
+};
+
 void() lost_explosion_frame = {
 	self.frame = self.frame + 1;
 	if (self.frame > self.count) SUB_Hide();
 	else self.nextthink = time + self.speed;
 };
 
-void() lost_die1 = [ $pain1, lost_die2 ] {};
-void() lost_die2 = [ $pain2, lost_die2 ] {
+void() lost_die2_orig = [ $pain2, lost_die2_orig ] {
 	// Lost souls explode when they die
 	T_RadiusDamage (self, self, 40, world, DMGTYPE_EXPLOSION);
-
 	if (random() > 0.5) {
 		self.speed = 0.05;
 		self.count = 13;
@@ -524,7 +536,6 @@ void() lost_die2 = [ $pain2, lost_die2 ] {
 	self.frame = 0;
 	
 	sound (self, CHAN_VOICE, "lostsoul/death.wav", 1, ATTN_NORM);
-
 	self.think = lost_explosion_frame;
 	self.nextthink = time + self.speed;
 };
