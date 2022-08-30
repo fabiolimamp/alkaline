@@ -941,7 +941,8 @@ If crucified, stick the bounding box 12 pixels back into a wall to look right."
 	]
 ]
 
-
+@PointClass base(Monster) size(-6 -6 -24, 6 6 32) model({"path":"progs/zombie2.mdl"}) = monster_zombie2 :
+"Fast Zombie, 10 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce3.mdl"}) = monster_super_enforcer :
 "Lieutenant, 120 health points, 1000 armor.

@@ -967,13 +967,13 @@ ai_run
 The monster has an enemy it is trying to kill
 =============
 */
-void(float dist) ai_run =
+float() ai_run_checks =
 {
 //	local	vector	delta;
 //	local	float	axis;
 //	local	float	direct, ang_rint, ang_floor, ang_ceil;
 	
-	movedist = dist;
+	//movedist = dist;
 	entity enem;
 	enem = SUB_entEnemyTarget();
 	
@@ -1007,7 +1007,7 @@ void(float dist) ai_run =
 				self.th_walk ();
 			else
 				self.th_stand ();
-			return;
+			return FALSE;
 		}
 	}
 
@@ -1024,7 +1024,7 @@ void(float dist) ai_run =
 	if (coop && self.search_time < time && enem.classname != "path_angry")
 	{
 		if (FindTarget ())
-			return;
+			return FALSE;
 	}
 
 	enemy_infront = infront(enem);
@@ -1037,28 +1037,38 @@ void(float dist) ai_run =
 	{
 //dprint ("ai_run_missile\n");
 		ai_run_missile ();
-		return;
+		return FALSE;
 	}
 	if (self.attack_state == AS_MELEE)
 	{
 //dprint ("ai_run_melee\n");
 		ai_run_melee ();
-		return;
+		return FALSE;
 	}
 
 	if (CheckAnyAttack ())
-		return;					// beginning an attack
+		return FALSE;					// beginning an attack
 		
 	if (self.attack_state == AS_SLIDING && self.goalentity.classname != "path_angry")
 	{
 		ai_run_slide ();
-		return;
+		return FALSE;
 	}
 	else if (self.attack_state == AS_SLIDING) self.attack_state = 0;
 
+	return TRUE;
 	// head straight in
-	movetogoal2 (dist);		// done in C code...
+	//movetogoal2 (dist);
 };
+
+void(float dist) ai_run = {
+	if (!ai_run_checks()) return;
+
+	//if (self.th_move)
+	//	self.th_move(dist);
+	//else 
+		movetogoal2(dist);
+}
 
 /*
 =============
