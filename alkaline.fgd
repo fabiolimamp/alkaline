@@ -1164,6 +1164,34 @@ Note: targeted lights should be set to START_OFF."
 	]
 ]
 
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_flame :
+"Produces a stream of fire. If targeted, it will toggle between on or off.
+
+'angle'/'angles' control stream direction.
+
+'speed' is a modifier for the flame velocity - the default is the same as the Dreadnought's flamethrower. 2 is double speed, 0.5 is half speed, etc.
+
+'wait' controls the fire stream density, or the time fraction between each flame. Lower values mean a more dense (and more damaging) stream.
+
+If there's a targetnamed light found under 'target', it'll be given a custom brightness pattern, and be toggled on/off with the flames.
+
+You can disable the long burning damage effect on players with the respective spawnflag.
+"
+[
+	wait(float) : "Fire density" : "0.1" : "Time between each flame"
+	angle(integer) : "Launch angle"
+	speed(integer) : "Flame velocity multiplier" : 1 : "Modifies the standard flame launching velocity. 0.5 is half the speed, 2 is double speed, etc."
+	dmg(integer) : "Damage" : 2 : "Damage dealt by each flame on contact."
+	target(target_destination) : "Light to toggle"
+	spawnflags(flags) =
+	[
+		1 : "Starts off" : 0
+		2 : "No long burn damage" : 0
+		4 : "No sound" : 0
+		8 : "Simple light effects" : 0
+	]
+]
+
 @PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_splash :
 "Produces a continuous particle splash for waterfalls."
 [

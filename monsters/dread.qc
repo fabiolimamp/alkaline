@@ -46,7 +46,10 @@ void() flame_touch =
 
 	if (self.dmg > 0 && other.health > 0){
 		//direct damage
-		T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN_LONG);
+		if (self.style == 1)
+			T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN);
+		else
+			T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN_LONG);
 		self.dmg = 0;
 	}
 };

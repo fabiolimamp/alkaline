@@ -893,6 +893,131 @@ void() misc_smoke =
 
 /*
 ===============================================================================
+misc_flame
+===============================================================================
+*/
+float FLAME_DONTBURN = 2;
+float FLAME_NOSOUND = 4;
+float FLAME_SIMPLELIGHT = 8;
+
+float FLAME_ST_OFF = 0;
+float FLAME_ST_STOPPING = 1;
+float FLAME_ST_ON = 2;
+float FLAME_ST_STARTING = 3;
+
+string FLAME_LIGHT_PATTERN =  "klolmolmomlnonkmonqnlmo";
+
+void() misc_flame_think =
+{
+	if (self.state < FLAME_ST_ON) {
+		self.nextthink = time + 0.1;
+		if (self.state == FLAME_ST_STOPPING) {
+			if (!(self.spawnflags & FLAME_NOSOUND)) sound(self, CHAN_VOICE, "misc/burning2.wav", 1, ATTN_IDLE);
+
+			if (self.style) lightstyle(self.style, "a");
+		}
+		self.state = FLAME_ST_OFF;
+		return;
+	}
+
+	make_flame(self.origin, self.movedir);
+	if (!(self.spawnflags & FLAME_SIMPLELIGHT))
+		newmis.effects = 0;
+
+	newmis.velocity *= self.speed;
+	
+	if (self.spawnflags & FLAME_DONTBURN)
+		newmis.style = 1;
+
+	newmis.dmg = self.dmg;
+
+	self.nextthink = time + self.wait;
+
+	if (self.state == FLAME_ST_ON && !(self.spawnflags & FLAME_NOSOUND)) {
+		entity e = find(world, classname, "player");
+		float dist;
+		while (e)
+		{
+			dist = vlen(self.origin - e.origin);
+			if (dist < 600 && dist > 500) {
+				self.burning_finished = 0;
+				__break;
+			}
+			e = find(e, classname, "player");
+		}
+		if (time > self.burning_finished) sound(self, CHAN_VOICE, "misc/burning.wav", 1, ATTN_IDLE);
+		self.burning_finished = time + 2.1;
+	}
+
+	if (self.state == FLAME_ST_STARTING) {
+		
+		self.state = FLAME_ST_ON;
+
+		if (self.style) lightstyle(self.style, FLAME_LIGHT_PATTERN);
+
+		if (!(self.spawnflags & FLAME_NOSOUND))
+			sound(self, CHAN_VOICE, "dread/flameon.wav", 1, ATTN_IDLE);
+
+		self.burning_finished = time + 0.5;
+	}
+	
+};
+
+
+void() misc_flame_use = {
+	if (self.state >= FLAME_ST_ON)
+		self.state = FLAME_ST_STOPPING;
+	else
+		self.state = FLAME_ST_STARTING;
+};
+
+
+void() misc_flame_startup = {
+	if (self.target != "") {
+		entity e = find(world, targetname, self.target);
+
+		if (e.classname == "light") 
+			self.style = e.style;
+
+		if (self.style && self.state == FLAME_ST_OFF)
+			lightstyle(self.style, "a");
+	}
+	self.use = misc_flame_use;
+	self.think = misc_flame_think;
+	self.nextthink = time + 0.1;
+}
+
+void() misc_flame =
+{
+	precache_model ("progs/s_flame.spr");
+	precache_sound ("dread/flameon.wav");
+	precache_sound ("dread/flameoff.wav");
+	precache_sound ("misc/burning.wav");
+	precache_sound ("misc/burning2.wav");
+
+	self.dmg = zeroconvertdefault(self.dmg, 2);
+
+	if (!self.speed)
+		self.speed = 1;
+
+
+	SetMovedir();
+
+	if (!self.wait)
+		self.wait = 0.1;
+					
+	if (!(self.spawnflags & START_OFF))
+		self.state = FLAME_ST_STARTING;
+	
+	self.nextthink = time + 0.2;
+	self.think = misc_flame_startup;
+	self.obituary = "was burned alive";
+};
+
+
+
+/*
+===============================================================================
 misc_splash
 ===============================================================================
 */
