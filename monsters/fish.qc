@@ -75,19 +75,20 @@ void() fish_melee =
 {
 	local vector	delta;
 	local float 	ldmg;
+	entity en = SUB_entEnemyTarget();
 
-	if (!self.enemy)
+	if (!en)
 		return;		// removed before stroke
 		
-	delta = self.enemy.origin - self.origin;
+	delta = en.origin - self.origin;
 
 	if (vlen(delta) > 60)
 		return;
 		
 	sound (self, CHAN_VOICE, "fish/bite.wav", 1, ATTN_NORM);
 	ldmg = (random() + random()) * 3;
-	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
-};
+	T_Damage(en, self, self, ldmg, DMGTYPE_MELEE);
+}
 
 void() f_attack1        =[      $attack1,       f_attack2 ] {ai_charge(12);};
 void() f_attack2        =[      $attack2,       f_attack3 ] {ai_charge(12);};

@@ -47,7 +47,7 @@ void() frogmen_fire = {
 void() frogmen_stand1 = [19, frogmen_stand2]
 {
 	ai_stand();
-	if (random() < 0.2 && !(self.spawnflags & MONSTER_NOIDLESOUND && !self.enemy))
+	if (random() < 0.2 && !(self.spawnflags & MONSTER_NOIDLESOUND && !SUB_entEnemyTarget()))
 	{
 		sound(self, CHAN_VOICE, "frogman/idle.wav", 1, ATTN_IDLE);
 	}
@@ -158,7 +158,7 @@ void() harpoon = {
 	harp.movetype = MOVETYPE_FLYMISSILE;
 	harp.owner = self;
 	harp.solid = SOLID_BBOX;
-	trace1 = normalize(self.origin - self.enemy.origin);
+	trace1 = normalize(self.origin - SUB_orgEnemyTarget());
 	harp.velocity = trace1 * -1000;
 	harp.angles = vectoangles(trace1 * -1);
 	harp.touch = poon_bang;

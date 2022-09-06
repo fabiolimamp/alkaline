@@ -86,10 +86,10 @@ void() eel_melee =
     local float     attackOK;
 
     attackOK = 1;
+    entity enem = SUB_entEnemyTarget();
+    traceline (self.origin, enem.origin, FALSE, self);
 
-    traceline (self.origin, self.enemy.origin, FALSE, self);
-
-    if (trace_ent != self.enemy)
+    if (trace_ent != enem)
         attackOK = FALSE;       // don't have a clear shot
 	if (trace_inopen && trace_inwater)
         attackOK = FALSE;           // sight line crossed contents
