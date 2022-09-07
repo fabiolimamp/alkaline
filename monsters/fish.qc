@@ -216,8 +216,8 @@ void() monster_fish =
 	precache_sound2 ("fish/bite.wav");
 	precache_sound2 ("fish/idle.wav");
 
-	self.cmins = '-16 -16 -24';
-	self.cmaxs = '16 16 24';
+	self.cmins = '-8 -8 -24';
+	self.cmaxs = '8 8 16';
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);

@@ -923,8 +923,8 @@ Only event_lightning can kill him." []
 @PointClass base(Monster) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_tarbaby :
 "Spawn (Tarbaby), 80 health points." []
 
-@PointClass base(Monster) size(32 32 48) model({"path":"progs/fish_small.mdl"}) = monster_fish :
-"Rotfish, 25 health points." []
+@PointClass base(Monster) size(-8 -8 -24, 8 8 16) model({"path":"progs/fish_small.mdl"}) = monster_fish :
+"Rotfish, 20 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 32) model({"path":"progs/oldone.mdl"}) = monster_oldone :
 "Shub-Niggurath, 40000 health points.
