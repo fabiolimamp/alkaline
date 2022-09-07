@@ -84,7 +84,10 @@ void() fish_melee =
 
 	if (vlen(delta) > 60)
 		return;
-		
+	
+	if (en.waterlevel <= 0)
+		return;
+
 	sound (self, CHAN_VOICE, "fish/bite.wav", 1, ATTN_NORM);
 	ldmg = (random() + random()) * 3;
 	T_Damage(en, self, self, ldmg, DMGTYPE_MELEE);
