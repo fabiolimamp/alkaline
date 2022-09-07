@@ -11,18 +11,23 @@ $base base
 $skin skin
 $scale 1
 
-
+// 0
 $frame base1
 
+// 1-11
 $frame cam1 cam2 cam3 cam4 cam5 cam6 cam7 cam8 cam9 cam10 cam11 
 
+// 12-17
 $frame att1 att2 att3 att4 att5 att6
 
+// 18-27
 $frame idl1 idl2 idl3 idl4 idl5 idl6 idl7 idl8 idl9 idl10
 
+// 28-33
 $frame paa1 paa2 paa3 paa4 paa5
 
-$frame pab1 pab2 pab3 pab4 pab5
+// 34-40
+$frame pab1 pab2 pab3 pab4 pab5 pab6 pab7
 
 
 
@@ -83,20 +88,19 @@ void(vector org, vector vec) LaunchDLaser =
 
 	newmis.nextthink = time + 5;
 	newmis.think = SUB_Remove;
-		newmis.touch = DLaser_Touch;
+	newmis.touch = DLaser_Touch;
 };
 
 
 
-void(float offset) drone_fire =
-{
-/* OUM - drone may misfire when damaged. */
+void(float offset) drone_fire = {
+	/* OUM - drone may misfire when damaged. */
 	local vector org;
 	local float ouch, ouch1;
 
-	ouch = 4 - skill;
+	ouch = 4 - startskill;
 	ouch1 = 4 * random();
-	if ((self.ammo_shells < ouch) && (ouch1 < ouch) && (self.health < 200))
+	if ((self.ammo_shells < ouch) && (ouch1 < ouch) && (self.health < 80))
 	{
 		sound (self, CHAN_VOICE, "drone/drngasp.wav", 0.6, ATTN_NORM);
 		self.ammo_shells = self.ammo_shells + 1;
@@ -106,10 +110,10 @@ void(float offset) drone_fire =
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	makevectors (self.angles);
 	
- //       org = self.origin + v_forward * 30 + '-5 15 0';
+ 	// org = self.origin + v_forward * 30 + '-5 15 0';
 	org = self.origin;
 
-	LaunchDLaser(org, SUB_entEnemyTarget().origin + v_right * offset - self.origin);
+	LaunchDLaser(org, SUB_orgEnemyTarget() + v_right * offset - self.origin);
 	SUB_AttackFinished (4);
 };
 
@@ -247,8 +251,7 @@ void()  drn_atta3       =[      $att3,               drn_atta4       ] {ai_face(
 void()  drn_atta4       =[      $att4,               drn_atta5       ] {ai_face();drone_fire(0);};
 void()  drn_atta5       =[      $att5,               drn_atta6       ] {ai_face();drone_fire(-25);};
 void()  drn_atta6       =[      $att6,               drn_atta7       ] {ai_face();drone_fire(-75);};
-void()  drn_atta7       =[      $cam1,               drn_atta8       ] 
-{
+void()  drn_atta7       =[      $cam1,               drn_atta8       ] {
 	ai_face();
 	drone_fire(-125);
 	self.ammo_shells = 0;
@@ -272,23 +275,23 @@ void()  drn_paina1       =[      $paa1,         drn_paina2       ] {};
 void()  drn_paina2       =[      $paa2,         drn_paina3       ] {};
 void()  drn_paina3       =[      $paa3,         drn_paina4       ] {};
 void()  drn_paina4       =[      $paa4,         drn_paina5       ] {};
-void()  drn_paina5       =[      $paa4,         drn_run         ] {};
+void()  drn_paina5       =[      $paa5,         drn_run         ] {};
 
 void()  drn_painb1       =[      $pab1,         drn_painb2       ] {};
 void()  drn_painb2       =[      $pab2,         drn_painb3       ] {};
 void()  drn_painb3       =[      $pab3,         drn_painb4       ] {};
 void()  drn_painb4       =[      $pab4,         drn_painb5       ] {};
-void()  drn_painb5       =[      $pab4,         drn_run         ] {};
+void()  drn_painb5       =[      $pab5,         drn_run         ] {};
 
 
-void(entity attacker, float damage) drn_pain =
-{
+void(entity attacker, float damage) drn_pain = {
 	if (random() > 0.75)
 		sound (self, CHAN_VOICE, "drone/drnpain2.wav", 1, ATTN_NORM);
 	else
 		sound (self, CHAN_VOICE, "drone/drnpain.wav", 1, ATTN_NORM);
 
-		ThrowGib ("progs/spike.mdl", -10);
+	ThrowGib ("progs/spike.mdl", -10);
+
 	if (random() > 0.5)
 		drn_paina1 ();
 	else
@@ -296,55 +299,60 @@ void(entity attacker, float damage) drn_pain =
 };
 
 
+void()  drn_die1        =[      $paa1,            drn_die2      ] {self.takedamage = DAMAGE_NO;
+	sound(self, CHAN_VOICE, "drone/drndeth.wav", 1, ATTN_NORM);
+	self.movetype = MOVETYPE_BOUNCEMISSILE;
+	setsize(self, '0 0 0', '0 0 0');
 
+	self.touch = drn_dead_touch;
 
-void()  drn_die1        =[      $paa5,            drn_die2      ] {self.takedamage = DAMAGE_NO;
-	sound (self, CHAN_VOICE, "drone/drndeth.wav", 1, ATTN_NORM);
 	self.velocity_x = -200 + 400*random();
 	self.velocity_y = -200 + 400*random();
-	self.velocity_z = 100 +  100*random();
+	self.velocity_z =  100 + 100*random();
+
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 };
 void()  drn_die2         =[      $paa1,         drn_die3       ] {};
 void()  drn_die3         =[      $paa2,         drn_die4       ] {};
 void()  drn_die4         =[      $paa3,         drn_die5       ] {};
 void()  drn_die5         =[      $paa4,         drn_die6       ] {};
-void()  drn_die6         =[      $paa5,         drn_die7       ] {};
-void()  drn_die7         =[      $base1,        drn_die7       ]
-{
-/*
-		ThrowGib ("progs/spike.mdl", -100, self.dest);
-		ThrowGib ("progs/spike.mdl", -100, self.dest);
-		ThrowGib ("progs/spike.mdl", -100, self.dest);
-		ThrowGib ("progs/spike.mdl", -100, self.dest);
-*/
-	ThrowGib ("progs/drngib1.mdl", -65);
-	ThrowGib ("progs/drngib2.mdl", -65);
-	ThrowHead ("progs/drngib3.mdl", -65);
-
-	self.nextthink = time + 2.5; // OUM - gives time to play death sound before going bang
-	T_RadiusDamage (self, self, 80, world, DMGTYPE_EXPLOSION); // reduced (Speedy)
-	self.origin = self.origin - 8*normalize(self.velocity);
-
-	TriggerExplosion();
-	//SUB_Hide();
-	
+void()  drn_die6         =[      $paa5,         drn_die6       ] {
+	self.think = drn_explode;
+	self.nextthink = time + 0.5;
 };
 
+void() drn_explode = {
+	ThrowGib("progs/drngib1.mdl", -65);
+	ThrowGib("progs/drngib2.mdl", -65);
+	ThrowHead("progs/drngib3.mdl", -65);
+
+	T_RadiusDamage(self, self, 80, world, DMGTYPE_EXPLOSION);
+
+	TriggerExplosion();
+}
 
 void() drn_die = {
+	// explosions more likely to make it explode instantly
 	if (self.health < -40 || (self.deathtype == DMGTYPE_EXPLOSION && self.health < -10)) 
-		drn_die7();
-	else
+		drn_explode();
+	else 
 		drn_die1();
 };
 
-void() DroneTouch = {
-	if (other.takedamage) {
-		T_Damage(self, other, other, self.health + 41, DMGTYPE_EXPLOSION); //explode instantly
+void() drn_dead_touch = {
+	if (other.solid == SOLID_BSP || other.solid == SOLID_BBOX || other.solid == SOLID_SLIDEBOX) {
+		drn_explode();
 	}
+}
 
+// touching it makes it explode instantly
+void() drn_touch = {
+	if (other.takedamage) {
+		T_Damage(self, other, other, self.health + 41, DMGTYPE_EXPLOSION);
+	}
 };
+
+
 
 void() drn_sight = {
 	sound (self, CHAN_VOICE, "drone/drnwake.wav", 1, ATTN_NORM);
@@ -354,8 +362,7 @@ void() drn_sight = {
 Note ambushing Drone stays silent unless activated.
 */
 
-void(entity e) monster_drone_start =
-{
+void(entity e) monster_drone_start = {
 	local entity oself;
 
 	oself = self;
@@ -371,8 +378,9 @@ void(entity e) monster_drone_start =
 	
 	self.health = 100;
 	if (self.obituary == "") self.obituary = "was drilled by a Drone";
-	self.touch = DroneTouch;
-		if(!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
+	self.touch = drn_touch;
+
+	if (!self.bloodtype) self.bloodtype = SPAWN_YELLOWSPARK;
 
 	self.th_stand = drn_stand1;
 	self.th_walk = drn_walk1;
@@ -392,10 +400,8 @@ void() monster_drone_spawner = {
 	monster_spawner(monster_drone_start);
 };
 
-void() monster_drone =
-{
-	if (deathmatch)
-	{
+void() monster_drone = {
+	if (deathmatch) {
 		remove(self);
 		return;
 	}
@@ -419,10 +425,10 @@ void() monster_drone =
 	precache_sound2 ("enforcer/enfstop.wav");
 	precache_model ("progs/spike.mdl");
 	
-	self.cmins = '-16 -16 -24';
-	self.cmaxs = '16 16 40';
+	self.cmins = '-16 -16 -16';
+	self.cmaxs = '16 16 24';
 
-	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
+	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 0', '0 0 0');
 	else setsize(self, self.cmins, self.cmaxs);
 
 	if (self.spawnflags & MONSTER_SPAWNER) {

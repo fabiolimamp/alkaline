@@ -973,7 +973,7 @@ The big boss mam!" []
 "Berserker, 200 health points.
 Don't shake hands with this crazy bastard!" []
 
-@PointClass base(Monster, Above) size(-16 -16 -24, 16 16 40) model({"path":"progs/drone1.mdl"}) = monster_drone :
+@PointClass base(Monster, Above) size(-16 -16 -16, 16 16 24) model({"path":"progs/drone1.mdl"}) = monster_drone :
 "Drone, 100 health points." []
 
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/hunter.mdl"}) = monster_hunter :
