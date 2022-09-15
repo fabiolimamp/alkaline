@@ -35,7 +35,6 @@ SUB_CallAsSelf
 wrap the self/oself shuffle for code cleanliness elsewhere
 ===============
 */
-/*
 void(void() fun, entity newself) SUB_CallAsSelf =
 {
 	local entity oself;
@@ -44,10 +43,8 @@ void(void() fun, entity newself) SUB_CallAsSelf =
 	self = newself;
 	fun();
 	self = oself;	
-}*/
+}
 
-#define SUB_CallAsSelf(func, whomst, ...) \
-self_backup = self; self = whomst; func(__VA_ARGS__); self = self_backup
 
 /*
 ================

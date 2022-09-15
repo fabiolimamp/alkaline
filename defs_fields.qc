@@ -145,8 +145,6 @@ string	string_null;	// null string, nothing should be held here
 
 nosave float clients;
 
-entity self_backup;
-
 entity client_ent;
 entity newmis;			// launch_spike sets this after spawning it
 
