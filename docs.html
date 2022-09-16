@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <meta charset="utf-8">
-<title>Alkaline</title>
+<title>Alkaline Mapping Reference</title>
 <style>
 body {
 	font-family: 'Helvetica', 'Arial', sans-serif;
@@ -816,7 +816,7 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 
 <p>A limitation about this system is that the dynamic liquid brushes' area of influence is determined by their bounding boxes, instead of the actual geometry, just like triggers.</p>
 
-<p>Adding a <strong>liquidtype</strong> key turns it into slime (liquidtype 1), or lava (liquidtype 2).</p>
+<p>Adding a <strong>liquidtype</strong> key set to 1 turns it into slime, or into lava when set to liquidtype 2.</p>
 
 <p>By default, the screen tint RBG values are the same as standard liquids on Quakespasm. You can override that through the <strong>liquidcolor</strong> key ("R G B" values in a 0-255 range), and the blend density through <strong>liquiddensity</strong> (also 0-255).</p>
 
@@ -948,6 +948,7 @@ It can be set to start visible through the "Start on" spawnflag.
 	<li><strong>Trap shooters:</strong> Now can fire rockets, and have projectile speed and damage customized.</li>
 	<li><strong>Laser turret:</strong> the <strong>func_turret</strong> brush entity creates a rotating laser shooter that aims at the player in any horizontal direction.</li>
 	<li><strong>Smoke:</strong> From Rubicon2, there's the <strong>misc_smoke</strong> point entity. Produces a jet of smoke/steam. If targeted, it will toggle between on or off.</li>
+	<li><strong>Fire/flames:</strong> the <strong>misc_flames</strong> produces a continuous stream of fire like a flamethrower. Toggles between on or off when targeted. If it targets a light, that light will be turned on while the flames are firing.</li>
 	<li><strong>Sparks:</strong> the <strong>misc_sparks</strong>, also from Rubicon2. Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks.</li>
 	<li><strong>Meat/gibs:</strong> <strong>target_meat_fireworks</strong>. Does what it says on the tin. Meat fireworks. Can be fired once or on a periodic basis.</li>
 	<li><strong>Teleport fog:</strong> Targeting a <strong>target_telefog</strong> produces a teleport fog effect when triggered, sounds and all.</li>
@@ -1022,7 +1023,7 @@ The activator's bounding box can be changed as well by activating spawnflag 1.</
 <p>To Spike for the FTEQCC compiler and for being a walking encyclopedia regarding everything engine- and QuakeC-related.</p>
 <p>To ericw for creating the awesome map compiling tools that were able to take modern Quake maps into another level in map complexity and lighting features.</p>
 <p>To Preach, necros, czg, Kell and other modders of old, whose work led to where we are today in terms of modern mod features and monsters.</p>
-<p>To the awesome community of mappers, modders and players at the Quake Mapping Discord, Quaddicted and func_msgboard for all the support and feedback.</p>
+<p>To the awesome community of mappers, modders and players at the Quake Mapping Discord, Slipseer, Quaddicted and func_msgboard, for all the support and feedback.</p>
 
 </body>
 </html>
