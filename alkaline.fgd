@@ -2307,7 +2307,10 @@ Note that they're mutually exclusive."
 
 @PointClass base(Appearflags, Trigger) = trigger_counter : "Trigger counter" 
 [
-	spawnflags(flags) = [ 1: "No Message" : 0 ]
+	spawnflags(flags) = [
+		1: "No Message" : 0
+		2: "Reset count after fired" : 0
+	]
 	count(integer) : "Count before activation" : 2
 ]
 

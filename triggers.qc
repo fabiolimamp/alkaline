@@ -273,6 +273,7 @@ void() trigger_secret =
 
 //=============================================================================
 
+float COUNTER_RESET = 2;
 
 void() counter_use =
 {
@@ -282,20 +283,22 @@ void() counter_use =
 
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
+	
+	if (self.count <= 0)
+		return;
 
 	self.count = self.count - 1;
-	if (self.count < 0)
-		return;
 	
-	if (self.count != 0)
-	{
-		if (activator.classname == "player"
-		&& (self.spawnflags & SPAWNFLAG_NOMESSAGE) == 0)
-		{
-			if (self.count >= 4)
-				centerprint (activator, "There are more to go...");
+	if (self.count > 0)	{
+		if (activator.classname == "player"	&& (self.spawnflags & SPAWNFLAG_NOMESSAGE) == 0) {
+			if (self.count >= 6)
+				centerprint (activator, "There are more to go ...");
+			else if (self.count == 5)
+				centerprint (activator, "There are 5 more to go ...");
+			else if (self.count == 4)
+				centerprint (activator, "There are 4 more to go ...");
 			else if (self.count == 3)
-				centerprint (activator, "Only 3 more to go...");
+				centerprint (activator, "There are 3 more to go ...");
 			else if (self.count == 2)
 				centerprint (activator, "Only 2 more to go...");
 			else
@@ -304,11 +307,14 @@ void() counter_use =
 		return;
 	}
 	
-	if (activator.classname == "player"
-	&& (self.spawnflags & SPAWNFLAG_NOMESSAGE) == 0)
+	if (activator.classname == "player" && (self.spawnflags & SPAWNFLAG_NOMESSAGE) == 0)
 		centerprint(activator, "Sequence completed!");
+
 	self.enemy = activator;
-	multi_trigger ();
+	multi_trigger();
+
+	if (self.spawnflags & COUNTER_RESET)
+		self.count = self.bubble_count;
 };
 
 /*QUAKED trigger_counter (.5 .5 .5) (-8 -8 -8) (8 8 8) nomessage
@@ -324,6 +330,7 @@ void() trigger_counter =
 	if (!self.count)
 		self.count = 2;
 
+	self.bubble_count = self.count; // store the initial count amount
 	self.use = counter_use;
 };
 
