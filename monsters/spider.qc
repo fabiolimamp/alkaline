@@ -11,77 +11,14 @@ void() spider_swalk = {sound(self, CHAN_BODY, SPIDER_SOUND_WALK, 1, ATTN_NORM);}
 
 void() spider_scharge = {sound(self, CHAN_AUTO, SPIDER_SOUND_CHARGE, 1, ATTN_NORM);};
 
-void() spider_findtarget = {
-
-	local entity	client;
-	local float		r;
-
-	if (sight_entity_time >= time - 0.1 && !(self.spawnflags & 1) )
-	{
-		client = sight_entity;
-		if (client.enemy == self.enemy)
-			return FALSE;
-	}
-	else
-	{
-		client = checkclient();
-		if (!client)
-			return FALSE;	// current check entity isn't in PVS
-	}
-
-	if (client == self.enemy)
-		return FALSE;
-
-	if (client.flags & FL_NOTARGET)
-		return FALSE;
-	if (client.items & IT_INVISIBILITY)
-		return FALSE;
-
-	r = vlen(self.origin - client.origin + client.view_ofs);
-		
-	if (!visible(client))
-		return FALSE;
-
-	if (r >= 120 && r <= 384) {
-		if (client.show_hostile < time)
-			return FALSE;
-	}
-	else if (r > 384)
-		return FALSE;
-
-	//johnfitz don't react to the intermission camera players
-	if (client.takedamage == DAMAGE_NO)
-		return FALSE;
-	
-	if (self.spawnflags & MONSTER_IGNOREPLAYER)
-		return FALSE;
-	
-//
-// got one
-//
-	self.enemy = client;
-	if (self.enemy.classname != "player")
-	{
-		self.enemy = self.enemy.enemy;
-		if (self.enemy.classname != "player")
-		{
-			self.enemy = world;
-			return FALSE;
-		}
-	}
-	
-	FoundTarget();
-
-};
-
-void() spider_sleep1 =	[21, spider_sleep2]		{spider_findtarget();};
-void() spider_sleep2 =	[20, spider_sleep3]		{spider_findtarget();};
-void() spider_sleep3 =	[19, spider_sleep4]		{spider_findtarget();};
-void() spider_sleep4 =	[18, spider_sleep5]		{spider_findtarget();};
-void() spider_sleep5 =	[18, spider_sleep1]		{spider_findtarget();};
+void() spider_sleep1 =	[21, spider_sleep2]		{FindTargetProximity();};
+void() spider_sleep2 =	[20, spider_sleep3]		{FindTargetProximity();};
+void() spider_sleep3 =	[19, spider_sleep4]		{FindTargetProximity();};
+void() spider_sleep4 =	[18, spider_sleep5]		{FindTargetProximity();};
+void() spider_sleep5 =	[18, spider_sleep1]		{FindTargetProximity();};
 
 void() spider_stand1 =	[10, spider_stand1]		{
-	spider_findtarget();
+	FindTargetProximity();
 	
 	if (time > self.pausetime) {
 		self.th_walk();
@@ -106,14 +43,14 @@ void() spider_wake8 =	[7, spider_wake9]		{};
 void() spider_wake9 =	[8, spider_wake10]		{};
 void() spider_wake10 =	[9, spider_run1]		{HuntTarget();};
 
-void() spider_walk1 =	[10, spider_walk2]		{self.state = 0; ai_walk(9); spider_findtarget();};
-void() spider_walk2 =	[11, spider_walk3]		{ai_walk(6); spider_findtarget();};
-void() spider_walk3 =	[12, spider_walk4]		{ai_walk(9); spider_findtarget();};
-void() spider_walk4 =	[13, spider_walk5]		{ai_walk(12); spider_findtarget();};
-void() spider_walk5 =	[14, spider_walk6]		{ai_walk(9); spider_swalk(); spider_findtarget();};
-void() spider_walk6 =	[15, spider_walk7]		{ai_walk(9); spider_findtarget();};
-void() spider_walk7 =	[16, spider_walk8]		{ai_walk(9); spider_findtarget();};
-void() spider_walk8 =	[17, spider_walk1]		{ai_walk(12); spider_findtarget();};
+void() spider_walk1 =	[10, spider_walk2]		{self.state = 0; ai_walk(9); FindTargetProximity();};
+void() spider_walk2 =	[11, spider_walk3]		{ai_walk(6); FindTargetProximity();};
+void() spider_walk3 =	[12, spider_walk4]		{ai_walk(9); FindTargetProximity();};
+void() spider_walk4 =	[13, spider_walk5]		{ai_walk(12); FindTargetProximity();};
+void() spider_walk5 =	[14, spider_walk6]		{ai_walk(9); spider_swalk(); FindTargetProximity();};
+void() spider_walk6 =	[15, spider_walk7]		{ai_walk(9); FindTargetProximity();};
+void() spider_walk7 =	[16, spider_walk8]		{ai_walk(9); FindTargetProximity();};
+void() spider_walk8 =	[17, spider_walk1]		{ai_walk(12); FindTargetProximity();};
 
 void() spider_run1 =	[10, spider_run2]		{self.state = 0; ai_run(16*self.speed); spider_swalk();};
 void() spider_run2 =	[11, spider_run3]		{ai_run(20*self.speed);};

@@ -50,7 +50,9 @@ $frame paine29 paine30
 
 $frame cruc_1 cruc_2 cruc_3 cruc_4 cruc_5 cruc_6
 
-float	SPAWN_CRUCIFIED	= 1;
+float ZOMBIE_CRUCIFIED = 1;
+float ZOMBIE_DOWN = 4;
+float ZOMBIE_WAITFORTRIGGER = 8;
 
 //=============================================================================
 
@@ -396,6 +398,18 @@ void() zombie_die =
 	ThrowGib ("progs/gib3.mdl", self.health);
 };
 
+
+void() zombie_down = [$paine11, zombie_down] {
+	if (!(self.spawnflags & ZOMBIE_WAITFORTRIGGER))
+		FindTargetProximity();
+};
+
+void() zombie_wake = {
+	if (self.type == "downedzombie") {
+		self.th_stand = zombie_stand1;
+		zombie_paine12();
+	}
+}
 /*
 =================
 zombie_pain
@@ -483,6 +497,7 @@ void(entity e) monster_zombie_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
+	//setmodel (self, "progs/zombie_alk.mdl");
 	setmodel (self, "progs/zombie.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
@@ -498,16 +513,26 @@ void(entity e) monster_zombie_start =
 	self.th_die = zombie_die;
 	self.th_missile = zombie_missile;
 	self.th_sight = zombie_sight;
+	self.th_wake = zombie_wake;
 
 	self.type = "";
 
-	if (self.spawnflags & SPAWN_CRUCIFIED)
+	if (self.spawnflags & ZOMBIE_CRUCIFIED)
 	{
 		self.movetype = MOVETYPE_NONE;
 		zombie_cruc1 ();
 	}
 	else
 		walkmonster_start();
+	
+	if (self.spawnflags & ZOMBIE_DOWN) {
+		self.type = "downedzombie";
+		self.frame = $paine11;
+		self.solid = SOLID_NOT;
+		self.th_stand = zombie_down;
+		//self.solid = SOLID_TRIGGER;
+		setorigin(self, self.origin); // relink
+	}
 
 	self = oself;
 };
@@ -525,6 +550,7 @@ void() monster_zombie =
 	}
 
 	precache_model ("progs/zombie.mdl");
+	//precache_model ("progs/zombie_alk.mdl");
 	precache_model ("progs/h_zombie.mdl");
 	precache_model ("progs/zom_gib.mdl");
 

@@ -930,14 +930,24 @@ Only event_lightning can kill him." []
 "Shub-Niggurath, 40000 health points.
 Most likely killed by teleport frag." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 32) model({"path":"progs/zombie.mdl"}) = monster_zombie :
+@PointClass base(Monster) size(-16 -16 -24, 16 16 32) model({{
+	spawnflags & 1 -> {"path":"progs/zombie.mdl", "frame":192},
+	spawnflags & 4 -> {"path":"progs/zombie.mdl", "frame":172},
+	{"path":"progs/zombie.mdl", "frame":0}
+}}) = monster_zombie :
 "Zombie, 60 health points.
-If crucified, stick the bounding box 12 pixels back into a wall to look right." 
+If crucified, stick the bounding box 12 pixels back into a wall to look right.
+
+'Start down' makes the zombie spawn lying down. It'll wake up by player proximity or upon triggering.
+'Only get up on trigger' makes it not wake up by proximity.
+" 
 [
 	spawnflags(Flags) = 
 	[
 		1 : "Crucified" : 0
 		2 : "Ambush" : 0
+		4 : "Start down" : 0
+		8 : "Only get up on trigger" : 0
 	]
 ]
 

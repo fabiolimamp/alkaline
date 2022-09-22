@@ -588,6 +588,75 @@ float() FindTarget =
 };
 
 
+float() FindTargetProximity = {
+
+	local entity	client;
+	local float		r;
+
+	if (self.enemy) self.was_angry = 1;
+	else self.was_angry = 0;
+	
+	if (sight_entity_time >= time - 0.1 && !(self.spawnflags & 1) )
+	{
+		client = sight_entity;
+		if (client.enemy == SUB_entEnemyTarget())
+			return FALSE;
+	}
+	else
+	{
+		client = checkclient();
+		if (!client)
+			return FALSE;	// current check entity isn't in PVS
+	}
+
+	if (client == SUB_entEnemyTarget())
+		return FALSE;
+
+	if (client.flags & FL_NOTARGET)
+		return FALSE;
+	if (client.items & IT_INVISIBILITY)
+		return FALSE;
+
+	r = vlen(self.origin - client.origin + client.view_ofs);
+		
+	if (!visible(client))
+		return FALSE;
+
+	if (r >= 120 && r <= 384) {
+		if (client.show_hostile < time)
+			return FALSE;
+	}
+	else if (r > 384)
+		return FALSE;
+
+	//johnfitz don't react to the intermission camera players
+	if (client.takedamage == DAMAGE_NO)
+		return FALSE;
+	
+	if (self.spawnflags & MONSTER_IGNOREPLAYER)
+		return FALSE;
+	
+//
+// got one
+//	
+	if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
+
+	self.enemy = client;
+	if (self.enemy.classname != "player")
+	{
+		self.enemy = self.enemy.enemy;
+		if (self.enemy.classname != "player")
+		{
+			self.enemy = world;
+			return FALSE;
+		}
+	}
+	
+	FoundTarget();
+
+	return TRUE;
+};
+
 void(float dist) ai_run_path = {
 
 	movetogoal2 (dist);
