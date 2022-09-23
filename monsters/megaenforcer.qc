@@ -139,7 +139,7 @@ void() spiralthink = {
 
 void() changemovetype = {
 	self.movetype = MOVETYPE_FLYMISSILE;
-	self.think = ShalHome;
+	self.think = MissileSpiralPointer_Home;
 	self.nextthink = time + 0.1;
 }
 
@@ -150,7 +150,38 @@ void() changemovetype = {
 // the player. The missile will track slowly and have a TTL
 //--------------------------------------------------------------------
 
+void() MissileSpiralPointer_Home =
+{
+	local vector	dir, vtemp;
 
+	if (self.sibling.classname != "drunkmissile") {
+		remove(self);
+		return;
+	}
+
+	vtemp = self.enemy.origin + '0 0 10';
+	if (self.enemy.health < 1)
+	{
+		remove(self);
+		return;
+	}
+
+	if (self.attack_finished && time > self.attack_finished) {
+		//dprint("Lifetime finished\n");
+		other = self.enemy;
+		self.touch();
+		return;
+	}
+
+	dir = normalize(vtemp - self.origin);
+	if (skill == 3)
+		self.velocity = dir * 350;
+	else
+		self.velocity = dir * 250;
+
+	self.nextthink = time + 0.2;
+	self.think = MissileSpiralPointer_Home;	
+};
 
 void() FireMissileSpiral = {
 	local	entity missile, pointer;
@@ -173,6 +204,7 @@ void() FireMissileSpiral = {
 	setorigin (pointer, org);	
 	pointer.think = changemovetype;
 	pointer.nextthink = time + 0.2;
+	pointer.classname = "drunkmissile_pointer";
 	
 	
 	// set intial pointer velocity	
@@ -191,6 +223,7 @@ void() FireMissileSpiral = {
 	missile.solid = SOLID_BBOX;
 	missile.effects = EF_DIMLIGHT;
 	missile.flags = missile.flags | FL_PROJECTILE;
+	missile.classname = "drunkmissile";
 
 	setorigin (missile, org);
 
