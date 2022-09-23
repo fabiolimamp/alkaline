@@ -488,46 +488,42 @@ LIGHTNING
 LightningDamage
 =================
 */
-void(vector p1, vector p2, entity from, float damage) LightningDamage =
-{
-	local entity		e1, e2;
-	local vector		f;
+void(vector p1, vector p2, entity from, float damage) LightningDamage = {
+	entity e1, e2;
+	vector f;
 	
-	f = p2 - p1;
-	normalize (f);
-	f_x = 0 - f_y;
-	f_y = f_x;
-	f_z = 0;
-	f = f*16;
+	f = normalize(p2 - p1);
 
+	f = [-f_y, f_x, 0] * 16; // vector pointing left
+	
 	e1 = e2 = world;
 
-	traceline (p1, p2, FALSE, self);
-	if (trace_ent.takedamage)
-	{
-		particle (trace_endpos, '0 0 100', 225, damage*4);
-
+	traceline(p1, p2, FALSE, self);
+	if (trace_ent.takedamage) {
+		//dprint3("Center bolt hit ", trace_ent.classname, " entity\n");
+		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
-		if (self.classname == "player")
-		{
+
+		if (self.classname == "player") {
 			if (other.classname == "player")
 				trace_ent.velocity_z = trace_ent.velocity_z + 400;
 		}
 	}
 	e1 = trace_ent;
 
-	traceline (p1 + f, p2 + f, FALSE, self);
-	if (trace_ent != e1 && trace_ent.takedamage)
-	{
-		particle (trace_endpos, '0 0 100', 225, damage*4);
+	traceline(p1 + f, p2 + f, FALSE, self);
+	if (trace_ent != e1 && trace_ent.takedamage){
+		//dprint3("Left bolt hit ", trace_ent.classname, " entity\n");
+		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
+
 	}
 	e2 = trace_ent;
 
-	traceline (p1 - f, p2 - f, FALSE, self);
-	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
-	{
-		particle (trace_endpos, '0 0 100', 225, damage*4);
+	traceline(p1 - f, p2 - f, FALSE, self);
+	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)	{
+		//dprint3("Right bolt hit ", trace_ent.classname, " entity\n");
+		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
 	}
 };
