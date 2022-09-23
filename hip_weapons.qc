@@ -110,11 +110,9 @@ HIP_FireLaser
 =================
 */
 void(float stat) HIP_FireLaser = {
-	local vector org;
-	local vector dir;
-	local vector out;
-	local float ofs;
-	local float aofs;
+	
+	float ofs;
+	float aofs;
 
 	if (!self.button0) {
 		player_run ();
@@ -129,36 +127,42 @@ void(float stat) HIP_FireLaser = {
 
 	SuperDamageSound();
 	self.effects = self.effects | EF_MUZZLEFLASH;
+	
 	makevectors (self.v_angle);
+	vector dir = aim(self, 1000);
 
-	ofs = 6;
-	out = v_forward;
-	out_z = 0;
-	out = normalize(out);
-	org = self.origin + ((12-ofs) * v_up) + (12*out);
-//	org = self.origin + (1*v_forward);
-	dir = aim (self, 1000);
-	aofs = ofs * 0.707;
+	float ofs = 6;
+	float aofs = ofs * 0.7071;
+
+	// central point between the 3 barrels
+	vector org = self.origin + self.view_ofs - 16*v_up;
 
 	if (stat == 0) {
-		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-		org = org + aofs*v_right - aofs*v_up;
-		HIP_LaunchLaser(org, dir, 0);
-		org = org - (2*aofs*v_right);
-		HIP_LaunchLaser(org, dir, 0);
-	}
-	else if (stat == 1)	{
-		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-		org = org + (ofs*v_up);
 
+		vector org1 = org + aofs*v_right - aofs*v_up;
+		vector org2 = org - aofs*v_right - aofs*v_up;
+
+		traceline(org1, org1 + 32*v_forward, FALSE, self);
+		HIP_LaunchLaser(org1 + trace_fraction*32*v_forward, dir, 0);
+
+		traceline(org2, org2 + 32*v_forward, FALSE, self);
+		HIP_LaunchLaser(org2 + trace_fraction*32*v_forward, dir, 0);
+
+	}
+	else if (stat == 1) {
+		vector org3 = org + ofs*v_up;
+		traceline(org3, org3 + 32*v_forward, FALSE, self);
+		
 		if (random() < 0.1) {
-			HIP_LaunchLaser(org, dir, 1);
+			HIP_LaunchLaser(org3 + trace_fraction*32*v_forward, dir, 1);
 			newmis.dmg = 25;
 		}
-		else
-			HIP_LaunchLaser(org, dir, 0);
+		else {
+			HIP_LaunchLaser(org3 + trace_fraction*32*v_forward, dir, 0);
+		}
 	}
 
+	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 	self.punchangle_x = -1;
 };
 
