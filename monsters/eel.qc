@@ -175,6 +175,15 @@ void() eel_death =
 	}
 };
 
+
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) eel_damage = {
+	if (dmgtype == DMGTYPE_ENERGY && inflictor.classname != "hiplaser")
+		return 0;
+	else
+		return damage;
+}
+
+
 void(entity attacker, float damage) eel_pain1  =[	$eeldth1, eel_pain2 ] 
 { 
 	if (self.pain_finished > time)
@@ -223,6 +232,7 @@ void(entity e) monster_eel_start =
 	self.th_melee = eel_attack1;
 	self.effects = EF_DIMLIGHT;
 	self.th_sight = eel_sight;
+	self.th_damage = eel_damage;
 
     self.delay = time + random() * 6;
     self.weapon = 0;

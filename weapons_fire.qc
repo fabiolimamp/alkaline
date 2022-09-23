@@ -525,20 +525,18 @@ void(vector org, vector dest, entity attacker, float damage) LightningDamage = {
 };
 
 
-void() W_FireLightning =
-{
-	local	vector		org;
-	local	float		cells;
-	local entity victim;
+void() W_FireLightning = {
+	vector 	org;
+	float cells;
+	entity victim;
 
-	if (self.ammo_cells < 1)
-	{
+	if (self.ammo_cells < 1) {
 		self.weapon = W_BestWeapon ();
 		W_SetCurrentAmmo ();
 		return;
 	}
 
-// explode if under water
+	// explode if under water
 	if (self.waterlevel > 1) {
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
@@ -546,7 +544,7 @@ void() W_FireLightning =
 		victim = findradius(self.origin, 35*cells);
 		
 		while (victim) {
-			if (victim.classname != "monster_eel" && victim.takedamage && victim.waterlevel > 0) {
+			if (victim.takedamage && victim.waterlevel > 0) {
 				T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
 			}
 
