@@ -26,29 +26,28 @@ void() HIP_LaserTouch = {
 		spawn_touchblood (self.dmg);
 		T_Damage(other, self, self.lastvictim, self.dmg, DMGTYPE_ENERGY);
 	}
-	else if (self.cnt == 3 || random() < 0.15) {
+	else if (self.cnt >= 3 || random() < 0.15) {
 		gunshot(org);
 	}
 	else {
-//		self.dmg = 0.66 * self.dmg;
 		self.dmg = 0.9 * self.dmg;
-//		self.speed = 0.95 * self.speed;
-		self.velocity = oldvel + (2 * trace_plane_normal);
-		self.velocity = normalize(self.velocity);
+
+		/*
+		Vector reflection around normal
+		r = d − 2(d*n)n
+		r => reflected vector, d => entrance vector, n => surface normal, d*n => dot product
+		*/
+
+		self.velocity = oldvel - (2 * (oldvel * trace_plane_normal)) * trace_plane_normal;
+		
 		self.velocity = self.speed * self.velocity;
 		self.old_velocity = self.velocity;
+
 		self.flags &~= FL_ONGROUND;
 
 		r = random();
 		sound (self, CHAN_WEAPON, "hipweap/laserric.wav", 1, ATTN_STATIC);
-/*
-		if (r<0.33)
-			sound (self, CHAN_WEAPON, "weapons/ric1.wav", 1, ATTN_STATIC);
-		else if (r<0.66)
-			sound (self, CHAN_WEAPON, "weapons/ric2.wav", 1, ATTN_STATIC);
-		else
-			sound (self, CHAN_WEAPON, "weapons/ric3.wav", 1, ATTN_STATIC);
-*/
+
 		return;
 	}
 	sound (self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_STATIC);
@@ -65,7 +64,7 @@ void() HIP_LaserThink = {
 
 	self.velocity = self.old_velocity;
 	self.angles = vectoangles(self.velocity);
-	self.nextthink = time+0.1;
+	self.nextthink = time + 0.05;
 };
 
 void(vector org, vector vec, float light) HIP_LaunchLaser = {
