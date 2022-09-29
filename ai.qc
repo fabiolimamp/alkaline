@@ -479,7 +479,13 @@ void() FoundTarget =
 	// sight function, stored in the monster's "th_sight" field,
 	// and called here.
 	if (self.th_sight && !(self.spawnflags & MONSTER_NOSIGHTSOUND)) self.th_sight();
-	
+
+	// initial jump when angry - from Copper
+	if (self.movetype == MOVETYPE_STEP && self.movedir != '0 0 0') {
+		self.velocity = self.movedir;
+		self.flags &~= FL_ONGROUND;
+		self.movedir = '0 0 0';	// don't leap again if an infight starts
+	}
 
 	// Optional wake function, in case the monster has some "going angry" animation.
 	// This function needs to call HuntTarget() by itself afterwards.
@@ -595,7 +601,7 @@ float() FindTargetProximity = {
 
 	if (self.enemy) self.was_angry = 1;
 	else self.was_angry = 0;
-	
+
 	if (sight_entity_time >= time - 0.1 && !(self.spawnflags & 1) )
 	{
 		client = sight_entity;

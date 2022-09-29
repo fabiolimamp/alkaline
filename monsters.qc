@@ -255,11 +255,17 @@ void() walkmonster_start_go =
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
 		self.yaw_speed = 20;
+
 	self.view_ofs = '0 0 25';
 	self.use = monster_use;
 	
 	self.flags = self.flags | FL_MONSTER;
 	
+	if (self.movedir2 != VEC_ORIGIN) {
+		makevectors(self.angles);
+		self.movedir = v_forward * self.movedir2_x + v_right * self.movedir2_y + v_up * self.movedir2_z;
+	}
+
 	if (self.target != "")
 	{
 		self.goalentity = self.movetarget = find(world, targetname, self.target);
@@ -490,6 +496,8 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	e.cmins = self.cmins;
 	e.cmaxs = self.cmaxs;
 	e.spawnflags = self.spawnflags | MONSTER_SPAWNANGRY; // always spawn angry
+	e.movedir = self.movedir;
+	e.movedir2 = self.movedir2;
 
 
 	if (self.totalspawncount > 0 && !(self.spawnflags & MONSTER_COUNTONSPAWN)) 

@@ -30,6 +30,9 @@ body {
 			<li><a href="#target_infight">Entity target_infight</a></li>
 			<li><a href="#monsters-list">Monsters list</a></li>
 			<li><a href="#scientists">Scientists</a></li>
+			<li><a href="#turrets">Turrets</a></li>
+			<li><a href="#health-triggers">Health Triggers</a></li>
+			<li><a href="#auto-monsterjumps">Auto-monsterjumps</a></li>
 		</ul>
 	</li>
 
@@ -329,6 +332,10 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 
 <p>You don't have to assign targets to each health trigger level, just the ones you need. So, for example, you can ignore <strong>target2</strong> and <strong>target3</strong> if you only need a trigger to fire at 75% damage. Also, all assigned targets WILL fire when their thresholds have passed, even if they happen at the same frame - so if you insta-gib an enemy for example, all its remaining targets will be fired at the same time.</p>
 
+<h3 id="auto-monsterjumps">Auto-monsterjumps</h3>
+<p>Taken (stolen) from Copper, lets you set an initial velocity for when the first time a monster gets angry.</p>
+<p>The <strong>movedir2</strong> key sets direct velocities relative to the monster's starting angle, in a "front right up" notation. So, for example, giving this field a value of "300 0 200" means the monster will be pushed with a velocity of 300 forward, and 200 upwards.</p>
+<p><strong>movedir</strong> does the same, but based on absolute world coordinates.</p>
 
 
 <hr>
