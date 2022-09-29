@@ -333,16 +333,16 @@ void()	wiz_run12	=[	$fly12,		wiz_run13	] {ai_run(16);};
 void()	wiz_run13	=[	$fly13,		wiz_run14	] {ai_run(16);};
 void()	wiz_run14	=[	$fly14,		wiz_run1	] {ai_run(16);};
 
-void()	wiz_fast1	=[	$magatt1,		wiz_fast2	] {ai_face();Wiz_StartFast();};
-void()	wiz_fast2	=[	$magatt2,		wiz_fast3	] {ai_face();};
-void()	wiz_fast3	=[	$magatt3,		wiz_fast4	] {ai_face();};
-void()	wiz_fast4	=[	$magatt4,		wiz_fast5	] {ai_face();};
-void()	wiz_fast5	=[	$magatt5,		wiz_fast6	] {ai_face();};
-void()	wiz_fast6	=[	$magatt6,		wiz_fast7	] {ai_face();};
-void()	wiz_fast7	=[	$magatt5,		wiz_fast8	] {ai_face();};
-void()	wiz_fast8	=[	$magatt4,		wiz_fast9	] {ai_face();};
-void()	wiz_fast9	=[	$magatt3,		wiz_fast10	] {ai_face();};
-void()	wiz_fast10	=[	$magatt2,		wiz_run1	] {ai_face();SUB_AttackFinished(2);WizardAttackFinished ();};
+void()	wiz_fast1   =[	$magatt1,   wiz_fast2	] {ai_face();  Wiz_StartFast();};
+void()	wiz_fast2   =[	$magatt2,   wiz_fast3	] {ai_face();};
+void()	wiz_fast3   =[	$magatt3,   wiz_fast4	] {ai_face();};
+void()	wiz_fast4   =[	$magatt4,   wiz_fast5	] {ai_face();};
+void()	wiz_fast5   =[	$magatt5,   wiz_fast6	] {ai_face();};
+void()	wiz_fast6   =[	$magatt6,   wiz_fast7	] {ai_face();};
+void()	wiz_fast7   =[	$magatt7,   wiz_fast8	] {ai_face();};
+void()	wiz_fast8   =[	$magatt8,   wiz_fast9	] {ai_face();};
+void()	wiz_fast9   =[	$magatt9,   wiz_fast10	] {ai_face();};
+void()	wiz_fast10  =[	$magatt10,   wiz_run1	] {ai_face();  SUB_AttackFinished(2);  WizardAttackFinished();};
 
 void()	wiz_pain1	=[	$pain1,		wiz_pain2	] {};
 void()	wiz_pain2	=[	$pain2,		wiz_pain3	] {};
@@ -381,9 +381,10 @@ void() wiz_die =
 	{
 		if (self.originalmonsters) {
 			// gib sound
+			self.skin = 0;
 			sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
 
-			ThrowHead("progs/h_wizard.mdl", self.health);
+			ThrowHead("progs/h_wizard_alk.mdl", self.health);
 			ThrowGib ("progs/gib2.mdl", self.health);
 			ThrowGib ("progs/gib2.mdl", self.health);
 			ThrowGib ("progs/gib2.mdl", self.health);
@@ -399,6 +400,7 @@ void() wiz_die =
 		
 		return;
 	}
+	if (self.originalmonsters) self.skin = 2;
 
 	wiz_death1 ();
 };
@@ -406,7 +408,14 @@ void() wiz_die =
 
 void(entity attacker, float damage) Wiz_Pain =
 {
-	if (self.originalmonsters) sound (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) {
+		if (self.health < self.max_health * 0.4)
+			self.skin = 2;
+		else if (self.health < self.max_health * 0.9)
+			self.skin = 1;
+
+		sound (self, CHAN_VOICE, "wizard/wpain.wav", 1, ATTN_NORM);
+	} 
 	else sound (self, CHAN_VOICE, "cyberscrag/wpain.wav", 1, ATTN_NORM);
 
 	if (random()*70 > damage)
@@ -438,7 +447,7 @@ void(entity e) monster_wizard_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	if (self.originalmonsters)	setmodel (self, "progs/wizard.mdl");
+	if (self.originalmonsters)	setmodel (self, "progs/wizard_alk.mdl");
 	else setmodel (self, "progs/cyberscrag.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
@@ -485,8 +494,8 @@ void() monster_wizard =
 	) self.originalmonsters = 1;
 	
 	if (self.originalmonsters) {
-		precache_model ("progs/wizard.mdl");
-		precache_model ("progs/h_wizard.mdl");
+		precache_model ("progs/wizard_alk.mdl");
+		precache_model ("progs/h_wizard_alk.mdl");
 
 		precache_sound ("wizard/wattack.wav");
 		precache_sound ("wizard/wdeath.wav");

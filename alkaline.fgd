@@ -878,7 +878,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 ]
 
 @PointClass base(Monster, Above) size(-16 -16 -24, 16 16 40) model({{
-	spawnflags & 8 -> 	"progs/wizard.mdl", "progs/cyberscrag.mdl"
+	spawnflags & 8 -> 	"progs/wizard_alk.mdl", "progs/cyberscrag.mdl"
 	}}
 ) = monster_wizard :
 "CyberScrag, 80 health points. Original Scrag available through the respective spawnflag." [
