@@ -1025,7 +1025,7 @@ Don't shake hands with this crazy bastard!" []
 "Edie, 500 health points." []
 
 
-@PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base.mdl"}) = monster_turret :
+@PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base_v2.mdl"}) = monster_turret :
 "Turret, 50 health points." [
 	spawnflags(flags) =	[
 		1 : "Don't sleep" : 0
@@ -1295,7 +1295,7 @@ Just for debugging. Don't use.
 Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to view frames of model."
 []
 
-@Pointclass base(Targetname, Appearflags, Deathtype) color(0 128 224) size(16 16 16) = target_explosion : 
+@Pointclass base(Targetname, Appearflags) color(0 128 224) size(16 16 16) = target_explosion : 
 "Causes explosions, same appearance as a rocket/grenade blast." 
 [
 	count(integer) : "Repeat count" : 1
