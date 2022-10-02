@@ -425,7 +425,7 @@ FIELDS
 
 
 // trigger_timer
-.float rand = healamount;	
+.float rand;	
 
 
 // switchable brushes

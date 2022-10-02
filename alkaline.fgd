@@ -1135,8 +1135,13 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 ]
 
 @PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter" [
-	wait(float) : "time between spikes (1.0 default)" : "1.0"
-	nextthink(integer) : "delay before firing first spike, so multiple shooters can be stagered"
+	wait(float) : "Firing interval" : "1.0"
+	delay(integer) : "Delay before firing first spike, so multiple shooters can be stagered"
+	rand(integer) : "Additional random firing interval and delay"
+	spawnflags(Flags) = 
+	[
+		128 : "Start off" : 0
+	]
 ]
 
 @PointClass base(Appearflags) color(0 128 204) = misc_fireball : "Small fireball"

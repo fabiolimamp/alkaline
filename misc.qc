@@ -312,8 +312,7 @@ void() spikeshooter_use =
 void() shooter_think =
 {
 	spikeshooter_use();
-	self.nextthink = time + self.wait;
-	//newmis.velocity = self.movedir * 500;
+	self.nextthink = time + self.wait + self.rand*random();
 };
 
 
@@ -358,17 +357,33 @@ Continuously fires spikes.
 "wait" time between spike (1.0 default)
 "nextthink" delay before firing first spike, so multiple shooters can be stagered.
 */
-void() trap_shooter =
-{
+void() trap_shooter = {
 	trap_spikeshooter ();
-	
+	self.use = trap_shooter_toggle;
+
 	if (self.wait == 0)
 		self.wait = 1;
-	self.nextthink = self.nextthink + self.wait + time;
+
+	if (self.spawnflags & 128)
+		self.estate = STATE_INACTIVE;
+
+	if (!self.delay)
+		self.delay = self.nextthink; // backwards compatibility with id1
+
+	self.nextthink = time + self.delay + self.rand*random();
 	self.think = shooter_think;
+	
 };
 
-
+void() trap_shooter_toggle = {
+	if (self.estate != STATE_ACTIVE){
+		self.estate = STATE_ACTIVE;
+		self.nextthink = time + self.delay + self.rand*random();
+	}
+	else {
+		self.estate = STATE_INACTIVE;
+	}
+};
 
 /*QUAKED viewthing (0 .5 .8) (-16 -16 -24) (16 16 40)
 
