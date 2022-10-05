@@ -67,7 +67,10 @@ void() multi_trigger =
 	}
 
 	if (self.noise)
-		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+		if (self.enemy.flags & FL_CLIENT)
+			sound (self.enemy, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+		else
+			sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 
 // don't trigger again until reset
 	self.takedamage = DAMAGE_NO;
