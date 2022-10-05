@@ -214,6 +214,7 @@ set "message" to text string
 */
 void() trigger_once =
 {
+
 	self.wait = -1;
 	trigger_multiple();
 };
@@ -224,6 +225,14 @@ void() trigger_once =
 This fixed size trigger cannot be touched, it can only be fired by other events.  It can contain killtargets, targets, delays, and messages.
 */
 void() trigger_relay_use = {
+	if (self.spawnflags & 1) {
+		self.spawnflags &~= 1;
+		dprint3("trigger_relay fired on map start at ", vtos(self.origin), "\n");
+	}
+
+	if (self.noise)
+		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+
 	SUB_UseTargets();
 	
 	if (self.count > 0)
@@ -236,7 +245,38 @@ void() trigger_relay_use = {
 
 void() trigger_relay =
 {
+	// Spawnflag 8192: Not in Nightmare
+	if (self.spawnflags & 8192 && startskill == SKILL_NIGHTMARE)
+		remove(self);
+
+	// Spawnflag 4096: Not in Hard
+	// Needed a change because the engine removes it for both Hard *and* Nightmare if the original 1024 spawnflag is on
+	if (self.spawnflags & 4096 && startskill == SKILL_HARD)
+		remove(self);
+
+	if (self.sounds == 1)
+	{
+		precache_sound ("misc/secret.wav");
+		self.noise = "misc/secret.wav";
+	}
+	else if (self.sounds == 2)
+	{
+		precache_sound ("misc/talk.wav");
+		self.noise = "misc/talk.wav";
+	}
+	else if (self.sounds == 3)
+	{
+		precache_sound ("misc/trigger1.wav");
+		self.noise = "misc/trigger1.wav";
+	}
+
 	self.use = trigger_relay_use;
+	
+	// Spawnflag 1: fire automatically on map start
+	if (self.spawnflags & 1) {
+		self.think = trigger_relay_use;
+		self.nextthink = time + 0.5;
+	}
 };
 
 
