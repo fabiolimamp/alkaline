@@ -5,6 +5,7 @@ exec config.cfg
 sv_protocol 999
 sv_protocol FTE999
 sv_nqplayerphysics 1
+sys_ticrate 0.025
 
 bind "F8" "echo Loading autosave...; wait; load auto"
 
