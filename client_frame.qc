@@ -273,8 +273,10 @@ WaterMove
 void() WaterMove =
 {
 //dprint (ftos(self.waterlevel));
-	if (self.movetype == MOVETYPE_NOCLIP)
+	if (self.movetype == MOVETYPE_NOCLIP){
+		self.air_finished = time + 12;
 		return;
+	}
 	if (self.health < 0)
 		return;
 
