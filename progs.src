@@ -52,6 +52,7 @@ fog.qc
 mapvar.qc
 gravity.qc
 water.qc
+touchplate.qc
 
 misc_scientist.qc
 

@@ -1801,6 +1801,41 @@ You can directly set a custom movement vector with the 'movedir' key.
 	message(string) : "Message"
 ]
 
+@SolidClass base(Targetname, Target, ModelLight, Message) = func_touchplate : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
+You can directly set a custom movement vector with the 'movedir' key.
+" 
+[
+	speed(integer) : "Speed (units per second)" : 40
+	distance(integer) : "Movement distance" : 8
+	noise(string) : "Custom pressing sound file (overrides 'sounds' setting)"
+	noise2(string) : "Returning sound"
+	sounds(choices) : "Pressing sound" = 
+	[
+		0 : "None"
+		1 : "Steam metal (buttons/airbut1.wav)"
+		2 : "Wooden clunk (buttons/switch21.wav)"
+		3 : "Metallic clink (buttons/switch02.wav)"
+		4 : "In-out (buttons/switch04.wav)"
+		5 : "Small metallic clink (weapons/spindn_click.wav)"
+	]
+	sounds2(choices) : "Returning sound" = 
+	[
+		0 : "None"
+		1 : "Steam metal (buttons/airbut1.wav)"
+		2 : "Wooden clunk (buttons/switch21.wav)"
+		3 : "Metallic clink (buttons/switch02.wav)"
+		4 : "In-out (buttons/switch04.wav)"
+		5 : "Small metallic clink (weapons/spindn_click.wav)"
+	]
+	wait(float) : "Delay before reset" : "0"
+	delay(float) : "Delay before trigger"
+	movedir(string) : "Movement vector (X Y Z)" : "0 0 -1"
+	message(string) : "Message"
+	spawnflags(flags) = [
+		1: "Fire target3/target4 when leaving" : 0
+	]
+]
+
 @SolidClass base(Targetname, BrushLight) = func_train :
 "Trains are moving platforms that players can ride. The target's origin specifies the min point of the train at each corner. The train spawns at the first target it is pointing at.
 Use path_corner as targets.
@@ -2320,6 +2355,18 @@ Note that they're mutually exclusive."
 	count(integer) : "Triggering limit count"
 	include(string) : "Include filter" : : "Trigger only this monster classname"
 	exclude(string) : "Exclude filter" : : "Trigger all monster classes except this one"
+]
+
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_touchplate : "Trigger touchplate
+
+Fires once when player touches the trigger volume, and won't fire again until they leave and come back.
+Can be set to fire target3/target4 when the player leaves the trigger by activating the corresponding spawnflag.
+" 
+[
+	wait(float) : "Wait" : 0 : "Time before it can be fired again after leaving the trigger volume"
+	spawnflags(flags) = [
+		1: "Fire target3/target4 when leaving" : 0
+	]
 ]
 
 @PointClass base(Appearflags, Trigger) = trigger_counter : "Trigger counter" 

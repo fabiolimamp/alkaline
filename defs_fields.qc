@@ -338,6 +338,7 @@ FIELDS
 .float		length, width, height;
 .float		t_length, t_width;
 .float		strength;
+.float		sounds2;
 
 //
 // doors, etc
