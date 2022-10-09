@@ -110,9 +110,6 @@ HIP_FireLaser
 */
 void(float stat) HIP_FireLaser = {
 	
-	float ofs;
-	float aofs;
-
 	if (!self.button0) {
 		player_run ();
 		return;
