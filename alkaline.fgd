@@ -1833,6 +1833,7 @@ You can directly set a custom movement vector with the 'movedir' key.
 	message(string) : "Message"
 	spawnflags(flags) = [
 		1: "Fire target3/target4 when leaving" : 0
+		2: "Monster triggerable" : 0
 	]
 ]
 
@@ -2366,6 +2367,7 @@ Can be set to fire target3/target4 when the player leaves the trigger by activat
 	wait(float) : "Wait" : 0 : "Time before it can be fired again after leaving the trigger volume"
 	spawnflags(flags) = [
 		1: "Fire target3/target4 when leaving" : 0
+		2: "Monster triggerable" : 0
 	]
 ]
 

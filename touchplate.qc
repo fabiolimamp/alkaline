@@ -21,7 +21,9 @@ void() trigger_touchplate_touch = {
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
-	if (!(other.flags & FL_CLIENT))
+	if (!(other.flags & (FL_CLIENT | FL_MONSTER)) )
+		return;
+	if (!(self.spawnflags & 2) && (other.flags & FL_MONSTER))
 		return;
 
 	self.think = trigger_touchplate_think;
@@ -48,6 +50,8 @@ void() trigger_touchplate_think = {
 
 
 //=============================================================================
+
+
 
 void() func_touchplate = {
 	self.solid = SOLID_BSP;
@@ -93,13 +97,15 @@ void() func_touchplate = {
 	if (self.noise != "") precache_sound(self.noise);
 	if (self.noise2 != "") precache_sound(self.noise2);
 
-	/*self.trigger_field = spawn();
+	self.trigger_field = spawn();
 	entity tf = self.trigger_field;
+	tf.owner = self;
 	tf.solid = SOLID_TRIGGER;
 	tf.movetype = MOVETYPE_NONE;
+	tf.classname = "touchplate_tf";
 	setsize(tf, [self.mins_x, self.mins_y, self.maxs_z], [self.maxs_x, self.maxs_y, self.maxs_z + 16]);
 	tf.touch = func_touchplate_tf_touch;
-	*/
+	
 	// spawnflag 1: fire target3/target4 upon leaving trigger
 	// store them into other fields so they wont fire on UseTargets
 	if (self.spawnflags & 1) {
@@ -109,23 +115,6 @@ void() func_touchplate = {
 		self.target4 = "";
 	}
 }
-/*
-void() func_touchplate_tf_touch = {
-	if (!(other.flags & FL_MONSTER) )
-		return;
-	dprint("TF touched, Retouching;");
-	droptofloor();
-	force_retouch = 2;
-}
-*/
-void() func_touchplate_press_finished = {
-	//dprint("Running func_touchplate_press_finished\n");
-	self.state = 2;
-	self.think = func_touchplate_think;
-	self.nextthink = getLocalTime() + 0.12 + self.wait;
-	activator = self.enemy;
-	SUB_UseTargets();
-}
 
 void() func_touchplate_touch = {
 	if (self.estate != STATE_ACTIVE)
@@ -133,13 +122,15 @@ void() func_touchplate_touch = {
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
-	if (!(other.flags & FL_CLIENT) )
+	if (!(other.flags & (FL_CLIENT | FL_MONSTER)) )
+		return;
+	if (!(self.spawnflags & 2) && (other.flags & FL_MONSTER))
 		return;
 
 	if (self.state == 1) //already moving
 		return;
-	//dprint("Running func_touchplate_touch\n");
 
+	force_retouch = 2;
 	self.enemy = other;
 
 	if (self.state == 2) {
@@ -156,24 +147,42 @@ void() func_touchplate_touch = {
 }
 
 void() func_touchplate_think = {
-
-	//dprint("Running func_touchplate_think\n");
-	self.nextthink = getLocalTime() + 0.02;
-	self.think = func_touchplate_return_start;
-	force_retouch = 2; // gives standing monsters another chance to touch it
-}
-
-void() func_touchplate_return_start = {
-
-	//dprint("Running func_touchplate_return_start\n");
 	self.state = 1;
 	if (self.noise2 != "") sound(self, CHAN_VOICE, self.noise2, 1, ATTN_NORM);
 	SUB_CalcMove(self.origin - self.movedir, self.speed, func_touchplate_return_finished);
+};
+
+
+void() func_touchplate_tf_touch = {
+	if (self.owner.classname != "func_touchplate"){
+		remove(self);
+		return;
+	}
+
+	if (!(other.flags & FL_MONSTER) )
+		return;
+
+	if (other.groundentity != self.owner || !(other.flags & FL_ONGROUND)) {
+		return;
+	}
+	
+	self = self.owner;
+
+	func_touchplate_touch();
 }
+
+void() func_touchplate_press_finished = {
+	self.state = 2;
+	self.think = func_touchplate_think;
+	self.nextthink = getLocalTime() + 0.1 + self.wait;
+	activator = self.enemy;
+	SUB_UseTargets();
+}
+
+
 
 void() func_touchplate_return_finished = {
 
-	//dprint("Running func_touchplate_return_finished\n");
 	self.state = 0;
 
 	if (self.spawnflags & 1) {
