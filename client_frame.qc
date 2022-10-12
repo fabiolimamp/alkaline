@@ -173,7 +173,9 @@ void() PlayerJump =
 	
 	if (self.waterlevel >= 2)
 	{
-		if (self.watertype == CONTENT_WATER)
+		if (self.onladder)
+			self.velocity_z = 160;
+		else if (self.watertype == CONTENT_WATER)
 			self.velocity_z = 100;
 		else if (self.watertype == CONTENT_SLIME)
 			self.velocity_z = 80;
@@ -181,7 +183,7 @@ void() PlayerJump =
 			self.velocity_z = 50;
 
 // play swiming sound
-		if (self.swim_flag < time)
+		if (self.swim_flag < time && !self.onladder)
 		{
 			self.swim_flag = time + 1;
 			if (random() < 0.5)
@@ -334,7 +336,7 @@ void() WaterMove =
 		}
 	}
 	
-	if ( !(self.flags & FL_INWATER) )
+	if ( !(self.flags & FL_INWATER) && !self.onladder)
 	{	
 
 // player enter water sound
@@ -422,7 +424,7 @@ void() PlayerPreThink =
 	CheckRules ();
 	WaterMove ();
 
-	if (self.waterlevel == 2)
+	if (self.waterlevel == 2 && !self.onladder)
 		CheckWaterJump ();
 
 	if (self.deadflag >= DEAD_DEAD)
@@ -435,41 +437,54 @@ void() PlayerPreThink =
 		return;	// dying, so do nothing
 
 
-
-	//johnfitz ladder conditions
-	if (self.onladder)
-	{
-		self.onladder = 0;
-		if (self.button2)
-		{				
-			PlayerClimb ();
-			
-			//ladder sounds
-			if (time > self.ladder_step_finished) {
-				if (random() > 0.5)
-					sound (self, CHAN_AUTO, "misc/ladder.wav", 0.5, ATTN_NORM);
-				else
-					sound (self, CHAN_AUTO, "misc/ladder2.wav", 0.5, ATTN_NORM);
-				self.ladder_step_finished = time + 0.3;
-			}
-			
-		}
-		else
-		{
-			self.flags = self.flags | FL_JUMPRELEASED;
-			self.velocity = 0.9 * self.velocity;
+	if (self.onladder) {
+		
+		if (fabs(self.velocity_x) < 1 && fabs(self.velocity_y) < 1 &&
+			self.velocity_z < 0 && self.velocity_z > -42 &&
+			!(self.flags & FL_WATERJUMP) &&
+			self.v_angle_x < 90
+		) {
 			self.velocity_z = 0;
+		}
+
+		self.velocity_x *= 0.9;
+		self.velocity_y *= 0.9;
+
+		if (fabs(self.velocity_z) > 160) {
+			if (self.velocity_z > 0) self.velocity_z = 160;
+			else self.velocity_z = -160;
+		}
+
+		if (self.velocity_z == 0) {
+			self.ladder_step_height = self.origin_z + 49;
+		}
+
+		if (
+			(
+				(self.onladder && !self.wasonladder) ||
+				(self.onladder && self.wasonladder && fabs(self.origin_z - self.ladder_step_height) > 48)
+			) && (self.velocity_z != 0)
+
+		)
+		{
+			self.ladder_step_height = self.origin_z;
+
+			if (random() > 0.5)
+				sound (self, CHAN_AUTO, "misc/ladder.wav", 0.5, ATTN_NORM);
+			else
+				sound (self, CHAN_AUTO, "misc/ladder2.wav", 0.5, ATTN_NORM);
 		}
 	}		
 	else
 	{
 		self.gravity = self.wantedgravity; 
-		if (self.button2)
-			PlayerJump ();
-		else
-			self.flags = self.flags | FL_JUMPRELEASED;
-	} //johnfitz
-	
+
+	}
+
+	if (self.button2)
+		PlayerJump ();
+	else
+		self.flags = self.flags | FL_JUMPRELEASED;
 
 // teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
@@ -494,8 +509,10 @@ void() PlayerPreThink =
 	}
 
 	checkClientInWaterBrush();
-
-	//dprint3("Player waterlevel: ", ftos(self.waterlevel), "\n");
+	if (self.onladder)
+		self.gravity = 0.00000001;
+	self.wasonladder = self.onladder;
+	self.onladder = 0;
 };
 	
 /*

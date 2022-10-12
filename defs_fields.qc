@@ -466,8 +466,8 @@ FIELDS
 .float		angle2;		
 .vector		movedir2;
 .string		message2;
-.float		onladder;	
-.float		ladder_step_finished;
+.float		onladder, wasonladder;	
+.float		ladder_step_height;
 .float		underwatersound;
 .float		burningsound;
 .float		gravity;
