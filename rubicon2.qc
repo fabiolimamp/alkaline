@@ -1074,6 +1074,9 @@ void() ladder_touch =
 
 	if (self.estate != STATE_ACTIVE)
 		return;
+	
+	if (other.waterlevel > 2)
+		return;
 
 	// if the trigger has an angles field, check player's facing direction
 	if (self.movedir != '0 0 0')

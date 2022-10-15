@@ -304,6 +304,10 @@ void() WaterMove =
 		}
 	}
 	
+	if (self.onladder) {
+		self.flags &~= FL_INWATER;
+	}
+
 	if (!self.waterlevel)
 	{
 		if (self.flags & FL_INWATER)
