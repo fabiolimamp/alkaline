@@ -352,18 +352,41 @@ _anglescale => _anglescale
 */
 void() light = {
 
-	// default speed for fading in/out
-	if (self.speed <= 0)
-		self.speed = 0.1;
-
 	// non-switchable light
-	if (!self.targetname) {
+	if (self.targetname == "") {
 		remove(self);
 		return;
 	}
 
 	// switchable light
 	if (self.style > LIGHTSTYLES_MAX) {
+		entity e = find(world, targetname, self.targetname);
+		while (e){
+			if (e.classname == "light" && e != self) {
+				// copy settings from one light to the other if possible
+				if (self.style2 && !e.style2) {
+					dprint5("Warning: light at (", vtos(e.origin), ") inheriting style2 key from light at (", vtos(self.origin), ")\n");
+					e.style2 = self.style2;
+				}
+				else if (self.style2 != e.style2) {
+					dprint5("Warning: lights at (", vtos(e.origin), ") and (", vtos(self.origin), ") with differing style2 keys\n");
+				}
+
+				if (self.speed && e.speed == 0.1){
+					dprint5("Warning: light at (", vtos(e.origin), ") inheriting speed key from light at (", vtos(self.origin), ")\n");
+					e.speed = self.speed;
+				}
+
+				if (self.spawnflags && !e.spawnflags){
+					dprint5("Warning: lights at (", vtos(e.origin), ") and (", vtos(self.origin), ") with differing spawnflags\n");
+				}
+
+				remove(self);
+				return;
+			}
+			e = find(e, targetname, self.targetname);
+		}
+
 		self.use = light_use;
 		if (self.spawnflags & START_OFF) {
 			self.count = 0;
@@ -374,6 +397,11 @@ void() light = {
 			lightstyle(self.style, lightstyle_lookup(self.style2));
 		}
 	}
+
+	if (self.speed <= 0)
+		self.speed = 0.1;
+	// default speed for fading in/out
+
 };
 
 /*QUAKED light_fluoro (0 1 0) (-8 -8 -8) (8 8 8) START_OFF FADE_IN_OUT X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY

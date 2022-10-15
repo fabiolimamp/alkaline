@@ -232,6 +232,7 @@ FIELDS
 .float		weapons;		// extra weapons
 .string 	impulsetarget;
 
+.float 		debug;
 
 //
 // monster ai
