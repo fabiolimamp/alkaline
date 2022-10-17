@@ -942,6 +942,8 @@ void() PlayerPostThink =
 		self.angles_x = self.v_angle_x;
 		self.fixangle = 1;
 	}
+
+	SUB_CallAsSelf(UpdateLightning, self.lightningcontroller);
 };
 
 
@@ -985,6 +987,9 @@ void() ClientDisconnect =
 	// if the level end trigger has been activated, just return
 	// since they aren't *really* leaving
 
+	if (self.healthcontroller.classname == "healthcontroller") remove(self.healthcontroller);
+	if (self.lightningcontroller.classname == "lightningcontroller") remove(self.lightningcontroller);
+	
 	// let everyone else know
 	bprint (self.netname);
 	bprint (" left the game with ");

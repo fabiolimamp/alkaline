@@ -95,6 +95,15 @@ vector(vector a, vector b) cross_product = {
     return ret;
 }
 
+vector(vector p1, vector p2, vector p3, vector p4, float u) bezierCurve = {
+    vector dest;
+
+    dest_x = pow(1-u,3)*p1_x + 3*u*pow(1-u,2)*p2_x + 3*pow(u,2)*(1-u)*p3_x + pow(u,3)*p4_x;
+    dest_y = pow(1-u,3)*p1_y + 3*u*pow(1-u,2)*p2_y + 3*pow(u,2)*(1-u)*p3_y + pow(u,3)*p4_y;
+    dest_z = pow(1-u,3)*p1_z + 3*u*pow(1-u,2)*p2_z + 3*pow(u,2)*(1-u)*p3_z + pow(u,3)*p4_z;
+    return dest;
+}
+
 /*
  * clamp
  *
@@ -119,6 +128,14 @@ float(float value, float minValue, float maxValue) clamp = {
     return value;
 };
 
+
+float(float num, float pw) pow = {
+    float ret = 1;
+    for (float i = pw; i > 0; i--) {
+        ret *= num;
+    }
+    return ret;
+}
 /*
  * mod
  *

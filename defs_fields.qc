@@ -326,6 +326,8 @@ FIELDS
 
 .entity hurtcontroller, healthcontroller;
 
+.entity lightningcontroller;
+
 //.float hit_z;
 
 //

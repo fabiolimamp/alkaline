@@ -488,9 +488,9 @@ LIGHTNING
 LightningDamage
 =================
 */
-void(vector org, vector dest, entity attacker, float damage) LightningDamage = {
+float(vector org, vector dest, entity attacker, float damage) LightningDamage = {
 	entity e1, e2;
-
+	float damaged;
 	// vector pointing left
 	vector left = normalize(dest - org);
 	left = [-left_y, left_x, 0] * 16; 
@@ -501,7 +501,7 @@ void(vector org, vector dest, entity attacker, float damage) LightningDamage = {
 	if (trace_ent.takedamage) {
 		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
-
+		damaged = TRUE;
 		if (self.classname == "player") {
 			if (other.classname == "player")
 				trace_ent.velocity_z = trace_ent.velocity_z + 400;
@@ -513,7 +513,7 @@ void(vector org, vector dest, entity attacker, float damage) LightningDamage = {
 	if (trace_ent != e1 && trace_ent.takedamage){
 		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
-
+		damaged = TRUE;
 	}
 	e2 = trace_ent;
 
@@ -521,9 +521,143 @@ void(vector org, vector dest, entity attacker, float damage) LightningDamage = {
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)	{
 		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
+		damaged = TRUE;
 	}
+	return damaged;
 };
 
+
+void() UpdateLightning = {
+	if (!self.count)
+		return;
+
+	if (self.attack_finished < time){
+		ClearLightning();
+		return;
+	}
+	
+	makevectors(self.owner.v_angle);
+	vector org = self.owner.origin + self.owner.view_ofs + v_forward*12 - v_up*6;
+	vector dest = self.pos2;
+
+	float len = vlen(dest - org);
+	vector dir = normalize(dest - org);
+	vector ang;
+
+	
+	float i;
+	vector sgorg;
+	
+	entity sg = self.sibling;
+	entity prevsg;
+	while (sg) {
+		if (!prevsg) {
+			setorigin(sg, org);
+			sgorg = bezierCurve(org, org + v_forward*len, dest, dest, i);
+		}
+		else {
+			while (vlen(sgorg - prevsg.origin) < 30 && i <= 1) {
+				sgorg = bezierCurve(org, org + v_forward*len, dest, dest, i);
+				i += 0.01;
+			}
+			setorigin(sg, sgorg);
+			ang = vectoangles(sg.origin - prevsg.origin);
+			
+			prevsg.angles_x = ang_x;
+			prevsg.angles_y = ang_y;
+		}
+
+		prevsg = sg;
+		sg = sg.sibling;
+	}
+
+	if (prevsg && prevsg != self.sibling) {
+		prevsg.angles_x = ang_x;
+		prevsg.angles_y = ang_y;
+	}
+
+	//self.nextthink = time + 0.01;
+}
+
+void() LightningSegmentThink = {
+	self.angles_z = random()*360;
+	self.nextthink = time + 0.025;
+	if (self.state) self.alpha -= 0.06;
+	else self.alpha -= 0.1;
+}
+
+void(entity pl, vector org, vector dest, float hit) DrawLightning = {
+	if (pl.lightningcontroller.classname != "lightningcontroller") SUB_CallAsSelf(CreateLightningController, pl);
+	entity ct = pl.lightningcontroller;
+
+	if (ct.pain_finished - time > 0.01 && !hit)
+		return;
+
+	SUB_CallAsSelf(ClearLightning, ct);
+
+	float len = vlen(dest - org);
+	vector dir = normalize(dest - org);
+	vector ang = vectoangles(dest - org);
+
+	ct.count = floor(len/30);
+	entity sg;
+	entity prevsg = ct;
+	for (float i = 0; i < ct.count; i++) {
+		sg = spawn();
+		prevsg.sibling = sg;
+
+		setmodel(sg, "progs/bolt2.mdl");
+		setsize(sg, VEC_ORIGIN, VEC_ORIGIN);
+		setorigin(sg, org + dir * 30 * i);
+
+		sg.flags |= FL_PROJECTILE;
+		sg.classname = "lgsegment";
+		sg.angles = ang;
+		sg.angles_z = random()*360;
+		sg.owner = pl;
+		sg.think = LightningSegmentThink;
+		sg.nextthink = time + 0.02;
+		sg.alpha = 0.9;
+		sg.state = hit;
+		prevsg = sg;
+	}
+	if (sg) sg.effects |= EF_DIMLIGHT;
+
+	
+
+	if (hit){
+		ct.pain_finished = time + 0.2;
+		ct.attack_finished = time + 0.3;
+	}
+	else { 
+		ct.pain_finished = time + 0.1;
+		ct.attack_finished = time + 0.2;
+	}
+	//ct.think = UpdateLightning;
+	//ct.nextthink = time + 0.01;
+	ct.pos1 = org;
+	ct.pos2 = dest;
+}
+
+void() ClearLightning = {
+	entity ct = self;
+
+	if (!ct.count)
+		return;
+
+	entity sg = ct.sibling;
+	entity nxsg;
+
+	while (sg.classname == "lgsegment") {
+		nxsg = sg.sibling;
+		remove(sg);
+		sg = nxsg;
+	}
+
+	ct.sibling = world;
+	ct.count = 0;
+	ct.nextthink = 0;
+}
 
 void() W_FireLightning = {
 	vector 	org;
@@ -563,11 +697,11 @@ void() W_FireLightning = {
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
-	org = self.origin + '0 0 16';
+	org = self.origin + self.view_ofs + v_forward*12 - v_up*6;
 	
 	traceline (org, org + v_forward*600, TRUE, self);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+	/*WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
 	WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
 	WriteEntity (MSG_BROADCAST, self);
 	WriteCoord (MSG_BROADCAST, org_x);
@@ -575,9 +709,11 @@ void() W_FireLightning = {
 	WriteCoord (MSG_BROADCAST, org_z);
 	WriteCoord (MSG_BROADCAST, trace_endpos_x);
 	WriteCoord (MSG_BROADCAST, trace_endpos_y);
-	WriteCoord (MSG_BROADCAST, trace_endpos_z);
+	WriteCoord (MSG_BROADCAST, trace_endpos_z);*/
+	
+	float hit = LightningDamage(self.origin, trace_endpos + v_forward*4, self, 30)
 
-	LightningDamage (self.origin, trace_endpos + v_forward*4, self, 30);
+	DrawLightning(self, org, trace_endpos, hit);
 };
 
 

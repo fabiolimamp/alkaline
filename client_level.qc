@@ -608,6 +608,11 @@ entity() SelectSpawnPoint = {
 	return spot;
 };
 
+void() CreateLightningController = {
+	self.lightningcontroller = spawn();
+	self.lightningcontroller.owner = self;
+	self.lightningcontroller.classname = "lightningcontroller";
+}
 
 void() CreateHealthController = {
 	self.healthcontroller = spawn();
@@ -723,6 +728,7 @@ void() PutClientInServer = {
 	spawn_tdeath (self.origin, self);
 
 	CreateHealthController();
+	CreateLightningController();
 };
 
 
