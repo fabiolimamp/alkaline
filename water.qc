@@ -99,12 +99,13 @@ void() checkClientInWaterBrush = {
 	while (e) {
 		lvl = getWaterLevelFromBrush(self, e);
 		if (lvl) {
-			self.waterlevel = lvl;
+			if (self.movetype != MOVETYPE_NOCLIP) {
+				self.waterlevel = lvl;
 
-			if (e.liquidtype == LIQUID_LAVA) self.watertype = CONTENT_LAVA;
-			else if (e.liquidtype == LIQUID_SLIME) self.watertype = CONTENT_SLIME;
-			else self.watertype = CONTENT_WATER;
-
+				if (e.liquidtype == LIQUID_LAVA) self.watertype = CONTENT_LAVA;
+				else if (e.liquidtype == LIQUID_SLIME) self.watertype = CONTENT_SLIME;
+				else self.watertype = CONTENT_WATER;
+			}
 			//self.flags |= FL_INWATER;
 
 			float dens;
@@ -113,8 +114,8 @@ void() checkClientInWaterBrush = {
 			if !(self.flags & FL_INLIQUIDBRUSH)
 				self.prevgravity = self.gravity;
 
-			if (self.watertype == CONTENT_SLIME) {cl = '0 25 5'; dens = 150;}
-			else if (self.watertype == CONTENT_LAVA) {cl = '255 80 0'; dens = 150;}
+			if (e.liquidtype == LIQUID_SLIME) {cl = '0 25 5'; dens = 150;}
+			else if (e.liquidtype == LIQUID_LAVA) {cl = '255 80 0'; dens = 150;}
 			else {cl = '130 80 50'; dens = 128;}
 
 			if (e.liquidcolor) cl = e.liquidcolor;

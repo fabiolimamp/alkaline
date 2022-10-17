@@ -277,6 +277,8 @@ void() WaterMove =
 //dprint (ftos(self.waterlevel));
 	if (self.movetype == MOVETYPE_NOCLIP){
 		self.air_finished = time + 12;
+		self.flags &~= FL_INWATER;
+		self.waterlevel = 0;
 		return;
 	}
 	if (self.health < 0)
@@ -303,7 +305,7 @@ void() WaterMove =
 			self.pain_finished = time + 1;
 		}
 	}
-	
+
 	if (self.onladder) {
 		self.flags &~= FL_INWATER;
 	}
