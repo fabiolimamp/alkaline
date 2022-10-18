@@ -98,20 +98,14 @@ vector(vector a, vector b) cross_product = {
 vector(vector p1, vector p2, vector p3, vector p4, float u) bezierCurve = {
     vector dest;
 
-    /*
-    dest_x = pow(1-u,3)*p1_x + 3*u*pow(1-u,2)*p2_x + 3*pow(u,2)*(1-u)*p3_x + pow(u,3)*p4_x;
-    dest_y = pow(1-u,3)*p1_y + 3*u*pow(1-u,2)*p2_y + 3*pow(u,2)*(1-u)*p3_y + pow(u,3)*p4_y;
-    dest_z = pow(1-u,3)*p1_z + 3*u*pow(1-u,2)*p2_z + 3*pow(u,2)*(1-u)*p3_z + pow(u,3)*p4_z;
-    */
+    float a = (1-u)*(1-u)*(1-u);
+    float b = 3*u*(1-u)*(1-u);
+    float c = 3*u*u*(1-u);
+    float d = u*u*u;
 
-    float bn1 = (1-u)*(1-u)*(1-u);
-    float bn2 = 3*u*(1-u)*(1-u);
-    float bn3 = 3*u*u*(1-u);
-    float bn4 = u*u*u;
-
-    dest_x = bn1*p1_x + bn2*p2_x + bn3*p3_x + bn4*p4_x;
-    dest_y = bn1*p1_y + bn2*p2_y + bn3*p3_y + bn4*p4_y;
-    dest_z = bn1*p1_z + bn2*p2_z + bn3*p3_z + bn4*p4_z;
+    dest_x = a*p1_x + b*p2_x + c*p3_x + d*p4_x;
+    dest_y = a*p1_y + b*p2_y + c*p3_y + d*p4_y;
+    dest_z = a*p1_z + b*p2_z + c*p3_z + d*p4_z;
 
     return dest;
 }

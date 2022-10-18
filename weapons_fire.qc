@@ -700,7 +700,7 @@ void() W_FireLightning = {
 	org = self.origin + self.view_ofs + v_forward*12 - v_up*6;
 	
 	traceline (org, org + v_forward*600, TRUE, self);
-	float hit = LightningDamage(self.origin, trace_endpos + v_forward*4, self, 30)
+	float hit = LightningDamage(self.origin, trace_endpos + v_forward*4, self, 30);
 
 	if (oldlightning) {
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
