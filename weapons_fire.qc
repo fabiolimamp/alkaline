@@ -696,11 +696,12 @@ void() W_FireLightning = {
 	self.punchangle_x = -2;
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-
+	//makevectors(self.v_angle);
 	org = self.origin + self.view_ofs + v_forward*12 - v_up*6;
 	
 	traceline (org, org + v_forward*600, TRUE, self);
-	float hit = LightningDamage(self.origin, trace_endpos + v_forward*4, self, 30);
+	vector endpos = trace_endpos;
+	float hit = LightningDamage(self.origin, endpos + v_forward*4, self, 30);
 
 	if (oldlightning) {
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
@@ -709,12 +710,12 @@ void() W_FireLightning = {
 		WriteCoord (MSG_BROADCAST, org_x);
 		WriteCoord (MSG_BROADCAST, org_y);
 		WriteCoord (MSG_BROADCAST, org_z);
-		WriteCoord (MSG_BROADCAST, trace_endpos_x);
-		WriteCoord (MSG_BROADCAST, trace_endpos_y);
-		WriteCoord (MSG_BROADCAST, trace_endpos_z);
+		WriteCoord (MSG_BROADCAST, endpos_x);
+		WriteCoord (MSG_BROADCAST, endpos_y);
+		WriteCoord (MSG_BROADCAST, endpos_z);
 	}
 	else {
-		DrawLightning(self, org, trace_endpos, hit);
+		DrawLightning(self, org, endpos, hit);
 	}
 };
 
