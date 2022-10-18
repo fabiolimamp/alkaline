@@ -700,20 +700,22 @@ void() W_FireLightning = {
 	org = self.origin + self.view_ofs + v_forward*12 - v_up*6;
 	
 	traceline (org, org + v_forward*600, TRUE, self);
-
-	/*WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
-	WriteEntity (MSG_BROADCAST, self);
-	WriteCoord (MSG_BROADCAST, org_x);
-	WriteCoord (MSG_BROADCAST, org_y);
-	WriteCoord (MSG_BROADCAST, org_z);
-	WriteCoord (MSG_BROADCAST, trace_endpos_x);
-	WriteCoord (MSG_BROADCAST, trace_endpos_y);
-	WriteCoord (MSG_BROADCAST, trace_endpos_z);*/
-	
 	float hit = LightningDamage(self.origin, trace_endpos + v_forward*4, self, 30)
 
-	DrawLightning(self, org, trace_endpos, hit);
+	if (oldlightning) {
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
+		WriteEntity (MSG_BROADCAST, self);
+		WriteCoord (MSG_BROADCAST, org_x);
+		WriteCoord (MSG_BROADCAST, org_y);
+		WriteCoord (MSG_BROADCAST, org_z);
+		WriteCoord (MSG_BROADCAST, trace_endpos_x);
+		WriteCoord (MSG_BROADCAST, trace_endpos_y);
+		WriteCoord (MSG_BROADCAST, trace_endpos_z);
+	}
+	else {
+		DrawLightning(self, org, trace_endpos, hit);
+	}
 };
 
 

@@ -431,9 +431,25 @@ void() ToggleOldGrenade = {
 		bprint("Old grenade style: enabled\n");
 		oldgrenade = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
+		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
 	}
 }
 
+void() ToggleOldLightning = {
+	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	tmp1 = cvar("saved1");
+	if (oldlightning) {
+		bprint("Old lightning style: disabled\n");
+		oldlightning = 0;
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_OLDLIGHTNING)));
+	}
+	else {
+		bprint("Old lightning style: enabled\n");
+		oldlightning = 1;
+		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDLIGHTNING));
+	}
+}
 
 void() ResetModSettings = {
 	cvar_set("saved1", 0);
@@ -498,7 +514,8 @@ void() ImpulseCommands = {
 		TogglePlayerTracers();
 	if (self.impulse == 44)
 		ToggleOldGrenade();
-
+	if (self.impulse == 45)
+		ToggleOldLightning();
 	if (self.impulse == 128)
 		printVersionConsole(self);
 		//centerprint(self, VERSION_S);

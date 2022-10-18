@@ -123,6 +123,16 @@ void() worldspawn =
 		playertracers = 1;
 	}
 
+	if (options & ALKSETTINGS_OLDGRENADE) {
+		bprint("\bAlkaline options:\b Old grenade style \benabled\b. Type \"oldgrenade\" to disable it.\n");
+		oldgrenade = 1;
+	}
+
+	if (options & ALKSETTINGS_OLDLIGHTNING) {
+		bprint("\bAlkaline options:\b Old lightning style \benabled\b. Type \"oldlightning\" to disable it.\n");
+		oldlightning = 1;
+	}
+
 	if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
 		self.originalmonsters = 1;
 

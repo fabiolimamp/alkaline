@@ -14,6 +14,8 @@ alias footsteps "impulse 31"
 alias autosaves "impulse 32"
 alias tracers "impulse 42"
 alias playertracers "impulse 43"
+alias oldgrenade "impulse 44"
+alias oldlightning "impulse 45"
 alias resetalkalinesettings "impulse 40"
 
 alias resurrect "impulse 154"
