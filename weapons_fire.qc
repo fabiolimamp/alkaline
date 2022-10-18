@@ -510,6 +510,9 @@ float(vector org, vector dest, entity attacker, float damage) LightningDamage = 
 	e1 = trace_ent;
 
 	traceline(org + left, dest + left, FALSE, self);
+	if (attacker.flags & FL_CLIENT){
+		attacker.lightningcontroller.dest1 = trace_endpos;
+	}
 	if (trace_ent != e1 && trace_ent.takedamage){
 		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
@@ -518,6 +521,9 @@ float(vector org, vector dest, entity attacker, float damage) LightningDamage = 
 	e2 = trace_ent;
 
 	traceline(org - left, dest - left, FALSE, self);
+	if (attacker.flags & FL_CLIENT){
+		attacker.lightningcontroller.dest2 = trace_endpos;
+	}
 	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)	{
 		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
 		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
@@ -537,8 +543,16 @@ void() UpdateLightning = {
 	}
 	
 	makevectors(self.owner.v_angle);
-	vector org = self.owner.origin + self.owner.view_ofs + v_forward*12 - v_up*6;
-	vector dest = self.pos2;
+	vector org = self.owner.origin + self.owner.view_ofs + v_forward*16 - v_up*6;
+
+	float rnd = random();
+	vector dest;
+	if (rnd < 0.25)
+		dest = self.dest1;
+	else if (rnd < 0.5)
+		dest = self.dest2;
+	else
+		dest = self.pos2;
 
 	float len = vlen(dest - org);
 	vector dir = normalize(dest - org);
@@ -697,7 +711,7 @@ void() W_FireLightning = {
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 	//makevectors(self.v_angle);
-	org = self.origin + self.view_ofs + v_forward*12 - v_up*6;
+	org = self.origin + self.view_ofs + v_forward*16 - v_up*6;
 	
 	traceline (org, org + v_forward*600, TRUE, self);
 	vector endpos = trace_endpos;
