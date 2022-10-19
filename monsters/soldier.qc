@@ -216,13 +216,16 @@ void() army_fire =
 	
 	sound (self, CHAN_WEAPON, "soldier/sattck1.wav", 1, ATTN_NORM);	
 
-// fire somewhat behind the player, so a dodging player is harder to hit
-	en = self.enemy;
+
+	makevectors(self.angles);
+	vector org = self.origin + 16*v_forward + 6*v_right + 14*v_up;
 	
+	en = SUB_entEnemyTarget();
+	// fire somewhat behind the player, so a dodging player is harder to hit
 	dir = en.origin - en.velocity*0.2;
-	dir = normalize (dir - self.origin);
+	dir = normalize (dir - org);
 	
-	FireBullets (4, dir, '0.1 0.1 0');
+	FireBullets2 (4, org, dir, '0.1 0.1 0');
 	ThrowGib("progs/shelcase.mdl", self.health);
 };
 
