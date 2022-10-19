@@ -31,7 +31,7 @@ body {
 			<li><a href="#monsters-list">Monsters list</a></li>
 			<li><a href="#scientists">Scientists</a></li>
 			<li><a href="#turrets">Turrets</a></li>
-			<li><a href="#health-triggers">Health Triggers</a></li>
+			<li><a href="#health-triggers">Health and wake triggers</a></li>
 			<li><a href="#auto-monsterjumps">Auto-monsterjumps</a></li>
 		</ul>
 	</li>
@@ -329,10 +329,13 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>Ceiling-installed turrets, bearing menacing hitscan cannons. Place them with the <strong>monster_turret</strong> entity. If a player gets closer than 512 units, they'll deploy and start firing. If they lose sight of their target, they stay in an "active search" state for 30s, when they retract and go back to sleep. Activating the <strong>Don't sleep</strong> spawnflag prevents them from doing that.</p>
 <p>Turrets don't count towards total monster count/kill.</p>
 
-<h3 id="health-triggers">Health Triggers</h3>
+<h3 id="health-triggers">Health and wake triggers</h3>
 <p>By activating the <strong>Health trigger</strong> spawnflag, the monster will fire <strong>target2</strong>, <strong>target3</strong> and <strong>target4</strong> when it takes 25%, 50% and 75% damage, respectively. Only <strong>target</strong> will be fired immediately when the monster dies in this case.</p>
 
 <p>You don't have to assign targets to each health trigger level, just the ones you need. So, for example, you can ignore <strong>target2</strong> and <strong>target3</strong> if you only need a trigger to fire at 75% damage. Also, all assigned targets WILL fire when their thresholds have passed, even if they happen at the same frame - so if you insta-gib an enemy for example, all its remaining targets will be fired at the same time.</p>
+
+<p>The <strong>Wake trigger</strong> spawnflag makes the monster fire <strong>target4</strong> upon getting angry for the first time. Note that using this in conjunction with health triggers prevents the 75% damage trigger from firing.</p>
+
 
 <h3 id="auto-monsterjumps">Auto-monsterjumps</h3>
 <p>Taken (stolen) from Copper, lets you set an initial velocity for when the first time a monster gets angry.</p>

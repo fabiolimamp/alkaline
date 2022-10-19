@@ -82,11 +82,8 @@ enemy as activator.
 
 void() monster_death_use =
 {
-//	local entity 	ent, otemp, stemp;
-
-
-	//if (!self.target)
-	//	return;
+	// makes sure wake trigger monsters won't fire target4 upon death
+	if (self.spawnflags & MONSTER_WAKETRIGGER) self.target4 = "";
 
 	activator = self.enemy;
 	SUB_UseTargets ();

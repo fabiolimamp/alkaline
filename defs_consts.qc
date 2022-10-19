@@ -295,6 +295,7 @@ float MONSTER_IGNOREPLAYER	= 131072;
 float MONSTER_SPAWNER = 262144;
 float MONSTER_ZEROBBOX = 524288;
 float MONSTER_HEALTHTRIGGER = 1048576;
+float MONSTER_WAKETRIGGER = 2097152;
 
 float MONAI_ABOVEMELEE = 120;		// Always be high above enemies inside this distance
 float MONAI_ABOVEDIST = 128;		// Distance to maintain above enemytarget

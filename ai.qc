@@ -471,7 +471,15 @@ void() FoundTarget =
 		sight_entity = self;
 		sight_entity_time = time;
 	}
-	
+
+	if (self.spawnflags & MONSTER_WAKETRIGGER) {
+		if (self.target4 != "") {
+			activator = self.enemy;
+			SUB_UseSpecificTarget(self.target4, targetname);
+			self.target4 = "";
+		}
+	}
+
 	self.show_hostile = time + 1;		// wake up other monsters
 
 	// If you're looking for the bizarre SightSound function,
