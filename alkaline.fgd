@@ -291,7 +291,8 @@
 @SolidClass base(Appearflags, Targetname, Target, Blood) color(255 128 128) = func_breakable : 
 "A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable, unless you set the spawnflag 'Always shootable'.
 
-NO_MONSTERS: object ignores damage from monsters" 
+Can be set to be damaged only by explosions, or to ignore monster attacks.
+" 
 [
 	cnt(integer) : "Debris amount" :  : "Number of pieces of debris to spawn. Set to -1 to disable debris."
 	mdl(string) : "Custom debris model" : : "Overrides the model selected through 'style'. EG: 'progs/gib.mdl'"
@@ -322,7 +323,7 @@ NO_MONSTERS: object ignores damage from monsters"
 "A togglable laser, hurts to touch, can be used to block players." 
 [
 	dmg(integer) : "Damage" : 1 : "Damage dealt. Set to -1 to do no damage."
-	alpha(float) : "Opacity" : "0.5" : "Approximate alpha you want the laser drawn at. default 0.5. alpha will vary by 20% of this value."
+	alpha(float) : "Opacity" : "0.5" : "Approximate alpha you want the laser drawn at. default 0.5. alpha will flicker in a 20% range around this value."
 	message(string) : "Activated message"
 	message2(string) : "Deactivated message"
 	spawnflags(flags) =
@@ -361,10 +362,14 @@ The laser originates from the horizontal center at the bottom of the model. You 
 
 
 @SolidClass base(Appearflags, Targetname, Target, TriggerWait) color(128 128 64) = trigger_ladder :
-"Invisible ladder entity.
-When player is touching this entity, they'll move on the direction they're facing when pressing forward, or move straight up/down with the jump/moveup/movedown keys."
+"Invisible ladder trigger.
+
+When player is touching this entity, they'll move on the direction they're facing when pressing forward, or be able to move straight up/down with the jump/moveup/movedown keys.
+
+The 'angle' key is optional. When set, the player will only stick to the ladder while facing this direction.
+"
 [
-	angle(integer) : "Angle" : : "The direction player must be facing to climb ladder"
+	angle(integer) : "Angle" : : "Optional. If set, the player will only stick to the ladder while facing this direction. If you need to set angle 0, use 360 instead."
 ]
 
 @PointClass base(Appearflags, Targetname) color(0 128 0) size(-4 -4 -4, 4 4 4) = info_rotate : 
@@ -372,13 +377,17 @@ When player is touching this entity, they'll move on the direction they're facin
 
 Make the rotate_object in your setup target this entity." []
 
-@SolidClass base(Appearflags, Targetname, Target) color(0 0 255) = func_movewall : 
-"Used to emulate collision on rotating objects.
+@SolidClass base(Appearflags, Targetname) color(0 0 255) = func_movewall : 
+"Used to emulate collision on rotators. Should be given the same targetname as the rotate_object entity.
+
+func_movewalls don't rotate, but they *move* around the same circular orbit as the rotate_object. So you must create multiple small func_movewalls to cover the whole volume of your rotating brush, and they'll move roughly in the same place.
+
 'Visible' causes brush to be displayed.
 'Hurts' specifies whether to cause damage when touched by player.
 'Non-solid' makes the brush non-solid.  This is useless if VISIBLE is set."
 [
 	dmg(integer) : "Damage" : 0
+	target(string) : "Name of info_rotate point entity"
 	spawnflags(flags) =
 	[
 		1 : "Visible" : 0
@@ -397,9 +406,9 @@ Rotating setups are always composed of 3 entitites:
 
 Firstly, place the info_rotate on the center/axis of rotation, and give it a unique targetname.
 Next make your rotating brushes, and make them a rotate_object. Give it a unique targetname, and make it target the info_rotate.
-Then place this func_rotate_door on the center/axis of rotation, and make it target the rotate_object.
+Then place this func_rotate_door at the same coordinates as the info_rotate, and make it target the rotate_object.
 
-For collison on rotating doors, refer to the func_movewall brush entity.
+For collison on rotators, refer to the func_movewall brush entity.
 
 'rotate' key sets the rotation directions per axis.
 'angles' key sets how much it should rotate, per axis.
@@ -407,7 +416,6 @@ For collison on rotating doors, refer to the func_movewall brush entity.
 
 'Stay open' spawnflag tells the door to reopen after closing. This prevents a trigger-once door from closing again when it's blocked."
 [
-	dmg(integer) : "Damage" : 2 : "Specifies the damage to cause when blocked. Set this to -1 to deal no damage."
 	speed(integer) : "Movement time" : : "Amount of time in seconds it'll take to complete the movement."
 	target(string) : "Name of rotate_object brush entity"
 	angles(string) : "Rotation angles per axis" : : "Sets how much it should rotate on each of the axis. So 'rotate' '0 1 -1' and 'angles' '0 90 -180' for example will make a door that rotates 90 degrees counterclockwise on the Z axis, and 180 degrees clockwise on the Y axis."
@@ -436,10 +444,12 @@ Rotating setups are always composed of 3 entitites:
 
 Firstly, place the info_rotate on the center/axis of rotation, and give it a unique targetname.
 Next make your rotating brushes, and make them a rotate_object. Give it a unique targetname, and make it target the info_rotate.
-Then place this func_rotate_entity on the center/axis of rotation, and make it target the rotate_object.
+Then place this func_rotate_entity at the same coordinates as the info_rotate, and make it target the rotate_object.
+
+For collison on rotators, refer to the func_movewall brush entity.
 
 'rotate' key sets the rotation speed per axis.
-'speed' key sets the movement acceleration when the rotator is toggled on/off.
+'speed' key sets the acceleration/deacceleration time when the rotator is toggled on/off.
 "
 [
 	rotate(string) : "Rotation speed per axis" : : "Set this value to three integers. '0 -90 0' for example will make it rotate clockwise along the Z axis at 90 degrees/second. You can set it to rotate around all the axis too, and to make it rotate the other way, just add/remove a – ( minus sign )."
@@ -1187,7 +1197,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 @PointClass base(Appearflags) color(0 128 204) = misc_fireball : "Small fireball"
 	[ speed(integer) : "Speed" : 40 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_sparks :
+@PointClass base(Appearflags, Targetname, SingleTarget) color(0 128 204) = misc_sparks :
 "Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks. 
 Note: targeted lights should be set to START_OFF."
 [
@@ -1206,7 +1216,7 @@ Note: targeted lights should be set to START_OFF."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_smoke :
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_smoke :
 "Produces a jet of smoke/steam. If targeted, it will toggle between on or off."
 [
 	wait(float) : "Time between puffs" : "1.0"
@@ -1252,7 +1262,7 @@ You can disable the long burning damage effect on players with the respective sp
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_splash :
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_splash :
 "Produces a continuous particle splash for waterfalls."
 [
 	color(integer) : "Color (0-15)" : 0 : "Color of particles.  0 through 15, corresponds to a row of the quake palette. (default 0)"
@@ -1261,7 +1271,7 @@ You can disable the long burning damage effect on players with the respective sp
 	volume(integer) : "Density" : 10
 ]
 
-@PointClass base(Appearflags, Targetname, Target)  color(0 128 204) model(
+@PointClass base(Appearflags, Targetname)  color(0 128 204) model(
 	{"path":"progs/flag.mdl", "frame": spawnflags & 2}
 ) = misc_flag :
 "A hanging banner, gently waving in the wind. Normal dimensions: 64 wide by 144 long.
@@ -1285,7 +1295,7 @@ Big banner is twice as big: 128 wide by 288 long."
 	mangle(string) : "Override meat vector" : "0 0 1"
 ]
 
-@PointClass base(Appearflags, Target, Targetname) size(32 32 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_model :
+@PointClass base(Appearflags, Targetname) size(32 32 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_model :
 "A point entity for displaying models. A frame range can be given to animate the model.
 Can be toggled visible/invisible when targeted.
 If you use a rotating model, make sure to enable the 'Don't make static' spawnflag.
@@ -1424,7 +1434,7 @@ If you want to make them angry at each other instantly, you can set the spawnfla
 	spawnflags(flags) = [ 1: "Mutual hate" : 0 ]
 ]
 
-@PointClass base(SingleTarget, Targetname, Appearflags) color(168 224 255) = misc_lightning_start :
+@PointClass base(Targetname, Appearflags) color(168 224 255) = misc_lightning_start :
 "Starting point of a lightning trail effect.
 Requires the target to be a misc_lightning_end or a misc_lightning_relay.
 You can create a long, continuous effect by chaining one or more misc_lightning_relays between the start and the end entities.
@@ -1443,6 +1453,7 @@ Set the LT_START_ON spawnflag if you want the lightning to start in a fired stat
 	dmg(integer) : "Damage" : 25 : "The amount of damage you want the lightning to do. Set it to -1 if you want no damage."
 	count(float) : "Duration" : "0.3" : "The duration of the lightning effect. Will be ignored if it's togglable."
 	delay(float) : "Delay" : "0" : "Time delay before activating the next point."
+	target(target_destination) : "Destination point" : : "Must point to a misc_lightning_relay or misc_lightning_end entity."
 	sounds(choices) : "Sound" : 1 = [
 		1 : "Lightning noise"
 		2 : "Silent"
@@ -1454,7 +1465,7 @@ Set the LT_START_ON spawnflag if you want the lightning to start in a fired stat
 	]
 ]
 
-@PointClass base(SingleTarget, Targetname, Appearflags) color(168 224 255) = misc_lightning_relay :
+@PointClass base(Targetname, Appearflags) color(168 224 255) = misc_lightning_relay :
 "Mid-point of a lightning trail effect. Refer to misc_lightning_start for a more detailed explanation.
 Must target a misc_lightning_end or another misc_lightning_relay.
 
@@ -1469,6 +1480,7 @@ Set 'delay' to the delay before activating the next point in the chain. Default 
 	dmg(integer) : "Damage" : : "Overrides the amount of damage the lightning does at this point. Set it to -1 if you want no damage."
 	count(float) : "Duration" : : "Overrides the duration of the lightning effect at this point. Will be ignored if it's togglable."
 	delay(float) : "Delay" : "0" : "Time delay before activating the next point."
+	target(target_destination) : "Destination point" : : "Must point to a misc_lightning_relay or misc_lightning_end entity."
 	sounds(choices) : "Sound" : 0 = [
 		0 : "Inherit from misc_lightning_start"
 		1 : "Lightning noise"
@@ -2257,7 +2269,10 @@ Flags:
 		128: "Monster-triggerable" : 0
 	]
 ]
-@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple" 
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple
+
+Will keep on firing while the player is touching the trigger, on the interval defined in 'wait'.
+" 
 [
 	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health"
@@ -2652,7 +2667,7 @@ Smoothly blends client's currently applied fog to this value over time.
 	delay(string) : "Pause before starting blend"
 ]
 
-@PointClass base(Appearflags, Targetname, Target, FogShift) color(128 128 50) = target_fogblend : 
+@PointClass base(Appearflags, Targetname, FogShift) color(128 128 50) = target_fogblend : 
 "Target: Fog Blend
 Activator's fog will toggle between fog_color/fog_density and fog_color2/fog_density2 values, smoothly blending it over time.
 If you check the 'one-way' spawnflag, it'll only blend over to fog_color2/fog_density2 - unless you check the 'reverse' flag as well, which will make it blend only to fog_color/fog_density.
