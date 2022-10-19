@@ -23,16 +23,16 @@
 
 @SolidClass = worldspawn : "World entity"
 [
-	message(string) : "Text on entering the world"
-	worldtype(choices) : "Ambience" : 0 =
+	message(string) : "Map title"
+	worldtype(choices) : "Map theme" : 0 =
 	[
 		1 : "Runic (metal)"
 		2 : "Present (base)"
 		3 : "Medieval"
 	]
-	sounds(integer) : "CD track to play" : 1
+	sounds(integer) : "Music track to play"
 	light(integer) : "Ambient light"
-	sky(string) : "Skybox"
+	sky(string) : "Skybox name"
 	
 	_dirt(integer) : "Use dirtmapping (ambient occlusion)" : 0
 	_bounce(integer) : "Bounce Lighting" : 0 : "1 enables bounce lighting, default 0."
@@ -134,12 +134,12 @@
 
 @baseclass color(255 255 40) = Light [
 	light(integer) : "Brightness" : 300
-	wait(float) : "Fade distance multiplier" : "1"
+	wait(float) : "Fade distance divider" : "1"
 	_color(color) : "Light color"
 	mangle(string) : "Spotlight angle"
 	angle(integer) : "Spotlight angle width" : 40
 	_softangle(float) : "Inner spotlight angle width" : "0"
-	speed(float) : "Speed when fading in/out" : "0.1"
+	speed(float) : "Fade step time" : "0.1" : "Lighting fade happens in 12 steps, and this key sets how long each step will take. To calculate the step time for a given total transition, just divide the intended time in seconds by 12. Say for example you want the full transition to happen in half a second, that'd be 0.5/12 = 0.042. This will be the value you must put into this field."
 	style2(integer) : ""
 	delay(choices) : "Attenuation" =
 	[
@@ -362,13 +362,15 @@ The laser originates from the horizontal center at the bottom of the model. You 
 
 @SolidClass base(Appearflags, Targetname, Target, TriggerWait) color(128 128 64) = trigger_ladder :
 "Invisible ladder entity.
-When player is touching this entity, he can climb by pushing 'jump'."
+When player is touching this entity, they'll move on the direction they're facing when pressing forward, or move straight up/down with the jump/moveup/movedown keys."
 [
 	angle(integer) : "Angle" : : "The direction player must be facing to climb ladder"
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 0) size(-4 -4 -4, 4 4 4) = info_rotate : 
-"Used as the point of rotation for rotatable objects." []
+@PointClass base(Appearflags, Targetname) color(0 128 0) size(-4 -4 -4, 4 4 4) = info_rotate : 
+"Used as pivot point for rotatable objects, such as func_rotate_door and func_rotate_entity. Refer to their documentation for more details.
+
+Make the rotate_object in your setup target this entity." []
 
 @SolidClass base(Appearflags, Targetname, Target) color(0 0 255) = func_movewall : 
 "Used to emulate collision on rotating objects.
@@ -385,13 +387,31 @@ When player is touching this entity, he can climb by pushing 'jump'."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(64 128 64) = func_rotate_door : 
+@PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_door : 
 "Creates a door that rotates between two positions around a point of rotation each time it's triggered.
 
-STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once door from closing again when it's blocked."
+Rotating setups are always composed of 3 entitites:
+- The func_rotate_entity or func_rotate_door (which are point entities despite their name), that act as controllers of the whole setup;
+- the rotate_object brush entity, which is only the brush geometry to be rotated;
+- the info_rotate point entity, that acts as the pivot point for the rotating movement. 
+
+Firstly, place the info_rotate on the center/axis of rotation, and give it a unique targetname.
+Next make your rotating brushes, and make them a rotate_object. Give it a unique targetname, and make it target the info_rotate.
+Then place this func_rotate_door on the center/axis of rotation, and make it target the rotate_object.
+
+For collison on rotating doors, refer to the func_movewall brush entity.
+
+'rotate' key sets the rotation directions per axis.
+'angles' key sets how much it should rotate, per axis.
+'speed' key sets the amount of time it'll take to make the full movement.
+
+'Stay open' spawnflag tells the door to reopen after closing. This prevents a trigger-once door from closing again when it's blocked."
 [
-	dmg(integer) : "Damage" : 2 : "Specifies the damage to cause when blocked. Negative numbers indicate no damage."
-	speed(integer) : "Speed" : 100 : "Specifies the time it takes to rotate."
+	dmg(integer) : "Damage" : 2 : "Specifies the damage to cause when blocked. Set this to -1 to deal no damage."
+	speed(integer) : "Movement time" : : "Amount of time in seconds it'll take to complete the movement."
+	target(string) : "Name of rotate_object brush entity"
+	angles(string) : "Rotation angles per axis" : : "Sets how much it should rotate on each of the axis. So 'rotate' '0 1 -1' and 'angles' '0 90 -180' for example will make a door that rotates 90 degrees counterclockwise on the Z axis, and 180 degrees clockwise on the Y axis."
+	rotate(string) : "Rotation direction" : : "Set this field to three 0’s or 1’s, with either 1 or -1 to set which axis it will rotate on. i.e. '0 1 -1' will make it rotate counterclockwise around the Z axis and clockwise around the Y axis. Set the total rotation angles with the 'angles' key."
 	sounds(choices) : "Sound" =
 	[
 		0: "No sounds"
@@ -407,11 +427,23 @@ STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once d
 ]
 
 @PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
-"Creates an entity that continually rotates.  Can be toggled on and off if targeted."
+"Creates an entity that continually rotates.  Can be toggled on and off if targeted.
+
+Rotating setups are always composed of 3 entitites:
+- The func_rotate_entity or func_rotate_door (which are point entities despite their name), that act as controllers of the whole setup;
+- the rotate_object brush entity, which is only the brush geometry to be rotated;
+- the info_rotate point entity, that acts as the pivot point for the rotating movement. 
+
+Firstly, place the info_rotate on the center/axis of rotation, and give it a unique targetname.
+Next make your rotating brushes, and make them a rotate_object. Give it a unique targetname, and make it target the info_rotate.
+Then place this func_rotate_entity on the center/axis of rotation, and make it target the rotate_object.
+
+'rotate' key sets the rotation speed per axis.
+'speed' key sets the movement acceleration when the rotator is toggled on/off.
+"
 [
-	obituary(string) : "Death message"
-	rotate(integer) : "Speed" : 40
-	target(string) : "Center of rotation"
+	rotate(string) : "Rotation speed per axis" : : "Set this value to three integers. '0 -90 0' for example will make it rotate clockwise along the Z axis at 90 degrees/second. You can set it to rotate around all the axis too, and to make it rotate the other way, just add/remove a – ( minus sign )."
+	target(string) : "Name of rotate_object brush entity"
 	speed(integer) : "Acceleration" : 5 : "How long the entity takes to go from standing still to full speed and vice-versa."
 	spawnflags(flags) =
 	[
@@ -492,8 +524,15 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	event(string) : "Event target"
 ]
 
-@SolidClass base(Appearflags, Targetname, Target) color(0 128 204) = rotate_object :
-"This defines an object to be rotated.  Used as the target of func_rotate_door." []
+@SolidClass base(Appearflags, Targetname) color(0 128 204) = rotate_object :
+"This defines an object to be rotated.
+
+Used as the target of func_rotate_door or func_rotate_entity point entities. Refer to them for more details.
+
+Make this entity target the info_rotate entity used as pivot point.
+" [
+	target(string) : "Name of info_rotate point entity"
+]
 
 
 //
@@ -616,25 +655,25 @@ You can override initial weapon/ammo loadout for this specific spot.
             spawnflags & 1 ->   ":maps/b_batt1.bsp",
                                 ":maps/b_batt0.bsp"
         }}
-    ) = item_cells : "Thunderbolt ammo" []
+    ) = item_cells : "Cells. Small box gives 6 cells, large box 12." []
 @PointClass base(Ammo) model(
         {{
             spawnflags & 1 ->   ":maps/b_rock1.bsp",
                                 ":maps/b_rock0.bsp"
         }}
-    ) = item_rockets : "Rockets" []
+    ) = item_rockets : "Rockets. Small box gives 5 rockets, large box 10." []
 @PointClass base(Ammo) model(
         {{
             spawnflags & 1 ->   ":maps/b_shell1.bsp",
                                 ":maps/b_shell0.bsp"
         }}
-    ) = item_shells : "Shells" []
+    ) = item_shells : "Shells. Small box gives 20 shells, large box 40." []
 @PointClass base(Ammo) model(
         {{
             spawnflags & 1 ->   ":maps/b_nail1.bsp",
                                 ":maps/b_nail0.bsp"
         }}
-    ) = item_spikes : "Perforator/Nailgun ammo" []
+    ) = item_spikes : "Nails. Small box gives 25 nails, large box 50." []
 
 @PointClass size(0 0 0, 32 32 56) base(RespawnableItem, Appearflags, ItemStyle) model(
         {{
@@ -643,7 +682,7 @@ You can override initial weapon/ammo loadout for this specific spot.
             spawnflags & 1 ->   ":maps/b_bh10.bsp",
                                 ":maps/b_bh25.bsp"
         }}
-    ) = item_health : "Health pak" 
+    ) = item_health : "Health pack. Rotten pack gives 15 health, standard pack 25, and megahealth 100." 
 [
 	spawnflags(flags) = 
 	[
@@ -1688,7 +1727,10 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 	]
 ]
 
-@SolidClass base(Targetname, Appearflags, ModelLight, Alpha, SwitchShadow) = func_wall : "Wall" [
+@SolidClass base(Targetname, Appearflags, ModelLight, Alpha, SwitchShadow) = func_wall : "Static, solid wall.
+Can be made non-solid.
+Targeting it toggles whatever switchable texture it may have on (+0/+a sets).
+" [
 	spawnflags(flags) =
 	[
 		2 : "Non-solid" : 0
