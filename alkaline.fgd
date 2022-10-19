@@ -943,8 +943,8 @@ Most likely killed by teleport frag." []
 "Zombie, 60 health points.
 If crucified, stick the bounding box 12 pixels back into a wall to look right.
 
-'Start down' makes the zombie spawn lying down. It'll wake up by player proximity or upon triggering.
-'Only get up on trigger' makes it not wake up by proximity.
+'Start down' makes the zombie spawn lying down. It'll get up by player proximity or upon triggering. If the activator is not a player it'll just stand idle after getting up.
+'Only get up on trigger' makes it never get up by proximity when the Start Down flag is checked, only upon being targeted.
 " 
 [
 	spawnflags(Flags) = 
