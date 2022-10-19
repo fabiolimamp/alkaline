@@ -409,6 +409,8 @@ void() zombie_wake = {
 		self.th_stand = zombie_stand1;
 		zombie_paine12();
 	}
+	else
+		HuntTarget();
 }
 /*
 =================
