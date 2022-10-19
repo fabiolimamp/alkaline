@@ -5,12 +5,6 @@ ZOMBIE
 
 ==============================================================================
 */
-$cd id1/models/zombie
-
-$origin	0 0 24
-
-$base base
-$skin skin
 
 $frame stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8
 $frame stand9 stand10 stand11 stand12 stand13 stand14 stand15
@@ -74,8 +68,8 @@ void() zombie_stand14	=[	$stand14,		zombie_stand15	] {ai_stand();};
 void() zombie_stand15	=[	$stand15,		zombie_stand1	] {ai_stand();};
 
 void() zombie_cruc1	=	[	$cruc_1,		zombie_cruc2	] {
-if (random() < 0.1)
-	sound (self, CHAN_VOICE, "zombie/idle_w2.wav", 1, ATTN_STATIC);};
+	if (random() < 0.1)	sound (self, CHAN_VOICE, "zombie/idle_w2.wav", 1, ATTN_STATIC);
+};
 void() zombie_cruc2	=	[	$cruc_2,		zombie_cruc3	] {self.nextthink = time + 0.1 + random()*0.1;};
 void() zombie_cruc3	=	[	$cruc_3,		zombie_cruc4	] {self.nextthink = time + 0.1 + random()*0.1;};
 void() zombie_cruc4	=	[	$cruc_4,		zombie_cruc5	] {self.nextthink = time + 0.1 + random()*0.1;};
@@ -100,10 +94,10 @@ void() zombie_walk15	=[	$walk15,	zombie_walk16	] {ai_walk(0);};
 void() zombie_walk16	=[	$walk16,	zombie_walk17	] {ai_walk(0);};
 void() zombie_walk17	=[	$walk17,	zombie_walk18	] {ai_walk(0);};
 void() zombie_walk18	=[	$walk18,	zombie_walk19	] {ai_walk(0);};
-void() zombie_walk19	=[	$walk19,	zombie_walk1	] {
-ai_walk(0);
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);};
+void() zombie_walk19	=[	$walk19,	zombie_walk1	] {ai_walk(0);
+	if (random() < 0.2)
+		sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
+};
 
 void() zombie_run1		=[	$run1,		zombie_run2	] {ai_run(1);self.inpain = 0;};
 void() zombie_run2		=[	$run2,		zombie_run3	] {ai_run(1);};
@@ -113,21 +107,20 @@ void() zombie_run5		=[	$run5,		zombie_run6	] {ai_run(2);};
 void() zombie_run6		=[	$run6,		zombie_run7	] {ai_run(3);};
 void() zombie_run7		=[	$run7,		zombie_run8	] {ai_run(4);};
 void() zombie_run8		=[	$run8,		zombie_run9	] {ai_run(4);};
-void() zombie_run9		=[	$run9,		zombie_run10	] {ai_run(2);};
-void() zombie_run10		=[	$run10,		zombie_run11	] {ai_run(0);};
-void() zombie_run11		=[	$run11,		zombie_run12	] {ai_run(0);};
-void() zombie_run12		=[	$run12,		zombie_run13	] {ai_run(0);};
-void() zombie_run13		=[	$run13,		zombie_run14	] {ai_run(2);};
-void() zombie_run14		=[	$run14,		zombie_run15	] {ai_run(4);};
-void() zombie_run15		=[	$run15,		zombie_run16	] {ai_run(6);};
-void() zombie_run16		=[	$run16,		zombie_run17	] {ai_run(7);};
-void() zombie_run17		=[	$run17,		zombie_run18	] {ai_run(3);};
-void() zombie_run18		=[	$run18,		zombie_run1	] {
-ai_run(8);
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
-if (random() > 0.8)
-	sound (self, CHAN_VOICE, "zombie/z_idle1.wav", 1, ATTN_IDLE);
+void() zombie_run9		=[	$run9,		zombie_run10] {ai_run(2);};
+void() zombie_run10		=[	$run10,		zombie_run11] {ai_run(0);};
+void() zombie_run11		=[	$run11,		zombie_run12] {ai_run(0);};
+void() zombie_run12		=[	$run12,		zombie_run13] {ai_run(0);};
+void() zombie_run13		=[	$run13,		zombie_run14] {ai_run(2);};
+void() zombie_run14		=[	$run14,		zombie_run15] {ai_run(4);};
+void() zombie_run15		=[	$run15,		zombie_run16] {ai_run(6);};
+void() zombie_run16		=[	$run16,		zombie_run17] {ai_run(7);};
+void() zombie_run17		=[	$run17,		zombie_run18] {ai_run(3);};
+void() zombie_run18		=[	$run18,		zombie_run1	] {ai_run(8);
+	if (random() < 0.2)
+		sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
+	if (random() > 0.8)
+		sound (self, CHAN_VOICE, "zombie/z_idle1.wav", 1, ATTN_IDLE);
 };
 
 /*
@@ -138,8 +131,7 @@ ATTACKS
 =============================================================================
 */
 
-void() ZombieGrenadeTouch =
-{
+void() ZombieGrenadeTouch = {
 	if (other == self.owner)
 		return;		// don't explode on owner
 	if (other.takedamage)
@@ -160,10 +152,9 @@ void() ZombieGrenadeTouch =
 ZombieFireGrenade
 ================
 */
-void(vector st) ZombieFireGrenade =
-{
-	local	entity missile;
-	local	vector	org;
+void(vector st) ZombieFireGrenade = {
+	entity missile;
+	vector org;
 
 	sound (self, CHAN_WEAPON, "zombie/z_shot1.wav", 1, ATTN_NORM);
 
@@ -171,15 +162,14 @@ void(vector st) ZombieFireGrenade =
 	missile.owner = self;
 	missile.movetype = MOVETYPE_BOUNCE;
 	missile.solid = SOLID_BBOX;
-	missile.flags = missile.flags | FL_PROJECTILE;
-
-// calc org
-	org = self.origin + st_x * v_forward + st_y * v_right + (st_z - 24) * v_up;
-	
-// set missile speed	
+	missile.flags |= FL_PROJECTILE;
 
 	makevectors (self.angles);
 
+	// calc org
+	org = self.origin + st_x * v_forward - st_y * v_right + st_z * v_up;
+	
+	
 	missile.velocity = normalize(self.enemy.origin - org);
 	missile.velocity = missile.velocity * 600;
 	missile.velocity_z = 200;
@@ -188,7 +178,6 @@ void(vector st) ZombieFireGrenade =
 
 	missile.touch = ZombieGrenadeTouch;
 	
-// set missile duration
 	missile.nextthink = time + 2.5;
 	missile.think = SUB_Remove;
 
@@ -210,7 +199,7 @@ void() zombie_atta9		=[	$atta9,		zombie_atta10	] {ai_face();};
 void() zombie_atta10	=[	$atta10,	zombie_atta11	] {ai_face();};
 void() zombie_atta11	=[	$atta11,	zombie_atta12	] {ai_face();};
 void() zombie_atta12	=[	$atta12,	zombie_atta13	] {ai_face();};
-void() zombie_atta13	=[	$atta13,	zombie_run1	] {ai_face();ZombieFireGrenade('-10 -22 30');};
+void() zombie_atta13	=[	$atta13,	zombie_run1	] {ai_face();ZombieFireGrenade('4 -12 24');};
 
 void() zombie_attb1		=[	$attb1,		zombie_attb2	] {ai_face();};
 void() zombie_attb2		=[	$attb2,		zombie_attb3	] {ai_face();};
@@ -225,7 +214,7 @@ void() zombie_attb10	=[	$attb10,	zombie_attb11	] {ai_face();};
 void() zombie_attb11	=[	$attb11,	zombie_attb12	] {ai_face();};
 void() zombie_attb12	=[	$attb12,	zombie_attb13	] {ai_face();};
 void() zombie_attb13	=[	$attb13,	zombie_attb14	] {ai_face();};
-void() zombie_attb14	=[	$attb13,	zombie_run1	] {ai_face();ZombieFireGrenade('-10 -24 29');};
+void() zombie_attb14	=[	$attb14,	zombie_run1	] {ai_face();ZombieFireGrenade('4 8 24');};
 
 void() zombie_attc1		=[	$attc1,		zombie_attc2	] {ai_face();};
 void() zombie_attc2		=[	$attc2,		zombie_attc3	] {ai_face();};
@@ -238,11 +227,10 @@ void() zombie_attc8		=[	$attc8,		zombie_attc9	] {ai_face();};
 void() zombie_attc9		=[	$attc9,		zombie_attc10	] {ai_face();};
 void() zombie_attc10	=[	$attc10,	zombie_attc11	] {ai_face();};
 void() zombie_attc11	=[	$attc11,	zombie_attc12	] {ai_face();};
-void() zombie_attc12	=[	$attc12,	zombie_run1		] {ai_face();ZombieFireGrenade('-12 -19 29');};
+void() zombie_attc12	=[	$attc12,	zombie_run1		] {ai_face();ZombieFireGrenade('20 -12 12');};
 
-void() zombie_missile =
-{
-	local float	r;
+void() zombie_missile = {
+	float r;
 	
 	r = random();
 	
@@ -358,7 +346,7 @@ void() zombie_paine10	=[	$paine10,	zombie_paine11	] {
 	setorigin(self, self.origin); // relink
 };
 void() zombie_paine11	=[	$paine11,	zombie_paine12	] {self.nextthink = self.nextthink + 4.5 + random(); self.health = 60;};
-void() zombie_paine12	=[	$paine12,	zombie_paine13	]{
+void() zombie_paine12	=[	$paine12,	zombie_paine13	] {
 	// see if ok to stand up
 	self.health = 60;
 	sound (self, CHAN_VOICE, "zombie/z_idle.wav", 1, ATTN_IDLE);
@@ -387,15 +375,14 @@ void() zombie_paine26	=[	$paine26,	zombie_paine27	] {ai_painforward(3);};
 void() zombie_paine27	=[	$paine27,	zombie_paine28	] {ai_painforward(1);};
 void() zombie_paine28	=[	$paine28,	zombie_paine29	] {ai_pain(1);};
 void() zombie_paine29	=[	$paine29,	zombie_paine30	] {};
-void() zombie_paine30	=[	$paine30,	zombie_run1		] {};
+void() zombie_paine30	=[	$paine30,	zombie_run1		] {if (!(SUB_entEnemyTarget().flags & FL_CLIENT)) self.think = zombie_stand1;};
 
-void() zombie_die =
-{
-	sound (self, CHAN_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
-	ThrowHead ("progs/h_zombie.mdl", self.health);
-	ThrowGib ("progs/gib1.mdl", self.health);
-	ThrowGib ("progs/gib2.mdl", self.health);
-	ThrowGib ("progs/gib3.mdl", self.health);
+void() zombie_die = {
+	sound(self, CHAN_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
+	ThrowHead("progs/h_zombie.mdl", self.health);
+	ThrowGib("progs/gib1.mdl", self.health);
+	ThrowGib("progs/gib2.mdl", self.health);
+	ThrowGib("progs/gib3.mdl", self.health);
 };
 
 
@@ -411,7 +398,7 @@ void() zombie_wake = {
 	}
 	else
 		HuntTarget();
-}
+};
 /*
 =================
 zombie_pain
@@ -431,11 +418,10 @@ A hit of less than 10 points of damage (winged by a shotgun) will be ignored.
 FIXME: don't use pain_finished because of nightmare hack
 =================
 */
-void(entity attacker, float take) zombie_pain =
-{
-	local float r;
+void(entity attacker, float take) zombie_pain = {
+	float r;
 
-	self.health = 60;		// allways reset health
+	self.health = 60;		// always reset health
 
 	if (take < 9)
 		return;				// totally ignore
@@ -443,41 +429,38 @@ void(entity attacker, float take) zombie_pain =
 	if (self.inpain == 2)
 		return;			// down on ground, so don't reset any counters
 
-// go down immediately if a big enough hit
-	if (take >= 25)
-	{
+	// go down immediately if a big enough hit
+	if (take >= 25) {
 		self.inpain = 2;
-		zombie_paine1 ();
+		zombie_paine1();
 		return;
 	}
 	
-	if (self.inpain)
-	{
-// if hit again in next gre seconds while not in pain frames, definately drop
+	if (self.inpain) {
+	// if hit again in next gre seconds while not in pain frames, definately drop
 		self.pain_finished = time + 3;
 		return;			// currently going through an animation, don't change
 	}
 	
-	if (self.pain_finished > time)
-	{
-// hit again, so drop down
+	if (self.pain_finished > time) {
+	// hit again, so drop down
 		self.inpain = 2;
 		zombie_paine1 ();
 		return;
 	}
 
-// gp into one of the fast pain animations	
+	// go into one of the fast pain animations	
 	self.inpain = 1;
 
 	r = random();
 	if (r < 0.25)
-		zombie_paina1 ();
+		zombie_paina1();
 	else if (r <  0.5)
-		zombie_painb1 ();
+		zombie_painb1();
 	else if (r <  0.75)
-		zombie_painc1 ();
+		zombie_painc1();
 	else
-		zombie_paind1 ();
+		zombie_paind1();
 };
 
 void() zombie_sight = {
@@ -490,9 +473,8 @@ void() zombie_sight = {
 
 If crucified, stick the bounding box 12 pixels back into a wall to look right.
 */
-void(entity e) monster_zombie_start =
-{
-	local entity oself;
+void(entity e) monster_zombie_start = {
+	entity oself;
 
 	oself = self;
 	self = e;
@@ -519,10 +501,9 @@ void(entity e) monster_zombie_start =
 
 	self.type = "";
 
-	if (self.spawnflags & ZOMBIE_CRUCIFIED)
-	{
+	if (self.spawnflags & ZOMBIE_CRUCIFIED) {
 		self.movetype = MOVETYPE_NONE;
-		zombie_cruc1 ();
+		zombie_cruc1();
 	}
 	else
 		walkmonster_start();
@@ -543,10 +524,8 @@ void() monster_zombie_spawner = {
 	monster_spawner(monster_zombie_start);
 };
 
-void() monster_zombie =
-{
-	if (deathmatch)
-	{
+void() monster_zombie = {
+	if (deathmatch) {
 		remove(self);
 		return;
 	}
