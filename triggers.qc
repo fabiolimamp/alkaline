@@ -752,7 +752,11 @@ void() trigger_monsterjump_touch =
 	if(!self.count)
 		return;
 
-	if ( other.flags & (FL_MONSTER | FL_FLY | FL_SWIM) != FL_MONSTER )
+	// only walking monsters 
+	if (other.flags & (FL_MONSTER | FL_FLY | FL_SWIM) != FL_MONSTER)
+		return;
+	// dead monsters can't jump
+	if (other.health <= 0)
 		return;
 
 	if (self.include && other.classname != self.include)
