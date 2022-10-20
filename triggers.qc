@@ -716,20 +716,23 @@ Pushes the player
 */
 void() trigger_push =
 {
-	InitTrigger ();
-	
-	if(!self.noise)
+	if (self.angles == '0 0 0')
+		self.angles = '0 360 0';
+
+	if (!self.noise)
 		self.noise = "ambience/windfly.wav";
 
-	if(!self.delay)
+	if (!self.delay)
 		self.delay = 1.5;
 
-	if(!(self.spawnflags & PUSH_SILENT)) precache_sound (self.noise);
+	if (!(self.spawnflags & PUSH_SILENT)) precache_sound(self.noise);
 	
 	self.touch = trigger_push_touch;
 	
 	if (!self.speed)
 		self.speed = 1000;
+
+	InitTrigger ();
 
 	SUB_CheckWaiting();
 };
