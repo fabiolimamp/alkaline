@@ -351,31 +351,63 @@ void() train_wait = {
 	
 };
 
+// returns the first active path corner,
+// or the first inactive one if no active path was found,
+// or world if no path was found at all
+entity(string name) getNextPath = {
+	entity targ, first;
+
+	first = targ = find(world, targetname, name);
+
+	// first path is ok
+	// most common case, so return early
+	if (targ && targ.estate == STATE_ACTIVE)
+		return first;
+
+	// found path isn't active, so search for others with the same targetname
+	while (targ && targ.estate != STATE_ACTIVE) {
+		targ = find(targ, targetname, name);
+	}
+
+	// found an active path
+	if (targ && targ.estate == STATE_ACTIVE)
+		return targ;
+
+	// no active path was found with the same targetname,
+	// so return the first non-active one
+	// will return world if no path was found at all
+	return first;
+}
+
 // searches for the next path_corner and sends the train on its way
 void() train_next = {
 	entity targ, first;
 	vector destang, displ;
-	float loopcount;
 
 	if (self.target == "") {
 		dprint("train_next: next target not set\n");
 		targ = self.enemy;
 	}
 	else {
-		first = targ = find(world, targetname, self.target);
+		first = targ = getNextPath(self.target);
 		
-		// loops if found path_corner isn't active
-		while (targ && targ.estate != STATE_ACTIVE && loopcount < 3) {
-			if (targ == first) loopcount++;
-			targ = find(world, targetname, targ.target);
+		// returned path isn't active, so keep iterating until we find one
+		while (targ && targ.estate != STATE_ACTIVE) {
+			targ = getNextPath(targ.target);
+		}
+
+		if (!targ && !first) {
+			dprint("train_next: next target not found\n");
+			targ = self.enemy;
+		}
+
+		if (!targ && first) {
+			dprint("train_next: no active path found\n");
+			targ = self.enemy;
 		}
 	}
 
-	if (!targ || loopcount >= 3) {
-		dprint("train_next: next target not found\n");
-		targ = self.enemy;
-	}
-
+	
 	self.target = targ.target;
 	
 	// gets the wait time from the upcoming path_corner if set
