@@ -192,7 +192,10 @@ void() door_move_up = {
 
 	self.state = STATE_UP;
 	self.owner.groupstate = STATE_UP;
-	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos2, self.smoothdist, self.speed, 0, 0, door_hit_top);
+	else
+		SUB_CalcMove (self.pos2, self.speed, door_hit_top);
 
 	SUB_UseTargets();
 
@@ -230,8 +233,11 @@ void() door_move_down = {
 		
 	self.state = STATE_DOWN;
 	self.owner.groupstate = STATE_DOWN;
-
-	SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
+	if (self.smoothdist)
+		//void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, void() func) SUB_CalcMoveSmooth
+		SUB_CalcMoveSmooth(self.pos1, self.smoothdist, self.speed2, 0, 0, door_hit_bottom);
+	else
+		SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
 	//dprint4("Door ", ftos(self.doornum), " started moving down at frame ", ftos(framecount));
 	//dprint5(", ltime: ", ftos(self.ltime), ", time: ", ftos(time), "\n");
 	if (self.switchshadstyle) {

@@ -142,10 +142,11 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 // divide by speed to get time to reach dest
 	traveltime = len / tspeed;
 
-	if (traveltime < 0.1)
+	// changed from the 0.1 default
+	if (traveltime < 0.025)
 	{
 		self.velocity = '0 0 0';
-		self.nextthink = localtime + 0.1;
+		self.nextthink = localtime + 0.025;
 		return;
 	}
 	
@@ -156,6 +157,113 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float	
 };
 
+
+
+
+void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, void() func) SUB_CalcMoveSmooth =
+{
+	local vector	vdestdelta;
+	local float		len, traveltime, localtime;
+
+	
+	//dprint3("tspeed: ", ftos(tspeed), "\n");
+	//dprint3("stspeed: ", ftos(stspeed), "\n");
+	//dprint3("fnspeed: ", ftos(fnspeed), "\n");
+	
+
+
+	if (!tspeed)
+		objerror("No speed is defined!");
+
+	localtime = getLocalTime();
+
+	self.think1 = func;
+	self.think = CalcMoveSmooth_Think;
+	self.finaldest = tdest;
+	self.calcmoveorigin = self.origin;
+	
+	//float smperc = (100 - self.smoothperc)*0.01;
+
+	//self.startspeed = clamp(stspeed,tspeed*smperc, tspeed);
+	//self.finalspeed = clamp(fnspeed,tspeed*smperc, tspeed); fnspeed;
+	self.startspeed = stspeed;
+	self.finalspeed = fnspeed;
+	self.travelspeed = tspeed;
+	self.realsmdist = smdist;
+	
+
+	len = vlen(self.origin - tdest);
+
+	if (len/2 < smdist) {
+		self.travelspeed = tspeed*len/2/smdist;
+		self.realsmdist = len/2;
+	}
+
+	if (tdest == self.origin)
+	{
+		self.velocity = '0 0 0';
+		self.nextthink = localtime + 0.1;
+		return;
+	}
+		
+	// set destdelta to the vector needed to move
+	vdestdelta = tdest - self.origin;
+	
+	
+	// time to reach dest
+	traveltime = vlen(vdestdelta) / tspeed;
+
+	// changed from the 0.1 default
+	if (traveltime < 0.025)
+	{
+		self.velocity = '0 0 0';
+		self.nextthink = localtime + 0.025;
+		return;
+	}
+
+	self.nextthink = localtime + 0.025;
+	//dprint3("Time: ", ftos(localtime), "\n");
+	//dprint3("nextthink: ", ftos(self.nextthink), "\n");
+
+// scale the destdelta vector by the time spent traveling to get velocity
+	self.velocity = normalize(vdestdelta) * max(stspeed, self.travelspeed/30);//clamp(stspeed,tspeed*smperc, tspeed));
+};
+
+
+void() CalcMoveSmooth_Think = {
+	float localtime = getLocalTime();
+
+	float disttofinish = vlen(self.origin - self.finaldest);
+	float disttostart = vlen(self.origin - self.calcmoveorigin);
+
+	float perctostart = clamp(disttostart/self.realsmdist, 0, 1);
+	float perctofinish = clamp(disttofinish/self.realsmdist, 0, 1);
+	float spd;
+	vector dir = normalize(self.finaldest - self.origin);
+
+	// accelerating
+	if (perctostart < perctofinish) {
+		spd = lerp(self.startspeed, self.travelspeed, perctostart);
+	}
+	//stopping
+	else if (perctostart > perctofinish) {
+		spd = lerp(self.travelspeed, self.finalspeed, 1 - perctofinish);
+	}
+	else {
+		spd = self.travelspeed;
+	}
+
+	spd = max(spd, self.travelspeed/30);
+
+	self.velocity = spd * dir;
+
+	if (vlen((self.origin + self.velocity * 0.025) - self.calcmoveorigin) > vlen(self.finaldest - self.calcmoveorigin)) {
+		self.think = SUB_CalcMoveDone;
+	}
+
+	self.nextthink = localtime + 0.025;
+}
+
 /*
 ============
 After moving, set origin to exact final destination
@@ -164,6 +272,13 @@ After moving, set origin to exact final destination
 void()  SUB_CalcMoveDone =
 {
 	setorigin(self, self.finaldest);
+
+	self.calcmoveorigin = '0 0 0';
+	self.travelspeed = 0;
+	self.startspeed = 0;
+	self.finalspeed = 0;
+	self.realsmdist = 0;
+
 	self.velocity = '0 0 0';
 	self.nextthink = -1;
 	if (self.think1)

@@ -388,7 +388,8 @@ FIELDS
 // subs
 //
 .void()		think1;
-.vector		finaldest, finalangle;
+.vector		finaldest, finalangle, calcmoveorigin;
+.float 		startspeed, travelspeed, finalspeed, smoothdist, smoothperc, realsmdist;
 .string 	target2, target3, target4, targetname2;
 
 //

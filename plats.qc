@@ -383,6 +383,13 @@ entity(string name) getNextPath = {
 void() train_next = {
 	entity targ, first;
 	vector destang, displ;
+	float prevspeed, nextspeed, curspeed;
+
+	if (self.think == func_train_find) prevspeed = 0;
+	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait && !(self.spawnflags & TRAIN_RETRIGGER)) prevspeed = self.speed2;
+	else prevspeed = 0;
+	//if (self.cnt == TRAIN_NEXT_STOP || (self.cnt == TRAIN_NEXT_WAIT && self.wait)) prevspeed = 0;
+	//else prevspeed = self.speed2;
 
 	if (self.target == "") {
 		dprint("train_next: next target not set\n");
@@ -449,8 +456,21 @@ void() train_next = {
 	}
 	
 	if (self.classname != "misc_modeltrain") displ = self.mins;
-	
-	SUB_CalcMove(targ.origin - displ, self.speed2, train_wait);
+
+	float smdist = defaultFl(targ.smoothdist, self.smoothdist);
+	if (smdist) {
+		
+		if (self.wait) nextspeed = 0;
+		else nextspeed = defaultFl(targ.speed, self.speed2);
+ 		
+ 		curspeed = self.speed2;
+		//void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, void() func) SUB_CalcMoveSmooth
+		SUB_CalcMoveSmooth(targ.origin - displ, smdist, curspeed, prevspeed, nextspeed, train_wait);
+	}
+	else {
+		//void(vector tdest, float tspeed, void() func) SUB_CalcMove
+		SUB_CalcMove(targ.origin - displ, self.speed2, train_wait);
+	}
 };
 
 // searches for the first path_corner after the train entity is initialized
