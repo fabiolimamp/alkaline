@@ -261,6 +261,24 @@ float(float num) sqrt =
 }
 
 
+float(float x) logn {
+    if (x <= 1 && x > 0)
+        return -8.6731532+(129.946172+(-558.971892+(843.967330-409.109529*x)*x)*x)*x;
+    else if (x > 1 && x <= 2)
+        return -1.7417939 + (2.8212026 + (-1.4699568 + (0.44717955 - 0.056570851 * x) * x) * x) * x;
+    else
+        return 0;
+}
+
+float(float x) log2 {
+
+    if (x > 0 && x <= 1)
+        //return (0.00383323 + 1.42412*x + 0.336161*x*x)/(1 + 0.704317*x + 0.0598015*x*x);
+         return (-5.83261 - 16.7012*x + 22.394*x*x)/(1 + 11.2638*x + 7.81124*x*x);
+    else
+        return 0;
+}
+
 float(float a, float b, float mix) lerp =
 {
     if (mix <= 0) return a;

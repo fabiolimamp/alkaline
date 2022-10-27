@@ -71,14 +71,21 @@ void() plat_go_down =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos2, self.smoothdist, self.speed, 0, 0, plat_hit_bottom);
+	else
+		SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
 };
 
 void() plat_go_up =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_UP;
-	SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
+		if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos1, self.smoothdist, self.speed, 0, 0, plat_hit_top);
+	else
+		SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
 };
 
 void() plat_center_touch =

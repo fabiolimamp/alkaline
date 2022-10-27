@@ -182,23 +182,22 @@ void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, voi
 	self.finaldest = tdest;
 	self.calcmoveorigin = self.origin;
 	
-	//float smperc = (100 - self.smoothperc)*0.01;
-
-	//self.startspeed = clamp(stspeed,tspeed*smperc, tspeed);
-	//self.finalspeed = clamp(fnspeed,tspeed*smperc, tspeed); fnspeed;
-	self.startspeed = stspeed;
-	self.finalspeed = fnspeed;
-	self.travelspeed = tspeed;
-	self.realsmdist = smdist;
-	
-
-	len = vlen(self.origin - tdest);
+		
+	vdestdelta = tdest - self.origin;
+	len = vlen(vdestdelta);
 
 	if (len/2 < smdist) {
 		self.travelspeed = tspeed*len/2/smdist;
 		self.realsmdist = len/2;
 	}
+	
+	else {
+		self.travelspeed = tspeed;
+		self.realsmdist = smdist;
+	}
 
+	self.startspeed = max(stspeed, self.travelspeed/50);
+	self.finalspeed = max(fnspeed, self.travelspeed/50);
 	if (tdest == self.origin)
 	{
 		self.velocity = '0 0 0';
@@ -207,11 +206,24 @@ void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, voi
 	}
 		
 	// set destdelta to the vector needed to move
-	vdestdelta = tdest - self.origin;
 	
-	
-	// time to reach dest
-	traveltime = vlen(vdestdelta) / tspeed;
+	//accelerating
+	//t = ((v - v0)*2d)/(v² - v0²)
+	// WRONG!
+	if (self.travelspeed != self.startspeed)
+		traveltime += ((self.travelspeed - self.startspeed)*2*self.realsmdist)/(self.travelspeed*self.travelspeed - self.startspeed*self.startspeed);
+	else
+		traveltime += self.realsmdist/self.startspeed;
+
+	// cruising
+	traveltime += (len - self.realsmdist*2)/self.travelspeed;
+
+	//stopping
+	//t = ((v - v0)*2d)/(v² - v0²)
+	if (self.finalspeed != self.travelspeed)
+		traveltime += ((self.finalspeed - self.travelspeed)*2*self.realsmdist)/(self.finalspeed*self.finalspeed - self.travelspeed*self.travelspeed);
+	else 
+		traveltime += self.realsmdist/self.finalspeed;
 
 	// changed from the 0.1 default
 	if (traveltime < 0.025)
@@ -220,13 +232,13 @@ void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, voi
 		self.nextthink = localtime + 0.025;
 		return;
 	}
+	self.idletimer = localtime;
+	dprint("Smooth move started\n");
 
 	self.nextthink = localtime + 0.025;
-	//dprint3("Time: ", ftos(localtime), "\n");
-	//dprint3("nextthink: ", ftos(self.nextthink), "\n");
 
 // scale the destdelta vector by the time spent traveling to get velocity
-	self.velocity = normalize(vdestdelta) * max(stspeed, self.travelspeed/30);//clamp(stspeed,tspeed*smperc, tspeed));
+	self.velocity = normalize(vdestdelta) * self.startspeed;
 };
 
 
@@ -243,7 +255,10 @@ void() CalcMoveSmooth_Think = {
 
 	// accelerating
 	if (perctostart < perctofinish) {
-		spd = lerp(self.startspeed, self.travelspeed, perctostart);
+		float lg2 = (log2(perctostart) + 7)/7;
+		lg2 *= lg2;
+		spd = lerp(self.startspeed, self.travelspeed, lg2);
+		//spd = lerp(self.startspeed, self.travelspeed, perctostart);
 	}
 	//stopping
 	else if (perctostart > perctofinish) {
@@ -253,9 +268,13 @@ void() CalcMoveSmooth_Think = {
 		spd = self.travelspeed;
 	}
 
-	spd = max(spd, self.travelspeed/30);
+	spd = max(spd, self.travelspeed/50);
+	vector newvel = spd * dir;
 
-	self.velocity = spd * dir;
+	//dprint3("Speed difference: ", ftos(vlen(newvel) - vlen(self.velocity)), "\n");
+	//dprint4("perctostart: ", ftos(perctostart), ", perctofinish: ", ftos(perctofinish));
+	//dprint3(", speed: ", ftos(spd), "\n");
+	self.velocity = newvel;
 
 	if (vlen((self.origin + self.velocity * 0.025) - self.calcmoveorigin) > vlen(self.finaldest - self.calcmoveorigin)) {
 		self.think = SUB_CalcMoveDone;
@@ -272,13 +291,18 @@ After moving, set origin to exact final destination
 void()  SUB_CalcMoveDone =
 {
 	setorigin(self, self.finaldest);
-
+	if (self.travelspeed) {
+		
+		dprint3("Smooth move ended. Move time: ", ftos(getLocalTime() - self.idletimer), "\n");
+	}
+	self.idletimer = 0;
 	self.calcmoveorigin = '0 0 0';
 	self.travelspeed = 0;
 	self.startspeed = 0;
 	self.finalspeed = 0;
 	self.realsmdist = 0;
 
+	//dprint3("End time: ", ftos(getLocalTime()), "\n");
 	self.velocity = '0 0 0';
 	self.nextthink = -1;
 	if (self.think1)
