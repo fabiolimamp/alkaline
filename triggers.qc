@@ -373,7 +373,7 @@ void() trigger_counter =
 	if (!self.count)
 		self.count = 2;
 
-	self.bubble_count = self.count; // store the initial count amount
+	if (!self.bubble_count) self.bubble_count = self.count; // store the initial count amount
 	self.use = counter_use;
 };
 
