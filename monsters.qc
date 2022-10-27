@@ -235,12 +235,13 @@ void() search_path_angry = {
 void() walkmonster_start_go =
 {
 
-	self.origin_z = self.origin_z + 1;	// raise off floor a bit
-	if (!(self.flags & FL_SPAWNEDMONSTER)) droptofloor();
-	
-	if (!walkmove2(0,0))
-	{
-		dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
+	if (!(self.flags & FL_SPAWNEDMONSTER)) {
+		self.origin_z = self.origin_z + 1;	// raise off floor a bit
+		droptofloor();
+		
+		if (!walkmove2(0,0))
+			dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
+		
 	}
 	
 	search_path_angry();
