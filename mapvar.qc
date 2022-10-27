@@ -158,7 +158,7 @@ void() trigger_mapvar_read_use = {
 void() trigger_mapvar_read_start = {
 	// not started up yet, waiting for 1st player
 	if (!mapvar_cvar) {
-		self.nextthink = time + 0.05;
+		self.nextthink = time + 0.025;
 		return;
 	}
 
@@ -171,10 +171,14 @@ void() trigger_mapvar_read_start = {
 };
 
 void() trigger_mapvar_read = {
-	if (!self.count)
+	if (!self.count){
 		objerror("Mapvar id not selected");
-	if (self.count < 1 || self.count > MAPV_TOTAL)
+		return;
+	}
+	if (self.count < 1 || self.count > MAPV_TOTAL){
 		objerror("Mapvar id out of range");
+		return;
+	}
 
 	self.style = defaultFl(self.style, MAPV_READ_ON);
 	
