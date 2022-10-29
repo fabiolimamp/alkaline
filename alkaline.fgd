@@ -1590,6 +1590,9 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 		impulse(integer) : "Channel (0 - 7) Automatic" : 0
 		wait(integer) : "Random time between sounds" : 20
 		delay(integer) : "Minimum time between sounds" : 2
+		spawnflags(flags) =	[
+			1 : "Start off" : 0
+		]
 	]
 @PointClass base(Targetname, Appearflags) size (16 16 24) color(30 200 35) = play_sound_triggered : "Custom sound trigger
 
