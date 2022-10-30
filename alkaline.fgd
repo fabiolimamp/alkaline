@@ -431,6 +431,7 @@ For collison on rotators, refer to the func_movewall brush entity.
 	spawnflags(flags) =
 	[
 		1 : "Stay open" : 0
+		2 : "Start open" : 0
 	]
 ]
 
