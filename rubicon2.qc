@@ -151,7 +151,7 @@ void() make_breakable_debris = {
 	
 };
 
-void() func_breakable_die = {
+void() func_breakable_break = {
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NONE;
@@ -160,19 +160,12 @@ void() func_breakable_die = {
 	make_breakable_debris();
 
 	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
-
+	
+	// broke by attacker
+	if (self.health <= 0) activator = damage_attacker;
+	
 	SUB_UseTargets();
 	remove(self);
-};
-
-
-void() func_breakable_killed = {
-	activator = damage_attacker;
-	func_breakable_die ();
-};
-
-void() func_breakable_use = {
-	func_breakable_die ();
 };
 
 float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) func_breakable_damage = {
@@ -242,16 +235,16 @@ void() func_breakable =
 
 	precache_sound (self.noise1);
 	precache_model (self.mdl);
-	if (!self.health) 
+	if (self.health <= 0)
 		self.health = 20;
 	
 		
-	self.use = func_breakable_use;
+	self.use = func_breakable_break;
 	self.th_damage = func_breakable_damage;
 
 	if (self.targetname == "" || (self.targetname != "" && (self.spawnflags & BREAKABLE_ALWAYS_SHOOTABLE))) {
 		self.takedamage = DAMAGE_YES;
-		self.th_die = func_breakable_killed;
+		self.th_die = func_breakable_break;
 	}
 
 	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "a");
