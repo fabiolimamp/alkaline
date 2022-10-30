@@ -266,18 +266,19 @@ void() ProximityGrenadeTouch = {
 	if (other == self)
 		return;
 
-	if (other.classname == self.classname)
-		return;
+	//if (other.classname == self.classname) {
+	//	return;
+	//}
 
 
-	if (other.takedamage == DAMAGE_AIM) {
+	if (other.takedamage == DAMAGE_AIM && other.classname != self.classname) {
 		SpawnExplosion(self.origin, 60, self, 0);
 
 		ProximityGrenadeExplode();
 		return;
 	}
 
-	if (vlen(other.velocity) > 0) {
+	if (vlen(other.velocity) > 0 && other.classname != self.classname) {
 		ProximityGrenadeExplode();
 		return;
 	}
@@ -289,10 +290,12 @@ void() ProximityGrenadeTouch = {
 	self.think = ProximityGrenadeCheck;
 	self.nextthink = time + 0.5;
 	self.movetype = MOVETYPE_NONE;
+	self.solid = SOLID_TRIGGER;
 	setsize(self, '-8 -8 -8', '8 8 8');
 
 	setorigin(self, self.origin - (normalize(self.velocity) * 6));
 
+	// state 1 -> sticking to something
 	self.state = 1;
 	//self.spawnmaster = other;
 };
@@ -319,8 +322,8 @@ void() ProximityGrenadeCheck = {
 					&& head.classname != self.classname)
 			blowup = 1;
 
-		if (head.classname == self.classname && head.state == 0)
-			blowup = 1;
+		//if (head.classname == self.classname && head.state == 0)
+		//	blowup = 1;
 
 		traceline(self.origin, head.origin, TRUE, self);
 
@@ -340,10 +343,21 @@ void() ProximityGrenadeCheck = {
 void() MultiGrenadeSpawn = {
 	float ang = 360/self.count;
 	
+	entity head = findradius(self.origin, 32);
+
+	while (head) {
+		if (head.classname == self.classname && head.state == 1 && head.think != MultiGrenadeSpawn) {
+			SUB_CallAsSelf(ProximityGrenadeExplode, head);
+		}
+	  	head = head.chain;
+  	}
+
 	while (self.count) {
 		MiniGrenadeLaunch((self.count-1) * ang);
 		self.count--;
 	}
+
+
 	
 	remove(self);
 };
