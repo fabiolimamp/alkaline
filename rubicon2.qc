@@ -153,24 +153,25 @@ void() make_breakable_debris = {
 
 void() func_breakable_die = {
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	self.solid = SOLID_NOT;
+	self.movetype = MOVETYPE_NONE;
 	self.origin = (self.absmin + self.absmax) * 0.5;
 	setorigin(self, self.origin);	
 	make_breakable_debris();
 
 	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
-	
+
+	SUB_UseTargets();
 	remove(self);
 };
 
+
 void() func_breakable_killed = {
 	activator = damage_attacker;
-	SUB_UseTargets();
 	func_breakable_die ();
 };
 
 void() func_breakable_use = {
-	//activator = other;
-	SUB_UseTargets();
 	func_breakable_die ();
 };
 
