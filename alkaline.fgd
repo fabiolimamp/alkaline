@@ -2845,9 +2845,9 @@ Mapvars are miscellaneous flags (only true/false values) that can be freely used
 "
 [
 	count(int) : "Mapvar id" : : "Obligatory. Must range between 1 and 44."
-	style(choices) : "Relay condition" : 1 = [
-		1 : "Trigger if mapvar is on/true"
-		2 : "Trigger if mapvar is off/false"
+	style(choices) : "Relay condition" : 2 = [
+		1 : "Trigger if mapvar is off/false"
+		2 : "Trigger if mapvar is on/true"
 	]
 ]
 
