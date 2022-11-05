@@ -389,7 +389,7 @@ FIELDS
 //
 .void()		think1;
 .vector		finaldest, finalangle, calcmoveorigin;
-.float 		startspeed, travelspeed, finalspeed, smoothdist, smoothperc, realsmdist;
+.float 		startspeed, travelspeed, finalspeed, smoothdist, smoothcurve, realsmdist;
 .string 	target2, target3, target4, targetname2;
 
 //

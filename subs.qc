@@ -190,7 +190,7 @@ void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, voi
 		self.travelspeed = tspeed*len/2/smdist;
 		self.realsmdist = len/2;
 	}
-	
+
 	else {
 		self.travelspeed = tspeed;
 		self.realsmdist = smdist;
@@ -257,8 +257,9 @@ void() CalcMoveSmooth_Think = {
 	if (perctostart < perctofinish) {
 		float lg2 = (log2(perctostart) + 7)/7;
 		lg2 *= lg2;
-		spd = lerp(self.startspeed, self.travelspeed, lg2);
-		//spd = lerp(self.startspeed, self.travelspeed, perctostart);
+		
+		if (!self.smoothcurve) spd = lerp(self.startspeed, self.travelspeed, lg2);
+		else spd = lerp(self.startspeed, self.travelspeed, perctostart);
 	}
 	//stopping
 	else if (perctostart > perctofinish) {
