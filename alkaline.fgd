@@ -647,10 +647,11 @@ You can override initial weapon/ammo loadout for this specific spot.
 	spawnflags(flags) =
 	[
 		16384 : "Respawn with DM effects" : 0
+		65536 : "No flicker before respawn" : 0
 	]
 	ritem(integer) : "Respawn item if set to 1"
-	respawndelay(integer) : "Respawn time"
-	respawncount(integer) : "How many respawns?"
+	respawndelay(integer) : "Respawn time" : : "Setting it to -1 disables automatic respawning, and will only happen when the item is triggered."
+	respawncount(integer) : "Maximum respawn count" : : "Leave blank for no limit."
 ]
 
 @baseclass size(0 0 0, 32 32 56) color(80 0 200) base(RespawnableItem, Appearflags, ItemStyle) = Ammo

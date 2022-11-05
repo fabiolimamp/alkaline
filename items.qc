@@ -3,13 +3,14 @@ float ITEM_SPAWNED = 64;
 float ITEM_SUSPENDED = 128;
 float ITEM_RESPAWNDM = 16384;
 float ITEM_DONTDROP = 32768;
+float ITEM_NOFLICKER = 65536;
 
 // internal use only! do not expose in the FGD
 // used to drop items from enemies
 float ITEM_DONTPRECACHE = 8388608; 
 
 void() SUB_regen = {
-	//self.model = self.mdl;		// restore original model
+	self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
 
 	if (deathmatch || (self.spawnflags & ITEM_RESPAWNDM))	// Respawn with DM effects
@@ -20,6 +21,8 @@ void() SUB_regen = {
 	self.flicker = "";
 	self.alpha = 0;
 	setorigin (self, self.origin);
+
+	if (self.use) self.use = SUB_Null;
 };
 
 
@@ -70,32 +73,61 @@ void() healthcontroller_think = {
 };
 
 
+// General pickup action.
+// Does brightflash, plays sounds, hides the model, 
+// fires targets, and sets a respawn if that's the case.
+// Assumes that "other" is always a client entity
+void(string snd, float spdelay, float dmdelay) ItemPickup = {
+
+	sound(other, CHAN_ITEM, snd, 1, ATTN_NORM);
+	stuffcmd(other, "bf\n");
+	
+	self.model = string_null;
+	self.solid = SOLID_NOT;
+
+	if (deathmatch == 1) CheckItemRespawn(dmdelay, 1);
+	else CheckItemRespawn(spdelay, 0);
+	
+	activator = other;
+	SUB_UseTargets();
+};
+
 // Supa, Quoth respawning items support Respawn item like in DM if 'ritem' TRUE,
 // override respawn time with 'respawndelay' if set, inc 'cnt' with each respawn
 // and if 'respawncount' is set we'll remove the item if cnt > respawncount
 // remember that SUB_Regen is already set on every item that can respawn, all we
 // need to do is give a nextthink time in order to trigger it
 
-void(entity whatitem, float defaultdelay) CheckItemRespawn = {
-	if (!whatitem.ritem)	// respawn item if true, otherwise abort
+void(float defaultdelay, float forcerespawn) CheckItemRespawn = {
+	if (!self.ritem && !forcerespawn)	// respawn item if true, otherwise abort
 		return;
 
-	whatitem.cnt = whatitem.cnt + 1;	// inc before check to account for zero indexing
+	self.cnt++;	// increment before check to account for zero indexing
 
-	if (whatitem.respawncount)	// limited respawns
-	if (whatitem.respawncount < whatitem.cnt)
+	if (self.respawncount && self.respawncount < self.cnt && !forcerespawn)	// limited respawns
 		return;
 
 	// okay, we're clear to set up a respawn
 
-	if (whatitem.respawndelay)	// custom respawn delay?
-		whatitem.nextthink = time + whatitem.respawndelay;
-	else
-		whatitem.nextthink = time + defaultdelay;
+	if (self.respawndelay)	{// custom respawn delay?
+		self.nextthink = time + self.respawndelay;
 
-	self.spark_finished = time + 1 + random() * 2;
-	self.model = self.mdl;
-	whatitem.flicker = "true";
+		// respawndelay -1 means it'll only respawn via triggering
+		if (self.respawndelay < 0)
+			self.nextthink = 0;
+	}
+	else
+		self.nextthink = time + defaultdelay;
+
+	self.think = SUB_regen;
+	
+	self.use = item_use;
+
+	if (!(self.spawnflags & ITEM_NOFLICKER)) {
+		self.spark_finished = time + 1 + random() * 2;
+		self.model = self.mdl;
+		self.flicker = "true";
+	}
 };
 
 
@@ -109,6 +141,27 @@ void() noclass =
 	dprint ("\n");
 	remove (self);
 };
+
+// respawning item has been triggered
+void() item_use = {
+	// Item not set to respawn.
+	// Just a sanity check, if the item isn't set to respawn
+	// then this shouldn't be even running in the first place
+	if (!self.ritem)	
+		return;
+
+	// item is already in the world, don't do anything
+	if (self.solid == SOLID_TRIGGER)
+		return;
+
+	// respawn count reached, don't spawn it again
+	if (self.respawncount && self.respawncount < self.cnt)
+		return;
+
+	self.cnt++;
+	self.nextthink = 0;
+	SUB_regen();
+}
 
 /*
 ============
@@ -322,25 +375,9 @@ void() health_touch = {
 	sprint(other, ftos(self.healamount));
 	sprint(other, " health\n");
 	
-	// health touch sound
-	sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 
-	stuffcmd(other, "bf\n");
-	
-	self.model = string_null;
-	self.solid = SOLID_NOT;
+	ItemPickup(self.noise, 20, 30);
 
-	self.think = SUB_regen;
-
-	if (deathmatch != 2)		// deathmatch 2 is the silly old rules
-	{
-		if (deathmatch)	self.nextthink = time + 20;
-		else CheckItemRespawn(self, 30); // checks if item is set to respawn and sets nextthink
-	}
-	
-	
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
 };	
 
 
@@ -395,20 +432,12 @@ void() armor_touch = {
 	other.armorvalue = value;
 	other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
 
-	self.solid = SOLID_NOT;
-	self.model = string_null;
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)
-		self.nextthink = time + 20;
-	self.think = SUB_regen;
-
 	sprint(other, "You got armor\n");
+
 // armor touch sound
-	sound(other, CHAN_ITEM, "items/armor1.wav", 1, ATTN_NORM);
-	stuffcmd(other, "bf\n");
-	
+
+	ItemPickup("items/armor1.wav", 30, 20);
+
 	if (!self.state) {
 		activator = other;
 		SUB_UseTargets();
@@ -446,23 +475,9 @@ void() shard_touch = { // progs_dump
 		other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
 	}
 
-	self.solid = SOLID_NOT;
-	self.model = string_null;
-
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)  // doesn't respawn in "deathmatch 2"
-		self.nextthink = time + 20;
-
-	self.think = SUB_regen;
+	ItemPickup("items/shard_pickup.wav", 30, 20);
 
 	sprint(other, "You got armor\n");
-	sound(other, CHAN_ITEM, "items/shard_pickup.wav", 1, ATTN_NORM);
-	stuffcmd(other, "bf\n");
-
-	activator = other;
-	SUB_UseTargets();	// fire all targets / killtargets
 };
 
 
@@ -647,18 +662,8 @@ void() weapon_touch =
 	if (leave)
 		return;
 
-// remove it in single player, or setup for respawning in deathmatch
-	self.model = string_null;
-	self.solid = SOLID_NOT;
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)
-		self.nextthink = time + 30;
-	self.think = SUB_regen;
-	
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+
+	ItemPickup("weapons/pkup.wav", 30, 30);
 };
 
 // johnfitz new items
@@ -916,9 +921,6 @@ void() ammo_touch = {
 	sprint (other, self.netname);
 	if (picked_amount > 1) sprint (other, "s");
 	sprint (other, "\n");
-// ammo touch sound
-	sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
-	stuffcmd (other, "bf\n");
 
 // change to a better weapon if appropriate
 
@@ -938,19 +940,7 @@ void() ammo_touch = {
 	   W_SetCurrentAmmo();
 	self = stemp;
 
-// remove it in single player, or setup for respawning in deathmatch
-	self.model = string_null;
-	self.solid = SOLID_NOT;
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)
-		self.nextthink = time + 30;
-
-	self.think = SUB_regen;
-
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+	ItemPickup("weapons/lock4.wav", 30, 30);
 };
 
 
@@ -1227,9 +1217,6 @@ void() powerup_touch =
 	if (other.health <= 0)
 		return;
 
-	sprint (other, "You got the ");
-	sprint (other, self.netname);
-	sprint (other,"\n");
 
 	// if (deathmatch)
 	// {
@@ -1244,37 +1231,8 @@ void() powerup_touch =
 	// 	self.think = SUB_regen;
 	// }
 
-	// Supa, SP respawning items support
-	self.mdl	= self.model;
-	self.think	= SUB_regen;
 
-	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM); //johnfitz -- was CHAN_VOICE
-	stuffcmd (other, "bf\n");
-	self.solid = SOLID_NOT;
 	other.items = other.items | self.items;
-	self.model = string_null;
-	
-	if (!deathmatch)
-	{
-		local float spawndelay;
-
-		if (self.classname == "item_artifact_invulnerability" || self.classname == "item_artifact_invisibility")
-			spawndelay = 300;
-		else
-			spawndelay = 60;
-
-		CheckItemRespawn(self, spawndelay);
-	}
-	else
-	{
-		if ((self.classname == "item_artifact_invulnerability") ||
-		    (self.classname == "item_artifact_invisibility"))
-			self.nextthink = time + 60*5;
-		else
-			self.nextthink = time + 60;
-	}
-
-	
 
 // do the apropriate action
 	if (self.classname == "item_artifact_envirosuit")
@@ -1339,9 +1297,17 @@ void() powerup_touch =
 		other.jboots_finished = time + 30;
 		other.jboots_rechargelimit = defaultFl(self.jboots_rechargelimit, -1);
 	}
-	
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+		
+	sprint (other, "You got the ");
+	sprint (other, self.netname);
+	sprint (other,"\n");
+
+	if (self.classname == "item_artifact_invulnerability" || self.classname == "item_artifact_invisibility")
+		ItemPickup(self.noise, 300, 300);
+	else
+		ItemPickup(self.noise, 60, 60);
+		
+
 };
 
 
