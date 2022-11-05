@@ -1173,6 +1173,11 @@ float FILTER_FIELD_COUNT = 11;
 float FILTER_FIELD_CNT = 12;
 float FILTER_FIELD_TYPE = 13;
 float FILTER_FIELD_TARGETNAME2 = 14;
+float FILTER_FIELD_AMMO_SHELLS = 15;
+float FILTER_FIELD_AMMO_NAILS = 16;
+float FILTER_FIELD_AMMO_ROCKETS = 17;
+float FILTER_FIELD_AMMO_CELLS = 18;
+float FILTER_FIELD_CURRENTAMMO = 19;
 
 
 float FILTER_FIELDTYPE_FLOAT = 0;
@@ -1282,6 +1287,31 @@ float(entity targ, entity filter) filter_entity = {
 		case FILTER_FIELD_TYPE:
 			fieldtype = FILTER_FIELDTYPE_STRING;
 			targstring = targ.type;
+			break;
+
+		case FILTER_FIELD_AMMO_SHELLS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_shells;
+			break;
+
+		case FILTER_FIELD_AMMO_NAILS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_nails;
+			break;
+
+		case FILTER_FIELD_AMMO_ROCKETS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_rockets;
+			break;
+
+		case FILTER_FIELD_AMMO_CELLS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_cells;
+			break;
+
+		case FILTER_FIELD_CURRENTAMMO:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.currentammo;
 			break;
 	}
 	result = 0;
@@ -1417,6 +1447,31 @@ void() trigger_filter_use = {
 		case FILTER_FIELD_TYPE:
 			fieldtype = FILTER_FIELDTYPE_STRING;
 			targstring = targ.type;
+			break;
+
+		case FILTER_FIELD_AMMO_SHELLS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_shells;
+			break;
+
+		case FILTER_FIELD_AMMO_NAILS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_nails;
+			break;
+
+		case FILTER_FIELD_AMMO_ROCKETS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_rockets;
+			break;
+
+		case FILTER_FIELD_AMMO_CELLS:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.ammo_cells;
+			break;
+
+		case FILTER_FIELD_CURRENTAMMO:
+			fieldtype = FILTER_FIELDTYPE_FLOAT;
+			targfloat = targ.currentammo;
 			break;
 	}
 	result = 0;

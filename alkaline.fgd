@@ -2511,6 +2511,11 @@ Also, the state of the last evaluation is stored in this entity's 'state' field 
 		12 : "cnt (float, use 'count' field)"
 		13 : "type (string, use 'type' field)"
 		14 : "targetname2 (string, use 'type' field)"
+		15 : "ammo_shells (float, use 'count' field)"
+		16 : "ammo_nails (float, use 'count' field)"
+		17 : "ammo_rockets (float, use 'count' field)"
+		18 : "ammo_cells (float, use 'count' field)"
+		19 : "currentammo (float, use 'count' field)"
 	]
 	weapon(choices) : "Operation" : 0 = [
 		0 : "== (equal, valid for all fields)"
