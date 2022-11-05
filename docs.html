@@ -838,6 +838,7 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 <p>A <strong>func_breakable</strong> is a visible object that can be destroyed by shooting it. If it has a targetname, it will only be destroyed by targeting it.</p>
 <p>You have 4 debris variations, each with a different debris model and accompanying sound effect (<strong>style</strong> key).<p>
 <p>A custom debris model can be set through the <strong>mdl</strong> key. You can also customize which particle effect will be spawned when the breakable get shot (<strong>bloodtype</strong> key).</p>
+<p>If you want to drop an item out of a breakable, just make the func_breakable entity target a trigger-spawned item that has the "don't start dropped" flag checked as well. This way you can place the item "inside" the breakable brush without making it get stuck.</p>
 
 <h3 id="togglable-brushes">Walls and togglable brushes</h3>
 <p>There are 2 togglable brush entities:</p>
