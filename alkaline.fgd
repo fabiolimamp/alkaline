@@ -1422,6 +1422,7 @@ Spawnflag 2 keeps the entity's original velocity."
 	spawnflags(flags) = [
 		1 : "Keep original angle"
 		2 : "Keep original velocity"
+		4 : "Spawn teleport effect"
 	]
 ]
 

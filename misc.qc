@@ -473,25 +473,29 @@ target_move
 
 
 void() target_move_use = {
-	local entity t;
-	local vector neworigin;
+	entity t;
+	vector neworigin;
 
 	t = find(world, targetname, self.target);
 
 	if (!t) //targetname not found, search for targetname2
 		t = find(world, targetname2, self.target);
 
-	if(t) {
+	if (t) {
 		if(t.movetype == MOVETYPE_STEP) //monsters need to move off the ground, otherwise they'll lerp 
 			neworigin = self.origin + '0 0 1';
 		else
 			neworigin = self.origin;
 
+		if (self.spawnflags & 4) spawn_tfog(t.origin);
+
 		setorigin(t, neworigin);
 		//t.origin = self.origin;
-		if(!(self.spawnflags & 1)) t.angles = self.mangle;
-		if(!(self.spawnflags & 2)) t.velocity = '0 0 0';
+		if (!(self.spawnflags & 1)) t.angles = self.mangle;
+		if (!(self.spawnflags & 2)) t.velocity = '0 0 0';
 		t.flags = t.flags - t.flags & FL_ONGROUND;
+
+		if (self.spawnflags & 4) spawn_tfog(t.origin);
 	}
 
 };
@@ -502,10 +506,10 @@ Use spawnflag 1 to not change the entity's original angle.
 Spawnflag 2 keeps the entity's original velocity.
 */
 void() target_move = {
-	if(!self.target)
+	if (!self.target)
 		objerror("No target set");
 
-	if(!self.targetname)
+	if (!self.targetname)
 		objerror("No targetname set");
 
 	self.use = target_move_use;
