@@ -173,6 +173,7 @@ body {
 			<li><a href="#bobbing">Bobbing brushes</a></li>
 			<li><a href="#func_fade">Fading brushes</a></li>
 			<li><a href="#func_touchplate">Touchplate</a></li>
+			<li><a href="#eased-movement">Eased movement</a></li>
 		</ul>
 	</li>
 
@@ -276,8 +277,8 @@ body {
 
 <h3 id="target_infight">Infight trigger</h3>
 <p>Point entity that makes <strong>target</strong> monster angry at <strong>target2</strong> when triggered.</p>
-<p>
-By default, the infighting doesn't start mutually, that is, <strong>target2</strong> monster will only get mad back at <strong>target</strong> after it's been attacked. If you want to make them angry at each other instantly, you can set the spawnflag <strong>Mutual hate</strong>.
+<p>If there are multiple monsters with the name indicated under <strong>target</strong>, they all will get angry at <strong>target2</strong>. <strong>target2</strong> on the other hand must point to a single entity, or else you'll get unpredictable results.</p>
+<p>By default, the infighting doesn't start mutually, that is, <strong>target2</strong> monster will only get mad back at <strong>target</strong> after it's been attacked. If you want to make them angry at each other instantly, you can set the spawnflag <strong>Mutual hate</strong>.
 </p>
 
 <h3 id="monsters-list">Monsters list</h3>
@@ -378,10 +379,11 @@ By default, the infighting doesn't start mutually, that is, <strong>target2</str
 <p>Also from progs_dump comes the <strong>trigger_usekey</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event - like a door would, but with no need for a door. It can be used by a player touching it, or by triggering.</p>
 
 <h3 id="item-respawning">Item respawning</h3>
-<p>Setting an item's <strong>ritem</strong> key to 1 makes it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.
-</p>
-<p>By default, the item makes the traditional teleport sound/fog effect when respawning, but you can change it to the more discreet deathmatch-style respawn effect, through the spawnflag <strong>Spawn with DM effects</strong>.
-</p>
+<p>Setting an item's <strong>ritem</strong> key to 1 makes it respawns after a few seconds, customizable through the <strong>respawndelay</strong> key. You also can set the maximum number of respawns through <strong>respawncount</strong>.</p>
+
+<p>If the item is set to respawn, triggering it also makes it respawn instantly, while still respecting respawncount if that's set. Setting -1 on the <strong>respawndelay</strong> field makes the item never respawn automatically, thus being respawnable only through triggering.</p>
+
+<p>By default, the item makes the traditional teleport sound/fog effect when respawning, but you can change it to the more discreet deathmatch-style respawn effect, through the spawnflag <strong>Spawn with DM effects</strong>.</p>
 
 <h3 id="item-trigger-spawning">Trigger spawning</h3>
 <p>Like monsters, items also support trigger-spawning. Just set the <strong>Trigger spawned</strong> flag and it'll only show up after triggered. You can make it spawn silently using the <strong>Spawn silent</strong> flag.
@@ -851,7 +853,8 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 
 
 <h3 id="rotators">Rotators</h3>
-<p>Alkaline comes with the well-known Hipnotic's rotate entities. You can refer to <a href="https://tomeofpreach.wordpress.com/quoth/tutorial/rotation-overview/">czg's in-depth tutorial over Preach's Blog</a> on how to use them.</p>
+<p>Alkaline comes with the well-known Hipnotic's rotate entities. The FGD descrition for the <strong>func_rotate_entity</strong> and <strong>func_rotate_door</strong> point entities have in-depth explanations on how to implement the whole setup.</p>
+<p>You can also refer to <a href="https://tomeofpreach.wordpress.com/quoth/tutorial/rotation-overview/">czg's tutorial over Preach's Blog</a> on how to use them.</p>
 
 <h3 id="exploboxes">Exploboxes</h3>
 <p>Besides the usual <strong>misc_explobox</strong> point entities, there's a <strong>func_explobox</strong> brush entity that works exactly the same way but can be made in any shape.</p>
@@ -861,7 +864,7 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 <p>The <strong>func_laser</strong> brush entity creates a togglable laser with a faint flickering alpha effect. Hurts to touch, can be used to block players. We recommend to use it with a fullbright-colored texture for better looks.</p>
 
 <h3 id="ladders">Ladders</h3>
-<p><strong>trigger_ladder</strong> creates an invisible ladder entity. When player is touching it, he can climb by pushing "jump".</p>
+<p><strong>trigger_ladder</strong> creates an invisible ladder entity. When player is touching it, they'll move in the direction they're facing when pressing forward. Also they can climb directly by pushing "jump".</p>
 
 <h3 id="bobbing">Bobbing</h3>
 <p>You can create entities that gently moves back and forth in any direction. <strong>func_bob</strong> is a brush entity, and <strong>misc_bob</strong> is a point entity that uses external models.</p>
@@ -893,6 +896,9 @@ It can be set to start visible through the "Start on" spawnflag.
 <p>The <strong>target2</strong> field can be used to target a light entity, so it will fade in/out together with the brush.</p>
 
 <p>If switchable shadows are on, they'll fade together as well.</p>
+
+<h3 id="eased-movement">Eased movements</h3>
+<p>You can have eased-out start and stop movements for func_train, func_door and func_plat by adding a <strong>smoothdist</strong> field to them. In that you set the distance from the start and before the end that the movement will accelerate/slow down. </p>
 
 <hr>
 
@@ -984,6 +990,7 @@ It can be set to start visible through the "Start on" spawnflag.
 <h3 id="target_move">target_move</h3>
 <p>Using this point entity you can move any other entity to its origin upon triggering. Works with any entity type. Think of it as a simplified, general-purpose teleport.</p>
 <p>If the targeted entity changes behavior when given a targetname, you can target its <strong>targetname2</strong> field instead.</p>
+<p>Optionally it may spawn a teleport fog effect.</p>
 
 <h3 id="target_setsize">target_setsize</h3>
 <p>Resizes the targeted entity's bounding box. Targets both <strong>targetname</strong> and <strong>targetname2</strong> fields.
