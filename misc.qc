@@ -541,28 +541,28 @@ void(entity t1, entity t2) make_angry_at =
 	}
 };
 
-void() target_infight_use = 
-{
-	local entity	t1, t2;
-
-	t1 = find(world, targetname, self.target);
+void() target_infight_use = {
+	entity t1, prev_t1, t2;
+	
 	t2 = find(world, targetname, self.target2);
 	
-	if (!t1)
-	{
-		dprint("[target_infight] Cannot find target\n");
-		return;
-	}
-	if (!t2)
-	{
+	if (!t2) {
 		dprint("[target_infight] Cannot find target2\n");
 		return;
 	}
+
+	t1 = find(world, targetname, self.target);
+	while (t1) {
+		if (t1.flags & FL_MONSTER){
+			make_angry_at(t1, t2);
+			prev_t1 = t1;
+		}
+		t1 = find(t1, targetname, self.target);
+	}
+		
 	
-	make_angry_at(t1, t2);
-	
-	if (self.spawnflags & INFIGHT_MUTUAL)
-		make_angry_at(t2, t1);
+	if (self.spawnflags & INFIGHT_MUTUAL && prev_t1)
+		make_angry_at(t2, prev_t1);
 };
 
 /*QUAKED target_infight (1 .0 .5) (-8 -8 -8) (8 8 8) MUTUAL
@@ -572,8 +572,7 @@ By default, the infighting doesn't start mutually, that is, 'target2' monster wi
 
 If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'.
 */
-void() target_infight = 
-{
+void() target_infight = {
 	self.use = target_infight_use;
 };
 

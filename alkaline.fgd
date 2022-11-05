@@ -1426,12 +1426,13 @@ Spawnflag 2 keeps the entity's original velocity."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname) = target_infight : "Makes 'target' monster angry at 'target2'.
+@PointClass base(Appearflags, Targetname) = target_infight : "Makes 'target' monster angry at 'target2'. If there are multiple monsters with the name indicated under 'target', they all will get angry at 'target2'. 'target2' on the other hand must point to a single entity, or else you'll get unpredictable results.
 
 By default, the infighting doesn't start mutually, that is, 'target2' monster will only get mad back at 'target' after it's been attacked.
-If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'."
+If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'. If you have more than one monster under 'target', the victim of the infighting will only get angry back at one of them.
+"
 [
-	target(target_destination) : "The monster who will get angry."
+	target(target_destination) : "The monster(s) who will get angry."
 	target2(target_destination) : "Who target will get angry at."
 	spawnflags(flags) = [ 1: "Mutual hate" : 0 ]
 ]
