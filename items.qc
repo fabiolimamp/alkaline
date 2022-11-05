@@ -434,9 +434,17 @@ void() armor_touch = {
 
 	sprint(other, "You got armor\n");
 
-// armor touch sound
 
-	ItemPickup("items/armor1.wav", 30, 20);
+	sound(other, CHAN_ITEM, "items/armor1.wav", 1, ATTN_NORM);
+	stuffcmd(other, "bf\n");
+	
+	self.model = string_null;
+	self.solid = SOLID_NOT;
+
+	if (deathmatch == 1) CheckItemRespawn(20, 1);
+	else CheckItemRespawn(30, 0);
+	
+	activator = other;
 
 	if (!self.state) {
 		activator = other;
