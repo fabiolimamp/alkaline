@@ -440,7 +440,7 @@ void() changelevel_touch = {
 		nextmap = self.map;
 
 	//johnfitz -- add a serverflag so users spawn at info_player_start2 when returning to startmap
-	if (nextmap == "start")
+	if (mapname == "start")
 		serverflags = serverflags | 16; //1,2,4,8 are used for runes
 	//johnfitz
 
