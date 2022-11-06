@@ -515,8 +515,10 @@ void() PlayerPreThink =
 	}
 
 	checkClientInWaterBrush();
-	if (self.onladder)
+	if (self.onladder){
 		self.gravity = 0.00000001;
+		self.waterlevel = 2;
+	}
 	self.wasonladder = self.onladder;
 	self.onladder = 0;
 };
@@ -849,6 +851,11 @@ void() PlayerPostThink =
 //	local	float	r;
 	checkClientInWaterBrush();
 	
+	if (self.wasonladder){
+		self.gravity = 0.00000001;
+		self.waterlevel = 2;
+	}
+
 	if (self.flags & FL_CLIENT) {
 		mapvar_cvar = TRUE;			// Map Variable are live
 	}

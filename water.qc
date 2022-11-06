@@ -111,8 +111,8 @@ void() checkClientInWaterBrush = {
 			float dens;
 			vector cl;
 
-			if !(self.flags & FL_INLIQUIDBRUSH)
-				self.prevgravity = self.gravity;
+			//if !(self.flags & FL_INLIQUIDBRUSH)
+			//	self.prevgravity = self.gravity;
 
 			if (e.liquidtype == LIQUID_SLIME) {cl = '0 25 5'; dens = 150;}
 			else if (e.liquidtype == LIQUID_LAVA) {cl = '255 80 0'; dens = 150;}
@@ -122,7 +122,7 @@ void() checkClientInWaterBrush = {
 			if (e.liquiddensity) dens = e.liquiddensity;
 
 			if (lvl >= 2) self.gravity = 0.000001;
-			else self.gravity = self.prevgravity;
+			else if (!self.onladder) self.gravity = self.wantedgravity;
 
 			if (lvl >= 3){
 				csf_set(self, dens, cl, 70);
@@ -143,7 +143,7 @@ void() checkClientInWaterBrush = {
 	// so turn off everything if the entity was in one at the previous frame
 	if (self.flags & FL_INLIQUIDBRUSH) {
 		csf_clear(self, 70);
-		self.gravity = self.prevgravity;
+		if (!self.onladder) self.gravity = self.wantedgravity;
 		//self.watertype = CONTENT_EMPTY;
 		//self.waterlevel = 0;
 

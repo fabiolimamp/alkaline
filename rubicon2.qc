@@ -1080,6 +1080,7 @@ void() ladder_touch =
 			return;		// not facing the right way
 	}
 	other.onladder = 1;
+	//if (!(other.flags & FL_INLIQUIDBRUSH)) other.prevgravity = other.gravity;
 	other.gravity = 0.00000001; //zero doesnt seem to work
 	other.waterlevel = 2;
 }
