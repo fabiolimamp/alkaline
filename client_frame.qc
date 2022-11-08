@@ -342,7 +342,7 @@ void() WaterMove =
 		}
 	}
 	
-	if ( !(self.flags & FL_INWATER) && !self.onladder)
+	if ( !(self.flags & FL_INWATER) && !self.onladder && !self.wasonladder)
 	{	
 
 // player enter water sound
