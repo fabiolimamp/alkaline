@@ -543,7 +543,7 @@ void() UpdateLightning = {
 	}
 	
 	makevectors(self.owner.v_angle);
-	vector org = self.owner.origin + self.owner.view_ofs + v_forward*16 - v_up*6;
+	vector org = self.owner.origin + self.owner.view_ofs + v_forward*32 - v_up*12;
 
 	float rnd = random();
 	vector dest;
@@ -711,9 +711,9 @@ void() W_FireLightning = {
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 	//makevectors(self.v_angle);
-	org = self.origin + self.view_ofs + v_forward*16 - v_up*6;
+	org = self.origin + self.view_ofs + v_forward*32 - v_up*12;
 	
-	traceline (org, org + v_forward*600, TRUE, self);
+	traceline (org - v_forward*32, org + v_forward*600, TRUE, self);
 	vector endpos = trace_endpos;
 	float hit = LightningDamage(self.origin, endpos + v_forward*4, self, 30);
 
