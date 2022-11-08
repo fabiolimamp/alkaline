@@ -477,13 +477,6 @@ void() StartFrame =
 		CreateBackstop();
 	}
 	
-	if (framecount >= 1) {
-		self = nextent(world);
-		while (self) {
-			entity_watercheck();
-			self = nextent(self);
-		}
-	}
 
 };
 
@@ -491,6 +484,7 @@ void() EndFrame = {
 	if (prevframe == framecount) {
 		return;
 	}
+	//dprint3("Liquid brushes checked: ", ftos(liquidbrushchecks), "\n");
 
 	//eprint(backstop);
 	//if(!nextent(backstop)) dprint("Backstop is last\n");
@@ -507,7 +501,30 @@ void() EndFrame = {
 	}
 
 	update_bulletholes();
+	gibswaterchecked = 0;
+	waterchecked = 0;
+	liquidbrushchecks = 0;
+	if (framecount >= 1) {
+		self = nextent(world);
+		while (self) {
+			if (
+				self.movetype == MOVETYPE_STEP ||
+				self.movetype == MOVETYPE_TOSS ||
+				self.movetype == MOVETYPE_BOUNCE ||
+				self.movetype == MOVETYPE_BOUNCEMISSILE
+			) {
+				
+				if (self.classname != "gib" || gibswaterchecked < 100) {
+					entity_watercheck();
+					gibswaterchecked++;
+				}
+				//waterchecked++;
+			}
 
+			self = nextent(self);
+		}
+		//dprint3("Waterchecked: ", ftos(waterchecked), "\n");
+	}
 	/*self = nextent(world);
 	while (self) {
 		entity_watercheck();

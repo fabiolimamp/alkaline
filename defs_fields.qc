@@ -164,6 +164,8 @@ nosave float gamestarted;
 
 entity lastspawn;
 
+float gibswaterchecked, waterchecked, liquidbrushchecks;
+
 
 // simple kex detection, thanks Lunaran
 float isKex; // running the quake rerelease

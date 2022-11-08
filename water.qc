@@ -25,31 +25,20 @@ void() startupWaterBrushes = {
 };
 
 void() entity_watercheck = {
-	//if (!(self.flags & FL_MONSTER) || self.health <= 0) 
-	if (self.movetype == MOVETYPE_NOCLIP ||
-		self.movetype == MOVETYPE_PUSH ||
-		self.movetype == MOVETYPE_NONE ||
-		self.movetype == MOVETYPE_WALK // clients are handled in pre/postthink
-	)
-		return;
 
 	float ct = pointcontents2(self.origin);
 
 	if (ct <= CONTENT_WATER){
 		if (self.flags & FL_SWIM2 && self.health > 0) self.flags |= FL_FLY;
 
-		/*if (!(self.flags & FL_INWATER) && touchedliquidbrush){
-			sound (self, CHAN_AUTO, "misc/h2ohit1.wav", 1, ATTN_NORM);
-		}*/
 		
 		if ((self.flags & FL_MONSTER && self.health <= 0) || self.classname == "gib") {
-			if (!self.prevgravity) self.prevgravity = self.gravity;
 			if (!self.gravity) self.gravity = 1;
+			if (!self.prevgravity) self.prevgravity = self.gravity;
 			if (self.gravity > 0.05) {
 				self.velocity *= 0.05/self.gravity; // reduces velocity when hitting water
 			}
 			self.gravity = 0.05;
-			//if (self.classname == "monster_wizard") {eprint(self);}
 		}
 
 		self.flags |= FL_INWATER;
@@ -158,12 +147,26 @@ float(vector org) pointcontents2 = {
 
 	if (pc != CONTENT_EMPTY) return pc;
 
-	entity e;
 	float touched;
 
-	e = liquidbrushfirst;
+	entity e = liquidbrushfirst;
 	while (e) {
-		touched = getTouch(org, e);
+		//liquidbrushchecks++;
+		if (org_x > e.absmax_x) 
+			touched = 0;
+		else if (org_x < e.absmin_x)
+			touched = 0;
+		else if (org_y > e.absmax_y)
+			touched = 0;
+		else if (org_y < e.absmin_y)
+			touched = 0;
+		else if (org_z > e.absmax_z)
+			touched = 0;
+		else if (org_z < e.absmin_z)
+			touched = 0;
+		else 
+			touched = 1;
+
 		if (touched) {
 			touchedliquidbrush = TRUE;
 
@@ -199,7 +202,7 @@ float (entity e, entity brush) getWaterLevelFromBrush = {
 	float lvl;
 	float depth = brush.absmax_z - e.absmin_z;
 
-	if (depth > (e.view_ofs_z - e.mins_z))
+	if (depth > (e.view_ofs_z - e.mins_z + 2))
 		lvl = 3;
 	else if (depth > (e.absmax_z - e.absmin_z)/2) {
 		lvl = 2;
