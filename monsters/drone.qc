@@ -301,7 +301,8 @@ void(entity attacker, float damage) drn_pain = {
 
 void()  drn_die1        =[      $paa1,            drn_die2      ] {self.takedamage = DAMAGE_NO;
 	sound(self, CHAN_VOICE, "drone/drndeth.wav", 1, ATTN_NORM);
-	self.movetype = MOVETYPE_BOUNCEMISSILE;
+	//self.movetype = MOVETYPE_BOUNCEMISSILE;
+	self.movetype = MOVETYPE_BOUNCE;
 	setsize(self, '0 0 0', '0 0 0');
 
 	self.touch = drn_dead_touch;
