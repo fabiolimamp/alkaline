@@ -183,7 +183,7 @@ void() PlayerJump =
 			self.velocity_z = 50;
 
 // play swiming sound
-		if (self.swim_flag < time && !self.onladder)
+		if (self.swim_flag < time && !self.onladder && !self.wasonladder )
 		{
 			self.swim_flag = time + 1;
 			if (random() < 0.5)
