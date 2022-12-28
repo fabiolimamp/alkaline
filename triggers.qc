@@ -330,7 +330,7 @@ void() counter_use =
 	if (self.count <= 0)
 		return;
 
-	self.count = self.count - 1;
+	self.count--;
 	
 	if (self.count > 0)	{
 		if (activator.classname == "player"	&& (self.spawnflags & SPAWNFLAG_NOMESSAGE) == 0) {
@@ -354,7 +354,7 @@ void() counter_use =
 		centerprint(activator, "Sequence completed!");
 
 	self.enemy = activator;
-	multi_trigger();
+	SUB_UseTargets();
 
 	if (self.spawnflags & COUNTER_RESET)
 		self.count = self.bubble_count;
