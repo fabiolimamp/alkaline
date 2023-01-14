@@ -476,10 +476,15 @@ void() target_move_use = {
 	entity t;
 	vector neworigin;
 
-	t = find(world, targetname, self.target);
+	// move activator
+	if (self.spawnflags & 8)
+		t = activator;
+	else {
+		t = find(world, targetname, self.target);
 
-	if (!t) //targetname not found, search for targetname2
-		t = find(world, targetname2, self.target);
+		if (!t) //targetname not found, search for targetname2
+			t = find(world, targetname2, self.target);
+	}
 
 	if (t) {
 		if(t.movetype == MOVETYPE_STEP) //monsters need to move off the ground, otherwise they'll lerp 
@@ -487,7 +492,10 @@ void() target_move_use = {
 		else
 			neworigin = self.origin;
 
-		if (self.spawnflags & 4) spawn_tfog(t.origin);
+		// spawn teleport effect
+		if (self.spawnflags & 4) {
+			spawn_tfog(t.origin);
+		}
 
 		setorigin(t, neworigin);
 		//t.origin = self.origin;
@@ -633,17 +641,16 @@ START_OFF wall doesn't block until triggered.
 "dmg" is the amount of damage to cause when touched.
 */
 
-void () blocker_touch =
-	{
-    if ( !self.dmg )
-      return;
+void () blocker_touch =	{
+	if (!self.dmg )
+	  return;
 
 	if (time < self.attack_finished)
 		return;
 	self.attack_finished = time + 0.5;
 	T_Damage(other, self, self, self.dmg, DMGTYPE_CRUSH);
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-   };
+};
 
 void () blocker_use = {
 	if ( !self.state ) {
@@ -678,18 +685,18 @@ void() func_togglewall = {
 	self.use = blocker_use;
 
 	if ( !self.noise )
-      self.noise = ("misc/null.wav");
+		self.noise = ("misc/null.wav");
 
-   	if ( !self.noise1 )
-      self.noise1 = ("misc/null.wav");
+	if ( !self.noise1 )
+		self.noise1 = ("misc/null.wav");
 
 	precache_sound( self.noise );
 	precache_sound( self.noise1 );
 	
 	if ( self.spawnflags & START_OFF ) self.state = 1;
 	else self.state = 0;
-      
-    blocker_use();
+	  
+	blocker_use();
 };
 
 /*****************
@@ -927,9 +934,9 @@ play a sound when it is used
 "impulse" channel on which to play sound (0-7) (0 automatic is default)
 "speed" attenuation factor
    -1 - no attenuation
-    1 - normal
-    2 - idle
-    3 - static
+	1 - normal
+	2 - idle
+	3 - static
 */
 void() play_sound_triggered = {
 
@@ -985,9 +992,9 @@ play a sound on a periodic basis
 "impulse" channel on which to play sound (0-7) (0 automatic is default)
 "speed" attenuation factor
    -1 - no attenuation
-    1 - normal
-    2 - idle
-    3 - static
+	1 - normal
+	2 - idle
+	3 - static
 */
 void() play_sound = {
 
