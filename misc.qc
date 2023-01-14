@@ -996,7 +996,10 @@ play a sound on a periodic basis
 	2 - idle
 	3 - static
 */
-void() play_sound = {
+
+void() play_sound = {play_sound_repeat();}
+
+void() play_sound_repeat = {
 
 	if (!self.noise) {
 		objerror ("no soundfile set in noise!\n");

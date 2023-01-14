@@ -1570,7 +1570,7 @@ If the target entity changes its default behavior when 'targetname' is set (such
 
 
 
-@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound : "Hipnotic sound player
+@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound_repeat : "Hipnotic sound player
 
 Plays a one off sound on a periodic basis.
 Do NOT use looped sounds with this entity. For looped sounds use ambient_general.
