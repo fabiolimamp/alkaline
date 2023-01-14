@@ -491,11 +491,22 @@ void() target_move_use = {
 
 		setorigin(t, neworigin);
 		//t.origin = self.origin;
+		// keep original angle
 		if (!(self.spawnflags & 1)) t.angles = self.mangle;
+		// keep original velocity
 		if (!(self.spawnflags & 2)) t.velocity = '0 0 0';
 		t.flags = t.flags - t.flags & FL_ONGROUND;
 
-		if (self.spawnflags & 4) spawn_tfog(t.origin);
+		if (self.spawnflags & 4) {
+			vector tfog_org;
+			if (t.flags & FL_CLIENT) {
+				makevectors(t.v_angle);
+				tfog_org = t.origin + v_forward * 32;
+			}
+			else
+				tfog_org = t.origin;
+			spawn_tfog(tfog_org);
+		}
 	}
 
 };
@@ -506,7 +517,7 @@ Use spawnflag 1 to not change the entity's original angle.
 Spawnflag 2 keeps the entity's original velocity.
 */
 void() target_move = {
-	if (!self.target)
+	if (!self.target && !(self.spawnflags & 8))
 		objerror("No target set");
 
 	if (!self.targetname)
@@ -514,7 +525,7 @@ void() target_move = {
 
 	self.use = target_move_use;
 	
-	if(!self.mangle) self.mangle = self.angles;
+	if (!self.mangle) self.mangle = self.angles;
 };
 
 

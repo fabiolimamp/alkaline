@@ -1424,6 +1424,7 @@ Spawnflag 2 keeps the entity's original velocity."
 		1 : "Keep original angle"
 		2 : "Keep original velocity"
 		4 : "Spawn teleport effect"
+		8 : "Move activator"
 	]
 ]
 
