@@ -76,6 +76,33 @@ float(float y, float x) atan2 =
     return vectoyaw(ang);
 }
 
+float(float x) acos {
+    float negate;
+
+    if (x < 0) negate = 1;
+    else negate = 0;
+    
+    x = fabs(x);
+    float ret = -0.0187293;
+    ret = ret * x;
+    ret = ret + 0.0742610;
+    ret = ret * x;
+    ret = ret - 0.2121144;
+    ret = ret * x;
+    ret = ret + 1.5707288;
+    ret = ret * sqrt(1.0-x);
+    ret = ret - 2 * negate * ret;
+    return (negate * 3.14159265358979 + ret)/3.14159265358979 * 180;
+}
+
+float(float x) acos2 = {
+    float a = sqrt(2+2*x);
+    float b = sqrt(2-2*x);
+    float c = sqrt(2-a);
+    return fabs((8/3*c-b/3)/3.14159265358979 * 180);
+}
+
+
 vector(vector v) vabs =
 {
     return [fabs(v_x),fabs(v_y),fabs(v_z)];
