@@ -111,7 +111,7 @@ entity(vector point, float rad, .string fld, string match) findradiusplus =
 	return prev;
 }
 
-entity(vector org, .string fld, string match) findClosest = {
+entity(vector org, .string fld, string match, float aliveonly) findClosest = {
 	entity closest, next;
 	float closestdist, nextdist;
 
@@ -119,17 +119,20 @@ entity(vector org, .string fld, string match) findClosest = {
 	
 	next = find(world, fld, match);	
 	while (next) {
-		nextdist = vlen(next.origin - org);
-		if (nextdist < closestdist) {
-			closestdist = nextdist;
-			closest = next;
+		if ((aliveonly && next.health > 0) || !aliveonly) {
+			nextdist = vlen(next.origin - org);
+			if (nextdist < closestdist) {
+				closestdist = nextdist;
+				closest = next;
+			}
 		}
 		next = find(next, fld, match);
 	}
 	return closest;
 };
 
-entity(vector org, .string fld, string match, entity ignored) findClosestVisible = {
+
+entity(vector org, .string fld, string match, entity ignored, float aliveonly) findClosestVisible = {
 	entity closest, next;
 	float closestdist, nextdist;
 
@@ -137,13 +140,15 @@ entity(vector org, .string fld, string match, entity ignored) findClosestVisible
 	
 	next = find(world, fld, match);	
 	while (next) {
-		nextdist = vlen(next.origin - org);
-		if (nextdist < closestdist) {
-			traceline(org, next.origin, TRUE, ignored);
+		if ((aliveonly && next.health > 0) || !aliveonly) {
+			nextdist = vlen(next.origin - org);
+			if (nextdist < closestdist) {
+				traceline(org, next.origin, TRUE, ignored);
 
-			if (trace_fraction < 1 && !(trace_inopen && trace_inwater)) {
-				closestdist = nextdist;
-				closest = next;
+				if (trace_fraction < 1 && !(trace_inopen && trace_inwater)) {
+					closestdist = nextdist;
+					closest = next;
+				}
 			}
 		}
 		next = find(next, fld, match);

@@ -215,22 +215,54 @@ void() trigger_once =
 /*QUAKED trigger_relay (.5 .5 .5) (-8 -8 -8) (8 8 8)
 This fixed size trigger cannot be touched, it can only be fired by other events.  It can contain killtargets, targets, delays, and messages.
 */
+
+float RELAY_AUTO = 1;
+float RELAY_ALWAYSPLAYER = 2;
+float RELAY_PLAYERONLY = 4;
+
 void() trigger_relay_use = {
+
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (time < self.attack_finished)
+		return;
+
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+
 	if (self.spawnflags & 1) {
 		self.spawnflags &~= 1;
 		dprint3("trigger_relay fired on map start at ", vtos(self.origin), "\n");
 	}
 
-	if (self.noise)
-		sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	if (self.spawnflags & 2 && !(activator.flags & FL_CLIENT)) {
+		entity closest;
+		closest = findClosest(self.origin, classname, "player", 1);
+		if (!closest) closest = findClosest(self.origin, classname, "player", 0);
+		if (closest) activator = closest;
+	} 
+
+	if (self.spawnflags & 4 && !(activator.flags & FL_CLIENT))
+		return;
+
+	if (self.noise) {
+		if (self.enemy.flags & FL_CLIENT)
+			sound (self.enemy, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+		else
+			sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	}
 
 	SUB_UseTargets();
 	
-	if (self.count > 0)
-	{
+	if (self.count > 0) {
 		self.count -= 1;
 		if (self.count == 0)
 			remove(self);
+	}
+
+	if (self.wait) {
+		self.attack_finished = time + self.wait;
 	}
 }
 
@@ -245,21 +277,16 @@ void() trigger_relay =
 	if (self.spawnflags & 4096 && startskill == SKILL_HARD)
 		remove(self);
 
-	if (self.sounds == 1)
-	{
-		precache_sound ("misc/secret.wav");
-		self.noise = "misc/secret.wav";
+	if (self.noise == "") {
+		if (self.sounds == 1)
+			self.noise = "misc/secret.wav";
+		else if (self.sounds == 2)
+			self.noise = "misc/talk.wav";
+		else if (self.sounds == 3)
+			self.noise = "misc/trigger1.wav";
 	}
-	else if (self.sounds == 2)
-	{
-		precache_sound ("misc/talk.wav");
-		self.noise = "misc/talk.wav";
-	}
-	else if (self.sounds == 3)
-	{
-		precache_sound ("misc/trigger1.wav");
-		self.noise = "misc/trigger1.wav";
-	}
+
+	if (self.noise != "") precache_sound(self.noise);
 
 	self.use = trigger_relay_use;
 	
@@ -1500,7 +1527,7 @@ void() trigger_filter_use = {
 		if (self.spawnflags & 2 && activator.owner) activator = activator.owner; // Relay owner as activator
 		else if (self.spawnflags & 4) { // relay closest player as activator
 			entity closest;
-			closest = findClosest(self.origin, classname, "player");
+			closest = findClosest(self.origin, classname, "player", 0);
 			if (closest) activator = closest;
 		}
 

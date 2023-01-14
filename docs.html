@@ -68,6 +68,7 @@ body {
 			<li><a href="#dormant-triggers">Dormant triggers</a></li>
 			<li><a href="#monster-triggerable">Monster-activated triggers</a></li>
 			<li><a href="#message-all">Message all players</a></li>
+			<li><a href="#relay-tricks">trigger_relay new tricks</a></li>
 			<li><a href="#trigger_repeat">Repeater/timer trigger</a></li>
 			<li><a href="#monsterjumps">Monsterjumps</a></li>
 			<li><a href="#hurt">Hurt triggers</a></li>
@@ -470,6 +471,17 @@ body {
 
 <h3 id="message-all">Message all players</h3>
 <p>Every entity that can centerprint a message may be set to broadcast it to all connected players. Good for when you have some map-wide event that you want to communicate in a co-op game for example. Just set the spawnflag <strong>message all players</strong> on the messaging entity.</p>
+
+<h3 id="relay-tricks">trigger_relay new tricks</h3>
+<p>trigger_relay got a few more features:</p>
+<ul>
+<li>The <strong>count</strong> key sets a maximum usage count. You can set it to 1 to make sure it can only be fired once.</li>
+<li>The <strong>wait</strong> key sets a wait time after the last activation when it cannot be fired again. Works similar to a touch-less trigger_multiple.</li>
+<li><strong>Not in nightmare</strong> flag.</li>
+<li>The <strong>Fire automatically on map start</strong> flag does what it says on the tin. Good for firing map-start events, especially when used in conjunction with skill flags. If the relay is meant to be fired only this way, it doesn't need a targetname. </li>
+<li><strong>Make sure activator is a player</strong> flag: if the activator isn't a player, change it to the closest one alive.</li>
+<li><strong>Player only</strong> flag: Will only relay the firing if the activator is a player. Note that it'll always fire when used in conjunction with the flag above.</li>
+</ul>
 
 <h3 id="trigger_repeat">Repeater/timer trigger</h3>
 <p>The <strong>trigger_repeat</strong> entity is a point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.</p>

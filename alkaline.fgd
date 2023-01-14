@@ -2400,12 +2400,27 @@ Using the destination's 'count' field, you can define which order they'll be sel
         3 : "Nightmare!"
 	]
 ]
-@PointClass base(Appearflags, Trigger) = trigger_relay : "Trigger relay"
+@PointClass base(Appearflags, Trigger) = trigger_relay : "Trigger relay
+
+- 'count' sets a maximum usage count. Set it to 1 to guarantee it can only be fired once.
+
+- 'wait' sets a wait time after the last activation when it cannot be fired again. Works similar to a touch-less trigger_multiple.
+
+Spawnflags
+----------
+
+- 'Fire automatically on map start': does what it says on the tin. Good for firing map-start events, especially when used in conjunction with skill flags. Relays can be filtered to nightmare only.
+- 'Make sure activator is a player': if the activator isn't a player, change it to the closest one alive. 
+- 'Player only': will only relay the firing if the activator is a player. Note that it'll always fire when used in conjunction with the flag above.
+"
 [
-	count(integer) : "Maximum usage count"
+	count(integer) : "Maximum usage count" : : "Sets a maximum usage count. Set it to 1 to guarantee it can only be fired once."
+	wait(integer) : "Wait time before it can be fired again"
 	spawnflags(flags) =
 	[
-		1 : "Fire automatically on map start"
+		1 : "Fire automatically on map start" : 0 : "Good for firing map-start events, especially when used in conjunction with skill flags. Relays specifically can be filtered to nightmare only."
+		2 : "Make sure activator is a player" : 0 : "If the activator isn't a player, change it to the closest one alive."
+		4 : "Player only" : 0 : "Will only relay the firing if the activator is a player. Note that it'll always fire when used in conjunction with the flag above."
 		1024 : "[Do not use]"
 		4096 : "Not in Hard"
 		8192 : "Not in Nightmare"

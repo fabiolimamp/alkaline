@@ -255,7 +255,7 @@ void() spikeshooter_use =
 		if (activator.flags & FL_CLIENT && activator.health > 0)
 			newmis.enemy = activator;
 		else
-			newmis.enemy = findClosest(self.origin, classname, "player");
+			newmis.enemy = findClosest(self.origin, classname, "player", 0);
 
 		newmis.attack_finished = time + 10;
 		newmis.movetype = MOVETYPE_FLY;
