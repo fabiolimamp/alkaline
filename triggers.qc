@@ -231,19 +231,19 @@ void() trigger_relay_use = {
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
-	if (self.spawnflags & 1) {
-		self.spawnflags &~= 1;
+	if (self.spawnflags & RELAY_AUTO) {
+		self.spawnflags &~= RELAY_AUTO;
 		dprint3("trigger_relay fired on map start at ", vtos(self.origin), "\n");
 	}
 
-	if (self.spawnflags & 2 && !(activator.flags & FL_CLIENT)) {
+	if (self.spawnflags & RELAY_ALWAYSPLAYER && !(activator.flags & FL_CLIENT)) {
 		entity closest;
 		closest = findClosest(self.origin, classname, "player", 1);
 		if (!closest) closest = findClosest(self.origin, classname, "player", 0);
 		if (closest) activator = closest;
 	} 
 
-	if (self.spawnflags & 4 && !(activator.flags & FL_CLIENT))
+	if (self.spawnflags & RELAY_PLAYERONLY && !(activator.flags & FL_CLIENT))
 		return;
 
 	if (self.noise) {
