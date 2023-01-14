@@ -4,8 +4,7 @@
 Lava Balls
 */
 
-void() misc_fireball =
-{
+void() misc_fireball = {
 	precache_model ("progs/lavaball.mdl");
 	self.classname = "fireball";
 	self.nextthink = time + (random() * 5);
@@ -15,9 +14,8 @@ void() misc_fireball =
 		self.speed = 1000;
 };
 
-void() fire_fly =
-{
-	local entity	fireball;
+void() fire_fly = {
+	entity fireball;
 
 	fireball = spawn();
 	fireball.solid = SOLID_TRIGGER;
@@ -39,8 +37,7 @@ void() fire_fly =
 };
 
 
-void() fire_touch =
-{
+void() fire_touch = {
 	if (other.health) T_Damage(other, self, self, 20, DMGTYPE_BURN);
 	remove(self);
 };
@@ -64,7 +61,7 @@ void() barrel_explode =
 	activator = self.enemy;
 	SUB_UseTargets();
 
-	BecomeExplosion ();
+	BecomeExplosion();
 };
 
 void() barrel_die = {
@@ -79,32 +76,30 @@ void() barrel_die = {
 	self.think = barrel_explode;
 	self.nextthink = time + 0.05 + random()*0.05;
 }
+
 /*QUAKED misc_explobox (0 .5 .8) (0 0 0) (32 32 64)
 TESTING THING
 */
-
-void() misc_explobox =
-{
-	local float	oldz;
+void() misc_explobox = {
+	float oldz;
 	
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_NONE;
-	precache_model ("maps/b_explob.bsp");
-	setmodel (self, "maps/b_explob.bsp");
-	precache_sound ("weapons/r_exp3.wav");
+	precache_model("maps/b_explob.bsp");
+	setmodel(self, "maps/b_explob.bsp");
+	precache_sound("weapons/r_exp3.wav");
 	if (!self.health) self.health = 20;
 	if (!self.dmg) self.dmg = 160;
 	if (!self.obituary) self.obituary = "blew up";
 	self.th_die = barrel_die;
 	self.use = barrel_die;
-	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
+	if (!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 
 	self.bloodtype = zeroconvertdefault(self.bloodtype, SPAWN_YELLOWSPARK);
 	self.origin_z = self.origin_z + 2;
 	oldz = self.origin_z;
 	droptofloor();
-	if (oldz - self.origin_z > 250)
-	{
+	if (oldz - self.origin_z > 250) {
 		dprint ("Explobox fell out of level at ");
 		dprint (vtos(self.origin));
 		dprint ("\n");
@@ -119,9 +114,8 @@ void() misc_explobox =
 Smaller exploding box, REGISTERED ONLY
 */
 
-void() misc_explobox2 =
-{
-	local float	oldz;
+void() misc_explobox2 = {
+	float oldz;
 	
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_NONE;
@@ -155,10 +149,6 @@ float TRAP_SUPERSPIKE = 1;
 float TRAP_LASER = 2;
 float TRAP_ROCKET = 4;
 float TRAP_VOREBALL = 8;
-
-void(vector org, vector vec) LaunchLaser;
-void() ShalMissile;
-void() ShalMissileTouch;
 
 void() ShalMisTouchEnt = {
 
@@ -226,28 +216,24 @@ void() ShalMisTfDie = {
 	ShalMisTouchEnt();
 }
 
-void() spikeshooter_use =
-{
-	local float spd, damage;
+void() spikeshooter_use = {
+	float spd, damage;
 
 	if (self.estate != STATE_ACTIVE) return;
 
-	if (self.spawnflags & TRAP_LASER)
-	{
+	if (self.spawnflags & TRAP_LASER) {
 		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
 		LaunchLaser (self.origin, self.movedir);
 		spd = 600;
 		damage = 15;
 	}
-	else if (self.spawnflags & TRAP_ROCKET)
-	{
+	else if (self.spawnflags & TRAP_ROCKET) {
 		sound (self, CHAN_VOICE, "weapons/sgun1.wav", 1, ATTN_NORM);
 		launch_rocket (self.origin, self.movedir);
 		spd = 500;
 		damage = 60;
 	}
-	else if (self.spawnflags & TRAP_VOREBALL)
-	{
+	else if (self.spawnflags & TRAP_VOREBALL) {
 		ShalMissile();
 		damage = 20;
 		spd = 200;
@@ -285,14 +271,14 @@ void() spikeshooter_use =
 		e.owner = newmis;
 		newmis.trigger_field = e;
 		setorigin(e, newmis.origin);
-		setsize (e, '-16 -16 -16', '16 16 16');
+		setsize(e, '-16 -16 -16', '16 16 16');
 		
 		e.classname = "shalmissiletf";
 		//sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 	}
 	else
 	{
-		sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
+		sound(self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
 		launch_spike (self.origin, self.movedir);
 		spd = 500;
 		if (self.spawnflags & TRAP_SUPERSPIKE) {
@@ -323,7 +309,7 @@ Laser is only for REGISTERED.
 
 void() trap_spikeshooter =
 {
-	SetMovedir ();
+	SetMovedir();
 	self.use = spikeshooter_use;
 
 	if (!self.obituary) {
@@ -335,10 +321,10 @@ void() trap_spikeshooter =
 
 	if (self.spawnflags & TRAP_LASER)
 	{
-		precache_model ("progs/laser.mdl");
+		precache_model("progs/laser.mdl");
 		
-		precache_sound ("enforcer/enfire.wav");
-		precache_sound ("enforcer/enfstop.wav");
+		precache_sound("enforcer/enfire.wav");
+		precache_sound("enforcer/enfstop.wav");
 	}
 	else if (self.spawnflags & TRAP_VOREBALL) {
 		//precache_model("progs/v_spike_red.mdl");
@@ -390,9 +376,7 @@ void() trap_shooter_toggle = {
 Just for the debugging level.  Don't use
 */
 
-void() viewthing =
-
-{
+void() viewthing = {
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_BBOX;
 	setsize (self, '-16 -16 -24', '16 16 40');
@@ -408,23 +392,17 @@ from Copper
 
 ***********************************************/
 
-void() target_autosave_use =
-{
+void() target_autosave_use = {
 	if (noautosaves) return;
 	
-	if (self.enemy)
-	{
+	if (self.enemy)	{
 		activator = self.enemy;
 		self.enemy = world;
 	}
+
 	if (activator.classname != "player") return;
-	if (time < 2)	// make sure an autosave fired from a player start doesn't happen too early
-	{
-		//if (serverflags & SVFL_RESPAWNING)
-		//{
-		//	dprint("RESPAWNING flag set, skipping autosave\n");
-		//	return;
-		//}
+
+	if (time < 2) {	// make sure an autosave fired from a player start doesn't happen too early
 		self.enemy = activator;
 		self.think = target_autosave_use;
 		self.nextthink = 2;
@@ -449,17 +427,15 @@ the bprint tends to stomp any other prints on screen in most quake clients, so u
 	message(string) : "Change save filename" : "auto"
 ]
 */
-void() target_autosave =
-{
-	if (deathmatch || coop)
-	{
+void() target_autosave = {
+	if (deathmatch || coop) {
 		remove(self);
 		return;
 	}
 	
-
 	if (self.message == string_null)
 		self.message = "auto";
+
 	precache_sound2("misc/sav.wav");
 	self.use = target_autosave_use;
 }
