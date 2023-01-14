@@ -2227,10 +2227,10 @@ Other than that, this entity functions like a normal button.
 		1 : "Secret sound"
 		2 : "Beep beep"
 		3 : "Large switch"
-		4 : "Set message to text string"
 	]
 	delay(string) : "Delay before trigger" : "0"
 	message(string) : "Message (set sound too!)"
+	noise(string) : "Custom sound path"
 ]
 
 @baseclass = TriggerWait [
@@ -2268,23 +2268,28 @@ Flags:
 	]
 ]
 
-@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once"
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once.
+
+Setting a 'health' value makes it solid and shootable.
+"
 [
 	health(integer) : "Health"
 	spawnflags(flags) = [
-		1: "Entity only" : 0
+		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
 	]
 ]
 @SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple
 
 Will keep on firing while the player is touching the trigger, on the interval defined in 'wait'.
+
+Setting a 'health' value makes it solid and shootable.
 " 
 [
 	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health"
 	spawnflags(flags) = [
-		1: "Entity only" : 0
+		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
 	]
 ]

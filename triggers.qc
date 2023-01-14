@@ -45,12 +45,10 @@ void() multi_wait =
 // the trigger was just touched/killed/used
 // self.enemy should be set to the activator so it can be held through a delay
 // so wait for the delay time before firing
-void() multi_trigger =
-{
+void() multi_trigger = {
+
 	if (self.nextthink > time)
-	{
 		return;		// already been triggered
-	}
 
 	if (self.estate != STATE_ACTIVE)
 		return;
@@ -66,26 +64,26 @@ void() multi_trigger =
 		WriteByte (MSG_ALL, SVC_FOUNDSECRET);
 	}
 
-	if (self.noise)
+	if (self.noise) {
 		if (self.enemy.flags & FL_CLIENT)
 			sound (self.enemy, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 		else
 			sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+	}
 
-// don't trigger again until reset
+	// don't trigger again until reset
 	self.takedamage = DAMAGE_NO;
 
 	activator = self.enemy;
 	
 	SUB_UseTargets();
 
-	if (self.wait > 0)	
-	{
+	if (self.wait > 0) {
 		self.think = multi_wait;
 		self.nextthink = time + self.wait;
 	}
-	else
-	{	// we can't just remove (self) here, because this is a touch function
+	else {
+		// we can't just remove (self) here, because this is a touch function
 		// called wheil C code is looping through area links...
 		self.touch = SUB_Null;
 		self.nextthink = time + 0.1;
@@ -95,8 +93,7 @@ void() multi_trigger =
 
 void() multi_killed = //dumptruck_ds
 {
-	if (self.estate != STATE_ACTIVE)	//restore health and do nothing if trigger is disabled
-	{
+	if (self.estate != STATE_ACTIVE) { //restore health and do nothing if trigger is disabled
 		self.health		= self.max_health;	// nyah nyah~!
 		self.takedamage	= DAMAGE_YES;
 		self.solid		= SOLID_BBOX;
@@ -154,23 +151,17 @@ set "message" to text string
 void() trigger_multiple =
 {
 	
+	if (self.noise == "") {
+		if (self.sounds == 1)
+			self.noise = "misc/secret.wav";
+		else if (self.sounds == 2)
+			self.noise = "misc/talk.wav";
+		else if (self.sounds == 3)
+			self.noise = "misc/trigger1.wav";
+	}
 
-	if (self.sounds == 1)
-	{
-		precache_sound ("misc/secret.wav");
-		self.noise = "misc/secret.wav";
-	}
-	else if (self.sounds == 2)
-	{
-		precache_sound ("misc/talk.wav");
-		self.noise = "misc/talk.wav";
-	}
-	else if (self.sounds == 3)
-	{
-		precache_sound ("misc/trigger1.wav");
-		self.noise = "misc/trigger1.wav";
-	}
-	
+	if (self.noise != "") precache_sound(self.noise);
+
 	if (!self.wait)
 		self.wait = 0.2;
 	self.use = multi_use;
