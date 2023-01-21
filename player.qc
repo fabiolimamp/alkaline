@@ -762,11 +762,6 @@ void() VoidKillPlayer = {
 	self.deadflag = DEAD_DEAD;
 	DeathSound();
 
-	/*if (random() < 0.5)
-		sound (self, CHAN_VOICE, "player/gib.wav", 1, ATTN_NONE);
-	else
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NONE);
-		*/
 };
 
 void(float deathbyvoid) PlayerDieGo = {

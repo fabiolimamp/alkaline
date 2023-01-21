@@ -71,29 +71,10 @@ void() monster_use =
 	self.think = FoundTarget;
 };
 
-/*
-================
-monster_death_use
-
-When a mosnter dies, it fires all of its targets with the current
-enemy as activator.
-================
-*/
-
-void() monster_death_use =
-{
-	// makes sure wake trigger monsters won't fire target4 upon death
-	if (self.spawnflags & MONSTER_WAKETRIGGER) self.target4 = "";
-
-	activator = self.enemy;
-	SUB_UseTargets ();
-};
 
 
 //============================================================================
 
-void(vector org) spawn_tfog;
-void(vector org, entity death_owner) spawn_tdeath;
 
 void(entity e) hide_spawned_monster_entity = {
 	//store the important info in unused fields

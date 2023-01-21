@@ -102,8 +102,12 @@
 .string		target;
 .string		targetname;
 
-// damage is accumulated through a frame. and sent as one single
-// message, so the super shotgun doesn't generate huge messages
+// Damage is accumulated through a frame. and sent as one single
+// message, so the super shotgun doesn't generate huge messages.
+
+// dmg_take having a value is what triggers the engine to tint the screen,
+// twitch the view, and show the pain face in the HUD.
+
 // dmg_take and dmg_save are cleared at each frame for clients
 .float		dmg_take;
 .float		dmg_save;
