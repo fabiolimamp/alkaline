@@ -131,6 +131,38 @@ entity(vector org, .string fld, string match, float aliveonly) findClosest = {
 	return closest;
 };
 
+// checks if a box isn't inside any solid
+// returns 1 if area is clear, 0 if not
+float(vector org, vector minbbox, vector maxbbox) isClear = {
+	
+	entity e = spawn();
+	e.movetype = MOVETYPE_TOSS;
+	setorigin(e, org);
+	setsize(e, minbbox, maxbbox);
+
+	// droptofloor() returns false if the drop distance is more than 256
+	// and that's indistinguishable from a solid check.
+	// So we need to put another entity below as a stopper so droptofloor
+	// will always return true if there's room
+	entity e2 = spawn();
+	e2.solid = SOLID_BBOX;
+	// slightly below the test box's lower bound
+	setorigin(e2, e.origin + [0, 0, minbbox_z - 4]);
+	setsize(e2, [minbbox_x, minbbox_y, -1], [maxbbox_x, maxbbox_y, 1]);
+
+	entity oldself = self;
+	self = e;
+		
+	float ret = droptofloor();
+
+	self = oldself;
+
+	remove(e);
+	remove(e2);
+
+	return ret;
+}
+
 
 entity(vector org, .string fld, string match, entity ignored, float aliveonly) findClosestVisible = {
 	entity closest, next;
