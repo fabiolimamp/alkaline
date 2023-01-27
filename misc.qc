@@ -540,7 +540,11 @@ void() target_infight_use = {
 	entity t1, prev_t1, t2;
 	
 	t2 = find(world, targetname, self.target2);
-	
+
+	if (!t2) {
+		t2 = find(world, targetname2, self.target2);
+	}
+
 	if (!t2) {
 		dprint("[target_infight] Cannot find target2\n");
 		return;
@@ -554,7 +558,15 @@ void() target_infight_use = {
 		}
 		t1 = find(t1, targetname, self.target);
 	}
-		
+	
+	t1 = find(world, targetname2, self.target);
+	while (t1) {
+		if (t1.flags & FL_MONSTER){
+			make_angry_at(t1, t2);
+			prev_t1 = t1;
+		}
+		t1 = find(t1, targetname2, self.target);
+	}
 	
 	if (self.spawnflags & INFIGHT_MUTUAL && prev_t1)
 		make_angry_at(t2, prev_t1);
