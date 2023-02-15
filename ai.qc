@@ -215,10 +215,14 @@ returns the range catagorization of an entity reletive to self
 */
 float(entity targ) range =
 {
-local vector	spot1, spot2;
-local float		r;	
+	vector spot1, spot2;
+	float r;	
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
 	
 	r = vlen (spot1 - spot2);
 	if (r < 120)
@@ -240,7 +244,12 @@ float(entity targ, float flat2d) range_distance =
 	local float		r;
 		
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+
 	if (flat2d) { spot1_z = spot2_z = 0; }
 	r = vlen (spot1 - spot2);
 	
@@ -259,7 +268,12 @@ float (entity targ) visible =
 	float startinliquid, endinliquid;
 
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+
 	traceline (spot1, spot2, TRUE, self);	// see through other monsters
 	
 	//if (trace_inopen && trace_inwater)
@@ -272,8 +286,10 @@ float (entity targ) visible =
 	if (startinliquid != endinliquid)
 		return FALSE;
 
-	if (trace_fraction == 1)
+	if (trace_fraction == 1 || trace_ent == targ) {	
 		return TRUE;
+	}
+	
 	return FALSE;
 };
 
@@ -283,7 +299,11 @@ float (entity org, entity targ) visible2 =
 	float startinliquid, endinliquid;
 	
 	spot1 = org.origin + org.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+	
 	traceline (spot1, spot2, TRUE, org);	// see through other monsters
 	
 	if (trace_inopen && trace_inwater)
@@ -294,8 +314,9 @@ float (entity org, entity targ) visible2 =
 	if (startinliquid != endinliquid)
 		return FALSE;
 
-	if (trace_fraction == 1)
+	if (trace_fraction == 1 || trace_ent == targ)
 		return TRUE;
+
 	return FALSE;
 };
 
@@ -308,15 +329,22 @@ returns 1 if there are no entities in the way of the shot
 */
 float (entity targ) canshoot =
 {
-	local vector	spot1, spot2;
+	vector spot1, spot2;
 	float startinliquid, endinliquid;
-	
+
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+	
+	
 	traceline (spot1, spot2, FALSE, self);  // don't see through other monsters
 
-	if (trace_ent != targ)
+	if (trace_ent != targ) {
 		return FALSE;		// don't have a clear shot
+	}
 			
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
@@ -903,15 +931,17 @@ float() CheckAttack =
 
 	targ = SUB_entEnemyTarget();
 
-	if (!canshoot(targ))
+	if (!canshoot(targ)) {
 		return FALSE;
+	}
 
 	if (enemy_range == RANGE_MELEE)
 	{	// melee attack
 		if (self.th_melee)
 		{
-			if (self.classname == "monster_knight")
+			if (self.classname == "monster_knight"){
 				knight_attack ();
+			}
 			else
 				self.th_melee ();
 			return TRUE;
@@ -1076,6 +1106,7 @@ float() ai_run_checks =
 	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
 	if ((enem.health <= 0 || enem.takedamage == DAMAGE_NO) && self.goalentity.classname != "path_angry") 
 	{
+		//dprint("Enemy is ded\n");
 		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget(); // disable enemy target system while changing enemies
 		self.enemy = world;
 	// FIXME: look all around for other targets
@@ -1129,9 +1160,9 @@ float() ai_run_checks =
 		return FALSE;
 	}
 
-	if (CheckAnyAttack ())
+	if (CheckAnyAttack ()) {
 		return FALSE;					// beginning an attack
-		
+	}
 	if (self.attack_state == AS_SLIDING && self.goalentity.classname != "path_angry")
 	{
 		ai_run_slide ();
