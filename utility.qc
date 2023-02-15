@@ -135,7 +135,7 @@ entity(vector org, .string fld, string match, float aliveonly) findClosest = {
 // returns 1 if area is clear, 0 if not
 float(vector org, vector minbbox, vector maxbbox) isClear = {
 	
-	entity e = spawn();
+	entity e = spawn_builtin();
 	e.movetype = MOVETYPE_TOSS;
 	setorigin(e, org);
 	setsize(e, minbbox, maxbbox);
@@ -144,7 +144,7 @@ float(vector org, vector minbbox, vector maxbbox) isClear = {
 	// and that's indistinguishable from a solid check.
 	// So we need to put another entity below as a stopper so droptofloor
 	// will always return true if there's room
-	entity e2 = spawn();
+	entity e2 = spawn_builtin();
 	e2.solid = SOLID_BBOX;
 	// slightly below the test box's lower bound
 	setorigin(e2, e.origin + [0, 0, minbbox_z - 4]);
