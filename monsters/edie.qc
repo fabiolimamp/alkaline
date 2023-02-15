@@ -495,7 +495,7 @@ void(float dist, float kickback, float dmg) edie_melee_hit =
 	
 	e = findradius(self.origin, dist);
 	while (e) {
-		if ((e.flags & (FL_MONSTER + FL_CLIENT)) &&	e != self && e.health > 0) {
+		if (e != self && e.health > 0) {
 			makevectors(self.angles);
 			dist_front = vlen(self.origin + (v_forward * 100) - (self.origin + normalize(e.origin - self.origin) * 100));
 
@@ -512,7 +512,7 @@ void(float dist, float kickback, float dmg) edie_melee_hit =
 				}
 
 				// large targets don't get kicked back
-				if (e.size_x <= 32) {
+				if (e.size_x <= 32 && (e.flags & (FL_MONSTER + FL_CLIENT))) {
 					if (e.flags & FL_ONGROUND) e.flags = e.flags - FL_ONGROUND;
 					
 					e.velocity = e.velocity + '0 0 24' * dmg;
