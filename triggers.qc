@@ -695,6 +695,139 @@ void() target_hurt = {
 /*
 ==============================================================================
 
+target_heal
+
+==============================================================================
+*/
+ 
+
+void() heal_think = {
+	/*
+	dmg_save -> amount of healing left to do
+	dmg_take -> amount of healing already done
+	healamount -> total heal
+	*/
+	if (self.owner.health <= 0 || self.attack_finished < time) {
+		if (self.attack_finished < time) {
+			if (self.dmg_save < self.healamount)
+				self.owner.health += self.healamount - self.dmg_save;
+		}
+		self.owner.hurtcontroller = world;
+		remove(self);
+		return;
+	}
+
+	self.dmg_take += self.healamount / self.delay / 10;
+	float take;
+
+	if (fabs(self.dmg_take) >= 1) {
+
+		if (self.dmg_take < 0) {
+			take = ceil(self.dmg_take);
+			self.owner.health += take;
+		}
+		else {
+			take = floor(self.dmg_take);
+			//T_Damage(self.owner, self.enemy, self.enemy, take, self.style);
+			self.owner.health += take;
+		}
+		
+		self.dmg_save += take;
+		
+		self.dmg_take = self.dmg_take % take;
+	}
+	self.nextthink = time + 0.1;
+};
+
+void(entity tgt, float totalheal, float duration) heal_start = {
+	entity controller;
+	if (self.spawnflags & 1 && tgt.flags & FL_CLIENT)
+		return;
+	
+	if (self.spawnflags & 2 && tgt.flags & FL_MONSTER)
+		return;
+
+	if (tgt.health <= 0)
+		return;
+
+	if (!tgt.hurtcontroller ||
+		tgt.hurtcontroller.classname != "hurt_controller" ||
+		tgt.hurtcontroller.enemy != self
+	) {
+		if (tgt.hurtcontroller) remove(tgt.hurtcontroller);
+
+		controller = spawn();
+		controller.owner = tgt;
+		controller.enemy = self;
+		controller.classname = "hurt_controller";
+		tgt.hurtcontroller = controller;
+
+		controller.attack_finished = time + duration;
+		controller.healamount = totalheal;
+		controller.delay = duration;
+
+		controller.think = heal_think;
+		controller.nextthink = time + 0.1;
+	}
+
+};
+
+void(string name, .string fld) heal_find = {
+	local entity t;
+
+	t = find(world, fld, name);
+
+	while (t) {
+		heal_start(t, self.healamount, self.speed);
+
+		t = find(t, fld, name);
+	}
+}
+
+void() heal_use = {
+	if (self.estate != STATE_ACTIVE)
+		return;
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+	float has_target;
+
+	if (self.target && self.target != "") {
+		heal_find(self.target, targetname);
+		heal_find(self.target, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target2 && self.target2 != "") {
+		heal_find(self.target2, targetname);
+		heal_find(self.target2, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target3 && self.target3 != "") {
+		heal_find(self.target3, targetname);
+		heal_find(self.target3, targetname2);
+		has_target = TRUE;
+	}
+	if (self.target4 && self.target4 != "") {
+		heal_find(self.target4, targetname);
+		heal_find(self.target4, targetname2);
+		has_target = TRUE;
+	}
+
+	if (!has_target) {
+		heal_start(activator, self.healamount, self.speed);
+	}
+
+
+}
+
+void() target_heal = {
+	self.use = heal_use;
+};
+
+
+
+/*
+==============================================================================
+
 trigger_push
 
 ==============================================================================

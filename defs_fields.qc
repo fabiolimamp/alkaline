@@ -322,6 +322,7 @@ FIELDS
 .float 		offground_start; // last time the player was on ground
 
 .float 		hurt_started; // timer for trigger_hurt
+.float		heal_started;
 
 .float 		wantedgravity; // thanks Spike!
 
