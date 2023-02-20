@@ -21,6 +21,7 @@ float TELEDEST_KEEPANGLE = 1;
 float TELEDEST_KEEPPITCH = 2;
 float TELEDEST_STEALTH = 4;
 float TELEDEST_KEEPVELOCITY = 8;
+float TELEDEST_KEEPANGLE_NOOFFSET = 16;
 
 float TELEDEST_STYLE_NORMAL = 0;
 float TELEDEST_STYLE_INSTANT = 1;
@@ -394,6 +395,9 @@ void() teleport_touch =
 				other.angles_z = atan2(v_right*t_up, v_up*t_up);
 			}
 		}
+
+		if (t.spawnflags & TELEDEST_KEEPANGLE_NOOFFSET)
+			other.angles = other.v_angle;
 
 		// turn this way immediately
 		other.fixangle = 1;

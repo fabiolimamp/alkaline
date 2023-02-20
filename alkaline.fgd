@@ -2353,6 +2353,7 @@ Using the destination's 'count' field, you can define which order they'll be sel
 		2: "Preserve pitch angle"
 		4: "No teleport effect"
 		8: "Preserve velocity"
+		16: "Preserve angle (no offset)"
 	]
 	count(integer) : "Group order"
 ]
