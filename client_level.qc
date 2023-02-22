@@ -270,6 +270,10 @@ void() IntermissionThink = {
 
 void() execute_changelevel = {
 
+	// flip on whichever mapvar is set into the changelevel trigger
+	if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
+		write_mapvar(self.jump_flag, MAPV_WRITE_ON);
+
 	intermission_running = 1;
 
 	if (self.message && self.message != "")
@@ -422,10 +426,6 @@ void() changelevel_touch = {
 		bprint (" exited the level\n");
 	}
 	
-
-	if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
-		write_mapvar(self.jump_flag, MAPV_WRITE_ON);
-
 
 	// "reset items on map change" flag
 	if (self.spawnflags & 2) reset_items_on_map_change = TRUE;
