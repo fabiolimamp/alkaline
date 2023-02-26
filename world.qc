@@ -492,7 +492,7 @@ void() EndFrame = {
 
 	prevframe = framecount;
 	// set ourselves up to think again next frame
-	backstop.nextthink = time;// + 0.05;
+	backstop.nextthink = time + 0.002;
 	// prevent accidental modification of the backstop
 	self = world;
 	
