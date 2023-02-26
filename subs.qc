@@ -159,6 +159,17 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 
 
 
+/*
+=============
+SUB_CalcMoveSmooth
+
+tdest -> destination coordinates
+smdist -> smoothing distance
+tspeed -> travel speed
+stspeed -> starting speed
+fnspeed -> final speed
+===============
+*/
 
 void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, void() func) SUB_CalcMoveSmooth =
 {
