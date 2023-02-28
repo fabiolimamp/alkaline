@@ -1080,13 +1080,13 @@ ai_run
 The monster has an enemy it is trying to kill
 =============
 */
-float() ai_run_checks =
+float(float dist) ai_run_checks =
 {
 //	local	vector	delta;
 //	local	float	axis;
 //	local	float	direct, ang_rint, ang_floor, ang_ceil;
 	
-	//movedist = dist;
+	movedist = dist;
 	entity enem;
 	enem = SUB_entEnemyTarget();
 	
@@ -1176,7 +1176,7 @@ float() ai_run_checks =
 };
 
 void(float dist) ai_run = {
-	if (!ai_run_checks()) return;
+	if (!ai_run_checks(dist)) return;
 
 	//if (self.th_move)
 	//	self.th_move(dist);

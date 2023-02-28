@@ -82,7 +82,7 @@ void(float step) ai_fZom_run = {
 	float enemy_range2D;
 	vector vec;
 
-	if (!ai_run_checks())
+	if (!ai_run_checks(step))
 		return;
 
 	_origin = self.origin;
