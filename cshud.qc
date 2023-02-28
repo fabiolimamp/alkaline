@@ -346,26 +346,35 @@ void Hud_DrawSBar(vector pos)
 		//drawpic(pos+'120 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
 	}
 
-	Hud_DrawFace(pos+'176 0 0');
+	Hud_DrawFace(pos+'168 0 0');
 	
-	drawpic(pos+'200 0 0', "gfx/numbk_health", '88 24 0', '1 1 1', 1, 0);
+	drawpic(pos+'192 0 0', "gfx/numbk_health", '88 24 0', '1 1 1', 1, 0);
 	//drawpic(pos+'200 0 0', "gfx/numbk_l2", '8 24 0', '1 1 1', 1, 0);
-	Hud_DrawLargeValue(pos+'208 0 0', getstatf(STAT_HEALTH), 25);
+	Hud_DrawLargeValue(pos+'200 0 0', getstatf(STAT_HEALTH), 25);
 	//drawpic(pos+'280 0 0', "gfx/numbk_r2", '8 24 0', '1 1 1', 1, 0);
 
 	if (st_items & IT_SHELLS)
-		drawpic(pos+'336 0 0', "gfx/sb_ashells", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'320 0 0', "gfx/sb_ashells", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_NAILS)
-		drawpic(pos+'336 0 0', "gfx/sb_anails", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'320 0 0', "gfx/sb_anails", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_ROCKETS)
-		drawpic(pos+'336 0 0', "gfx/sb_arocket", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'320 0 0', "gfx/sb_arocket", '24 24 0', '1 1 1', 1, 0);
 	else if (st_items & IT_CELLS)
-		drawpic(pos+'336 0 0', "gfx/sb_cells", '24 24 0', '1 1 1', 1, 0);
+		drawpic(pos+'320 0 0', "gfx/sb_cells", '24 24 0', '1 1 1', 1, 0);
 
-	drawpic(pos+'360 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
+	drawpic(pos+'344 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
 	//drawpic(pos+'360 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
-	Hud_DrawLargeValue(pos+'368 0 0', getstatf(STAT_AMMO), 10);
+	Hud_DrawLargeValue(pos+'352 0 0', getstatf(STAT_AMMO), 10);
 	//drawpic(pos+'440 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
+
+	if (st_items2 & 32)
+		drawpic(pos+'440 0 0', "gfx/sb_sigil1", '8 16 0', '1 1 1', 1, 0);
+	if (st_items2 & 64)
+		drawpic(pos+'448 0 0', "gfx/sb_sigil2", '8 16 0', '1 1 1', 1, 0);
+	if (st_items2 & 128)
+		drawpic(pos+'456 0 0', "gfx/sb_sigil3", '8 16 0', '1 1 1', 1, 0);
+	if (st_items2 & 256)
+		drawpic(pos+'464 0 0', "gfx/sb_sigil4", '8 16 0', '1 1 1', 1, 0);
 };
 
 void Hud_DrawIBar(vector pos)
@@ -379,10 +388,10 @@ void Hud_DrawIBar(vector pos)
 	}
 	
 
-	Hud_DrawAmmoCount(0, pos + '10 0 0', FALSE);
-	Hud_DrawAmmoCount(1, pos + '58 0 0', FALSE);
-	Hud_DrawAmmoCount(2, pos + '106 0 0', FALSE);
-	Hud_DrawAmmoCount(3, pos + '154 0 0', FALSE);
+	Hud_DrawAmmoCount(0, pos + '58 0 0', FALSE);
+	Hud_DrawAmmoCount(1, pos + '106 0 0', FALSE);
+	Hud_DrawAmmoCount(2, pos + '176 0 0', FALSE);
+	Hud_DrawAmmoCount(3, pos + '248 0 0', FALSE);
 
 	if (st_items & IT_KEY1)
 		drawpic(pos+'288 8 0', "gfx/sb_key1", '16 16 0', '1 1 1', 1, 0);
@@ -402,14 +411,7 @@ void Hud_DrawIBar(vector pos)
 	if (st_boots)
 		drawpic(pos+'400 8 0', "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
 
-	if (st_items2 & 32)
-		drawpic(pos+'416 8 0', "gfx/sb_sigil1", '8 16 0', '1 1 1', 1, 0);
-	if (st_items2 & 64)
-		drawpic(pos+'424 8 0', "gfx/sb_sigil2", '8 16 0', '1 1 1', 1, 0);
-	if (st_items2 & 128)
-		drawpic(pos+'432 8 0', "gfx/sb_sigil3", '8 16 0', '1 1 1', 1, 0);
-	if (st_items2 & 256)
-		drawpic(pos+'440 8 0', "gfx/sb_sigil4", '8 16 0', '1 1 1', 1, 0);
+
 };
 
 
@@ -452,7 +454,7 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 	local float nsecs, nmins;
 	
 	// Clear status bar ready for map info/scores
-	drawpic(pos, "gfx/alk_scorebar", [464, 24], '1 1 1', baralpha, 0);
+	drawpic(pos, "gfx/alk_scorebar", [480, 24], '1 1 1', baralpha, 0);
 
 	// Level designers Map name + Skill level name
 	map_str = strcat(world.message, " (", mapname, ")");
@@ -509,7 +511,7 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 
 	prevweapons = st_weapons;
 
-	pos_x = (screensize_x-464)/2;
+	pos_x = (screensize_x-480)/2;
 	pos_y = screensize_y;
 
 	//st_items = getstatbits(STAT_ITEMS, 0, 23);
@@ -541,17 +543,17 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 	}
 
 	if (hudviewsize < 110) {
-		drawpic(pos - '0 48 0', "gfx/alk_ibar", '464 24 0', '1 1 1', baralpha, 0);
+		drawpic(pos - '0 48 0', "gfx/alk_ibar", '480 24 0', '1 1 1', baralpha, 0);
 		Hud_DrawIBar(pos - '-8 48 0');
 
 		if (!scoreboard) {
-			drawpic(pos - '0 24 0', "gfx/alk_sbar", '464 24 0', '1 1 1', baralpha, 0);
+			drawpic(pos - '0 24 0', "gfx/alk_sbar", '480 24 0', '1 1 1', baralpha, 0);
 			Hud_DrawSBar(pos - '0 24 0');
 		}
 	}
 	
 	else if (hudviewsize == 110 && !scoreboard) {
-		drawpic(pos - '0 24 0', "gfx/alk_sbar_solo", '464 24 0', '1 1 1', baralpha, 0);
+		drawpic(pos - '0 24 0', "gfx/alk_sbar_solo", '480 24 0', '1 1 1', baralpha, 0);
 		Hud_DrawSBar(pos - '0 24 0');
 	}
 
