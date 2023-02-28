@@ -31,7 +31,6 @@ void() SetChangeParms = {
 	}
 
 	// jump boots persists across levels. even if player is dead on map change
-	float limit;
 	if (self.jboots_finished) parm11 = self.jboots_prevlimit;
 	else parm11 = self.jboots_rechargelimit;
 	
