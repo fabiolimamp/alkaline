@@ -246,8 +246,16 @@ void() trigger_relay_use = {
 	if (self.spawnflags & RELAY_PLAYERONLY && !(activator.flags & FL_CLIENT))
 		return;
 
+	entity t;
 	if (self.noise) {
-		if (self.enemy.flags & FL_CLIENT)
+		if (self.spawnflags & TRIGGER_CENTERPRINTALL) {
+			t = find(world, classname, "player");
+			while (t) {
+				sound (t, CHAN_VOICE, self.noise, 1, ATTN_NORM);
+				t = find(t, classname, "player");
+			}
+		}
+		else if (self.enemy.flags & FL_CLIENT)
 			sound (self.enemy, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 		else
 			sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
