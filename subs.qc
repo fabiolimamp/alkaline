@@ -535,6 +535,12 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 			}
 		}
 
+		if (t.classname == "trigger_secret" && !(t.nextthink > time)) {
+			dprint3("Killed untouched trigger_secret at ", vtos((t.mins + t.maxs)/2), ", marking as found\n");
+			found_secrets = found_secrets + 1;
+			WriteByte (MSG_ALL, SVC_FOUNDSECRET);
+		}
+
 		// liquid brush list handling
 		if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
 		if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
