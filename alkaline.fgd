@@ -2670,6 +2670,27 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	]
 ]
 
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_float : "Makes things floaty.
+It pushes entities smoothly towards a set vertical speed, either up or downwards. Affects everything that has gravity - players, monsters, items, projectiles, gibs.
+
+Can be given an optional float sound. 
+
+'finalspeed' sets the final vertical speed the entity will be pushed to. Positive values are upwards, negative downwards.
+
+'speed' controls the acceleration in units/s^2 to reach for the final speed (or simply the gravity of the floater, in other words). This must always be a positive value. For reference, standard gravity is 800u/s^2, so it's recommended to use a value higher than this, otherwise the vertical push will never be able to fight against gravity.
+"
+[
+	spawnflags(flags) = [
+		1: "Don't affect players" : 0 
+		2: "Don't affect monsters" : 0
+	]
+	speed(integer) : "Acceleration" : 1600
+	finalspeed(integer) : "Final vertical speed" : 100
+
+	noise(string) : "Optional floating sound"
+	delay(float) : "Sound loop time (when there's a sound set)" : "1"
+]
+
 @PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_hurt : "Trigger hurt. Hurts any entity activating it, or the entities defined in the target-target4 fields.
 'dmg' sets the total damage to be inflicted.
 'speed' sets the total time it takes for damage to be progressively applied.

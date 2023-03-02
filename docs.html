@@ -192,6 +192,7 @@ body {
 		<ul>
 			<li><a href="#void">Void</a></li>
 			<li><a href="#gravity">Gravity</a></li>
+			<li><a href="#gravity-pads">Gravity pads/floaters</a></li>
 			<li><a href="#explosions">Explosions</a></li>
 			<li><a href="#particle-field">Particle field</a></li>
 			<li><a href="#lightning-trail">Lightning trail</a></li>
@@ -945,6 +946,13 @@ It can be set to start visible through the "Start on" spawnflag.
 	<li><strong>Globally:</strong> The <strong>trigger_globalgravity</strong> point entity toggles the world gravity between two settings when triggered (<strong>gravity</strong> and <strong>return_gravity</strong> fields).</li>
 	<li><strong>Locally:</strong> The <strong>trigger_setgravity</strong> brush entity changes the gravity of each entity that touches it.</li>
 </ul>
+
+
+<h3 id="gravity-pads">Gravity pads/floaters</h3>
+
+<p><strong>trigger_float</strong> makes things floaty. It pushes entities smoothly towards a set vertical speed, either up or downwards. Affects everything that has gravity - players, monsters, items, projectiles, gibs.</p>
+
+<p>Can be given an optional float sound like trigger_push.</p>
 
 
 <h3 id="explosions">Explosions</h3>

@@ -1874,3 +1874,70 @@ void() target_startpath_use = {
 void() target_startpath = {
 	self.use = target_startpath_use;
 };
+
+
+
+/*
+=============================================================
+
+trigger_float
+
+=============================================================
+*/
+
+void() trigger_float = {
+	InitTrigger();
+
+	self.touch = trigger_float_touch;
+
+	self.speed = defaultFl(self.speed, 1600);
+	self.finalspeed = zeroconvertdefault(self.finalspeed, 100);
+
+	self.delay = defaultFl(self.delay, 1);
+
+	if (self.noise != "") precache_sound(self.noise);
+
+	if (self.speed <= 0 ) {
+		objerror("trigger_float: speed cannot be negative");
+		remove(self);
+		return;
+	}
+
+	SUB_CheckWaiting();
+}
+
+void() trigger_float_touch = {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (other.movetype != MOVETYPE_TOSS &&
+		other.movetype != MOVETYPE_BOUNCE && 
+		other.movetype != MOVETYPE_BOUNCEMISSILE &&
+		other.movetype != MOVETYPE_WALK &&
+		other.movetype != MOVETYPE_STEP
+	)
+		return;
+
+	// no players
+	if (other.movetype == MOVETYPE_WALK && self.spawnflags & 1)
+		return;
+
+	// no monsters
+	if (other.movetype == MOVETYPE_STEP && self.spawnflags & 2)
+		return;
+	
+
+	if (other.velocity_z < self.finalspeed){
+		other.flags &~= FL_ONGROUND;
+		other.velocity_z += self.speed * frametime;
+	}
+	else
+		other.velocity_z -= self.speed * frametime;
+
+	if (self.noise != "") {
+		if (other.flags & FL_CLIENT && other.health > 0 && other.fly_sound < time) {
+			other.fly_sound = time + self.delay;
+			sound(other, CHAN_AUTO, self.noise, 1, ATTN_NORM);
+		}
+	}
+}
