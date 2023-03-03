@@ -6,21 +6,36 @@ SHAL-RATH
 ==============================================================================
 */
 
-
+// 0 - 10
 $frame attack1 attack2 attack3 attack4 attack5 attack6 attack7 attack8
 $frame attack9 attack10 attack11
 
+// 11- 15
 $frame pain1 pain2 pain3 pain4 pain5 
 
+// 16 - 22
 $frame death1 death2 death3 death4 death5 death6 death7
 
+// 23
 $frame stand1
 
+// 24 - 34
 $frame	walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10
 $frame	walk11
 
-void() ShalMissile;
-void() shal_stand     =[      $stand1,       shal_stand    ] {ai_stand();}; // stand1 is a framegroup, animates automatically
+/*
+Mechavore has a few differences in frame numbers:
+- Stand is frame 0 instead of 23
+- Walk is 23-33 instead of 24-34
+- There's no frame 34
+That gets corrected in every frame function they're used in.
+*/
+
+
+void() shal_stand     =[      $stand1,       shal_stand    ] {
+	if (!self.originalmonsters) self.frame = $attack1; // mechavore has stand as frame 0
+	ai_stand();
+}; // stand1 is a framegroup, animates automatically
 
 
 void() shal_walk1     =[      $walk1,       shal_walk2    ] {ai_walk(4);};
@@ -30,15 +45,15 @@ void() shal_walk2     =[      $walk2,       shal_walk3    ] {ai_walk(6);
 		else sound (self, CHAN_VOICE, "mechavore/idle.wav", 1, ATTN_IDLE);
 	}
 };
-void() shal_walk3     =[      $walk3,       shal_walk4    ] {ai_walk(0);};
-void() shal_walk4     =[      $walk4,       shal_walk5    ] {ai_walk(0);};
-void() shal_walk5     =[      $walk5,       shal_walk6    ] {ai_walk(0);};
-void() shal_walk6     =[      $walk6,       shal_walk7    ] {ai_walk(0);};
-void() shal_walk7     =[      $walk7,       shal_walk8    ] {ai_walk(5);};
-void() shal_walk8     =[      $walk8,       shal_walk9    ] {ai_walk(6);};
-void() shal_walk9     =[      $walk9,       shal_walk10    ] {ai_walk(5);};
-void() shal_walk10    =[      $walk10,       shal_walk11    ] {ai_walk(0);};
-void() shal_walk11    =[      $walk11,       shal_walk1    ] {ai_walk(4);};
+void() shal_walk3     =[      $walk3,       shal_walk4    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk4     =[      $walk4,       shal_walk5    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk5     =[      $walk5,       shal_walk6    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk6     =[      $walk6,       shal_walk7    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk7     =[      $walk7,       shal_walk8    ] {if (!self.originalmonsters) self.frame--; ai_walk(5); };
+void() shal_walk8     =[      $walk8,       shal_walk9    ] {if (!self.originalmonsters) self.frame--; ai_walk(6); };
+void() shal_walk9     =[      $walk9,       shal_walk10    ] {if (!self.originalmonsters) self.frame--; ai_walk(5); };
+void() shal_walk10    =[      $walk10,       shal_walk11    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk11    =[      $walk11,       shal_walk1    ] {if (!self.originalmonsters) self.frame--; ai_walk(4); };
 
 
 
@@ -48,16 +63,16 @@ void() shal_run1     =[      $walk1,       shal_run2    ] {ai_run(6);
 		else sound (self, CHAN_VOICE, "mechavore/idle.wav", 1, ATTN_IDLE);
 	}
 };
-void() shal_run2     =[      $walk2,       shal_run3    ] {ai_run(4);};
-void() shal_run3     =[      $walk3,       shal_run4    ] {ai_run(0);};
-void() shal_run4     =[      $walk4,       shal_run5    ] {ai_run(0);};
-void() shal_run5     =[      $walk5,       shal_run6    ] {ai_run(0);};
-void() shal_run6     =[      $walk6,       shal_run7    ] {ai_run(0);};
-void() shal_run7     =[      $walk7,       shal_run8    ] {ai_run(5);};
-void() shal_run8     =[      $walk8,       shal_run9    ] {ai_run(6);};
-void() shal_run9     =[      $walk9,       shal_run10    ] {ai_run(5);};
-void() shal_run10    =[      $walk10,       shal_run11    ] {ai_run(0);};
-void() shal_run11    =[      $walk11,       shal_run1    ] {ai_run(4);};
+void() shal_run2     =[      $walk2,       shal_run3    ] {if (!self.originalmonsters) self.frame--; ai_run(4); };
+void() shal_run3     =[      $walk3,       shal_run4    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run4     =[      $walk4,       shal_run5    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run5     =[      $walk5,       shal_run6    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run6     =[      $walk6,       shal_run7    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run7     =[      $walk7,       shal_run8    ] {if (!self.originalmonsters) self.frame--; ai_run(5); };
+void() shal_run8     =[      $walk8,       shal_run9    ] {if (!self.originalmonsters) self.frame--; ai_run(6); };
+void() shal_run9     =[      $walk9,       shal_run10    ] {if (!self.originalmonsters) self.frame--; ai_run(5); };
+void() shal_run10    =[      $walk10,       shal_run11    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run11    =[      $walk11,       shal_run1    ] {if (!self.originalmonsters) self.frame--; ai_run(4); };
 
 
 void() shal_attack1     =[      $attack1,       shal_attack2    ] {ai_face();
