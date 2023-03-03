@@ -774,7 +774,7 @@ void() weapon_proximity_gun =
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_mine.mdl");
 	setmodel (self, "progs/g_mine.mdl");
 	self.weapon = WEAPON_PROXIMITY_GUN;
-	self.netname = "Proximity Launcher";
+	self.netname = "Cluster Mine Launcher";
 	self.touch = weapon_touch;
 	if(!self.ammo_rockets) self.ammo_rockets = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
