@@ -338,12 +338,14 @@ void() monster_shalrath =
 		precache_model2 ("progs/mvore_bomb.mdl");
 		precache_model2 ("progs/probelasr_gib1.mdl");
 		precache_model2 ("progs/cyberscrag_gib1.mdl");
+		precache_model2 ("progs/cyberscrag_gib2.mdl");
 		
 		precache_sound2 ("mechavore/attack.wav");
 		precache_sound2 ("mechavore/death.wav");
 		precache_sound2 ("mechavore/idle.wav");
 		precache_sound2 ("mechavore/pain.wav");
 		precache_sound2 ("mechavore/sight.wav");
+		precache_sound2 ("misc/metal_impact.wav");
 	}
 
 	precache_sound2 ("shalrath/attack2.wav");
