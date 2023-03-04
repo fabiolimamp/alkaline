@@ -1098,6 +1098,7 @@ void() trigger_ladder =
 	precache_sound("misc/ladder2.wav");
 
 	InitTrigger ();
+	setsize(self, self.mins, self.maxs + '0 0 16');
 	self.touch = ladder_touch;
 
 	SUB_CheckWaiting();
