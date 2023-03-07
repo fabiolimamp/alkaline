@@ -362,8 +362,12 @@ void() worldspawn =
 	mapvar_setuparray();
 	
 
-	// defaults to base theme, because of course it does
-	if (!self.worldtype) self.worldtype = WORLDTYPE_BASE;
+	// Defaults to base theme, because of course it does.
+	// Adding a value of 4 to the scratch1 cvar turns back medieval as default
+	if (!self.worldtype) {
+		if (cvar("scratch1") & TEMPSETTINGS_ORIGINALWORLDTYPES) self.worldtype = WORLDTYPE_MEDIEVAL;
+		else self.worldtype = WORLDTYPE_BASE;
+	}
 
 	lastdq = -1;
 	currentdq = -1;
