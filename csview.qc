@@ -1,15 +1,4 @@
-void(float apilevel, string enginename, float engineversion) CSQC_Init = {
 
-};
-
-float(float save, float take, vector dir) CSQC_Parse_Damage = {
-	painfinishtime = time + 0.2;
-	return FALSE;
-};
-
-void(vector virtsize, float showscores) CSQC_DrawHud = {
-	Hud_Draw(2, showscores, virtsize_x, virtsize_y);
-};
 /*
 void(float vwidth, float vheight, float notmenu) CSQC_UpdateView =
 {

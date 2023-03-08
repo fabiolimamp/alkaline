@@ -1,8 +1,11 @@
 vector screensize;
-float st_items, st_items2, st_weapons, st_activeweapon, prevweapons;
+float st_items, st_items2, previtems2;
+float st_weapons, st_activeweapon, prevweapons;
 float st_boots, st_boots_finished;
+float st_health, prevhealth;
 
 float baralpha, hudalpha;
+float hudviewsize;
 
 // Default sizes for HUD elements
 vector HUDSIZE_24 = '24 24 0';		// Status Bar
@@ -43,6 +46,31 @@ string anumber[10] = {
 	"gfx/xanum_7",
 	"gfx/xanum_8",
 	"gfx/xanum_9"
+};
+
+string number2[10] = {
+	"gfx/num_0",
+	"gfx/num_1",
+	"gfx/num_2",
+	"gfx/num_3",
+	"gfx/num_4",
+	"gfx/num_5",
+	"gfx/num_6",
+	"gfx/num_7",
+	"gfx/num_8",
+	"gfx/num_9"
+};
+string anumber2[10] = {
+	"gfx/anum_0",
+	"gfx/anum_1",
+	"gfx/anum_2",
+	"gfx/anum_3",
+	"gfx/anum_4",
+	"gfx/anum_5",
+	"gfx/anum_6",
+	"gfx/anum_7",
+	"gfx/anum_8",
+	"gfx/anum_9"
 };
 
 string faceid[10] = {
@@ -105,12 +133,21 @@ float WPN_ICONS = 12;
 // Record when weapons have been added (flash mechanic)
 float weapontime[WPN_ICONS];
 
+
+
+float runeflags[4] = {
+	32, 64, 128, 256
+};
+// Record when runes have been added (flash mechanic)
+float runetime[4];
+
 string(float num, float fr) getWeaponName = {
 	return strcat(weaponprefix[num], weaponframes[fr], weaponname[num]);
 }
 
-void(float num, vector pos) Hud_DrawWeapon = {
+void(float num, vector pos, vector selected_offset) Hud_DrawWeapon = {
 	float flash, fr;
+	vector ofs;
 	string name;
 
 	if (st_weapons & weaponflags[num]) {
@@ -131,8 +168,10 @@ void(float num, vector pos) Hud_DrawWeapon = {
 				fr = 0;
 		}
 
+		if (st_activeweapon == weaponflags[num]) ofs = selected_offset;
+
 		name = getWeaponName(num, fr);
-		drawpic(pos, name, '24 16 0', '1 1 1', 1, 0);
+		drawpic(pos + ofs, name, '24 16 0', '1 1 1', 1, 0);
 	}
 }
 
@@ -184,7 +223,7 @@ void(vector pos, float value, float digit, float zerofill, float fontcol) Hud_Dr
 	}	
 };
 
-void(vector pos, float value, float threshhold) Hud_DrawLargeValue =
+void(vector pos, float value, float threshhold, float style) Hud_DrawLargeValue =
 {
 	float c;
 	float len;
@@ -211,7 +250,10 @@ void(vector pos, float value, float threshhold) Hud_DrawLargeValue =
 			len--;
 			c = str2chr(s, len);
 
-			drawpic(pos+len * '24 0 0', anumber[c-'0'], '24 24 0', '1 1 1', 1, 0);
+			if (style == 2)
+				drawpic(pos+len * '24 0 0', anumber2[c-'0'], '24 24 0', '1 1 1', 1, 0);
+			else
+				drawpic(pos+len * '24 0 0', anumber[c-'0'], '24 24 0', '1 1 1', 1, 0);
 		}
 	}
 	else
@@ -222,7 +264,10 @@ void(vector pos, float value, float threshhold) Hud_DrawLargeValue =
 			len--;
 			c = str2chr(s, len);
 
-			drawpic(pos+len * '24 0 0', number[c-'0'], '24 24 0', '1 1 1', 1, 0);
+			if (style == 2)
+				drawpic(pos+len * '24 0 0', number2[c-'0'], '24 24 0', '1 1 1', 1, 0);
+			else
+				drawpic(pos+len * '24 0 0', number[c-'0'], '24 24 0', '1 1 1', 1, 0);
 		}
 	}
 };
@@ -322,6 +367,10 @@ string(float f, float chars, string lead) FormatFloat
 	return s;
 };
 
+//=================================================================================================
+//                                        Old style HUD
+//=================================================================================================
+
 void Hud_DrawSBar(vector pos)
 {
 	
@@ -341,17 +390,13 @@ void Hud_DrawSBar(vector pos)
 			drawpic(pos+'16 0 0', "gfx/sb_aarmor1", '24 24 0', '1 1 1', 1, 0);
 
 		drawpic(pos+'40 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
-		//drawpic(pos+'40 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
-		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25);
-		//drawpic(pos+'120 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
+		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25, 1);
 	}
 
 	Hud_DrawFace(pos+'168 0 0');
 	
 	drawpic(pos+'192 0 0', "gfx/numbk_health", '88 24 0', '1 1 1', 1, 0);
-	//drawpic(pos+'200 0 0', "gfx/numbk_l2", '8 24 0', '1 1 1', 1, 0);
-	Hud_DrawLargeValue(pos+'200 0 0', getstatf(STAT_HEALTH), 25);
-	//drawpic(pos+'280 0 0', "gfx/numbk_r2", '8 24 0', '1 1 1', 1, 0);
+	Hud_DrawLargeValue(pos+'200 0 0', getstatf(STAT_HEALTH), 25, 1);
 
 	if (st_items & IT_SHELLS)
 		drawpic(pos+'320 0 0', "gfx/sb_ashells", '24 24 0', '1 1 1', 1, 0);
@@ -363,9 +408,7 @@ void Hud_DrawSBar(vector pos)
 		drawpic(pos+'320 0 0', "gfx/sb_cells", '24 24 0', '1 1 1', 1, 0);
 
 	drawpic(pos+'344 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
-	//drawpic(pos+'360 0 0', "gfx/numbk_l1", '8 24 0', '1 1 1', 1, 0);
-	Hud_DrawLargeValue(pos+'352 0 0', getstatf(STAT_AMMO), 10);
-	//drawpic(pos+'440 0 0', "gfx/numbk_r1", '8 24 0', '1 1 1', 1, 0);
+	Hud_DrawLargeValue(pos+'352 0 0', getstatf(STAT_AMMO), 10, 1);
 
 	if (st_items2 & 32)
 		drawpic(pos+'440 0 0', "gfx/sb_sigil1", '8 16 0', '1 1 1', 1, 0);
@@ -384,7 +427,7 @@ void Hud_DrawIBar(vector pos)
 	vector offset;
 	for (i = 0; i < 12; i++) {
 		offset = [i * 24, 8, 0];
-		Hud_DrawWeapon(i, pos + offset);
+		Hud_DrawWeapon(i, pos + offset, '0 0 0');
 	}
 	
 
@@ -501,42 +544,8 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 };
 
 
-nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float height) {
-	vector pos;
-	float hudviewsize;
-	float i;
-	screensize_x = width;
-	screensize_y = height;
-	screensize_z = 0;
-
-	prevweapons = st_weapons;
-
-	pos_x = (screensize_x-480)/2;
-	pos_y = screensize_y;
-
-	//st_items = getstatbits(STAT_ITEMS, 0, 23);
-	st_items = getstatf(STAT_IT);
-	st_items2 = getstatbits(STAT_ITEMS, 23, 9);
-	st_weapons = getstatf(STAT_WEAPONS);
-	st_activeweapon = getstatf(STAT_ACTIVEWEAPON);
-	st_boots = getstatf(STAT_BOOTS);
-	st_boots_finished = getstatf(STAT_BOOTS_FINISHED);
-
-	hudviewsize = cvar("viewsize");
-
-	baralpha = cvar("scr_sbaralpha");
-	if (baralpha == 0) baralpha = 0.333;
-	// Default is 1 for everything else
-	hudalpha = 1;
-
-	for (i = 0; i < WPN_ICONS; i++) {
-		if ((st_weapons & weaponflags[i]) && !(prevweapons & weaponflags[i]))
-			weapontime[i] = time;
-	}
-
-	//if hudtype == 0 then the engine already drew it.
-
-	
+nonstatic void Hud_Draw(float scoreboard, vector pos) {
+		
 	if (scoreboard)	{
 		//Hud_CoopScores_SBar(pos - '0 24 0');
 		Hud_DrawScoreBar_QSClock(pos - '0 24 ');
@@ -559,4 +568,271 @@ nonstatic void Hud_Draw(float hudtype, float scoreboard, float width, float heig
 
 
 	
+};
+
+//=================================================================================================
+//                                        New style HUD
+//=================================================================================================
+
+float vertical_left, vertical_right;
+
+void Hud_DrawSBar_2(vector left, vector right) {
+
+	vertical_left -= 24;
+
+	Hud_DrawFace(left + [0, vertical_left, 0]);
+	Hud_DrawLargeValue(left + [32, vertical_left, 0], getstatf(STAT_HEALTH), 25, 2);
+	
+
+	if (st_items & IT_TRIFECTA)	{
+		vertical_left -= 24;
+		drawpic(left + [0, vertical_left, 0], "gfx/sb_aarmortri", '112 24 0', '1 1 1', 1, 0);
+
+	}
+	else if (st_items & IT_INVULNERABILITY) {
+		vertical_left -= 24;
+		drawpic(left + [0, vertical_left, 0], "gfx/sb_aarmor666", '112 24 0', '1 1 1', 1, 0);
+	}
+	else if (st_items & (IT_ARMOR3 + IT_ARMOR2 + IT_ARMOR1)) {
+		string armorpic;
+
+		vertical_left -= 24;
+
+		if (st_items & IT_ARMOR3) armorpic = "gfx/sb_armor3";
+		else if (st_items & IT_ARMOR2) armorpic = "gfx/sb_armor2";
+		else armorpic = "gfx/sb_armor1";
+		
+		drawpic(left + [0, vertical_left, 0], armorpic, '24 24 0', '1 1 1', 1, 0);
+		Hud_DrawLargeValue(left + [32, vertical_left, 0], getstatf(STAT_ARMOR), 25, 2);
+
+		
+	}
+	
+	vertical_left -= 2;
+	
+	if (hudviewsize < 110) {
+		if (st_items & IT_INVISIBILITY) {
+			vertical_left -= 16;
+			drawpic(left + [4, vertical_left, 0], "gfx/sb_invis", '16 16 0', '1 1 1', 1, 0);
+		}
+		if (st_items & IT_INVULNERABILITY) {
+			vertical_left -= 16;
+			drawpic(left + [4, vertical_left, 0], "gfx/sb_invuln", '16 16 0', '1 1 1', 1, 0);
+		}
+		if (st_items & IT_SUIT) {
+			vertical_left -= 16;
+			drawpic(left + [4, vertical_left, 0], "gfx/sb_suit", '16 16 0', '1 1 1', 1, 0);
+		}
+		if (st_items & IT_QUAD) {
+			vertical_left -= 16;
+			drawpic(left + [4, vertical_left, 0], "gfx/sb_quad", '16 16 0', '1 1 1', 1, 0);
+		}
+		if (st_items & IT_TRIFECTA) {
+			vertical_left -= 16;
+			drawpic(left + [4, vertical_left, 0], "gfx/sb_trifecta", '16 16 0', '1 1 1', 1, 0);
+		}
+		if (st_boots) {
+			vertical_left -= 16;
+			drawpic(left + [4, vertical_left, 0], "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
+		}
+	}
+
+	//---------------------------------------------------------------------------------------------
+	
+	string ammopic;
+	if (st_items & IT_SHELLS) ammopic = "gfx/sb_shells";
+	else if (st_items & IT_NAILS) ammopic = "gfx/sb_nails";
+	else if (st_items & IT_ROCKETS) ammopic = "gfx/sb_rocket";
+	else if (st_items & IT_CELLS) ammopic = "gfx/sb_cells";
+	
+	vertical_right -= 24;
+
+	if (ammopic != "") {
+		drawpic(right + [-24, vertical_right, 0], ammopic, '24 24 0', '1 1 1', 1, 0);
+		Hud_DrawLargeValue(right + [-104, vertical_right, 0], getstatf(STAT_AMMO), 10, 2);
+	}
+	else {
+		Hud_DrawLargeValue(right + [-72, vertical_right, 0], getstatf(STAT_AMMO), 10, 2);
+	}
+
+	if (hudviewsize < 110) {
+		vertical_right -= 28;
+		
+		drawpic(right + [-96, vertical_right, 0], "gfx/bg_ammo.lmp", '96 20 0', '1 1 1', baralpha, 0);
+
+		Hud_DrawAmmoCount(0, right + [-96, vertical_right, 0] + '10 0 0', FALSE);
+		Hud_DrawAmmoCount(1, right + [-96, vertical_right, 0] + '58 0 0', FALSE);
+		Hud_DrawAmmoCount(2, right + [-96, vertical_right, 0] + '10 10 0', FALSE);
+		Hud_DrawAmmoCount(3, right + [-96, vertical_right, 0] + '58 10 0', FALSE);
+	}
+
+	vertical_right -= 4;
+
+	if (st_items & IT_KEY1){
+		vertical_right -= 16;
+		drawpic(right + [-16, vertical_right, 0], "gfx/sb_key1", '16 16 0', '1 1 1', 1, 0);
+	}
+	if (st_items & IT_KEY2){
+		vertical_right -= 16;
+		drawpic(right + [-16, vertical_right, 0], "gfx/sb_key2", '16 16 0', '1 1 1', 1, 0);
+	}
+
+	float i;
+	vector offset;
+	
+	if (hudviewsize < 110) {
+		for (i = 0; i < 12; i++) {
+			if (st_weapons & weaponflags[i]) {
+				offset += '0 -14 0';
+				Hud_DrawWeapon(i, [screensize_x - 25, screensize_y/2 + 56, 0] + offset , '-4 0 0');
+			}
+		}
+	}
+
+};
+
+float runealpha(float i) {
+	if (runetime[i] < 0)
+		return 1;
+
+	if (time - runetime[i] > 1.5)
+		return 1;
+	else if (time - runetime[i] > 1.2)
+		return (time - runetime[i] - 1.2)/0.3;
+	else if (time - runetime[i] > 0.9)
+		return 1 - (time - runetime[i] - 0.9)/0.3;
+	else if (time - runetime[i] > 0.6)
+		return (time - runetime[i] - 0.6)/0.3;
+	else if (time - runetime[i] > 0.3)
+		return 1 - (time - runetime[i] - 0.3)/0.3;
+	else
+		return (time - runetime[i])/0.3;
+}
+
+void Hud_DrawRunes_2(vector pos) {
+	drawpic(pos+'0 0 0', "gfx/bg_runes.lmp", '32 16 0', '1 1 1', 1, 0);
+
+	if (st_items2 & 32){
+		drawpic(pos+'0 0 0', "gfx/sb_sigil1", '8 16 0', '1 1 1', runealpha(0), 0);
+	}
+	if (st_items2 & 64) {
+		drawpic(pos+'8 0 0', "gfx/sb_sigil2", '8 16 0', '1 1 1', runealpha(1), 0);
+	}
+	if (st_items2 & 128) {
+		drawpic(pos+'16 0 0', "gfx/sb_sigil3", '8 16 0', '1 1 1', runealpha(2), 0);
+	}
+	if (st_items2 & 256){
+		drawpic(pos+'24 0 0', "gfx/sb_sigil4", '8 16 0', '1 1 1', runealpha(3), 0);
+	}
+}
+
+
+
+nonstatic void Hud_Draw_2(float scoreboard) {
+	if (scoreboard)	{
+		//Hud_CoopScores_SBar(pos - '0 24 0');
+		Hud_DrawScoreBar_QSClock([(screensize_x-480)/2, screensize_y - 24, 0]);
+		Hud_DrawRunes_2([(screensize_x-32)/2, screensize_y - 48, 0]);
+		return;
+	}
+
+	vertical_left = 0;
+	vertical_right = 0;
+	
+	if (hudviewsize <= 110) {
+		Hud_DrawSBar_2([16, screensize_y - 10, 0], [screensize_x - 16, screensize_y - 10, 0]);
+
+		float lastrunetime;
+		for (float i = 0; i < 4; i++) {
+			if (time - runetime[i] < 3 && time - runetime[i] > lastrunetime) lastrunetime = runetime[i];
+		}
+
+		if (lastrunetime > 0) 
+			Hud_DrawRunes_2([(screensize_x-32)/2, screensize_y - 24, 0]);
+	}
+
+
+	
+};
+
+
+//=================================================================================================
+//                                      Engine hooks
+//=================================================================================================
+
+void(float apilevel, string enginename, float engineversion) CSQC_Init = {
+	//dprint("teste\n");
+	/*st_items = getstatf(STAT_IT);
+	st_items2 = getstatbits(STAT_ITEMS, 23, 9);
+	st_weapons = getstatf(STAT_WEAPONS);
+	st_activeweapon = getstatf(STAT_ACTIVEWEAPON);
+	st_boots = getstatf(STAT_BOOTS);
+	st_boots_finished = getstatf(STAT_BOOTS_FINISHED);
+	st_health = getstatf(STAT_HEALTH);
+
+	dprint("Initializing runes ");dprint(ftos(previtems2));dprint("\n");
+	*/
+	/*
+	for (float i = 0; i < 4; i++) {
+		//if ((runeflags[i] & st_items2)){
+			dprint("Clearing rune ");dprint(ftos(i));dprint("\n");
+			runetime[i] = -1;
+		//}
+	}*/
+	previtems2 = -1;
+	prevweapons = -1;
+};
+
+
+void(vector virtsize, float showscores) CSQC_DrawHud = {
+
+	screensize_x = virtsize_x;
+	screensize_y = virtsize_y;
+	screensize_z = 0;
+
+	if (prevweapons >= 0) prevweapons = st_weapons;
+	prevhealth = st_health;
+
+	if (previtems2 >= 0) previtems2 = st_items2;
+
+	//st_items = getstatbits(STAT_ITEMS, 0, 23);
+	st_items = getstatf(STAT_IT);
+	st_items2 = getstatbits(STAT_ITEMS, 23, 9);
+	st_weapons = getstatf(STAT_WEAPONS);
+	st_activeweapon = getstatf(STAT_ACTIVEWEAPON);
+	st_boots = getstatf(STAT_BOOTS);
+	st_boots_finished = getstatf(STAT_BOOTS_FINISHED);
+	st_health = getstatf(STAT_HEALTH);
+
+	hudviewsize = cvar("viewsize");
+
+	baralpha = cvar("scr_sbaralpha");
+	if (baralpha == 0) baralpha = 0.333;
+	// Default is 1 for everything else
+	hudalpha = 1;
+
+	if (prevweapons < 0) prevweapons = st_weapons;
+
+	for (float i = 0; i < WPN_ICONS; i++) {
+		if (weaponflags[i] & st_weapons && !(weaponflags[i] & prevweapons))
+			weapontime[i] = time;
+	}
+
+
+
+	if (previtems2 < 0) previtems2 = st_items2;
+
+	for (float i = 0; i < 4; i++) {
+		if (runeflags[i] & st_items2 && !(runeflags[i] & previtems2)){
+			runetime[i] = time;
+		}
+	}
+
+	
+	if (st_health < prevhealth) painfinishtime = time + 0.2;
+
+	if (cvar("scratch1") == 1)
+		Hud_Draw_2(showscores);
+	else
+		Hud_Draw(showscores, [(screensize_x-480)/2, screensize_y, 0]);
 };

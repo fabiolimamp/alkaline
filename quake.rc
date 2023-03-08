@@ -8,6 +8,7 @@ sv_nqplayerphysics 1
 sys_ticrate 0.025
 
 bind "F8" "echo Loading autosave...; wait; load auto"
+bind "h" "impulse 50"
 
 alias bulletholes "impulse 30;toggleconsole;wait;toggleconsole"
 alias footsteps "impulse 31;toggleconsole;wait;toggleconsole"
@@ -17,6 +18,9 @@ alias playertracers "impulse 43;toggleconsole;wait;toggleconsole"
 alias oldgrenade "impulse 44;toggleconsole;wait;toggleconsole"
 alias oldlightning "impulse 45;toggleconsole;wait;toggleconsole"
 alias resetalkalinesettings "impulse 40;toggleconsole;wait;toggleconsole"
+
+
+alias cyclehud "impulse 50;toggleconsole;wait;toggleconsole"
 
 alias resurrect "impulse 154"
 alias giveall "impulse 9"

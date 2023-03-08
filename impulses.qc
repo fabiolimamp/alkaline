@@ -462,6 +462,13 @@ void() ResetPlayerZ = {
 	self.fixangle = 1;
 }
 
+void() CycleHUD = {
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	float current = cvar("scratch1");
+
+	if (current) cvar_set("scratch1", 0);
+	else cvar_set("scratch1", "1");
+}
 /*
 ============
 ImpulseCommands
@@ -516,6 +523,10 @@ void() ImpulseCommands = {
 		ToggleOldGrenade();
 	if (self.impulse == 45)
 		ToggleOldLightning();
+
+	if (self.impulse == 50)
+		CycleHUD();
+
 	if (self.impulse == 128)
 		printVersionConsole(self);
 		//centerprint(self, VERSION_S);
