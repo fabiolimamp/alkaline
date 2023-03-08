@@ -281,7 +281,7 @@ void() WaterMove =
 		self.waterlevel = 0;
 		return;
 	}
-	if (self.health < 0)
+	if (self.health <= 0)
 		return;
 
 	if (self.waterlevel != 3)
@@ -930,11 +930,11 @@ void() PlayerPostThink =
 	else
 		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
 
-	if (cvar("scratch2")) {
-		self.angles_z = cvar("scratch2");
+	if (cvar("scratch3")) {
+		self.angles_z = cvar("scratch3");
 		self.angles_x = self.v_angle_x;
 		self.fixangle = 1;
-		cvar_set("scratch2", 0);
+		cvar_set("scratch3", 0);
 	}
 	
 	if (self.v_angle_z) {

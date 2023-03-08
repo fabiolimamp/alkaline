@@ -258,7 +258,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	if (teamplay == 1 && targ.team > 0 && targ.team == attacker.team)
 		return;
 
-
+	take = floor(take); // don't deal float damage
 
 	// do the damage
 	targ.health = targ.health - take;

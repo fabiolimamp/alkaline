@@ -537,7 +537,7 @@ void()	player_rocket32 =	[$rockatt6, player_run	] {self.weaponframe=32; nxth(0.0
 void(float dmgtype) PainSound = {
 	local float		rs;
 
-	if (self.health < 0)
+	if (self.health <= 0)
 		return;
 
 	if (damage_attacker.classname == "teledeath") {
