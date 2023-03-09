@@ -523,9 +523,9 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 	// Clear status bar ready for map info/scores
 	drawpic(pos, "gfx/alk_scorebar", [480, 24], '1 1 1', baralpha, 0);
 
-	// Level designers Map name + Skill level name
+	// map title + map name
 	map_str = strcat(world.message, " (", mapname, ")");
-	Hud_ScrollTextBox(pos, 8, 4, 448, 8, 16, map_str);
+	Hud_ScrollTextBox(pos, 8, 4, 464, 8, 32, map_str);
 
 	// Kills
 	drawstring(pos+[8,12], "Kills:", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
