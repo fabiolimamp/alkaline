@@ -468,8 +468,16 @@ void Hud_DrawIBar(vector pos)
 		drawpic(pos+'384 8 0', "gfx/sb_quad", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_TRIFECTA)
 		drawpic(pos+'400 8 0', "gfx/sb_trifecta", '16 16 0', '1 1 1', 1, 0);
-	if (st_boots)
+	if (st_boots) {
 		drawpic(pos+'416 8 0', "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
+		if (st_boots != 1) {
+			float c;
+			if (st_boots < 0 || st_boots > 9) c = str2chr("+", 0);
+			else c = str2chr(ftos(st_boots), 0);
+			//drawcharacter(left + [24, vertical_left + 4, 0], c, '8 8 0', '1 1 1', 1, 0);
+			drawcharacter(pos+'423 15 0', c, '8 8 0', '1 1 1', 1, 0);
+		}
+	}
 
 };
 
@@ -650,6 +658,14 @@ void Hud_DrawSBar_2(vector left, vector right) {
 		if (st_boots) {
 			vertical_left -= 16;
 			drawpic(left + [4, vertical_left, 0], "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
+			
+			if (st_boots != 1) {
+				float c;
+				if (st_boots < 0 || st_boots > 9) c = str2chr("+", 0);
+				else c = str2chr(ftos(st_boots), 0);
+				//drawcharacter(left + [24, vertical_left + 4, 0], c, '8 8 0', '1 1 1', 1, 0);
+				drawcharacter(left + [11, vertical_left + 7, 0], c, '8 8 0', '1 1 1', 1, 0);
+			}
 		}
 	}
 
