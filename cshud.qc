@@ -440,7 +440,7 @@ void Hud_DrawIBar(vector pos)
 		drawpic(pos+'288 8 0', "gfx/sb_key1", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_KEY2)
 		drawpic(pos+'304 8 0', "gfx/sb_key2", '16 16 0', '1 1 1', 1, 0);
-
+	/*
 	if (st_items & IT_INVISIBILITY)
 		drawpic(pos+'320 8 0', "gfx/sb_invis", '16 16 0', '1 1 1', 1, 0);
 	if (st_items & IT_INVULNERABILITY)
@@ -453,7 +453,23 @@ void Hud_DrawIBar(vector pos)
 		drawpic(pos+'384 8 0', "gfx/sb_trifecta", '16 16 0', '1 1 1', 1, 0);
 	if (st_boots)
 		drawpic(pos+'400 8 0', "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
+	*/
 
+	if (st_items & IT_KEY3)
+		drawpic(pos+'320 8 0', "gfx/sb_key3", '16 16 0', '1 1 1', 1, 0);
+
+	if (st_items & IT_INVISIBILITY)
+		drawpic(pos+'336 8 0', "gfx/sb_invis", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_INVULNERABILITY)
+		drawpic(pos+'352 8 0', "gfx/sb_invuln", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_SUIT)
+		drawpic(pos+'368 8 0', "gfx/sb_suit", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_QUAD)
+		drawpic(pos+'384 8 0', "gfx/sb_quad", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_TRIFECTA)
+		drawpic(pos+'400 8 0', "gfx/sb_trifecta", '16 16 0', '1 1 1', 1, 0);
+	if (st_boots)
+		drawpic(pos+'416 8 0', "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
 
 };
 
@@ -676,12 +692,15 @@ void Hud_DrawSBar_2(vector left, vector right) {
 		vertical_right -= 16;
 		drawpic(right + [-16, vertical_right, 0], "gfx/sb_key2", '16 16 0', '1 1 1', 1, 0);
 	}
+	if (st_items & IT_KEY3){
+		vertical_right -= 16;
+		drawpic(right + [-16, vertical_right, 0], "gfx/sb_key3", '16 16 0', '1 1 1', 1, 0);
+	}
 
-	float i;
 	vector offset;
 	
 	if (hudviewsize < 110) {
-		for (i = 0; i < 12; i++) {
+		for (float i = 0; i < 12; i++) {
 			if (st_weapons & weaponflags[i]) {
 				offset += '0 -14 0';
 				Hud_DrawWeapon(i, [screensize_x - 25, screensize_y/2 + 56, 0] + offset , '-4 0 0');
@@ -828,7 +847,7 @@ void(vector virtsize, float showscores) CSQC_DrawHud = {
 		}
 	}
 
-	
+
 	if (st_health < prevhealth) painfinishtime = time + 0.2;
 
 	if (cvar("scratch1") == 1)

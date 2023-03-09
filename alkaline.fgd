@@ -747,6 +747,8 @@ You can override initial weapon/ammo loadout for this specific spot.
 	item_key1 : "Silver key" []
 @PointClass base(Key) model({ "path": ":progs/w_g_key.mdl" }) =
 	item_key2 : "Gold key" []
+@PointClass base(Key) model({ "path": ":progs/pd_w_key.mdl", "skin" : 13 }) =
+	item_key3 : "Platinum key" []
 
 @PointClass base(Key) model({ "path": mdl, "skin": skin }) =
 	item_key_custom :
@@ -1715,6 +1717,7 @@ The door now has built-in support for switchable shadows, that fade in/out autom
         32: "Toggle" : 0
         64: "Doom-style unlock" : 0
         128: "Sound during delay" : 0
+        16384: "Platinum Key required" : 0
         65536: "Expanded trigger field X" : 0
         131072: "Expanded trigger field Y" : 0
         262144: "Reduced trigger field X" : 0

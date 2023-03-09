@@ -11,6 +11,7 @@ float DOOR_SILVER_KEY = 16;
 float DOOR_TOGGLE = 32;
 float DOOR_DOOM_STYLE_UNLOCK = 64;
 float DOOR_SOUND_DURING_DELAY = 128;
+float DOOR_PLAT_KEY = 16384;
 float DOOR_EXPANDED_TRIGGER_X = 65536;
 float DOOR_EXPANDED_TRIGGER_Y = 131072;
 float DOOR_REDUCED_TRIGGER_X = 262144;
@@ -1029,6 +1030,8 @@ void() func_door = {
 		keylock_set_silver_key ();
 	if (self.spawnflags & DOOR_GOLD_KEY)
 		keylock_set_gold_key ();
+	if (self.spawnflags & DOOR_PLAT_KEY)
+		keylock_set_plat_key ();
 
 	// support for item_key_custom -- iw
 	if (self.keyname != "") {

@@ -20,15 +20,6 @@ keylock.qc).
 */
 
 
-string() SilverKeyName;
-string() GoldKeyName;
-float(string key_name) CustomKeyFlag;
-entity(string key_name) SpawnCustomKeyDef;
-entity(string key_name) FindCustomKeyDef;
-float(entity client, float item_flags, float customkey_flags) HasKeys;
-void(entity client, float item_flags, float customkey_flags) GiveKeys;
-void(entity client) GiveAllKeys;
-void(entity client, float item_flags, float customkey_flags) RemoveKeys;
 
 
 // The highest bitflag that will be assigned to a custom key.
@@ -73,6 +64,22 @@ string() GoldKeyName =
 	return "gold key";
 };
 
+/*
+============
+PlatKeyName
+
+Return the name that should be used for the platinum key as per
+world.worldtype. 
+============
+*/
+string() PlatKeyName =
+{
+	if (world.worldtype == WORLDTYPE_BASE)
+		return "platinum keycard";
+	if (world.worldtype == WORLDTYPE_METAL)
+		return "platinum runekey";
+	return "platinum key";
+};
 
 /*
 ================
@@ -200,7 +207,7 @@ custom keys that have been defined for the current map.  -- iw
 */
 void(entity client) GiveAllKeys =
 {
-	GiveKeys (client, IT_KEY1 | IT_KEY2, highest_custom_key * 2 - 1);
+	GiveKeys (client, IT_KEY1 | IT_KEY2 | IT_KEY3, highest_custom_key * 2 - 1);
 };
 
 
@@ -346,6 +353,21 @@ void() keylock_set_gold_key =
 	self.netname = GoldKeyName ();
 };
 
+/*
+================
+keylock_set_plat_key
+
+Make it so that the player will need to use the gold key in order to
+unlock self.  -- iw
+================
+*/
+void() keylock_set_plat_key =
+{
+	self.items = IT_KEY3;
+	self.customkeys = 0;  // support for item_key_custom -- iw
+	self.netname = PlatKeyName ();
+};
+
 
 // support for item_key_custom -- iw
 /*
@@ -469,6 +491,7 @@ void(entity client, string custom_message, void() success_func) keylock_try_to_u
 
 float USE_SILV_KEY = 8;
 float USE_GOLD_KEY = 16;
+float USE_PLAT_KEY = 16384;
 
 /*
 ================
@@ -550,6 +573,8 @@ void() trigger_usekey =
 		keylock_set_silver_key ();
 	if (self.spawnflags & USE_GOLD_KEY) //dumptruck_ds
 		keylock_set_gold_key ();
+	if (self.spawnflags & USE_PLAT_KEY)
+		keylock_set_plat_key ();
 
 // support for item_key_custom -- iw
 	if (self.keyname != "")
@@ -829,6 +854,34 @@ void() item_key2 =
 	}
 	self.netname = GoldKeyName ();
 	self.items = IT_KEY2;
+
+// support for item_key_custom -- iw
+	self.customkeys = 0;  // ignore any mapper-set value
+	self.noise = "";  // ignore any mapper-set value
+
+	key_start ();
+};
+
+
+void() item_key3 =
+{
+	if (world.worldtype == WORLDTYPE_METAL)
+	{
+		precache_model ("progs/m_p_key.mdl");
+		setmodel (self, "progs/m_p_key.mdl");
+	}
+	else if (world.worldtype == WORLDTYPE_BASE)
+	{
+		precache_model2 ("progs/b_p_key.mdl");
+		setmodel (self, "progs/b_p_key.mdl");
+	}
+	else {
+		precache_model ("progs/w_p_key.mdl");
+		setmodel (self, "progs/w_p_key.mdl");
+	}
+
+	self.netname = PlatKeyName ();
+	self.items = IT_KEY3;
 
 // support for item_key_custom -- iw
 	self.customkeys = 0;  // ignore any mapper-set value

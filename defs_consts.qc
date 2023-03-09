@@ -110,7 +110,7 @@ float	IT_NAILS				= 512;
 float	IT_ROCKETS				= 1024;
 float	IT_CELLS				= 2048;
 
-//								= 4096
+float	IT_KEY3					= 4096;
 
 float	IT_ARMOR1				= 8192;
 float	IT_ARMOR2				= 16384;
