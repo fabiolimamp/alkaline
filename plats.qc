@@ -321,7 +321,7 @@ void() train_wait = {
 	self.think = train_next;
 
 	// train is moving normally and path_corner has a wait set, so pause for that time.
-	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT && !(self.spawnflags & TRAIN_RETRIGGER)) {
+	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT) {
 		// state: stopped
 		self.state = 0;
 		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
@@ -333,7 +333,7 @@ void() train_wait = {
 	}
 	// train is moving normally and path_corner has no wait time,
 	// or has been forced to move instantly through a triggering.
-	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait && !(self.spawnflags & TRAIN_RETRIGGER)) {
+	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) {
 
 		//play "passing by" sound, if any. If path_corner has a custom one, play that instead
 		if (self.enemy.noise2 != "") sound(self, CHAN_WEAPON, self.enemy.noise2, 1, ATTN_NORM);
@@ -393,7 +393,7 @@ void() train_next = {
 	float prevspeed, nextspeed, curspeed;
 
 	if (self.think == func_train_find) prevspeed = 0;
-	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait && !(self.spawnflags & TRAIN_RETRIGGER)) prevspeed = self.speed2;
+	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) prevspeed = self.speed2;
 	else prevspeed = 0;
 	//if (self.cnt == TRAIN_NEXT_STOP || (self.cnt == TRAIN_NEXT_WAIT && self.wait)) prevspeed = 0;
 	//else prevspeed = self.speed2;
