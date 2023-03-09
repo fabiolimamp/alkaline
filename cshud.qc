@@ -2,7 +2,7 @@ vector screensize;
 float st_items, st_items2, previtems2;
 float st_weapons, st_activeweapon, prevweapons;
 float st_boots, st_boots_finished;
-float st_health, prevhealth;
+float st_health;
 
 float baralpha, hudalpha;
 float hudviewsize;
@@ -810,7 +810,6 @@ void(vector virtsize, float showscores) CSQC_DrawHud = {
 	screensize_z = 0;
 
 	if (prevweapons >= 0) prevweapons = st_weapons;
-	prevhealth = st_health;
 
 	if (previtems2 >= 0) previtems2 = st_items2;
 
@@ -847,8 +846,7 @@ void(vector virtsize, float showscores) CSQC_DrawHud = {
 		}
 	}
 
-
-	if (st_health < prevhealth) painfinishtime = time + 0.2;
+	if (getstatf(STAT_DMGTAKE) > 0) painfinishtime = time + 0.2;
 
 	if (cvar("scratch1") == 1)
 		Hud_Draw_2(showscores);

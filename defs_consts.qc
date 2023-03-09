@@ -397,3 +397,4 @@ float STAT_WEAPONS = 33;
 float STAT_BOOTS = 34;
 float STAT_BOOTS_FINISHED = 35;
 float STAT_IT = 36;
+float STAT_DMGTAKE = 37;
