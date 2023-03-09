@@ -971,7 +971,12 @@ when hitting the Bambler." []
 
 @PointClass base(Monster) size(-128 -128 -24, 128 128 256) model({"path":"progs/boss.mdl"}) = monster_boss :
 "Chthon (Boss of Shareware Quake)
-Only event_lightning can kill him." []
+Only event_lightning can kill him." [
+	spawnflags(flags) =
+	[
+		1 : "Non-shootable" : 0
+	]
+]
 
 @PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
 "Enforcer, 80 health points." []
