@@ -538,7 +538,6 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 
 
 	// Work out time passed
-	//drawstring(pos+[112,12], "Time", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
 	nmins = floor(time/60);
 	nsecs = floor(time - nmins*60);
 	Hud_DrawNoFont8(pos+[124,12], nmins, 3, FALSE, HUDFONT_WHITE);
@@ -547,13 +546,12 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 
 
 	// Secret totals
-
 	drawstring(pos+[200,12], "Secrets:", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
 	Hud_DrawNoFont8(pos+[264,12], getstatf(STAT_FOUNDSECRETS), 2, FALSE, HUDFONT_WHITE);
 	drawstring(pos+[280,12], "/", HUDSIZE_8, HUDRGB_DEF, hudalpha, 0);
 	Hud_DrawNoFont8(pos+[288,12], getstatf(STAT_TOTALSECRETS), 2, FALSE, HUDFONT_WHITE);
 
-	// Map skill level
+	// Skill
 
 	//skill_no = stof(autocvar(skill, "1"));
 	skill_no = cvar("skill");
@@ -598,9 +596,10 @@ nonstatic void Hud_Draw(float scoreboard, vector pos) {
 //                                        New style HUD
 //=================================================================================================
 
-float vertical_left, vertical_right;
+
 
 void Hud_DrawSBar_2(vector left, vector right) {
+	float vertical_left, vertical_right;
 
 	vertical_left -= 24;
 
@@ -771,8 +770,6 @@ nonstatic void Hud_Draw_2(float scoreboard) {
 		return;
 	}
 
-	vertical_left = 0;
-	vertical_right = 0;
 	
 	if (hudviewsize <= 110) {
 		Hud_DrawSBar_2([16, screensize_y - 10, 0], [screensize_x - 16, screensize_y - 10, 0]);
@@ -796,30 +793,14 @@ nonstatic void Hud_Draw_2(float scoreboard) {
 //=================================================================================================
 
 void(float apilevel, string enginename, float engineversion) CSQC_Init = {
-	//dprint("teste\n");
-	/*st_items = getstatf(STAT_IT);
-	st_items2 = getstatbits(STAT_ITEMS, 23, 9);
-	st_weapons = getstatf(STAT_WEAPONS);
-	st_activeweapon = getstatf(STAT_ACTIVEWEAPON);
-	st_boots = getstatf(STAT_BOOTS);
-	st_boots_finished = getstatf(STAT_BOOTS_FINISHED);
-	st_health = getstatf(STAT_HEALTH);
-
-	dprint("Initializing runes ");dprint(ftos(previtems2));dprint("\n");
-	*/
-	/*
-	for (float i = 0; i < 4; i++) {
-		//if ((runeflags[i] & st_items2)){
-			dprint("Clearing rune ");dprint(ftos(i));dprint("\n");
-			runetime[i] = -1;
-		//}
-	}*/
 	previtems2 = -1;
 	prevweapons = -1;
 };
 
 
 void(vector virtsize, float showscores) CSQC_DrawHud = {
+
+
 
 	screensize_x = virtsize_x;
 	screensize_y = virtsize_y;
@@ -851,7 +832,6 @@ void(vector virtsize, float showscores) CSQC_DrawHud = {
 		if (weaponflags[i] & st_weapons && !(weaponflags[i] & prevweapons))
 			weapontime[i] = time;
 	}
-
 
 
 	if (previtems2 < 0) previtems2 = st_items2;
