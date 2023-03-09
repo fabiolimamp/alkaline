@@ -713,8 +713,7 @@ void() misc_teleporttrain =
 	self.speed2 = self.speed;
 	self.cnt = 1;
 	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_PUSH;
-	self.blocked = train_blocked;
+	self.movetype = MOVETYPE_NOCLIP;
 	self.use = train_use;
 	self.avelocity = '100 200 300';
 
@@ -725,7 +724,7 @@ void() misc_teleporttrain =
 
 	precache_model2 ("progs/teleport.mdl");
 	setmodel (self, "progs/teleport.mdl");
-	setsize (self, self.mins , self.maxs);
+	setsize (self, '0 0 0' , '0 0 0');
 	setorigin (self, self.origin);
 
 // start trains on the second frame, to make sure their targets have had
