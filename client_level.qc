@@ -731,6 +731,7 @@ void() PutClientInServer = {
 
 	CreateHealthController();
 	CreateLightningController();
+	csf_clear_all(self);
 };
 
 
