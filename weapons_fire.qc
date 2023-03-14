@@ -533,6 +533,8 @@ float(vector org, vector dest, entity attacker, float damage) LightningDamage = 
 };
 
 
+// Runs at every frame for every player
+// self is player.lightningcontroller
 void() UpdateLightning = {
 	if (!self.count)
 		return;
@@ -564,32 +566,44 @@ void() UpdateLightning = {
 	
 	entity sg = self.sibling;
 	entity prevsg;
+	float iterations, segments;
 	while (sg) {
+		// first segment has no previous, so calculate from the player's position
 		if (!prevsg) {
 			setorigin(sg, org);
 			sgorg = bezierCurve(org, org + v_forward*len, dest, dest, i);
 		}
 		else {
+			// divides the full bolt in 100 steps and iterates through that
+			// when the distance to the last segment reaches more than 30 units, place the next one
 			while (vlen(sgorg - prevsg.origin) < 30 && i <= 1) {
 				sgorg = bezierCurve(org, org + v_forward*len, dest, dest, i);
 				i += 0.01;
+				iterations++;
 			}
 			setorigin(sg, sgorg);
-			ang = vectoangles(sg.origin - prevsg.origin);
-			
+
+			// in some cases the last segments pile up and have 0 distance,
+			// so calculating an angle out of that gives a borked result.
+			// when that happens the previous segment's angles will be reused
+			if (sg.origin - prevsg.origin != '0 0 0') 
+				ang = vectoangles(sg.origin - prevsg.origin);
+
 			prevsg.angles_x = ang_x;
 			prevsg.angles_y = ang_y;
 		}
 
 		prevsg = sg;
 		sg = sg.sibling;
+
+		segments++;
 	}
 
 	if (prevsg && prevsg != self.sibling) {
 		prevsg.angles_x = ang_x;
 		prevsg.angles_y = ang_y;
 	}
-
+	//dprint5("Segments: ", ftos(segments), ", Iterations: ", ftos(iterations), "\n");
 	//self.nextthink = time + 0.01;
 }
 
