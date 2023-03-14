@@ -685,14 +685,14 @@ void() W_FireLightning = {
 	}
 
 	// explode if under water
-	if (self.waterlevel > 1) {
+	if (self.waterlevel > 1 && self.flags & FL_INWATER) {
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
 		W_SetCurrentAmmo ();
 		victim = findradius(self.origin, 35*cells);
 		
 		while (victim) {
-			if (victim.takedamage && victim.waterlevel > 0) {
+			if (victim.takedamage && victim.waterlevel > 0 && victim.flags & FL_INWATER) {
 				T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
 			}
 
