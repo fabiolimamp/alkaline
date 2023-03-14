@@ -710,7 +710,8 @@ void() W_FireLightning = {
 	self.punchangle_x = -2;
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-	//makevectors(self.v_angle);
+
+	makevectors(self.v_angle);
 	org = self.origin + self.view_ofs + v_forward*32 - v_up*12;
 	
 	traceline (org - v_forward*32, org + v_forward*600, TRUE, self);
