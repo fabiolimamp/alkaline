@@ -384,17 +384,19 @@ void()	menf_run1	=[	$run1  ,	menf_run2	] {ai_run(18);
 	if (random() < 0.2)	sound (self, CHAN_VOICE, "me/meidle.wav", 1, ATTN_IDLE);
 	menf_shield_on(TRUE);
 };
-void()	menf_run2	=[	$run2  ,	menf_run3	] {ai_run(14); menf_shield_on(FALSE);};
-void()	menf_run3	=[	$run3  ,	menf_run4	] {ai_run(7);  menf_shield_on(FALSE);};
-void()	menf_run4	=[	$run4  ,	menf_run5	] {ai_run(12); menf_shield_on(FALSE);};
-void()	menf_run5	=[	$run5  ,	menf_run6	] {ai_run(14); menf_shield_on(FALSE);};
-void()	menf_run6	=[	$run6  ,	menf_run7	] {ai_run(14); menf_shield_on(FALSE);};
-void()	menf_run7	=[	$run7  ,	menf_run8	] {ai_run(7);  menf_shield_on(FALSE);};
-void()	menf_run8	=[	$run8  ,	menf_run1	] {ai_run(11); menf_shield_on(FALSE);};
+void()	menf_run2	=[	$run2  ,	menf_run3	] {menf_shield_on(FALSE); ai_run(14); };
+void()	menf_run3	=[	$run3  ,	menf_run4	] {menf_shield_on(FALSE); ai_run(7); };
+void()	menf_run4	=[	$run4  ,	menf_run5	] {menf_shield_on(FALSE); ai_run(12); };
+void()	menf_run5	=[	$run5  ,	menf_run6	] {menf_shield_on(FALSE); ai_run(14); };
+void()	menf_run6	=[	$run6  ,	menf_run7	] {menf_shield_on(FALSE); ai_run(14); };
+void()	menf_run7	=[	$run7  ,	menf_run8	] {menf_shield_on(FALSE); ai_run(7); };
+void()	menf_run8	=[	$run8  ,	menf_run1	] {menf_shield_on(FALSE); ai_run(11); };
 
 
 
-void()	menf_atk1	=[	$attack1,	menf_atk2	] {ai_face();
+void()	menf_atk1	=[	$attack1,	menf_atk2	] {
+	menf_shield_off(TRUE);
+	ai_face();
 	
 	if (random() < 0.3)	{
 		self.think = menf_run1;
@@ -403,35 +405,35 @@ void()	menf_atk1	=[	$attack1,	menf_atk2	] {ai_face();
 	}
 
 	//self.lastclose = 1;
-	menf_shield_off(TRUE);
+	
 };
-void()	menf_atk2	=[	$attack2,	menf_atk3	] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_atk3	=[	$attack3,	menf_atk4	] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_atk4	=[	$attack4,	menf_atk7	] {ai_face(); menf_shield_off(FALSE);};
+void()	menf_atk2	=[	$attack2,	menf_atk3	] {menf_shield_off(FALSE); ai_face(); };
+void()	menf_atk3	=[	$attack3,	menf_atk4	] {menf_shield_off(FALSE); ai_face(); };
+void()	menf_atk4	=[	$attack4,	menf_atk7	] {menf_shield_off(FALSE); ai_face(); };
 /*
 void()	menf_atk5	=[	$attack5,	menf_atk6	] {ai_face();};
 void()	menf_atk6	=[	$attack6,	menf_atk7	] { skip};
 */
-void()	menf_atk7	=[	$attack7,	menf_atk8	] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_atk8	=[	$attack8,	menf_atk9	] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_atk9	=[	$attack5,	menf_atk10	] {ai_face(); self.oldorigin = self.enemy.origin; menf_shield_off(FALSE);};
-void()	menf_atk10	=[	$attack6,	menf_atk11	] {FireParticleBeam(); menf_shield_off(FALSE);};
-void()	menf_atk11	=[	$attack7,	menf_atk12	] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_atk12	=[	$attack8,	menf_atk13	] {ai_face(); menf_shield_off(FALSE); sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); };
-void()	menf_atk13	=[	$attack9,	menf_atk14	] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_atk14	=[	$attack10,	menf_run1	] {ai_face(); SUB_CheckRefire (menf_atk1); menf_shield_on(FALSE);};
+void()	menf_atk7	=[	$attack7,	menf_atk8	] {menf_shield_off(FALSE); ai_face(); };
+void()	menf_atk8	=[	$attack8,	menf_atk9	] {menf_shield_off(FALSE); ai_face(); };
+void()	menf_atk9	=[	$attack5,	menf_atk10	] {menf_shield_off(FALSE); ai_face(); self.oldorigin = self.enemy.origin; };
+void()	menf_atk10	=[	$attack6,	menf_atk11	] {menf_shield_off(FALSE); FireParticleBeam(); menf_shield_off(FALSE);};
+void()	menf_atk11	=[	$attack7,	menf_atk12	] {menf_shield_off(FALSE); ai_face(); };
+void()	menf_atk12	=[	$attack8,	menf_atk13	] {menf_shield_off(FALSE); ai_face(); sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); };
+void()	menf_atk13	=[	$attack9,	menf_atk14	] {menf_shield_off(FALSE); ai_face(); };
+void()	menf_atk14	=[	$attack10,	menf_run1	] {menf_shield_on(FALSE); ai_face(); SUB_CheckRefire (menf_atk1);};
 
 
 
-void()	menf_satck1 =[	$attackp1,  menf_satck2 ] {ai_face(); menf_shield_off(TRUE);};
-void()	menf_satck2 =[	$attackp2,  menf_satck3 ] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_satck3 =[	$attackp2,  menf_satck4 ] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_satck4 =[	$attackp3,  menf_satck5 ] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_satck5 =[	$attackp4,  menf_satck6 ] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_satck6 =[	$attackp4,  menf_satck7 ] {ai_face(); menf_shield_off(FALSE);};
-void()	menf_satck7 =[	$attackp5,  menf_satck8 ] {ai_face(); FireMissileSpiral (); self.attack_finished = time + 1.5; menf_shield_off(FALSE);};
-void()	menf_satck8 =[	$attackp6,  menf_satck9 ] {ai_face(); menf_shield_off(FALSE); sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); };
-void()	menf_satck9 =[	$attackp7,  menf_run1   ] {ai_face(); menf_shield_on(FALSE);};
+void()	menf_satck1 =[	$attackp1,  menf_satck2 ] {menf_shield_off(TRUE); ai_face();};
+void()	menf_satck2 =[	$attackp2,  menf_satck3 ] {menf_shield_off(FALSE); ai_face();};
+void()	menf_satck3 =[	$attackp2,  menf_satck4 ] {menf_shield_off(FALSE); ai_face();};
+void()	menf_satck4 =[	$attackp3,  menf_satck5 ] {menf_shield_off(FALSE); ai_face();};
+void()	menf_satck5 =[	$attackp4,  menf_satck6 ] {menf_shield_off(FALSE); ai_face();};
+void()	menf_satck6 =[	$attackp4,  menf_satck7 ] {menf_shield_off(FALSE); ai_face();};
+void()	menf_satck7 =[	$attackp5,  menf_satck8 ] {menf_shield_off(FALSE); ai_face(); FireMissileSpiral (); self.attack_finished = time + 1.5;};
+void()	menf_satck8 =[	$attackp6,  menf_satck9 ] {menf_shield_off(FALSE); ai_face(); sound (self, 5, "me/me_son.wav", 1, ATTN_NORM); };
+void()	menf_satck9 =[	$attackp7,  menf_run1   ] {menf_shield_off(FALSE); ai_face();};
 
 
 
@@ -475,6 +477,23 @@ void()	menf_paind17	=[	$paind17,	menf_paind18	] {ai_pain(1);};
 void()	menf_paind18	=[	$paind18,	menf_paind19	] {};
 void()	menf_paind19	=[	$paind19,	menf_run1	] {};
 
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) menf_damage = {
+
+	if (self.state == 1) {
+		// Shields are up, ignore everything except explosions.
+		// Only 15% of the damage passes through.
+		// Smallish explosions are ignored too
+		if (dmgtype == DMGTYPE_EXPLOSION && damage >= 20)
+			return damage * 0.15;
+		else
+			return 0;
+	}
+	else
+		return damage;
+
+};
+
+
 void(entity attacker, float damage)	menf_pain =
 {
 	local float r, shielded;
@@ -483,8 +502,10 @@ void(entity attacker, float damage)	menf_pain =
 	else if (self.health < self.max_health * 0.5 && self.health >= self.max_health * 0.25)	self.skin = 2;
 	else if (self.health < self.max_health * 0.75 && self.health >= self.max_health * 0.5)	self.skin = 1;
 
-	if (self.pain_finished > time || self.health > 120 || !self.state)
+	if ((self.pain_finished > time || self.health > 120) && !self.state) {
+		//dprint("Pain ignored\n");
 		return;
+	}
 
 	
 	shielded = self.state;
@@ -502,8 +523,8 @@ void(entity attacker, float damage)	menf_pain =
 
 	r = random ();
 
-	if (shielded) dprint("Shielded\n");
-	else dprint("Not shielded\n");
+	//if (shielded) dprint("Shielded\n");
+	//else dprint("Not shielded\n");
 	// long pain animation if stunned from explosion
 	if (shielded) {
 		if (damage >= 7) {
@@ -599,22 +620,6 @@ void() menf_die =
 		sound (self, CHAN_VOICE, "me/medeath1.wav", 1, ATTN_NORM);
 		menf_fdie1 ();
 	}
-};
-
-float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) menf_damage = {
-
-	if (self.state == 1) {
-		// Shields are up, ignore everything except explosions.
-		// Only 15% of the damage passes through.
-		// Smallish explosions are ignored too
-		if (dmgtype == DMGTYPE_EXPLOSION && damage >= 20)
-			return damage * 0.15;
-		else
-			return 0;
-	}
-	else
-		return damage;
-
 };
 
 void() menf_sight = {
