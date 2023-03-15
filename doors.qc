@@ -156,7 +156,10 @@ void() door_hit_top = {
 		
 		
 		self.owner.think = door_group_go_down;
-		self.owner.nextthink = getEntityTime(self.owner) + self.owner.wait;
+		if (self.owner.wait < 0)
+			self.owner.nextthink = 10000000000;
+		else
+			self.owner.nextthink = getEntityTime(self.owner) + self.owner.wait;
 	}
 };
 
