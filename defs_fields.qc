@@ -662,3 +662,5 @@ float prevdoornum;
 .vector inflictor_origin;
 .float inflictor_movetype;
 .vector inflictor_vel;
+
+.float dev_announce;

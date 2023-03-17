@@ -505,6 +505,10 @@ void(string matchstring, .string matchfield) SUB_UseSpecificTarget =
 			}
 			else*/
 				self.use();
+				if (self.dev_announce && developer) {
+					dprint6(self.classname, " with targetname '", matchstring, "'' fired by ", act.classname, "\n");
+					eprint(self);
+				}
 		}
 		self = stemp;
 		other = otemp;
