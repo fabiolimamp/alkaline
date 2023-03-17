@@ -1220,7 +1220,7 @@ float SETSTATE_CLOSEALLDOORS = 2;
 float SETSTATE_DONTRESETBUTTON = 4;
 
 float(entity e) entity_get_state = {
-	if(e.classname == "func_door") return e.owner.estate;
+	if (e.classname == "func_door") return e.owner.estate;
 	else return e.estate;
 };
 
@@ -1247,15 +1247,18 @@ void(entity e, float state, float flags) entity_set_state = {
 void(string matchstring, .string matchfield, float state, float flags) target_setstate_set_target = {
 	local entity t;
 
-	t = find (world, matchfield, matchstring);
+	t = find(world, matchfield, matchstring);
 	while (t != world) {
-		if(state == -1){
-			if(entity_get_state(t) == STATE_ACTIVE) entity_set_state(t, STATE_INACTIVE, flags);
-			else entity_set_state(t, STATE_ACTIVE, flags);
+		if (!(t.classname == "func_door" && t.owner != t)) {
+			if (state == -1){
+				if (entity_get_state(t) == STATE_ACTIVE)
+					entity_set_state(t, STATE_INACTIVE, flags);
+				else
+					entity_set_state(t, STATE_ACTIVE, flags);
+			}
+			else entity_set_state(t, state, flags);
 		}
-		else entity_set_state(t, state, flags);
-
-		t = find (t, matchfield, matchstring);
+		t = find(t, matchfield, matchstring);
 	}
 };
 
