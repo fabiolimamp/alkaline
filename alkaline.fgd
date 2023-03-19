@@ -1289,6 +1289,22 @@ You can disable the long burning damage effect on players with the respective sp
 	volume(integer) : "Density" : 10
 ]
 
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_drip :
+"Produces a continous water drip. Can be toggled on/off or controlled via target_setstate.
+Drip interval varies randomly between waitmin and waitmax.
+"
+[
+	waitmin(float) : "Minimum drip interval" : "2"
+	waitmax(float) : "Maximum drop interval" : "3"
+	spawnflags(flags) =
+	[
+		1 : "Starts off" : 0
+		2 : "No sound" : 0
+		4 : "Don't bounce on hit" : 0
+	]
+	
+]
+
 @PointClass base(Appearflags, Targetname)  color(0 128 204) model(
 	{"path":"progs/flag.mdl", "frame": spawnflags & 2}
 ) = misc_flag :

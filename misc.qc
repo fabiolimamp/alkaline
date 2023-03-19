@@ -42,6 +42,126 @@ void() fire_touch = {
 	remove(self);
 };
 
+
+
+//============================================================================
+
+void() misc_drip = {
+
+	if (self.mdl == "") self.mdl = "progs/drip.spr";
+	precache_model(self.mdl);
+
+	// mute
+	if (!(self.spawnflags & 2)) {
+		precache_sound("misc/singledrip1.wav");
+		precache_sound("misc/singledrip2.wav");
+		precache_sound("misc/singledrip3.wav");
+		precache_sound("misc/singledrip4.wav");
+	}
+
+	self.think = misc_drip_think;
+	self.use = misc_drip_use;
+
+	self.waitmin = defaultFl(self.waitmin, 2);
+	self.waitmax = defaultFl(self.waitmax, 3);
+	float tmin = min(self.waitmin, self.waitmax);
+	float tmax = max(self.waitmin, self.waitmax);
+	self.waitmin = tmin;
+	self.waitmax = tmax;
+	// start off
+	if (self.spawnflags & 1)
+		self.estate = STATE_INACTIVE;
+
+	self.nextthink = time + self.waitmin + random()*(self.waitmax - self.waitmin);
+}
+
+void() misc_drip_use = {
+	if (self.estate != STATE_ACTIVE)
+		self.estate = STATE_ACTIVE;
+	else
+		self.estate = STATE_INACTIVE;
+}
+
+void() misc_drip_think = {
+	self.nextthink = time + self.waitmin + random()*(self.waitmax - self.waitmin);
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	misc_drip_spawn();
+}
+
+void() misc_drip_spawn = {
+	entity e = spawn();
+
+	e.movetype = MOVETYPE_TOSS;
+	e.solid = SOLID_BBOX;
+	setorigin(e, self.origin);
+	setmodel(e, self.mdl);
+	setsize(e, '0 0 0', '0 0 0');
+	e.owner = self;
+	e.touch = misc_drip_touch;
+	e.think = SUB_Remove;
+	e.nextthink = time + 5;
+}
+
+void() misc_drip_touch = {
+	self.solid = SOLID_NOT;
+
+	// mute
+	if (!(self.spawnflags & 2)) {
+		float r = random();
+		string dripsnd;
+
+		if (r < 0.25) dripsnd = "misc/singledrip1.wav";
+		else if (r < 0.5) dripsnd = "misc/singledrip2.wav";
+		else if (r < 0.75) dripsnd = "misc/singledrip3.wav";
+		else dripsnd = "misc/singledrip4.wav";
+
+		sound(self, CHAN_VOICE, dripsnd, 0.1, ATTN_STATIC);
+	}
+	
+	// if no bounce is off
+	if (!(self.spawnflags & 4)) {
+		vector v_drip, angle_normal;
+
+		traceline(self.origin + '0 0 2', self.origin - '0 0 2', FALSE, self);
+		angle_normal = vectoangles(trace_plane_normal);
+		
+		entity e;
+		for (float i = 0; i < 3; i++) {
+
+			e = spawn();
+			e.movetype = MOVETYPE_BOUNCE;
+			e.solid = SOLID_TRIGGER;
+			setorigin(e, self.origin);
+			setmodel(e, self.model);
+			setsize(e, '0 0 0', '0 0 0');
+			e.touch = misc_drip_bouncetouch;
+			e.think = SUB_Remove;
+			e.nextthink = time + 1;
+
+			// create the initial drip vector
+			makevectors([-50 - random()*15, 360/3*i + crandom()*30, 0]);
+
+			// rotate the vector 90deg so it's facing front
+			v_drip = [v_forward_z, v_forward_y, -v_forward_x];
+
+			// negate X axis to account for makevectors
+			makevectors([-angle_normal_x, angle_normal_y, angle_normal_z]);
+
+			// reorient the drip vector around the surface normal
+			e.velocity = (v_forward*v_drip_x - v_right*v_drip_y + v_up*v_drip_z) * (130 + random()*40);//vlen(self.velocity)/4;
+		}
+	}
+	remove(self);
+
+}
+
+void() misc_drip_bouncetouch = {
+	if (other.solid == SOLID_TRIGGER)
+		return;
+	remove(self);
+}
 //============================================================================
 
 
