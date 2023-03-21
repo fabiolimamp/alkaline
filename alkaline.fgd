@@ -747,7 +747,7 @@ You can override initial weapon/ammo loadout for this specific spot.
 	item_key1 : "Silver key" []
 @PointClass base(Key) model({ "path": ":progs/w_g_key.mdl" }) =
 	item_key2 : "Gold key" []
-@PointClass base(Key) model({ "path": ":progs/pd_w_key.mdl", "skin" : 13 }) =
+@PointClass base(Key) model({ "path": ":progs/w_p_key.mdl"}) =
 	item_key3 : "Platinum key" []
 
 @PointClass base(Key) model({ "path": mdl, "skin": skin }) =
