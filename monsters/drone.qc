@@ -290,7 +290,7 @@ void(entity attacker, float damage) drn_pain = {
 	else
 		sound (self, CHAN_VOICE, "drone/drnpain.wav", 1, ATTN_NORM);
 
-	ThrowGib ("progs/spike.mdl", -10);
+	ThrowGib ("progs/spike_old.mdl", -10);
 
 	if (random() > 0.5)
 		drn_paina1 ();
@@ -424,7 +424,7 @@ void() monster_drone = {
 	precache_sound2 ("drone/drngasp2.wav");
 	precache_sound2 ("drone/drndeth.wav"); // death sound
 	precache_sound2 ("enforcer/enfstop.wav");
-	precache_model ("progs/spike.mdl");
+	precache_model ("progs/spike_old.mdl");
 	
 	self.cmins = '-16 -16 -16';
 	self.cmaxs = '16 16 24';
