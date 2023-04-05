@@ -42,7 +42,7 @@ void() shal_walk1     =[      $walk1,       shal_walk2    ] {ai_walk(4);};
 void() shal_walk2     =[      $walk2,       shal_walk3    ] {ai_walk(6);
 	if (random() < 0.2)	{
 		if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
-		else sound (self, CHAN_VOICE, "mechavore/idle.wav", 1, ATTN_IDLE);
+		else sound (self, CHAN_VOICE, "mechavore/mv_idle_a.wav", 1, ATTN_IDLE);
 	}
 };
 void() shal_walk3     =[      $walk3,       shal_walk4    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
@@ -60,7 +60,7 @@ void() shal_walk11    =[      $walk11,       shal_walk1    ] {if (!self.original
 void() shal_run1     =[      $walk1,       shal_run2    ] {ai_run(6);
 	if (random() < 0.2)	{
 		if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
-		else sound (self, CHAN_VOICE, "mechavore/idle.wav", 1, ATTN_IDLE);
+		else sound (self, CHAN_VOICE, "mechavore/mv_idle_a.wav", 1, ATTN_IDLE);
 	}
 };
 void() shal_run2     =[      $walk2,       shal_run3    ] {if (!self.originalmonsters) self.frame--; ai_run(4); };
@@ -77,7 +77,7 @@ void() shal_run11    =[      $walk11,       shal_run1    ] {if (!self.originalmo
 
 void() shal_attack1     =[      $attack1,       shal_attack2    ] {ai_face();
 	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
-	else sound (self, CHAN_VOICE, "mechavore/attack.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "mechavore/mv_attack.wav", 1, ATTN_NORM);
 };
 void() shal_attack2     =[      $attack2,       shal_attack3    ] {ai_face();};
 void() shal_attack3     =[      $attack3,       shal_attack4    ] {ai_face();};
@@ -111,7 +111,10 @@ void(entity attacker, float damage) shalrath_pain =
 		return;
 
 	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
-	else sound (self, CHAN_VOICE, "mechavore/pain.wav", 1, ATTN_NORM);
+	else {
+		if (random() > 0.5) sound (self, CHAN_VOICE, "mechavore/mv_pain_a.wav", 1, ATTN_NORM);
+		else sound (self, CHAN_VOICE, "mechavore/mv_pain2_a.wav", 1, ATTN_NORM);
+	}
 
 	shal_pain1();
 	self.pain_finished = time + 3;
@@ -164,7 +167,7 @@ void() shalrath_die =
 	if (self.originalmonsters) self.skin = 3;
 
 	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
-	else sound (self, CHAN_VOICE, "mechavore/death.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "mechavore/mv_death_a.wav", 1, ATTN_NORM);
 
 	shal_death1();
 	self.solid = SOLID_TRIGGER; setorigin(self, self.origin);
@@ -260,7 +263,7 @@ void() ShalMissileTouch =
 void() shal_sight = {
 
 	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
-	else sound (self, CHAN_VOICE, "mechavore/sight.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "mechavore/mv_sight_b.wav", 1, ATTN_NORM);
 };
 
 
@@ -340,11 +343,19 @@ void() monster_shalrath =
 		precache_model2 ("progs/cyberscrag_gib1.mdl");
 		precache_model2 ("progs/cyberscrag_gib2.mdl");
 		
-		precache_sound2 ("mechavore/attack.wav");
+		/*precache_sound2 ("mechavore/attack.wav");
 		precache_sound2 ("mechavore/death.wav");
 		precache_sound2 ("mechavore/idle.wav");
 		precache_sound2 ("mechavore/pain.wav");
-		precache_sound2 ("mechavore/sight.wav");
+		precache_sound2 ("mechavore/sight.wav");*/
+
+		precache_sound2 ("mechavore/mv_attack.wav");
+		precache_sound2 ("mechavore/mv_death_a.wav");
+		precache_sound2 ("mechavore/mv_idle_a.wav");
+		precache_sound2 ("mechavore/mv_pain_a.wav");
+		precache_sound2 ("mechavore/mv_pain2_a.wav");
+		precache_sound2 ("mechavore/mv_sight_b.wav");
+
 		precache_sound2 ("misc/metal_impact.wav");
 	}
 
