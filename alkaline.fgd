@@ -1787,6 +1787,9 @@ Targeting it toggles whatever switchable texture it may have on (+0/+a sets).
 	spawnflags(flags) =
 	[
 		2 : "Non-solid" : 0
+		4 : "Invert on/off frames" : 0
+		8 : "Sync with fluoro flicker" : 0
+		16 : "Start off" : 0
 	]
 ]
 

@@ -716,7 +716,16 @@ SIMPLE BMODELS
 
 void() func_wall_use =
 {	// change to alternate textures
-	self.frame = 1 - self.frame;
+
+	if (self.spawnflags & 8) {
+		if (self.estate != STATE_ACTIVE)
+			self.estate = STATE_ACTIVE;
+		else
+			self.estate = STATE_INACTIVE;
+	}
+	else
+		self.frame = 1 - self.frame;
+
 };
 
 /*QUAKED func_wall (0 .5 .8) ?
@@ -735,8 +744,48 @@ void() func_wall =
 	}
 	self.use = func_wall_use;
 	setmodel (self, self.model);
+	
+	if (self.spawnflags & 4) self.frame = 1 - self.frame;
+
+	if (self.spawnflags & 16) self.estate = STATE_INACTIVE;
+
+	if (self.spawnflags & 8) {
+		self.think = func_wall_think;
+		self.nextthink = getLocalTime() + 0.1;
+	}
 };
 
+
+void() func_wall_think = {
+	self.nextthink = getLocalTime() + 0.01;
+
+	float onframe = (self.spawnflags & 4) ? 0 : 1;
+
+	if (self.estate != STATE_ACTIVE) {
+		self.frame = 1 - onframe;
+		return;
+	}
+
+	float ltframe = ceil((time % 2.5) * 10);
+	//dprint3("Frame time: ", ftos((time % 2.5) * 10), "\n");
+	//dprint3("Frame number: ", ftos(ltframe), "\n");
+
+	/*
+mmamammmmammamamaaamammma
+	*/
+	if (ltframe == 3 || ltframe == 5 || ltframe == 10 || ltframe == 13 || ltframe == 15 ||
+		ltframe == 17 || ltframe == 18 || ltframe == 19 || ltframe == 21 || ltframe == 25
+	)
+		self.frame = 1 - onframe;
+	
+	else
+		self.frame = onframe;
+
+
+}
+
+
+//=============================================================================
 
 /*QUAKED func_togglewall (0 .5 .8) ? START_OFF X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
 
