@@ -88,6 +88,10 @@ void() spider_melee = {
 
 void() spider_wake = {
 	if (self.state) spider_wake1();
+	else {
+		HuntTarget();
+		spider_run1();
+	}
 };
 
 void() spider_sight = {
@@ -116,7 +120,7 @@ void(entity e) monster_spiderbot_start = {
 	self.th_melee = spider_melee;
 	self.th_die = spider_die;
 
-	self.state = 1; // sleeping
+	if (!(self.spawnflags & 4)) self.state = 1; // sleeping
 
 	self.th_sight = spider_sight;
 	self.th_wake = spider_wake;
