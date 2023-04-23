@@ -25,6 +25,10 @@ void() plat_spawn_inside_trigger =
 	
 	tmin = self.mins + '25 25 0';
 	tmax = self.maxs - '25 25 -8';
+	if (self.spawnflags & 4) {
+		tmin_z += self.pos1_z - self.pos2_z;
+		tmax_z += self.pos1_z - self.pos2_z;
+	}
 
 	if (self.spawnflags & PLAT_DEEP_TRIGGER) {
 		// makes the trigger field go all the way to the bottom of the lower position
@@ -209,13 +213,23 @@ void() func_plat =
 	if (!self.speed)
 		self.speed = 150;
 
-// pos1 is the top position, pos2 is the bottom
-	self.pos1 = self.origin;
-	self.pos2 = self.origin;
-	if (self.height)
-		self.pos2_z = self.origin_z - self.height;
-	else
-		self.pos2_z = self.origin_z - self.size_z + 8;
+	// pos1 is the top position, pos2 is the bottom
+	if (self.spawnflags & 4) {
+		self.pos2 = self.origin;
+		self.pos1 = self.origin;
+		if (self.height)
+			self.pos1_z = self.origin_z + self.height;
+		else
+			self.pos1_z = self.origin_z + self.size_z - 8;
+	}
+	else {
+		self.pos1 = self.origin;
+		self.pos2 = self.origin;
+		if (self.height)
+			self.pos2_z = self.origin_z - self.height;
+		else
+			self.pos2_z = self.origin_z - self.size_z + 8;
+	}
 
 	self.use = plat_trigger_use;
 
@@ -223,6 +237,7 @@ void() func_plat =
 
 	if (self.targetname)
 	{
+		setorigin (self, self.pos1);
 		self.state = STATE_UP;
 		self.use = plat_use;
 	}
