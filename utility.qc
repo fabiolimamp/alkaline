@@ -15,6 +15,25 @@ void(string s, string ss, string sss, string ssss, string sssss, string ssssss, 
 void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss, string sssssssss) dprint9 = 
 	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss); dprint(ssssssss); dprint(sssssssss); }
 
+
+void(string s, string ss) bprint2 = 
+	{ bprint(s); bprint(ss); }
+void(string s, string ss, string sss) bprint3 = 
+	{ bprint(s); bprint(ss); bprint(sss); }
+void(string s, string ss, string sss, string ssss) bprint4 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); }
+void(string s, string ss, string sss, string ssss, string sssss) bprint5 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); }
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss) bprint6 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss) bprint7 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss); bprint(sssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss) bprint8 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss); bprint(sssssss); bprint(ssssssss); }
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss, string sssssssss) bprint9 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss); bprint(sssssss); bprint(ssssssss); bprint(sssssssss); }
+
+
 /**********************************
  Sourced from utility.qc from smej2
  **********************************/
