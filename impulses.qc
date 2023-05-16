@@ -469,6 +469,26 @@ void() CycleHUD = {
 	if (current) cvar_set("scratch1", 0);
 	else cvar_set("scratch1", "1");
 }
+
+
+void() DumpParms = {
+	bprint3("parm1: ", ftos(parm1), "\n");
+	bprint3("parm2: ", ftos(parm2), "\n");
+	bprint3("parm3: ", ftos(parm3), "\n");
+	bprint3("parm4: ", ftos(parm4), "\n");
+	bprint3("parm5: ", ftos(parm5), "\n");
+	bprint3("parm6: ", ftos(parm6), "\n");
+	bprint3("parm7: ", ftos(parm7), "\n");
+	bprint3("parm8: ", ftos(parm8), "\n");
+	bprint3("parm9: ", ftos(parm9), "\n");
+	bprint3("parm10: ", ftos(parm10), "\n");
+	bprint3("parm11: ", ftos(parm11), "\n");
+	bprint3("parm12: ", ftos(parm12), "\n");
+	bprint3("parm13: ", ftos(parm13), "\n");
+	bprint3("parm14: ", ftos(parm14), "\n");
+	bprint3("parm15: ", ftos(parm15), "\n");
+	bprint3("parm16: ", ftos(parm16), "\n");
+}
 /*
 ============
 ImpulseCommands
@@ -534,6 +554,8 @@ void() ImpulseCommands = {
 		display_monsleft();
 	if (self.impulse == 185)
 		display_mapvar();
+	if (self.impulse == 186)
+		DumpParms();
 	if (self.impulse == 200)
 		dev_reveal();
 	if (self.impulse == 201)
