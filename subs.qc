@@ -129,7 +129,7 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 	if (tdest == self.origin)
 	{
 		self.velocity = '0 0 0';
-		self.nextthink = localtime + 0.1;
+		self.nextthink = localtime + 0.025;
 		return;
 	}
 		
