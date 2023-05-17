@@ -23,7 +23,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_AXE)
 	{
 		self.currentammo = 0;
-		self.weaponmodel = "progs/v_alkaxe20fps.mdl";
+		self.weaponmodel = "";//"progs/v_alkaxe20fps.mdl";
 		self.weaponframe = 0;
 	}
 	else if (self.weapon == WEAPON_CHAINSAW)
@@ -204,6 +204,8 @@ void() W_Attack =
 		self.show_hostile = 0; // will only be set if the axe hits something
 		sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
 		player_axe();
+		//W_FireBall();
+
 		self.attack_finished = time + 0.5;
 	}
 	else if (self.weapon == WEAPON_SHOTGUN)

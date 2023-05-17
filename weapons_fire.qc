@@ -839,10 +839,128 @@ void() W_FireGrenade =
 };
 
 
+//==========================================================================
+
+
+void() W_FireBall =
+{
+	local	entity missile;
+	
+	
+	//sound (self, CHAN_WEAPON, "weapons/marioball.wav", 1, ATTN_NORM);
+
+	missile = spawn ();
+	missile.owner = self;
+	missile.movetype = MOVETYPE_BOUNCE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "grenade";
+	missile.flags = missile.flags | FL_PROJECTILE;
+		
+// set missile speed	
+
+	makevectors (self.v_angle);
+
+	if (self.v_angle_x)
+		missile.velocity = v_forward*500 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
+	else
+	{
+		missile.velocity = aim(self, 10000);
+		missile.velocity = missile.velocity * 500;
+		missile.velocity_z = 200;
+	}
+	missile.gravity = 1.5;
+	missile.avelocity = '300 300 300';
+
+	missile.angles = vectoangles(missile.velocity);
+	
+	missile.movedir = normalize([missile.velocity_x, missile.velocity_y, 0]);
+	missile.touch = FireballTouch;
+	
+// set missile duration
+	missile.attack_finished = time + 2.5;
+	missile.nextthink = time + 0.001;
+	missile.think = FireballThink;
+
+	setmodel (missile, "progs/lavaball.mdl");
+	setsize (missile, '0 0 0', '0 0 0');
+
+	if (oldgrenade) {
+		setorigin (missile, self.origin);
+	}
+	else {
+		vector org = self.origin + self.view_ofs - v_up*12;// '0 0 10';
+		traceline(org, org + v_forward * 24, FALSE, self);
+		setorigin(missile, org + v_forward*24 * trace_fraction);
+	}
+};
+
+void() FireballExplode =
+{
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		remove(self);
+		return;
+	}
+
+	T_RadiusDamage (self, self.owner, 30, world, DMGTYPE_EXPLOSION);
+
+	BecomeExplosion ();
+};
+
+void() FireballThink = {
+	if (self.jump_flag) {
+		self.velocity = self.movedir * 500;
+		self.velocity_z = 200;
+		self.jump_flag = 0;
+	}
+	else if (self.origin == self.oldorigin) {
+		self.velocity = self.movedir * 500;
+		self.velocity_z = 200;
+		self.flags &~= FL_ONGROUND;
+		self.avelocity = '300 300 300';
+	}
+	//dprint5("Time: ", ftos(time), ", velocity: ", vtos(self.velocity), "\n");
+	//dprint(self.origin == self.oldorigin ? "Not moved\n":"Moved\n");
+	if (time > self.attack_finished) {
+		FireballExplode();
+		return;
+	}
+	self.oldorigin = self.origin;
+	self.nextthink = time + 0.001;
+}
+
+void() FireballTouch =
+{
+	if (other == self.owner)
+		return;		// don't explode on owner
+	if (other.takedamage == DAMAGE_AIM)
+	{
+		FireballExplode();
+		return;
+	}
+	
+	traceline([self.origin_x, self.origin_y, self.origin_z + 4], [self.origin_x, self.origin_y, self.origin_z - 4], TRUE, self);
+	if (trace_fraction < 1) {
+		float dot = trace_plane_normal * '0 0 1';
+		if (dot > 0.3) {
+			self.jump_flag = 1;
+		}
+		else {
+			FireballExplode();
+			return;
+		}
+	}
+	else {
+		FireballExplode();
+		return;
+	}
+
+};
+
+
+
 //=============================================================================
 
-void() spike_touch;
-void() superspike_touch;
 
 
 /*
