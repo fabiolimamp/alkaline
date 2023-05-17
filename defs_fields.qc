@@ -664,3 +664,6 @@ float prevdoornum;
 .vector inflictor_vel;
 
 .float dev_announce;
+
+.vector prev_groundvel;
+.float wasonground;

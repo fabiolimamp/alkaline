@@ -425,6 +425,13 @@ void() PlayerPreThink =
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
 
+	if (self.groundentity)
+		self.prev_groundvel = self.groundentity.velocity;
+	else 
+		self.prev_groundvel = '0 0 0';
+
+	self.wasonground = (self.flags & FL_ONGROUND) ? 1 : 0;
+
 	makevectors (self.v_angle);		// is this still used
 
 	CheckRules ();
@@ -851,6 +858,14 @@ void() PlayerPostThink =
 //	local	float	r;
 	checkClientInWaterBrush();
 	
+	if (self.wasonground && !(self.flags & FL_ONGROUND)){
+		self.velocity += [self.prev_groundvel_x, self.prev_groundvel_y, 0];
+		///dprint("added velocity\n");
+	}
+	else if (!self.wasonground && self.flags & FL_ONGROUND) {
+		self.velocity -= self.groundentity.velocity;
+	}
+
 	if (self.wasonladder){
 		self.gravity = 0.00000001;
 		self.waterlevel = 2;
