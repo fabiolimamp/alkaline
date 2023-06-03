@@ -1907,6 +1907,12 @@ You can directly set a custom movement vector with the 'movedir' key.
 	delay(string) : "Delay before trigger"
 	movedir(string) : "Custom movement vector (X Y Z)"
 	message(string) : "Message"
+	spawnflags(flags) =
+	[
+		1 : "Silver key" : 0
+		2 : "Gold key" : 0
+		4 : "Platinum key" : 0
+	]
 ]
 
 @SolidClass base(Targetname, Target, ModelLight, Message) = func_touchplate : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.

@@ -434,7 +434,7 @@ The self.cnt functionality is a feature of progs_dump and was not part
 of the original game.  -- iw
 ================
 */
-void(entity client, string custom_message, void() success_func) keylock_try_to_unlock =
+float(entity client, string custom_message, void() success_func) keylock_try_to_unlock =
 {
 	local string s;
 
@@ -450,7 +450,7 @@ void(entity client, string custom_message, void() success_func) keylock_try_to_u
 				centerprint2 (client, "You need the ", self.netname);
 			
 		sound (self, CHAN_VOICE, self.noise3, 1, ATTN_NORM);
-		return;
+		return 0;
 	}
 
 // the old code in door_touch included a comment from dumptruck_ds
@@ -475,6 +475,7 @@ void(entity client, string custom_message, void() success_func) keylock_try_to_u
 	sound (self, CHAN_ITEM, self.noise4, 1, ATTN_NORM);
 
 	success_func ();
+	return 1;
 };
 
 

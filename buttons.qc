@@ -45,6 +45,14 @@ void() button_fire =
 	if (self.state == STATE_UP || self.state == STATE_TOP)
 		return;
 
+	if (self.spawnflags & (1+2+4)){
+		if (!(self.enemy.flags & FL_CLIENT))
+			return;
+
+		if (!keylock_try_to_unlock(self.enemy, "", SUB_Null))
+			return;
+	}
+
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 
 	self.state = STATE_UP;
@@ -187,6 +195,17 @@ void() func_button =
 	if (!self.wait)
 		self.wait = 1;
 
+	if (self.spawnflags & (1+2+4)){
+		self.wait = -1;
+		keylock_init();
+	}
+
+	if (self.spawnflags & 1)
+		keylock_set_silver_key ();
+	if (self.spawnflags & 2)
+		keylock_set_gold_key ();
+	if (self.spawnflags & 4)
+		keylock_set_plat_key ();
 
 	self.state = STATE_BOTTOM;
 
