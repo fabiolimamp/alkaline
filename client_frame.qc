@@ -923,9 +923,11 @@ void() PlayerPostThink =
 		{
 			T_Damage(self, world, world, 5, DMGTYPE_FALL); 
 			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
+			self.punchangle_x = 3;	
 		}
 		else
 			sound (self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
+			self.punchangle_x = 2;	
 
 		self.jump_flag = 0;
 	}
