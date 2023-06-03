@@ -967,6 +967,8 @@ void() PlayerPostThink =
 		self.fixangle = 1;
 	}
 
+	//centerprint2(self, ftos(vlen([self.velocity_x, self.velocity_y, 0])), "\n");
+
 	SUB_CallAsSelf(UpdateLightning, self.lightningcontroller);
 };
 

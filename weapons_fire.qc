@@ -452,10 +452,7 @@ void(vector org, vector dir) launch_rocket = {
 	//newmis = missile;
 };
 
-void() W_FireRocket =
-{
-	local	vector dir, org;
-	
+void() W_FireRocket = {
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
@@ -463,15 +460,11 @@ void() W_FireRocket =
 	self.punchangle_x = -2;
 
 	makevectors (self.v_angle);
-	dir = aim(self, 1000);
-
-
-	org = self.origin + self.view_ofs - v_up*6;// '0 0 10';
+	
+	vector dir = aim(self, 1000);
+	vector org = self.origin + self.view_ofs - v_up*6;
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_rocket(org + v_forward*24 * trace_fraction, dir);
-
-	//org = self.origin + v_forward*8 + self.view_ofs - v_up*6;
-	//launch_rocket(org, dir);
 
 };
 
