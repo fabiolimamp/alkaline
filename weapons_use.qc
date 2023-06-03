@@ -23,7 +23,7 @@ void() W_SetCurrentAmmo =
 	else if (self.weapon == WEAPON_AXE)
 	{
 		self.currentammo = 0;
-		self.weaponmodel = "";//"progs/v_alkaxe20fps.mdl";
+		self.weaponmodel = "progs/v_alkaxe20fps.mdl";
 		self.weaponframe = 0;
 	}
 	else if (self.weapon == WEAPON_CHAINSAW)
