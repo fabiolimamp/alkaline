@@ -103,7 +103,7 @@ void() spawn_monster;
 void() spawn_monster_use = {
 	if (self.delay) {
 		self.think = spawn_monster;
-		self.nextthink = time + self.delay;
+		self.nextthink = time + self.delay + self.rand*random();
 	}
 	else
 		spawn_monster();

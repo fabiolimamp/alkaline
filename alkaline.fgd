@@ -865,6 +865,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 	spawncount(integer) : "Maximum alive monsters" : 10 : "For monster spawners. Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawn in from this entity until they're killed. Set to -1 to remove this limit."
 	totalspawncount(integer) : "Total spawn count" : : "For monster spawners. Maximum total spawns. When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this maximum already counted, unless you set the 'Count on spawn' flag as well."
 	delay(integer) : "Spawn delay" : : "For trigger-spawned monsters, sets a delay time for spawning in after being triggered."
+	rand(integer) : "Random delay" : : "For trigger-spawned monsters, sets a random delay interval for spawning in - as in, the delay will be bewteen 0 and this value. The random delay will sum with whatever fixed delay is set in the 'delay' field, if any."
 ]
 
 @baseclass = Above [
