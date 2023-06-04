@@ -863,7 +863,7 @@ void() PlayerPostThink =
 		///dprint("added velocity\n");
 	}
 	else if (!self.wasonground && self.flags & FL_ONGROUND) {
-		self.velocity -= self.groundentity.velocity;
+		self.velocity -= [self.groundentity.velocity_x, self.groundentity.velocity_y, 0];
 	}
 
 	if (self.wasonladder){
