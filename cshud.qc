@@ -175,6 +175,35 @@ void(float num, vector pos, vector selected_offset) Hud_DrawWeapon = {
 	}
 }
 
+void(float num, vector pos, vector selected_offset) Hud_DrawWeaponFrame = {
+	float flash, fr;
+	vector ofs;
+	string name;
+
+	if (st_weapons & weaponflags[num]) {
+
+		flash = (time - weapontime[num])*10;
+
+		if (flash < 10) {
+			// Is the flash into second phase?
+			if (flash < 0) flash = 0;
+			else if (flash >= 5) flash = flash - 5;
+			// flash is only 0-4 frames
+			fr = flash + 2;
+		}
+		else {
+			if (st_activeweapon == weaponflags[num])
+				fr = 1;
+			else	
+				fr = 0;
+		}
+
+		if (st_activeweapon == weaponflags[num]) ofs = selected_offset;
+
+		name = strcat(weaponprefix[num], weaponframes[fr], "wframe");
+		drawpic(pos + ofs, name, '32 16 0', '1 1 1', 1, 0);
+	}
+}
 
 
 //----------------------------------------------------------------------
@@ -719,6 +748,7 @@ void Hud_DrawSBar_2(vector left, vector right) {
 			if (st_weapons & weaponflags[i]) {
 				offset += '0 -14 0';
 				Hud_DrawWeapon(i, [screensize_x - 25, screensize_y/2 + 56, 0] + offset , '-4 0 0');
+				Hud_DrawWeaponFrame(i, [screensize_x - 25, screensize_y/2 + 56, 0] + offset , '-4 0 0');
 			}
 		}
 	}
