@@ -135,11 +135,11 @@ void() worldspawn =
 		oldlightning = 1;
 	}
 
-	if (cvar("scratch2") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
+	if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
 		self.originalmonsters = 1;
 
 	if (!self.itemstyle) {
-		if (cvar("scratch2") & TEMPSETTINGS_FORCEMDLBOXES) self.itemstyle = ITEMSTYLE_MDL;
+		if (cvar("scratch1") & TEMPSETTINGS_FORCEMDLBOXES) self.itemstyle = ITEMSTYLE_MDL;
 		else self.itemstyle = ITEMSTYLE_BSP;
 	}
 
@@ -370,7 +370,7 @@ void() worldspawn =
 	// Defaults to base theme, because of course it does.
 	// Adding a value of 4 to the scratch1 cvar turns back medieval as default
 	if (!self.worldtype) {
-		if (cvar("scratch2") & TEMPSETTINGS_ORIGINALWORLDTYPES) self.worldtype = WORLDTYPE_MEDIEVAL;
+		if (cvar("scratch1") & TEMPSETTINGS_ORIGINALWORLDTYPES) self.worldtype = WORLDTYPE_MEDIEVAL;
 		else self.worldtype = WORLDTYPE_BASE;
 	}
 
