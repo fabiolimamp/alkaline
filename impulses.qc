@@ -28,29 +28,21 @@ void() GiveAllCommand =
 
 /*
 ============
-GiveWeaponsCommand
+GiveKeysCommand
 ============
 */
-void() GiveWeaponsCommand =
+void() GiveKeysCommand =
 {
 	if (deathmatch || coop)
 		return;
 
-	self.ammo_rockets = 100;
-	self.ammo_nails = 200;
-	self.ammo_shells = 100;
-	self.weapons = self.weapons | ALL_WEAPONS;
-	self.items = self.items | HUD_WEAPONS;
+	self.items = self.items | IT_KEY1 | IT_KEY2 | IT_KEY3;
 
-	self.ammo_cells = 100;
-		
-	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.impulse = 0;
-	W_SetCurrentAmmo ();
 
 
 	stuffcmd (self, "bf\n");
-	sprint(self, "You got all weapons and ammo\n");
+	sprint(self, "You got all keys\n");
 	sound (self, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
 };
 
@@ -530,7 +522,8 @@ void() ImpulseCommands = {
 		ServerflagsCommand();
 
 	if (self.impulse == 13)
-		GiveWeaponsCommand();
+		GiveKeysCommand();
+
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
 
