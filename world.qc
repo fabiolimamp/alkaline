@@ -236,6 +236,8 @@ void() worldspawn =
 	
 // johnfitz -- precache sounds for cheats
 	precache_sound ("items/protect.wav");
+	precache_sound ("items/protect2.wav");
+	precache_sound ("items/protect3.wav");
 	precache_sound ("items/damage.wav");
 	precache_sound ("items/damage2.wav");
 	precache_sound ("items/damage3.wav");

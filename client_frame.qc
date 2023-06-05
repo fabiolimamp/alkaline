@@ -86,13 +86,14 @@ void() PlayerRessurect =
 	self.view_ofs = '0 0 22';
 	
 	//lose powerups
-	self.items &~= IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
+	self.items &~= IT_INVISIBILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
+	self.items |= IT_INVULNERABILITY;
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
-	self.invincible_finished = 0;
+	self.invincible_finished = time + 5;
 	self.effects = 0;
-	self.invincible_time = 0;
+	self.invincible_time = 1;
 	self.trif_time = 0;
 	self.trif_finished = 0;
 
