@@ -669,3 +669,4 @@ float prevdoornum;
 .float wasonground;
 
 .float currenthud;
+.float dmg_take_hud;

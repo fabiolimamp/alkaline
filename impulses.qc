@@ -463,16 +463,19 @@ void() ResetPlayerZ = {
 }
 
 void() CycleHUD = {
+	float tmp1 = cvar("saved1");
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	float current = self.currenthud;
 
 	if (current) {
-		cvar_set("scratch1", 0);
+		//cvar_set("scratch1", "0");
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTIGNS_OLDSTYLEHUD)));
 		self.currenthud = 0;
 	}
 	else {
-		cvar_set("scratch1", "1");
+		//cvar_set("scratch1", "1");
 		self.currenthud = 1;
+		cvar_set("saved1", ftos(tmp1 | ALKSETTIGNS_OLDSTYLEHUD));
 	}
 }
 

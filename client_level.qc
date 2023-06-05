@@ -670,7 +670,7 @@ void() PutClientInServer = {
 	self.sky = world.sky;
 	self.connect_time = time;
 
-	if (just_connected) self.currenthud = cvar("scratch1");
+	if (just_connected) self.currenthud = !!(cvar("saved1") & ALKSETTIGNS_OLDSTYLEHUD);
 
 	StopBurning(self);//johnfitz -- reset burning	
 
