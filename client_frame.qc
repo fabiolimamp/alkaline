@@ -411,6 +411,8 @@ void() PlayerPreThink =
 	gameloaded = 1;
 	self.light_lev = 0; // resets dimlight flags for powerups/status effects
 
+	self.dmg_take_hud = 0;
+	
 	if (cleanUpClientStuff) {
 		fog_setFromEnt( self, self );
 		csf_apply(self);

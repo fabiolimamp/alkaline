@@ -270,6 +270,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	// Both fields at cleared at each frame for clients
 	if (targ.flags & FL_CLIENT) {
 		targ.dmg_take = targ.dmg_take + take;
+		targ.dmg_take_hud = self.dmg_take;
 		targ.dmg_save = targ.dmg_save + save;
 	}
 	

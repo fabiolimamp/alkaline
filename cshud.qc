@@ -872,7 +872,9 @@ void(vector virtsize, float showscores) CSQC_DrawHud = {
 		}
 	}
 
-	if (getstatf(STAT_DMGTAKE) > 0) painfinishtime = time + 0.2;
+	if (getstatf(STAT_DMGTAKE) > 0) {
+		painfinishtime = time + 0.2;
+	}
 
 	if (getstatf(STAT_CURRENTHUD) == 1)
 		Hud_Draw(showscores, [(screensize_x-480)/2, screensize_y, 0]);
