@@ -667,3 +667,5 @@ float prevdoornum;
 
 .vector prev_groundvel;
 .float wasonground;
+
+.float currenthud;

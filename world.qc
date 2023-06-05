@@ -91,6 +91,7 @@ void() worldspawn =
 		clientstat(STAT_BOOTS_FINISHED, EV_FLOAT, jboots_finished);
 		clientstat(STAT_IT, EV_FLOAT, items);
 		clientstat(STAT_DMGTAKE, EV_FLOAT, dmg_take);
+		clientstat(STAT_CURRENTHUD, EV_FLOAT, currenthud);
 	}
 
 	InitBodyQue ();

@@ -635,10 +635,14 @@ called each time a player is spawned
 void() PutClientInServer = {
 	local	entity spot;
 
-	dprint5("\b[CLIENT]\b Connected at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
+	dprint5("\b[CLIENT]\b PutClientInServer at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
 
 	if(!client_ent) client_ent = self; //client_ent will be the first player to enter
 	
+	float just_connected;
+
+	if (self.classname == "") just_connected = TRUE;
+
 	self.classname = "player";
 	self.health = 100;
 	self.takedamage = DAMAGE_AIM;
@@ -665,6 +669,8 @@ void() PutClientInServer = {
 	self.offground_start = 0;
 	self.sky = world.sky;
 	self.connect_time = time;
+
+	if (just_connected) self.currenthud = cvar("scratch1");
 
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -729,8 +735,8 @@ void() PutClientInServer = {
 
 	spawn_tdeath (self.origin, self);
 
-	CreateHealthController();
-	CreateLightningController();
+	if (self.healthcontroller.classname != "healthcontroller") CreateHealthController();
+	if (self.lightningcontroller.classname != "lightningcontroller") CreateLightningController();
 	csf_clear_all(self);
 };
 
