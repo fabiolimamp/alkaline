@@ -376,6 +376,11 @@ body {
 
 
 <h3 id="keys">Keys</h3>
+
+<p>Besides the standard Silver and Gold keys, there's also a new Platinum key (<strong>item_key3</strong>). It works the same way as the other keys. Due to engine limitations, it shows up on the HUD only in CSQC-supporting sourceports, but the basic functionality still works the same.</p>
+
+<p>Buttons can now be set to require keys the same way as doors - just select the appropriate spawnflag.</p>
+
 <p>Alkaline borrows the custom key system from progs_dump. You can create a key using the <strong>item_key_custom</strong> entity, and define a custom model, skin, sound and name. Then on any door you can set the name of the key that will open it. For more details, please refer to the in-editor documentation.</p>
 
 <p>Also from progs_dump comes the <strong>trigger_usekey</strong> brush entity. You can use it to "consume" a key from the player's inventory (custom or not) and trigger some event - like a door would, but with no need for a door. It can be used by a player touching it, or by triggering.</p>
@@ -1042,9 +1047,9 @@ The activator's bounding box can be changed as well by activating spawnflag 1.</
 <p>Note that the old <strong>give #</strong> cheat to get a specific weapon won't work in this mod.</p>
 
 <ul>
-	<li><strong>resurrect</strong> (impulse 154): resurrects the player on the spot with 100 health and with their inventory intact.</li>
-	<li><strong>giveall</strong> (impulse 9): Gives all weapons, ammo, keys, runes and armor.</li>
-	<li><strong>giveweapons</strong> (impulse 13): Gives only weapons and ammo.</li>
+	<li><strong>resurrect</strong> (impulse 154): resurrects the player on the spot with 100 health and with their inventory intact. You also get a 5s invulnerability to get out of whatever rough spot you may have fall into.</li>
+	<li><strong>giveall</strong> (impulse 9): Gives all weapons and ammo.</li>
+	<li><strong>givekeys</strong> (impulse 13): Gives all 3 keys.</li>
 	<li><strong>quad</strong> (impulse 255): Gives the Quad Damage.</li>
 	<li><strong>belt</strong> (impulse 252): Gives the Invisibility Belt.</li>
 	<li><strong>suit</strong> (impulse 253): Gives the Biosuit.</li>
