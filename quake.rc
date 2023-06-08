@@ -3,7 +3,7 @@ exec default.cfg
 exec config.cfg
 
 sv_protocol 999
-sv_protocol FTE999
+sv_maxvelocity 50000
 sv_nqplayerphysics 1
 sys_ticrate 0.025
 
