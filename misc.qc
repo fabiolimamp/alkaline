@@ -354,6 +354,7 @@ void() spikeshooter_use = {
 		damage = 60;
 	}
 	else if (self.spawnflags & TRAP_VOREBALL) {
+		self.originalmonsters = 1;
 		ShalMissile();
 		damage = 20;
 		spd = 200;
