@@ -958,15 +958,13 @@ void() PlayerPostThink =
 	}
 	
 	if (self.v_angle_z) {
-		//dprint3("v_angle_z: ", ftos(self.v_angle_z), "\n");
-		if (fabs(self.v_angle_z) < 0.5) {
-			self.angles_z = 0;
-		//	dprint("z_angle ended! ----------------\n");
-		}
-		else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*(fabs(self.v_angle_z)/40 + 0.2);
-		//else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*0.5;
+		self.angles = normalizeAngles180(self.v_angle);
 
-		self.angles_x = self.v_angle_x;
+		if (fabs(self.angles_z) < 0.5) 
+			self.angles_z = 0;
+		else
+			self.angles_z = self.angles_z - sign(self.angles_z)*(fabs(self.angles_z)/40 + 0.2);
+
 		self.fixangle = 1;
 	}
 
