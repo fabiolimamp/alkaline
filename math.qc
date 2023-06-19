@@ -37,8 +37,8 @@ vector(float num) SinCos =
     
     angle = '0 1 0' * num;
     makevectors(angle);
-    result = [v_forward_y, v_forward_x, v_forward_x / v_forward_y];   // technically SinCosTan
-    
+    result = [v_forward_y, v_forward_x, v_forward_y / v_forward_x];   // technically SinCosTan
+
     v_forward = vf;
     v_up = vu;
     v_right = vr;
