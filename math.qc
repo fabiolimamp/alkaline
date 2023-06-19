@@ -20,121 +20,121 @@ float(float value, float minValue, float maxValue) wrap;
 
 vector(float x, float y, float z) Vector =
 {
-    local vector swiz;
-    swiz_x = x;
-    swiz_y = y;
-    swiz_z = z;
-    return swiz;
+	local vector swiz;
+	swiz_x = x;
+	swiz_y = y;
+	swiz_z = z;
+	return swiz;
 }
 
 vector(float num) SinCos =
 {
-    local vector angle, vf, vu, vr, result;
-    
-    vf = v_forward;
-    vu = v_up;
-    vr = v_right;
-    
-    angle = '0 1 0' * num;
-    makevectors(angle);
-    result = [v_forward_y, v_forward_x, v_forward_y / v_forward_x];   // technically SinCosTan
+	local vector angle, vf, vu, vr, result;
 
-    v_forward = vf;
-    v_up = vu;
-    v_right = vr;
-    
-    return result;
+	vf = v_forward;
+	vu = v_up;
+	vr = v_right;
+
+	angle = '0 1 0' * num;
+	makevectors(angle);
+	result = [v_forward_y, v_forward_x, v_forward_y / v_forward_x];   // technically SinCosTan
+
+	v_forward = vf;
+	v_up = vu;
+	v_right = vr;
+
+	return result;
 }
 
 float(float num) sin =
 {
-    vector temp;
-    temp = SinCos(num);
-    return temp_x;
+	vector temp;
+	temp = SinCos(num);
+	return temp_x;
 }
 
 float(float num) cos =
 {
-    vector temp;
-    temp = SinCos(num);
-    return temp_y;
+	vector temp;
+	temp = SinCos(num);
+	return temp_y;
 }
 
 float(float num) tan =
 {
-    vector temp;
-    temp = SinCos(num);
-    return temp_x / temp_y;
+	vector temp;
+	temp = SinCos(num);
+	return temp_x / temp_y;
 }
  
 float(float y, float x) atan2 =
 {
-    local vector ang; //temporary used to calculate trig values
-    ang = '0 0 0';
-    ang_x = x;
-    ang_y = y;
-    return vectoyaw(ang);
+	local vector ang; //temporary used to calculate trig values
+	ang = '0 0 0';
+	ang_x = x;
+	ang_y = y;
+	return vectoyaw(ang);
 }
 
 float(float x) acos {
-    float negate;
+	float negate;
 
-    if (x < 0) negate = 1;
-    else negate = 0;
-    
-    x = fabs(x);
-    float ret = -0.0187293;
-    ret = ret * x;
-    ret = ret + 0.0742610;
-    ret = ret * x;
-    ret = ret - 0.2121144;
-    ret = ret * x;
-    ret = ret + 1.5707288;
-    ret = ret * sqrt(1.0-x);
-    ret = ret - 2 * negate * ret;
-    return (negate * 3.14159265358979 + ret)/3.14159265358979 * 180;
+	if (x < 0) negate = 1;
+	else negate = 0;
+	
+	x = fabs(x);
+	float ret = -0.0187293;
+	ret = ret * x;
+	ret = ret + 0.0742610;
+	ret = ret * x;
+	ret = ret - 0.2121144;
+	ret = ret * x;
+	ret = ret + 1.5707288;
+	ret = ret * sqrt(1.0-x);
+	ret = ret - 2 * negate * ret;
+	return (negate * 3.14159265358979 + ret)/3.14159265358979 * 180;
 }
 
 float(float x) acos2 = {
-    float a = sqrt(2+2*x);
-    float b = sqrt(2-2*x);
-    float c = sqrt(2-a);
-    return fabs((8/3*c-b/3)/3.14159265358979 * 180);
+	float a = sqrt(2+2*x);
+	float b = sqrt(2-2*x);
+	float c = sqrt(2-a);
+	return fabs((8/3*c-b/3)/3.14159265358979 * 180);
 }
 
 
 vector(vector v) vabs =
 {
-    return [fabs(v_x),fabs(v_y),fabs(v_z)];
+	return [fabs(v_x),fabs(v_y),fabs(v_z)];
 }
 
 
 vector(vector a, vector b) vec_scale =
 {
-    return [a_x * b_x, a_y * b_y, a_z * b_z];
+	return [a_x * b_x, a_y * b_y, a_z * b_z];
 }
 
 vector(vector a, vector b) cross_product = {
-    vector ret;
-    ret_x = a_y*b_z - a_z*b_y;
-    ret_y = a_z*b_x - a_x*b_z;
-    ret_z = a_x*b_y - a_y*b_x;
-    return ret;
+	vector ret;
+	ret_x = a_y*b_z - a_z*b_y;
+	ret_y = a_z*b_x - a_x*b_z;
+	ret_z = a_x*b_y - a_y*b_x;
+	return ret;
 }
 
 vector(vector p1, vector p2, vector p3, vector p4, float u) bezierCurve = {
-    vector dest;
+	vector dest;
 
-    float a = (1-u)*(1-u)*(1-u);
-    float b = 3*u*(1-u)*(1-u);
-    float c = 3*u*u*(1-u);
-    float d = u*u*u;
+	float a = (1-u)*(1-u)*(1-u);
+	float b = 3*u*(1-u)*(1-u);
+	float c = 3*u*u*(1-u);
+	float d = u*u*u;
 
-    dest_x = a*p1_x + b*p2_x + c*p3_x + d*p4_x;
-    dest_y = a*p1_y + b*p2_y + c*p3_y + d*p4_y;
-    dest_z = a*p1_z + b*p2_z + c*p3_z + d*p4_z;
+	dest_x = a*p1_x + b*p2_x + c*p3_x + d*p4_x;
+	dest_y = a*p1_y + b*p2_y + c*p3_y + d*p4_y;
+	dest_z = a*p1_z + b*p2_z + c*p3_z + d*p4_z;
 
-    return dest;
+	return dest;
 }
 
 /*
@@ -151,14 +151,14 @@ vector(vector p1, vector p2, vector p3, vector p4, float u) bezierCurve = {
  * Returns: A number within the given range.
  */
 float(float value, float minValue, float maxValue) clamp = {
-    if (value > maxValue) {
-        return maxValue;
-    }
-    else if (value < minValue) {
-        return minValue;
-    }
+	if (value > maxValue) {
+		return maxValue;
+	}
+	else if (value < minValue) {
+		return minValue;
+	}
 
-    return value;
+	return value;
 };
 
 /*
@@ -173,7 +173,7 @@ float(float value, float minValue, float maxValue) clamp = {
  * Returns: The remainder of a divided by n
  */
 float(float a, float n) mod = {
-    return a - (n * floor(a / n));
+	return a - (n * floor(a / n));
 };
 
 /*
@@ -186,14 +186,14 @@ float(float a, float n) mod = {
  * Returns: -1 if x < 0, 0 if x == 0, 1 if x > 0.
  */
 float(float x) sign = {
-    if (x > 0) {
-        return 1;
-    }
-    else if (x < 0) {
-        return -1;
-    }
+	if (x > 0) {
+		return 1;
+	}
+	else if (x < 0) {
+		return -1;
+	}
 
-    return 0;
+	return 0;
 };
 
 /*
@@ -211,9 +211,9 @@ float(float x) sign = {
  * Returns: A number within the given range.
  */
 float(float value, float minValue, float maxValue) wrap = {
-    local float range = maxValue - minValue;
+	local float range = maxValue - minValue;
 
-    return mod(value - minValue, range + 1) + minValue;
+	return mod(value - minValue, range + 1) + minValue;
 };
 
 float(float a, float b) min = { if (a <= b) return a; return b; }
@@ -227,164 +227,169 @@ float(float a, float b) not = { return a - (a & b); }
 //faster version of id's anglemod
 float(float v) anglemod =
 {
-    return v - floor(v/360) * 360;
+	return v - floor(v/360) * 360;
 }
 
 float(float v) anglemod180 =
 {
-    return v - floor((v+180)/360) * 360;
+	return v - floor((v+180)/360) * 360;
 }
 
 float(float anga, float angb) angledif =
 {
-    float dif;
-    dif = fabs(anga - angb);
-    if (dif > 180)
-        dif = 360 - dif;
-    return dif;
+	float dif;
+	dif = fabs(anga - angb);
+	if (dif > 180)
+		dif = 360 - dif;
+	return dif;
 }
 
 vector(vector anga, vector angb) anglesdif =
 {
-    vector dif;
-    dif = anga - angb;
-    if (dif_x > 180)
-        dif_x = 360 - dif_x;
-    if (dif_y > 180)
-        dif_y = 360 - dif_y;
-    if (dif_z > 180)
-        dif_z = 360 - dif_z;
-    return dif;
+	vector dif;
+	dif = anga - angb;
+	if (dif_x > 180)
+		dif_x = 360 - dif_x;
+	if (dif_y > 180)
+		dif_y = 360 - dif_y;
+	if (dif_z > 180)
+		dif_z = 360 - dif_z;
+	return dif;
 }
 
 float(vector ang, vector base_ang, vector offset) isInAngle = {
-    if (angledif(ang_x, base_ang_x) > offset_x || angledif(ang_y, base_ang_y) > offset_y)
-        return FALSE;
-    else
-        return TRUE;
+	if (angledif(ang_x, base_ang_x) > offset_x || angledif(ang_y, base_ang_y) > offset_y)
+		return FALSE;
+	else
+		return TRUE;
 };
 
 
 // mathlib_sqrt
 float(float num) sqrt =
 {
-    local float apr;
+	local float apr;
 
-    if(mathlib_accuracy <= 0)
-        mathlib_accuracy = 0.001;   //this sets a level of accuracy, it's a global float
+	if(mathlib_accuracy <= 0)
+		mathlib_accuracy = 0.001;   //this sets a level of accuracy, it's a global float
 
-    if (num < mathlib_accuracy)
-        return 0;
-    if (num>1)
-        apr = num;
-    else
-        apr = 1;
-    do
-    {
-        apr = (num + (apr * apr)) / (2 * apr);
-    }
-    while (fabs((apr * apr) - num) > (num * mathlib_accuracy));
-    return apr;
+	if (num < mathlib_accuracy)
+		return 0;
+	if (num>1)
+		apr = num;
+	else
+		apr = 1;
+	do
+	{
+		apr = (num + (apr * apr)) / (2 * apr);
+	}
+	while (fabs((apr * apr) - num) > (num * mathlib_accuracy));
+	return apr;
 }
 
 
 float(float x) logn {
-    if (x <= 1 && x > 0)
-        return -8.6731532+(129.946172+(-558.971892+(843.967330-409.109529*x)*x)*x)*x;
-    else if (x > 1 && x <= 2)
-        return -1.7417939 + (2.8212026 + (-1.4699568 + (0.44717955 - 0.056570851 * x) * x) * x) * x;
-    else
-        return 0;
+	return log2(x) * 0.6931472;
+	/*
+	if (x <= 1 && x > 0)
+		return -8.6731532 + (129.946172 + (-558.971892 + (843.967330 - 409.109529*x)*x)*x)*x; // this one is bad
+	else if (x > 1 && x <= 2)
+		return -1.7417939 + (2.8212026 + (-1.4699568 + (0.44717955 - 0.056570851 * x) * x) * x) * x;
+	else
+		return 0;
+	*/
 }
+
 
 float(float x) log2 {
 
-    if (x > 0 && x <= 1)
-        //return (0.00383323 + 1.42412*x + 0.336161*x*x)/(1 + 0.704317*x + 0.0598015*x*x);
-         return (-5.83261 - 16.7012*x + 22.394*x*x)/(1 + 11.2638*x + 7.81124*x*x);
-    else
-        return 0;
+	if (x > 0 && x <= 1)
+		return (-5.83261 - 16.7012*x + 22.394*x*x)/(1 + 11.2638*x + 7.81124*x*x);
+	else if (x > 1 && x <= 2)
+		return -0.344845*x*x + 2.024658*x -1.674873;
+	else
+		return 0;
 }
 
 float(float a, float b, float mix) lerp =
 {
-    if (mix <= 0) return a;
-    if (mix >= 1) return b;
-    return (b * mix + a * ( 1 - mix ) );
+	if (mix <= 0) return a;
+	if (mix >= 1) return b;
+	return (b * mix + a * ( 1 - mix ) );
 }
 
 vector(vector a, vector b, float mix) lerpVector =
 {
-    if (mix <= 0) return a;
-    if (mix >= 1) return b;
-    return (b * mix + a * ( 1 - mix ) );
+	if (mix <= 0) return a;
+	if (mix >= 1) return b;
+	return (b * mix + a * ( 1 - mix ) );
 }
 
 // for a relaxing lerp: hermite lerp.
 float(float a, float b, float mix) lerpHermite =
 {
-    if (mix <= 0) return a;
-    if (mix >= 1) return b;
-    
-    local float h01;
-    
-    h01 = mix * mix;
-    h01 *= 3 - 2 * mix;
-    
-    return (b * h01 + a * ( 1 - h01 ) );
+	if (mix <= 0) return a;
+	if (mix >= 1) return b;
+	
+	local float h01;
+	
+	h01 = mix * mix;
+	h01 *= 3 - 2 * mix;
+	
+	return (b * h01 + a * ( 1 - h01 ) );
 }
 
 vector(vector a, vector b, float mix) lerpVectorHermite =
 {
-    if (mix <= 0) return a;
-    if (mix >= 1) return b;
+	if (mix <= 0) return a;
+	if (mix >= 1) return b;
 
-    local float h01;
-    
-    h01 = mix * mix;
-    h01 *= 3 - 2 * mix;
-    
-    return (b * h01 + a * ( 1 - h01 ) );
+	local float h01;
+	
+	h01 = mix * mix;
+	h01 *= 3 - 2 * mix;
+	
+	return (b * h01 + a * ( 1 - h01 ) );
 }
 
 // even more smooth:
 float(float a, float b, float mix) lerpCosine =
 {
-    if (mix <= 0) return a;
-    if (mix >= 1) return b;
-    
-    local float cmx;
-    cmx = (1 - cos(mix * 180)) / 2;
-    
-    return (b * cmx + a * ( 1 - cmx ) );
+	if (mix <= 0) return a;
+	if (mix >= 1) return b;
+	
+	local float cmx;
+	cmx = (1 - cos(mix * 180)) / 2;
+	
+	return (b * cmx + a * ( 1 - cmx ) );
 }
 
 vector(vector a, vector b, float mix) lerpVectorCosine =
 {
-    if (mix <= 0) return a;
-    if (mix >= 1) return b;
+	if (mix <= 0) return a;
+	if (mix >= 1) return b;
 
-    local float cmx;
-    cmx = (1 - cos(mix * 180)) / 2;
-    
-    return (b * cmx + a * ( 1 - cmx ) );
+	local float cmx;
+	cmx = (1 - cos(mix * 180)) / 2;
+	
+	return (b * cmx + a * ( 1 - cmx ) );
 }
 
 
 float() crandom = {
-    return 2*(random() - 0.5);
+	return 2*(random() - 0.5);
 };
 
 //Supa's random offset function
 vector(float offset_amt) RandomOffset =
 {
-    local vector offset;
+	local vector offset;
 
-    offset_x = crandom() * offset_amt;
-    offset_y = crandom() * offset_amt;
-    offset_z = crandom() * offset_amt;
-    
-    return offset;
+	offset_x = crandom() * offset_amt;
+	offset_y = crandom() * offset_amt;
+	offset_z = crandom() * offset_amt;
+	
+	return offset;
 };
 
 
