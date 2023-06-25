@@ -45,6 +45,8 @@ void() JumpPadTouch = {
 	if (other.movetype == MOVETYPE_STEP && self.spawnflags & 2)
 		return;
 	
+	if (time < self.attack_finished) return;
+
 	entity tgt = find(world, targetname, self.target);
 
 	if (!tgt){
@@ -60,6 +62,7 @@ void() JumpPadTouch = {
 			sound(other, CHAN_AUTO, self.noise, 1, ATTN_NORM);
 		}
 	}
+	self.attack_finished = time + 0.2;
 }
 
 float(entity e, vector target_spot) JumpPadLaunch = {
@@ -206,7 +209,7 @@ float(float v_extra) JumpPadSimulateRun = {
 		traceline (cur, next, FALSE, self.enemy);
 		while (trace_fraction < 1 && trace_ent != self.goalentity && trace_ent != world) traceline (trace_endpos, next, FALSE, trace_ent);
 		// Check if it hit the target
-		
+
 		if (trace_ent == self.goalentity) {
 			return v_vertical;
 		}
