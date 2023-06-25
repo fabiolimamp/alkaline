@@ -50,8 +50,6 @@ $frame pull1 pull2 pull3 pull4 pull5 pull6 pull7 pull8 pull9 pull10 pull11
 //speed an ogre grenade is fired at
 float OGRE_G_VEL = 600;
  
-//fixme: get the correct gravity strength for the level
-float grav = 800;
  
 //a default angle to fire at if the enemy is too far away
 float OGRE_DEFAULT_ELEVATION = 30;
@@ -92,6 +90,7 @@ float(float theta, vector dest) IterateElevation = {
 	y = vlen(ofs);
 
 	//find the coefficients of the quadratic in tan(theta)
+	float grav = cvar("sv_gravity");
 	a = 0.5 * grav * y * y / (OGRE_G_VEL * OGRE_G_VEL);
 	b = -y;
 	c = a + z;

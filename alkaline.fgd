@@ -2726,6 +2726,7 @@ Can be given an optional float sound.
 	spawnflags(flags) = [
 		1: "Don't affect players" : 0 
 		2: "Don't affect monsters" : 0
+		4: "Silent" : 0
 	]
 	speed(integer) : "Acceleration" : 1600
 	finalspeed(integer) : "Final vertical speed" : 100
@@ -2733,6 +2734,22 @@ Can be given an optional float sound.
 	noise(string) : "Optional floating sound"
 	delay(float) : "Sound loop time (when there's a sound set)" : "1"
 ]
+
+@SolidClass base(Appearflags, Targetname, SingleTarget, TriggerWait) = trigger_jumppad : "
+"
+[
+	spawnflags(flags) = [
+		1: "Don't affect players" : 0 
+		2: "Don't affect monsters" : 0
+	]
+	height(integer) : "Vertical velocity adjustment. Can be positive or negative"
+	//speed(integer) : "Acceleration" : 1600
+	//finalspeed(integer) : "Final vertical speed" : 100
+
+	noise(string) : "Launch sound" : "misc/jumppad.wav"
+	//delay(float) : "Sound loop time (when there's a sound set)" : "1"
+]
+
 
 @PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_hurt : "Trigger hurt. Hurts any entity activating it, or the entities defined in the target-target4 fields.
 'dmg' sets the total damage to be inflicted.
