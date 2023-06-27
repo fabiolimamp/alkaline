@@ -98,9 +98,71 @@ float(entity e, vector target_spot) JumpPadLaunch = {
 	e.flags &~= FL_ONGROUND;
 	e.velocity = JumpPadConvertVelocity(throw_spot, target_spot, v_vertical, v_horizontal);
 
+	if (e.flags & FL_CLIENT) {
+		entity ctrl;
+		// setup bounce controller if not created yet
+		if (e.pushcontroller.classname != "pushcontroller") {
+			ctrl = spawn();
+			e.pushcontroller = ctrl;
+			ctrl.classname = "pushcontroller";
+			ctrl.owner = e;
+		}
+		// otherwise, just fetch a reference to the existing one
+		else
+			ctrl = e.pushcontroller;
+		
+		ctrl.enemy = self;
+		
+		ctrl.movedir = [e.velocity_x, e.velocity_y, 0];
+		ctrl.invincible_time = vlen([throw_spot_x, throw_spot_y, 0] - [target_spot_x, target_spot_y, 0])/v_horizontal;
+		ctrl.connect_time = time;
+		ctrl.oldvelocity = e.velocity;
+
+		ctrl.think = pushcontroller_jpd_think;
+		ctrl.nextthink = time + 0.025;
+	}
 	return TRUE;
 };
 
+void() pushcontroller_jpd_think = {
+	entity e = self.owner;
+
+	if (time > self.connect_time + self.invincible_time || e.flags & FL_ONGROUND){
+		e.pushcontroller = world;
+		remove(self);
+		return;
+	}
+	
+	//float steer = (time - self.connect_time)/self.invincible_time;
+	//float steer = 1 - clamp(vlen(e.velocity)/600, 0, 1);
+
+	/*float verticalFactor = clamp(e.velocity_z, 0, 600);
+	float horizontalFactor = min(vlen([e.velocity_x, e.velocity_y, 0]), 600);
+
+	float steer = 1 - min((verticalFactor + horizontalFactor)*600, 600)/600;
+	
+	dprint3("Z: ", ftos(e.velocity_z), "\n");
+	dprint3("Steer: ", ftos(steer), "\n");
+	//dprint5("X current: ", ftos(e.velocity_x*steer), ", X push: ", ftos(self.movedir_x*(1-steer)), "\n");
+	//dprint5("Y current: ", ftos(e.velocity_y*steer), ", Y push: ", ftos(self.movedir_y*(1-steer)), "\n");
+	e.velocity_x = (e.velocity_x*steer + self.movedir_x*(1-steer));
+	e.velocity_y = (e.velocity_y*steer + self.movedir_y*(1-steer));
+	*/
+
+	/*
+	e.velocity_x = self.movedir_x;
+	e.velocity_y = self.movedir_y;
+	*/
+
+	//float horSpd = vlen([e.velocity_x, e.velocity_y, 0]);
+
+	//dprint3("dot: ", ftos(normalize([e.velocity_x, e.velocity_y, 0]) * normalize([self.oldvelocity_x, self.oldvelocity_y, 0]) * 1000), "\n");
+	e.velocity_x = (self.oldvelocity_x*0.99 + e.velocity_x*0.01);
+	e.velocity_y = (self.oldvelocity_y*0.99 + e.velocity_y*0.01);
+
+	self.oldvelocity = e.velocity;
+	self.nextthink = time + 0.0001;
+}
 
 // Calculates the vertical velocity based on height difference
 float(vector throw_spot, vector target_spot) JumpPadCalculateVertical {
@@ -158,7 +220,7 @@ float(float v_extra) JumpPadSimulateRun = {
 	// Determine where the throw source and destination
 	// JUMPPAD_SIM_COMPENSATE Helps the dynamite clear tall walls
 	// The sim may clip corners, so this makes the sim test a bit lower
-	vector throw_spot = self.enemy.origin + [0, 0, self.enemy.mins_z] - JUMPPAD_SIM_COMPENSATE;
+	vector throw_spot = self.enemy.origin + [0, 0, self.enemy.mins_z];// - JUMPPAD_SIM_COMPENSATE;
 	vector target_spot = self.goalentity.origin - JUMPPAD_SIM_COMPENSATE;
 	
 	// Get world gravity value
@@ -248,8 +310,8 @@ float(float v_extra) JumpPadSimulateRun = {
 // Returns -1 if it did not find any angle with a target hit
 float() JumpPadSimulateThrow = {
 	float sim_result;
-	float angles_try[10] = {-192, -128, -64, 0, 64, 128, 192, 256, 384, 512};
-	for (float i = 0; i < 9; i ++) {
+	float angles_try[12] = {-192, -128, -64, 0, 64, 128, 192, 256, 384, 512, 768, 1024};
+	for (float i = 0; i < 10; i ++) {
 		sim_result = JumpPadSimulateRun(angles_try[i]);
 		
 		if (sim_result != -1) {

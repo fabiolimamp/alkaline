@@ -670,3 +670,5 @@ float prevdoornum;
 
 .float currenthud;
 .float dmg_take_hud;
+
+.entity pushcontroller;
