@@ -2735,14 +2735,20 @@ Can be given an optional float sound.
 	delay(float) : "Sound loop time (when there's a sound set)" : "1"
 ]
 
-@SolidClass base(Appearflags, Targetname, SingleTarget, TriggerWait) = trigger_jumppad : "
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_jumppad : "
 "
 [
 	spawnflags(flags) = [
 		1: "Don't affect players" : 0 
 		2: "Don't affect monsters" : 0
+		4: "Silent" : 0
+		8: "Dodge brush entities" : 0
+		16: "Don't hold player" : 0
+		32: "Fixed push direction" : 0
 	]
 	height(integer) : "Vertical velocity adjustment. Can be positive or negative"
+	target(target_destination) : "Destination point, obligatory. Can be a simple info_notnull"
+	target2(target_destination) : "Origin point, optional when used with the 'fixed push' flag"
 	//speed(integer) : "Acceleration" : 1600
 	//finalspeed(integer) : "Final vertical speed" : 100
 

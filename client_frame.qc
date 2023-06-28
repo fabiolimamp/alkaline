@@ -531,6 +531,12 @@ void() PlayerPreThink =
 	}
 	self.wasonladder = self.onladder;
 	self.onladder = 0;
+
+
+	if (self.waterlevel < 2 && time < self.pushfinished) {
+		ClientPush();// jumppad.qc
+	}
+
 };
 	
 /*
@@ -860,7 +866,12 @@ void() PlayerPostThink =
 //	local	float	mspeed, aspeed;
 //	local	float	r;
 	checkClientInWaterBrush();
-	
+
+	if (self.flags & FL_ONGROUND) {
+		self.pushfinished = 0;
+		self.pushvelocity = '0 0 0';
+	}
+
 	if (self.wasonground && !(self.flags & FL_ONGROUND)){
 		self.velocity += [self.prev_groundvel_x, self.prev_groundvel_y, 0];
 		///dprint("added velocity\n");
@@ -971,6 +982,7 @@ void() PlayerPostThink =
 	//centerprint2(self, ftos(vlen([self.velocity_x, self.velocity_y, 0])), "\n");
 
 	SUB_CallAsSelf(UpdateLightning, self.lightningcontroller);
+	self.oldvelocity = self.velocity;
 };
 
 

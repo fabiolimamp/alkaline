@@ -7,6 +7,13 @@ Loosely based on Devil's code by ZungryWare, from modjam2
 
 =============================================================
 */
+vector JUMPPAD_SIM_COMPENSATE = '0 0 32';
+float JUMPPAD_SIM_STEP = 0.08;
+
+float JUMPPAD_SILENT = 4;
+float JUMPPAD_DONTIGNOREMOVERS = 8;
+float JUMPPAD_DONTHOLDPLAYER = 16;
+float JUMPPAD_FIXEDPUSH = 32;
 
 void() trigger_jumppad = {
 	InitTrigger();
@@ -16,13 +23,53 @@ void() trigger_jumppad = {
 	if (self.noise == "") self.noise = "misc/jumppad.wav";
 
 	if (self.spawnflags & 4) self.noise = "";
-
 	if (self.noise != "") precache_sound(self.noise);
 
 	if (!self.delay) self.delay = 1;
+
+	self.wait = zeroconvertdefault(0.2, self.wait);
+
+	if (self.spawnflags & JUMPPAD_FIXEDPUSH) {
+		self.think = JumpPadCalculateFixedJump;
+		self.nextthink = time + 0.5;
+	}
+
 	SUB_CheckWaiting();
 }
 
+void() JumpPadCalculateFixedJump = {
+	entity origin_tgt;
+	
+	entity e = spawn();
+	e.classname = "jumppadtester";
+	e.solid = SOLID_TRIGGER;
+	e.movetype = MOVETYPE_TOSS;
+	setsize(e, VEC_HULL_MIN, VEC_HULL_MAX);
+
+	if (self.target2 != "") origin_tgt = find(world, targetname, self.target2);
+
+	if (origin_tgt){
+		setorigin(e, origin_tgt.origin);
+		dprint("found origin\n");
+	}
+	else {
+		vector org = (self.absmin + self.absmax)/2;
+		org_z += self.size_z;
+
+		setorigin(e, org);
+		entity oself = self;
+		self = e;
+		droptofloor();
+		self = oself;
+	}
+	
+	entity tgt = find(world, targetname, self.target);
+	if (!JumpPadLaunch(e, tgt.origin)) self.state = 1;
+
+	self.movedir = e.velocity;
+	self.invincible_time = e.pushfinished - time;
+	remove(e);
+}
 
 
 void() JumpPadTouch = {
@@ -47,14 +94,23 @@ void() JumpPadTouch = {
 	
 	if (time < self.attack_finished) return;
 
-	entity tgt = find(world, targetname, self.target);
+	if (self.spawnflags & JUMPPAD_FIXEDPUSH){
+		if (!JumpPadLaunchFixed(other)){
+			dprint("Warning: no valid throw\n");
+			return;
+		}
+	}
+	else {
+		entity tgt = find(world, targetname, self.target);
 
-	if (!tgt){
-		dprint("trigger_jummpad: no target\n");
-		return;
+		if (!tgt){
+			dprint("trigger_jummpad: no target\n");
+			return;
+		}
+		JumpPadLaunch(other, tgt.origin);
 	}
 
-	JumpPadLaunch(other, tgt.origin);
+	dprint3("Push velocity: ", vtos(other.velocity), "\n");
 
 	if (self.noise != "") {
 		if (other.flags & FL_CLIENT && other.health > 0 && other.fly_sound < time) {
@@ -62,8 +118,23 @@ void() JumpPadTouch = {
 			sound(other, CHAN_AUTO, self.noise, 1, ATTN_NORM);
 		}
 	}
-	self.attack_finished = time + 0.2;
+	self.attack_finished = time + self.wait;
 }
+
+float(entity e) JumpPadLaunchFixed = {
+	if (self.state == 1)
+		return FALSE;
+
+	e.velocity = self.movedir;
+	e.flags &~= FL_ONGROUND;
+
+	if (e.flags & FL_CLIENT && e.health > 0 && !(self.spawnflags & JUMPPAD_DONTHOLDPLAYER)) {
+		e.pushvelocity = self.movedir;
+		e.oldvelocity = self.movedir;
+		e.pushfinished = time + self.invincible_time;
+	}
+	return TRUE;
+};
 
 float(entity e, vector target_spot) JumpPadLaunch = {
 	vector throw_spot = e.origin;
@@ -81,88 +152,53 @@ float(entity e, vector target_spot) JumpPadLaunch = {
 
 	float v_vertical = JumpPadSimulateThrow();
 	
-	self.enemy = world;
 	self.goalentity = world;
 	remove(goal);
 	
 	// If there's no valid throw, exit
 	if (v_vertical == -1) {
 		dprint("No valid throw\n");
+		self.enemy = world;
 		return FALSE;
 	}
 	
-	v_vertical += self.height;
+	v_vertical += self.height + 64;
 	// Calculate horizontal velocity
 	float v_horizontal = JumpPadCalculateHorizontal(throw_spot, target_spot, v_vertical);
 	
 	e.flags &~= FL_ONGROUND;
 	e.velocity = JumpPadConvertVelocity(throw_spot, target_spot, v_vertical, v_horizontal);
 
-	if (e.flags & FL_CLIENT) {
-		entity ctrl;
-		// setup bounce controller if not created yet
-		if (e.pushcontroller.classname != "pushcontroller") {
-			ctrl = spawn();
-			e.pushcontroller = ctrl;
-			ctrl.classname = "pushcontroller";
-			ctrl.owner = e;
-		}
-		// otherwise, just fetch a reference to the existing one
-		else
-			ctrl = e.pushcontroller;
-		
-		ctrl.enemy = self;
-		
-		ctrl.movedir = [e.velocity_x, e.velocity_y, 0];
-		ctrl.invincible_time = vlen([throw_spot_x, throw_spot_y, 0] - [target_spot_x, target_spot_y, 0])/v_horizontal;
-		ctrl.connect_time = time;
-		ctrl.oldvelocity = e.velocity;
-
-		ctrl.think = pushcontroller_jpd_think;
-		ctrl.nextthink = time + 0.025;
+	if ((e.flags & FL_CLIENT && e.health > 0 && !(self.spawnflags & JUMPPAD_DONTHOLDPLAYER)) || e.classname == "jumppadtester") {
+		e.pushvelocity = e.velocity;
+		e.oldvelocity = e.velocity;
+		e.pushfinished = time + vlen([throw_spot_x, throw_spot_y, 0] - [target_spot_x, target_spot_y, 0])/v_horizontal;
 	}
+
+
+	self.enemy = world;
+
 	return TRUE;
 };
 
-void() pushcontroller_jpd_think = {
-	entity e = self.owner;
+// called from PlayerPreThink
+void() ClientPush = {
 
-	if (time > self.connect_time + self.invincible_time || e.flags & FL_ONGROUND){
-		e.pushcontroller = world;
-		remove(self);
-		return;
-	}
-	
-	//float steer = (time - self.connect_time)/self.invincible_time;
-	//float steer = 1 - clamp(vlen(e.velocity)/600, 0, 1);
+	float verticalFactor = clamp(self.velocity_z, 0, 600);
+	float horizontalFactor = min(vlen([self.velocity_x, self.velocity_y, 0]), 600);
 
-	/*float verticalFactor = clamp(e.velocity_z, 0, 600);
-	float horizontalFactor = min(vlen([e.velocity_x, e.velocity_y, 0]), 600);
+	float pushFactor = vlen(self.pushvelocity);
+	float steer = 1 - (0.5 + min((verticalFactor + horizontalFactor), 600)/600*0.5);
 
-	float steer = 1 - min((verticalFactor + horizontalFactor)*600, 600)/600;
-	
-	dprint3("Z: ", ftos(e.velocity_z), "\n");
-	dprint3("Steer: ", ftos(steer), "\n");
-	//dprint5("X current: ", ftos(e.velocity_x*steer), ", X push: ", ftos(self.movedir_x*(1-steer)), "\n");
-	//dprint5("Y current: ", ftos(e.velocity_y*steer), ", Y push: ", ftos(self.movedir_y*(1-steer)), "\n");
-	e.velocity_x = (e.velocity_x*steer + self.movedir_x*(1-steer));
-	e.velocity_y = (e.velocity_y*steer + self.movedir_y*(1-steer));
-	*/
+	//dprint3("----------\nSteer: ", ftos(steer*1000), "\n");
+	//dprint5("Vertical factor: ", ftos(verticalFactor), ", Horizontal factor: ", ftos(horizontalFactor), "\n");
+	//dprint7("pushvel: ", vtos(self.pushvelocity), ", oldvel: ", vtos(self.oldvelocity), ", vel: ", vtos(self.velocity), "\n");
 
-	/*
-	e.velocity_x = self.movedir_x;
-	e.velocity_y = self.movedir_y;
-	*/
+	self.velocity_x = (self.velocity_x*steer + self.oldvelocity_x*(1-steer));
+	self.velocity_y = (self.velocity_y*steer + self.oldvelocity_y*(1-steer));
 
-	//float horSpd = vlen([e.velocity_x, e.velocity_y, 0]);
-
-	//dprint3("dot: ", ftos(normalize([e.velocity_x, e.velocity_y, 0]) * normalize([self.oldvelocity_x, self.oldvelocity_y, 0]) * 1000), "\n");
-	e.velocity_x = (self.oldvelocity_x*0.99 + e.velocity_x*0.01);
-	e.velocity_y = (self.oldvelocity_y*0.99 + e.velocity_y*0.01);
-
-	self.oldvelocity = e.velocity;
-	self.nextthink = time + 0.0001;
 }
+
 
 // Calculates the vertical velocity based on height difference
 float(vector throw_spot, vector target_spot) JumpPadCalculateVertical {
@@ -183,7 +219,7 @@ float(vector throw_spot, vector target_spot, float v_vertical) JumpPadCalculateH
 	
 	makevectors (self.angles);
 	float grav = cvar("sv_gravity");
-	//if (self.enemy.gravity) grav *= self.enemy.gravity;
+	if (self.enemy && self.enemy.gravity) grav *= self.enemy.gravity;
 	dv = throw_spot_z - target_spot_z;
 	delta = target_spot - throw_spot;
 	delta_z = 0;
@@ -206,19 +242,17 @@ vector(vector throw_spot, vector target_spot, float v_vertical, float v_horizont
 	return result;
 }
 
-#define JUMPPAD_SIM_COMPENSATE '0 0 32'
-#define JUMPPAD_SIM_STEP 0.08
 
 
 // Simulates a throw for the entity to make sure it won't hit geo or some other blocker
 // Returns the resulting vertical velocity on target hit
 // Returns -1 on target miss
 float(float v_extra) JumpPadSimulateRun = {
-	//dprint3("Simulating run: ", ftos(v_extra), "\n");
+	//dprint3("---------------\n---------------\nSimulating run: ", ftos(v_extra), "\n");
 
 	
 	// Determine where the throw source and destination
-	// JUMPPAD_SIM_COMPENSATE Helps the dynamite clear tall walls
+	// JUMPPAD_SIM_COMPENSATE Helps throw clear tall walls
 	// The sim may clip corners, so this makes the sim test a bit lower
 	vector throw_spot = self.enemy.origin + [0, 0, self.enemy.mins_z];// - JUMPPAD_SIM_COMPENSATE;
 	vector target_spot = self.goalentity.origin - JUMPPAD_SIM_COMPENSATE;
@@ -252,6 +286,9 @@ float(float v_extra) JumpPadSimulateRun = {
 	vector next;
 	float checked_ceiling;
 	entity bbl;
+	float passthru;
+
+	float dont_ignore_movers = !!(self.spawnflags & JUMPPAD_DONTIGNOREMOVERS);
 	while (counter > 0) {
 		// Step
 		next = cur + (sim_velocity * JUMPPAD_SIM_STEP);
@@ -268,16 +305,51 @@ float(float v_extra) JumpPadSimulateRun = {
 		}
 		
 		// Do the trace
+		//dprint3("---------------\nStep ", ftos(counter), "\n");
+		//dprint3("Trace length: ", ftos(vlen(cur - next)), "\n");
+		//dprint3("Ent to ignore: ", self.enemy.classname, "\n");
 		traceline (cur, next, FALSE, self.enemy);
-		while (trace_fraction < 1 && trace_ent != self.goalentity && trace_ent != world) traceline (trace_endpos, next, FALSE, trace_ent);
+		
+		//dprint3("All solid: ", ftos(trace_allsolid), "\n");
+		//dprint3("Start solid: ", ftos(trace_startsolid), "\n");
+		//dprint3("Trace fraction: ", ftos(trace_fraction*1000), "\n");
+		//dprint3("Trace ent: ", trace_ent.classname, "\n");
+
+		//if (trace_fraction < 1 || trace_startsolid) dprint3("Hit entity: ", trace_ent.classname, "\n");
+
+		
+	
+		passthru = 0;
+		while ((trace_fraction < 1 || trace_startsolid) && trace_ent != self.goalentity && trace_ent != world && passthru < 10
+			&& ((trace_ent.solid != SOLID_BSP && dont_ignore_movers) || !dont_ignore_movers)
+		){
+			//dprint("Retracing\n");
+
+			//dprint3("Ent to ignore: ", trace_ent.classname, "\n");
+			//dprint3("Trace length: ", ftos(vlen(trace_endpos - normalize(next - trace_endpos) - next)), "\n");
+
+			//traceline (trace_endpos - normalize(next - trace_endpos), next, FALSE, trace_ent);
+			traceline (trace_endpos - normalize(next - trace_endpos), next, FALSE, trace_ent);
+
+			//dprint3("All solid: ", ftos(trace_allsolid), "\n");
+			//dprint3("Start solid: ", ftos(trace_startsolid), "\n");
+			//dprint3("Trace fraction: ", ftos(trace_fraction*1000), "\n");
+			//dprint3("Trace ent: ", trace_ent.classname, "\n");
+			//bbl.frame = 1;
+			//if (trace_fraction < 1 || trace_startsolid) dprint3("Retrace hit entity: ", trace_ent.classname, "\n");
+
+			passthru++; // sanity check to not get to infinite loops
+		}
+
 		// Check if it hit the target
 
 		if (trace_ent == self.goalentity) {
+			//dprint("Found target\n");
 			return v_vertical;
 		}
 		
 		//Check for collision with something else
-		if (trace_fraction < 1 && trace_ent != self.goalentity) {
+		if ((trace_fraction < 1 || trace_startsolid) && trace_ent != self.goalentity) {
 			//dprint("Collided with something\n");
 			return -1;
 		}
@@ -300,7 +372,7 @@ float(float v_extra) JumpPadSimulateRun = {
 		cur = next;
 		counter = counter - 1;
 	}
-	
+	//dprint("Didn't hit anything\n");
 	// Didn't hit anything
 	return v_vertical;
 }
