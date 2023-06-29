@@ -722,6 +722,7 @@ void() PutClientInServer = {
 	modelindex_player = self.modelindex;
 
 	setsize (self, VEC_HULL_MIN, VEC_HULL_MAX);
+	//setsize (self, '-32 -32 -72', '32 32 16');
 	
 	self.view_ofs = '0 0 22';
 

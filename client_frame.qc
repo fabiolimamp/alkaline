@@ -260,8 +260,10 @@ void() PlayerJump =
 		
 		self.button2 = 0;
 		// player jumping sound
-		sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
-		self.velocity_z = self.velocity_z + 270;
+		//sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
+		sound (self, CHAN_BODY, "player/jumpmario.wav", 1, ATTN_NORM);
+		//self.velocity_z = self.velocity_z + 270;
+		self.velocity_z = self.velocity_z + 480;
 	}
 };
 
@@ -925,6 +927,53 @@ void() PlayerPostThink =
 
 	W_WeaponFrame ();
 
+	if (self.jump_flag <= 0 && !(self.flags & FL_ONGROUND)) {
+		vector org = [self.origin_x, self.origin_y, self.absmin_z];
+		float hit;
+		traceline(org, org - '0 0 8', FALSE, self);
+		if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
+			T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
+			self.velocity_z = 200;
+			hit = TRUE;
+		}
+		if (!hit) {
+			org = [self.absmin_x, self.absmin_y, self.absmin_z];
+			traceline(org, org - '0 0 8', FALSE, self);
+			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
+				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
+				self.velocity_z = 200;
+				hit = TRUE;
+			}
+		}
+		if (!hit) {
+			org = [self.absmin_x, self.absmax_y, self.absmin_z];
+			traceline(org, org - '0 0 8', FALSE, self);
+			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
+				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
+				self.velocity_z = 200;
+				hit = TRUE;
+			}
+		}
+		if (!hit) {
+			org = [self.absmax_x, self.absmin_y, self.absmin_z];
+			traceline(org, org - '0 0 8', FALSE, self);
+			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
+				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
+				self.velocity_z = 200;
+				hit = TRUE;
+			}
+		}
+		if (!hit) {
+			org = [self.absmax_x, self.absmax_y, self.absmin_z];
+			traceline(org, org - '0 0 8', FALSE, self);
+			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
+				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
+				self.velocity_z = 200;
+				hit = TRUE;
+			}
+		}
+
+	}
 // check to see if player landed and play landing sound	
 	if ((self.jump_flag < -300) && (self.flags & FL_ONGROUND) && (self.health > 0))
 	{

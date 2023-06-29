@@ -171,7 +171,8 @@ void() worldspawn =
 	precache_sound ("weapons/shotgn2.wav");		// super shotgun
 	precache_sound ("weapons/axhit4.wav");		// extra axe sound for melee - greenwood
 	precache_sound ("weapons/spindn_click.wav");		// super nailgun spindown click
-	//precache_sound ("weapons/marioball.wav");		// it'sa me!
+	precache_sound ("weapons/marioball.wav");		// it'sa me!
+	precache_sound ("player/jumpmario.wav");		// it'sa me!
 	
 	precache_sound ("enforcer/enfstop.wav");	// laser cannon
 	
