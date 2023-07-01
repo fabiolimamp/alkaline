@@ -263,7 +263,7 @@ void() PlayerJump =
 		//sound (self, CHAN_BODY, "player/plyrjmp8.wav", 1, ATTN_NORM);
 		sound (self, CHAN_BODY, "player/jumpmario.wav", 1, ATTN_NORM);
 		//self.velocity_z = self.velocity_z + 270;
-		self.velocity_z = self.velocity_z + 480;
+		self.velocity_z = self.velocity_z + 410;
 	}
 };
 
@@ -929,48 +929,45 @@ void() PlayerPostThink =
 
 	if (self.jump_flag <= 0 && !(self.flags & FL_ONGROUND)) {
 		vector org = [self.origin_x, self.origin_y, self.absmin_z];
-		float hit;
+		entity hit;
 		traceline(org, org - '0 0 8', FALSE, self);
 		if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
-			T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
-			self.velocity_z = 200;
-			hit = TRUE;
+			hit = trace_ent;
 		}
 		if (!hit) {
 			org = [self.absmin_x, self.absmin_y, self.absmin_z];
 			traceline(org, org - '0 0 8', FALSE, self);
 			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
-				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
-				self.velocity_z = 200;
-				hit = TRUE;
+				hit = trace_ent;
 			}
 		}
 		if (!hit) {
 			org = [self.absmin_x, self.absmax_y, self.absmin_z];
 			traceline(org, org - '0 0 8', FALSE, self);
 			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
-				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
-				self.velocity_z = 200;
-				hit = TRUE;
+				hit = trace_ent;
 			}
 		}
 		if (!hit) {
 			org = [self.absmax_x, self.absmin_y, self.absmin_z];
 			traceline(org, org - '0 0 8', FALSE, self);
 			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
-				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
-				self.velocity_z = 200;
-				hit = TRUE;
+				hit = trace_ent;
 			}
 		}
 		if (!hit) {
 			org = [self.absmax_x, self.absmax_y, self.absmin_z];
 			traceline(org, org - '0 0 8', FALSE, self);
 			if (trace_fraction < 1 && trace_ent.flags & FL_MONSTER && trace_ent.takedamage && trace_ent.health > 0) {
-				T_Damage(trace_ent, self, self, trace_ent.health + 40, DMGTYPE_MELEE);
-				self.velocity_z = 200;
-				hit = TRUE;
+				hit = trace_ent;
 			}
+		}
+
+		if (hit) {
+			T_Damage(hit, self, self, hit.health + 40, DMGTYPE_MELEE);
+			sound (self, CHAN_BODY, "player/bumpmario.wav", 1, ATTN_NORM);
+			if (self.button2) self.velocity_z = 400;
+			else self.velocity_z = 200;
 		}
 
 	}

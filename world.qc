@@ -173,6 +173,7 @@ void() worldspawn =
 	precache_sound ("weapons/spindn_click.wav");		// super nailgun spindown click
 	precache_sound ("weapons/marioball.wav");		// it'sa me!
 	precache_sound ("player/jumpmario.wav");		// it'sa me!
+	precache_sound ("player/bumpmario.wav");		// it'sa me!
 	
 	precache_sound ("enforcer/enfstop.wav");	// laser cannon
 	
