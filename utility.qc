@@ -93,6 +93,9 @@ float(float in, float def) zeroconvertdefault =
 	return in;
 }
 
+void(vector v) makevectors_angles = {
+	makevectors([-v_x, v_y, v_z]);
+}
 
 /*
 Gets the correct time value depending on entity movetype. MOVETYPE_PUSH ents needs to use

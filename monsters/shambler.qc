@@ -381,6 +381,18 @@ float() ShamCheckAttack =
 };
 
 
+void() shambler_trigger_touch = {
+	if (!(other.classname == "player" && other.health > 0)) return;
+	dprint("touchy\n");
+}
+
+
+void() shambler_trigger_think = {
+	makevectors_angles(self.owner.angles);
+	setorigin(self, self.owner.origin + v_up * 72 - v_forward * 32);
+	self.nextthink = time + 0.025;
+}
+
 
 /*QUAKED monster_shambler (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 */
@@ -411,7 +423,22 @@ void(entity e) monster_shambler_start =
 	self.th_sight = sham_sight;
 	self.th_checkattack = ShamCheckAttack;
 	self.th_damage = shambler_customdamage;
-	
+
+
+	entity tf = spawn();
+	tf.solid = SOLID_TRIGGER;
+	tf.movetype = MOVETYPE_NOCLIP;
+	makevectors_angles(self.angles);
+	setorigin(tf, self.origin + v_up * 72 - v_forward * 32);
+	setsize(tf, '-24 -24 -24', '24 24 24');
+
+	tf.classname = "shamblertrigger";
+	tf.think = shambler_trigger_think;
+	tf.nextthink = time + 0.025;
+	tf.touch = shambler_trigger_touch;
+
+	tf.owner = self;
+	self.trigger_field = tf;
 	walkmonster_start();
 
 	self = oself;
