@@ -60,7 +60,15 @@ void() button_fire =
 };
 
 void(float newstate, float stateflags) button_setstate = {
+	if (self.estate == STATE_INVISIBLE) {
+		entity_set_state_unhide(self);
+	}
+
 	if (newstate == STATE_ACTIVE) button_unlock(self, stateflags & SETSTATE_DONTRESETBUTTON);
+	else if (newstate == STATE_INVISIBLE) {
+		entity_set_state_hide(self);
+		self.estate = newstate;
+	}
 	else button_lock(self);
 }
 

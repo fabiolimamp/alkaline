@@ -1224,6 +1224,24 @@ float(entity e) entity_get_state = {
 	else return e.estate;
 };
 
+void(entity e) entity_set_state_hide = {
+	e.estate_orig_solid = e.solid;
+	e.estate_orig_move = e.movetype;
+	e.estate_orig_mdlindex = e.modelindex;
+
+	e.modelindex = 0;
+	e.solid = SOLID_NOT;
+	if (e.movetype == SOLID_BSP) e.movetype = MOVETYPE_NONE;
+	setorigin(e, e.origin); // relink
+}
+
+void(entity e) entity_set_state_unhide = {
+	e.modelindex = e.estate_orig_mdlindex;
+	e.solid = e.estate_orig_solid;
+	e.movetype = e.estate_orig_move;
+	setorigin(e, e.origin); // relink
+}
+
 void(entity e, float state, float flags) entity_set_state = {
 	
 	if (e.th_setstate){
@@ -1232,8 +1250,15 @@ void(entity e, float state, float flags) entity_set_state = {
 		self.th_setstate(state, flags);
 		self = oself;
 	}
-	else
+	else {
+		if (e.estate == STATE_INVISIBLE) {
+			entity_set_state_unhide(e);
+		}
+		else if (state == STATE_INVISIBLE) {
+			entity_set_state_hide(e);
+		}
 		e.estate = state;
+	}
 
 	if (e.is_waiting > 0 && state == STATE_ACTIVE) {
 		SUB_CallAsSelf(SUB_EndWaiting, e);
@@ -1286,6 +1311,7 @@ void() target_setstate_use = {
 
 	if (self.style == 1) state = STATE_ACTIVE;
 	else if (self.style == 2) state = STATE_INACTIVE;
+	else if (self.style == 3) state = STATE_INVISIBLE;
 	else state = -1;
 
 	target_setstate_set_alltargets(state);
@@ -1293,7 +1319,10 @@ void() target_setstate_use = {
 };
 
 void() target_setstate_startoff_think = {
-	if (door_setup_finished) target_setstate_set_alltargets(STATE_INACTIVE);
+	if (door_setup_finished) {
+		if (self.style == 3) target_setstate_set_alltargets(STATE_INVISIBLE);
+		else target_setstate_set_alltargets(STATE_INACTIVE);
+	}
 	else {
 		// not finished yet? wait a bit longer
 		self.think = target_setstate_startoff_think;

@@ -587,7 +587,9 @@ float prevdoornum;
 
 // entity state
 .float estate;
-
+.float estate_orig_solid;
+.float estate_orig_move;
+.float estate_orig_mdlindex;
 
 // func_bob
 .float attack_timer;

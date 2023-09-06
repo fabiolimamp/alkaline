@@ -2535,7 +2535,7 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 Entities in a disabled state won't execute its main function, depending on context.
 Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
 The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
-You can force the target entities to spawn disabled/locked with spawnflag 1.
+You can force the target entities to spawn disabled/locked/invisible with spawnflag 1.
 " 
 [
 	spawnflags(flags) = [
@@ -2547,6 +2547,7 @@ You can force the target entities to spawn disabled/locked with spawnflag 1.
 		0 : "Toggle current state"
 		1 : "Force active"
 		2 : "Force inactive"
+		2 : "Make invisible"
 	]
 ]
 
