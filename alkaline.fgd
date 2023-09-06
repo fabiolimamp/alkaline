@@ -1500,6 +1500,11 @@ Set the LT_START_ON spawnflag if you want the lightning to start in a fired stat
 	count(float) : "Duration" : "0.3" : "The duration of the lightning effect. Will be ignored if it's togglable."
 	delay(float) : "Delay" : "0" : "Time delay before activating the next point."
 	target(target_destination) : "Destination point" : : "Must point to a misc_lightning_relay or misc_lightning_end entity."
+	style(choices) : "Bolt style" : 0 = [
+		0 : "Lightning Gun (thin)"
+		1 : "Shambler (medium)"
+		2 : "Chthon (large)"
+	]
 	sounds(choices) : "Sound" : 1 = [
 		1 : "Lightning noise"
 		2 : "Silent"
