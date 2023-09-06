@@ -267,8 +267,8 @@ void() teleport_touch =
 	if (!(self.spawnflags & TELE_STEALTH || t.spawnflags & TELEDEST_STEALTH))
 		spawn_tfog (other.origin);
 
-	
-	tAngle = [t.mangle_x, t.mangle_y, t.mangle_z];
+	// teleport destination's angle offset
+	tAngle = t.mangle;
 
 	// entity is a client, so take the angles from v_angle instead
 	if (other.flags & FL_CLIENT)
