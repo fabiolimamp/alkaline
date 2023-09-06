@@ -565,9 +565,10 @@ void() SUB_UseTargets =
 //
 	if (self.delay)
 	{
-		// delay on doors is for opening, not for firing targets
-		// and monsters use the key for delaying trigger-spawning
-		if (self.classname != "func_door" || !(self.flags & FL_MONSTER)){
+		// Delay on doors is for opening, not for firing targets
+		// Monsters use the key for delaying trigger-spawning
+		// trigger_repeat uses delay for the initial firing
+		if (self.classname != "func_door" && !(self.flags & FL_MONSTER) && self.classname != "trigger_repeat"){
 			// create a temp object to fire at a later time
 			t = spawn();
 			t.classname = "DelayedUse";

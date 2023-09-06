@@ -1191,7 +1191,14 @@ void() trigger_repeat_think = {
 void() trigger_repeat_use = {
 	if(self.state == STATE_INACTIVE) {
 		if(!(self.spawnflags & 1)) self.cnt = self.count;
-		trigger_repeat_think();
+		
+		if (self.delay) {
+			self.think = trigger_repeat_think;
+			self.nextthink = time + self.delay; 
+		}
+		else
+			trigger_repeat_think();
+
 		self.state = STATE_ACTIVE;
 	}
 	else {
