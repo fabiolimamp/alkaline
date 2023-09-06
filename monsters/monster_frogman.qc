@@ -385,6 +385,8 @@ void() monster_frogman_spawner = {
 
 void() monster_frogman = 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch){
 		remove(self);
 		return;

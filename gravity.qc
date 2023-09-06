@@ -27,6 +27,8 @@ void() SetGlobalGravity_Use = {
 };
 
 void() trigger_globalgravity = {
+	if (!SUB_InitEntity()) return;
+	
 	self.classname = "gravity_global";
 	self.state = 0;
 	self.use = SetGlobalGravity_Use;
@@ -110,6 +112,8 @@ set the gravity of a player
 */
 
 void() trigger_setgravity = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 
 	self.use = trigger_gravity_use;

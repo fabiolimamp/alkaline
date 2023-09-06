@@ -206,6 +206,8 @@ place in the level in the active/attacking position for proper lighting.
 
 void() func_turret =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local entity helper;
 	local vector org;
 

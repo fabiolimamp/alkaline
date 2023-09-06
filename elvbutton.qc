@@ -101,6 +101,8 @@ When a button is touched, it moves some distance in the direction of it's angle,
 */
 void() func_elvtr_button =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 	if (self.sounds == 0)
 	{

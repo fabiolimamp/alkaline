@@ -316,6 +316,8 @@ float	H_ROTTEN = 1;
 float	H_MEGA = 2;
 
 void() item_health = {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = health_touch;
 	if (!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -493,6 +495,8 @@ void() shard_touch = { // progs_dump
 */
 
 void() item_armor_shard = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = shard_touch;
 	precache_model("progs/shard.mdl");
 	setmodel(self, "progs/shard.mdl");
@@ -503,6 +507,8 @@ void() item_armor_shard = {
 };
 
 void() item_armor1 = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = armor_touch;
 	precache_model("progs/armor.mdl");
 	setmodel(self, "progs/armor.mdl");
@@ -515,6 +521,8 @@ void() item_armor1 = {
 */
 
 void() item_armor2 = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = armor_touch;
 	precache_model("progs/armor.mdl");
 	setmodel(self, "progs/armor.mdl");
@@ -527,6 +535,8 @@ void() item_armor2 = {
 */
 
 void() item_armorInv = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = armor_touch;
 	precache_model("progs/armor.mdl");
 	setmodel(self, "progs/armor.mdl");
@@ -680,6 +690,8 @@ Axe
 */
 void() weapon_axe =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_axe_alk.mdl");
 	setmodel (self, "progs/g_axe_alk.mdl");
 	self.weapon = WEAPON_AXE;
@@ -694,6 +706,8 @@ Shotgun
 
 void() weapon_shotgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_shotgn.mdl");
 	setmodel (self, "progs/g_shotgn.mdl");
 	self.weapon = WEAPON_SHOTGUN;
@@ -711,6 +725,8 @@ void() weapon_shotgun =
 
 void() weapon_supershotgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_shot.mdl");
 	setmodel (self, "progs/g_shot.mdl");
 	self.weapon = WEAPON_SUPER_SHOTGUN;
@@ -726,6 +742,8 @@ void() weapon_supershotgun =
 
 void() weapon_nailgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_nail.mdl");
 	setmodel (self, "progs/g_nail.mdl");
 	self.weapon = WEAPON_NAILGUN;
@@ -741,6 +759,8 @@ void() weapon_nailgun =
 
 void() weapon_supernailgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_nail2.mdl");
 	setmodel (self, "progs/g_nail2.mdl");
 	self.weapon = WEAPON_SUPER_NAILGUN;
@@ -756,6 +776,8 @@ void() weapon_supernailgun =
 
 void() weapon_grenadelauncher =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_rock.mdl");
 	setmodel (self, "progs/g_rock.mdl");
 	self.weapon = WEAPON_GRENADE_LAUNCHER;
@@ -771,6 +793,8 @@ void() weapon_grenadelauncher =
 
 void() weapon_proximity_gun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_mine.mdl");
 	setmodel (self, "progs/g_mine.mdl");
 	self.weapon = WEAPON_PROXIMITY_GUN;
@@ -786,6 +810,8 @@ void() weapon_proximity_gun =
 
 void() weapon_rocketlauncher =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
 	self.weapon = WEAPON_ROCKET_LAUNCHER;
@@ -802,6 +828,8 @@ void() weapon_rocketlauncher =
 
 void() weapon_lightning =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
 	self.weapon = WEAPON_LIGHTNING;
@@ -816,6 +844,8 @@ void() weapon_lightning =
 */
 void() weapon_chainsaw =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_saw.mdl");
 	setmodel (self, "progs/g_saw.mdl");
 	self.weapon = WEAPON_CHAINSAW;
@@ -831,6 +861,8 @@ QUAKED weapon_laser_gun (0 .5 .8) (-16 -16 0) (16 16 32)
 */
 void() weapon_laser_gun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_laserg.mdl");
 	setmodel (self, "progs/g_laserg.mdl");
 	self.weapon = WEAPON_LASER_CANNON;
@@ -844,6 +876,8 @@ void() weapon_laser_gun =
 
 void() weapon_plasmagun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_plasma.mdl");
 	setmodel (self, "progs/g_plasma.mdl");
 	self.weapon = WEAPON_PLASMA;
@@ -961,6 +995,8 @@ float WEAPON_BIG2 = 1;
 
 void() item_shells =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -991,6 +1027,8 @@ void() item_shells =
 
 void() item_spikes =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -1021,6 +1059,8 @@ void() item_spikes =
 
 void() item_rockets =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -1052,6 +1092,8 @@ void() item_rockets =
 
 void() item_cells =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -1187,6 +1229,8 @@ End of level sigil, pick up to end episode and return to jrstart.
 
 void() item_sigil =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.spawnflags)
 		objerror ("no spawnflags");
 
@@ -1325,6 +1369,8 @@ Player is invulnerable for 30 seconds
 */
 void() item_artifact_invulnerability =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
@@ -1346,6 +1392,8 @@ Combine 3 powerups, probably invisibility, quad and pentagram
 */
 void() item_artifact_trifecta =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/trifecta.mdl");
@@ -1368,6 +1416,8 @@ Player takes no damage from water or slime for 30 seconds
 */
 void() item_artifact_envirosuit =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/suit.mdl");
@@ -1388,6 +1438,8 @@ Player is invisible for 30 seconds
 */
 void() item_artifact_invisibility =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/invisibl.mdl");
@@ -1409,6 +1461,8 @@ The next attack from the player will do 4x damage
 */
 void() item_artifact_super_damage =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/quaddama.mdl");
@@ -1611,6 +1665,8 @@ void() DropBackpack =
 
 
 void() item_backpack = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells)) {
 		objerror("Empty backpack");
 		return;	// nothing in it
@@ -1628,6 +1684,8 @@ void() item_backpack = {
 
 
 void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/jumpblue.mdl");
 	precache_sound ("items/jboots_got.wav");
 	
@@ -1642,6 +1700,8 @@ void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
 }
 
 void() item_jboots_timed = { //JCR SUPERJUMP BOOTS	TIMED
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/jumpgold.mdl");
 	precache_sound ("items/jboots_got.wav");
 	

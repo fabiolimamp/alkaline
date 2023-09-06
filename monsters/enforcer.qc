@@ -371,6 +371,8 @@ void() monster_enforcer_spawner = {
 
 void() monster_enforcer =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 //monster_me();
 

@@ -499,6 +499,8 @@ void() monster_ogreb_spawner = {
 
 void() monster_ogreb =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

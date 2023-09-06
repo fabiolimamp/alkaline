@@ -476,6 +476,8 @@ void() monster_demon1_spawner = {
 
 void() monster_demon1 =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -526,6 +528,8 @@ void() monster_mutant_spawner = {
 
 void() monster_mutant =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

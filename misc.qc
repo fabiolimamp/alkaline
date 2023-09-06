@@ -5,6 +5,8 @@ Lava Balls
 */
 
 void() misc_fireball = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/lavaball.mdl");
 	self.classname = "fireball";
 	self.nextthink = time + (random() * 5);
@@ -47,6 +49,8 @@ void() fire_touch = {
 //============================================================================
 
 void() misc_drip = {
+	if (!SUB_InitEntity()) return;
+	
 
 	if (self.mdl == "") self.mdl = "progs/drip.spr";
 	precache_model(self.mdl);
@@ -201,6 +205,8 @@ void() barrel_die = {
 TESTING THING
 */
 void() misc_explobox = {
+	if (!SUB_InitEntity()) return;
+	
 	float oldz;
 	
 	self.solid = SOLID_BBOX;
@@ -235,6 +241,8 @@ Smaller exploding box, REGISTERED ONLY
 */
 
 void() misc_explobox2 = {
+	if (!SUB_InitEntity()) return;
+	
 	float oldz;
 	
 	self.solid = SOLID_BBOX;
@@ -418,6 +426,8 @@ void() spikeshooter_use = {
 
 void() shooter_think =
 {
+	if (!SUB_InitEntity()) return;
+	
 	spikeshooter_use();
 	self.nextthink = time + self.wait + self.rand*random();
 };
@@ -430,6 +440,8 @@ Laser is only for REGISTERED.
 
 void() trap_spikeshooter =
 {
+	if (!SUB_InitEntity()) return;
+	
 	SetMovedir();
 	self.use = spikeshooter_use;
 
@@ -465,6 +477,8 @@ Continuously fires spikes.
 "nextthink" delay before firing first spike, so multiple shooters can be stagered.
 */
 void() trap_shooter = {
+	if (!SUB_InitEntity()) return;
+	
 	trap_spikeshooter ();
 	self.use = trap_shooter_toggle;
 
@@ -549,6 +563,8 @@ the bprint tends to stomp any other prints on screen in most quake clients, so u
 ]
 */
 void() target_autosave = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch || coop) {
 		remove(self);
 		return;
@@ -622,6 +638,8 @@ Use spawnflag 1 to not change the entity's original angle.
 Spawnflag 2 keeps the entity's original velocity.
 */
 void() target_move = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.target && !(self.spawnflags & 8))
 		objerror("No target set");
 
@@ -701,6 +719,8 @@ By default, the infighting doesn't start mutually, that is, 'target2' monster wi
 If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'.
 */
 void() target_infight = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_infight_use;
 };
 
@@ -734,6 +754,8 @@ This is just a solid wall if not inhibitted
 */
 void() func_wall =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.angles = '0 0 0';
 	if (self.spawnflags & 2) {
 		self.movetype = MOVETYPE_NONE;
@@ -833,6 +855,8 @@ void () blocker_use = {
 };
 
 void() func_togglewall = {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.classname = "togglewall";
 	
@@ -902,6 +926,8 @@ An invisible bmodel that can be used to only cast shadows.
 ******************/
 
 void() func_shadow = {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.angles = '0 0 0';
 	self.movetype = MOVETYPE_NONE;
@@ -925,6 +951,8 @@ TOGGLEVISWALL_NOTSOLID sets it to be non-solid.
 */
 void() func_togglevisiblewall =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.angles = '0 0 0';
 	self.use = func_togglevisiblewall_use;
@@ -949,6 +977,8 @@ A simple entity that looks solid but lets you walk through it.
 void() func_illusionary =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.angles = '0 0 0';
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_NOT;
@@ -962,6 +992,8 @@ This bmodel will appear if the episode has allready been completed, so players c
 void() func_episodegate =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!(serverflags & self.spawnflags))
 		return;			// can still enter episode
 
@@ -978,6 +1010,8 @@ This bmodel appears unless players have all of the episode sigils.
 void() func_bossgate =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if ( (serverflags & 15) == 15)
 		return;		// all episodes completed
 	self.angles = '0 0 0';
@@ -1098,6 +1132,8 @@ play a sound when it is used
 */
 void() play_sound_triggered = {
 
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.noise) {
 	   objerror ("no soundfile set in noise!\n");
 	   remove(self);
@@ -1159,6 +1195,8 @@ void() play_sound = {play_sound_repeat();}
 
 void() play_sound_repeat = {
 
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.noise) {
 		objerror ("no soundfile set in noise!\n");
 		remove(self);
@@ -1230,6 +1268,8 @@ void() misc_changemusic_use = {
 }
 
 void() misc_changemusic = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.sounds) {
 		objerror("ERROR: misc_changemusic needs valid track number in sounds field");
 		return;
@@ -1329,6 +1369,8 @@ void() trigger_textstory_touch = {
 };
 
 void() trigger_textstory = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 	self.touch = trigger_textstory_touch;
 
@@ -1409,6 +1451,8 @@ void() target_textstory_use = {
 };
 
 void() target_textstory = {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.noise1 == "")
 		self.noise1 = "misc/talk.wav";
 	
@@ -1449,6 +1493,8 @@ float FUNC_FADE_REVERSE = 1;
 float FUNC_FADE_START_ON = 2;
 
 void() func_fade = {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NOCLIP; 
@@ -1685,5 +1731,7 @@ void() target_skybox_use = {
 };
 
 void() target_skybox = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_skybox_use;
 };

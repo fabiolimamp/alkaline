@@ -151,6 +151,8 @@ set "message" to text string
 void() trigger_multiple =
 {
 	
+	if (!SUB_InitEntity()) return;
+	
 	if (self.noise == "") {
 		if (self.sounds == 1)
 			self.noise = "misc/secret.wav";
@@ -206,6 +208,8 @@ set "message" to text string
 void() trigger_once =
 {
 
+	if (!SUB_InitEntity()) return;
+	
 	self.wait = -1;
 	trigger_multiple();
 };
@@ -276,6 +280,8 @@ void() trigger_relay_use = {
 
 void() trigger_relay =
 {
+	if (!SUB_InitEntity()) return;
+	
 	// Spawnflag 8192: Not in Nightmare
 	if (self.spawnflags & 8192 && startskill == SKILL_NIGHTMARE)
 		remove(self);
@@ -319,6 +325,8 @@ set "message" to text string
 */
 void() trigger_secret =
 {
+	if (!SUB_InitEntity()) return;
+	
 	total_secrets = total_secrets + 1;
 	self.wait = -1;
 	if (!self.message)
@@ -395,6 +403,8 @@ After the counter has been triggered "count" times (default 2), it will fire all
 */
 void() trigger_counter =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.wait = -1;
 	if (!self.count)
 		self.count = 2;
@@ -453,6 +463,8 @@ Only used on start map.
 */
 void() trigger_setskill =
 {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger ();
 	self.touch = trigger_skill_touch;
 	self.use = trigger_skill_use; //johnfitz -- make it targetable
@@ -504,6 +516,8 @@ Only fires if playing the registered version, otherwise prints the message
 */
 void() trigger_onlyregistered =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound ("misc/talk.wav");
 	InitTrigger ();
 	self.touch = trigger_onlyregistered_touch;
@@ -564,6 +578,8 @@ defalt dmg = 5
 */
 void() trigger_hurt =
 {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 	self.touch = hurt_touch;
 	if(!self.wait) self.wait = 1;
@@ -697,6 +713,8 @@ void() hurt_use = {
 }
 
 void() target_hurt = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = hurt_use;
 };
 
@@ -828,6 +846,8 @@ void() heal_use = {
 }
 
 void() target_heal = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = heal_use;
 };
 
@@ -875,6 +895,8 @@ Pushes the player
 */
 void() trigger_push =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.angles == '0 0 0')
 		self.angles = '0 360 0';
 
@@ -947,6 +969,8 @@ Walking monsters that touch this will jump in the direction of the trigger's ang
 */
 void() trigger_monsterjump =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.speed)
 		self.speed = 200;
 	if (!self.height)
@@ -1040,6 +1064,8 @@ Use this for a 'void' area.  removes monsters, gibs, ammo, etc...  also kills pl
 */
 void() trigger_void =
 {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger ();
 	self.touch = trigger_void_touch;
 
@@ -1125,6 +1151,8 @@ void() trigger_removeitems_touch = {
 };
 
 void() trigger_removeitems = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 
 	self.touch = trigger_removeitems_touch;
@@ -1153,6 +1181,8 @@ void() target_removeitems_use = {
 };
 
 void() target_removeitems = {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.use = target_removeitems_use;
 	
@@ -1208,6 +1238,8 @@ void() trigger_repeat_use = {
 };
 
 void() trigger_repeat = {
+	if (!SUB_InitEntity()) return;
+	
 	if(!self.wait) self.wait = 2;
 
 	self.cnt = self.count; //.cnt is the internal counter
@@ -1338,6 +1370,8 @@ void() target_setstate_startoff_think = {
 };
 
 void() target_setstate = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_setstate_use;
 
 	if(self.spawnflags & START_OFF) {
@@ -1720,6 +1754,8 @@ void() trigger_filter_use = {
 };
 
 void() trigger_filter = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = trigger_filter_use;
 
 };
@@ -1750,6 +1786,8 @@ void() trigger_everything_touch = {
 };
 
 void() trigger_everything = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 
 	self.touch = trigger_everything_touch;
@@ -1813,6 +1851,8 @@ void() target_setcount_use = {
 };
 
 void() target_setcount = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_setcount_use;
 
 };
@@ -1874,6 +1914,8 @@ void() target_setsize_use = {
 };
 
 void() target_setsize = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_setsize_use;
 
 };
@@ -1911,6 +1953,8 @@ void() target_startpath_use = {
 
 
 void() target_startpath = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_startpath_use;
 };
 
@@ -1925,6 +1969,8 @@ trigger_float
 */
 
 void() trigger_float = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 
 	self.touch = trigger_float_touch;

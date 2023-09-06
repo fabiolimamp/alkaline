@@ -556,6 +556,8 @@ void() monster_banshee_spawner = {
 
 void() monster_banshee = 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch) {
 		remove(self);
 		return;

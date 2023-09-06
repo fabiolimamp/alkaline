@@ -332,6 +332,8 @@ void() monster_turret_use = {
 
 void() monster_turret = {
 
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/alkturret_main_v2.mdl");
 	precache_model("progs/alkturret_base_v2.mdl");
 	precache_model("progs/laser.mdl");

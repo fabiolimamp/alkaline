@@ -1,4 +1,6 @@
 void() trigger_touchplate = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 
 	self.touch = trigger_touchplate_touch;
@@ -54,6 +56,8 @@ void() trigger_touchplate_think = {
 
 
 void() func_touchplate = {
+	if (!SUB_InitEntity()) return;
+	
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	setmodel(self, self.model);

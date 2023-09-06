@@ -482,6 +482,8 @@ void() monster_wizard_spawner = {
 
 void() monster_wizard =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

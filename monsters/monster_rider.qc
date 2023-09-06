@@ -545,6 +545,8 @@ void() monster_rider_spawner = {
 
 void() monster_rider = 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)	{
 		remove(self);
 		return;

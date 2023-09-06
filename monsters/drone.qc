@@ -402,6 +402,8 @@ void() monster_drone_spawner = {
 };
 
 void() monster_drone = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch) {
 		remove(self);
 		return;

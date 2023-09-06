@@ -439,6 +439,8 @@ void() monster_hell_knight_spawner = {
 };
 
 void() monster_hell_knight = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

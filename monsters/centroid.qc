@@ -507,6 +507,8 @@ void() monster_scourge_spawner = {
 
 void() monster_scourge =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

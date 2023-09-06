@@ -85,6 +85,8 @@ Monsters will continue walking towards the next target corner.
 */
 void() path_corner =
 {
+	if (!SUB_InitEntity()) return;
+	
 	movetarget_f ();
 };
 
@@ -123,6 +125,8 @@ void() path_angry_touch = {
 };
 
 void() path_angry = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.targetname)
 		objerror ("path_angry: no targetname");
 	entity trg;

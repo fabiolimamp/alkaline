@@ -231,6 +231,8 @@ void() monster_tarbaby_spawner = {
 
 void() monster_tarbaby =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

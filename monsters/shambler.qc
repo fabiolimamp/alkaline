@@ -424,6 +424,8 @@ void() monster_shambler_spawner = {
 
 void() monster_shambler =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

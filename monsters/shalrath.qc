@@ -312,6 +312,8 @@ void() monster_shalrath_spawner = {
 
 void() monster_shalrath =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

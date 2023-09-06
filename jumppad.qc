@@ -16,6 +16,8 @@ float JUMPPAD_DONTHOLDPLAYER = 16;
 float JUMPPAD_FIXEDPUSH = 32;
 
 void() trigger_jumppad = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 
 	self.touch = JumpPadTouch;

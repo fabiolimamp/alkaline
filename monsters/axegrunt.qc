@@ -389,6 +389,8 @@ void() monster_axegrunt_spawner = {
 
 void() monster_axegrunt =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

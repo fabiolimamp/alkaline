@@ -263,6 +263,8 @@ void() monster_super_enforcer_spawner = {
 
 void() monster_super_enforcer =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

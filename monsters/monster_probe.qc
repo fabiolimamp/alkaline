@@ -736,6 +736,8 @@ void() monster_grenadeprobe = {
 
 
 void() monster_probe = {
+	if (!SUB_InitEntity()) return;
+	
 	//local float sk;
 	if (deathmatch)	{
 		remove(self);

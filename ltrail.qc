@@ -127,6 +127,8 @@ Set 'sounds' to
 */
 void() misc_lightning_start =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound ("weapons/lhit.wav");
 
 	self.owner = self;
@@ -168,6 +170,8 @@ Set 'delay' to the amount of time before the lightning is spawned from this poin
 */
 void() misc_lightning_relay =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound ("weapons/lhit.wav");
 	if(!self.target || self.target == "") objerror("Target point not set for lightning");
 
@@ -184,6 +188,8 @@ Does not fire any lightning.
 */
 void() misc_lightning_end =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound ("weapons/lhit.wav");
 
 	// muzzleflash effects require a model

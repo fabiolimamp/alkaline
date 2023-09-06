@@ -126,6 +126,8 @@ void() func_bob_off =
 //----------------------------------------------------------------------
 void() func_bob =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.spawnflags = self.spawnflags | BOB_COLLISION;
 	if (self.spawnflags & BOB_NONSOLID)
 		self.spawnflags = self.spawnflags - (self.spawnflags & BOB_COLLISION);
@@ -177,6 +179,8 @@ Same as func_bob but uses a custom model instead of a brush. Use the mdl key to 
 */
 void() misc_bob =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.mdl == "")
 		self.mdl = string_null;
 	precache_model(self.mdl);

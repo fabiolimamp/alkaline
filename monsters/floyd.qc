@@ -584,6 +584,8 @@ void() monster_floyd_spawner = {
 
 void() monster_floyd =
 {
+	if (!SUB_InitEntity()) return;
+	
 	
 	if (deathmatch)
 	{

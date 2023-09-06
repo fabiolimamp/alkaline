@@ -112,6 +112,8 @@
 		512 : "Not in Normal" : 0
 		1024 : "Not in Hard" : 0
 		2048 : "Not in Deathmatch" : 0
+		4096 : "Not in Coop" : 0
+		8192 : "Only in Coop" : 0
 	]
 ]
 

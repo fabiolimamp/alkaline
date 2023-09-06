@@ -130,6 +130,8 @@ void() trigger_mapvar_write_use = {
 };
 
 void() trigger_mapvar_write = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.count)
 		objerror("Mapvar id not selected");
 	if (self.count < 1 || self.count > MAPV_TOTAL)
@@ -171,6 +173,8 @@ void() trigger_mapvar_read_start = {
 };
 
 void() trigger_mapvar_read = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.count){
 		objerror("Mapvar id not selected");
 		return;

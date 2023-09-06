@@ -337,6 +337,8 @@ void() scientist_die =
 
 void() misc_scientist =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

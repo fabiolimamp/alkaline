@@ -248,6 +248,8 @@ void() monster_eel_spawner = {
 
 void() monster_eel =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

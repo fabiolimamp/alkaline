@@ -391,6 +391,8 @@ void() boss_awake =
 */
 void() monster_boss =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

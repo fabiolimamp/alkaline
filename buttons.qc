@@ -166,6 +166,8 @@ When a button is touched, it moves some distance in the direction of it's angle,
 */
 void() func_button =
 {
+	if (!SUB_InitEntity()) return;
+	
 //local float		gtemp, ftemp;
 	string default_noise;
 

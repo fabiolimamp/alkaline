@@ -511,6 +511,8 @@ void() monster_centurion_spawner = {
 
 void() monster_centurion =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

@@ -169,6 +169,8 @@ Set "sounds" to one of the following:
 void() func_plat =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 //local entity t;
 
 	if (!self.t_length)
@@ -532,6 +534,8 @@ sounds
 */
 void() func_train =
 {	
+	if (!SUB_InitEntity()) return;
+	
 
 	if (!self.speed)
 		self.speed = 100;
@@ -659,6 +663,8 @@ void() animcontroller_think = {
 
 void() misc_modeltrain = {
 
+	if (!SUB_InitEntity()) return;
+	
 	precache_model(self.mdl);
 
 	func_train();
@@ -720,6 +726,8 @@ This is used for the final bos
 */
 void() misc_teleporttrain =
 {	
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.speed)
 		self.speed = 100;
 	if (!self.target)

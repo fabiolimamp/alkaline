@@ -352,6 +352,8 @@ _anglescale => _anglescale
 */
 void() light = {
 
+	if (!SUB_InitEntity()) return;
+	
 	// non-switchable light
 	if (self.targetname == "") {
 		remove(self);
@@ -411,6 +413,8 @@ Makes steady fluorescent humming sound.
 See the "light" entity for a full description.
 */
 void() light_fluoro = {
+	if (!SUB_InitEntity()) return;
+	
 	ambient_light_buzz();
 	light();
 };
@@ -424,6 +428,8 @@ Default style is 10.
 See the "light" entity for a full description.
 */
 void() light_fluorospark = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.style)
 		self.style = 10;
 	ambient_flouro_buzz();
@@ -436,6 +442,8 @@ Can't be toggled.
 See the "light" entity for a full description.
 */
 void() light_globe = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/s_light.spr");
 	setmodel(self, "progs/s_light.spr");
 	makestatic(self);
@@ -447,6 +455,8 @@ Short wall torch
 See the "light" entity for a full description.
 */
 void() light_torch_small_walltorch = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/flame.mdl");
 	//precache_body_model("progs/flame.mdl");
 	setmodel(self, "progs/flame.mdl");
@@ -462,6 +472,8 @@ Large yellow flame
 See the "light" entity for a full description.
 */
 void() light_flame_large_yellow = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/flame2.mdl");
 	setmodel (self, "progs/flame2.mdl");
 	self.frame = 1;
@@ -475,6 +487,8 @@ Small yellow flame
 See the "light" entity for a full description.
 */
 void() light_flame_small_yellow = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/flame2.mdl");
 	setmodel(self, "progs/flame2.mdl");
 	FireAmbient();
@@ -487,6 +501,8 @@ Left for compatability
 Identical to "light_flame_small_yellow"
 */
 void() light_flame_small_white = {
+	if (!SUB_InitEntity()) return;
+	
 	light_flame_small_yellow();
 };
 
@@ -645,6 +661,8 @@ void() misc_shadowcontroller_setup = {
 };
 
 void() misc_shadowcontroller = {
+	if (!SUB_InitEntity()) return;
+	
 	self.think = misc_shadowcontroller_setup;
 	self.nextthink = time + 0.1;
 };
@@ -791,6 +809,8 @@ Changes a global lightstyle when triggered."
 ]
 */
 void() target_lightstyle = {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.message == string_null)
 		self.message = "azam";	// suitably garish accidental default
 	self.use = target_lightstyle_use;

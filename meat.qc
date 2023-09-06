@@ -352,6 +352,8 @@ Keys
 */
 void() target_meat_fireworks =
 {
+	if (!SUB_InitEntity()) return;
+	
 	//if (!SUB_ShouldSpawn()) return;
 	self.speed = zeroconvertdefault(self.speed, 128);
 	self.count = zeroconvertdefault(self.count, 1);

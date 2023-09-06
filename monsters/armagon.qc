@@ -901,6 +901,8 @@ void() monster_armagon_spawner = {
 
 void() monster_armagon =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

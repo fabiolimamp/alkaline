@@ -281,6 +281,9 @@ float START_OFF = 1;
 float ITEMSTYLE_BSP = 1;
 float ITEMSTYLE_MDL = 2;
 
+float SPAWNFLAG_NOCOOP = 4096;
+float SPAWNFLAG_ONLYCOOP = 8192;
+
 // monsters
 float MONSTER_ALK = 4;
 float MONSTER_ORIGINAL = 8;

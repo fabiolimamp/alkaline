@@ -134,6 +134,7 @@ void() monster_spiderbot_spawner = {
 };
 
 void() monster_spiderbot = {
+	if (!SUB_InitEntity()) return;
 
 	if (deathmatch)
 	{

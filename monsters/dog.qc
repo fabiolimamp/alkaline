@@ -373,6 +373,8 @@ void() monster_dog_spawner = {
 
 void() monster_dog =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

@@ -874,6 +874,8 @@ void() monster_edie_spawner = {
 
 void() monster_edie =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

@@ -198,6 +198,8 @@ NO_MONSTERS: object ignores damage from monsters
 */
 void() func_breakable =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	setmodel (self, self.model);
@@ -299,6 +301,8 @@ Keys:
 */
 void () func_explobox =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	setmodel (self, self.model);
@@ -414,6 +418,8 @@ Keys:
 
 void () func_laser =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local entity helper;
 	
 	self.origmodel = self.model;
@@ -504,6 +510,8 @@ collectible circuit board thing
 */
 void () item_circuitboard =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!self.mdl) self.mdl = "progs/fromitz.mdl";
 	precache_model (self.mdl);
 	setmodel (self, self.mdl);
@@ -535,6 +543,8 @@ Keys:
 */
 void() light_fixture1 =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/fixture1.mdl");
 	setmodel (self, "progs/fixture1.mdl");
 	self.angles_y = self.angle2;
@@ -561,6 +571,8 @@ Keys:
 */
 void() light_beacon =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/beacon.mdl");
 	setmodel (self, "progs/beacon.mdl");
 	if (self.spawnflags & 1)
@@ -584,6 +596,8 @@ Flags:
 */
 void () misc_flag =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/flag.mdl");
 	setmodel (self, "progs/flag.mdl");
 	self.frame = (self.spawnflags & 3);
@@ -708,6 +722,8 @@ Keys:
 */
 void() misc_sparks =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/spark.mdl");
 	precache_sound ("misc/spark.wav");
 		
@@ -865,6 +881,8 @@ Keys:
 */
 void() misc_smoke =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/s_smoke.spr");
 	precache_sound ("misc/airhiss.wav");
 	precache_sound ("misc/airhiss2.wav");
@@ -983,6 +1001,8 @@ void() misc_flame_startup = {
 
 void() misc_flame =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/s_flame.spr");
 	precache_sound ("dread/flameon.wav");
 	precache_sound ("dread/flameoff.wav");
@@ -1041,6 +1061,8 @@ Produces a continuous particle splash for waterfalls
 */
 void() misc_splash =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.wait)
 		self.wait = 0.1;
 	if (!self.movedir)
@@ -1094,6 +1116,8 @@ Keys:
 */
 void() trigger_ladder =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound("misc/ladder.wav");
 	precache_sound("misc/ladder2.wav");
 

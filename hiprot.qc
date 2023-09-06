@@ -48,6 +48,8 @@ Used as the point of rotation for rotatable objects.
 */
 void() info_rotate =
 {
+	if (!SUB_InitEntity()) return;
+	
 // remove self after a little while, to make sure that entities that
 // have targeted it have had a chance to spawn
 	self.nextthink = time + 2;
@@ -322,6 +324,8 @@ If "obituary" is set with a string, this is the message that will appear when a 
 
 void() func_rotate_entity =
 	{
+	if (!SUB_InitEntity()) return;
+	
 	self.solid    = SOLID_NOT;
 	self.movetype = MOVETYPE_NONE;
 
@@ -367,6 +371,8 @@ void() func_rotate_entity =
 */
 void() path_rotate =
 	{
+	if (!SUB_InitEntity()) return;
+	
 	if ( self.noise )
 		{
 		precache_sound( self.noise );
@@ -722,6 +728,8 @@ void() rotate_train =
 
 void() func_rotate_train =
 	{
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.speed)
 		self.speed = 100;
 	if (!self.target)
@@ -855,6 +863,8 @@ ROTATE_NONBLOCKING makes the brush non-solid.  This is useless if ROTATE_VISIBLE
 */
 void() func_movewall =
 	{
+	if (!SUB_InitEntity()) return;
+	
 	self.angles = '0 0 0';
 	self.movetype = MOVETYPE_PUSH;
 	if ( self.spawnflags & ROTATE_NONBLOCKING )
@@ -885,6 +895,8 @@ This defines an object to be rotated.  Used as the target of func_rotate_door.
 */
 void() rotate_object =
 	{
+	if (!SUB_InitEntity()) return;
+	
 	self.classname = "rotate_object";
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NONE;
@@ -1062,6 +1074,8 @@ once door from closing again when it's blocked.
 
 void() func_rotate_door =
 	{
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.target)
 		{
 		objerror( "rotate_door without target." );

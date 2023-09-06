@@ -485,6 +485,8 @@ void() monster_arachnofloyd_spawner = {
 
 void() monster_arachnofloyd =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

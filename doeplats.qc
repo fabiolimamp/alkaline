@@ -502,6 +502,8 @@ Set "sounds" to one of the following:
 
 void() func_new_plat =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 	//local entity t;
 	local float negativeHeight;

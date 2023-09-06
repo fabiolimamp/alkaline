@@ -15,7 +15,9 @@ string 	intermission_message;
 This is the camera point for the intermission.
 Use mangle instead of angle, so you can set pitch or roll as well as yaw.  'pitch yaw roll'
 */
-void() info_intermission = {};
+void() info_intermission = {
+	if (!SUB_InitEntity()) return;
+};
 
 // engine sysdef function. Called automatically for every client on map change
 void() SetChangeParms = {
@@ -472,6 +474,8 @@ void() changelevel_use = {
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
 void() trigger_changelevel = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.map)
 		dprint("changelevel trigger doesn't have map set, will return to the same map\n");
 	
@@ -754,11 +758,15 @@ void() PutClientInServer = {
 The normal starting point for a level.
 */
 void() info_player_start =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 
 void() info_player_start_test =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!cvar("developer")) remove(self);
 };
 
@@ -767,26 +775,34 @@ void() info_player_start_test =
 Only used on start map for the return point from an episode.
 */
 void() info_player_start2 =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 
 /*
 saved out by quaked in region mode
 */
 void() testplayerstart =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for deathmatch games
 */
 void() info_player_deathmatch =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for coop games
 */
 void() info_player_coop =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 /*
 ===============================================================================

@@ -428,6 +428,8 @@ This is the destination marker for a teleporter.  It should have a "targetname" 
 */
 void() info_teleport_destination =
 {
+	if (!SUB_InitEntity()) return;
+	
 // this does nothing, just serves as a target spot
 	self.mangle = self.angles;
 	self.angles = '0 0 0';
@@ -451,6 +453,8 @@ If the trigger_teleport has a targetname, it will only teleport entities when it
 */
 void() trigger_teleport =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local vector o;
 
 	InitTrigger ();
@@ -473,6 +477,8 @@ void() trigger_teleport =
 
 
 void() trigger_teleport_instadestination = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.targetname)
 		objerror ("no targetname");
 

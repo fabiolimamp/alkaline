@@ -306,6 +306,8 @@ void() monster_bambler_spawner = {
 
 void() monster_bambler =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

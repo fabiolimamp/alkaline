@@ -556,6 +556,8 @@ Variable sized single use trigger that requires a key to trigger targets.  Must 
 
 void() trigger_usekey =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 
 // the keylock_* functions use self.noise3 and self.noise4 internally,
@@ -684,6 +686,8 @@ void() key_start =
 
 void() item_key_custom =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 	if (self.keyname == "")
 	{
@@ -799,6 +803,8 @@ In order for keys to work you MUST set your map's worldtype to one of the follow
 */
 void() item_key1 =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 	if (world.worldtype == WORLDTYPE_METAL)
 	{
@@ -839,6 +845,8 @@ In order for keys to work you MUST set your map's worldtype to one of the follow
 
 void() item_key2 =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (world.worldtype == WORLDTYPE_METAL)
 	{
 		precache_model ("progs/m_g_key.mdl");
@@ -866,6 +874,8 @@ void() item_key2 =
 
 void() item_key3 =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (world.worldtype == WORLDTYPE_METAL)
 	{
 		precache_model ("progs/m_p_key.mdl");

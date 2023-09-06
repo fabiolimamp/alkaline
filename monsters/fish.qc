@@ -205,6 +205,8 @@ void() monster_fish_spawner = {
 
 void() monster_fish =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

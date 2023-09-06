@@ -894,6 +894,8 @@ void() monster_hunter_spawner = {
 
 void() monster_hunter =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

@@ -957,6 +957,8 @@ Key doors are allways wait -1.
 */
 
 void() func_door = {
+	if (!SUB_InitEntity()) return;
+	
 	local string default_noise1;
 	local string default_noise2;
 
@@ -1337,6 +1339,8 @@ If a secret door has a targetname, it will only be opened by it's botton or trig
 
 void () func_door_secret =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.sounds == 0)
 		self.sounds = 3;
 	if (self.sounds == 1)
@@ -1498,6 +1502,8 @@ void() target_setdoor_use = {
 };
 
 void() target_setdoor = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_setdoor_use;
 };
 
@@ -1512,6 +1518,8 @@ Sets a user-defined door's trigger field.
 
 void() trigger_doortriggerfield = {
 
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.target || self.target == "") {
 		objerror("No target set");
 		return;

@@ -460,6 +460,8 @@ void() monster_zombie2_spawner = {
 
 void() monster_zombie2 =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

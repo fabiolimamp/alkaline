@@ -438,6 +438,8 @@ void() monster_nailgrunt_spawner = {
 };
 
 void() monster_nailgrunt = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -481,6 +483,8 @@ void() monster_army_spawner = {
 
 
 void() monster_army = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

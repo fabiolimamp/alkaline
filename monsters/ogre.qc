@@ -709,6 +709,8 @@ void() monster_ogre_spawner = {
 
 
 void() monster_ogre = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -792,6 +794,8 @@ void() monster_ogre_marksman_spawner = {
 
 
 void() monster_ogre_marksman = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

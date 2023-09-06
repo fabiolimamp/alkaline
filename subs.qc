@@ -2,6 +2,32 @@
 
 void() SUB_Null = {};
 void(entity attacker, float damage) SUB_NullPain = {};
+
+float() SUB_InitEntity = {
+	if (self.classname == "trigger_relay") {
+		if (self.spawnflags & 16384 && coop){
+			remove(self);
+			return FALSE;
+		}
+		if (self.spawnflags & 32768 && !coop){
+			remove(self);
+			return FALSE;
+		}
+	}
+	else {
+		if (self.spawnflags & SPAWNFLAG_NOCOOP && coop){
+			remove(self);
+			return FALSE;
+		}
+		if (self.spawnflags & SPAWNFLAG_ONLYCOOP && !coop){
+			remove(self);
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+
 /*
 =============
 SUB_Remove/SUB_RemoveSoon
