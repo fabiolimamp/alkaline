@@ -243,22 +243,22 @@ void() IntermissionThink = {
 
 	if (time > self.attack_finished) self.cnt = 0;
 
-	if (!self.button0 && !self.button1 && !self.button2) {
+	if (!self.button0 && !self.button1 && !self.button2 && self.impulse != 10 && self.impulse != 12 ) {
 		self.wait = 0;
 		return;
 	}
 
-	if (self.button0) {
+	if (self.impulse == 10 || self.impulse == 12) {
+		self.impulse = 0;
 		if (self.wait) return;
 
 		if (time > self.pain_finished) {
 			nextIntermission();
 		}
-
-		if (time <= self.attack_finished || !self.cnt){
+		/*if (time <= self.attack_finished || !self.cnt){
 			self.attack_finished = time + 0.25;
 			self.cnt++;
-		}
+		}*/
 		self.wait = 1;
 		return;
 	}
