@@ -132,7 +132,7 @@ void() f_death17 =[      $death17,       f_death18       ] {};
 void() f_death18 =[      $death18,       f_death19       ] {};
 void() f_death19 =[      $death19,       f_death20       ] {};
 void() f_death20 =[      $death20,       f_death21       ] {};
-void() f_death21 =[      $death21,       f_death21       ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() f_death21 =[      $death21,       f_death21       ] {monster_dead_dead();};
 
 void() fish_die =
 {
@@ -141,6 +141,7 @@ void() fish_die =
         sound (self, CHAN_VOICE, "player/tornoff2.wav", 1, ATTN_NORM);
         ThrowHead ("progs/gib3.mdl", self.health);
         ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
         return;
 	}
 	

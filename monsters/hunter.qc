@@ -595,6 +595,7 @@ void() hunter_explode =
 	TriggerExplosion();
 	SUB_Hide();
 
+	self.deadflag = DEAD_GIBBED;
 };
 
 void() hunter_death =

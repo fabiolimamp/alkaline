@@ -132,7 +132,7 @@ void()	scientist_death_08		=[	$death8,	scientist_death_09	] {};
 void()	scientist_death_09		=[	$death9,	scientist_death_10	] {};
 void()	scientist_death_10		=[	$death10,	scientist_death_11	] {};
 void()	scientist_death_11		=[	$death11,	scientist_death_12	] {};
-void()	scientist_death_12		=[	$death12,	scientist_death_12	] {};
+void()	scientist_death_12		=[	$death12,	scientist_death_12	] {monster_dead_dead();};
 
 void()	scientist_walk_01		=[	$walk1,		scientist_walk_02	] {ai_walk(4);};
 void()	scientist_walk_02		=[	$walk2,		scientist_walk_03	] {ai_walk(3);};
@@ -329,6 +329,7 @@ void() scientist_die =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 

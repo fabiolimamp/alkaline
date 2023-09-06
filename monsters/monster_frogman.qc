@@ -286,7 +286,7 @@ void() frogmen_stick = {
 
 void() frogmen_death_stick1 = [40, frogmen_death_stick2]{};
 void() frogmen_death_stick2 = [39, frogmen_death_stick3]{};
-void() frogmen_death_stick3 = [59, frogmen_death_stick3]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() frogmen_death_stick3 = [59, frogmen_death_stick3]{monster_dead_dead();};
 
 void() frogmen_death1 = [39, frogmen_death2]{};
 void() frogmen_death2 = [40, frogmen_death3]{};
@@ -298,7 +298,7 @@ void() frogmen_death7 = [45, frogmen_death8]{};
 void() frogmen_death8 = [46, frogmen_death9]{};
 void() frogmen_death9 = [47, frogmen_death10]{};
 void() frogmen_death10 = [48, frogmen_death11]{};
-void() frogmen_death11 = [49, frogmen_death11]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() frogmen_death11 = [49, frogmen_death11]{monster_dead_dead();};
 
 
 //==================================================================
@@ -315,6 +315,7 @@ void() frogmen_die =
 		ThrowGib("progs/gib2.mdl", self.health);
 		ThrowGib("progs/gib3.mdl", self.health);
 		ThrowGib("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	self.skin = 3;

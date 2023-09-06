@@ -72,6 +72,12 @@ void() monster_use =
 };
 
 
+void() monster_dead_dead = {
+	self.deadflag = DEAD_DEAD;
+	self.think = SUB_MakeNotSolid;
+	self.nextthink = time + 5;
+}
+
 
 //============================================================================
 

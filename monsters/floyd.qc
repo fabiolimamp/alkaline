@@ -311,6 +311,8 @@ void () floyd_explode =
 		ThrowFloydHead ("progs/h_floyd.mdl", self.health);
 	else
 		SUB_Hide();
+	
+	self.deadflag = DEAD_GIBBED;
 }
 
 void () floyd_death2 =  [$death2,  floyd_death3]  {ai_painforward(-3.33);};

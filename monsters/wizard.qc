@@ -365,7 +365,7 @@ void()	wiz_death4	=[	$death4,		wiz_death5	] {};
 void()	wiz_death5	=[	$death5,		wiz_death6	] {};
 void()	wiz_death6	=[	$death6,		wiz_death7	] {};
 void()	wiz_death7	=[	$death7,		wiz_death8	] {};
-void()	wiz_death8	=[	$death8,		wiz_death8	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	wiz_death8	=[	$death8,		wiz_death8	] {monster_dead_dead();};
 
 void() wiz_fall = {
 	if (other.solid == SOLID_BSP) {
@@ -379,6 +379,7 @@ void() wiz_die =
 // check for gib
 	if (self.health < -40)
 	{
+		self.deadflag = DEAD_GIBBED;
 		if (self.originalmonsters) {
 			// gib sound
 			self.skin = 0;

@@ -45,7 +45,7 @@ float(entity targ, vector org) CanDamage =
 Killed
 ============
 */
-void(entity targ, entity attacker) Killed =
+void(entity targ, entity attacker, entity inflictor) Killed =
 {
 	local entity oself;
 
@@ -102,6 +102,8 @@ void(entity targ, entity attacker) Killed =
 
 		activator = self.enemy;
 		SUB_UseTargets ();
+		
+		self.deadflag = DEAD_DYING;
 	}
 
 	if (attacker.classname == "trigger_void") {
@@ -305,7 +307,7 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 
 	if (targ.health <= 0) {
 		targ.deathtype = dmgtype;
-		Killed(targ, attacker);
+		Killed(targ, attacker, inflictor);
 		return;
 	}
 

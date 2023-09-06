@@ -501,7 +501,9 @@ void() probe_die3 = [15, SUB_Hide] {
 	self.trigger_field.inflictor_movetype = self.inflictor_movetype;
 	self.trigger_field.inflictor_vel = self.inflictor_vel;
 
-	FuelTankExplode();	
+	FuelTankExplode();
+	
+	self.deadflag = DEAD_GIBBED;
 };
 
 void(entity attacker, float damage) probe_pain = {

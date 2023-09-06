@@ -238,7 +238,7 @@ void() bam_death7      =[      $death7,       bam_death8     ] {};
 void() bam_death8      =[      $death8,       bam_death9     ] {};
 void() bam_death9      =[      $death9,       bam_death10    ] {};
 void() bam_death10     =[      $death10,      bam_death11    ] {};
-void() bam_death11     =[      $death11,      bam_death11    ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() bam_death11     =[      $death11,      bam_death11    ] {monster_dead_dead();};
 
 void() bam_die =
 {
@@ -253,6 +253,7 @@ void() bam_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 

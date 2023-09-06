@@ -680,7 +680,7 @@ void() edie_death30	=[$death31, edie_death31	] {};
 void() edie_death31	=[$death32, edie_death32	] {};
 void() edie_death32	=[$death33, edie_death33	] {};
 void() edie_death33	=[$death34, edie_death34	] {};
-void() edie_death34	=[$death35, edie_death34	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() edie_death34	=[$death35, edie_death34	] {monster_dead_dead();};
 
 void() edie_die =
 {
@@ -695,6 +695,7 @@ void() edie_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 

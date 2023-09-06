@@ -578,7 +578,7 @@ void()	menf_die10	=[	$death10,	menf_die11	] {ai_forward(5);};
 void()	menf_die11	=[	$death11,	menf_die12	] {ai_forward(5);};
 void()	menf_die12	=[	$death12,	menf_die13	] {ai_forward(5);};
 void()	menf_die13	=[	$death13,	menf_die14	] {};
-void()	menf_die14	=[	$death14,	menf_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	menf_die14	=[	$death14,	menf_die14	] {monster_dead_dead();};
 
 void()	menf_fdie1	=[	$fdeath1,	menf_fdie2	] {};
 void()	menf_fdie2	=[	$fdeath2,	menf_fdie3	] {};
@@ -590,7 +590,7 @@ void()	menf_fdie7	=[	$fdeath7,	menf_fdie8	] {};
 void()	menf_fdie8	=[	$fdeath8,	menf_fdie9	] {};
 void()	menf_fdie9	=[	$fdeath9,	menf_fdie10	] {};
 void()	menf_fdie10	=[	$fdeath10,	menf_fdie11	] {};
-void()	menf_fdie11	=[	$fdeath11,	menf_fdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	menf_fdie11	=[	$fdeath11,	menf_fdie11	] {monster_dead_dead();};
 
 
 void() menf_die =
@@ -606,6 +606,7 @@ void() menf_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	self.skin = 3;

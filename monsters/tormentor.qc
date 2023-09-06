@@ -569,6 +569,7 @@ void() torm_death = [ 98, torm_death ] {
 		ThrowGib ("progs/fgib1.mdl", -23);
 		ThrowGib ("progs/fgib1.mdl", -23);
 		ThrowGib ("progs/fgib1.mdl", -23);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 

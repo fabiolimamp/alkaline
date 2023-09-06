@@ -130,13 +130,14 @@ void() shal_death3      =[      $death3,        shal_death4     ] {};
 void() shal_death4      =[      $death4,        shal_death5     ] {};
 void() shal_death5      =[      $death5,        shal_death6     ] {};
 void() shal_death6      =[      $death6,        shal_death7     ] {};
-void() shal_death7      =[      $death7,        shal_death7    ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() shal_death7      =[      $death7,        shal_death7    ] {monster_dead_dead();};
 
 void() shalrath_die =
 {
 // check for gib
 	if (self.health < -90)
 	{
+		self.deadflag = DEAD_GIBBED;
 		if (self.originalmonsters) {
 			self.skin = 0;
 			sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);

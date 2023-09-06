@@ -204,6 +204,7 @@ void() arf_explode = {
 	ThrowGib ("progs/fgib1.mdl", self.health);
 	ThrowGib ("progs/fgib1.mdl", self.health);
 
+	self.deadflag = DEAD_GIBBED;
 	TriggerExplosion();
 }
 

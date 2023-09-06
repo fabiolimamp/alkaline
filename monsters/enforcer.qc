@@ -271,7 +271,7 @@ void()	enf_die10	=[	$death10,	enf_die11	] {ai_forward(5);};
 void()	enf_die11	=[	$death11,	enf_die12	] {ai_forward(5);};
 void()	enf_die12	=[	$death12,	enf_die13	] {ai_forward(5);};
 void()	enf_die13	=[	$death13,	enf_die14	] {};
-void()	enf_die14	=[	$death14,	enf_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	enf_die14	=[	$death14,	enf_die14	] {monster_dead_dead();};
 
 void()	enf_fdie1	=[	$fdeath1,	enf_fdie2	] {
 
@@ -286,7 +286,7 @@ void()	enf_fdie7	=[	$fdeath7,	enf_fdie8	] {};
 void()	enf_fdie8	=[	$fdeath8,	enf_fdie9	] {};
 void()	enf_fdie9	=[	$fdeath9,	enf_fdie10	] {};
 void()	enf_fdie10	=[	$fdeath10,	enf_fdie11	] {};
-void()	enf_fdie11	=[	$fdeath11,	enf_fdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	enf_fdie11	=[	$fdeath11,	enf_fdie11	] {monster_dead_dead();};
 
 
 void() enf_die =
@@ -304,6 +304,7 @@ void() enf_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		if (random() < 0.2)
         	ThrowGib ("progs/enf_gun.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	self.skin = 3;

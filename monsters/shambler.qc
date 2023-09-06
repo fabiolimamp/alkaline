@@ -292,7 +292,7 @@ void() sham_death7      =[      $death7,       sham_death8     ] {};
 void() sham_death8      =[      $death8,       sham_death9     ] {};
 void() sham_death9      =[      $death9,       sham_death10    ] {};
 void() sham_death10     =[      $death10,      sham_death11    ] {};
-void() sham_death11     =[      $death11,      sham_death11    ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() sham_death11     =[      $death11,      sham_death11    ] {monster_dead_dead();};
 
 void() sham_die =
 {
@@ -307,6 +307,7 @@ void() sham_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	self.skin = 3;

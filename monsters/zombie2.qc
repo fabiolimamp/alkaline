@@ -278,7 +278,7 @@ void() zombieFast_deathA7 = [ 79, zombieFast_deathA8 ]{ai_pain(1);};
 void() zombieFast_deathA8 = [ 80, zombieFast_deathA9 ]{ai_pain(1);};
 void() zombieFast_deathA9 = [ 81, zombieFast_deathA10 ]{ai_pain(2);};
 void() zombieFast_deathA10 = [ 82, zombieFast_deathA11 ]{};
-void() zombieFast_deathA11 = [ 83, zombieFast_deathA11 ]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() zombieFast_deathA11 = [ 83, zombieFast_deathA11 ]{monster_dead_dead();};
 
 void() zombieFast_deathB1 = [ 84, zombieFast_deathB2 ]{ai_pain(16 + random()*8);};
 void() zombieFast_deathB2 = [ 85, zombieFast_deathB3 ]{ai_pain(16 + random()*8);};
@@ -288,7 +288,7 @@ void() zombieFast_deathB5 = [ 88, zombieFast_deathB6 ]{ai_pain(4);};
 void() zombieFast_deathB6 = [ 89, zombieFast_deathB7 ]{};
 void() zombieFast_deathB7 = [ 90, zombieFast_deathB8 ]{};
 void() zombieFast_deathB8 = [ 91, zombieFast_deathB9 ]{};
-void() zombieFast_deathB9 = [ 92, zombieFast_deathB9 ]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() zombieFast_deathB9 = [ 92, zombieFast_deathB9 ]{monster_dead_dead();};
 
 void() zombieFast_deathC1 = [ 93, zombieFast_deathC2 ]{};
 void() zombieFast_deathC2 = [ 94, zombieFast_deathC3 ]{};
@@ -300,7 +300,7 @@ void() zombieFast_deathC7 = [ 99, zombieFast_deathC8 ]{};
 void() zombieFast_deathC8 = [ 100, zombieFast_deathC9 ]{};
 void() zombieFast_deathC9 = [ 101, zombieFast_deathC10 ]{ai_right(2);};
 void() zombieFast_deathC10 = [ 102, zombieFast_deathC11 ]{ai_right(6);};
-void() zombieFast_deathC11 = [ 103, zombieFast_deathC11 ]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() zombieFast_deathC11 = [ 103, zombieFast_deathC11 ]{monster_dead_dead();};
 
 void() zombieFast_deathD1 = [ 104, zombieFast_deathD2 ]{ai_zCharge(24);};
 void() zombieFast_deathD2 = [ 105, zombieFast_deathD3 ]{ai_zCharge(20);};
@@ -311,7 +311,7 @@ void() zombieFast_deathD6 = [ 109, zombieFast_deathD7 ]{ai_forward(4);};
 void() zombieFast_deathD7 = [ 110, zombieFast_deathD8 ]{};
 void() zombieFast_deathD8 = [ 111, zombieFast_deathD9 ]{};
 void() zombieFast_deathD9 = [ 112, zombieFast_deathD10 ]{};
-void() zombieFast_deathD10 = [ 113, zombieFast_deathD10 ]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() zombieFast_deathD10 = [ 113, zombieFast_deathD10 ]{monster_dead_dead();};
 
 void() zombieFast_die =
 {
@@ -323,6 +323,7 @@ void() zombieFast_die =
 		ThrowGib("progs/gib1.mdl", self.health);
 		ThrowGib("progs/gib2.mdl", self.health);
 		ThrowGib("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 

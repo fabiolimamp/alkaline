@@ -254,7 +254,7 @@ void()	axe_die5	=[	$axdeth5,	axe_die6	] {};
 void()	axe_die6	=[	$axdeth6,	axe_die7	] {};
 void()	axe_die7	=[	$axdeth7,	axe_die8	] {};
 void()	axe_die8	=[	$axdeth8,	axe_die9	] {};
-void()	axe_die9	=[	$axdeth9,	axe_die9] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	axe_die9	=[	$axdeth9,	axe_die9] {monster_dead_dead();};
 
 
 void()	axe_diea1	=[	$deatha1,	axe_diea2	] {};
@@ -268,7 +268,7 @@ void()	axe_diea7	=[	$deatha7,	axe_diea8	] {};
 void()	axe_diea8	=[	$deatha8,	axe_diea9	] {};
 void()	axe_diea9	=[	$deatha9,	axe_diea10	] {};
 void()	axe_diea10	=[	$deatha10,	axe_diea11	] {};
-void()	axe_diea11	=[	$deatha11,	axe_diea11] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	axe_diea11	=[	$deatha11,	axe_diea11] {monster_dead_dead();};
 
 void()	axe_diec1	=[	$deathc1,	axe_diec2	] {self.nextthink = time + 0.075; ai_painforward(12);};
 void()	axe_diec2	=[	$deathc2,	axe_diec3	] {self.nextthink = time + 0.075; ai_painforward(12);};
@@ -284,7 +284,7 @@ void()	axe_diec11	=[	$deathc11,	axe_diec12	] {self.nextthink = time + 0.075; };
 void()	axe_diec12	=[	$deathc12,	axe_diec13	] {self.nextthink = time + 0.075; };
 void()	axe_diec13	=[	$deathc13,	axe_diec14	] {self.nextthink = time + 0.075; };
 void()	axe_diec14	=[	$deathc14,	axe_diec15	] {self.nextthink = time + 0.075; };
-void()	axe_diec15	=[	$deathc15,	axe_diec15] {self.nextthink = time + 0.075; self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	axe_diec15	=[	$deathc15,	axe_diec15] {self.nextthink = time + 0.075; monster_dead_dead();};
 
 
 void()	axe_died1	=[	$deathd1,	axe_died2	] {};
@@ -296,7 +296,7 @@ void()	axe_died5	=[	$deathd5,	axe_died6	] {};
 void()	axe_died6	=[	$deathd6,	axe_died7	] {};
 void()	axe_died7	=[	$deathd7,	axe_died8	] {};
 void()	axe_died8	=[	$deathd8,	axe_died9	] {};
-void()	axe_died9	=[	$deathd9,	axe_died9] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	axe_died9	=[	$deathd9,	axe_died9] {monster_dead_dead();};
 
 
 void()	axe_diee1	=[	$deathe1,	axe_diee2	] {};
@@ -308,7 +308,7 @@ void()	axe_diee5	=[	$deathe5,	axe_diee6	] {};
 void()	axe_diee6	=[	$deathe6,	axe_diee7	] {};
 void()	axe_diee7	=[	$deathe7,	axe_diee8	] {};
 void()	axe_diee8	=[	$deathe8,	axe_diee9	] {};
-void()	axe_diee9	=[	$deathe9,	axe_diee9] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	axe_diee9	=[	$deathe9,	axe_diee9] {monster_dead_dead();};
 
 
 void() axe_die =
@@ -326,6 +326,7 @@ void() axe_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 

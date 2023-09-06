@@ -162,7 +162,7 @@ void()	lth_fdie7	=[	$fdeath7,	lth_fdie8	] {};
 void()	lth_fdie8	=[	$fdeath8,	lth_fdie9	] {};
 void()	lth_fdie9	=[	$fdeath9,	lth_fdie10	] {};
 void()	lth_fdie10	=[	$fdeath10,	lth_fdie11	] {};
-void()	lth_fdie11	=[	$fdeath11,	lth_fdie11	] {};
+void()	lth_fdie11	=[	$fdeath11,	lth_fdie11	] {monster_dead_dead();};
 
 
 void() super_enforcer_die =
@@ -178,6 +178,7 @@ void() super_enforcer_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 

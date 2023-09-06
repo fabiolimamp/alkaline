@@ -294,7 +294,7 @@ void()	ogreb_die17	=[	$death17,	ogreb_die18	] {SpawnMeatSpray (self.origin + v_f
 void()	ogreb_die18	=[	$death18,	ogreb_die19	] {SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);};
 void()	ogreb_die19	=[	$death19,	ogreb_die20	] {SpawnMeatSpray (self.origin + v_forward*16, crandom() * 100 * v_right);};
 void()	ogreb_die20	=[	$death20,	ogreb_die21	] {};
-void()	ogreb_die21	=[	$death21,	ogreb_die21	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	ogreb_die21	=[	$death21,	ogreb_die21	] {monster_dead_dead();};
 
 // Death B
 
@@ -307,7 +307,7 @@ void()	ogreb_bdie6	=[	$bdeath6,	ogreb_bdie7	] {};
 void()	ogreb_bdie7	=[	$bdeath7,	ogreb_bdie8	] {};
 void()	ogreb_bdie8	=[	$bdeath8,	ogreb_bdie9	] {};
 void()	ogreb_bdie9	=[	$bdeath9,	ogreb_bdie10	] {};
-void()	ogreb_bdie10	=[	$bdeath10,	ogreb_bdie10	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	ogreb_bdie10	=[	$bdeath10,	ogreb_bdie10	] {monster_dead_dead();};
 
 // Death C
 
@@ -324,7 +324,7 @@ void()	ogreb_cdie10	=[	$cdeath10,	ogreb_cdie11	] {};
 void()	ogreb_cdie11	=[	$cdeath11,	ogreb_cdie12	] {};
 void()	ogreb_cdie12	=[	$cdeath12,	ogreb_cdie13	] {};
 void()	ogreb_cdie13	=[	$cdeath13,	ogreb_cdie14	] {};
-void()	ogreb_cdie14	=[	$cdeath14,	ogreb_cdie14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	ogreb_cdie14	=[	$cdeath14,	ogreb_cdie14	] {monster_dead_dead();};
 
 void() ogreb_die =
 {
@@ -345,6 +345,7 @@ void() ogreb_die =
 
 		if (random() < 0.2) ThrowGib ("progs/brz_saw.mdl", self.health);
 
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	self.skin = 3;

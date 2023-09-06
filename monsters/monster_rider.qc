@@ -276,7 +276,7 @@ void() rider_die7 = [73, rider_die8]{rider_think();};
 void() rider_die8 = [74, rider_die9]{rider_think();};
 void() rider_die9 = [75, rider_die10]{rider_think();};
 void() rider_die10 = [76, rider_die11]{rider_think();};
-void() rider_die11 = [76, SUB_Null]{self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() rider_die11 = [76, SUB_Null]{monster_dead_dead();};
 
 void(entity attacker, float damage) rider_pain = 
 {
