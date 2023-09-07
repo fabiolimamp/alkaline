@@ -8,9 +8,9 @@
 */
 
 // maximum bulletholes on the map
-float BULLETHOLES_MAX = 50;
+float BULLETHOLES_MAX = 150;
 // maximum bulletholes spawned per frame
-float BULLETHOLES_MAXFRAME = 10;
+float BULLETHOLES_MAXFRAME = 30;
 
 float BULLETHOLES_LIFETIME = 60;
 
