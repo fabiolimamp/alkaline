@@ -961,12 +961,12 @@ void() PlayerPostThink =
 	else
 		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
 
-	if (cvar("scratch3")) {
+	/*if (cvar("scratch3")) {
 		self.angles_z = cvar("scratch3");
 		self.angles_x = self.v_angle_x;
 		self.fixangle = 1;
 		cvar_set("scratch3", 0);
-	}
+	}*/
 	
 	if (self.v_angle_z) {
 		self.angles = normalizeAngles180(self.v_angle);

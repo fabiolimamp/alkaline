@@ -15,7 +15,7 @@ void(vector ang) monster_turret_shoot = {
 	makevectors(ang);
 	//LaunchLaser(self.origin - v_up*14 + v_forward*56, v_forward); 
 	//newmis.effects = newmis.effects - EF_DIMLIGHT;
-	FireBullets2(1, self.origin - v_up*14 + v_forward*56, v_forward, '0.1 0.04 0');
+	FireBullets2(1, 4, self.origin - v_up*14 + v_forward*56, v_forward, '0.1 0.04 0', 0, FALSE);
 };
 
 

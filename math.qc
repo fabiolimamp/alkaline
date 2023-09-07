@@ -375,6 +375,22 @@ vector(vector a, vector b, float mix) lerpVectorCosine =
 	return (b * cmx + a * ( 1 - cmx ) );
 }
 
+float(float runs) weighted_random = {
+    float ret = 0;
+    
+    for (float i = 0; i < runs; i++) {
+        ret += random() * 1/runs;
+    }
+    return ret;
+}
+
+float(float runs) weighted_crandom = {
+    float ret = 0;
+    for (float i = 0; i < runs; i++) {
+        ret += random() * 1/runs;
+    }
+    return 2*(ret - 0.5);
+}
 
 float() crandom = {
 	return 2*(random() - 0.5);

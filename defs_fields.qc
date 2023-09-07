@@ -282,6 +282,9 @@ FIELDS
 .entity startpath;
 .entity nextbumper;
 
+.float multi_dmg;
+.entity multi_next;
+
 // edie
 .float multiplier; 
 .entity spawnmaster;

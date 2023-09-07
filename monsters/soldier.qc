@@ -225,7 +225,9 @@ void() army_fire =
 	dir = en.origin - en.velocity*0.2;
 	dir = normalize (dir - org);
 	
-	FireBullets2 (4, org, dir, '0.1 0.1 0');
+	FireBullets2 (4, 4, org, dir, '0.1 0.1 0', 0, FALSE);
+
+	//FireBullets2 (4, org, dir, '0.1 0.1 0');
 	ThrowGib("progs/shelcase.mdl", self.health);
 };
 

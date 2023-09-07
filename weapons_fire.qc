@@ -134,35 +134,44 @@ Collects multiple small damages into a single damage
 ==============================================================================
 */
 
-entity	multi_ent;
-float	multi_damage;
+
+entity	multi_ent_first, multi_ent_last;
+//float	multi_damage;
 
 void() ClearMultiDamage =
 {
-	multi_ent = world;
-	multi_damage = 0;
+	//multi_ent = world;
+	//multi_damage = 0;
 };
 
 void() ApplyMultiDamage =
 {
-	if (!multi_ent)
-		return;
-	T_Damage(multi_ent, self, self, multi_damage, DMGTYPE_BALLISTIC);
+	entity e = multi_ent_first;
+	entity e_nxt;
+	while (e) {
+		e_nxt = e.multi_next;
+		T_Damage(e, self, self, e.multi_dmg, DMGTYPE_BALLISTIC);
+		e.multi_dmg = 0;
+		e.multi_next = world;
+		e = e_nxt;
+	}
+	multi_ent_first = world;
+	multi_ent_last = world;
 };
 
 void(entity hit, float damage) AddMultiDamage =
 {
 	if (!hit)
 		return;
-	
-	if (hit != multi_ent)
+
+	if (!multi_ent_first) multi_ent_first = hit;
+
+	if (!hit.multi_dmg)
 	{
-		ApplyMultiDamage ();
-		multi_damage = damage;
-		multi_ent = hit;
+		if (multi_ent_last) multi_ent_last.multi_next = hit;
+		multi_ent_last = hit;
 	}
-	else
-		multi_damage = multi_damage + damage;
+	hit.multi_dmg += damage;
 };
 
 /*
@@ -219,15 +228,17 @@ void(vector org, vector direction, vector dest) drawTracer = {
 TraceAttack
 ================
 */
-void(float damage, vector dir) TraceAttack =
+void(float damage, vector dir, float penetrate) TraceAttack =
 {
 	local	vector	vel, org;
 	
 	org = trace_endpos - dir*4;
+	//dprint3("Trace hit: ", trace_ent.classname, "\n");
+	
 
-	if (trace_ent.takedamage)
-	{
-		if(trace_ent.bloodtype == SPAWN_DIRT || trace_ent.bloodtype == SPAWN_CHUNK){
+
+	if ((trace_ent.flags & (FL_MONSTER + FL_CLIENT) && trace_ent.deadflag > 0) || trace_ent.takedamage)	{
+		if (trace_ent.bloodtype == SPAWN_DIRT || trace_ent.bloodtype == SPAWN_CHUNK) {
 			vel = normalize(dir - v_up*crandom() * 20 + v_right*crandom());
 			vel = vel + 2*trace_plane_normal;
 			vel = vel * 200;
@@ -241,13 +252,32 @@ void(float damage, vector dir) TraceAttack =
 
 			ImpactSpawn(org, vel*0.2, damage, trace_ent.bloodtype);
 		}
-		
-		AddMultiDamage (trace_ent, damage);
 	}
 	else
-	{
 		gunshot(org);
+	
+
+	if (trace_ent.takedamage) 
+		AddMultiDamage (trace_ent, damage);
+
+	if (
+		penetrate &&
+		trace_ent.flags & (FL_MONSTER + FL_CLIENT) &&
+		(
+			( trace_ent.health - trace_ent.multi_dmg <= 0)
+			|| trace_ent.deadflag > 0
+		)
+	){
+		//dprint2(ftos(trace_ent.flags & (FL_MONSTER + FL_CLIENT)), "\n");
+		traceline (trace_endpos + dir*4, trace_endpos + dir*2048, FALSE, trace_ent);
+		if (trace_fraction != 1.0) {
+			//dprint3("Trace penetrated hit: ", trace_ent.classname, "\n");
+			TraceAttack(damage, dir, FALSE);
+			placebullethole(trace_endpos, trace_plane_normal, trace_ent);
+		}
+		//else dprint("Trace penetrated\n");
 	}
+		
 };
 
 /*
@@ -263,6 +293,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	local	vector direction;
 	local	vector	src;
 	local vector plane_normal;
+	float penetrate = FALSE;
 	//float bullet;
 	makevectors(self.v_angle);
 
@@ -282,7 +313,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
 			//JIM
-			TraceAttack(4, direction);
+			TraceAttack(4, direction, penetrate);
 
 			placebullethole(trace_endpos, plane_normal, trace_ent);
 
@@ -293,36 +324,42 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	ApplyMultiDamage ();
 };
 
-void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
+void(float shotcount, float dmg, vector org, vector dir, vector spread, float centerbias, float penetrate) FireBullets2 =
 {
 	local	vector direction;
 	local vector plane_normal;
+	vector endpoint;
+	entity ent_hit;
 	//float bullet;
 	makevectors(vectoangles(dir));
 
 
-	ClearMultiDamage();
+	//ClearMultiDamage();
 	while (shotcount > 0)
 	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+		if (centerbias) direction = dir + weighted_crandom(centerbias)*spread_x*v_right + weighted_crandom(centerbias)*spread_y*v_up;
+		else direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (org, org + direction*2048, FALSE, self);
+		endpoint = trace_endpos;
+		ent_hit = trace_ent;
 
-		if (!(vlen(org - trace_endpos) < 128 && trace_ent.solid == SOLID_BSP))
-			drawTracer(org, direction, trace_endpos);
+		if (!(vlen(org - trace_endpos) < 128 && ent_hit.solid == SOLID_BSP))
+			drawTracer(org, direction, endpoint);
 		
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
-			//JIM
-			TraceAttack(4, direction);
+			
+			TraceAttack(dmg, direction, penetrate);
 
-			placebullethole(trace_endpos, plane_normal, trace_ent);
+			placebullethole(endpoint, plane_normal, ent_hit);
 
 		}
 		shotcount = shotcount - 1;
 		
 	}
 	ApplyMultiDamage ();
+	//dprint("Attack ended\n");
 };
 
 /*
@@ -340,9 +377,13 @@ void() W_FireShotgun =
 	
 	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
 	dir = aim (self, 100000);
-	FireBullets (6, dir, '0.04 0.04 0');
-};
 
+	//if (cvar("scratch3") == 1)
+		FireBullets2 (6, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.05 0.05 0', 2, TRUE);
+	//else
+	//	FireBullets2 (6, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.04 0.04 0', 0, TRUE);
+};
+//void(float shotcount, float dmg, vector org, vector dir, vector spread, float centerbias, float penetrate) FireBullets2 =
 
 /*
 ================
@@ -365,7 +406,11 @@ void() W_FireSuperShotgun =
 	
 	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
 	dir = aim (self, 100000);
-	FireBullets (14, dir, '0.14 0.08 0');
+	
+	//if (cvar("scratch3") == 1)
+		FireBullets2 (14, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.15 0.09 0', 2, TRUE);
+	//else
+	//	FireBullets2 (14, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.14 0.08 0', 0, TRUE);
 };
 
 
