@@ -732,7 +732,7 @@ void() W_FireLightning = {
 
 	if (self.ammo_cells < 1) {
 		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo(TRUE);
 		return;
 	}
 
@@ -740,7 +740,7 @@ void() W_FireLightning = {
 	if (self.waterlevel > 1 && self.flags & FL_INWATER) {
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo(TRUE);
 		victim = findradius(self.origin, 35*cells);
 		
 		while (victim) {
@@ -1068,7 +1068,7 @@ void(float ox) W_FireSpikes =
 	if (self.ammo_nails < 1)
 	{
 		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo(TRUE);
 		return;
 	}
 

@@ -618,7 +618,7 @@ weapon_touch
 
 void() weapon_touch =
 {
-	local	float	best, new;
+	local	float	current, best, new;
 	local	entity	stemp;
 	local	float	leave;
 
@@ -640,9 +640,16 @@ void() weapon_touch =
 		objerror ("weapon_touch: entity's weapon not set");
 	
 	if (leave && (other.weapons & self.weapon) )
-		return;		
-	
+		return;	
+
+	current = other.weapon;
 	new = self.weapon;
+
+	if (HUD_WEAPONS & new) { // player.items still needed for weapons to show up in the HUD
+		other.items = other.items | new;
+	}
+	
+	other.weapons = other.weapons | new;
 
 	other.ammo_shells += self.ammo_shells;
 	other.ammo_nails += self.ammo_nails;
@@ -658,12 +665,6 @@ void() weapon_touch =
 
 	bound_other_ammo ();
 
-	if(HUD_WEAPONS & new) { // player.items still needed for weapons to show up in the HUD
-		other.items = other.items | new;
-	}
-	
-	other.weapons = other.weapons | new;
-
 	stemp = self;
 	self = other;
 
@@ -672,14 +673,15 @@ void() weapon_touch =
 	else
 		Deathmatch_Weapon (new);
 
+	if (current != new)
+		W_SetCurrentAmmo(TRUE);
+	else
+		W_SetCurrentAmmo(FALSE);
 
-	W_SetCurrentAmmo();
-	
 	self = stemp;
 
 	if (leave)
 		return;
-
 
 	ItemPickup("weapons/pkup.wav", 30, 30);
 };
@@ -900,7 +902,7 @@ AMMO
 
 void() ammo_touch = {
 	entity stemp;
-	float best;
+	float best, current;
 	float prev_ammo, picked_amount;
 
 	if (other.classname != "player")
@@ -914,6 +916,7 @@ void() ammo_touch = {
 	best = W_BestWeapon();
 	self = stemp;
 
+	current = other.weapon;
 
 // shotgun
 	if (self.weapon == 1) {
@@ -966,20 +969,22 @@ void() ammo_touch = {
 
 // change to a better weapon if appropriate
 
-	if (other.weapon == best && !deathmatch) {
+	/*if (other.weapon == best && !deathmatch) {
 		stemp = self;
 		self = other;
 		self.weapon = W_BestWeapon();
-		if (self.weapon != WEAPON_CHAINSAW)
-		   W_SetCurrentAmmo ();
 		self = stemp;
-	}
+	}*/
 
 // if changed current ammo, update it
 	stemp = self;
 	self = other;
-	if (self.weapon != WEAPON_CHAINSAW)
-	   W_SetCurrentAmmo();
+
+	//if (self.weapon != current)
+	//	W_SetCurrentAmmo(TRUE);
+	//else
+		W_SetCurrentAmmo(FALSE);
+
 	self = stemp;
 
 	ItemPickup("weapons/lock4.wav", 30, 30);
@@ -1490,10 +1495,11 @@ PLAYER BACKPACKS
 
 void() BackpackTouch =
 {
-	local string	s;
-	local	float	best, old, new;
-	local	entity	stemp;
-	local	float	acount;
+	string s;
+	float new;
+	float best, current;
+	entity stemp;
+	float acount;
 	
 	if (other.classname != "player")
 		return;
@@ -1512,9 +1518,9 @@ void() BackpackTouch =
 			sprint (other, self.netname);
 		}
 	}
-	else if (self.weapons)
+	else if (self.weapon)
 	{
-		if ((other.weapons & self.weapons) == 0)
+		if ((other.weapons & self.weapon) == 0)
 		{
 			acount = 1;
 			sprint (other, "the ");
@@ -1532,12 +1538,15 @@ void() BackpackTouch =
 	other.ammo_nails = other.ammo_nails + self.ammo_nails;
 	other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
 	other.ammo_cells = other.ammo_cells + self.ammo_cells;
+	
+	current = other.weapon;
+	new = self.weapon;
 
-	new = self.items;
 	if (!new)
 		new = other.weapon;
-	old = other.weapons;
-	other.weapons = other.weapons | new;
+
+	other.weapons |= new;
+	other.items |= (new & HUD_WEAPONS);
 	
 	bound_other_ammo ();
 
@@ -1595,8 +1604,10 @@ void() BackpackTouch =
 	else
 		Deathmatch_Weapon (new);
 
-	W_SetCurrentAmmo ();
-
+	if (current != new)
+		W_SetCurrentAmmo(TRUE);
+	else
+		W_SetCurrentAmmo(FALSE);
 
 };
 
@@ -1615,30 +1626,30 @@ void() DropBackpack =
 	item = spawn();
 	item.origin = self.origin - '0 0 24';
 	
-	item.weapons = self.weapon;
-	if (item.weapons == WEAPON_AXE)
+	item.weapon = self.weapon;
+	if (item.weapon == WEAPON_AXE)
 		item.netname = "Axe";
-	else if (item.weapons == WEAPON_SHOTGUN)
+	else if (item.weapon == WEAPON_SHOTGUN)
 		item.netname = "Shotgun";
-	else if (item.weapons == WEAPON_SUPER_SHOTGUN)
+	else if (item.weapon == WEAPON_SUPER_SHOTGUN)
 		item.netname = "Double-barrelled Shotgun";
-	else if (item.weapons == WEAPON_NAILGUN)
+	else if (item.weapon == WEAPON_NAILGUN)
 		item.netname = "Nailgun";
-	else if (item.weapons == WEAPON_SUPER_NAILGUN)
+	else if (item.weapon == WEAPON_SUPER_NAILGUN)
 		item.netname = "Super Nailgun";
-	else if (item.weapons == WEAPON_GRENADE_LAUNCHER)
+	else if (item.weapon == WEAPON_GRENADE_LAUNCHER)
 		item.netname = "Grenade Launcher";
-	else if (item.weapons == WEAPON_ROCKET_LAUNCHER)
+	else if (item.weapon == WEAPON_ROCKET_LAUNCHER)
 		item.netname = "Rocket Launcher";
-	else if (item.weapons == WEAPON_LIGHTNING)
+	else if (item.weapon == WEAPON_LIGHTNING)
 		item.netname = "Thunderbolt";
-	else if (item.weapons == WEAPON_LASER_CANNON)
+	else if (item.weapon == WEAPON_LASER_CANNON)
 		item.netname = "Laser Cannon";
-	else if (item.weapons == WEAPON_PLASMA)
+	else if (item.weapon == WEAPON_PLASMA)
 		item.netname = "Plasma Rifle";
-	else if (item.weapons == WEAPON_PROXIMITY_GUN)
+	else if (item.weapon == WEAPON_PROXIMITY_GUN)
 		item.netname = "Proximity Launcher";
-	else if (item.weapons == WEAPON_CHAINSAW)
+	else if (item.weapon == WEAPON_CHAINSAW)
 		item.netname = "Chainsaw";
 	else
 		item.netname = "";

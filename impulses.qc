@@ -19,7 +19,7 @@ void() GiveAllCommand =
 		
 	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.impulse = 0;
-	W_SetCurrentAmmo ();
+	W_SetCurrentAmmo (TRUE);
 
 	stuffcmd (self, "bf\n");
 	sprint(self, "You got everything\n");

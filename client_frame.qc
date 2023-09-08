@@ -100,7 +100,7 @@ void() PlayerRessurect =
 	
 	StopBurning(self);
 
-	W_SetCurrentAmmo ();
+	W_SetCurrentAmmo (TRUE);
 	player_stand1 ();
 
 	bprint (self.netname);
@@ -511,7 +511,7 @@ void() PlayerPreThink =
 		if (self.weapon != WEAPON_AXE && self.weapon != WEAPON_CHAINSAW)
 		{
 			self.weapon = W_BestWeapon ();
-			W_SetCurrentAmmo ();
+			W_SetCurrentAmmo (TRUE);
 		}
 	}
 	

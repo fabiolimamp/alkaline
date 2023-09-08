@@ -117,7 +117,7 @@ void(float stat) HIP_FireLaser = {
 
 	if (self.ammo_cells < 1) {
 		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo (TRUE);
 		return;
 	}
 

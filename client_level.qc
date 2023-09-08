@@ -689,7 +689,7 @@ void() PutClientInServer = {
 		if (spot.spawnflags & 4) self.flags = self.flags | FL_NOTARGET;
 	}
 	
-	W_SetCurrentAmmo ();
+	W_SetCurrentAmmo (TRUE);
 
 	self.attack_finished = time;
 	self.th_pain = player_pain_generic;
