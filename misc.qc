@@ -1297,7 +1297,7 @@ void(entity controller) textstory_hide = {
 	self.enemy.suppressCenterPrint = FALSE;
 	centerprint(self.enemy, "");
 
-	if (controller.noise2) 
+	if (controller.noise2 != "") 
 		sound(self.enemy, CHAN_BODY, controller.noise2, 1, ATTN_NORM);
 	
 	if (!(controller.spawnflags & TEXTSTORY_NOFADE))
@@ -1320,7 +1320,7 @@ void(entity controller) textstory_show = {
 	centerprint_builtin(self.enemy, msg);
 
 	if (!self.state) {
-		if (controller.noise1)
+		if (controller.noise1 != "")
 			sound(self.enemy, CHAN_BODY, controller.noise1, 1, ATTN_NORM);
 
 		if (!(controller.spawnflags & TEXTSTORY_NOFADE))
@@ -1384,8 +1384,8 @@ void() trigger_textstory = {
 		self.noise2 = "misc/null.wav";
 
 	if (self.spawnflags & TEXTSTORY_SILENT) {
-		self.noise1 = "";
-		self.noise2 = "";
+		self.noise1 = string_null;
+		self.noise2 = string_null;
 	}
 
 
