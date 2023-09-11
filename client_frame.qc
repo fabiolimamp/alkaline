@@ -86,20 +86,21 @@ void() PlayerRessurect =
 	self.view_ofs = '0 0 22';
 	
 	//lose powerups
-	self.items &~= IT_INVISIBILITY | IT_INVULNERABILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
+	self.items &~= IT_INVISIBILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
+	self.items |= IT_INVULNERABILITY;
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
-	self.invincible_finished = 0;
+	self.invincible_finished = time + 5;
 	self.effects = 0;
-	self.invincible_time = 0;
+	self.invincible_time = 1;
 	self.trif_time = 0;
 	self.trif_finished = 0;
 
 	
 	StopBurning(self);
 
-	W_SetCurrentAmmo ();
+	W_SetCurrentAmmo (TRUE);
 	player_stand1 ();
 
 	bprint (self.netname);
@@ -173,7 +174,9 @@ void() PlayerJump =
 	
 	if (self.waterlevel >= 2)
 	{
-		if (self.watertype == CONTENT_WATER)
+		if (self.onladder)
+			self.velocity_z = 160;
+		else if (self.watertype == CONTENT_WATER)
 			self.velocity_z = 100;
 		else if (self.watertype == CONTENT_SLIME)
 			self.velocity_z = 80;
@@ -181,7 +184,7 @@ void() PlayerJump =
 			self.velocity_z = 50;
 
 // play swiming sound
-		if (self.swim_flag < time)
+		if (self.swim_flag < time && !self.onladder && !self.wasonladder )
 		{
 			self.swim_flag = time + 1;
 			if (random() < 0.5)
@@ -273,9 +276,13 @@ WaterMove
 void() WaterMove =
 {
 //dprint (ftos(self.waterlevel));
-	if (self.movetype == MOVETYPE_NOCLIP)
+	if (self.movetype == MOVETYPE_NOCLIP){
+		self.air_finished = time + 12;
+		self.flags &~= FL_INWATER;
+		self.waterlevel = 0;
 		return;
-	if (self.health < 0)
+	}
+	if (self.health <= 0)
 		return;
 
 	if (self.waterlevel != 3)
@@ -299,7 +306,11 @@ void() WaterMove =
 			self.pain_finished = time + 1;
 		}
 	}
-	
+
+	if (self.onladder) {
+		self.flags &~= FL_INWATER;
+	}
+
 	if (!self.waterlevel)
 	{
 		if (self.flags & FL_INWATER)
@@ -332,7 +343,7 @@ void() WaterMove =
 		}
 	}
 	
-	if ( !(self.flags & FL_INWATER) )
+	if ( !(self.flags & FL_INWATER) && !self.onladder && !self.wasonladder)
 	{	
 
 // player enter water sound
@@ -400,6 +411,8 @@ void() PlayerPreThink =
 	gameloaded = 1;
 	self.light_lev = 0; // resets dimlight flags for powerups/status effects
 
+	self.dmg_take_hud = 0;
+	
 	if (cleanUpClientStuff) {
 		fog_setFromEnt( self, self );
 		csf_apply(self);
@@ -415,12 +428,19 @@ void() PlayerPreThink =
 	if (self.view_ofs == '0 0 0')
 		return;		// intermission or finale
 
+	if (self.groundentity)
+		self.prev_groundvel = self.groundentity.velocity;
+	else 
+		self.prev_groundvel = '0 0 0';
+
+	self.wasonground = (self.flags & FL_ONGROUND) ? 1 : 0;
+
 	makevectors (self.v_angle);		// is this still used
 
 	CheckRules ();
 	WaterMove ();
 
-	if (self.waterlevel == 2)
+	if (self.waterlevel == 2 && !self.onladder)
 		CheckWaterJump ();
 
 	if (self.deadflag >= DEAD_DEAD)
@@ -433,41 +453,54 @@ void() PlayerPreThink =
 		return;	// dying, so do nothing
 
 
-
-	//johnfitz ladder conditions
-	if (self.onladder)
-	{
-		self.onladder = 0;
-		if (self.button2)
-		{				
-			PlayerClimb ();
-			
-			//ladder sounds
-			if (time > self.ladder_step_finished) {
-				if (random() > 0.5)
-					sound (self, CHAN_AUTO, "misc/ladder.wav", 0.5, ATTN_NORM);
-				else
-					sound (self, CHAN_AUTO, "misc/ladder2.wav", 0.5, ATTN_NORM);
-				self.ladder_step_finished = time + 0.3;
-			}
-			
-		}
-		else
-		{
-			self.flags = self.flags | FL_JUMPRELEASED;
-			self.velocity = 0.9 * self.velocity;
+	if (self.onladder) {
+		
+		if (fabs(self.velocity_x) < 1 && fabs(self.velocity_y) < 1 &&
+			self.velocity_z < 0 && self.velocity_z > -42 &&
+			!(self.flags & FL_WATERJUMP) &&
+			self.v_angle_x < 90
+		) {
 			self.velocity_z = 0;
+		}
+
+		self.velocity_x *= 0.9;
+		self.velocity_y *= 0.9;
+
+		if (fabs(self.velocity_z) > 160) {
+			if (self.velocity_z > 0) self.velocity_z = 160;
+			else self.velocity_z = -160;
+		}
+
+		if (self.velocity_z == 0) {
+			self.ladder_step_height = self.origin_z + 49;
+		}
+
+		if (
+			(
+				(self.onladder && !self.wasonladder) ||
+				(self.onladder && self.wasonladder && fabs(self.origin_z - self.ladder_step_height) > 48)
+			) && (self.velocity_z != 0)
+
+		)
+		{
+			self.ladder_step_height = self.origin_z;
+
+			if (random() > 0.5)
+				sound (self, CHAN_AUTO, "misc/ladder.wav", 0.5, ATTN_NORM);
+			else
+				sound (self, CHAN_AUTO, "misc/ladder2.wav", 0.5, ATTN_NORM);
 		}
 	}		
 	else
 	{
 		self.gravity = self.wantedgravity; 
-		if (self.button2)
-			PlayerJump ();
-		else
-			self.flags = self.flags | FL_JUMPRELEASED;
-	} //johnfitz
-	
+
+	}
+
+	if (self.button2)
+		PlayerJump ();
+	else
+		self.flags = self.flags | FL_JUMPRELEASED;
 
 // teleporters can force a non-moving pause time	
 	if (time < self.pausetime)
@@ -478,7 +511,7 @@ void() PlayerPreThink =
 		if (self.weapon != WEAPON_AXE && self.weapon != WEAPON_CHAINSAW)
 		{
 			self.weapon = W_BestWeapon ();
-			W_SetCurrentAmmo ();
+			W_SetCurrentAmmo (TRUE);
 		}
 	}
 	
@@ -492,8 +525,18 @@ void() PlayerPreThink =
 	}
 
 	checkClientInWaterBrush();
+	if (self.onladder){
+		self.gravity = 0.00000001;
+		self.waterlevel = 2;
+	}
+	self.wasonladder = self.onladder;
+	self.onladder = 0;
 
-	//dprint3("Player waterlevel: ", ftos(self.waterlevel), "\n");
+
+	if (self.waterlevel < 2 && time < self.pushfinished) {
+		ClientPush();// jumppad.qc
+	}
+
 };
 	
 /*
@@ -823,7 +866,25 @@ void() PlayerPostThink =
 //	local	float	mspeed, aspeed;
 //	local	float	r;
 	checkClientInWaterBrush();
-	
+
+	if (self.flags & FL_ONGROUND) {
+		self.pushfinished = 0;
+		self.pushvelocity = '0 0 0';
+	}
+
+	if (self.wasonground && !(self.flags & FL_ONGROUND)){
+		self.velocity += [self.prev_groundvel_x, self.prev_groundvel_y, 0];
+		///dprint("added velocity\n");
+	}
+	else if (!self.wasonground && self.flags & FL_ONGROUND) {
+		self.velocity -= [self.groundentity.velocity_x, self.groundentity.velocity_y, 0];
+	}
+
+	if (self.wasonladder){
+		self.gravity = 0.00000001;
+		self.waterlevel = 2;
+	}
+
 	if (self.flags & FL_CLIENT) {
 		mapvar_cvar = TRUE;			// Map Variable are live
 	}
@@ -876,9 +937,11 @@ void() PlayerPostThink =
 		{
 			T_Damage(self, world, world, 5, DMGTYPE_FALL); 
 			sound (self, CHAN_VOICE, "player/land2.wav", 1, ATTN_NORM);
+			self.punchangle_x = 3;	
 		}
 		else
 			sound (self, CHAN_VOICE, "player/land.wav", 1, ATTN_NORM);
+			self.punchangle_x = 2;	
 
 		self.jump_flag = 0;
 	}
@@ -898,25 +961,28 @@ void() PlayerPostThink =
 	else
 		self.effects = self.effects - (self.effects & EF_DIMLIGHT);
 
-	if (cvar("scratch2")) {
-		self.angles_z = cvar("scratch2");
+	/*if (cvar("scratch3")) {
+		self.angles_z = cvar("scratch3");
 		self.angles_x = self.v_angle_x;
 		self.fixangle = 1;
-		cvar_set("scratch2", 0);
-	}
+		cvar_set("scratch3", 0);
+	}*/
 	
 	if (self.v_angle_z) {
-		//dprint3("v_angle_z: ", ftos(self.v_angle_z), "\n");
-		if (fabs(self.v_angle_z) < 0.5) {
-			self.angles_z = 0;
-		//	dprint("z_angle ended! ----------------\n");
-		}
-		else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*(fabs(self.v_angle_z)/40 + 0.2);
-		//else self.angles_z = self.v_angle_z - sign(self.v_angle_z)*0.5;
+		self.angles = normalizeAngles180(self.v_angle);
 
-		self.angles_x = self.v_angle_x;
+		if (fabs(self.angles_z) < 0.5) 
+			self.angles_z = 0;
+		else
+			self.angles_z = self.angles_z - sign(self.angles_z)*(fabs(self.angles_z)/40 + 0.2);
+
 		self.fixangle = 1;
 	}
+
+	//centerprint2(self, ftos(vlen([self.velocity_x, self.velocity_y, 0])), "\n");
+
+	SUB_CallAsSelf(UpdateLightning, self.lightningcontroller);
+	self.oldvelocity = self.velocity;
 };
 
 
@@ -960,6 +1026,9 @@ void() ClientDisconnect =
 	// if the level end trigger has been activated, just return
 	// since they aren't *really* leaving
 
+	if (self.healthcontroller.classname == "healthcontroller") remove(self.healthcontroller);
+	if (self.lightningcontroller.classname == "lightningcontroller") remove(self.lightningcontroller);
+	
 	// let everyone else know
 	bprint (self.netname);
 	bprint (" left the game with ");

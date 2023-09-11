@@ -41,14 +41,23 @@ void() dn_and_wait_go_down =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos2, self.speed, dn_and_wait_hit_bottom);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos2, self.smoothdist, self.speed, 0, 0, dn_and_wait_hit_bottom);
+	else
+		SUB_CalcMove (self.pos2, self.speed, dn_and_wait_hit_bottom);
+	
 };
 
 void() dn_and_wait_go_up =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_UP;
-	SUB_CalcMove (self.pos1, self.speed, dn_and_wait_hit_top);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos1, self.smoothdist, self.speed, 0, 0, dn_and_wait_hit_top);
+	else
+		SUB_CalcMove (self.pos1, self.speed, dn_and_wait_hit_top);
 };
 
 void() dn_and_wait_crush =
@@ -95,14 +104,22 @@ void() toggle_go_down =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos2, self.speed, toggle_hit_bottom);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos2, self.smoothdist, self.speed, 0, 0, toggle_hit_bottom);
+	else
+		SUB_CalcMove (self.pos2, self.speed, toggle_hit_bottom);
 };
 
 void() toggle_go_up =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_UP;
-	SUB_CalcMove (self.pos1, self.speed, toggle_hit_top);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos1, self.smoothdist, self.speed, 0, 0, toggle_hit_top);
+	else
+		SUB_CalcMove (self.pos1, self.speed, toggle_hit_top);
 };
 
 void() toggle_crush =
@@ -146,7 +163,12 @@ void() elvtr_go =
 								(self.height * self.elevatorToFloor);
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_UP;
-	SUB_CalcMove (self.elevatorDestination, self.speed, elvtr_stop);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.elevatorDestination, self.smoothdist, self.speed, 0, 0, elvtr_stop);
+	else
+		SUB_CalcMove (self.elevatorDestination, self.speed, elvtr_stop);
+
 	self.elevatorLastUse = time;
 };
 
@@ -334,14 +356,22 @@ void() plat2_go_down =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos2, self.speed, plat2_hit_bottom);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos2, self.smoothdist, self.speed, 0, 0, plat2_hit_bottom);
+	else
+		SUB_CalcMove (self.pos2, self.speed, plat2_hit_bottom);
 };
 
 void() plat2_go_up =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_UP;
-	SUB_CalcMove (self.pos1, self.speed, plat2_hit_top);
+	
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos1, self.smoothdist, self.speed, 0, 0, plat2_hit_top);
+	else
+		SUB_CalcMove (self.pos1, self.speed, plat2_hit_top);
 };
 
 void() plat2_use =
@@ -472,6 +502,8 @@ Set "sounds" to one of the following:
 
 void() func_new_plat =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 	//local entity t;
 	local float negativeHeight;

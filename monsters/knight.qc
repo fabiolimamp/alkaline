@@ -210,7 +210,7 @@ void()	knight_dieb7	=[	$deathb7,	knight_dieb8	] {};
 void()	knight_dieb8	=[	$deathb8,	knight_dieb9	] {};
 void()	knight_dieb9	=[	$deathb9,	knight_dieb10] {};
 void()	knight_dieb10 = [	$deathb10,	knight_dieb11] {};
-void()	knight_dieb11 = [	$deathb11,	knight_dieb11] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	knight_dieb11 = [	$deathb11,	knight_dieb11] {monster_dead_dead();};
 
 
 void() knight_die =
@@ -225,6 +225,7 @@ void() knight_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	self.skin = 2;
@@ -294,6 +295,8 @@ void() monster_knight_spawner = {
 
 void() monster_knight =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

@@ -184,6 +184,8 @@ dmg is the amount of damage to cause when touched."
 ]
 */
 void() misc_forcefield = {
+   if (!SUB_InitEntity()) return;
+   
 
    if ( !self.color )
       self.color = 192;

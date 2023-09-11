@@ -86,10 +86,10 @@ void() eel_melee =
     local float     attackOK;
 
     attackOK = 1;
+    entity enem = SUB_entEnemyTarget();
+    traceline (self.origin, enem.origin, FALSE, self);
 
-    traceline (self.origin, self.enemy.origin, FALSE, self);
-
-    if (trace_ent != self.enemy)
+    if (trace_ent != enem)
         attackOK = FALSE;       // don't have a clear shot
 	if (trace_inopen && trace_inwater)
         attackOK = FALSE;           // sight line crossed contents
@@ -151,7 +151,7 @@ void() eel_death12 =[	$eeldth6,	eel_death13	] {};
 void() eel_death13 =[	$eeldth7,	eel_death14	] {};
 void() eel_death14 =[	$eeldth8,	eel_death15	] {};
 void() eel_death15 =[	$eeldth9,	eel_death16	] {droptofloor();};
-void() eel_death16 =[	$eeldth10,	eel_death16	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() eel_death16 =[	$eeldth10,	eel_death16	] {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);monster_dead_dead();};
 
 void() eel_death =
 {
@@ -167,6 +167,7 @@ void() eel_death =
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	else
@@ -174,6 +175,15 @@ void() eel_death =
 		eel_death1 ();
 	}
 };
+
+
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) eel_damage = {
+	if (dmgtype == DMGTYPE_ENERGY && inflictor.classname != "hiplaser")
+		return 0;
+	else
+		return damage;
+}
+
 
 void(entity attacker, float damage) eel_pain1  =[	$eeldth1, eel_pain2 ] 
 { 
@@ -223,6 +233,7 @@ void(entity e) monster_eel_start =
 	self.th_melee = eel_attack1;
 	self.effects = EF_DIMLIGHT;
 	self.th_sight = eel_sight;
+	self.th_damage = eel_damage;
 
     self.delay = time + random() * 6;
     self.weapon = 0;
@@ -238,6 +249,8 @@ void() monster_eel_spawner = {
 
 void() monster_eel =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

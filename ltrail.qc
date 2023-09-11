@@ -16,7 +16,7 @@ void() misc_lightning_fire =
 {
 	local entity t;
 	local float damage;
-	
+	float lt_style;
 	if (self.sounds == LT_SOUND_ON) {
 		if (self.t_width < time) {
 			sound (self, CHAN_VOICE, "weapons/lhit.wav", 1, ATTN_NORM);
@@ -31,9 +31,15 @@ void() misc_lightning_fire =
 
 	// Unsupported feature: emitter can target multiple points
 	// Use at your own risk, may or may not work
+	if (self.style == 1) lt_style = TE_LIGHTNING1;
+	else if (self.style == 2) lt_style = TE_LIGHTNING3;
+	else lt_style = TE_LIGHTNING2;
+	
 	while(t) {
+
+		
 		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-		WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
+		WriteByte (MSG_BROADCAST, lt_style);
 		WriteEntity (MSG_BROADCAST, t);
 		WriteCoord (MSG_BROADCAST, self.origin_x);
 		WriteCoord (MSG_BROADCAST, self.origin_y);
@@ -42,13 +48,16 @@ void() misc_lightning_fire =
 		WriteCoord (MSG_BROADCAST, t.origin_y);
 		WriteCoord (MSG_BROADCAST, t.origin_z);
 		
-		LightningDamage (self.origin, t.origin, self, damage);
+		if (damage > 0) LightningDamage (self.origin, t.origin, self, damage);
 		
 		if(t.spawnflags & LT_CASTLIGHT) t.effects = EF_MUZZLEFLASH;
 
 		t.enemy = self;
 
 		t = find(t, targetname, self.target);
+		if (t.style == 1) lt_style = TE_LIGHTNING1;
+		else if (t.style == 2) lt_style = TE_LIGHTNING3;
+		else lt_style = TE_LIGHTNING2;
 	}
 	
 	if(self.spawnflags & LT_CASTLIGHT) self.effects = EF_MUZZLEFLASH;
@@ -118,6 +127,8 @@ Set 'sounds' to
 */
 void() misc_lightning_start =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound ("weapons/lhit.wav");
 
 	self.owner = self;
@@ -159,6 +170,8 @@ Set 'delay' to the amount of time before the lightning is spawned from this poin
 */
 void() misc_lightning_relay =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound ("weapons/lhit.wav");
 	if(!self.target || self.target == "") objerror("Target point not set for lightning");
 
@@ -175,6 +188,8 @@ Does not fire any lightning.
 */
 void() misc_lightning_end =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound ("weapons/lhit.wav");
 
 	// muzzleflash effects require a model

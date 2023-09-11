@@ -3,21 +3,29 @@ exec default.cfg
 exec config.cfg
 
 sv_protocol 999
-sv_protocol FTE999
+sv_maxvelocity 50000
 sv_nqplayerphysics 1
+sys_ticrate 0.025
 
 bind "F8" "echo Loading autosave...; wait; load auto"
+bind "h" "impulse 50"
 
-alias bulletholes "impulse 30"
-alias footsteps "impulse 31"
-alias autosaves "impulse 32"
-alias tracers "impulse 42"
-alias playertracers "impulse 43"
-alias resetalkalinesettings "impulse 40"
+alias bulletholes "impulse 30;toggleconsole;wait;toggleconsole"
+alias footsteps "impulse 31;toggleconsole;wait;toggleconsole"
+alias autosaves "impulse 32;toggleconsole;wait;toggleconsole"
+alias tracers "impulse 42;toggleconsole;wait;toggleconsole"
+alias playertracers "impulse 43;toggleconsole;wait;toggleconsole"
+alias oldgrenade "impulse 44;toggleconsole;wait;toggleconsole"
+alias oldlightning "impulse 45;toggleconsole;wait;toggleconsole"
+alias resetalkalinesettings "impulse 40;toggleconsole;wait;toggleconsole"
+
+
+alias cyclehud "impulse 50;toggleconsole;wait;toggleconsole"
 
 alias resurrect "impulse 154"
 alias giveall "impulse 9"
-alias giveweapons "impulse 13"
+alias giveweapons "impulse 9"
+alias givekeys "impulse 13"
 alias belt "impulse 252"
 alias suit "impulse 253"
 alias pentagram "impulse 254"
@@ -27,19 +35,19 @@ alias bootstimed "impulse 221"
 alias bootsremove "impulse 223"
 
 
-alias alkversion "impulse 128"
-alias listmonsters "impulse 184"
-alias mapvars "impulse 185"
+alias alkversion "impulse 128;toggleconsole;wait;toggleconsole"
+alias listmonsters "impulse 184;toggleconsole;wait;toggleconsole"
+alias mapvars "impulse 185;toggleconsole;wait;toggleconsole"
 alias reveal "impulse 200"
-alias impulsetest1 "impulse 91"
-alias impulsetest2 "impulse 92"
-alias impulsetest3 "impulse 93"
-alias impulsetest4 "impulse 94"
-alias impulsetest5 "impulse 95"
-alias impulsetest6 "impulse 96"
-alias impulsetest7 "impulse 97"
-alias impulsetest8 "impulse 98"
-alias impulsetest9 "impulse 99"
+alias impulsetest1 "impulse 91;toggleconsole;wait;toggleconsole"
+alias impulsetest2 "impulse 92;toggleconsole;wait;toggleconsole"
+alias impulsetest3 "impulse 93;toggleconsole;wait;toggleconsole"
+alias impulsetest4 "impulse 94;toggleconsole;wait;toggleconsole"
+alias impulsetest5 "impulse 95;toggleconsole;wait;toggleconsole"
+alias impulsetest6 "impulse 96;toggleconsole;wait;toggleconsole"
+alias impulsetest7 "impulse 97;toggleconsole;wait;toggleconsole"
+alias impulsetest8 "impulse 98;toggleconsole;wait;toggleconsole"
+alias impulsetest9 "impulse 99;toggleconsole;wait;toggleconsole"
 
 
 exec autoexec.cfg

@@ -46,7 +46,10 @@ void() flame_touch =
 
 	if (self.dmg > 0 && other.health > 0){
 		//direct damage
-		T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN_LONG);
+		if (self.style == 1)
+			T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN);
+		else
+			T_Damage(other, self, self.owner, self.dmg, DMGTYPE_BURN_LONG);
 		self.dmg = 0;
 	}
 };
@@ -271,7 +274,7 @@ void()	dread_die10		=[	$death10,	dread_die11	] {ai_forward(5);};
 void()	dread_die11		=[	$death11,	dread_die12	] {ai_forward(5);};
 void()	dread_die12		=[	$death12,	dread_die13	] {ai_forward(5);};
 void()	dread_die13		=[	$death13,	dread_die14	] {};
-void()	dread_die14		=[	$death14,	dread_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	dread_die14		=[	$death14,	dread_die14	] {monster_dead_dead();};
 
 void()	dread_fdie1		=[	$fdeath1,	dread_fdie2	] {};
 void()	dread_fdie2		=[	$fdeath2,	dread_fdie3	] {};
@@ -283,7 +286,7 @@ void()	dread_fdie7		=[	$fdeath7,	dread_fdie8	] {};
 void()	dread_fdie8		=[	$fdeath8,	dread_fdie9	] {};
 void()	dread_fdie9		=[	$fdeath9,	dread_fdie10	] {};
 void()	dread_fdie10	=[	$fdeath10,	dread_fdie11	] {};
-void()	dread_fdie11	=[	$fdeath11,	dread_fdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	dread_fdie11	=[	$fdeath11,	dread_fdie11	] {monster_dead_dead();};
 
 
 void() dread_die =
@@ -298,6 +301,7 @@ void() dread_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 	}
 	else // regular death
 	{
@@ -377,6 +381,8 @@ void() monster_dreadnaught_spawner = {
 
 void() monster_dreadnaught =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

@@ -15,6 +15,25 @@ void(string s, string ss, string sss, string ssss, string sssss, string ssssss, 
 void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss, string sssssssss) dprint9 = 
 	{ dprint(s); dprint(ss); dprint(sss); dprint(ssss); dprint(sssss); dprint(ssssss); dprint(sssssss); dprint(ssssssss); dprint(sssssssss); }
 
+
+void(string s, string ss) bprint2 = 
+	{ bprint(s); bprint(ss); }
+void(string s, string ss, string sss) bprint3 = 
+	{ bprint(s); bprint(ss); bprint(sss); }
+void(string s, string ss, string sss, string ssss) bprint4 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); }
+void(string s, string ss, string sss, string ssss, string sssss) bprint5 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); }
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss) bprint6 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss) bprint7 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss); bprint(sssssss);}
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss) bprint8 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss); bprint(sssssss); bprint(ssssssss); }
+void(string s, string ss, string sss, string ssss, string sssss, string ssssss, string sssssss, string ssssssss, string sssssssss) bprint9 = 
+	{ bprint(s); bprint(ss); bprint(sss); bprint(ssss); bprint(sssss); bprint(ssssss); bprint(sssssss); bprint(ssssssss); bprint(sssssssss); }
+
+
 /**********************************
  Sourced from utility.qc from smej2
  **********************************/
@@ -111,7 +130,7 @@ entity(vector point, float rad, .string fld, string match) findradiusplus =
 	return prev;
 }
 
-entity(vector org, .string fld, string match) findClosest = {
+entity(vector org, .string fld, string match, float aliveonly) findClosest = {
 	entity closest, next;
 	float closestdist, nextdist;
 
@@ -119,17 +138,52 @@ entity(vector org, .string fld, string match) findClosest = {
 	
 	next = find(world, fld, match);	
 	while (next) {
-		nextdist = vlen(next.origin - org);
-		if (nextdist < closestdist) {
-			closestdist = nextdist;
-			closest = next;
+		if ((aliveonly && next.health > 0) || !aliveonly) {
+			nextdist = vlen(next.origin - org);
+			if (nextdist < closestdist) {
+				closestdist = nextdist;
+				closest = next;
+			}
 		}
 		next = find(next, fld, match);
 	}
 	return closest;
 };
 
-entity(vector org, .string fld, string match, entity ignored) findClosestVisible = {
+// checks if a box isn't inside any solid
+// returns 1 if area is clear, 0 if not
+float(vector org, vector minbbox, vector maxbbox) isClear = {
+	
+	entity e = spawn_builtin();
+	e.movetype = MOVETYPE_TOSS;
+	setorigin(e, org);
+	setsize(e, minbbox, maxbbox);
+
+	// droptofloor() returns false if the drop distance is more than 256
+	// and that's indistinguishable from a solid check.
+	// So we need to put another entity below as a stopper so droptofloor
+	// will always return true if there's room
+	entity e2 = spawn_builtin();
+	e2.solid = SOLID_BBOX;
+	// slightly below the test box's lower bound
+	setorigin(e2, e.origin + [0, 0, minbbox_z - 4]);
+	setsize(e2, [minbbox_x, minbbox_y, -1], [maxbbox_x, maxbbox_y, 1]);
+
+	entity oldself = self;
+	self = e;
+		
+	float ret = droptofloor();
+
+	self = oldself;
+
+	remove(e);
+	remove(e2);
+
+	return ret;
+}
+
+
+entity(vector org, .string fld, string match, entity ignored, float aliveonly) findClosestVisible = {
 	entity closest, next;
 	float closestdist, nextdist;
 
@@ -137,13 +191,15 @@ entity(vector org, .string fld, string match, entity ignored) findClosestVisible
 	
 	next = find(world, fld, match);	
 	while (next) {
-		nextdist = vlen(next.origin - org);
-		if (nextdist < closestdist) {
-			traceline(org, next.origin, TRUE, ignored);
+		if ((aliveonly && next.health > 0) || !aliveonly) {
+			nextdist = vlen(next.origin - org);
+			if (nextdist < closestdist) {
+				traceline(org, next.origin, TRUE, ignored);
 
-			if (trace_fraction < 1 && !(trace_inopen && trace_inwater)) {
-				closestdist = nextdist;
-				closest = next;
+				if (trace_fraction < 1 && !(trace_inopen && trace_inwater)) {
+					closestdist = nextdist;
+					closest = next;
+				}
 			}
 		}
 		next = find(next, fld, match);

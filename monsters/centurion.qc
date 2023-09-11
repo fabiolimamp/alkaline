@@ -411,7 +411,7 @@ void()	cent_die10	=[	$death10,	cent_die11	] {};
 void()	cent_die11	=[	$death11,	cent_die12	] {};
 void()	cent_die12	=[	$death12,	cent_die13	] {};
 void()	cent_die13	=[	$death13,	cent_die14	] {};
-void()	cent_die14	=[	$death14,	cent_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	cent_die14	=[	$death14,	cent_die14	] {monster_dead_dead();};
 
 void()	cent_fdie1	=[	$fdeath1,	cent_fdie2	] {cent_death();};
 void()	cent_fdie2	=[	$fdeath2,	cent_fdie3	] {};
@@ -423,7 +423,7 @@ void()	cent_fdie7	=[	$fdeath7,	cent_fdie8	] {};
 void()	cent_fdie8	=[	$fdeath8,	cent_fdie9	] {};
 void()	cent_fdie9	=[	$fdeath9,	cent_fdie10	] {};
 void()	cent_fdie10	=[	$fdeath10,	cent_fdie11	] {};
-void()	cent_fdie11	=[	$fdeath11,	cent_fdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	cent_fdie11	=[	$fdeath11,	cent_fdie11	] {monster_dead_dead();};
 
 
 void() cent_die =
@@ -439,6 +439,7 @@ void() cent_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	self.skin = 3;
@@ -511,6 +512,8 @@ void() monster_centurion_spawner = {
 
 void() monster_centurion =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

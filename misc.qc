@@ -4,8 +4,9 @@
 Lava Balls
 */
 
-void() misc_fireball =
-{
+void() misc_fireball = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/lavaball.mdl");
 	self.classname = "fireball";
 	self.nextthink = time + (random() * 5);
@@ -15,9 +16,8 @@ void() misc_fireball =
 		self.speed = 1000;
 };
 
-void() fire_fly =
-{
-	local entity	fireball;
+void() fire_fly = {
+	entity fireball;
 
 	fireball = spawn();
 	fireball.solid = SOLID_TRIGGER;
@@ -39,12 +39,133 @@ void() fire_fly =
 };
 
 
-void() fire_touch =
-{
+void() fire_touch = {
 	if (other.health) T_Damage(other, self, self, 20, DMGTYPE_BURN);
 	remove(self);
 };
 
+
+
+//============================================================================
+
+void() misc_drip = {
+	if (!SUB_InitEntity()) return;
+	
+
+	if (self.mdl == "") self.mdl = "progs/drip.spr";
+	precache_model(self.mdl);
+
+	// mute
+	if (!(self.spawnflags & 2)) {
+		precache_sound("misc/singledrip1.wav");
+		precache_sound("misc/singledrip2.wav");
+		precache_sound("misc/singledrip3.wav");
+		precache_sound("misc/singledrip4.wav");
+	}
+
+	self.think = misc_drip_think;
+	self.use = misc_drip_use;
+
+	self.waitmin = defaultFl(self.waitmin, 2);
+	self.waitmax = defaultFl(self.waitmax, 3);
+	float tmin = min(self.waitmin, self.waitmax);
+	float tmax = max(self.waitmin, self.waitmax);
+	self.waitmin = tmin;
+	self.waitmax = tmax;
+	// start off
+	if (self.spawnflags & 1)
+		self.estate = STATE_INACTIVE;
+
+	self.nextthink = time + self.waitmin + random()*(self.waitmax - self.waitmin);
+}
+
+void() misc_drip_use = {
+	if (self.estate != STATE_ACTIVE)
+		self.estate = STATE_ACTIVE;
+	else
+		self.estate = STATE_INACTIVE;
+}
+
+void() misc_drip_think = {
+	self.nextthink = time + self.waitmin + random()*(self.waitmax - self.waitmin);
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	misc_drip_spawn();
+}
+
+void() misc_drip_spawn = {
+	entity e = spawn();
+
+	e.movetype = MOVETYPE_TOSS;
+	e.solid = SOLID_BBOX;
+	setorigin(e, self.origin);
+	setmodel(e, self.mdl);
+	setsize(e, '0 0 0', '0 0 0');
+	e.owner = self;
+	e.touch = misc_drip_touch;
+	e.think = SUB_Remove;
+	e.nextthink = time + 5;
+}
+
+void() misc_drip_touch = {
+	self.solid = SOLID_NOT;
+
+	// mute
+	if (!(self.spawnflags & 2)) {
+		float r = random();
+		string dripsnd;
+
+		if (r < 0.25) dripsnd = "misc/singledrip1.wav";
+		else if (r < 0.5) dripsnd = "misc/singledrip2.wav";
+		else if (r < 0.75) dripsnd = "misc/singledrip3.wav";
+		else dripsnd = "misc/singledrip4.wav";
+
+		sound(self, CHAN_VOICE, dripsnd, 0.1, ATTN_STATIC);
+	}
+	
+	// if no bounce is off
+	if (!(self.spawnflags & 4)) {
+		vector v_drip, angle_normal;
+
+		traceline(self.origin + '0 0 2', self.origin - '0 0 2', FALSE, self);
+		angle_normal = vectoangles(trace_plane_normal);
+		
+		entity e;
+		for (float i = 0; i < 3; i++) {
+
+			e = spawn();
+			e.movetype = MOVETYPE_BOUNCE;
+			e.solid = SOLID_TRIGGER;
+			setorigin(e, self.origin);
+			setmodel(e, self.model);
+			setsize(e, '0 0 0', '0 0 0');
+			e.touch = misc_drip_bouncetouch;
+			e.think = SUB_Remove;
+			e.nextthink = time + 1;
+
+			// create the initial drip vector
+			makevectors([-50 - random()*15, 360/3*i + crandom()*30, 0]);
+
+			// rotate the vector 90deg so it's facing front
+			v_drip = [v_forward_z, v_forward_y, -v_forward_x];
+
+			// negate X axis to account for makevectors
+			makevectors([-angle_normal_x, angle_normal_y, angle_normal_z]);
+
+			// reorient the drip vector around the surface normal
+			e.velocity = (v_forward*v_drip_x - v_right*v_drip_y + v_up*v_drip_z) * (130 + random()*40);//vlen(self.velocity)/4;
+		}
+	}
+	remove(self);
+
+}
+
+void() misc_drip_bouncetouch = {
+	if (other.solid == SOLID_TRIGGER)
+		return;
+	remove(self);
+}
 //============================================================================
 
 
@@ -64,7 +185,7 @@ void() barrel_explode =
 	activator = self.enemy;
 	SUB_UseTargets();
 
-	BecomeExplosion ();
+	BecomeExplosion();
 };
 
 void() barrel_die = {
@@ -79,32 +200,32 @@ void() barrel_die = {
 	self.think = barrel_explode;
 	self.nextthink = time + 0.05 + random()*0.05;
 }
+
 /*QUAKED misc_explobox (0 .5 .8) (0 0 0) (32 32 64)
 TESTING THING
 */
-
-void() misc_explobox =
-{
-	local float	oldz;
+void() misc_explobox = {
+	if (!SUB_InitEntity()) return;
+	
+	float oldz;
 	
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_NONE;
-	precache_model ("maps/b_explob.bsp");
-	setmodel (self, "maps/b_explob.bsp");
-	precache_sound ("weapons/r_exp3.wav");
+	precache_model("maps/b_explob.bsp");
+	setmodel(self, "maps/b_explob.bsp");
+	precache_sound("weapons/r_exp3.wav");
 	if (!self.health) self.health = 20;
 	if (!self.dmg) self.dmg = 160;
 	if (!self.obituary) self.obituary = "blew up";
 	self.th_die = barrel_die;
 	self.use = barrel_die;
-	if(!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
+	if (!(self.spawnflags & 1)) self.takedamage = DAMAGE_AIM;
 
 	self.bloodtype = zeroconvertdefault(self.bloodtype, SPAWN_YELLOWSPARK);
 	self.origin_z = self.origin_z + 2;
 	oldz = self.origin_z;
 	droptofloor();
-	if (oldz - self.origin_z > 250)
-	{
+	if (oldz - self.origin_z > 250) {
 		dprint ("Explobox fell out of level at ");
 		dprint (vtos(self.origin));
 		dprint ("\n");
@@ -119,9 +240,10 @@ void() misc_explobox =
 Smaller exploding box, REGISTERED ONLY
 */
 
-void() misc_explobox2 =
-{
-	local float	oldz;
+void() misc_explobox2 = {
+	if (!SUB_InitEntity()) return;
+	
+	float oldz;
 	
 	self.solid = SOLID_BBOX;
 	self.movetype = MOVETYPE_NONE;
@@ -155,10 +277,6 @@ float TRAP_SUPERSPIKE = 1;
 float TRAP_LASER = 2;
 float TRAP_ROCKET = 4;
 float TRAP_VOREBALL = 8;
-
-void(vector org, vector vec) LaunchLaser;
-void() ShalMissile;
-void() ShalMissileTouch;
 
 void() ShalMisTouchEnt = {
 
@@ -226,28 +344,25 @@ void() ShalMisTfDie = {
 	ShalMisTouchEnt();
 }
 
-void() spikeshooter_use =
-{
-	local float spd, damage;
+void() spikeshooter_use = {
+	float spd, damage;
 
 	if (self.estate != STATE_ACTIVE) return;
 
-	if (self.spawnflags & TRAP_LASER)
-	{
+	if (self.spawnflags & TRAP_LASER) {
 		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
 		LaunchLaser (self.origin, self.movedir);
 		spd = 600;
 		damage = 15;
 	}
-	else if (self.spawnflags & TRAP_ROCKET)
-	{
+	else if (self.spawnflags & TRAP_ROCKET) {
 		sound (self, CHAN_VOICE, "weapons/sgun1.wav", 1, ATTN_NORM);
 		launch_rocket (self.origin, self.movedir);
 		spd = 500;
 		damage = 60;
 	}
-	else if (self.spawnflags & TRAP_VOREBALL)
-	{
+	else if (self.spawnflags & TRAP_VOREBALL) {
+		self.originalmonsters = 1;
 		ShalMissile();
 		damage = 20;
 		spd = 200;
@@ -255,7 +370,7 @@ void() spikeshooter_use =
 		if (activator.flags & FL_CLIENT && activator.health > 0)
 			newmis.enemy = activator;
 		else
-			newmis.enemy = findClosest(self.origin, classname, "player");
+			newmis.enemy = findClosest(self.origin, classname, "player", 0);
 
 		newmis.attack_finished = time + 10;
 		newmis.movetype = MOVETYPE_FLY;
@@ -286,14 +401,14 @@ void() spikeshooter_use =
 		e.owner = newmis;
 		newmis.trigger_field = e;
 		setorigin(e, newmis.origin);
-		setsize (e, '-16 -16 -16', '16 16 16');
+		setsize(e, '-16 -16 -16', '16 16 16');
 		
 		e.classname = "shalmissiletf";
 		//sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 	}
 	else
 	{
-		sound (self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
+		sound(self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
 		launch_spike (self.origin, self.movedir);
 		spd = 500;
 		if (self.spawnflags & TRAP_SUPERSPIKE) {
@@ -312,9 +427,10 @@ void() spikeshooter_use =
 
 void() shooter_think =
 {
+	if (!SUB_InitEntity()) return;
+	
 	spikeshooter_use();
-	self.nextthink = time + self.wait;
-	//newmis.velocity = self.movedir * 500;
+	self.nextthink = time + self.wait + self.rand*random();
 };
 
 
@@ -325,7 +441,9 @@ Laser is only for REGISTERED.
 
 void() trap_spikeshooter =
 {
-	SetMovedir ();
+	if (!SUB_InitEntity()) return;
+	
+	SetMovedir();
 	self.use = spikeshooter_use;
 
 	if (!self.obituary) {
@@ -337,10 +455,10 @@ void() trap_spikeshooter =
 
 	if (self.spawnflags & TRAP_LASER)
 	{
-		precache_model ("progs/laser.mdl");
+		precache_model("progs/laser.mdl");
 		
-		precache_sound ("enforcer/enfire.wav");
-		precache_sound ("enforcer/enfstop.wav");
+		precache_sound("enforcer/enfire.wav");
+		precache_sound("enforcer/enfstop.wav");
 	}
 	else if (self.spawnflags & TRAP_VOREBALL) {
 		precache_model("progs/v_spike_red.mdl");
@@ -361,26 +479,42 @@ Continuously fires spikes.
 "wait" time between spike (1.0 default)
 "nextthink" delay before firing first spike, so multiple shooters can be stagered.
 */
-void() trap_shooter =
-{
-	trap_spikeshooter ();
+void() trap_shooter = {
+	if (!SUB_InitEntity()) return;
 	
+	trap_spikeshooter ();
+	self.use = trap_shooter_toggle;
+
 	if (self.wait == 0)
 		self.wait = 1;
-	self.nextthink = self.nextthink + self.wait + time;
+
+	if (self.spawnflags & 128)
+		self.estate = STATE_INACTIVE;
+
+	if (!self.delay)
+		self.delay = self.nextthink; // backwards compatibility with id1
+
+	self.nextthink = time + self.delay + self.rand*random();
 	self.think = shooter_think;
+	
 };
 
-
+void() trap_shooter_toggle = {
+	if (self.estate != STATE_ACTIVE){
+		self.estate = STATE_ACTIVE;
+		self.nextthink = time + self.delay + self.rand*random();
+	}
+	else {
+		self.estate = STATE_INACTIVE;
+	}
+};
 
 /*QUAKED viewthing (0 .5 .8) (-16 -16 -24) (16 16 40)
 
 Just for the debugging level.  Don't use
 */
 
-void() viewthing =
-
-{
+void() viewthing = {
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_BBOX;
 	setsize (self, '-16 -16 -24', '16 16 40');
@@ -396,23 +530,17 @@ from Copper
 
 ***********************************************/
 
-void() target_autosave_use =
-{
+void() target_autosave_use = {
 	if (noautosaves) return;
 	
-	if (self.enemy)
-	{
+	if (self.enemy)	{
 		activator = self.enemy;
 		self.enemy = world;
 	}
+
 	if (activator.classname != "player") return;
-	if (time < 2)	// make sure an autosave fired from a player start doesn't happen too early
-	{
-		//if (serverflags & SVFL_RESPAWNING)
-		//{
-		//	dprint("RESPAWNING flag set, skipping autosave\n");
-		//	return;
-		//}
+
+	if (time < 2) {	// make sure an autosave fired from a player start doesn't happen too early
 		self.enemy = activator;
 		self.think = target_autosave_use;
 		self.nextthink = 2;
@@ -437,17 +565,17 @@ the bprint tends to stomp any other prints on screen in most quake clients, so u
 	message(string) : "Change save filename" : "auto"
 ]
 */
-void() target_autosave =
-{
-	if (deathmatch || coop)
-	{
+void() target_autosave = {
+	if (!SUB_InitEntity()) return;
+	
+	if (deathmatch || coop) {
 		remove(self);
 		return;
 	}
 	
-
 	if (self.message == string_null)
 		self.message = "auto";
+
 	precache_sound2("misc/sav.wav");
 	self.use = target_autosave_use;
 }
@@ -461,25 +589,48 @@ target_move
 
 
 void() target_move_use = {
-	local entity t;
-	local vector neworigin;
+	entity t;
+	vector neworigin;
 
-	t = find(world, targetname, self.target);
+	// move activator
+	if (self.spawnflags & 8)
+		t = activator;
+	else {
+		t = find(world, targetname, self.target);
 
-	if (!t) //targetname not found, search for targetname2
-		t = find(world, targetname2, self.target);
+		if (!t) //targetname not found, search for targetname2
+			t = find(world, targetname2, self.target);
+	}
 
-	if(t) {
+	if (t) {
 		if(t.movetype == MOVETYPE_STEP) //monsters need to move off the ground, otherwise they'll lerp 
 			neworigin = self.origin + '0 0 1';
 		else
 			neworigin = self.origin;
 
+		// spawn teleport effect
+		if (self.spawnflags & 4) {
+			spawn_tfog(t.origin);
+		}
+
 		setorigin(t, neworigin);
 		//t.origin = self.origin;
-		if(!(self.spawnflags & 1)) t.angles = self.mangle;
-		if(!(self.spawnflags & 2)) t.velocity = '0 0 0';
+		// keep original angle
+		if (!(self.spawnflags & 1)) t.angles = self.mangle;
+		// keep original velocity
+		if (!(self.spawnflags & 2)) t.velocity = '0 0 0';
 		t.flags = t.flags - t.flags & FL_ONGROUND;
+
+		if (self.spawnflags & 4) {
+			vector tfog_org;
+			if (t.flags & FL_CLIENT) {
+				makevectors(t.v_angle);
+				tfog_org = t.origin + v_forward * 32;
+			}
+			else
+				tfog_org = t.origin;
+			spawn_tfog(tfog_org);
+		}
 	}
 
 };
@@ -490,15 +641,17 @@ Use spawnflag 1 to not change the entity's original angle.
 Spawnflag 2 keeps the entity's original velocity.
 */
 void() target_move = {
-	if(!self.target)
+	if (!SUB_InitEntity()) return;
+	
+	if (!self.target && !(self.spawnflags & 8))
 		objerror("No target set");
 
-	if(!self.targetname)
+	if (!self.targetname)
 		objerror("No targetname set");
 
 	self.use = target_move_use;
 	
-	if(!self.mangle) self.mangle = self.angles;
+	if (!self.mangle) self.mangle = self.angles;
 };
 
 
@@ -525,28 +678,40 @@ void(entity t1, entity t2) make_angry_at =
 	}
 };
 
-void() target_infight_use = 
-{
-	local entity	t1, t2;
-
-	t1 = find(world, targetname, self.target);
-	t2 = find(world, targetname, self.target2);
+void() target_infight_use = {
+	entity t1, prev_t1, t2;
 	
-	if (!t1)
-	{
-		dprint("[target_infight] Cannot find target\n");
-		return;
+	t2 = find(world, targetname, self.target2);
+
+	if (!t2) {
+		t2 = find(world, targetname2, self.target2);
 	}
-	if (!t2)
-	{
+
+	if (!t2) {
 		dprint("[target_infight] Cannot find target2\n");
 		return;
 	}
+
+	t1 = find(world, targetname, self.target);
+	while (t1) {
+		if (t1.flags & FL_MONSTER){
+			make_angry_at(t1, t2);
+			prev_t1 = t1;
+		}
+		t1 = find(t1, targetname, self.target);
+	}
 	
-	make_angry_at(t1, t2);
+	t1 = find(world, targetname2, self.target);
+	while (t1) {
+		if (t1.flags & FL_MONSTER){
+			make_angry_at(t1, t2);
+			prev_t1 = t1;
+		}
+		t1 = find(t1, targetname2, self.target);
+	}
 	
-	if (self.spawnflags & INFIGHT_MUTUAL)
-		make_angry_at(t2, t1);
+	if (self.spawnflags & INFIGHT_MUTUAL && prev_t1)
+		make_angry_at(t2, prev_t1);
 };
 
 /*QUAKED target_infight (1 .0 .5) (-8 -8 -8) (8 8 8) MUTUAL
@@ -556,8 +721,9 @@ By default, the infighting doesn't start mutually, that is, 'target2' monster wi
 
 If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'.
 */
-void() target_infight = 
-{
+void() target_infight = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_infight_use;
 };
 
@@ -574,7 +740,16 @@ SIMPLE BMODELS
 
 void() func_wall_use =
 {	// change to alternate textures
-	self.frame = 1 - self.frame;
+
+	if (self.spawnflags & 8) {
+		if (self.estate != STATE_ACTIVE)
+			self.estate = STATE_ACTIVE;
+		else
+			self.estate = STATE_INACTIVE;
+	}
+	else
+		self.frame = 1 - self.frame;
+
 };
 
 /*QUAKED func_wall (0 .5 .8) ?
@@ -582,6 +757,8 @@ This is just a solid wall if not inhibitted
 */
 void() func_wall =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.angles = '0 0 0';
 	if (self.spawnflags & 2) {
 		self.movetype = MOVETYPE_NONE;
@@ -593,8 +770,48 @@ void() func_wall =
 	}
 	self.use = func_wall_use;
 	setmodel (self, self.model);
+	
+	if (self.spawnflags & 4) self.frame = 1 - self.frame;
+
+	if (self.spawnflags & 16) self.estate = STATE_INACTIVE;
+
+	if (self.spawnflags & 8) {
+		self.think = func_wall_think;
+		self.nextthink = getLocalTime() + 0.1;
+	}
 };
 
+
+void() func_wall_think = {
+	self.nextthink = getLocalTime() + 0.01;
+
+	float onframe = (self.spawnflags & 4) ? 0 : 1;
+
+	if (self.estate != STATE_ACTIVE) {
+		self.frame = 1 - onframe;
+		return;
+	}
+
+	float ltframe = ceil((time % 2.5) * 10);
+	//dprint3("Frame time: ", ftos((time % 2.5) * 10), "\n");
+	//dprint3("Frame number: ", ftos(ltframe), "\n");
+
+	/*
+mmamammmmammamamaaamammma
+	*/
+	if (ltframe == 3 || ltframe == 5 || ltframe == 10 || ltframe == 13 || ltframe == 15 ||
+		ltframe == 17 || ltframe == 18 || ltframe == 19 || ltframe == 21 || ltframe == 25
+	)
+		self.frame = 1 - onframe;
+	
+	else
+		self.frame = onframe;
+
+
+}
+
+
+//=============================================================================
 
 /*QUAKED func_togglewall (0 .5 .8) ? START_OFF X X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
 
@@ -607,17 +824,16 @@ START_OFF wall doesn't block until triggered.
 "dmg" is the amount of damage to cause when touched.
 */
 
-void () blocker_touch =
-	{
-    if ( !self.dmg )
-      return;
+void () blocker_touch =	{
+	if (!self.dmg )
+	  return;
 
 	if (time < self.attack_finished)
 		return;
 	self.attack_finished = time + 0.5;
 	T_Damage(other, self, self, self.dmg, DMGTYPE_CRUSH);
 	sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
-   };
+};
 
 void () blocker_use = {
 	if ( !self.state ) {
@@ -642,6 +858,8 @@ void () blocker_use = {
 };
 
 void() func_togglewall = {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.classname = "togglewall";
 	
@@ -652,18 +870,18 @@ void() func_togglewall = {
 	self.use = blocker_use;
 
 	if ( !self.noise )
-      self.noise = ("misc/null.wav");
+		self.noise = ("misc/null.wav");
 
-   	if ( !self.noise1 )
-      self.noise1 = ("misc/null.wav");
+	if ( !self.noise1 )
+		self.noise1 = ("misc/null.wav");
 
 	precache_sound( self.noise );
 	precache_sound( self.noise1 );
 	
 	if ( self.spawnflags & START_OFF ) self.state = 1;
 	else self.state = 0;
-      
-    blocker_use();
+	  
+	blocker_use();
 };
 
 /*****************
@@ -711,6 +929,8 @@ An invisible bmodel that can be used to only cast shadows.
 ******************/
 
 void() func_shadow = {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.angles = '0 0 0';
 	self.movetype = MOVETYPE_NONE;
@@ -734,6 +954,8 @@ TOGGLEVISWALL_NOTSOLID sets it to be non-solid.
 */
 void() func_togglevisiblewall =
 {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.angles = '0 0 0';
 	self.use = func_togglevisiblewall_use;
@@ -758,6 +980,8 @@ A simple entity that looks solid but lets you walk through it.
 void() func_illusionary =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.angles = '0 0 0';
 	self.movetype = MOVETYPE_NONE;
 	self.solid = SOLID_NOT;
@@ -771,6 +995,8 @@ This bmodel will appear if the episode has allready been completed, so players c
 void() func_episodegate =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!(serverflags & self.spawnflags))
 		return;			// can still enter episode
 
@@ -787,6 +1013,8 @@ This bmodel appears unless players have all of the episode sigils.
 void() func_bossgate =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if ( (serverflags & 15) == 15)
 		return;		// all episodes completed
 	self.angles = '0 0 0';
@@ -893,37 +1121,6 @@ void() misc_noisemaker =
 
 //a collection of various pieces of mods and some new code -- by dumptruck_ds
 
-void() play_sound_use =
-   {
-   if (self.spawnflags & 1)
-      {
-      if (self.state == 0)
-         {
-         self.state = 1;
-         sound (self, self.impulse, self.noise, self.volume, self.speed);
-         }
-      else
-         {
-         self.state = 0;
-         sound (self, self.impulse, "misc/null.wav", self.volume, self.speed);
-         }
-      }
-   else
-      {
-      sound (self, self.impulse, self.noise, self.volume, self.speed);
-      }
-   };
-
-void() PlaySoundThink =
-   {
-   local float t;
-   t = self.wait * random();
-   if (t < self.delay)
-      t = self.delay;
-   self.nextthink = time + t;
-   play_sound_use();
-   };
-
 /*QUAKED play_sound_triggered (0.3 0.1 0.6) (-8 -8 -8) (8 8 8) toggle
 play a sound when it is used
 "toggle" determines whether sound should be stopped when triggered again
@@ -932,34 +1129,56 @@ play a sound when it is used
 "impulse" channel on which to play sound (0-7) (0 automatic is default)
 "speed" attenuation factor
    -1 - no attenuation
-    1 - normal
-    2 - idle
-    3 - static
+	1 - normal
+	2 - idle
+	3 - static
 */
-void() play_sound_triggered =
-   {
-   
-   if (!self.noise) //dumptruck_ds
-   {
-       objerror ("no soundfile set in noise!\n");
-       remove(self);
-       return;
-   }
+void() play_sound_triggered = {
 
-   precache_sound (self.noise);
-   precache_sound ("misc/null.wav");
-   if (self.volume == 0)
-      self.volume = 1;
-   if (self.speed == 0)
-      self.speed = 1;
-   if (self.speed == -1)
-      // self.speed = 0;
-      self.speed = ATTN_NONE;
-   if (self.spawnflags & 1)
-      if (self.impulse == 0)
-         self.impulse = 7;
-   self.use = play_sound_use;
-   };
+	if (!SUB_InitEntity()) return;
+	
+	if (!self.noise) {
+	   objerror ("no soundfile set in noise!\n");
+	   remove(self);
+	   return;
+	}
+
+	precache_sound (self.noise);
+	precache_sound ("misc/null.wav");
+
+	if (self.volume == 0)
+		self.volume = 1;
+
+	if (self.speed == 0)
+		self.speed = 1;
+
+	if (self.speed == -1)
+		self.speed = ATTN_NONE;
+
+	if (self.spawnflags & 1){
+		if (self.impulse == 0)
+			self.impulse = 7;
+	}
+
+	self.use = play_sound_triggered_use;
+};
+
+void() play_sound_triggered_use = {
+	if (self.spawnflags & 1) {
+		if (self.state == 0) {
+			self.state = 1;
+			sound (self, self.impulse, self.noise, self.volume, self.speed);
+		}
+		else {
+			self.state = 0;
+			sound (self, self.impulse, "misc/null.wav", self.volume, self.speed);
+		}
+	}
+	else {
+		sound (self, self.impulse, self.noise, self.volume, self.speed);
+	}
+};
+
 
 /*QUAKED play_sound (0.3 0.1 0.6) (-8 -8 -8) (8 8 8)
 play a sound on a periodic basis
@@ -970,36 +1189,60 @@ play a sound on a periodic basis
 "impulse" channel on which to play sound (0-7) (0 automatic is default)
 "speed" attenuation factor
    -1 - no attenuation
-    1 - normal
-    2 - idle
-    3 - static
+	1 - normal
+	2 - idle
+	3 - static
 */
-void() play_sound =
-   {
 
+void() play_sound = {play_sound_repeat();}
 
-   local float t;
+void() play_sound_repeat = {
 
-   if (!self.noise) //dumptruck_ds
-   {
-      objerror ("no soundfile set in noise!\n");
-      remove(self);
-      return;
-   }
+	if (!SUB_InitEntity()) return;
+	
+	if (!self.noise) {
+		objerror ("no soundfile set in noise!\n");
+		remove(self);
+		return;
+	}
 
+	play_sound_triggered();
 
-   play_sound_triggered();
-   if (self.wait == 0)
-      self.wait = 20;
-   if (self.delay == 0)
-      self.delay = 2;
-   self.think = PlaySoundThink;
-   t = self.wait * random();
-   if (t < self.delay)
-      t = self.delay;
-   self.nextthink = time + t;
-   };
+	if (self.wait == 0)
+		self.wait = 20;
 
+	if (self.delay == 0)
+		self.delay = 2;
+	
+	self.think = play_sound_think;
+	self.use = play_sound_use;
+
+	if (self.spawnflags & 1) {
+		self.estate = STATE_INACTIVE;
+	}
+	else {
+		self.nextthink = time + self.delay + self.wait * random();
+	}
+};
+
+void() play_sound_think = {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	self.nextthink = time + self.delay + self.wait * random();
+
+	sound(self, self.impulse, self.noise, self.volume, self.speed);
+};
+
+void() play_sound_use = {
+	if (self.estate != STATE_ACTIVE) {
+		self.estate = STATE_ACTIVE;
+		self.nextthink = time + self.delay + self.wait * random();
+	}
+	else {
+		self.estate = STATE_INACTIVE;
+	}
+};
 
 /*
 =============================================================
@@ -1028,6 +1271,8 @@ void() misc_changemusic_use = {
 }
 
 void() misc_changemusic = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.sounds) {
 		objerror("ERROR: misc_changemusic needs valid track number in sounds field");
 		return;
@@ -1055,7 +1300,7 @@ void(entity controller) textstory_hide = {
 	self.enemy.suppressCenterPrint = FALSE;
 	centerprint(self.enemy, "");
 
-	if (controller.noise2) 
+	if (controller.noise2 != "") 
 		sound(self.enemy, CHAN_BODY, controller.noise2, 1, ATTN_NORM);
 	
 	if (!(controller.spawnflags & TEXTSTORY_NOFADE))
@@ -1078,7 +1323,7 @@ void(entity controller) textstory_show = {
 	centerprint_builtin(self.enemy, msg);
 
 	if (!self.state) {
-		if (controller.noise1)
+		if (controller.noise1 != "")
 			sound(self.enemy, CHAN_BODY, controller.noise1, 1, ATTN_NORM);
 
 		if (!(controller.spawnflags & TEXTSTORY_NOFADE))
@@ -1127,6 +1372,8 @@ void() trigger_textstory_touch = {
 };
 
 void() trigger_textstory = {
+	if (!SUB_InitEntity()) return;
+	
 	InitTrigger();
 	self.touch = trigger_textstory_touch;
 
@@ -1140,8 +1387,8 @@ void() trigger_textstory = {
 		self.noise2 = "misc/null.wav";
 
 	if (self.spawnflags & TEXTSTORY_SILENT) {
-		self.noise1 = "";
-		self.noise2 = "";
+		self.noise1 = string_null;
+		self.noise2 = string_null;
 	}
 
 
@@ -1207,6 +1454,8 @@ void() target_textstory_use = {
 };
 
 void() target_textstory = {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.noise1 == "")
 		self.noise1 = "misc/talk.wav";
 	
@@ -1247,6 +1496,8 @@ float FUNC_FADE_REVERSE = 1;
 float FUNC_FADE_START_ON = 2;
 
 void() func_fade = {
+	if (!SUB_InitEntity()) return;
+	
 
 	self.solid = SOLID_NOT;
 	self.movetype = MOVETYPE_NOCLIP; 
@@ -1483,5 +1734,7 @@ void() target_skybox_use = {
 };
 
 void() target_skybox = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_skybox_use;
 };

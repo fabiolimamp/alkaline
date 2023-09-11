@@ -6,55 +6,78 @@ SHAL-RATH
 ==============================================================================
 */
 
-
+// 0 - 10
 $frame attack1 attack2 attack3 attack4 attack5 attack6 attack7 attack8
 $frame attack9 attack10 attack11
 
+// 11- 15
 $frame pain1 pain2 pain3 pain4 pain5 
 
+// 16 - 22
 $frame death1 death2 death3 death4 death5 death6 death7
 
+// 23
 $frame stand1
 
+// 24 - 34
 $frame	walk1 walk2 walk3 walk4 walk5 walk6 walk7 walk8 walk9 walk10
 $frame	walk11
 
-void() ShalMissile;
-void() shal_stand     =[      $stand1,       shal_stand    ] {ai_stand();}; // stand1 is a framegroup, animates automatically
+/*
+Mechavore has a few differences in frame numbers:
+- Stand is frame 0 instead of 23
+- Walk is 23-33 instead of 24-34
+- There's no frame 34
+That gets corrected in every frame function they're used in.
+*/
+
+
+void() shal_stand     =[      $stand1,       shal_stand    ] {
+	if (!self.originalmonsters) self.frame = $attack1; // mechavore has stand as frame 0
+	ai_stand();
+}; // stand1 is a framegroup, animates automatically
 
 
 void() shal_walk1     =[      $walk1,       shal_walk2    ] {ai_walk(4);};
 void() shal_walk2     =[      $walk2,       shal_walk3    ] {ai_walk(6);
-	if (random() < 0.2)	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);};
-void() shal_walk3     =[      $walk3,       shal_walk4    ] {ai_walk(0);};
-void() shal_walk4     =[      $walk4,       shal_walk5    ] {ai_walk(0);};
-void() shal_walk5     =[      $walk5,       shal_walk6    ] {ai_walk(0);};
-void() shal_walk6     =[      $walk6,       shal_walk7    ] {ai_walk(0);};
-void() shal_walk7     =[      $walk7,       shal_walk8    ] {ai_walk(5);};
-void() shal_walk8     =[      $walk8,       shal_walk9    ] {ai_walk(6);};
-void() shal_walk9     =[      $walk9,       shal_walk10    ] {ai_walk(5);};
-void() shal_walk10    =[      $walk10,       shal_walk11    ] {ai_walk(0);};
-void() shal_walk11    =[      $walk11,       shal_walk1    ] {ai_walk(4);};
+	if (random() < 0.2)	{
+		if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+		else sound (self, CHAN_VOICE, "mechavore/mv_idle_a.wav", 1, ATTN_IDLE);
+	}
+};
+void() shal_walk3     =[      $walk3,       shal_walk4    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk4     =[      $walk4,       shal_walk5    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk5     =[      $walk5,       shal_walk6    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk6     =[      $walk6,       shal_walk7    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk7     =[      $walk7,       shal_walk8    ] {if (!self.originalmonsters) self.frame--; ai_walk(5); };
+void() shal_walk8     =[      $walk8,       shal_walk9    ] {if (!self.originalmonsters) self.frame--; ai_walk(6); };
+void() shal_walk9     =[      $walk9,       shal_walk10    ] {if (!self.originalmonsters) self.frame--; ai_walk(5); };
+void() shal_walk10    =[      $walk10,       shal_walk11    ] {if (!self.originalmonsters) self.frame--; ai_walk(0); };
+void() shal_walk11    =[      $walk11,       shal_walk1    ] {if (!self.originalmonsters) self.frame--; ai_walk(4); };
 
 
 
 void() shal_run1     =[      $walk1,       shal_run2    ] {ai_run(6);
-	if (random() < 0.2)	sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+	if (random() < 0.2)	{
+		if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/idle.wav", 1, ATTN_IDLE);
+		else sound (self, CHAN_VOICE, "mechavore/mv_idle_a.wav", 1, ATTN_IDLE);
+	}
 };
-void() shal_run2     =[      $walk2,       shal_run3    ] {ai_run(4);};
-void() shal_run3     =[      $walk3,       shal_run4    ] {ai_run(0);};
-void() shal_run4     =[      $walk4,       shal_run5    ] {ai_run(0);};
-void() shal_run5     =[      $walk5,       shal_run6    ] {ai_run(0);};
-void() shal_run6     =[      $walk6,       shal_run7    ] {ai_run(0);};
-void() shal_run7     =[      $walk7,       shal_run8    ] {ai_run(5);};
-void() shal_run8     =[      $walk8,       shal_run9    ] {ai_run(6);};
-void() shal_run9     =[      $walk9,       shal_run10    ] {ai_run(5);};
-void() shal_run10    =[      $walk10,       shal_run11    ] {ai_run(0);};
-void() shal_run11    =[      $walk11,       shal_run1    ] {ai_run(4);};
+void() shal_run2     =[      $walk2,       shal_run3    ] {if (!self.originalmonsters) self.frame--; ai_run(4); };
+void() shal_run3     =[      $walk3,       shal_run4    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run4     =[      $walk4,       shal_run5    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run5     =[      $walk5,       shal_run6    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run6     =[      $walk6,       shal_run7    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run7     =[      $walk7,       shal_run8    ] {if (!self.originalmonsters) self.frame--; ai_run(5); };
+void() shal_run8     =[      $walk8,       shal_run9    ] {if (!self.originalmonsters) self.frame--; ai_run(6); };
+void() shal_run9     =[      $walk9,       shal_run10    ] {if (!self.originalmonsters) self.frame--; ai_run(5); };
+void() shal_run10    =[      $walk10,       shal_run11    ] {if (!self.originalmonsters) self.frame--; ai_run(0); };
+void() shal_run11    =[      $walk11,       shal_run1    ] {if (!self.originalmonsters) self.frame--; ai_run(4); };
 
 
 void() shal_attack1     =[      $attack1,       shal_attack2    ] {ai_face();
-	sound (self, CHAN_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/attack.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "mechavore/mv_attack.wav", 1, ATTN_NORM);
 };
 void() shal_attack2     =[      $attack2,       shal_attack3    ] {ai_face();};
 void() shal_attack3     =[      $attack3,       shal_attack4    ] {ai_face();};
@@ -78,14 +101,21 @@ void() shal_pain5       =[      $pain5, shal_run1      ] {};
 
 void(entity attacker, float damage) shalrath_pain =
 {
-	if (self.health < self.max_health * 0.05)	self.skin = 3;
-	else if (self.health < self.max_health * 0.4)	self.skin = 2;
-	else if (self.health < self.max_health * 0.8)	self.skin = 1;
+	if (self.originalmonsters) {
+		if (self.health < self.max_health * 0.05)	self.skin = 3;
+		else if (self.health < self.max_health * 0.4)	self.skin = 2;
+		else if (self.health < self.max_health * 0.8)	self.skin = 1;
+	}
 
 	if (self.pain_finished > time)
 		return;
 
-	sound (self, CHAN_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/pain.wav", 1, ATTN_NORM);
+	else {
+		if (random() > 0.5) sound (self, CHAN_VOICE, "mechavore/mv_pain_a.wav", 1, ATTN_NORM);
+		else sound (self, CHAN_VOICE, "mechavore/mv_pain2_a.wav", 1, ATTN_NORM);
+	}
+
 	shal_pain1();
 	self.pain_finished = time + 3;
 };
@@ -100,27 +130,46 @@ void() shal_death3      =[      $death3,        shal_death4     ] {};
 void() shal_death4      =[      $death4,        shal_death5     ] {};
 void() shal_death5      =[      $death5,        shal_death6     ] {};
 void() shal_death6      =[      $death6,        shal_death7     ] {};
-void() shal_death7      =[      $death7,        shal_death7    ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() shal_death7      =[      $death7,        shal_death7    ] {monster_dead_dead();};
 
 void() shalrath_die =
 {
 // check for gib
 	if (self.health < -90)
 	{
-		self.skin = 0;
-		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_shal.mdl", self.health);
-		ThrowGib ("progs/gib1.mdl", self.health);
-		ThrowGib ("progs/gib1.mdl", self.health);
-		ThrowGib ("progs/gib2.mdl", self.health);
-		ThrowGib ("progs/gib3.mdl", self.health);
-		ThrowGib ("progs/gib3.mdl", self.health);
-		ThrowGib ("progs/gib3.mdl", self.health);
-		return;
+		self.deadflag = DEAD_GIBBED;
+		if (self.originalmonsters) {
+			self.skin = 0;
+			sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
+			ThrowHead ("progs/h_shal.mdl", self.health);
+			ThrowGib ("progs/gib1.mdl", self.health);
+			ThrowGib ("progs/gib1.mdl", self.health);
+			ThrowGib ("progs/gib2.mdl", self.health);
+			ThrowGib ("progs/gib3.mdl", self.health);
+			ThrowGib ("progs/gib3.mdl", self.health);
+			ThrowGib ("progs/gib3.mdl", self.health);
+			return;
+		}
+		else {
+			sound (self, CHAN_VOICE, "misc/metal_impact.wav", 1, ATTN_NORM);
+			ThrowHead("progs/h_hunter.mdl", self.health);
+			ThrowGib ("progs/cyberscrag_gib1.mdl", self.health);
+			ThrowGib ("progs/cyberscrag_gib1.mdl", self.health);
+			ThrowGib ("progs/cyberscrag_gib2.mdl", self.health);
+			ThrowGib ("progs/cyberscrag_gib2.mdl", self.health);
+			ThrowGib ("progs/probelasr_gib1.mdl", self.health);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health);
+			ThrowGib ("progs/hunter_gibs.mdl", self.health);
+			return;
+		}
 	}
-	self.skin = 3;
 
-	sound (self, CHAN_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
+	if (self.originalmonsters) self.skin = 3;
+
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/death.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "mechavore/mv_death_a.wav", 1, ATTN_NORM);
+
 	shal_death1();
 	self.solid = SOLID_TRIGGER; setorigin(self, self.origin);
 	// insert death sounds here
@@ -147,13 +196,17 @@ void() ShalMissile =
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 
+
 	newmis = spawn ();
 	newmis.classname = "shalmissile";
 	newmis.owner = self;
 
 	newmis.solid = SOLID_BBOX;
 	newmis.movetype = MOVETYPE_FLYMISSILE;
-	setmodel (newmis, "progs/v_spike.mdl");
+
+	if (self.originalmonsters) setmodel (newmis, "progs/v_spike.mdl");
+	else setmodel (newmis, "progs/mvore_bomb.mdl");
+	
 
 	setsize (newmis, '0 0 0', '0 0 0');		
 	newmis.flags = newmis.flags | FL_PROJECTILE;
@@ -204,13 +257,14 @@ void() ShalMissileTouch =
 	self.dmg = zeroconvertdefault(self.dmg, 40);
 
 	T_RadiusDamage (self, self.owner, self.dmg, world, DMGTYPE_EXPLOSION);
-	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
-
+	
 	BecomeExplosion();
 };
 
 void() shal_sight = {
-	sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
+
+	if (self.originalmonsters) sound (self, CHAN_VOICE, "shalrath/sight.wav", 1, ATTN_NORM);
+	else sound (self, CHAN_VOICE, "mechavore/mv_sight_b.wav", 1, ATTN_NORM);
 };
 
 
@@ -228,13 +282,17 @@ void(entity e) monster_shalrath_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	
-	setmodel (self, "progs/shalrath_old.mdl");
+	if (self.originalmonsters) setmodel (self, "progs/shalrath_old.mdl");
+	else setmodel (self, "progs/shalrath_newer.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
 	
 	self.health = 400;
-	if (self.obituary == "") self.obituary = "was exploded by a Vore";
+	if (self.obituary == "") {
+		if (self.originalmonsters) self.obituary = "was exploded by a Vore";
+		else self.obituary = "was exploded by a Mecha Vore";
+	}
 
 	self.th_stand = shal_stand;
 	self.th_walk = shal_walk1;
@@ -255,21 +313,60 @@ void() monster_shalrath_spawner = {
 
 void() monster_shalrath =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
 		return;
 	}
-	precache_model2 ("progs/shalrath_old.mdl");
-	precache_model2 ("progs/h_shal.mdl");
-	precache_model2 ("progs/v_spike.mdl");
-	
-	precache_sound2 ("shalrath/attack.wav");
+
+	if (
+		world.originalmonsters && !(self.spawnflags & MONSTER_ALK)
+		|| self.spawnflags & MONSTER_ORIGINAL
+	) self.originalmonsters = 1;
+
+	if (self.originalmonsters) {
+		precache_model2 ("progs/shalrath_old.mdl");
+		precache_model2 ("progs/h_shal.mdl");
+		precache_model2 ("progs/v_spike.mdl");
+		
+		precache_sound2 ("shalrath/attack.wav");
+		precache_sound2 ("shalrath/death.wav");
+		precache_sound2 ("shalrath/idle.wav");
+		precache_sound2 ("shalrath/pain.wav");
+		precache_sound2 ("shalrath/sight.wav");
+	}
+	else {
+		precache_model2 ("progs/shalrath_newer.mdl");
+		precache_model2 ("progs/h_hunter.mdl");
+		precache_model2 ("progs/hunter_gibs.mdl");
+		precache_model2 ("progs/mvore_bomb.mdl");
+		precache_model2 ("progs/probelasr_gib1.mdl");
+		precache_model2 ("progs/cyberscrag_gib1.mdl");
+		precache_model2 ("progs/cyberscrag_gib2.mdl");
+		
+		/*precache_sound2 ("mechavore/attack.wav");
+		precache_sound2 ("mechavore/death.wav");
+		precache_sound2 ("mechavore/idle.wav");
+		precache_sound2 ("mechavore/pain.wav");
+		precache_sound2 ("mechavore/sight.wav");*/
+
+		precache_sound2 ("mechavore/mv_attack.wav");
+		precache_sound2 ("mechavore/mv_death_a.wav");
+		precache_sound2 ("mechavore/mv_idle_a.wav");
+		precache_sound2 ("mechavore/mv_pain_a.wav");
+		precache_sound2 ("mechavore/mv_pain2_a.wav");
+		precache_sound2 ("mechavore/mv_sight_b.wav");
+
+		precache_sound2 ("misc/metal_impact.wav");
+	}
+
 	precache_sound2 ("shalrath/attack2.wav");
-	precache_sound2 ("shalrath/death.wav");
-	precache_sound2 ("shalrath/idle.wav");
-	precache_sound2 ("shalrath/pain.wav");
-	precache_sound2 ("shalrath/sight.wav");
+	
+	if (!self.bloodtype && !self.originalmonsters) {
+		self.bloodtype = SPAWN_YELLOWSPARK;
+	}
 
 	self.cmins = VEC_HULL2_MIN;
 	self.cmaxs = VEC_HULL2_MAX;

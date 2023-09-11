@@ -569,6 +569,7 @@ void() torm_death = [ 98, torm_death ] {
 		ThrowGib ("progs/fgib1.mdl", -23);
 		ThrowGib ("progs/fgib1.mdl", -23);
 		ThrowGib ("progs/fgib1.mdl", -23);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 
@@ -649,6 +650,8 @@ void() monster_tormentor_spawner = {
 
 
 void() monster_tormentor = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

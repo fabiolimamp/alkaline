@@ -8,7 +8,7 @@ float	IT_NAILS				= 512;
 float	IT_ROCKETS				= 1024;
 float	IT_CELLS				= 2048;
 
-//								= 4096
+float	IT_KEY3					= 4096;
 
 float	IT_ARMOR1				= 8192;
 float	IT_ARMOR2				= 16384;
@@ -47,3 +47,5 @@ float STAT_WEAPONS = 33;
 float STAT_BOOTS = 34;
 float STAT_BOOTS_FINISHED = 35;
 float STAT_IT = 36;
+float STAT_DMGTAKE = 37;
+float STAT_CURRENTHUD = 38;

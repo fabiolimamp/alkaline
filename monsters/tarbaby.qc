@@ -182,6 +182,7 @@ void()	tbaby_die2	=[	$exp,		tbaby_run1	]
 	
 	TriggerExplosion();
 	SUB_Hide();
+	self.deadflag = DEAD_GIBBED;
 };
 
 void() tbaby_sight = {
@@ -231,6 +232,8 @@ void() monster_tarbaby_spawner = {
 
 void() monster_tarbaby =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

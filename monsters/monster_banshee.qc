@@ -360,7 +360,7 @@ void() banshee_die15 = 	[71, banshee_die16]		{banshee_think(); self.nextthink = 
 void() banshee_die16 = 	[72, banshee_die17]		{banshee_think(); self.nextthink = time + 0.1; };
 void() banshee_die17 = 	[73, banshee_die18]		{banshee_think(); self.nextthink = time + 0.1; };
 void() banshee_die18 = 	[74, banshee_die19]		{banshee_think(); self.nextthink = time + 0.1; sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE); };
-void() banshee_die19 = 	[74, banshee_die19]		{self.solid = SOLID_TRIGGER; setorigin(self, self.origin); self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() banshee_die19 = 	[74, banshee_die19]		{self.solid = SOLID_TRIGGER; setorigin(self, self.origin); monster_dead_dead();};
 
 
 void(entity attacker, float damage) banshee_pain = {
@@ -556,6 +556,8 @@ void() monster_banshee_spawner = {
 
 void() monster_banshee = 
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch) {
 		remove(self);
 		return;

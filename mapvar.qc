@@ -130,6 +130,8 @@ void() trigger_mapvar_write_use = {
 };
 
 void() trigger_mapvar_write = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.count)
 		objerror("Mapvar id not selected");
 	if (self.count < 1 || self.count > MAPV_TOTAL)
@@ -146,14 +148,23 @@ void() trigger_mapvar_read_use = {
 	mapvar_val = read_mapvar(self.count);
 
 	if ((self.style == MAPV_READ_ON && mapvar_val) || (self.style == MAPV_READ_OFF && !mapvar_val)) {
+		dprint4("trigger_mapvar_read fired at (", vtos(self.origin), ") for mapvar #", ftos(self.count));
+		if (!mapvar_val) dprint(" = OFF\n");
+		else dprint(" = ON\n");
+
 		SUB_UseTargets();
 	}
 	
 };
 
 void() trigger_mapvar_read_start = {
+	// not started up yet, waiting for 1st player
+	if (!mapvar_cvar) {
+		self.nextthink = time + 0.025;
+		return;
+	}
+
 	entity pl;
-	dprint3("trigger_mapvar_read fired automatically at (", vtos(self.origin), ")\n");
 	pl = find(world, classname, "player");
 	if (!pl) return;
 
@@ -162,10 +173,16 @@ void() trigger_mapvar_read_start = {
 };
 
 void() trigger_mapvar_read = {
-	if (!self.count)
+	if (!SUB_InitEntity()) return;
+	
+	if (!self.count){
 		objerror("Mapvar id not selected");
-	if (self.count < 1 || self.count > MAPV_TOTAL)
+		return;
+	}
+	if (self.count < 1 || self.count > MAPV_TOTAL){
 		objerror("Mapvar id out of range");
+		return;
+	}
 
 	self.style = defaultFl(self.style, MAPV_READ_ON);
 	

@@ -11,6 +11,7 @@ float DOOR_SILVER_KEY = 16;
 float DOOR_TOGGLE = 32;
 float DOOR_DOOM_STYLE_UNLOCK = 64;
 float DOOR_SOUND_DURING_DELAY = 128;
+float DOOR_PLAT_KEY = 16384;
 float DOOR_EXPANDED_TRIGGER_X = 65536;
 float DOOR_EXPANDED_TRIGGER_Y = 131072;
 float DOOR_REDUCED_TRIGGER_X = 262144;
@@ -155,7 +156,10 @@ void() door_hit_top = {
 		
 		
 		self.owner.think = door_group_go_down;
-		self.owner.nextthink = getEntityTime(self.owner) + self.owner.wait;
+		if (self.owner.wait < 0)
+			self.owner.nextthink = 10000000000;
+		else
+			self.owner.nextthink = getEntityTime(self.owner) + self.owner.wait;
 	}
 };
 
@@ -192,7 +196,10 @@ void() door_move_up = {
 
 	self.state = STATE_UP;
 	self.owner.groupstate = STATE_UP;
-	SUB_CalcMove (self.pos2, self.speed, door_hit_top);
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos2, self.smoothdist, self.speed, 0, 0, door_hit_top);
+	else
+		SUB_CalcMove (self.pos2, self.speed, door_hit_top);
 
 	SUB_UseTargets();
 
@@ -230,8 +237,11 @@ void() door_move_down = {
 		
 	self.state = STATE_DOWN;
 	self.owner.groupstate = STATE_DOWN;
-
-	SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
+	if (self.smoothdist)
+		//void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, void() func) SUB_CalcMoveSmooth
+		SUB_CalcMoveSmooth(self.pos1, self.smoothdist, self.speed2, 0, 0, door_hit_bottom);
+	else
+		SUB_CalcMove (self.pos1, self.speed2, door_hit_bottom);
 	//dprint4("Door ", ftos(self.doornum), " started moving down at frame ", ftos(framecount));
 	//dprint5(", ltime: ", ftos(self.ltime), ", time: ", ftos(time), "\n");
 	if (self.switchshadstyle) {
@@ -944,6 +954,8 @@ Key doors are allways wait -1.
 */
 
 void() func_door = {
+	if (!SUB_InitEntity()) return;
+	
 	local string default_noise1;
 	local string default_noise2;
 
@@ -1020,6 +1032,8 @@ void() func_door = {
 		keylock_set_silver_key ();
 	if (self.spawnflags & DOOR_GOLD_KEY)
 		keylock_set_gold_key ();
+	if (self.spawnflags & DOOR_PLAT_KEY)
+		keylock_set_plat_key ();
 
 	// support for item_key_custom -- iw
 	if (self.keyname != "") {
@@ -1322,6 +1336,8 @@ If a secret door has a targetname, it will only be opened by it's botton or trig
 
 void () func_door_secret =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.sounds == 0)
 		self.sounds = 3;
 	if (self.sounds == 1)
@@ -1483,6 +1499,8 @@ void() target_setdoor_use = {
 };
 
 void() target_setdoor = {
+	if (!SUB_InitEntity()) return;
+	
 	self.use = target_setdoor_use;
 };
 
@@ -1497,6 +1515,8 @@ Sets a user-defined door's trigger field.
 
 void() trigger_doortriggerfield = {
 
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.target || self.target == "") {
 		objerror("No target set");
 		return;

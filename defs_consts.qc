@@ -65,6 +65,7 @@ float	DEAD_NO					= 0;
 float	DEAD_DYING				= 1;
 float	DEAD_DEAD				= 2;
 float	DEAD_RESPAWNABLE		= 3;
+float 	DEAD_GIBBED				= 4;
 
 // takedamage values
 
@@ -110,7 +111,7 @@ float	IT_NAILS				= 512;
 float	IT_ROCKETS				= 1024;
 float	IT_CELLS				= 2048;
 
-//								= 4096
+float	IT_KEY3					= 4096;
 
 float	IT_ARMOR1				= 8192;
 float	IT_ARMOR2				= 16384;
@@ -281,6 +282,9 @@ float START_OFF = 1;
 float ITEMSTYLE_BSP = 1;
 float ITEMSTYLE_MDL = 2;
 
+float SPAWNFLAG_NOCOOP = 4096;
+float SPAWNFLAG_ONLYCOOP = 8192;
+
 // monsters
 float MONSTER_ALK = 4;
 float MONSTER_ORIGINAL = 8;
@@ -295,6 +299,7 @@ float MONSTER_IGNOREPLAYER	= 131072;
 float MONSTER_SPAWNER = 262144;
 float MONSTER_ZEROBBOX = 524288;
 float MONSTER_HEALTHTRIGGER = 1048576;
+float MONSTER_WAKETRIGGER = 2097152;
 
 float MONAI_ABOVEMELEE = 120;		// Always be high above enemies inside this distance
 float MONAI_ABOVEDIST = 128;		// Distance to maintain above enemytarget
@@ -309,9 +314,12 @@ float ALKSETTINGS_NOAUTOSAVES = 4;
 float ALKSETTINGS_NOTRACERS = 8;
 float ALKSETTINGS_PLAYERTRACERS = 16;
 float ALKSETTINGS_OLDGRENADE = 32;
+float ALKSETTINGS_OLDLIGHTNING = 64;
+float ALKSETTIGNS_OLDSTYLEHUD = 128;
 
 float TEMPSETTINGS_ORIGINALMONSTERS = 1;
 float TEMPSETTINGS_FORCEMDLBOXES = 2;
+float TEMPSETTINGS_ORIGINALWORLDTYPES = 4;
 
 //
 // monster ai
@@ -394,3 +402,5 @@ float STAT_WEAPONS = 33;
 float STAT_BOOTS = 34;
 float STAT_BOOTS_FINISHED = 35;
 float STAT_IT = 36;
+float STAT_DMGTAKE = 37;
+float STAT_CURRENTHUD = 38;

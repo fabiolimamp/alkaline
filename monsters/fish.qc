@@ -75,19 +75,23 @@ void() fish_melee =
 {
 	local vector	delta;
 	local float 	ldmg;
+	entity en = SUB_entEnemyTarget();
 
-	if (!self.enemy)
+	if (!en)
 		return;		// removed before stroke
 		
-	delta = self.enemy.origin - self.origin;
+	delta = en.origin - self.origin;
 
 	if (vlen(delta) > 60)
 		return;
-		
+	
+	if (en.waterlevel <= 0)
+		return;
+
 	sound (self, CHAN_VOICE, "fish/bite.wav", 1, ATTN_NORM);
 	ldmg = (random() + random()) * 3;
-	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);
-};
+	T_Damage(en, self, self, ldmg, DMGTYPE_MELEE);
+}
 
 void() f_attack1        =[      $attack1,       f_attack2 ] {ai_charge(12);};
 void() f_attack2        =[      $attack2,       f_attack3 ] {ai_charge(12);};
@@ -128,7 +132,7 @@ void() f_death17 =[      $death17,       f_death18       ] {};
 void() f_death18 =[      $death18,       f_death19       ] {};
 void() f_death19 =[      $death19,       f_death20       ] {};
 void() f_death20 =[      $death20,       f_death21       ] {};
-void() f_death21 =[      $death21,       f_death21       ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() f_death21 =[      $death21,       f_death21       ] {monster_dead_dead();};
 
 void() fish_die =
 {
@@ -137,6 +141,7 @@ void() fish_die =
         sound (self, CHAN_VOICE, "player/tornoff2.wav", 1, ATTN_NORM);
         ThrowHead ("progs/gib3.mdl", self.health);
         ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
         return;
 	}
 	
@@ -201,6 +206,8 @@ void() monster_fish_spawner = {
 
 void() monster_fish =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -212,8 +219,8 @@ void() monster_fish =
 	precache_sound2 ("fish/bite.wav");
 	precache_sound2 ("fish/idle.wav");
 
-	self.cmins = '-16 -16 -24';
-	self.cmaxs = '16 16 24';
+	self.cmins = '-8 -8 -24';
+	self.cmaxs = '8 8 16';
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);

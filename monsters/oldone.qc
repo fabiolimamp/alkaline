@@ -251,6 +251,8 @@ void(entity attacker, float damage) nopain =
 */
 void() monster_oldone =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

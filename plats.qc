@@ -25,6 +25,10 @@ void() plat_spawn_inside_trigger =
 	
 	tmin = self.mins + '25 25 0';
 	tmax = self.maxs - '25 25 -8';
+	if (self.spawnflags & 4) {
+		tmin_z += self.pos1_z - self.pos2_z;
+		tmax_z += self.pos1_z - self.pos2_z;
+	}
 
 	if (self.spawnflags & PLAT_DEEP_TRIGGER) {
 		// makes the trigger field go all the way to the bottom of the lower position
@@ -71,14 +75,21 @@ void() plat_go_down =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_DOWN;
-	SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
+
+	if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos2, self.smoothdist, self.speed, 0, 0, plat_hit_bottom);
+	else
+		SUB_CalcMove (self.pos2, self.speed, plat_hit_bottom);
 };
 
 void() plat_go_up =
 {
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 	self.state = STATE_UP;
-	SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
+		if (self.smoothdist)
+		SUB_CalcMoveSmooth(self.pos1, self.smoothdist, self.speed, 0, 0, plat_hit_top);
+	else
+		SUB_CalcMove (self.pos1, self.speed, plat_hit_top);
 };
 
 void() plat_center_touch =
@@ -158,6 +169,8 @@ Set "sounds" to one of the following:
 void() func_plat =
 
 {
+	if (!SUB_InitEntity()) return;
+	
 //local entity t;
 
 	if (!self.t_length)
@@ -202,13 +215,23 @@ void() func_plat =
 	if (!self.speed)
 		self.speed = 150;
 
-// pos1 is the top position, pos2 is the bottom
-	self.pos1 = self.origin;
-	self.pos2 = self.origin;
-	if (self.height)
-		self.pos2_z = self.origin_z - self.height;
-	else
-		self.pos2_z = self.origin_z - self.size_z + 8;
+	// pos1 is the top position, pos2 is the bottom
+	if (self.spawnflags & 4) {
+		self.pos2 = self.origin;
+		self.pos1 = self.origin;
+		if (self.height)
+			self.pos1_z = self.origin_z + self.height;
+		else
+			self.pos1_z = self.origin_z + self.size_z - 8;
+	}
+	else {
+		self.pos1 = self.origin;
+		self.pos2 = self.origin;
+		if (self.height)
+			self.pos2_z = self.origin_z - self.height;
+		else
+			self.pos2_z = self.origin_z - self.size_z + 8;
+	}
 
 	self.use = plat_trigger_use;
 
@@ -216,6 +239,7 @@ void() func_plat =
 
 	if (self.targetname)
 	{
+		setorigin (self, self.pos1);
 		self.state = STATE_UP;
 		self.use = plat_use;
 	}
@@ -314,7 +338,7 @@ void() train_wait = {
 	self.think = train_next;
 
 	// train is moving normally and path_corner has a wait set, so pause for that time.
-	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT && !(self.spawnflags & TRAIN_RETRIGGER)) {
+	if (self.wait > 0 && self.cnt == TRAIN_NEXT_WAIT) {
 		// state: stopped
 		self.state = 0;
 		if (self.classname == "misc_modeltrain") SUB_CallAsSelf(self.animcontroller.think, self.animcontroller);
@@ -326,7 +350,7 @@ void() train_wait = {
 	}
 	// train is moving normally and path_corner has no wait time,
 	// or has been forced to move instantly through a triggering.
-	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait && !(self.spawnflags & TRAIN_RETRIGGER)) {
+	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) {
 
 		//play "passing by" sound, if any. If path_corner has a custom one, play that instead
 		if (self.enemy.noise2 != "") sound(self, CHAN_WEAPON, self.enemy.noise2, 1, ATTN_NORM);
@@ -351,31 +375,70 @@ void() train_wait = {
 	
 };
 
+// returns the first active path corner,
+// or the first inactive one if no active path was found,
+// or world if no path was found at all
+entity(string name) getNextPath = {
+	entity targ, first;
+
+	first = targ = find(world, targetname, name);
+
+	// first path is ok
+	// most common case, so return early
+	if (targ && targ.estate == STATE_ACTIVE)
+		return first;
+
+	// found path isn't active, so search for others with the same targetname
+	while (targ && targ.estate != STATE_ACTIVE) {
+		targ = find(targ, targetname, name);
+	}
+
+	// found an active path
+	if (targ && targ.estate == STATE_ACTIVE)
+		return targ;
+
+	// no active path was found with the same targetname,
+	// so return the first non-active one
+	// will return world if no path was found at all
+	return first;
+}
+
 // searches for the next path_corner and sends the train on its way
 void() train_next = {
 	entity targ, first;
 	vector destang, displ;
-	float loopcount;
+	float prevspeed, nextspeed, curspeed;
+
+	if (self.think == func_train_find) prevspeed = 0;
+	else if (self.cnt != TRAIN_NEXT_STOP && !self.wait) prevspeed = self.speed2;
+	else prevspeed = 0;
+	//if (self.cnt == TRAIN_NEXT_STOP || (self.cnt == TRAIN_NEXT_WAIT && self.wait)) prevspeed = 0;
+	//else prevspeed = self.speed2;
 
 	if (self.target == "") {
 		dprint("train_next: next target not set\n");
 		targ = self.enemy;
 	}
 	else {
-		first = targ = find(world, targetname, self.target);
+		first = targ = getNextPath(self.target);
 		
-		// loops if found path_corner isn't active
-		while (targ && targ.estate != STATE_ACTIVE && loopcount < 3) {
-			if (targ == first) loopcount++;
-			targ = find(world, targetname, targ.target);
+		// returned path isn't active, so keep iterating until we find one
+		while (targ && targ.estate != STATE_ACTIVE) {
+			targ = getNextPath(targ.target);
+		}
+
+		if (!targ && !first) {
+			dprint("train_next: next target not found\n");
+			targ = self.enemy;
+		}
+
+		if (!targ && first) {
+			dprint("train_next: no active path found\n");
+			targ = self.enemy;
 		}
 	}
 
-	if (!targ || loopcount >= 3) {
-		dprint("train_next: next target not found\n");
-		targ = self.enemy;
-	}
-
+	
 	self.target = targ.target;
 	
 	// gets the wait time from the upcoming path_corner if set
@@ -417,8 +480,21 @@ void() train_next = {
 	}
 	
 	if (self.classname != "misc_modeltrain") displ = self.mins;
-	
-	SUB_CalcMove(targ.origin - displ, self.speed2, train_wait);
+
+	float smdist = defaultFl(targ.smoothdist, self.smoothdist);
+	if (smdist) {
+		
+		if (self.wait) nextspeed = 0;
+		else nextspeed = defaultFl(targ.speed, self.speed2);
+ 		
+ 		curspeed = self.speed2;
+		//void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, void() func) SUB_CalcMoveSmooth
+		SUB_CalcMoveSmooth(targ.origin - displ, smdist, curspeed, prevspeed, nextspeed, train_wait);
+	}
+	else {
+		//void(vector tdest, float tspeed, void() func) SUB_CalcMove
+		SUB_CalcMove(targ.origin - displ, self.speed2, train_wait);
+	}
 };
 
 // searches for the first path_corner after the train entity is initialized
@@ -458,6 +534,8 @@ sounds
 */
 void() func_train =
 {	
+	if (!SUB_InitEntity()) return;
+	
 
 	if (!self.speed)
 		self.speed = 100;
@@ -585,6 +663,8 @@ void() animcontroller_think = {
 
 void() misc_modeltrain = {
 
+	if (!SUB_InitEntity()) return;
+	
 	precache_model(self.mdl);
 
 	func_train();
@@ -646,6 +726,8 @@ This is used for the final bos
 */
 void() misc_teleporttrain =
 {	
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.speed)
 		self.speed = 100;
 	if (!self.target)
@@ -654,8 +736,7 @@ void() misc_teleporttrain =
 	self.speed2 = self.speed;
 	self.cnt = 1;
 	self.solid = SOLID_NOT;
-	self.movetype = MOVETYPE_PUSH;
-	self.blocked = train_blocked;
+	self.movetype = MOVETYPE_NOCLIP;
 	self.use = train_use;
 	self.avelocity = '100 200 300';
 
@@ -666,7 +747,7 @@ void() misc_teleporttrain =
 
 	precache_model2 ("progs/teleport.mdl");
 	setmodel (self, "progs/teleport.mdl");
-	setsize (self, self.mins , self.maxs);
+	setsize (self, '0 0 0' , '0 0 0');
 	setorigin (self, self.origin);
 
 // start trains on the second frame, to make sure their targets have had

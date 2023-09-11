@@ -15,7 +15,9 @@ string 	intermission_message;
 This is the camera point for the intermission.
 Use mangle instead of angle, so you can set pitch or roll as well as yaw.  'pitch yaw roll'
 */
-void() info_intermission = {};
+void() info_intermission = {
+	if (!SUB_InitEntity()) return;
+};
 
 // engine sysdef function. Called automatically for every client on map change
 void() SetChangeParms = {
@@ -31,7 +33,9 @@ void() SetChangeParms = {
 	}
 
 	// jump boots persists across levels. even if player is dead on map change
-	parm11 = defaultFl(self.jboots_prevlimit, self.jboots_rechargelimit);
+	if (self.jboots_finished) parm11 = self.jboots_prevlimit;
+	else parm11 = self.jboots_rechargelimit;
+	
 	if (!parm11) self.items = self.items - (self.items & IT_JBOOTS);
 	
 
@@ -241,22 +245,22 @@ void() IntermissionThink = {
 
 	if (time > self.attack_finished) self.cnt = 0;
 
-	if (!self.button0 && !self.button1 && !self.button2) {
+	if (!self.button0 && !self.button1 && !self.button2 && self.impulse != 10 && self.impulse != 12 ) {
 		self.wait = 0;
 		return;
 	}
 
-	if (self.button0) {
+	if (self.impulse == 10 || self.impulse == 12) {
+		self.impulse = 0;
 		if (self.wait) return;
 
 		if (time > self.pain_finished) {
 			nextIntermission();
 		}
-
-		if (time <= self.attack_finished || !self.cnt){
+		/*if (time <= self.attack_finished || !self.cnt){
 			self.attack_finished = time + 0.25;
 			self.cnt++;
-		}
+		}*/
 		self.wait = 1;
 		return;
 	}
@@ -269,6 +273,10 @@ void() IntermissionThink = {
 };
 
 void() execute_changelevel = {
+
+	// flip on whichever mapvar is set into the changelevel trigger
+	if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
+		write_mapvar(self.jump_flag, MAPV_WRITE_ON);
 
 	intermission_running = 1;
 
@@ -423,10 +431,6 @@ void() changelevel_touch = {
 	}
 	
 
-	if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
-		write_mapvar(self.jump_flag, MAPV_WRITE_ON);
-
-
 	// "reset items on map change" flag
 	if (self.spawnflags & 2) reset_items_on_map_change = TRUE;
 	else reset_items_on_map_change = FALSE;
@@ -440,7 +444,7 @@ void() changelevel_touch = {
 		nextmap = self.map;
 
 	//johnfitz -- add a serverflag so users spawn at info_player_start2 when returning to startmap
-	if (nextmap == "start")
+	if (mapname == "start")
 		serverflags = serverflags | 16; //1,2,4,8 are used for runes
 	//johnfitz
 
@@ -470,6 +474,8 @@ void() changelevel_use = {
 When the player touches this, he gets sent to the map listed in the "map" variable.  Unless the NO_INTERMISSION flag is set, the view will go to the info_intermission spot and display stats.
 */
 void() trigger_changelevel = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.map)
 		dprint("changelevel trigger doesn't have map set, will return to the same map\n");
 	
@@ -608,6 +614,11 @@ entity() SelectSpawnPoint = {
 	return spot;
 };
 
+void() CreateLightningController = {
+	self.lightningcontroller = spawn();
+	self.lightningcontroller.owner = self;
+	self.lightningcontroller.classname = "lightningcontroller";
+}
 
 void() CreateHealthController = {
 	self.healthcontroller = spawn();
@@ -628,10 +639,14 @@ called each time a player is spawned
 void() PutClientInServer = {
 	local	entity spot;
 
-	dprint5("\b[CLIENT]\b Connected at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
+	dprint5("\b[CLIENT]\b PutClientInServer at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
 
 	if(!client_ent) client_ent = self; //client_ent will be the first player to enter
 	
+	float just_connected;
+
+	if (self.classname == "") just_connected = TRUE;
+
 	self.classname = "player";
 	self.health = 100;
 	self.takedamage = DAMAGE_AIM;
@@ -659,6 +674,8 @@ void() PutClientInServer = {
 	self.sky = world.sky;
 	self.connect_time = time;
 
+	if (just_connected) self.currenthud = !!(cvar("saved1") & ALKSETTIGNS_OLDSTYLEHUD);
+
 	StopBurning(self);//johnfitz -- reset burning	
 
 	DecodeLevelParms ();
@@ -672,7 +689,7 @@ void() PutClientInServer = {
 		if (spot.spawnflags & 4) self.flags = self.flags | FL_NOTARGET;
 	}
 	
-	W_SetCurrentAmmo ();
+	W_SetCurrentAmmo (TRUE);
 
 	self.attack_finished = time;
 	self.th_pain = player_pain_generic;
@@ -722,7 +739,9 @@ void() PutClientInServer = {
 
 	spawn_tdeath (self.origin, self);
 
-	CreateHealthController();
+	if (self.healthcontroller.classname != "healthcontroller") CreateHealthController();
+	if (self.lightningcontroller.classname != "lightningcontroller") CreateLightningController();
+	csf_clear_all(self);
 };
 
 
@@ -739,11 +758,15 @@ void() PutClientInServer = {
 The normal starting point for a level.
 */
 void() info_player_start =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 
 void() info_player_start_test =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!cvar("developer")) remove(self);
 };
 
@@ -752,26 +775,34 @@ void() info_player_start_test =
 Only used on start map for the return point from an episode.
 */
 void() info_player_start2 =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 
 /*
 saved out by quaked in region mode
 */
 void() testplayerstart =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 /*QUAKED info_player_deathmatch (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for deathmatch games
 */
 void() info_player_deathmatch =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 /*QUAKED info_player_coop (1 0 1) (-16 -16 -24) (16 16 24)
 potential spawning position for coop games
 */
 void() info_player_coop =
-{};
+{
+	if (!SUB_InitEntity()) return;
+};
 
 /*
 ===============================================================================

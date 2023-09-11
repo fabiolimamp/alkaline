@@ -102,8 +102,12 @@
 .string		target;
 .string		targetname;
 
-// damage is accumulated through a frame. and sent as one single
-// message, so the super shotgun doesn't generate huge messages
+// Damage is accumulated through a frame. and sent as one single
+// message, so the super shotgun doesn't generate huge messages.
+
+// dmg_take having a value is what triggers the engine to tint the screen,
+// twitch the view, and show the pain face in the HUD.
+
 // dmg_take and dmg_save are cleared at each frame for clients
 .float		dmg_take;
 .float		dmg_save;
@@ -164,6 +168,8 @@ nosave float gamestarted;
 
 entity lastspawn;
 
+float gibswaterchecked, waterchecked, liquidbrushchecks;
+
 
 // simple kex detection, thanks Lunaran
 float isKex; // running the quake rerelease
@@ -189,6 +195,7 @@ float noautosaves;
 float notracers;
 float playertracers;
 float oldgrenade;
+float oldlightning;
 
 // gravity
 entity current_gravity_ent;
@@ -232,6 +239,7 @@ FIELDS
 .float		weapons;		// extra weapons
 .string 	impulsetarget;
 
+.float 		debug;
 
 //
 // monster ai
@@ -274,6 +282,9 @@ FIELDS
 .entity startpath;
 .entity nextbumper;
 
+.float multi_dmg;
+.entity multi_next;
+
 // edie
 .float multiplier; 
 .entity spawnmaster;
@@ -314,6 +325,7 @@ FIELDS
 .float 		offground_start; // last time the player was on ground
 
 .float 		hurt_started; // timer for trigger_hurt
+.float		heal_started;
 
 .float 		wantedgravity; // thanks Spike!
 
@@ -324,6 +336,8 @@ FIELDS
 .float steptype, steplast, altsteptype, altsteplast;
 
 .entity hurtcontroller, healthcontroller;
+
+.entity lightningcontroller;
 
 //.float hit_z;
 
@@ -338,6 +352,7 @@ FIELDS
 .float		length, width, height;
 .float		t_length, t_width;
 .float		strength;
+.float		sounds2;
 
 //
 // doors, etc
@@ -383,7 +398,8 @@ FIELDS
 // subs
 //
 .void()		think1;
-.vector		finaldest, finalangle;
+.vector		finaldest, finalangle, calcmoveorigin;
+.float 		startspeed, travelspeed, finalspeed, smoothdist, smoothcurve, realsmdist;
 .string 	target2, target3, target4, targetname2;
 
 //
@@ -425,7 +441,7 @@ FIELDS
 
 
 // trigger_timer
-.float rand = healamount;	
+.float rand;	
 
 
 // switchable brushes
@@ -465,8 +481,8 @@ FIELDS
 .float		angle2;		
 .vector		movedir2;
 .string		message2;
-.float		onladder;	
-.float		ladder_step_finished;
+.float		onladder, wasonladder;	
+.float		ladder_step_height;
 .float		underwatersound;
 .float		burningsound;
 .float		gravity;
@@ -574,7 +590,9 @@ float prevdoornum;
 
 // entity state
 .float estate;
-
+.float estate_orig_solid;
+.float estate_orig_move;
+.float estate_orig_mdlindex;
 
 // func_bob
 .float attack_timer;
@@ -649,3 +667,14 @@ float prevdoornum;
 .vector inflictor_origin;
 .float inflictor_movetype;
 .vector inflictor_vel;
+
+.float dev_announce;
+
+.vector prev_groundvel;
+.float wasonground;
+
+.float currenthud;
+.float dmg_take_hud;
+
+.vector pushvelocity;
+.float pushfinished;

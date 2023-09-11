@@ -23,16 +23,16 @@
 
 @SolidClass = worldspawn : "World entity"
 [
-	message(string) : "Text on entering the world"
-	worldtype(choices) : "Ambience" : 0 =
+	message(string) : "Map title"
+	worldtype(choices) : "Map theme" : 0 =
 	[
 		1 : "Runic (metal)"
 		2 : "Present (base)"
 		3 : "Medieval"
 	]
-	sounds(integer) : "CD track to play" : 1
+	sounds(integer) : "Music track to play"
 	light(integer) : "Ambient light"
-	sky(string) : "Skybox"
+	sky(string) : "Skybox name"
 	
 	_dirt(integer) : "Use dirtmapping (ambient occlusion)" : 0
 	_bounce(integer) : "Bounce Lighting" : 0 : "1 enables bounce lighting, default 0."
@@ -112,6 +112,8 @@
 		512 : "Not in Normal" : 0
 		1024 : "Not in Hard" : 0
 		2048 : "Not in Deathmatch" : 0
+		4096 : "Not in Coop" : 0
+		8192 : "Only in Coop" : 0
 	]
 ]
 
@@ -134,12 +136,12 @@
 
 @baseclass color(255 255 40) = Light [
 	light(integer) : "Brightness" : 300
-	wait(float) : "Fade distance multiplier" : "1"
+	wait(float) : "Fade distance divider" : "1"
 	_color(color) : "Light color"
 	mangle(string) : "Spotlight angle"
 	angle(integer) : "Spotlight angle width" : 40
 	_softangle(float) : "Inner spotlight angle width" : "0"
-	speed(float) : "Speed when fading in/out" : "0.1"
+	speed(float) : "Fade step time" : "0.1" : "Lighting fade happens in 12 steps, and this key sets how long each step will take. To calculate the step time for a given total transition, just divide the intended time in seconds by 12. Say for example you want the full transition to happen in half a second, that'd be 0.5/12 = 0.042. This will be the value you must put into this field."
 	style2(integer) : ""
 	delay(choices) : "Attenuation" =
 	[
@@ -291,7 +293,8 @@
 @SolidClass base(Appearflags, Targetname, Target, Blood) color(255 128 128) = func_breakable : 
 "A visible object that can be destroyed by shooting it. If it has a targetname, it will not be directly damageable, unless you set the spawnflag 'Always shootable'.
 
-NO_MONSTERS: object ignores damage from monsters" 
+Can be set to be damaged only by explosions, or to ignore monster attacks.
+" 
 [
 	cnt(integer) : "Debris amount" :  : "Number of pieces of debris to spawn. Set to -1 to disable debris."
 	mdl(string) : "Custom debris model" : : "Overrides the model selected through 'style'. EG: 'progs/gib.mdl'"
@@ -322,7 +325,7 @@ NO_MONSTERS: object ignores damage from monsters"
 "A togglable laser, hurts to touch, can be used to block players." 
 [
 	dmg(integer) : "Damage" : 1 : "Damage dealt. Set to -1 to do no damage."
-	alpha(float) : "Opacity" : "0.5" : "Approximate alpha you want the laser drawn at. default 0.5. alpha will vary by 20% of this value."
+	alpha(float) : "Opacity" : "0.5" : "Approximate alpha you want the laser drawn at. default 0.5. alpha will flicker in a 20% range around this value."
 	message(string) : "Activated message"
 	message2(string) : "Deactivated message"
 	spawnflags(flags) =
@@ -361,22 +364,32 @@ The laser originates from the horizontal center at the bottom of the model. You 
 
 
 @SolidClass base(Appearflags, Targetname, Target, TriggerWait) color(128 128 64) = trigger_ladder :
-"Invisible ladder entity.
-When player is touching this entity, he can climb by pushing 'jump'."
+"Invisible ladder trigger.
+
+When player is touching this entity, they'll move on the direction they're facing when pressing forward, or be able to move straight up/down with the jump/moveup/movedown keys.
+
+The 'angle' key is optional. When set, the player will only stick to the ladder while facing this direction.
+"
 [
-	angle(integer) : "Angle" : : "The direction player must be facing to climb ladder"
+	angle(integer) : "Angle" : : "Optional. If set, the player will only stick to the ladder while facing this direction. If you need to set angle 0, use 360 instead."
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 0) size(-4 -4 -4, 4 4 4) = info_rotate : 
-"Used as the point of rotation for rotatable objects." []
+@PointClass base(Appearflags, Targetname) color(0 128 0) size(-4 -4 -4, 4 4 4) = info_rotate : 
+"Used as pivot point for rotatable objects, such as func_rotate_door and func_rotate_entity. Refer to their documentation for more details.
 
-@SolidClass base(Appearflags, Targetname, Target) color(0 0 255) = func_movewall : 
-"Used to emulate collision on rotating objects.
+Make the rotate_object in your setup target this entity." []
+
+@SolidClass base(Appearflags, Targetname) color(0 0 255) = func_movewall : 
+"Used to emulate collision on rotators. Should be given the same targetname as the rotate_object entity.
+
+func_movewalls don't rotate, but they *move* around the same circular orbit as the rotate_object. So you must create multiple small func_movewalls to cover the whole volume of your rotating brush, and they'll move roughly in the same place.
+
 'Visible' causes brush to be displayed.
 'Hurts' specifies whether to cause damage when touched by player.
 'Non-solid' makes the brush non-solid.  This is useless if VISIBLE is set."
 [
 	dmg(integer) : "Damage" : 0
+	target(string) : "Name of info_rotate point entity"
 	spawnflags(flags) =
 	[
 		1 : "Visible" : 0
@@ -385,13 +398,30 @@ When player is touching this entity, he can climb by pushing 'jump'."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(64 128 64) = func_rotate_door : 
+@PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_door : 
 "Creates a door that rotates between two positions around a point of rotation each time it's triggered.
 
-STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once door from closing again when it's blocked."
+Rotating setups are always composed of 3 entitites:
+- The func_rotate_entity or func_rotate_door (which are point entities despite their name), that act as controllers of the whole setup;
+- the rotate_object brush entity, which is only the brush geometry to be rotated;
+- the info_rotate point entity, that acts as the pivot point for the rotating movement. 
+
+Firstly, place the info_rotate on the center/axis of rotation, and give it a unique targetname.
+Next make your rotating brushes, and make them a rotate_object. Give it a unique targetname, and make it target the info_rotate.
+Then place this func_rotate_door at the same coordinates as the info_rotate, and make it target the rotate_object.
+
+For collison on rotators, refer to the func_movewall brush entity.
+
+'rotate' key sets the rotation directions per axis.
+'angles' key sets how much it should rotate, per axis.
+'speed' key sets the amount of time it'll take to make the full movement.
+
+'Stay open' spawnflag tells the door to reopen after closing. This prevents a trigger-once door from closing again when it's blocked."
 [
-	dmg(integer) : "Damage" : 2 : "Specifies the damage to cause when blocked. Negative numbers indicate no damage."
-	speed(integer) : "Speed" : 100 : "Specifies the time it takes to rotate."
+	speed(integer) : "Movement time" : : "Amount of time in seconds it'll take to complete the movement."
+	target(string) : "Name of rotate_object brush entity"
+	angles(string) : "Rotation angles per axis" : : "Sets how much it should rotate on each of the axis. So 'rotate' '0 1 -1' and 'angles' '0 90 -180' for example will make a door that rotates 90 degrees counterclockwise on the Z axis, and 180 degrees clockwise on the Y axis."
+	rotate(string) : "Rotation direction" : : "Set this field to three 0’s or 1’s, with either 1 or -1 to set which axis it will rotate on. i.e. '0 1 -1' will make it rotate counterclockwise around the Z axis and clockwise around the Y axis. Set the total rotation angles with the 'angles' key."
 	sounds(choices) : "Sound" =
 	[
 		0: "No sounds"
@@ -403,15 +433,30 @@ STAYOPEN tells the door to reopen after closing.  This prevents a trigger-once d
 	spawnflags(flags) =
 	[
 		1 : "Stay open" : 0
+		2 : "Start open" : 0
 	]
 ]
 
 @PointClass base(Appearflags, Targetname) color(64 128 64) = func_rotate_entity : 
-"Creates an entity that continually rotates.  Can be toggled on and off if targeted."
+"Creates an entity that continually rotates.  Can be toggled on and off if targeted.
+
+Rotating setups are always composed of 3 entitites:
+- The func_rotate_entity or func_rotate_door (which are point entities despite their name), that act as controllers of the whole setup;
+- the rotate_object brush entity, which is only the brush geometry to be rotated;
+- the info_rotate point entity, that acts as the pivot point for the rotating movement. 
+
+Firstly, place the info_rotate on the center/axis of rotation, and give it a unique targetname.
+Next make your rotating brushes, and make them a rotate_object. Give it a unique targetname, and make it target the info_rotate.
+Then place this func_rotate_entity at the same coordinates as the info_rotate, and make it target the rotate_object.
+
+For collison on rotators, refer to the func_movewall brush entity.
+
+'rotate' key sets the rotation speed per axis.
+'speed' key sets the acceleration/deacceleration time when the rotator is toggled on/off.
+"
 [
-	obituary(string) : "Death message"
-	rotate(integer) : "Speed" : 40
-	target(string) : "Center of rotation"
+	rotate(string) : "Rotation speed per axis" : : "Set this value to three integers. '0 -90 0' for example will make it rotate clockwise along the Z axis at 90 degrees/second. You can set it to rotate around all the axis too, and to make it rotate the other way, just add/remove a – ( minus sign )."
+	target(string) : "Name of rotate_object brush entity"
 	speed(integer) : "Acceleration" : 5 : "How long the entity takes to go from standing still to full speed and vice-versa."
 	spawnflags(flags) =
 	[
@@ -492,8 +537,15 @@ SET_DAMAGE tells the train to set all targets damage to 'dmg'
 	event(string) : "Event target"
 ]
 
-@SolidClass base(Appearflags, Targetname, Target) color(0 128 204) = rotate_object :
-"This defines an object to be rotated.  Used as the target of func_rotate_door." []
+@SolidClass base(Appearflags, Targetname) color(0 128 204) = rotate_object :
+"This defines an object to be rotated.
+
+Used as the target of func_rotate_door or func_rotate_entity point entities. Refer to them for more details.
+
+Make this entity target the info_rotate entity used as pivot point.
+" [
+	target(string) : "Name of info_rotate point entity"
+]
 
 
 //
@@ -597,10 +649,11 @@ You can override initial weapon/ammo loadout for this specific spot.
 	spawnflags(flags) =
 	[
 		16384 : "Respawn with DM effects" : 0
+		65536 : "No flicker before respawn" : 0
 	]
 	ritem(integer) : "Respawn item if set to 1"
-	respawndelay(integer) : "Respawn time"
-	respawncount(integer) : "How many respawns?"
+	respawndelay(integer) : "Respawn time" : : "Setting it to -1 disables automatic respawning, and will only happen when the item is triggered."
+	respawncount(integer) : "Maximum respawn count" : : "Leave blank for no limit."
 ]
 
 @baseclass size(0 0 0, 32 32 56) color(80 0 200) base(RespawnableItem, Appearflags, ItemStyle) = Ammo
@@ -616,25 +669,25 @@ You can override initial weapon/ammo loadout for this specific spot.
             spawnflags & 1 ->   ":maps/b_batt1.bsp",
                                 ":maps/b_batt0.bsp"
         }}
-    ) = item_cells : "Thunderbolt ammo" []
+    ) = item_cells : "Cells. Small box gives 6 cells, large box 12." []
 @PointClass base(Ammo) model(
         {{
             spawnflags & 1 ->   ":maps/b_rock1.bsp",
                                 ":maps/b_rock0.bsp"
         }}
-    ) = item_rockets : "Rockets" []
+    ) = item_rockets : "Rockets. Small box gives 5 rockets, large box 10." []
 @PointClass base(Ammo) model(
         {{
             spawnflags & 1 ->   ":maps/b_shell1.bsp",
                                 ":maps/b_shell0.bsp"
         }}
-    ) = item_shells : "Shells" []
+    ) = item_shells : "Shells. Small box gives 20 shells, large box 40." []
 @PointClass base(Ammo) model(
         {{
             spawnflags & 1 ->   ":maps/b_nail1.bsp",
                                 ":maps/b_nail0.bsp"
         }}
-    ) = item_spikes : "Perforator/Nailgun ammo" []
+    ) = item_spikes : "Nails. Small box gives 25 nails, large box 50." []
 
 @PointClass size(0 0 0, 32 32 56) base(RespawnableItem, Appearflags, ItemStyle) model(
         {{
@@ -643,7 +696,7 @@ You can override initial weapon/ammo loadout for this specific spot.
             spawnflags & 1 ->   ":maps/b_bh10.bsp",
                                 ":maps/b_bh25.bsp"
         }}
-    ) = item_health : "Health pak" 
+    ) = item_health : "Health pack. Rotten pack gives 15 health, standard pack 25, and megahealth 100." 
 [
 	spawnflags(flags) = 
 	[
@@ -696,6 +749,8 @@ You can override initial weapon/ammo loadout for this specific spot.
 	item_key1 : "Silver key" []
 @PointClass base(Key) model({ "path": ":progs/w_g_key.mdl" }) =
 	item_key2 : "Gold key" []
+@PointClass base(Key) model({ "path": ":progs/w_p_key.mdl"}) =
+	item_key3 : "Platinum key" []
 
 @PointClass base(Key) model({ "path": mdl, "skin": skin }) =
 	item_key_custom :
@@ -806,24 +861,31 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 		131072 : "Pacifist" : 0 : "Only gets angry at you when hurt or triggered"
 		262144 : "Monster spawner" : 0 : "Spawns a monster from this entity when triggered"
 		524288 : "0-sized bbox" : 0 : "Starts with 0-sized entity. Use target_setsize to set the original size"
-		1048576 : "Health triggers" : 0 : "Triggers target2/3/4 when reaching 75%/50%/25% health respectively"
+		1048576 : "Health triggers" : 0 : "Triggers target2/3/4 when reaching 25%/50%/75% damage respectively"
+		2097152 : "Wake trigger" : 0 : "Triggers target4 when monster wakes up"
 	]
 	spawncount(integer) : "Maximum alive monsters" : 10 : "For monster spawners. Maximum amount of monsters spawned by this entity that can be alive at the same time. If this value is reached no more monsters spawn in from this entity until they're killed. Set to -1 to remove this limit."
 	totalspawncount(integer) : "Total spawn count" : : "For monster spawners. Maximum total spawns. When set, the spawner will stop when it has spawned this amount of monsters. Also the total monster counter will start with this maximum already counted, unless you set the 'Count on spawn' flag as well."
 	delay(integer) : "Spawn delay" : : "For trigger-spawned monsters, sets a delay time for spawning in after being triggered."
+	rand(integer) : "Random delay" : : "For trigger-spawned monsters, sets a random delay interval for spawning in - as in, the delay will be bewteen 0 and this value. The random delay will sum with whatever fixed delay is set in the 'delay' field, if any."
 ]
 
 @baseclass = Above [
 	above(integer) : "Fly above enemy" : : "Makes enemy fly this height above its enemy."
 ]
 
+@baseclass = MonsterJump [
+	movedir(string) : "Auto-jump" : : "Auto jump velocity on spawn/awaken (x y z, in worldspace)"
+	movedir2(string) : "Angle-relative auto-jump" : : "Angle-relative auto jump velocity on spawn/awaken (forward right up)"
+]
+
 // Rubicon 2 monsters first
 // Centurion, 150 hp
 @PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/cent.mdl"})= monster_centurion : "Centurion, 150 health points." []
 // Dreadnaught, 150 hp
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 64) model({"path":"progs/floyd.mdl", "frame":1}) = monster_floyd : "Floyd automaton robot, 200 hp
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 64) model({"path":"progs/floyd.mdl", "frame":1}) = monster_floyd : "Floyd automaton robot, 200 hp
 ROLLING Floyd is on his back and helpless, explodes after taking 75 damage
 ASLEEP Floyd will not respond to anything unless he is shot or his targetname is triggered"
 [
@@ -837,13 +899,13 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 
 // Regular monsters
 		
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier_alk.mdl"}) = monster_army :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier_alk.mdl"}) = monster_army :
 "Grunt, 30 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
 "Dog (Rottweiler), 25 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model(
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model(
 	{{spawnflags & 8 -> 	"progs/ogre_old.mdl", "progs/ogre_alk.mdl"}}
 ) = monster_ogre :
 "Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
@@ -854,13 +916,13 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
 "Ogre Marksman, 200 health points." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
 "Knight, 75 health points." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({{
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({{
 	spawnflags & 8 -> 	"progs/hknight_old.mdl", "progs/sknight.mdl"
 	}}
 ) = monster_hell_knight :
@@ -873,7 +935,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 ]
 
 @PointClass base(Monster, Above) size(-16 -16 -24, 16 16 40) model({{
-	spawnflags & 8 -> 	"progs/wizard.mdl", "progs/cyberscrag.mdl"
+	spawnflags & 8 -> 	"progs/wizard_alk.mdl", "progs/cyberscrag.mdl"
 	}}
 ) = monster_wizard :
 "CyberScrag, 80 health points. Original Scrag available through the respective spawnflag." [
@@ -884,7 +946,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({{
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({{
 	spawnflags & 8 -> "progs/demon_old.mdl", "progs/demon_alk.mdl"
 	}}
 ) = monster_demon1 :
@@ -896,15 +958,15 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
 "Mutant, 220 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
 "Shambler, 600 health points.
 Rockets only have half damage
 when hitting the Shambler." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/bambler.mdl"}) = monster_bambler :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/bambler.mdl"}) = monster_bambler :
 "Bambler, 500 health points.
 Melee only bald shamblers.
 Rockets only have half damage
@@ -912,67 +974,92 @@ when hitting the Bambler." []
 
 @PointClass base(Monster) size(-128 -128 -24, 128 128 256) model({"path":"progs/boss.mdl"}) = monster_boss :
 "Chthon (Boss of Shareware Quake)
-Only event_lightning can kill him." []
+Only event_lightning can kill him." [
+	spawnflags(flags) =
+	[
+		1 : "Non-shootable" : 0
+	]
+]
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
 "Enforcer, 80 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 48) model({"path":"progs/shalrath_old.mdl"}) = monster_shalrath :
-"Vore (Shalrath), 400 health points." []
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 48) model({{
+	spawnflags & 8 -> "progs/shalrath_old.mdl", "progs/shalrath_newer.mdl"
+	}}
+) = monster_shalrath :
+"Vore (Shalrath), 400 health points." [
+	spawnflags(flags) =
+	[
+		4 : "Force Alkaline version" : 0
+		8 : "Force original version" : 0
+	]
+]
 
-@PointClass base(Monster) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_tarbaby :
+@PointClass base(Monster, MonsterJump) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_tarbaby :
 "Spawn (Tarbaby), 80 health points." []
 
-@PointClass base(Monster) size(32 32 48) model({"path":"progs/fish_small.mdl"}) = monster_fish :
-"Rotfish, 25 health points." []
+@PointClass base(Monster) size(-8 -8 -24, 8 8 16) model({"path":"progs/fish_small.mdl"}) = monster_fish :
+"Rotfish, 20 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 32) model({"path":"progs/oldone.mdl"}) = monster_oldone :
 "Shub-Niggurath, 40000 health points.
 Most likely killed by teleport frag." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 32) model({"path":"progs/zombie.mdl"}) = monster_zombie :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 32) model({{
+	spawnflags & 1 -> {"path":"progs/zombie.mdl", "frame":192},
+	spawnflags & 4 -> {"path":"progs/zombie.mdl", "frame":172},
+	{"path":"progs/zombie.mdl", "frame":0}
+}}) = monster_zombie :
 "Zombie, 60 health points.
-If crucified, stick the bounding box 12 pixels back into a wall to look right." 
+If crucified, stick the bounding box 12 pixels back into a wall to look right.
+
+'Start down' makes the zombie spawn lying down. It'll get up by player proximity or upon triggering. If the activator is not a player it'll just stand idle after getting up.
+'Only get up on trigger' makes it never get up by proximity when the Start Down flag is checked, only upon being targeted.
+" 
 [
 	spawnflags(Flags) = 
 	[
 		1 : "Crucified" : 0
 		2 : "Ambush" : 0
+		4 : "Start down" : 0
+		8 : "Only get up on trigger" : 0
 	]
 ]
 
+@PointClass base(Monster, MonsterJump) size(-6 -6 -24, 6 6 32) model({"path":"progs/zombie2.mdl"}) = monster_zombie2 :
+"Fast Zombie, 10 health points." []
 
-
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce3.mdl"}) = monster_super_enforcer :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce3.mdl"}) = monster_super_enforcer :
 "Lieutenant, 120 health points, 1000 armor.
 This S.O.B. will turn you into Swiss cheese
 if you are not careful!" []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce2.mdl"}) = monster_me :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce2.mdl"}) = monster_me :
 "Mega Enforcer, 150 health points.
 With a force field, plasma gun, and shoulder
 cannon, look out for this cold-blooded killer." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier_alk.mdl"}) = monster_nailgrunt :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier_alk.mdl"}) = monster_nailgrunt :
 "Nail Grunt, 30 health points.
 This ugly cyborg can penetrate your heart
 ...and not in a good way." []
 
-@PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl","frame":17}) = monster_axegrunt :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl","frame":17}) = monster_axegrunt :
 "Axe Grunt, 75 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/scor.mdl"}) = monster_scourge :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/scor.mdl"}) = monster_scourge :
 "Centroid, 300 health points." []
 
-@PointClass base(Monster) size(-48 -48 -24, 48 48 84) model({"path":"progs/armalegs.mdl"}) = monster_armagon :
+@PointClass base(Monster, MonsterJump) size(-48 -48 -24, 48 48 84) model({"path":"progs/armalegs.mdl"}) = monster_armagon :
 "Armagon, 2000-3500 health points.
 The big boss mam!" []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogreb.mdl"}) = monster_ogreb :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogreb.mdl"}) = monster_ogreb :
 "Berserker, 200 health points.
 Don't shake hands with this crazy bastard!" []
 
-@PointClass base(Monster, Above) size(-16 -16 -24, 16 16 40) model({"path":"progs/drone1.mdl"}) = monster_drone :
+@PointClass base(Monster, Above) size(-16 -16 -16, 16 16 24) model({"path":"progs/drone1.mdl"}) = monster_drone :
 "Drone, 100 health points." []
 
 @PointClass base(Monster, Above) size(-16 -16 -24, 16 16 16) model({"path":"progs/mon_lostsoul.mdl"}) = monster_lostsoul :
@@ -987,19 +1074,21 @@ Don't shake hands with this crazy bastard!" []
 		4 : "Perch" : 0 : "Start in a sitting down, place 44 units out from perching edge, 4 units higher" 
 	]	
 ]
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/hunter.mdl"}) = monster_hunter :
+
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/hunter.mdl"}) = monster_hunter :
+
 "Hunter, 600 health points." []
 
-@PointClass base(Monster) size(32 32 48) model({"path":"progs/eel2.mdl"}) = monster_eel :
+@PointClass base(Monster, MonsterJump) size(32 32 48) model({"path":"progs/eel2.mdl"}) = monster_eel :
 "Eel, 60 health points." []
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/frogman.mdl"}) = monster_frogman :
 "Frogman, 100 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/banlegs.mdl"}) = monster_banshee :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/banlegs.mdl"}) = monster_banshee :
 "Annihilator, 1300 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/ridlegs.mdl"}) = monster_rider :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/ridlegs.mdl"}) = monster_rider :
 "Prowler, 777 health points." []
 
 @PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/probelasr_body.mdl"}) = monster_probe :
@@ -1008,20 +1097,28 @@ Don't shake hands with this crazy bastard!" []
 @PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/probegren_body.mdl"}) = monster_grenadeprobe :
 "Grenade Probe, 200 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnofloyd.mdl"}) = monster_arachnofloyd :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnofloyd.mdl"}) = monster_arachnofloyd :
 "Arachnofloyd, 600 health points." []
 
-@PointClass base(Monster) size(-16 -16 0, 16 16 24) model({"path":"progs/spiderbot.mdl"}) = monster_spiderbot :
-"Spiderbot, 30 health points." []
+@PointClass base(Monster, MonsterJump) size(-16 -16 0, 16 16 24) model({"path":"progs/spiderbot.mdl"})
+model({{
+	spawnflags & 4 -> {"path":"progs/spiderbot.mdl", "frame":10},
+	{"path":"progs/spiderbot.mdl", "frame":0}
+}})= monster_spiderbot :
+"Spiderbot, 30 health points." [
+	spawnflags(flags) =	[
+		4 : "Start upright" : 0
+	]
+]
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 120) model({"path":"progs/tormentor.mdl"}) = monster_tormentor :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 120) model({"path":"progs/tormentor.mdl"}) = monster_tormentor :
 "Tormentor, 2000 health points." []
 
-@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/edie.mdl", "frame":149}) = monster_edie :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/edie.mdl", "frame":149}) = monster_edie :
 "Edie, 500 health points." []
 
 
-@PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base.mdl"}) = monster_turret :
+@PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base_v2.mdl"}) = monster_turret :
 "Turret, 50 health points." [
 	spawnflags(flags) =	[
 		1 : "Don't sleep" : 0
@@ -1137,14 +1234,19 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 ]
 
 @PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter" [
-	wait(float) : "time between spikes (1.0 default)" : "1.0"
-	nextthink(integer) : "delay before firing first spike, so multiple shooters can be stagered"
+	wait(float) : "Firing interval" : "1.0"
+	delay(integer) : "Delay before firing first spike, so multiple shooters can be stagered"
+	rand(integer) : "Additional random firing interval and delay"
+	spawnflags(Flags) = 
+	[
+		128 : "Start off" : 0
+	]
 ]
 
 @PointClass base(Appearflags) color(0 128 204) = misc_fireball : "Small fireball"
 	[ speed(integer) : "Speed" : 40 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_sparks :
+@PointClass base(Appearflags, Targetname, SingleTarget) color(0 128 204) = misc_sparks :
 "Produces a burst of yellow sparks at random intervals. If targeted, it will toggle between on or off.  If it targets a light, that light will flash allong with each burst of sparks. 
 Note: targeted lights should be set to START_OFF."
 [
@@ -1163,7 +1265,7 @@ Note: targeted lights should be set to START_OFF."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_smoke :
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_smoke :
 "Produces a jet of smoke/steam. If targeted, it will toggle between on or off."
 [
 	wait(float) : "Time between puffs" : "1.0"
@@ -1181,7 +1283,35 @@ Note: targeted lights should be set to START_OFF."
 	]
 ]
 
-@PointClass base(Appearflags, Targetname, Target) color(0 128 204) = misc_splash :
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_flame :
+"Produces a stream of fire. If targeted, it will toggle between on or off.
+
+'angle'/'angles' control stream direction.
+
+'speed' is a modifier for the flame velocity - the default is the same as the Dreadnought's flamethrower. 2 is double speed, 0.5 is half speed, etc.
+
+'wait' controls the fire stream density, or the time fraction between each flame. Lower values mean a more dense (and more damaging) stream.
+
+If there's a targetnamed light found under 'target', it'll be given a custom brightness pattern, and be toggled on/off with the flames.
+
+You can disable the long burning damage effect on players with the respective spawnflag.
+"
+[
+	wait(float) : "Fire density" : "0.1" : "Time between each flame"
+	angle(integer) : "Launch angle"
+	speed(integer) : "Flame velocity multiplier" : 1 : "Modifies the standard flame launching velocity. 0.5 is half the speed, 2 is double speed, etc."
+	dmg(integer) : "Damage" : 2 : "Damage dealt by each flame on contact."
+	target(target_destination) : "Light to toggle"
+	spawnflags(flags) =
+	[
+		1 : "Starts off" : 0
+		2 : "No long burn damage" : 0
+		4 : "No sound" : 0
+		8 : "Simple light effects" : 0
+	]
+]
+
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_splash :
 "Produces a continuous particle splash for waterfalls."
 [
 	color(integer) : "Color (0-15)" : 0 : "Color of particles.  0 through 15, corresponds to a row of the quake palette. (default 0)"
@@ -1190,7 +1320,23 @@ Note: targeted lights should be set to START_OFF."
 	volume(integer) : "Density" : 10
 ]
 
-@PointClass base(Appearflags, Targetname, Target)  color(0 128 204) model(
+@PointClass base(Appearflags, Targetname) color(0 128 204) = misc_drip :
+"Produces a continous water drip. Can be toggled on/off or controlled via target_setstate.
+Drip interval varies randomly between waitmin and waitmax.
+"
+[
+	waitmin(float) : "Minimum drip interval" : "2"
+	waitmax(float) : "Maximum drop interval" : "3"
+	spawnflags(flags) =
+	[
+		1 : "Starts off" : 0
+		2 : "No sound" : 0
+		4 : "Don't bounce on hit" : 0
+	]
+	
+]
+
+@PointClass base(Appearflags, Targetname)  color(0 128 204) model(
 	{"path":"progs/flag.mdl", "frame": spawnflags & 2}
 ) = misc_flag :
 "A hanging banner, gently waving in the wind. Normal dimensions: 64 wide by 144 long.
@@ -1214,7 +1360,7 @@ Big banner is twice as big: 128 wide by 288 long."
 	mangle(string) : "Override meat vector" : "0 0 1"
 ]
 
-@PointClass base(Appearflags, Target, Targetname) size(32 32 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_model :
+@PointClass base(Appearflags, Targetname) size(32 32 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_model :
 "A point entity for displaying models. A frame range can be given to animate the model.
 Can be toggled visible/invisible when targeted.
 If you use a rotating model, make sure to enable the 'Don't make static' spawnflag.
@@ -1269,7 +1415,7 @@ Just for debugging. Don't use.
 Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to view frames of model."
 []
 
-@Pointclass base(Targetname, Appearflags, Deathtype) color(0 128 224) size(16 16 16) = target_explosion : 
+@Pointclass base(Targetname, Appearflags) color(0 128 224) size(16 16 16) = target_explosion : 
 "Causes explosions, same appearance as a rocket/grenade blast." 
 [
 	count(integer) : "Repeat count" : 1
@@ -1340,20 +1486,23 @@ Spawnflag 2 keeps the entity's original velocity."
 	spawnflags(flags) = [
 		1 : "Keep original angle"
 		2 : "Keep original velocity"
+		4 : "Spawn teleport effect"
+		8 : "Move activator"
 	]
 ]
 
-@PointClass base(Appearflags, Targetname) = target_infight : "Makes 'target' monster angry at 'target2'.
+@PointClass base(Appearflags, Targetname) = target_infight : "Makes 'target' monster angry at 'target2'. If there are multiple monsters with the name indicated under 'target', they all will get angry at 'target2'. 'target2' on the other hand must point to a single entity, or else you'll get unpredictable results.
 
 By default, the infighting doesn't start mutually, that is, 'target2' monster will only get mad back at 'target' after it's been attacked.
-If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'."
+If you want to make them angry at each other instantly, you can set the spawnflag 'Mutual hate'. If you have more than one monster under 'target', the victim of the infighting will only get angry back at one of them.
+"
 [
-	target(target_destination) : "The monster who will get angry."
+	target(target_destination) : "The monster(s) who will get angry."
 	target2(target_destination) : "Who target will get angry at."
 	spawnflags(flags) = [ 1: "Mutual hate" : 0 ]
 ]
 
-@PointClass base(SingleTarget, Targetname, Appearflags) color(168 224 255) = misc_lightning_start :
+@PointClass base(Targetname, Appearflags) color(168 224 255) = misc_lightning_start :
 "Starting point of a lightning trail effect.
 Requires the target to be a misc_lightning_end or a misc_lightning_relay.
 You can create a long, continuous effect by chaining one or more misc_lightning_relays between the start and the end entities.
@@ -1372,6 +1521,12 @@ Set the LT_START_ON spawnflag if you want the lightning to start in a fired stat
 	dmg(integer) : "Damage" : 25 : "The amount of damage you want the lightning to do. Set it to -1 if you want no damage."
 	count(float) : "Duration" : "0.3" : "The duration of the lightning effect. Will be ignored if it's togglable."
 	delay(float) : "Delay" : "0" : "Time delay before activating the next point."
+	target(target_destination) : "Destination point" : : "Must point to a misc_lightning_relay or misc_lightning_end entity."
+	style(choices) : "Bolt style" : 0 = [
+		0 : "Lightning Gun (thin)"
+		1 : "Shambler (medium)"
+		2 : "Chthon (large)"
+	]
 	sounds(choices) : "Sound" : 1 = [
 		1 : "Lightning noise"
 		2 : "Silent"
@@ -1383,7 +1538,7 @@ Set the LT_START_ON spawnflag if you want the lightning to start in a fired stat
 	]
 ]
 
-@PointClass base(SingleTarget, Targetname, Appearflags) color(168 224 255) = misc_lightning_relay :
+@PointClass base(Targetname, Appearflags) color(168 224 255) = misc_lightning_relay :
 "Mid-point of a lightning trail effect. Refer to misc_lightning_start for a more detailed explanation.
 Must target a misc_lightning_end or another misc_lightning_relay.
 
@@ -1398,6 +1553,7 @@ Set 'delay' to the delay before activating the next point in the chain. Default 
 	dmg(integer) : "Damage" : : "Overrides the amount of damage the lightning does at this point. Set it to -1 if you want no damage."
 	count(float) : "Duration" : : "Overrides the duration of the lightning effect at this point. Will be ignored if it's togglable."
 	delay(float) : "Delay" : "0" : "Time delay before activating the next point."
+	target(target_destination) : "Destination point" : : "Must point to a misc_lightning_relay or misc_lightning_end entity."
 	sounds(choices) : "Sound" : 0 = [
 		0 : "Inherit from misc_lightning_start"
 		1 : "Lightning noise"
@@ -1482,7 +1638,7 @@ If the target entity changes its default behavior when 'targetname' is set (such
 
 
 
-@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound : "Hipnotic sound player
+@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound_repeat : "Hipnotic sound player
 
 Plays a one off sound on a periodic basis.
 Do NOT use looped sounds with this entity. For looped sounds use ambient_general.
@@ -1507,6 +1663,9 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 		impulse(integer) : "Channel (0 - 7) Automatic" : 0
 		wait(integer) : "Random time between sounds" : 20
 		delay(integer) : "Minimum time between sounds" : 2
+		spawnflags(flags) =	[
+			1 : "Start off" : 0
+		]
 	]
 @PointClass base(Targetname, Appearflags) size (16 16 24) color(30 200 35) = play_sound_triggered : "Custom sound trigger
 
@@ -1615,6 +1774,7 @@ The door now has built-in support for switchable shadows, that fade in/out autom
         32: "Toggle" : 0
         64: "Doom-style unlock" : 0
         128: "Sound during delay" : 0
+        16384: "Platinum Key required" : 0
         65536: "Expanded trigger field X" : 0
         131072: "Expanded trigger field Y" : 0
         262144: "Reduced trigger field X" : 0
@@ -1656,10 +1816,16 @@ The door now has built-in support for switchable shadows, that fade in/out autom
 	]
 ]
 
-@SolidClass base(Targetname, Appearflags, ModelLight, Alpha, SwitchShadow) = func_wall : "Wall" [
+@SolidClass base(Targetname, Appearflags, ModelLight, Alpha, SwitchShadow) = func_wall : "Static, solid wall.
+Can be made non-solid.
+Targeting it toggles whatever switchable texture it may have on (+0/+a sets).
+" [
 	spawnflags(flags) =
 	[
 		2 : "Non-solid" : 0
+		4 : "Invert on/off frames" : 0
+		8 : "Sync with fluoro flicker" : 0
+		16 : "Start off" : 0
 	]
 ]
 
@@ -1768,6 +1934,48 @@ You can directly set a custom movement vector with the 'movedir' key.
 	delay(string) : "Delay before trigger"
 	movedir(string) : "Custom movement vector (X Y Z)"
 	message(string) : "Message"
+	spawnflags(flags) =
+	[
+		1 : "Silver key" : 0
+		2 : "Gold key" : 0
+		4 : "Platinum key" : 0
+	]
+]
+
+@SolidClass base(Targetname, Target, ModelLight, Message) = func_touchplate : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
+You can directly set a custom movement vector with the 'movedir' key.
+" 
+[
+	speed(integer) : "Speed (units per second)" : 40
+	distance(integer) : "Movement distance" : 8
+	noise(string) : "Custom pressing sound file (overrides 'sounds' setting)"
+	noise2(string) : "Returning sound"
+	sounds(choices) : "Pressing sound" = 
+	[
+		0 : "None"
+		1 : "Steam metal (buttons/airbut1.wav)"
+		2 : "Wooden clunk (buttons/switch21.wav)"
+		3 : "Metallic clink (buttons/switch02.wav)"
+		4 : "In-out (buttons/switch04.wav)"
+		5 : "Small metallic clink (weapons/spindn_click.wav)"
+	]
+	sounds2(choices) : "Returning sound" = 
+	[
+		0 : "None"
+		1 : "Steam metal (buttons/airbut1.wav)"
+		2 : "Wooden clunk (buttons/switch21.wav)"
+		3 : "Metallic clink (buttons/switch02.wav)"
+		4 : "In-out (buttons/switch04.wav)"
+		5 : "Small metallic clink (weapons/spindn_click.wav)"
+	]
+	wait(float) : "Delay before reset" : "0"
+	delay(float) : "Delay before trigger"
+	movedir(string) : "Movement vector (X Y Z)" : "0 0 -1"
+	message(string) : "Message"
+	spawnflags(flags) = [
+		1: "Fire target3/target4 when leaving" : 0
+		2: "Monster triggerable" : 0
+	]
 ]
 
 @SolidClass base(Targetname, BrushLight) = func_train :
@@ -1910,6 +2118,7 @@ Deep trigger: trigger field goes all the way to the bottom of the entity's lower
 	[
 		1 : "Low trigger" : 0
 		2 : "Deep trigger" : 0
+		4 : "Setup at lower pos" : 0
 	]
 	speed(integer) : "Speed" : 150
 	height(integer) : "Travel altitude (can be negative)" : 0
@@ -2098,10 +2307,10 @@ Other than that, this entity functions like a normal button.
 		1 : "Secret sound"
 		2 : "Beep beep"
 		3 : "Large switch"
-		4 : "Set message to text string"
 	]
 	delay(string) : "Delay before trigger" : "0"
 	message(string) : "Message (set sound too!)"
+	noise(string) : "Custom sound path"
 ]
 
 @baseclass = TriggerWait [
@@ -2139,20 +2348,28 @@ Flags:
 	]
 ]
 
-@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once"
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once.
+
+Setting a 'health' value makes it solid and shootable.
+"
 [
 	health(integer) : "Health"
 	spawnflags(flags) = [
-		1: "Entity only" : 0
+		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
 	]
 ]
-@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple" 
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_multiple : "Trigger: Activate multiple
+
+Will keep on firing while the player is touching the trigger, on the interval defined in 'wait'.
+
+Setting a 'health' value makes it solid and shootable.
+" 
 [
 	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health"
 	spawnflags(flags) = [
-		1: "Entity only" : 0
+		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
 	]
 ]
@@ -2215,6 +2432,7 @@ Using the destination's 'count' field, you can define which order they'll be sel
 		2: "Preserve pitch angle"
 		4: "No teleport effect"
 		8: "Preserve velocity"
+		16: "Preserve angle (no offset)"
 	]
 	count(integer) : "Group order"
 ]
@@ -2243,7 +2461,7 @@ Using the destination's 'count' field, you can define which order they'll be sel
 
 @SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_void : "Use this for a 'void' area. Removes monsters, gibs, ammo, etc... also kills player"
 [
-	spawnflags(Flags) =
+	spawnflags(flags) =
 	[
 		1 : "No Effect on Monsters" : 0
 		2 : "No Effect on Players" : 0
@@ -2263,9 +2481,31 @@ Using the destination's 'count' field, you can define which order they'll be sel
         3 : "Nightmare!"
 	]
 ]
-@PointClass base(Appearflags, Trigger) = trigger_relay : "Trigger relay"
+@PointClass base(Appearflags, Trigger) = trigger_relay : "Trigger relay
+
+- 'count' sets a maximum usage count. Set it to 1 to guarantee it can only be fired once.
+
+- 'wait' sets a wait time after the last activation when it cannot be fired again. Works similar to a touch-less trigger_multiple.
+
+Spawnflags
+----------
+
+- 'Fire automatically on map start': does what it says on the tin. Good for firing map-start events, especially when used in conjunction with skill flags. Relays can be filtered to nightmare only.
+- 'Make sure activator is a player': if the activator isn't a player, change it to the closest one alive. 
+- 'Player only': will only relay the firing if the activator is a player. Note that it'll always fire when used in conjunction with the flag above.
+"
 [
-	count(integer) : "Maximum usage count"
+	count(integer) : "Maximum usage count" : : "Sets a maximum usage count. Set it to 1 to guarantee it can only be fired once."
+	wait(integer) : "Wait time before it can be fired again"
+	spawnflags(flags) =
+	[
+		1 : "Fire automatically on map start" : 0 : "Good for firing map-start events, especially when used in conjunction with skill flags. Relays specifically can be filtered to nightmare only."
+		2 : "Make sure activator is a player" : 0 : "If the activator isn't a player, change it to the closest one alive."
+		4 : "Player only" : 0 : "Will only relay the firing if the activator is a player. Note that it'll always fire when used in conjunction with the flag above."
+		1024 : "[Do not use]"
+		4096 : "Not in Hard"
+		8192 : "Not in Nightmare"
+	]
 ]
 @SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_monsterjump : "Trigger monster jump.
 
@@ -2284,9 +2524,25 @@ Note that they're mutually exclusive."
 	exclude(string) : "Exclude filter" : : "Trigger all monster classes except this one"
 ]
 
+@SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_touchplate : "Trigger touchplate
+
+Fires once when player touches the trigger volume, and won't fire again until they leave and come back.
+Can be set to fire target3/target4 when the player leaves the trigger by activating the corresponding spawnflag.
+" 
+[
+	wait(float) : "Wait" : 0 : "Time before it can be fired again after leaving the trigger volume"
+	spawnflags(flags) = [
+		1: "Fire target3/target4 when leaving" : 0
+		2: "Monster triggerable" : 0
+	]
+]
+
 @PointClass base(Appearflags, Trigger) = trigger_counter : "Trigger counter" 
 [
-	spawnflags(flags) = [ 1: "No Message" : 0 ]
+	spawnflags(flags) = [
+		1: "No Message" : 0
+		2: "Reset count after fired" : 0
+	]
 	count(integer) : "Count before activation" : 2
 ]
 
@@ -2306,7 +2562,7 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 Entities in a disabled state won't execute its main function, depending on context.
 Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
 The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
-You can force the target entities to spawn disabled/locked with spawnflag 1.
+You can force the target entities to spawn disabled/locked/invisible with spawnflag 1.
 " 
 [
 	spawnflags(flags) = [
@@ -2318,6 +2574,7 @@ You can force the target entities to spawn disabled/locked with spawnflag 1.
 		0 : "Toggle current state"
 		1 : "Force active"
 		2 : "Force inactive"
+		2 : "Make invisible"
 	]
 ]
 
@@ -2357,6 +2614,11 @@ Also, the state of the last evaluation is stored in this entity's 'state' field 
 		12 : "cnt (float, use 'count' field)"
 		13 : "type (string, use 'type' field)"
 		14 : "targetname2 (string, use 'type' field)"
+		15 : "ammo_shells (float, use 'count' field)"
+		16 : "ammo_nails (float, use 'count' field)"
+		17 : "ammo_rockets (float, use 'count' field)"
+		18 : "ammo_cells (float, use 'count' field)"
+		19 : "currentammo (float, use 'count' field)"
 	]
 	weapon(choices) : "Operation" : 0 = [
 		0 : "== (equal, valid for all fields)"
@@ -2440,7 +2702,7 @@ The 'All players' spawnflag changes it for all connected players instead of only
 
 If 'target2' is a path_corner, the monster will start walking towards it only when not angry. If it's a path_angry, on the other hand, it'll only do it while angry at something.
 
-You can set up more than one target_setpath entity for a monster, if you need both walking/angry pathing situations to happen at different times. Or you can even have more than one of the same path type, if you want to route it to a different direction depending on some event. 
+You can set up more than one target_startpath entity for a monster, if you need both walking/angry pathing situations to happen at different times. Or you can even have more than one of the same path type, if you want to route it to a different direction depending on some event. 
 " 
 [
 	target(target_destination) : "Monster's name" 
@@ -2478,6 +2740,50 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 		2: "Don't hurt monsters" : 0
 	]
 ]
+
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_float : "Makes things floaty.
+It pushes entities smoothly towards a set vertical speed, either up or downwards. Affects everything that has gravity - players, monsters, items, projectiles, gibs.
+
+Can be given an optional float sound. 
+
+'finalspeed' sets the final vertical speed the entity will be pushed to. Positive values are upwards, negative downwards.
+
+'speed' controls the acceleration in units/s^2 to reach for the final speed (or simply the gravity of the floater, in other words). This must always be a positive value. For reference, standard gravity is 800u/s^2, so it's recommended to use a value higher than this, otherwise the vertical push will never be able to fight against gravity.
+"
+[
+	spawnflags(flags) = [
+		1: "Don't affect players" : 0 
+		2: "Don't affect monsters" : 0
+		4: "Silent" : 0
+	]
+	speed(integer) : "Acceleration" : 1600
+	finalspeed(integer) : "Final vertical speed" : 100
+
+	noise(string) : "Optional floating sound"
+	delay(float) : "Sound loop time (when there's a sound set)" : "1"
+]
+
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_jumppad : "
+"
+[
+	spawnflags(flags) = [
+		1: "Don't affect players" : 0 
+		2: "Don't affect monsters" : 0
+		4: "Silent" : 0
+		8: "Dodge brush entities" : 0
+		16: "Don't hold player" : 0
+		32: "Fixed push direction" : 0
+	]
+	height(integer) : "Vertical velocity adjustment. Can be positive or negative"
+	target(target_destination) : "Destination point, obligatory. Can be a simple info_notnull"
+	target2(target_destination) : "Origin point, optional when used with the 'fixed push' flag"
+	//speed(integer) : "Acceleration" : 1600
+	//finalspeed(integer) : "Final vertical speed" : 100
+
+	noise(string) : "Launch sound" : "misc/jumppad.wav"
+	//delay(float) : "Sound loop time (when there's a sound set)" : "1"
+]
+
 
 @PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_hurt : "Trigger hurt. Hurts any entity activating it, or the entities defined in the target-target4 fields.
 'dmg' sets the total damage to be inflicted.
@@ -2519,7 +2825,7 @@ Smoothly blends client's currently applied fog to this value over time.
 	delay(string) : "Pause before starting blend"
 ]
 
-@PointClass base(Appearflags, Targetname, Target, FogShift) color(128 128 50) = target_fogblend : 
+@PointClass base(Appearflags, Targetname, FogShift) color(128 128 50) = target_fogblend : 
 "Target: Fog Blend
 Activator's fog will toggle between fog_color/fog_density and fog_color2/fog_density2 values, smoothly blending it over time.
 If you check the 'one-way' spawnflag, it'll only blend over to fog_color2/fog_density2 - unless you check the 'reverse' flag as well, which will make it blend only to fog_color/fog_density.
@@ -2693,9 +2999,9 @@ Mapvars are miscellaneous flags (only true/false values) that can be freely used
 "
 [
 	count(int) : "Mapvar id" : : "Obligatory. Must range between 1 and 44."
-	style(choices) : "Relay condition" : 1 = [
-		1 : "Trigger if mapvar is on/true"
-		2 : "Trigger if mapvar is off/false"
+	style(choices) : "Relay condition" : 2 = [
+		1 : "Trigger if mapvar is off/false"
+		2 : "Trigger if mapvar is on/true"
 	]
 ]
 

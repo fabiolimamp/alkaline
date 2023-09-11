@@ -21,6 +21,7 @@ float TELEDEST_KEEPANGLE = 1;
 float TELEDEST_KEEPPITCH = 2;
 float TELEDEST_STEALTH = 4;
 float TELEDEST_KEEPVELOCITY = 8;
+float TELEDEST_KEEPANGLE_NOOFFSET = 16;
 
 float TELEDEST_STYLE_NORMAL = 0;
 float TELEDEST_STYLE_INSTANT = 1;
@@ -266,8 +267,8 @@ void() teleport_touch =
 	if (!(self.spawnflags & TELE_STEALTH || t.spawnflags & TELEDEST_STEALTH))
 		spawn_tfog (other.origin);
 
-	
-	tAngle = [t.mangle_x, t.mangle_y, t.mangle_z];
+	// teleport destination's angle offset
+	tAngle = t.mangle;
 
 	// entity is a client, so take the angles from v_angle instead
 	if (other.flags & FL_CLIENT)
@@ -395,6 +396,9 @@ void() teleport_touch =
 			}
 		}
 
+		if (t.spawnflags & TELEDEST_KEEPANGLE_NOOFFSET)
+			other.angles = other.v_angle;
+
 		// turn this way immediately
 		other.fixangle = 1;
 		other.above = 1;
@@ -424,6 +428,8 @@ This is the destination marker for a teleporter.  It should have a "targetname" 
 */
 void() info_teleport_destination =
 {
+	if (!SUB_InitEntity()) return;
+	
 // this does nothing, just serves as a target spot
 	self.mangle = self.angles;
 	self.angles = '0 0 0';
@@ -447,6 +453,8 @@ If the trigger_teleport has a targetname, it will only teleport entities when it
 */
 void() trigger_teleport =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local vector o;
 
 	InitTrigger ();
@@ -469,6 +477,8 @@ void() trigger_teleport =
 
 
 void() trigger_teleport_instadestination = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.targetname)
 		objerror ("no targetname");
 

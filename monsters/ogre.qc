@@ -50,8 +50,6 @@ $frame pull1 pull2 pull3 pull4 pull5 pull6 pull7 pull8 pull9 pull10 pull11
 //speed an ogre grenade is fired at
 float OGRE_G_VEL = 600;
  
-//fixme: get the correct gravity strength for the level
-float grav = 800;
  
 //a default angle to fire at if the enemy is too far away
 float OGRE_DEFAULT_ELEVATION = 30;
@@ -92,6 +90,7 @@ float(float theta, vector dest) IterateElevation = {
 	y = vlen(ofs);
 
 	//find the coefficients of the quadratic in tan(theta)
+	float grav = cvar("sv_gravity");
 	a = 0.5 * grav * y * y / (OGRE_G_VEL * OGRE_G_VEL);
 	b = -y;
 	c = a + z;
@@ -539,7 +538,7 @@ void()	ogre_die10	=[	$death10,	ogre_die11	] {};
 void()	ogre_die11	=[	$death11,	ogre_die12	] {};
 void()	ogre_die12	=[	$death12,	ogre_die13	] {};
 void()	ogre_die13	=[	$death13,	ogre_die14	] {};
-void()	ogre_die14	=[	$death14,	ogre_die14	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	ogre_die14	=[	$death14,	ogre_die14	] {monster_dead_dead();};
 
 void()	ogre_bdie1	=[	$bdeath1,	ogre_bdie2	] {};
 void()	ogre_bdie2	=[	$bdeath2,	ogre_bdie3	] {ai_forward(5);};
@@ -552,7 +551,7 @@ void()	ogre_bdie6	=[	$bdeath6,	ogre_bdie7	] {ai_forward(7);};
 void()	ogre_bdie7	=[	$bdeath7,	ogre_bdie8	] {ai_forward(25);};
 void()	ogre_bdie8	=[	$bdeath8,	ogre_bdie9	] {};
 void()	ogre_bdie9	=[	$bdeath9,	ogre_bdie10	] {};
-void()	ogre_bdie10	=[	$bdeath10,	ogre_bdie10	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	ogre_bdie10	=[	$bdeath10,	ogre_bdie10	] {monster_dead_dead();};
 
 void() ogre_die =
 {
@@ -569,6 +568,7 @@ void() ogre_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		if (random() < 0.2)
                 ThrowGib ("progs/ogr_gun.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 	
@@ -710,6 +710,8 @@ void() monster_ogre_spawner = {
 
 
 void() monster_ogre = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -793,6 +795,8 @@ void() monster_ogre_marksman_spawner = {
 
 
 void() monster_ogre_marksman = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

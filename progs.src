@@ -53,6 +53,8 @@ fog.qc
 mapvar.qc
 gravity.qc
 water.qc
+touchplate.qc
+jumppad.qc
 
 misc_scientist.qc
 
@@ -106,6 +108,7 @@ monsters/tormentor.qc 		// bmFbr
 monsters/spider.qc 			// bmFbr
 monsters/edie.qc			// quoth
 monsters/monster_turret.qc
+monsters/zombie2.qc			// ne_ruins
 
 monsters/lostsoul.qc		// sock/bmFbr
 monsters/gargoyle.qc		// sock/bmFbr

@@ -90,6 +90,8 @@ void() worldspawn =
 		clientstat(STAT_BOOTS, EV_FLOAT, jboots_rechargelimit);
 		clientstat(STAT_BOOTS_FINISHED, EV_FLOAT, jboots_finished);
 		clientstat(STAT_IT, EV_FLOAT, items);
+		clientstat(STAT_DMGTAKE, EV_FLOAT, dmg_take_hud);
+		clientstat(STAT_CURRENTHUD, EV_FLOAT, currenthud);
 	}
 
 	InitBodyQue ();
@@ -121,6 +123,16 @@ void() worldspawn =
 	if (options & ALKSETTINGS_PLAYERTRACERS) {
 		bprint("\bAlkaline options:\b Player tracers \benabled\b. Type \"playertracers\" to disable it.\n");
 		playertracers = 1;
+	}
+
+	if (options & ALKSETTINGS_OLDGRENADE) {
+		bprint("\bAlkaline options:\b Old grenade style \benabled\b. Type \"oldgrenade\" to disable it.\n");
+		oldgrenade = 1;
+	}
+
+	if (options & ALKSETTINGS_OLDLIGHTNING) {
+		bprint("\bAlkaline options:\b Old lightning style \benabled\b. Type \"oldlightning\" to disable it.\n");
+		oldlightning = 1;
 	}
 
 	if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
@@ -159,6 +171,7 @@ void() worldspawn =
 	precache_sound ("weapons/shotgn2.wav");		// super shotgun
 	precache_sound ("weapons/axhit4.wav");		// extra axe sound for melee - greenwood
 	precache_sound ("weapons/spindn_click.wav");		// super nailgun spindown click
+	//precache_sound ("weapons/marioball.wav");		// it'sa me!
 	
 	precache_sound ("enforcer/enfstop.wav");	// laser cannon
 	
@@ -223,6 +236,8 @@ void() worldspawn =
 	
 // johnfitz -- precache sounds for cheats
 	precache_sound ("items/protect.wav");
+	precache_sound ("items/protect2.wav");
+	precache_sound ("items/protect3.wav");
 	precache_sound ("items/damage.wav");
 	precache_sound ("items/damage2.wav");
 	precache_sound ("items/damage3.wav");
@@ -352,8 +367,12 @@ void() worldspawn =
 	mapvar_setuparray();
 	
 
-	// defaults to base theme, because of course it does
-	if (!self.worldtype) self.worldtype = WORLDTYPE_BASE;
+	// Defaults to base theme, because of course it does.
+	// Adding a value of 4 to the scratch1 cvar turns back medieval as default
+	if (!self.worldtype) {
+		if (cvar("scratch1") & TEMPSETTINGS_ORIGINALWORLDTYPES) self.worldtype = WORLDTYPE_MEDIEVAL;
+		else self.worldtype = WORLDTYPE_BASE;
+	}
 
 	lastdq = -1;
 	currentdq = -1;
@@ -467,13 +486,6 @@ void() StartFrame =
 		CreateBackstop();
 	}
 	
-	if (framecount >= 1) {
-		self = nextent(world);
-		while (self) {
-			entity_watercheck();
-			self = nextent(self);
-		}
-	}
 
 };
 
@@ -481,6 +493,7 @@ void() EndFrame = {
 	if (prevframe == framecount) {
 		return;
 	}
+	//dprint3("Liquid brushes checked: ", ftos(liquidbrushchecks), "\n");
 
 	//eprint(backstop);
 	//if(!nextent(backstop)) dprint("Backstop is last\n");
@@ -488,7 +501,7 @@ void() EndFrame = {
 
 	prevframe = framecount;
 	// set ourselves up to think again next frame
-	backstop.nextthink = time;// + 0.05;
+	backstop.nextthink = time + 0.002;
 	// prevent accidental modification of the backstop
 	self = world;
 	
@@ -497,7 +510,30 @@ void() EndFrame = {
 	}
 
 	update_bulletholes();
+	gibswaterchecked = 0;
+	waterchecked = 0;
+	liquidbrushchecks = 0;
+	if (framecount >= 1) {
+		self = nextent(world);
+		while (self) {
+			if (
+				self.movetype == MOVETYPE_STEP ||
+				self.movetype == MOVETYPE_TOSS ||
+				self.movetype == MOVETYPE_BOUNCE ||
+				self.movetype == MOVETYPE_BOUNCEMISSILE
+			) {
+				
+				if (self.classname != "gib" || gibswaterchecked < 100) {
+					entity_watercheck();
+					gibswaterchecked++;
+				}
+				//waterchecked++;
+			}
 
+			self = nextent(self);
+		}
+		//dprint3("Waterchecked: ", ftos(waterchecked), "\n");
+	}
 	/*self = nextent(world);
 	while (self) {
 		entity_watercheck();

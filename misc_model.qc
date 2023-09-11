@@ -45,6 +45,8 @@ void() misc_model_think = {
 };
 
 void() misc_model = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.mdl || self.mdl == "")
 		objerror("Model not defined");
 

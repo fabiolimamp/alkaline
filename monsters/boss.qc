@@ -174,6 +174,11 @@ void() boss_pain7 =[ $shocka7, boss_pain8 ] {};
 void() boss_pain8 =[ $shocka8, boss_pain9 ] {};
 void() boss_pain9 =[ $shocka9, boss_missile1 ] {}; // auto shoot a lavaball
 
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) boss_damage = {
+	if (self.spawnflags & 1) return 0;
+	else return damage;
+}
+
 void(entity attacker, float damage)	boss_pain =
 {
 	sound (self, CHAN_VOICE, "boss1/pain.wav", 1, ATTN_NORM);
@@ -189,6 +194,28 @@ void(entity attacker, float damage)	boss_pain =
 	self.pain_finished = time + 2;
 		
 	boss_pain1 ();
+};
+
+
+void() boss_hit = {
+	if (self.health <= 0 || self.count <= 0)
+		return;
+	
+	self.enemy = activator;
+	if (self.health < 2500 && self.health >= 1200)
+		self.count = min(self.count, 2);
+	else if (self.health < 1200)
+		self.count = min(self.count, 1);
+	
+	sound (self, CHAN_VOICE, "boss1/pain.wav", 1, ATTN_NORM);
+	self.health = max(self.health - 500, 0);
+	self.count--;
+	if (self.count >= 2)
+		boss_shocka1();
+	else if (self.count == 1)
+		boss_shockb1();
+	else if (self.count == 0)
+		boss_shockc1();
 };
 
 void() boss_death1 = [$death1, boss_death2] {
@@ -262,7 +289,7 @@ void() GibBoss =
 
 void() boss_die =
 {
-	if (self.health < -15) // if health under 15
+	if (self.health < -150) // if health under 150
 	{
 		GibBoss (); // call the function in step 4
 		return;
@@ -327,18 +354,25 @@ void() boss_awake =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 	self.takedamage = DAMAGE_YES;
+	self.flags |= FL_FLY;
 	
 	setmodel (self, "progs/boss.mdl");
 	setsize (self, '-128 -128 -24', '128 128 256');
 	
-	if (skill == 0)
+	if (skill == 0) {
 		self.health = 1000;
-	else
+		self.count = 1;
+	}
+	else {
 		self.health = 3000;
+		self.count = 3;
+	}
 
+	self.th_damage = boss_damage;
 	self.th_pain = boss_pain;
 	self.th_die = boss_die;
 
+	self.use = boss_hit;
 
 	self.enemy = activator;
 
@@ -357,6 +391,8 @@ void() boss_awake =
 */
 void() monster_boss =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -372,7 +408,7 @@ void() monster_boss =
 	precache_sound ("boss1/throw.wav");
 	precache_sound ("boss1/pain.wav");
 	precache_sound ("boss1/death.wav");
-
+	//self.spawnflags = 1;
 	total_monsters = total_monsters + 1;
 
 	self.use = boss_awake;
@@ -453,18 +489,8 @@ void() lightning_use =
 	self = find (world, classname, "monster_boss");
 	if (!self)
 		return;
-	self.enemy = activator;
-	if (le1.state == STATE_TOP && self.health > 0)
-	{
-		sound (self, CHAN_VOICE, "boss1/pain.wav", 1, ATTN_NORM);
-		self.health = self.health - 1000;
-		if (self.health >= 2)
-			boss_shocka1();
-		else if (self.health == 1)
-			boss_shockb1();
-		else if (self.health == 0)
-			boss_shockc1();
-	}	
+	
+	boss_hit();
 };
 
 

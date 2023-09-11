@@ -71,32 +71,16 @@ void() monster_use =
 	self.think = FoundTarget;
 };
 
-/*
-================
-monster_death_use
 
-When a mosnter dies, it fires all of its targets with the current
-enemy as activator.
-================
-*/
-
-void() monster_death_use =
-{
-//	local entity 	ent, otemp, stemp;
-
-
-	//if (!self.target)
-	//	return;
-
-	activator = self.enemy;
-	SUB_UseTargets ();
-};
+void() monster_dead_dead = {
+	self.deadflag = DEAD_DEAD;
+	self.think = SUB_MakeNotSolid;
+	self.nextthink = time + 5;
+}
 
 
 //============================================================================
 
-void(vector org) spawn_tfog;
-void(vector org, entity death_owner) spawn_tdeath;
 
 void(entity e) hide_spawned_monster_entity = {
 	//store the important info in unused fields
@@ -125,7 +109,7 @@ void() spawn_monster;
 void() spawn_monster_use = {
 	if (self.delay) {
 		self.think = spawn_monster;
-		self.nextthink = time + self.delay;
+		self.nextthink = time + self.delay + self.rand*random();
 	}
 	else
 		spawn_monster();
@@ -238,12 +222,13 @@ void() search_path_angry = {
 void() walkmonster_start_go =
 {
 
-	self.origin_z = self.origin_z + 1;	// raise off floor a bit
-	if (!(self.flags & FL_SPAWNEDMONSTER)) droptofloor();
-	
-	if (!walkmove2(0,0))
-	{
-		dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
+	if (!(self.flags & FL_SPAWNEDMONSTER)) {
+		self.origin_z = self.origin_z + 1;	// raise off floor a bit
+		droptofloor();
+		
+		if (!walkmove2(0,0))
+			dprint4(self.classname, " in wall at: ", vtos(self.origin), "\n");
+		
 	}
 	
 	search_path_angry();
@@ -255,11 +240,17 @@ void() walkmonster_start_go =
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
 		self.yaw_speed = 20;
+
 	self.view_ofs = '0 0 25';
 	self.use = monster_use;
 	
 	self.flags = self.flags | FL_MONSTER;
 	
+	if (self.movedir2 != VEC_ORIGIN) {
+		makevectors(self.angles);
+		self.movedir = v_forward * self.movedir2_x + v_right * self.movedir2_y + v_up * self.movedir2_z;
+	}
+
 	if (self.target != "")
 	{
 		self.goalentity = self.movetarget = find(world, targetname, self.target);
@@ -490,6 +481,8 @@ void(void(entity mon) start_function_parm) monster_spawner = {
 	e.cmins = self.cmins;
 	e.cmaxs = self.cmaxs;
 	e.spawnflags = self.spawnflags | MONSTER_SPAWNANGRY; // always spawn angry
+	e.movedir = self.movedir;
+	e.movedir2 = self.movedir2;
 
 
 	if (self.totalspawncount > 0 && !(self.spawnflags & MONSTER_COUNTONSPAWN)) 

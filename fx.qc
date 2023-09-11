@@ -578,6 +578,8 @@ Color Reference:
 */
 void() misc_particlefield_box =
 {
+	if (!SUB_InitEntity()) return;
+	
 	//if (!SUB_ShouldSpawn()) return;
 	self.think = particlefield_think;
 	self.use = particlefield_use;
@@ -666,6 +668,8 @@ Color Reference:
 */
 void() misc_particlefield =
 {
+	if (!SUB_InitEntity()) return;
+	
 	setmodel(self,self.model);
 	self.mangle = self.size;
 	setorigin(self,(self.absmin + self.absmax) * 0.5);
@@ -797,7 +801,8 @@ Total shake duration is length + delay + wait."
 */
 void() target_screenshake =
 {
-	//if (!SUB_ShouldSpawn()) return;
+	if (!SUB_InitEntity()) return;
+	
 	self.wait = max(0, self.wait);
 	self.delay = max(0, self.delay);
 	self.length = max(0, self.length);
@@ -892,6 +897,8 @@ Keys
 ]
 */
 void() target_explosion = {
+	if (!SUB_InitEntity()) return;
+	
 	self.count = zeroconvertdefault(self.count, 1);
 	self.use = target_explosion_use;
 	if (!self.wait)
@@ -953,7 +960,8 @@ Keys
 */
 void() target_telefog =
 {
-	//if (!SUB_ShouldSpawn()) return;
+	if (!SUB_InitEntity()) return;
+	
 	self.count = zeroconvertdefault(self.count, 1);
 	self.use = target_telefog_use;
 	if (!self.wait)
@@ -1029,7 +1037,8 @@ air bubble emitter. always bubbles.
 */
 void() air_bubbles =
 {
-	//if (!SUB_ShouldSpawn()) return;
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove (self);

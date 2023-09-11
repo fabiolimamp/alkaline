@@ -3,13 +3,14 @@ float ITEM_SPAWNED = 64;
 float ITEM_SUSPENDED = 128;
 float ITEM_RESPAWNDM = 16384;
 float ITEM_DONTDROP = 32768;
+float ITEM_NOFLICKER = 65536;
 
 // internal use only! do not expose in the FGD
 // used to drop items from enemies
 float ITEM_DONTPRECACHE = 8388608; 
 
 void() SUB_regen = {
-	//self.model = self.mdl;		// restore original model
+	self.model = self.mdl;		// restore original model
 	self.solid = SOLID_TRIGGER;	// allow it to be touched again
 
 	if (deathmatch || (self.spawnflags & ITEM_RESPAWNDM))	// Respawn with DM effects
@@ -20,6 +21,8 @@ void() SUB_regen = {
 	self.flicker = "";
 	self.alpha = 0;
 	setorigin (self, self.origin);
+
+	if (self.use) self.use = SUB_Null;
 };
 
 
@@ -70,32 +73,61 @@ void() healthcontroller_think = {
 };
 
 
+// General pickup action.
+// Does brightflash, plays sounds, hides the model, 
+// fires targets, and sets a respawn if that's the case.
+// Assumes that "other" is always a client entity
+void(string snd, float spdelay, float dmdelay) ItemPickup = {
+
+	sound(other, CHAN_ITEM, snd, 1, ATTN_NORM);
+	stuffcmd(other, "bf\n");
+	
+	self.model = string_null;
+	self.solid = SOLID_NOT;
+
+	if (deathmatch == 1) CheckItemRespawn(dmdelay, 1);
+	else CheckItemRespawn(spdelay, 0);
+	
+	activator = other;
+	SUB_UseTargets();
+};
+
 // Supa, Quoth respawning items support Respawn item like in DM if 'ritem' TRUE,
 // override respawn time with 'respawndelay' if set, inc 'cnt' with each respawn
 // and if 'respawncount' is set we'll remove the item if cnt > respawncount
 // remember that SUB_Regen is already set on every item that can respawn, all we
 // need to do is give a nextthink time in order to trigger it
 
-void(entity whatitem, float defaultdelay) CheckItemRespawn = {
-	if (!whatitem.ritem)	// respawn item if true, otherwise abort
+void(float defaultdelay, float forcerespawn) CheckItemRespawn = {
+	if (!self.ritem && !forcerespawn)	// respawn item if true, otherwise abort
 		return;
 
-	whatitem.cnt = whatitem.cnt + 1;	// inc before check to account for zero indexing
+	self.cnt++;	// increment before check to account for zero indexing
 
-	if (whatitem.respawncount)	// limited respawns
-	if (whatitem.respawncount < whatitem.cnt)
+	if (self.respawncount && self.respawncount < self.cnt && !forcerespawn)	// limited respawns
 		return;
 
 	// okay, we're clear to set up a respawn
 
-	if (whatitem.respawndelay)	// custom respawn delay?
-		whatitem.nextthink = time + whatitem.respawndelay;
-	else
-		whatitem.nextthink = time + defaultdelay;
+	if (self.respawndelay)	{// custom respawn delay?
+		self.nextthink = time + self.respawndelay;
 
-	self.spark_finished = time + 1 + random() * 2;
-	self.model = self.mdl;
-	whatitem.flicker = "true";
+		// respawndelay -1 means it'll only respawn via triggering
+		if (self.respawndelay < 0)
+			self.nextthink = 0;
+	}
+	else
+		self.nextthink = time + defaultdelay;
+
+	self.think = SUB_regen;
+	
+	self.use = item_use;
+
+	if (!(self.spawnflags & ITEM_NOFLICKER)) {
+		self.spark_finished = time + 1 + random() * 2;
+		self.model = self.mdl;
+		self.flicker = "true";
+	}
 };
 
 
@@ -109,6 +141,27 @@ void() noclass =
 	dprint ("\n");
 	remove (self);
 };
+
+// respawning item has been triggered
+void() item_use = {
+	// Item not set to respawn.
+	// Just a sanity check, if the item isn't set to respawn
+	// then this shouldn't be even running in the first place
+	if (!self.ritem)	
+		return;
+
+	// item is already in the world, don't do anything
+	if (self.solid == SOLID_TRIGGER)
+		return;
+
+	// respawn count reached, don't spawn it again
+	if (self.respawncount && self.respawncount < self.cnt)
+		return;
+
+	self.cnt++;
+	self.nextthink = 0;
+	SUB_regen();
+}
 
 /*
 ============
@@ -263,6 +316,8 @@ float	H_ROTTEN = 1;
 float	H_MEGA = 2;
 
 void() item_health = {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = health_touch;
 	if (!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -322,25 +377,9 @@ void() health_touch = {
 	sprint(other, ftos(self.healamount));
 	sprint(other, " health\n");
 	
-	// health touch sound
-	sound(other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 
-	stuffcmd(other, "bf\n");
-	
-	self.model = string_null;
-	self.solid = SOLID_NOT;
+	ItemPickup(self.noise, 20, 30);
 
-	self.think = SUB_regen;
-
-	if (deathmatch != 2)		// deathmatch 2 is the silly old rules
-	{
-		if (deathmatch)	self.nextthink = time + 20;
-		else CheckItemRespawn(self, 30); // checks if item is set to respawn and sets nextthink
-	}
-	
-	
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
 };	
 
 
@@ -395,20 +434,20 @@ void() armor_touch = {
 	other.armorvalue = value;
 	other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
 
-	self.solid = SOLID_NOT;
-	self.model = string_null;
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)
-		self.nextthink = time + 20;
-	self.think = SUB_regen;
-
 	sprint(other, "You got armor\n");
-// armor touch sound
+
+
 	sound(other, CHAN_ITEM, "items/armor1.wav", 1, ATTN_NORM);
 	stuffcmd(other, "bf\n");
 	
+	self.model = string_null;
+	self.solid = SOLID_NOT;
+
+	if (deathmatch == 1) CheckItemRespawn(20, 1);
+	else CheckItemRespawn(30, 0);
+	
+	activator = other;
+
 	if (!self.state) {
 		activator = other;
 		SUB_UseTargets();
@@ -446,23 +485,9 @@ void() shard_touch = { // progs_dump
 		other.items = other.items - (other.items & (IT_ARMOR1 | IT_ARMOR2 | IT_ARMOR3)) + bit;
 	}
 
-	self.solid = SOLID_NOT;
-	self.model = string_null;
-
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)  // doesn't respawn in "deathmatch 2"
-		self.nextthink = time + 20;
-
-	self.think = SUB_regen;
+	ItemPickup("items/shard_pickup.wav", 30, 20);
 
 	sprint(other, "You got armor\n");
-	sound(other, CHAN_ITEM, "items/shard_pickup.wav", 1, ATTN_NORM);
-	stuffcmd(other, "bf\n");
-
-	activator = other;
-	SUB_UseTargets();	// fire all targets / killtargets
 };
 
 
@@ -470,6 +495,8 @@ void() shard_touch = { // progs_dump
 */
 
 void() item_armor_shard = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = shard_touch;
 	precache_model("progs/shard.mdl");
 	setmodel(self, "progs/shard.mdl");
@@ -480,6 +507,8 @@ void() item_armor_shard = {
 };
 
 void() item_armor1 = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = armor_touch;
 	precache_model("progs/armor.mdl");
 	setmodel(self, "progs/armor.mdl");
@@ -492,6 +521,8 @@ void() item_armor1 = {
 */
 
 void() item_armor2 = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = armor_touch;
 	precache_model("progs/armor.mdl");
 	setmodel(self, "progs/armor.mdl");
@@ -504,6 +535,8 @@ void() item_armor2 = {
 */
 
 void() item_armorInv = {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = armor_touch;
 	precache_model("progs/armor.mdl");
 	setmodel(self, "progs/armor.mdl");
@@ -585,7 +618,7 @@ weapon_touch
 
 void() weapon_touch =
 {
-	local	float	best, new;
+	local	float	current, best, new;
 	local	entity	stemp;
 	local	float	leave;
 
@@ -607,9 +640,16 @@ void() weapon_touch =
 		objerror ("weapon_touch: entity's weapon not set");
 	
 	if (leave && (other.weapons & self.weapon) )
-		return;		
-	
+		return;	
+
+	current = other.weapon;
 	new = self.weapon;
+
+	if (HUD_WEAPONS & new) { // player.items still needed for weapons to show up in the HUD
+		other.items = other.items | new;
+	}
+	
+	other.weapons = other.weapons | new;
 
 	other.ammo_shells += self.ammo_shells;
 	other.ammo_nails += self.ammo_nails;
@@ -625,12 +665,6 @@ void() weapon_touch =
 
 	bound_other_ammo ();
 
-	if(HUD_WEAPONS & new) { // player.items still needed for weapons to show up in the HUD
-		other.items = other.items | new;
-	}
-	
-	other.weapons = other.weapons | new;
-
 	stemp = self;
 	self = other;
 
@@ -639,26 +673,17 @@ void() weapon_touch =
 	else
 		Deathmatch_Weapon (new);
 
+	if (current != new)
+		W_SetCurrentAmmo(TRUE);
+	else
+		W_SetCurrentAmmo(FALSE);
 
-	W_SetCurrentAmmo();
-	
 	self = stemp;
 
 	if (leave)
 		return;
 
-// remove it in single player, or setup for respawning in deathmatch
-	self.model = string_null;
-	self.solid = SOLID_NOT;
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)
-		self.nextthink = time + 30;
-	self.think = SUB_regen;
-	
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+	ItemPickup("weapons/pkup.wav", 30, 30);
 };
 
 // johnfitz new items
@@ -667,6 +692,8 @@ Axe
 */
 void() weapon_axe =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_axe_alk.mdl");
 	setmodel (self, "progs/g_axe_alk.mdl");
 	self.weapon = WEAPON_AXE;
@@ -681,6 +708,8 @@ Shotgun
 
 void() weapon_shotgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_shotgn.mdl");
 	setmodel (self, "progs/g_shotgn.mdl");
 	self.weapon = WEAPON_SHOTGUN;
@@ -698,6 +727,8 @@ void() weapon_shotgun =
 
 void() weapon_supershotgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_shot.mdl");
 	setmodel (self, "progs/g_shot.mdl");
 	self.weapon = WEAPON_SUPER_SHOTGUN;
@@ -713,6 +744,8 @@ void() weapon_supershotgun =
 
 void() weapon_nailgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_nail.mdl");
 	setmodel (self, "progs/g_nail.mdl");
 	self.weapon = WEAPON_NAILGUN;
@@ -728,6 +761,8 @@ void() weapon_nailgun =
 
 void() weapon_supernailgun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_nail2.mdl");
 	setmodel (self, "progs/g_nail2.mdl");
 	self.weapon = WEAPON_SUPER_NAILGUN;
@@ -743,6 +778,8 @@ void() weapon_supernailgun =
 
 void() weapon_grenadelauncher =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_rock.mdl");
 	setmodel (self, "progs/g_rock.mdl");
 	self.weapon = WEAPON_GRENADE_LAUNCHER;
@@ -758,10 +795,12 @@ void() weapon_grenadelauncher =
 
 void() weapon_proximity_gun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_mine.mdl");
 	setmodel (self, "progs/g_mine.mdl");
 	self.weapon = WEAPON_PROXIMITY_GUN;
-	self.netname = "Proximity Launcher";
+	self.netname = "Cluster Mine Launcher";
 	self.touch = weapon_touch;
 	if(!self.ammo_rockets) self.ammo_rockets = 5;
 	setsize (self, '-16 -16 0', '16 16 56');
@@ -773,6 +812,8 @@ void() weapon_proximity_gun =
 
 void() weapon_rocketlauncher =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_rock2.mdl");
 	setmodel (self, "progs/g_rock2.mdl");
 	self.weapon = WEAPON_ROCKET_LAUNCHER;
@@ -789,6 +830,8 @@ void() weapon_rocketlauncher =
 
 void() weapon_lightning =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_light.mdl");
 	setmodel (self, "progs/g_light.mdl");
 	self.weapon = WEAPON_LIGHTNING;
@@ -803,6 +846,8 @@ void() weapon_lightning =
 */
 void() weapon_chainsaw =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_saw.mdl");
 	setmodel (self, "progs/g_saw.mdl");
 	self.weapon = WEAPON_CHAINSAW;
@@ -818,6 +863,8 @@ QUAKED weapon_laser_gun (0 .5 .8) (-16 -16 0) (16 16 32)
 */
 void() weapon_laser_gun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_laserg.mdl");
 	setmodel (self, "progs/g_laserg.mdl");
 	self.weapon = WEAPON_LASER_CANNON;
@@ -831,6 +878,8 @@ void() weapon_laser_gun =
 
 void() weapon_plasmagun =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_plasma.mdl");
 	setmodel (self, "progs/g_plasma.mdl");
 	self.weapon = WEAPON_PLASMA;
@@ -853,7 +902,7 @@ AMMO
 
 void() ammo_touch = {
 	entity stemp;
-	float best;
+	float best, current;
 	float prev_ammo, picked_amount;
 
 	if (other.classname != "player")
@@ -867,6 +916,7 @@ void() ammo_touch = {
 	best = W_BestWeapon();
 	self = stemp;
 
+	current = other.weapon;
 
 // shotgun
 	if (self.weapon == 1) {
@@ -916,41 +966,28 @@ void() ammo_touch = {
 	sprint (other, self.netname);
 	if (picked_amount > 1) sprint (other, "s");
 	sprint (other, "\n");
-// ammo touch sound
-	sound (other, CHAN_ITEM, "weapons/lock4.wav", 1, ATTN_NORM);
-	stuffcmd (other, "bf\n");
 
 // change to a better weapon if appropriate
 
-	if (other.weapon == best && !deathmatch) {
+	/*if (other.weapon == best && !deathmatch) {
 		stemp = self;
 		self = other;
 		self.weapon = W_BestWeapon();
-		if (self.weapon != WEAPON_CHAINSAW)
-		   W_SetCurrentAmmo ();
 		self = stemp;
-	}
+	}*/
 
 // if changed current ammo, update it
 	stemp = self;
 	self = other;
-	if (self.weapon != WEAPON_CHAINSAW)
-	   W_SetCurrentAmmo();
+
+	//if (self.weapon != current)
+	//	W_SetCurrentAmmo(TRUE);
+	//else
+		W_SetCurrentAmmo(FALSE);
+
 	self = stemp;
 
-// remove it in single player, or setup for respawning in deathmatch
-	self.model = string_null;
-	self.solid = SOLID_NOT;
-	// Supa, SP respawning items support
-	if (!deathmatch)
-		CheckItemRespawn(self, 30);
-	else if (deathmatch == 1)
-		self.nextthink = time + 30;
-
-	self.think = SUB_regen;
-
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+	ItemPickup("weapons/lock4.wav", 30, 30);
 };
 
 
@@ -963,6 +1000,8 @@ float WEAPON_BIG2 = 1;
 
 void() item_shells =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -993,6 +1032,8 @@ void() item_shells =
 
 void() item_spikes =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -1023,6 +1064,8 @@ void() item_spikes =
 
 void() item_rockets =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -1054,6 +1097,8 @@ void() item_rockets =
 
 void() item_cells =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local string model;
 	self.touch = ammo_touch;
 	if(!self.itemstyle) self.itemstyle = world.itemstyle;
@@ -1189,6 +1234,8 @@ End of level sigil, pick up to end episode and return to jrstart.
 
 void() item_sigil =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.spawnflags)
 		objerror ("no spawnflags");
 
@@ -1227,9 +1274,6 @@ void() powerup_touch =
 	if (other.health <= 0)
 		return;
 
-	sprint (other, "You got the ");
-	sprint (other, self.netname);
-	sprint (other,"\n");
 
 	// if (deathmatch)
 	// {
@@ -1244,37 +1288,8 @@ void() powerup_touch =
 	// 	self.think = SUB_regen;
 	// }
 
-	// Supa, SP respawning items support
-	self.mdl	= self.model;
-	self.think	= SUB_regen;
 
-	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM); //johnfitz -- was CHAN_VOICE
-	stuffcmd (other, "bf\n");
-	self.solid = SOLID_NOT;
 	other.items = other.items | self.items;
-	self.model = string_null;
-	
-	if (!deathmatch)
-	{
-		local float spawndelay;
-
-		if (self.classname == "item_artifact_invulnerability" || self.classname == "item_artifact_invisibility")
-			spawndelay = 300;
-		else
-			spawndelay = 60;
-
-		CheckItemRespawn(self, spawndelay);
-	}
-	else
-	{
-		if ((self.classname == "item_artifact_invulnerability") ||
-		    (self.classname == "item_artifact_invisibility"))
-			self.nextthink = time + 60*5;
-		else
-			self.nextthink = time + 60;
-	}
-
-	
 
 // do the apropriate action
 	if (self.classname == "item_artifact_envirosuit")
@@ -1339,9 +1354,17 @@ void() powerup_touch =
 		other.jboots_finished = time + 30;
 		other.jboots_rechargelimit = defaultFl(self.jboots_rechargelimit, -1);
 	}
-	
-	activator = other;
-	SUB_UseTargets();				// fire all targets / killtargets
+		
+	sprint (other, "You got the ");
+	sprint (other, self.netname);
+	sprint (other,"\n");
+
+	if (self.classname == "item_artifact_invulnerability" || self.classname == "item_artifact_invisibility")
+		ItemPickup(self.noise, 300, 300);
+	else
+		ItemPickup(self.noise, 60, 60);
+		
+
 };
 
 
@@ -1351,6 +1374,8 @@ Player is invulnerable for 30 seconds
 */
 void() item_artifact_invulnerability =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
@@ -1372,6 +1397,8 @@ Combine 3 powerups, probably invisibility, quad and pentagram
 */
 void() item_artifact_trifecta =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/trifecta.mdl");
@@ -1394,6 +1421,8 @@ Player takes no damage from water or slime for 30 seconds
 */
 void() item_artifact_envirosuit =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/suit.mdl");
@@ -1414,6 +1443,8 @@ Player is invisible for 30 seconds
 */
 void() item_artifact_invisibility =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/invisibl.mdl");
@@ -1435,6 +1466,8 @@ The next attack from the player will do 4x damage
 */
 void() item_artifact_super_damage =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.touch = powerup_touch;
 	if(!(self.spawnflags & ITEM_DONTPRECACHE)) {
 		precache_model ("progs/quaddama.mdl");
@@ -1462,10 +1495,11 @@ PLAYER BACKPACKS
 
 void() BackpackTouch =
 {
-	local string	s;
-	local	float	best, old, new;
-	local	entity	stemp;
-	local	float	acount;
+	string s;
+	float new;
+	float best, current;
+	entity stemp;
+	float acount;
 	
 	if (other.classname != "player")
 		return;
@@ -1484,9 +1518,9 @@ void() BackpackTouch =
 			sprint (other, self.netname);
 		}
 	}
-	else if (self.weapons)
+	else if (self.weapon)
 	{
-		if ((other.weapons & self.weapons) == 0)
+		if ((other.weapons & self.weapon) == 0)
 		{
 			acount = 1;
 			sprint (other, "the ");
@@ -1504,12 +1538,15 @@ void() BackpackTouch =
 	other.ammo_nails = other.ammo_nails + self.ammo_nails;
 	other.ammo_rockets = other.ammo_rockets + self.ammo_rockets;
 	other.ammo_cells = other.ammo_cells + self.ammo_cells;
+	
+	current = other.weapon;
+	new = self.weapon;
 
-	new = self.items;
 	if (!new)
 		new = other.weapon;
-	old = other.weapons;
-	other.weapons = other.weapons | new;
+
+	other.weapons |= new;
+	other.items |= (new & HUD_WEAPONS);
 	
 	bound_other_ammo ();
 
@@ -1567,8 +1604,10 @@ void() BackpackTouch =
 	else
 		Deathmatch_Weapon (new);
 
-	W_SetCurrentAmmo ();
-
+	if (current != new)
+		W_SetCurrentAmmo(TRUE);
+	else
+		W_SetCurrentAmmo(FALSE);
 
 };
 
@@ -1587,30 +1626,30 @@ void() DropBackpack =
 	item = spawn();
 	item.origin = self.origin - '0 0 24';
 	
-	item.weapons = self.weapon;
-	if (item.weapons == WEAPON_AXE)
+	item.weapon = self.weapon;
+	if (item.weapon == WEAPON_AXE)
 		item.netname = "Axe";
-	else if (item.weapons == WEAPON_SHOTGUN)
+	else if (item.weapon == WEAPON_SHOTGUN)
 		item.netname = "Shotgun";
-	else if (item.weapons == WEAPON_SUPER_SHOTGUN)
+	else if (item.weapon == WEAPON_SUPER_SHOTGUN)
 		item.netname = "Double-barrelled Shotgun";
-	else if (item.weapons == WEAPON_NAILGUN)
+	else if (item.weapon == WEAPON_NAILGUN)
 		item.netname = "Nailgun";
-	else if (item.weapons == WEAPON_SUPER_NAILGUN)
+	else if (item.weapon == WEAPON_SUPER_NAILGUN)
 		item.netname = "Super Nailgun";
-	else if (item.weapons == WEAPON_GRENADE_LAUNCHER)
+	else if (item.weapon == WEAPON_GRENADE_LAUNCHER)
 		item.netname = "Grenade Launcher";
-	else if (item.weapons == WEAPON_ROCKET_LAUNCHER)
+	else if (item.weapon == WEAPON_ROCKET_LAUNCHER)
 		item.netname = "Rocket Launcher";
-	else if (item.weapons == WEAPON_LIGHTNING)
+	else if (item.weapon == WEAPON_LIGHTNING)
 		item.netname = "Thunderbolt";
-	else if (item.weapons == WEAPON_LASER_CANNON)
+	else if (item.weapon == WEAPON_LASER_CANNON)
 		item.netname = "Laser Cannon";
-	else if (item.weapons == WEAPON_PLASMA)
+	else if (item.weapon == WEAPON_PLASMA)
 		item.netname = "Plasma Rifle";
-	else if (item.weapons == WEAPON_PROXIMITY_GUN)
+	else if (item.weapon == WEAPON_PROXIMITY_GUN)
 		item.netname = "Proximity Launcher";
-	else if (item.weapons == WEAPON_CHAINSAW)
+	else if (item.weapon == WEAPON_CHAINSAW)
 		item.netname = "Chainsaw";
 	else
 		item.netname = "";
@@ -1637,6 +1676,8 @@ void() DropBackpack =
 
 
 void() item_backpack = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!(self.ammo_shells + self.ammo_nails + self.ammo_rockets + self.ammo_cells)) {
 		objerror("Empty backpack");
 		return;	// nothing in it
@@ -1654,6 +1695,8 @@ void() item_backpack = {
 
 
 void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/jumpblue.mdl");
 	precache_sound ("items/jboots_got.wav");
 	
@@ -1668,6 +1711,8 @@ void() item_jboots = { //JCR SUPERJUMP BOOTS	PERSISTENT
 }
 
 void() item_jboots_timed = { //JCR SUPERJUMP BOOTS	TIMED
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/jumpgold.mdl");
 	precache_sound ("items/jboots_got.wav");
 	

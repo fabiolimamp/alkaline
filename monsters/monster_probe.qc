@@ -11,7 +11,7 @@ void(float ofs, float turn) Probe_laser_fire = {
 	local vector ang;
 	local entity missile;
 	local float dist;
-
+	entity enem = SUB_entEnemyTarget();
 	ang = self.angles;
 	ang_y = ang_y + self.fixangle;
 	
@@ -22,11 +22,11 @@ void(float ofs, float turn) Probe_laser_fire = {
 
 	makevectors(ang);
 	src = self.origin + '0 0 -10' + v_right * ofs + v_forward;
-	targ = self.enemy.origin + self.enemy.view_ofs;
+	targ = enem.origin + enem.view_ofs;
 	
 	if (startskill != 0)	{
 		dist = vlen(targ - src);
-		targ = targ + self.enemy.velocity * (dist / 1000);
+		targ = targ + enem.velocity * (dist / 1000);
 	}
 
 	vec = targ - src;
@@ -501,7 +501,9 @@ void() probe_die3 = [15, SUB_Hide] {
 	self.trigger_field.inflictor_movetype = self.inflictor_movetype;
 	self.trigger_field.inflictor_vel = self.inflictor_vel;
 
-	FuelTankExplode();	
+	FuelTankExplode();
+	
+	self.deadflag = DEAD_GIBBED;
 };
 
 void(entity attacker, float damage) probe_pain = {
@@ -736,6 +738,8 @@ void() monster_grenadeprobe = {
 
 
 void() monster_probe = {
+	if (!SUB_InitEntity()) return;
+	
 	//local float sk;
 	if (deathmatch)	{
 		remove(self);

@@ -151,27 +151,21 @@ void() make_breakable_debris = {
 	
 };
 
-void() func_breakable_die = {
+void() func_breakable_break = {
 	sound (self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
+	self.solid = SOLID_NOT;
+	self.movetype = MOVETYPE_NONE;
 	self.origin = (self.absmin + self.absmax) * 0.5;
 	setorigin(self, self.origin);	
 	make_breakable_debris();
 
 	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
 	
+	// broke by attacker
+	if (self.health <= 0) activator = damage_attacker;
+	
+	SUB_UseTargets();
 	remove(self);
-};
-
-void() func_breakable_killed = {
-	activator = damage_attacker;
-	SUB_UseTargets();
-	func_breakable_die ();
-};
-
-void() func_breakable_use = {
-	//activator = other;
-	SUB_UseTargets();
-	func_breakable_die ();
 };
 
 float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) func_breakable_damage = {
@@ -204,6 +198,8 @@ NO_MONSTERS: object ignores damage from monsters
 */
 void() func_breakable =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	setmodel (self, self.model);
@@ -241,16 +237,16 @@ void() func_breakable =
 
 	precache_sound (self.noise1);
 	precache_model (self.mdl);
-	if (!self.health) 
+	if (self.health <= 0)
 		self.health = 20;
 	
 		
-	self.use = func_breakable_use;
+	self.use = func_breakable_break;
 	self.th_damage = func_breakable_damage;
 
 	if (self.targetname == "" || (self.targetname != "" && (self.spawnflags & BREAKABLE_ALWAYS_SHOOTABLE))) {
 		self.takedamage = DAMAGE_YES;
-		self.th_die = func_breakable_killed;
+		self.th_die = func_breakable_break;
 	}
 
 	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "a");
@@ -305,6 +301,8 @@ Keys:
 */
 void () func_explobox =
 {
+	if (!SUB_InitEntity()) return;
+	
 	self.solid = SOLID_BSP;
 	self.movetype = MOVETYPE_PUSH;
 	setmodel (self, self.model);
@@ -420,6 +418,8 @@ Keys:
 
 void () func_laser =
 {
+	if (!SUB_InitEntity()) return;
+	
 	local entity helper;
 	
 	self.origmodel = self.model;
@@ -510,6 +510,8 @@ collectible circuit board thing
 */
 void () item_circuitboard =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if(!self.mdl) self.mdl = "progs/fromitz.mdl";
 	precache_model (self.mdl);
 	setmodel (self, self.mdl);
@@ -541,6 +543,8 @@ Keys:
 */
 void() light_fixture1 =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/fixture1.mdl");
 	setmodel (self, "progs/fixture1.mdl");
 	self.angles_y = self.angle2;
@@ -567,6 +571,8 @@ Keys:
 */
 void() light_beacon =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/beacon.mdl");
 	setmodel (self, "progs/beacon.mdl");
 	if (self.spawnflags & 1)
@@ -590,6 +596,8 @@ Flags:
 */
 void () misc_flag =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/flag.mdl");
 	setmodel (self, "progs/flag.mdl");
 	self.frame = (self.spawnflags & 3);
@@ -714,6 +722,8 @@ Keys:
 */
 void() misc_sparks =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/spark.mdl");
 	precache_sound ("misc/spark.wav");
 		
@@ -871,6 +881,8 @@ Keys:
 */
 void() misc_smoke =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model ("progs/s_smoke.spr");
 	precache_sound ("misc/airhiss.wav");
 	precache_sound ("misc/airhiss2.wav");
@@ -889,6 +901,133 @@ void() misc_smoke =
 	self.think = smoke_firstthink;
 	self.obituary = "was steamed alive";
 };
+
+
+/*
+===============================================================================
+misc_flame
+===============================================================================
+*/
+float FLAME_DONTBURN = 2;
+float FLAME_NOSOUND = 4;
+float FLAME_SIMPLELIGHT = 8;
+
+float FLAME_ST_OFF = 0;
+float FLAME_ST_STOPPING = 1;
+float FLAME_ST_ON = 2;
+float FLAME_ST_STARTING = 3;
+
+string FLAME_LIGHT_PATTERN =  "klolmolmomlnonkmonqnlmo";
+
+void() misc_flame_think =
+{
+	if (self.state < FLAME_ST_ON) {
+		self.nextthink = time + 0.1;
+		if (self.state == FLAME_ST_STOPPING) {
+			if (!(self.spawnflags & FLAME_NOSOUND)) sound(self, CHAN_VOICE, "misc/burning2.wav", 1, ATTN_IDLE);
+
+			if (self.style) lightstyle(self.style, "a");
+		}
+		self.state = FLAME_ST_OFF;
+		return;
+	}
+
+	make_flame(self.origin, self.movedir);
+	if (!(self.spawnflags & FLAME_SIMPLELIGHT))
+		newmis.effects = 0;
+
+	newmis.velocity *= self.speed;
+	
+	if (self.spawnflags & FLAME_DONTBURN)
+		newmis.style = 1;
+
+	newmis.dmg = self.dmg;
+
+	self.nextthink = time + self.wait;
+
+	if (self.state == FLAME_ST_ON && !(self.spawnflags & FLAME_NOSOUND)) {
+		entity e = find(world, classname, "player");
+		float dist;
+		while (e)
+		{
+			dist = vlen(self.origin - e.origin);
+			if (dist < 600 && dist > 500) {
+				self.burning_finished = 0;
+				__break;
+			}
+			e = find(e, classname, "player");
+		}
+		if (time > self.burning_finished) sound(self, CHAN_VOICE, "misc/burning.wav", 1, ATTN_IDLE);
+		self.burning_finished = time + 2.1;
+	}
+
+	if (self.state == FLAME_ST_STARTING) {
+		
+		self.state = FLAME_ST_ON;
+
+		if (self.style) lightstyle(self.style, FLAME_LIGHT_PATTERN);
+
+		if (!(self.spawnflags & FLAME_NOSOUND))
+			sound(self, CHAN_VOICE, "dread/flameon.wav", 1, ATTN_IDLE);
+
+		self.burning_finished = time + 0.5;
+	}
+	
+};
+
+
+void() misc_flame_use = {
+	if (self.state >= FLAME_ST_ON)
+		self.state = FLAME_ST_STOPPING;
+	else
+		self.state = FLAME_ST_STARTING;
+};
+
+
+void() misc_flame_startup = {
+	if (self.target != "") {
+		entity e = find(world, targetname, self.target);
+
+		if (e.classname == "light") 
+			self.style = e.style;
+
+		if (self.style && self.state == FLAME_ST_OFF)
+			lightstyle(self.style, "a");
+	}
+	self.use = misc_flame_use;
+	self.think = misc_flame_think;
+	self.nextthink = time + 0.1;
+}
+
+void() misc_flame =
+{
+	if (!SUB_InitEntity()) return;
+	
+	precache_model ("progs/s_flame.spr");
+	precache_sound ("dread/flameon.wav");
+	precache_sound ("dread/flameoff.wav");
+	precache_sound ("misc/burning.wav");
+	precache_sound ("misc/burning2.wav");
+
+	self.dmg = zeroconvertdefault(self.dmg, 2);
+
+	if (!self.speed)
+		self.speed = 1;
+
+
+	SetMovedir();
+
+	if (!self.wait)
+		self.wait = 0.1;
+					
+	if (!(self.spawnflags & START_OFF))
+		self.state = FLAME_ST_STARTING;
+	
+	self.nextthink = time + 0.2;
+	self.think = misc_flame_startup;
+	self.obituary = "was burned alive";
+};
+
 
 
 /*
@@ -922,6 +1061,8 @@ Produces a continuous particle splash for waterfalls
 */
 void() misc_splash =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.wait)
 		self.wait = 0.1;
 	if (!self.movedir)
@@ -949,6 +1090,9 @@ void() ladder_touch =
 
 	if (self.estate != STATE_ACTIVE)
 		return;
+	
+	if (other.waterlevel > 2)
+		return;
 
 	// if the trigger has an angles field, check player's facing direction
 	if (self.movedir != '0 0 0')
@@ -958,7 +1102,9 @@ void() ladder_touch =
 			return;		// not facing the right way
 	}
 	other.onladder = 1;
-	other.gravity = 0.0000001; //zero doesnt seem to work
+	//if (!(other.flags & FL_INLIQUIDBRUSH)) other.prevgravity = other.gravity;
+	other.gravity = 0.00000001; //zero doesnt seem to work
+	other.waterlevel = 2;
 }
 
 /*QUAKED trigger_ladder (.5 .5 .5) ?
@@ -970,10 +1116,13 @@ Keys:
 */
 void() trigger_ladder =
 {
+	if (!SUB_InitEntity()) return;
+	
 	precache_sound("misc/ladder.wav");
 	precache_sound("misc/ladder2.wav");
 
 	InitTrigger ();
+	setsize(self, self.mins, self.maxs + '0 0 16');
 	self.touch = ladder_touch;
 
 	SUB_CheckWaiting();

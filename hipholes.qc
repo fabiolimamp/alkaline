@@ -8,9 +8,9 @@
 */
 
 // maximum bulletholes on the map
-float BULLETHOLES_MAX = 50;
+float BULLETHOLES_MAX = 150;
 // maximum bulletholes spawned per frame
-float BULLETHOLES_MAXFRAME = 10;
+float BULLETHOLES_MAXFRAME = 30;
 
 float BULLETHOLES_LIFETIME = 60;
 
@@ -25,6 +25,18 @@ void() InitBulletHoles = {
 	if (cvar("saved1") & ALKSETTINGS_NOBULLETHOLES) bulletmode = 0;
 	else bulletmode = 1;
 };
+
+void() RestartBulletHoles = {
+	bulletholes = world;
+	lastbullet = world;
+	numbulletholes = 0;
+
+	entity e = find(world, classname, "bullethole");
+	while (e) {
+		remove(e);
+		e = find(e, classname, "bullethole");
+	}
+}
 
 void() remove_bullethole = {
 	local entity e;
@@ -81,9 +93,11 @@ void() hide_bulletholes = {
 
 void() update_bulletholes = {
 	numbulletsframe = 0;
+	float loops;
 	entity e, next;
 	e = bulletholes;
-	while (e) {
+
+	while (e.classname == "bullethole" && loops < BULLETHOLES_MAX + 2) {
 		// hole is in a valid non-world solid entity
 		if (e.owner && e.owner.solid == SOLID_BSP) {
 			// check if the entity moved
@@ -104,6 +118,14 @@ void() update_bulletholes = {
 		else {
 			e = e.lastvictim;
 		}
+		loops++;
+	}
+
+	// something has gone wrong,
+	// so restart the list and remove all current ones from the world
+	if (loops >= BULLETHOLES_MAX + 2) {// ||	(loops > 0 && e.classname != "bullethole")) {
+		dprint("Bulletholes linked list lost, restarting\n");
+		RestartBulletHoles();
 	}
 };
 

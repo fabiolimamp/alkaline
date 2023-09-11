@@ -352,18 +352,43 @@ _anglescale => _anglescale
 */
 void() light = {
 
-	// default speed for fading in/out
-	if (self.speed <= 0)
-		self.speed = 0.1;
-
+	if (!SUB_InitEntity()) return;
+	
 	// non-switchable light
-	if (!self.targetname) {
+	if (self.targetname == "") {
 		remove(self);
 		return;
 	}
 
 	// switchable light
 	if (self.style > LIGHTSTYLES_MAX) {
+		entity e = find(world, targetname, self.targetname);
+		while (e){
+			if (e.classname == "light" && e != self) {
+				// copy settings from one light to the other if possible
+				if (self.style2 && !e.style2) {
+					dprint5("Warning: light at (", vtos(e.origin), ") inheriting style2 key from light at (", vtos(self.origin), ")\n");
+					e.style2 = self.style2;
+				}
+				else if (self.style2 != e.style2) {
+					dprint5("Warning: lights at (", vtos(e.origin), ") and (", vtos(self.origin), ") with differing style2 keys\n");
+				}
+
+				if (self.speed && e.speed == 0.1){
+					dprint5("Warning: light at (", vtos(e.origin), ") inheriting speed key from light at (", vtos(self.origin), ")\n");
+					e.speed = self.speed;
+				}
+
+				if (self.spawnflags && !e.spawnflags){
+					dprint5("Warning: lights at (", vtos(e.origin), ") and (", vtos(self.origin), ") with differing spawnflags\n");
+				}
+
+				remove(self);
+				return;
+			}
+			e = find(e, targetname, self.targetname);
+		}
+
 		self.use = light_use;
 		if (self.spawnflags & START_OFF) {
 			self.count = 0;
@@ -374,6 +399,11 @@ void() light = {
 			lightstyle(self.style, lightstyle_lookup(self.style2));
 		}
 	}
+
+	if (self.speed <= 0)
+		self.speed = 0.1;
+	// default speed for fading in/out
+
 };
 
 /*QUAKED light_fluoro (0 1 0) (-8 -8 -8) (8 8 8) START_OFF FADE_IN_OUT X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
@@ -383,6 +413,8 @@ Makes steady fluorescent humming sound.
 See the "light" entity for a full description.
 */
 void() light_fluoro = {
+	if (!SUB_InitEntity()) return;
+	
 	ambient_light_buzz();
 	light();
 };
@@ -396,6 +428,8 @@ Default style is 10.
 See the "light" entity for a full description.
 */
 void() light_fluorospark = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.style)
 		self.style = 10;
 	ambient_flouro_buzz();
@@ -408,6 +442,8 @@ Can't be toggled.
 See the "light" entity for a full description.
 */
 void() light_globe = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/s_light.spr");
 	setmodel(self, "progs/s_light.spr");
 	makestatic(self);
@@ -419,6 +455,8 @@ Short wall torch
 See the "light" entity for a full description.
 */
 void() light_torch_small_walltorch = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/flame.mdl");
 	//precache_body_model("progs/flame.mdl");
 	setmodel(self, "progs/flame.mdl");
@@ -434,6 +472,8 @@ Large yellow flame
 See the "light" entity for a full description.
 */
 void() light_flame_large_yellow = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/flame2.mdl");
 	setmodel (self, "progs/flame2.mdl");
 	self.frame = 1;
@@ -447,6 +487,8 @@ Small yellow flame
 See the "light" entity for a full description.
 */
 void() light_flame_small_yellow = {
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/flame2.mdl");
 	setmodel(self, "progs/flame2.mdl");
 	FireAmbient();
@@ -459,6 +501,8 @@ Left for compatability
 Identical to "light_flame_small_yellow"
 */
 void() light_flame_small_white = {
+	if (!SUB_InitEntity()) return;
+	
 	light_flame_small_yellow();
 };
 
@@ -617,6 +661,8 @@ void() misc_shadowcontroller_setup = {
 };
 
 void() misc_shadowcontroller = {
+	if (!SUB_InitEntity()) return;
+	
 	self.think = misc_shadowcontroller_setup;
 	self.nextthink = time + 0.1;
 };
@@ -763,6 +809,8 @@ Changes a global lightstyle when triggered."
 ]
 */
 void() target_lightstyle = {
+	if (!SUB_InitEntity()) return;
+	
 	if (self.message == string_null)
 		self.message = "azam";	// suitably garish accidental default
 	self.use = target_lightstyle_use;

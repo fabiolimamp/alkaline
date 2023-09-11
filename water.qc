@@ -25,31 +25,20 @@ void() startupWaterBrushes = {
 };
 
 void() entity_watercheck = {
-	//if (!(self.flags & FL_MONSTER) || self.health <= 0) 
-	if (self.movetype == MOVETYPE_NOCLIP ||
-		self.movetype == MOVETYPE_PUSH ||
-		self.movetype == MOVETYPE_NONE ||
-		self.movetype == MOVETYPE_WALK // clients are handled in pre/postthink
-	)
-		return;
 
 	float ct = pointcontents2(self.origin);
 
 	if (ct <= CONTENT_WATER){
 		if (self.flags & FL_SWIM2 && self.health > 0) self.flags |= FL_FLY;
 
-		/*if (!(self.flags & FL_INWATER) && touchedliquidbrush){
-			sound (self, CHAN_AUTO, "misc/h2ohit1.wav", 1, ATTN_NORM);
-		}*/
 		
 		if ((self.flags & FL_MONSTER && self.health <= 0) || self.classname == "gib") {
-			if (!self.prevgravity) self.prevgravity = self.gravity;
 			if (!self.gravity) self.gravity = 1;
+			if (!self.prevgravity) self.prevgravity = self.gravity;
 			if (self.gravity > 0.05) {
 				self.velocity *= 0.05/self.gravity; // reduces velocity when hitting water
 			}
 			self.gravity = 0.05;
-			//if (self.classname == "monster_wizard") {eprint(self);}
 		}
 
 		self.flags |= FL_INWATER;
@@ -65,9 +54,9 @@ void() entity_watercheck = {
 	else {
 		if (self.flags & FL_SWIM2) self.flags &~= FL_FLY;
 
-		//if (self.flags & (FL_INWATER | FL_INLIQUIDBRUSH) == FL_INWATER | FL_INLIQUIDBRUSH){
-		//	sound (self, CHAN_AUTO, "misc/h2ohit1.wav", 1, ATTN_NORM);
-		//}
+		if (self.flags & (FL_INWATER | FL_INLIQUIDBRUSH) == FL_INWATER | FL_INLIQUIDBRUSH){
+			sound (self, CHAN_AUTO, "misc/h2ohit1.wav", 1, ATTN_NORM);
+		}
 
 		if (self.flags & FL_MONSTER && self.health <= 0) {
 			if (self.flags & FL_INWATER) {
@@ -99,29 +88,30 @@ void() checkClientInWaterBrush = {
 	while (e) {
 		lvl = getWaterLevelFromBrush(self, e);
 		if (lvl) {
-			self.waterlevel = lvl;
+			if (self.movetype != MOVETYPE_NOCLIP) {
+				self.waterlevel = lvl;
 
-			if (e.liquidtype == LIQUID_LAVA) self.watertype = CONTENT_LAVA;
-			else if (e.liquidtype == LIQUID_SLIME) self.watertype = CONTENT_SLIME;
-			else self.watertype = CONTENT_WATER;
-
-			self.flags |= FL_INWATER;
+				if (e.liquidtype == LIQUID_LAVA) self.watertype = CONTENT_LAVA;
+				else if (e.liquidtype == LIQUID_SLIME) self.watertype = CONTENT_SLIME;
+				else self.watertype = CONTENT_WATER;
+			}
+			//self.flags |= FL_INWATER;
 
 			float dens;
 			vector cl;
 
-			if !(self.flags & FL_INLIQUIDBRUSH)
-				self.prevgravity = self.gravity;
+			//if !(self.flags & FL_INLIQUIDBRUSH)
+			//	self.prevgravity = self.gravity;
 
-			if (self.watertype == CONTENT_SLIME) {cl = '0 25 5'; dens = 150;}
-			else if (self.watertype == CONTENT_LAVA) {cl = '255 80 0'; dens = 150;}
+			if (e.liquidtype == LIQUID_SLIME) {cl = '0 25 5'; dens = 150;}
+			else if (e.liquidtype == LIQUID_LAVA) {cl = '255 80 0'; dens = 150;}
 			else {cl = '130 80 50'; dens = 128;}
 
 			if (e.liquidcolor) cl = e.liquidcolor;
 			if (e.liquiddensity) dens = e.liquiddensity;
 
 			if (lvl >= 2) self.gravity = 0.000001;
-			else self.gravity = self.prevgravity;
+			else if (!self.onladder) self.gravity = self.wantedgravity;
 
 			if (lvl >= 3){
 				csf_set(self, dens, cl, 70);
@@ -142,7 +132,7 @@ void() checkClientInWaterBrush = {
 	// so turn off everything if the entity was in one at the previous frame
 	if (self.flags & FL_INLIQUIDBRUSH) {
 		csf_clear(self, 70);
-		self.gravity = self.prevgravity;
+		if (!self.onladder) self.gravity = self.wantedgravity;
 		//self.watertype = CONTENT_EMPTY;
 		//self.waterlevel = 0;
 
@@ -157,12 +147,26 @@ float(vector org) pointcontents2 = {
 
 	if (pc != CONTENT_EMPTY) return pc;
 
-	entity e;
 	float touched;
 
-	e = liquidbrushfirst;
+	entity e = liquidbrushfirst;
 	while (e) {
-		touched = getTouch(org, e);
+		//liquidbrushchecks++;
+		if (org_x > e.absmax_x) 
+			touched = 0;
+		else if (org_x < e.absmin_x)
+			touched = 0;
+		else if (org_y > e.absmax_y)
+			touched = 0;
+		else if (org_y < e.absmin_y)
+			touched = 0;
+		else if (org_z > e.absmax_z)
+			touched = 0;
+		else if (org_z < e.absmin_z)
+			touched = 0;
+		else 
+			touched = 1;
+
 		if (touched) {
 			touchedliquidbrush = TRUE;
 
@@ -198,7 +202,7 @@ float (entity e, entity brush) getWaterLevelFromBrush = {
 	float lvl;
 	float depth = brush.absmax_z - e.absmin_z;
 
-	if (depth > (e.view_ofs_z - e.mins_z))
+	if (depth > (e.view_ofs_z - e.mins_z + 2))
 		lvl = 3;
 	else if (depth > (e.absmax_z - e.absmin_z)/2) {
 		lvl = 2;

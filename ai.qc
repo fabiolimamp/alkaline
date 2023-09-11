@@ -85,6 +85,8 @@ Monsters will continue walking towards the next target corner.
 */
 void() path_corner =
 {
+	if (!SUB_InitEntity()) return;
+	
 	movetarget_f ();
 };
 
@@ -123,6 +125,8 @@ void() path_angry_touch = {
 };
 
 void() path_angry = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.targetname)
 		objerror ("path_angry: no targetname");
 	entity trg;
@@ -215,10 +219,14 @@ returns the range catagorization of an entity reletive to self
 */
 float(entity targ) range =
 {
-local vector	spot1, spot2;
-local float		r;	
+	vector spot1, spot2;
+	float r;	
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
 	
 	r = vlen (spot1 - spot2);
 	if (r < 120)
@@ -240,7 +248,12 @@ float(entity targ, float flat2d) range_distance =
 	local float		r;
 		
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+
 	if (flat2d) { spot1_z = spot2_z = 0; }
 	r = vlen (spot1 - spot2);
 	
@@ -259,7 +272,12 @@ float (entity targ) visible =
 	float startinliquid, endinliquid;
 
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+
 	traceline (spot1, spot2, TRUE, self);	// see through other monsters
 	
 	//if (trace_inopen && trace_inwater)
@@ -272,8 +290,10 @@ float (entity targ) visible =
 	if (startinliquid != endinliquid)
 		return FALSE;
 
-	if (trace_fraction == 1)
+	if (trace_fraction == 1 || trace_ent == targ) {	
 		return TRUE;
+	}
+	
 	return FALSE;
 };
 
@@ -283,7 +303,11 @@ float (entity org, entity targ) visible2 =
 	float startinliquid, endinliquid;
 	
 	spot1 = org.origin + org.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+	
 	traceline (spot1, spot2, TRUE, org);	// see through other monsters
 	
 	if (trace_inopen && trace_inwater)
@@ -294,8 +318,9 @@ float (entity org, entity targ) visible2 =
 	if (startinliquid != endinliquid)
 		return FALSE;
 
-	if (trace_fraction == 1)
+	if (trace_fraction == 1 || trace_ent == targ)
 		return TRUE;
+
 	return FALSE;
 };
 
@@ -308,15 +333,22 @@ returns 1 if there are no entities in the way of the shot
 */
 float (entity targ) canshoot =
 {
-	local vector	spot1, spot2;
+	vector spot1, spot2;
 	float startinliquid, endinliquid;
-	
+
 	spot1 = self.origin + self.view_ofs;
-	spot2 = targ.origin + targ.view_ofs;
+
+	if (targ.solid == SOLID_BSP) 
+		spot2 = (targ.absmin + targ.absmax)/2;
+	else
+		spot2 = targ.origin + targ.view_ofs;
+	
+	
 	traceline (spot1, spot2, FALSE, self);  // don't see through other monsters
 
-	if (trace_ent != targ)
+	if (trace_ent != targ) {
 		return FALSE;		// don't have a clear shot
+	}
 			
 	if (trace_inopen && trace_inwater)
 		return FALSE;			// sight line crossed contents
@@ -471,7 +503,15 @@ void() FoundTarget =
 		sight_entity = self;
 		sight_entity_time = time;
 	}
-	
+
+	if (self.spawnflags & MONSTER_WAKETRIGGER) {
+		if (self.target4 != "") {
+			activator = self.enemy;
+			SUB_UseSpecificTarget(self.target4, targetname);
+			self.target4 = "";
+		}
+	}
+
 	self.show_hostile = time + 1;		// wake up other monsters
 
 	// If you're looking for the bizarre SightSound function,
@@ -479,7 +519,13 @@ void() FoundTarget =
 	// sight function, stored in the monster's "th_sight" field,
 	// and called here.
 	if (self.th_sight && !(self.spawnflags & MONSTER_NOSIGHTSOUND)) self.th_sight();
-	
+
+	// initial jump when angry - from Copper
+	if (self.movetype == MOVETYPE_STEP && self.movedir != '0 0 0') {
+		self.velocity = self.movedir;
+		self.flags &~= FL_ONGROUND;
+		self.movedir = '0 0 0';	// don't leap again if an infight starts
+	}
 
 	// Optional wake function, in case the monster has some "going angry" animation.
 	// This function needs to call HuntTarget() by itself afterwards.
@@ -587,6 +633,75 @@ float() FindTarget =
 	return TRUE;
 };
 
+
+float() FindTargetProximity = {
+
+	local entity	client;
+	local float		r;
+
+	if (self.enemy) self.was_angry = 1;
+	else self.was_angry = 0;
+
+	if (sight_entity_time >= time - 0.1 && !(self.spawnflags & 1) )
+	{
+		client = sight_entity;
+		if (client.enemy == SUB_entEnemyTarget())
+			return FALSE;
+	}
+	else
+	{
+		client = checkclient();
+		if (!client)
+			return FALSE;	// current check entity isn't in PVS
+	}
+
+	if (client == SUB_entEnemyTarget())
+		return FALSE;
+
+	if (client.flags & FL_NOTARGET)
+		return FALSE;
+	if (client.items & IT_INVISIBILITY)
+		return FALSE;
+
+	r = vlen(self.origin - client.origin + client.view_ofs);
+		
+	if (!visible(client))
+		return FALSE;
+
+	if (r >= 120 && r <= 384) {
+		if (client.show_hostile < time)
+			return FALSE;
+	}
+	else if (r > 384)
+		return FALSE;
+
+	//johnfitz don't react to the intermission camera players
+	if (client.takedamage == DAMAGE_NO)
+		return FALSE;
+	
+	if (self.spawnflags & MONSTER_IGNOREPLAYER)
+		return FALSE;
+	
+//
+// got one
+//	
+	if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget();
+
+	self.enemy = client;
+	if (self.enemy.classname != "player")
+	{
+		self.enemy = self.enemy.enemy;
+		if (self.enemy.classname != "player")
+		{
+			self.enemy = world;
+			return FALSE;
+		}
+	}
+	
+	FoundTarget();
+
+	return TRUE;
+};
 
 void(float dist) ai_run_path = {
 
@@ -820,15 +935,17 @@ float() CheckAttack =
 
 	targ = SUB_entEnemyTarget();
 
-	if (!canshoot(targ))
+	if (!canshoot(targ)) {
 		return FALSE;
+	}
 
 	if (enemy_range == RANGE_MELEE)
 	{	// melee attack
 		if (self.th_melee)
 		{
-			if (self.classname == "monster_knight")
+			if (self.classname == "monster_knight"){
 				knight_attack ();
+			}
 			else
 				self.th_melee ();
 			return TRUE;
@@ -967,7 +1084,7 @@ ai_run
 The monster has an enemy it is trying to kill
 =============
 */
-void(float dist) ai_run =
+float(float dist) ai_run_checks =
 {
 //	local	vector	delta;
 //	local	float	axis;
@@ -993,6 +1110,7 @@ void(float dist) ai_run =
 	//johnfitz added enemy.takedamage check to ignore players once intermission starts.
 	if ((enem.health <= 0 || enem.takedamage == DAMAGE_NO) && self.goalentity.classname != "path_angry") 
 	{
+		//dprint("Enemy is ded\n");
 		if (self.enemy.type == "enemytarget") SUB_switchEnemyTarget(); // disable enemy target system while changing enemies
 		self.enemy = world;
 	// FIXME: look all around for other targets
@@ -1007,7 +1125,7 @@ void(float dist) ai_run =
 				self.th_walk ();
 			else
 				self.th_stand ();
-			return;
+			return FALSE;
 		}
 	}
 
@@ -1024,7 +1142,7 @@ void(float dist) ai_run =
 	if (coop && self.search_time < time && enem.classname != "path_angry")
 	{
 		if (FindTarget ())
-			return;
+			return FALSE;
 	}
 
 	enemy_infront = infront(enem);
@@ -1037,28 +1155,38 @@ void(float dist) ai_run =
 	{
 //dprint ("ai_run_missile\n");
 		ai_run_missile ();
-		return;
+		return FALSE;
 	}
 	if (self.attack_state == AS_MELEE)
 	{
 //dprint ("ai_run_melee\n");
 		ai_run_melee ();
-		return;
+		return FALSE;
 	}
 
-	if (CheckAnyAttack ())
-		return;					// beginning an attack
-		
+	if (CheckAnyAttack ()) {
+		return FALSE;					// beginning an attack
+	}
 	if (self.attack_state == AS_SLIDING && self.goalentity.classname != "path_angry")
 	{
 		ai_run_slide ();
-		return;
+		return FALSE;
 	}
 	else if (self.attack_state == AS_SLIDING) self.attack_state = 0;
 
+	return TRUE;
 	// head straight in
-	movetogoal2 (dist);		// done in C code...
+	//movetogoal2 (dist);
 };
+
+void(float dist) ai_run = {
+	if (!ai_run_checks(dist)) return;
+
+	//if (self.th_move)
+	//	self.th_move(dist);
+	//else 
+		movetogoal2(dist);
+}
 
 /*
 =============

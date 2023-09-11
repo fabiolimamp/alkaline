@@ -216,13 +216,18 @@ void() army_fire =
 	
 	sound (self, CHAN_WEAPON, "soldier/sattck1.wav", 1, ATTN_NORM);	
 
-// fire somewhat behind the player, so a dodging player is harder to hit
-	en = self.enemy;
+
+	makevectors(self.angles);
+	vector org = self.origin + 16*v_forward + 6*v_right + 14*v_up;
 	
+	en = SUB_entEnemyTarget();
+	// fire somewhat behind the player, so a dodging player is harder to hit
 	dir = en.origin - en.velocity*0.2;
-	dir = normalize (dir - self.origin);
+	dir = normalize (dir - org);
 	
-	FireBullets (4, dir, '0.1 0.1 0');
+	FireBullets2 (4, 4, org, dir, '0.1 0.1 0', 0, FALSE);
+
+	//FireBullets2 (4, org, dir, '0.1 0.1 0');
 	ThrowGib("progs/shelcase.mdl", self.health);
 };
 
@@ -251,7 +256,7 @@ void()	army_die6	=[	$death6,	army_die7	] {};
 void()	army_die7	=[	$death7,	army_die8	] {};
 void()	army_die8	=[	$death8,	army_die9	] {};
 void()	army_die9	=[	$death9,	army_die10	] {};
-void()	army_die10	=[	$death10,	army_die10	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	army_die10	=[	$death10,	army_die10	] {monster_dead_dead();};
 
 void()	army_cdie1	=[	$deathc1,	army_cdie2	] {};
 void()	army_cdie2	=[	$deathc2,	army_cdie3	] {ai_back(5);};
@@ -264,7 +269,7 @@ void()	army_cdie7	=[	$deathc7,	army_cdie8	] {};
 void()	army_cdie8	=[	$deathc8,	army_cdie9	] {};
 void()	army_cdie9	=[	$deathc9,	army_cdie10	] {};
 void()	army_cdie10	=[	$deathc10,	army_cdie11	] {};
-void()	army_cdie11	=[	$deathc11,	army_cdie11	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	army_cdie11	=[	$deathc11,	army_cdie11	] {monster_dead_dead();};
 
 
 void() army_die =
@@ -281,6 +286,7 @@ void() army_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		if (random() < 0.2)
         	ThrowGib ("progs/arm_foot.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 
@@ -435,6 +441,8 @@ void() monster_nailgrunt_spawner = {
 };
 
 void() monster_nailgrunt = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -478,6 +486,8 @@ void() monster_army_spawner = {
 
 
 void() monster_army = {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

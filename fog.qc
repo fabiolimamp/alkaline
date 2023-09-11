@@ -239,7 +239,8 @@ Acts as a smoothly blending portal between two zones of different fog. Sets the 
 */
 void() trigger_fogblend =
 {
-	//if (!SUB_ShouldSpawn()) return;
+	if (!SUB_InitEntity()) return;
+	
 	if (self.angles == '0 0 0')		// InitTrigger assumes angle 0 means no angle
 		self.angles = '0 360 0';
 
@@ -444,6 +445,8 @@ Activator's fog will be blended over time from start to end values.
 void() target_fogblend =
 {
 
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.fog_density && !self.skyfog_density) {
 		objerror("Neither fog density nor skyfog density set");
 		return;
@@ -525,6 +528,8 @@ CAVEATS:
 */
 
 void() trigger_fog = {
+	if (!SUB_InitEntity()) return;
+	
 	if (!self.fog_density && !self.skyfog_density) {
 		objerror("Neither fog density nor skyfog density set");
 		return;

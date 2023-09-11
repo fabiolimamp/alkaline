@@ -26,29 +26,28 @@ void() HIP_LaserTouch = {
 		spawn_touchblood (self.dmg);
 		T_Damage(other, self, self.lastvictim, self.dmg, DMGTYPE_ENERGY);
 	}
-	else if (self.cnt == 3 || random() < 0.15) {
+	else if (self.cnt >= 3 || random() < 0.15) {
 		gunshot(org);
 	}
 	else {
-//		self.dmg = 0.66 * self.dmg;
 		self.dmg = 0.9 * self.dmg;
-//		self.speed = 0.95 * self.speed;
-		self.velocity = oldvel + (2 * trace_plane_normal);
-		self.velocity = normalize(self.velocity);
+
+		/*
+		Vector reflection around normal
+		r = d − 2(d*n)n
+		r => reflected vector, d => entrance vector, n => surface normal, d*n => dot product
+		*/
+
+		self.velocity = oldvel - (2 * (oldvel * trace_plane_normal)) * trace_plane_normal;
+		
 		self.velocity = self.speed * self.velocity;
 		self.old_velocity = self.velocity;
+
 		self.flags &~= FL_ONGROUND;
 
 		r = random();
 		sound (self, CHAN_WEAPON, "hipweap/laserric.wav", 1, ATTN_STATIC);
-/*
-		if (r<0.33)
-			sound (self, CHAN_WEAPON, "weapons/ric1.wav", 1, ATTN_STATIC);
-		else if (r<0.66)
-			sound (self, CHAN_WEAPON, "weapons/ric2.wav", 1, ATTN_STATIC);
-		else
-			sound (self, CHAN_WEAPON, "weapons/ric3.wav", 1, ATTN_STATIC);
-*/
+
 		return;
 	}
 	sound (self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_STATIC);
@@ -65,7 +64,7 @@ void() HIP_LaserThink = {
 
 	self.velocity = self.old_velocity;
 	self.angles = vectoangles(self.velocity);
-	self.nextthink = time+0.1;
+	self.nextthink = time + 0.05;
 };
 
 void(vector org, vector vec, float light) HIP_LaunchLaser = {
@@ -110,12 +109,7 @@ HIP_FireLaser
 =================
 */
 void(float stat) HIP_FireLaser = {
-	local vector org;
-	local vector dir;
-	local vector out;
-	local float ofs;
-	local float aofs;
-
+	
 	if (!self.button0) {
 		player_run ();
 		return;
@@ -123,42 +117,48 @@ void(float stat) HIP_FireLaser = {
 
 	if (self.ammo_cells < 1) {
 		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo (TRUE);
 		return;
 	}
 
 	SuperDamageSound();
 	self.effects = self.effects | EF_MUZZLEFLASH;
+	
 	makevectors (self.v_angle);
+	vector dir = aim(self, 1000);
 
-	ofs = 6;
-	out = v_forward;
-	out_z = 0;
-	out = normalize(out);
-	org = self.origin + ((12-ofs) * v_up) + (12*out);
-//	org = self.origin + (1*v_forward);
-	dir = aim (self, 1000);
-	aofs = ofs * 0.707;
+	float ofs = 6;
+	float aofs = ofs * 0.7071;
+
+	// central point between the 3 barrels
+	vector org = self.origin + self.view_ofs - 16*v_up;
 
 	if (stat == 0) {
-		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-		org = org + aofs*v_right - aofs*v_up;
-		HIP_LaunchLaser(org, dir, 0);
-		org = org - (2*aofs*v_right);
-		HIP_LaunchLaser(org, dir, 0);
-	}
-	else if (stat == 1)	{
-		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
-		org = org + (ofs*v_up);
 
+		vector org1 = org + aofs*v_right - aofs*v_up;
+		vector org2 = org - aofs*v_right - aofs*v_up;
+
+		traceline(org1, org1 + 32*v_forward, FALSE, self);
+		HIP_LaunchLaser(org1 + trace_fraction*32*v_forward, dir, 0);
+
+		traceline(org2, org2 + 32*v_forward, FALSE, self);
+		HIP_LaunchLaser(org2 + trace_fraction*32*v_forward, dir, 0);
+
+	}
+	else if (stat == 1) {
+		vector org3 = org + ofs*v_up;
+		traceline(org3, org3 + 32*v_forward, FALSE, self);
+		
 		if (random() < 0.1) {
-			HIP_LaunchLaser(org, dir, 1);
+			HIP_LaunchLaser(org3 + trace_fraction*32*v_forward, dir, 1);
 			newmis.dmg = 25;
 		}
-		else
-			HIP_LaunchLaser(org, dir, 0);
+		else {
+			HIP_LaunchLaser(org3 + trace_fraction*32*v_forward, dir, 0);
+		}
 	}
 
+	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 	self.punchangle_x = -1;
 };
 
@@ -193,14 +193,23 @@ void() W_FireProximityGrenade = {
 	newmis.health = 5;
 	newmis.state = 0;
 
-	if (self.ammo_rockets < 4) {
+	if (self.ammo_rockets == 1) {
+		newmis.count = 2;
+		self.currentammo = self.ammo_rockets = 0;
+	}
+	else {
+		newmis.count = 4;
+		self.currentammo = self.ammo_rockets = self.ammo_rockets - 2;
+	}
+
+	/*if (self.ammo_rockets < 4) {
 		newmis.count = self.ammo_rockets;
 		self.currentammo = self.ammo_rockets = 0;
 	}
 	else {
 		newmis.count = 4;
 		self.currentammo = self.ammo_rockets = self.ammo_rockets - 4;
-	}
+	}*/
 
 
 	// set newmis speed
@@ -257,18 +266,19 @@ void() ProximityGrenadeTouch = {
 	if (other == self)
 		return;
 
-	if (other.classname == self.classname)
-		return;
+	//if (other.classname == self.classname) {
+	//	return;
+	//}
 
 
-	if (other.takedamage == DAMAGE_AIM) {
+	if (other.takedamage == DAMAGE_AIM && other.classname != self.classname) {
 		SpawnExplosion(self.origin, 60, self, 0);
 
 		ProximityGrenadeExplode();
 		return;
 	}
 
-	if (vlen(other.velocity) > 0) {
+	if (vlen(other.velocity) > 0 && other.classname != self.classname) {
 		ProximityGrenadeExplode();
 		return;
 	}
@@ -280,10 +290,12 @@ void() ProximityGrenadeTouch = {
 	self.think = ProximityGrenadeCheck;
 	self.nextthink = time + 0.5;
 	self.movetype = MOVETYPE_NONE;
+	self.solid = SOLID_TRIGGER;
 	setsize(self, '-8 -8 -8', '8 8 8');
 
 	setorigin(self, self.origin - (normalize(self.velocity) * 6));
 
+	// state 1 -> sticking to something
 	self.state = 1;
 	//self.spawnmaster = other;
 };
@@ -310,8 +322,8 @@ void() ProximityGrenadeCheck = {
 					&& head.classname != self.classname)
 			blowup = 1;
 
-		if (head.classname == self.classname && head.state == 0)
-			blowup = 1;
+		//if (head.classname == self.classname && head.state == 0)
+		//	blowup = 1;
 
 		traceline(self.origin, head.origin, TRUE, self);
 
@@ -331,10 +343,21 @@ void() ProximityGrenadeCheck = {
 void() MultiGrenadeSpawn = {
 	float ang = 360/self.count;
 	
+	entity head = findradius(self.origin, 32);
+
+	while (head) {
+		if (head.classname == self.classname && head.state == 1 && head.think != MultiGrenadeSpawn) {
+			SUB_CallAsSelf(ProximityGrenadeExplode, head);
+		}
+	  	head = head.chain;
+  	}
+
 	while (self.count) {
 		MiniGrenadeLaunch((self.count-1) * ang);
 		self.count--;
 	}
+
+
 	
 	remove(self);
 };

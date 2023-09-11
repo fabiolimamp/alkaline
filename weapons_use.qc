@@ -8,106 +8,97 @@ PLAYER WEAPON USE
 ===============================================================================
 */
 
-void() W_SetCurrentAmmo =
+void(float resetState) W_SetCurrentAmmo =
 {
-	if (self.weapon != WEAPON_NO_WEAPON && !(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1)) player_run ();		// get out of any weapon firing states
+	if (resetState) {
+		if (self.weapon != WEAPON_NO_WEAPON && !(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1)) {
+			player_run ();		// get out of any weapon firing states
+			self.weaponframe = 0;
+		}
+	}
 
 	self.items = self.items - ( self.items & (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS) );
-	
+
 	if (self.weapon == WEAPON_NO_WEAPON)  //johnfitz
 	{
 		self.currentammo = 0;
 		self.weaponmodel = "";
-		self.weaponframe = 0;
 	}	
 	else if (self.weapon == WEAPON_AXE)
 	{
 		self.currentammo = 0;
 		self.weaponmodel = "progs/v_alkaxe20fps.mdl";
-		self.weaponframe = 0;
 	}
 	else if (self.weapon == WEAPON_CHAINSAW)
 	{
 		self.currentammo = 0;
 		self.weaponmodel = "progs/v_saw.mdl";
-		self.weaponframe = 0;
 		sound (self, 6, "weapons/sawidle.wav", 1, ATTN_NORM);
 	}
 	else if (self.weapon == WEAPON_SHOTGUN)
 	{
 		self.currentammo = self.ammo_shells;
 		self.weaponmodel = "progs/v_shot40fps.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
 	else if (self.weapon == WEAPON_SUPER_SHOTGUN)
 	{
 		self.currentammo = self.ammo_shells;
 		self.weaponmodel = "progs/v_shot2_40fps.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_SHELLS;
 	}
 	else if (self.weapon == WEAPON_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail_alk40fps.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
 	else if (self.weapon == WEAPON_SUPER_NAILGUN)
 	{
 		self.currentammo = self.ammo_nails;
 		self.weaponmodel = "progs/v_nail3.mdl";
-		if (self.cnt != 1) self.weaponframe = 0;
 		self.items = self.items | IT_NAILS;
 	}
 	else if (self.weapon == WEAPON_LASER_CANNON)
 	{
 		self.currentammo = self.ammo_cells;
 		self.weaponmodel = "progs/v_laserg40fps.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
 	}
 	else if (self.weapon == WEAPON_PLASMA)
 	{
 		self.currentammo = self.ammo_cells;
 		self.weaponmodel = "progs/v_plasma.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
 	}
 	else if (self.weapon == WEAPON_GRENADE_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rock_40fps.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
 	else if (self.weapon == WEAPON_PROXIMITY_GUN)
 	{
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_mine_40fps.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
 	else if (self.weapon == WEAPON_ROCKET_LAUNCHER)
 	{
 		self.currentammo = self.ammo_rockets;
 		self.weaponmodel = "progs/v_rock2_40fps.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_ROCKETS;
 	}
 	else if (self.weapon == WEAPON_LIGHTNING)
 	{
 		self.currentammo = self.ammo_cells;
 		self.weaponmodel = "progs/v_light.mdl";
-		self.weaponframe = 0;
 		self.items = self.items | IT_CELLS;
 	}
 	else
 	{
 		self.currentammo = 0;
 		self.weaponmodel = "";
-		self.weaponframe = 0;
 	}
 };
 
@@ -168,9 +159,13 @@ float() W_CheckNoAmmo =
 	if (self.weapon == WEAPON_CHAINSAW)
 		return TRUE;
 	
+	float current = self.weapon;
 	self.weapon = W_BestWeapon ();
 
-	W_SetCurrentAmmo ();
+	if (current != self.weapon)
+		W_SetCurrentAmmo(TRUE);
+	else
+		W_SetCurrentAmmo(FALSE);
 	
 // drop the weapon down
 	return FALSE;
@@ -204,6 +199,8 @@ void() W_Attack =
 		self.show_hostile = 0; // will only be set if the axe hits something
 		sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
 		player_axe();
+		//W_FireBall();
+
 		self.attack_finished = time + 0.5;
 	}
 	else if (self.weapon == WEAPON_SHOTGUN)
@@ -313,56 +310,56 @@ W_ChangeWeapon
 void() W_ChangeWeapon =
 {
 	local float noammo;
-	local float weap;
+	local float new, current;
 	local float item;
 	
 	noammo = 0;
 
 	if (self.impulse == 1) {
 		if (!(self.weapons & WEAPON_AXE) && (self.weapons & WEAPON_CHAINSAW)) { // has the saw but not the axe
-			weap = WEAPON_CHAINSAW;
+			new = WEAPON_CHAINSAW;
 		}
 		else if (self.weapon == WEAPON_AXE) {
 			if (self.weapons & WEAPON_CHAINSAW) {
-				weap = WEAPON_CHAINSAW;
+				new = WEAPON_CHAINSAW;
 			}
 			else 
-				weap = WEAPON_AXE;
+				new = WEAPON_AXE;
 		}
 		else
-			weap = WEAPON_AXE; 
+			new = WEAPON_AXE; 
 	}
 	else if (self.impulse == 2)	{
-		weap = WEAPON_SHOTGUN;
+		new = WEAPON_SHOTGUN;
 		if (self.ammo_shells < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 3)	{
-		weap = WEAPON_SUPER_SHOTGUN;
+		new = WEAPON_SUPER_SHOTGUN;
 		if (self.ammo_shells < 2)
 			noammo = 1;
 	}		
 	else if (self.impulse == 4)	{
-		weap = WEAPON_NAILGUN;
+		new = WEAPON_NAILGUN;
 		if (self.ammo_nails < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 5)	{
-		weap = WEAPON_SUPER_NAILGUN;
+		new = WEAPON_SUPER_NAILGUN;
 		if (self.ammo_nails < 2)
 			noammo = 1;
 	}
 	else if (self.impulse == 6)	{
-		weap = WEAPON_GRENADE_LAUNCHER;
+		new = WEAPON_GRENADE_LAUNCHER;
 		if(self.weapon == WEAPON_GRENADE_LAUNCHER){
-			weap = WEAPON_PROXIMITY_GUN;
+			new = WEAPON_PROXIMITY_GUN;
 		}
 		else {
 			if (self.weapons & WEAPON_GRENADE_LAUNCHER){
-				weap = WEAPON_GRENADE_LAUNCHER;
+				new = WEAPON_GRENADE_LAUNCHER;
 			}
 			else if (self.weapons & WEAPON_PROXIMITY_GUN){
-				weap = WEAPON_PROXIMITY_GUN;
+				new = WEAPON_PROXIMITY_GUN;
 			}
 		}
 		
@@ -370,80 +367,80 @@ void() W_ChangeWeapon =
 			noammo = 1;
 	}
 	else if (self.impulse == 7)	{
-		weap = WEAPON_ROCKET_LAUNCHER;
+		new = WEAPON_ROCKET_LAUNCHER;
 		if (self.ammo_rockets < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 8)	{
 		if (self.weapon == WEAPON_LIGHTNING) {
 			if(self.weapons & WEAPON_LASER_CANNON)
-				weap = WEAPON_LASER_CANNON;
+				new = WEAPON_LASER_CANNON;
 			else {
-				weap = WEAPON_PLASMA;
+				new = WEAPON_PLASMA;
 			}
 		}
 		else if (self.weapon == WEAPON_LASER_CANNON) {
 			if (self.weapons & WEAPON_PLASMA) {
-				weap = WEAPON_PLASMA;
+				new = WEAPON_PLASMA;
 			}
 			else 
-				weap = item = WEAPON_LIGHTNING;
+				new = item = WEAPON_LIGHTNING;
 		}
 		else if(self.weapon == WEAPON_PLASMA) {
 			if(self.weapons & WEAPON_LIGHTNING)
-				weap = WEAPON_LIGHTNING;
+				new = WEAPON_LIGHTNING;
 			else
-				weap = WEAPON_LASER_CANNON;
+				new = WEAPON_LASER_CANNON;
 		}
 		else if(self.weapons & WEAPON_LIGHTNING)
-			weap = WEAPON_LIGHTNING;
+			new = WEAPON_LIGHTNING;
 		else if(self.weapons & WEAPON_LASER_CANNON)
-			weap = WEAPON_LASER_CANNON;
+			new = WEAPON_LASER_CANNON;
 		else {
-			weap = WEAPON_PLASMA;
+			new = WEAPON_PLASMA;
 		}
 
 		if (self.ammo_cells < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 225) {
-		weap = WEAPON_LASER_CANNON;
+		new = WEAPON_LASER_CANNON;
 		if (self.ammo_cells < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 226) {
-		weap = WEAPON_CHAINSAW;
+		new = WEAPON_CHAINSAW;
 	}
 	else if (self.impulse == 227) {
-		weap = WEAPON_PLASMA;
+		new = WEAPON_PLASMA;
 		if (self.ammo_cells < 1)
 			noammo = 1;
 	} 
 	else if (self.impulse == 228) {
-		weap = WEAPON_LIGHTNING;
+		new = WEAPON_LIGHTNING;
 		if (self.ammo_cells < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 229) {
-		weap = WEAPON_PROXIMITY_GUN;
+		new = WEAPON_PROXIMITY_GUN;
 		if (self.ammo_rockets < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 230) {
-		weap = WEAPON_GRENADE_LAUNCHER;
+		new = WEAPON_GRENADE_LAUNCHER;
 		if (self.ammo_rockets < 1)
 			noammo = 1;
 	}
 	else if (self.impulse == 231) {
-		weap = WEAPON_AXE;
+		new = WEAPON_AXE;
 	}
 	else 
-		weap = WEAPON_NO_WEAPON; // doesn't work right but does no harm either
+		new = WEAPON_NO_WEAPON; // doesn't work right but does no harm either
 	
 	self.impulse = 0;
 	
-	if (weap) {
-		if (!(self.weapons & weap)) {	// don't have the weapon or the ammo
+	if (new) {
+		if (!(self.weapons & new)) {	// don't have the weapon or the ammo
 			sprint (self, "no weapon.\n");
 			return;
 		}
@@ -458,10 +455,12 @@ void() W_ChangeWeapon =
 //
 // set weapon, set ammo
 //
-	if (self.weapon != weap) self.weaponframe = 0;
-	self.weapon = weap;
+	current = self.weapon;
+	self.weapon = new;
 
-	W_SetCurrentAmmo ();
+	if (current != new) W_SetCurrentAmmo (TRUE);
+	else W_SetCurrentAmmo (FALSE);
+	
 };
 
 /*
@@ -473,7 +472,7 @@ Go to the next weapon with ammo
 */
 void() CycleWeaponCommand =
 {
-	local	float	weaps, noammo, loop;
+	float	weaps, current, noammo, loop;
 	
 	weaps = self.weapons;
 	
@@ -483,10 +482,11 @@ void() CycleWeaponCommand =
 	if (!(weaps & ALL_WEAPONS))
 	{
 		self.weapon = WEAPON_NO_WEAPON;
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo (TRUE);
 		return;
 	}
 
+	current = self.weapon;
 	
 	while (1)
 	{
@@ -564,7 +564,12 @@ void() CycleWeaponCommand =
 		if ((weaps & self.weapon && !noammo) || loop > 12)
 		{
 			if (loop > 12) self.weapon = WEAPON_NO_WEAPON;
-			W_SetCurrentAmmo ();
+			
+			if (current != self.weapon)
+				W_SetCurrentAmmo(TRUE);
+			else
+				W_SetCurrentAmmo(FALSE);
+			
 			return;
 		}
 
@@ -582,7 +587,7 @@ Go to the prev weapon with ammo
 */
 void() CycleWeaponReverseCommand =
 {
-	local	float	weaps, noammo, loop;
+	float	weaps, current, noammo, loop;
 	
 	weaps = self.weapons;
 
@@ -592,9 +597,11 @@ void() CycleWeaponReverseCommand =
 	if (!(weaps & ALL_WEAPONS))
 	{
 		self.weapon = WEAPON_NO_WEAPON;
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo (TRUE);
 		return;
 	}
+
+	current = self.weapon;
 
 	while (1)
 	{
@@ -672,7 +679,12 @@ void() CycleWeaponReverseCommand =
 		if ((weaps & self.weapon && !noammo) || loop > 12)
 		{
 			if (loop > 12) self.weapon = WEAPON_NO_WEAPON;
-			W_SetCurrentAmmo ();
+
+			if (current != self.weapon)
+				W_SetCurrentAmmo(TRUE);
+			else
+				W_SetCurrentAmmo(FALSE);
+			
 			return;
 		}
 		loop++;

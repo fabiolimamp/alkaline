@@ -191,7 +191,7 @@ void()	demon1_die6		=[	$death6,		demon1_die7	]
 {self.solid = SOLID_TRIGGER; setorigin(self, self.origin);};
 void()	demon1_die7		=[	$death7,		demon1_die8	] {};
 void()	demon1_die8		=[	$death8,		demon1_die9	] {};
-void()	demon1_die9		=[	$death9,		demon1_die9 ] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void()	demon1_die9		=[	$death9,		demon1_die9 ] {monster_dead_dead();};
 
 void() demon_die =
 {
@@ -208,6 +208,7 @@ void() demon_die =
 		ThrowGib ("progs/gib2.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 
@@ -476,6 +477,8 @@ void() monster_demon1_spawner = {
 
 void() monster_demon1 =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);
@@ -526,6 +529,8 @@ void() monster_mutant_spawner = {
 
 void() monster_mutant =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

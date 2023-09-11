@@ -2,6 +2,32 @@
 
 void() SUB_Null = {};
 void(entity attacker, float damage) SUB_NullPain = {};
+
+float() SUB_InitEntity = {
+	if (self.classname == "trigger_relay") {
+		if (self.spawnflags & 16384 && coop){
+			remove(self);
+			return FALSE;
+		}
+		if (self.spawnflags & 32768 && !coop){
+			remove(self);
+			return FALSE;
+		}
+	}
+	else {
+		if (self.spawnflags & SPAWNFLAG_NOCOOP && coop){
+			remove(self);
+			return FALSE;
+		}
+		if (self.spawnflags & SPAWNFLAG_ONLYCOOP && !coop){
+			remove(self);
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+
 /*
 =============
 SUB_Remove/SUB_RemoveSoon
@@ -129,7 +155,7 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 	if (tdest == self.origin)
 	{
 		self.velocity = '0 0 0';
-		self.nextthink = localtime + 0.1;
+		self.nextthink = localtime + 0.025;
 		return;
 	}
 		
@@ -142,10 +168,11 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 // divide by speed to get time to reach dest
 	traveltime = len / tspeed;
 
-	if (traveltime < 0.1)
+	// changed from the 0.1 default
+	if (traveltime < 0.025)
 	{
 		self.velocity = '0 0 0';
-		self.nextthink = localtime + 0.1;
+		self.nextthink = localtime + 0.025;
 		return;
 	}
 	
@@ -156,6 +183,144 @@ void(vector tdest, float tspeed, void() func) SUB_CalcMove =
 	self.velocity = vdestdelta * (1/traveltime);	// qcc won't take vec/float	
 };
 
+
+
+/*
+=============
+SUB_CalcMoveSmooth
+
+tdest -> destination coordinates
+smdist -> smoothing distance
+tspeed -> travel speed
+stspeed -> starting speed
+fnspeed -> final speed
+===============
+*/
+
+void(vector tdest, float smdist, float tspeed, float stspeed, float fnspeed, void() func) SUB_CalcMoveSmooth =
+{
+	local vector	vdestdelta;
+	local float		len, traveltime, localtime;
+
+	
+	//dprint3("tspeed: ", ftos(tspeed), "\n");
+	//dprint3("stspeed: ", ftos(stspeed), "\n");
+	//dprint3("fnspeed: ", ftos(fnspeed), "\n");
+	
+
+
+	if (!tspeed)
+		objerror("No speed is defined!");
+
+	localtime = getLocalTime();
+
+	self.think1 = func;
+	self.think = CalcMoveSmooth_Think;
+	self.finaldest = tdest;
+	self.calcmoveorigin = self.origin;
+	
+		
+	vdestdelta = tdest - self.origin;
+	len = vlen(vdestdelta);
+
+	if (len/2 < smdist) {
+		self.travelspeed = tspeed*len/2/smdist;
+		self.realsmdist = len/2;
+	}
+
+	else {
+		self.travelspeed = tspeed;
+		self.realsmdist = smdist;
+	}
+
+	self.startspeed = max(stspeed, self.travelspeed/50);
+	self.finalspeed = max(fnspeed, self.travelspeed/50);
+	if (tdest == self.origin)
+	{
+		self.velocity = '0 0 0';
+		self.nextthink = localtime + 0.1;
+		return;
+	}
+		
+	// set destdelta to the vector needed to move
+	
+	//accelerating
+	//t = ((v - v0)*2d)/(v² - v0²)
+	// WRONG!
+	if (self.travelspeed != self.startspeed)
+		traveltime += ((self.travelspeed - self.startspeed)*2*self.realsmdist)/(self.travelspeed*self.travelspeed - self.startspeed*self.startspeed);
+	else
+		traveltime += self.realsmdist/self.startspeed;
+
+	// cruising
+	traveltime += (len - self.realsmdist*2)/self.travelspeed;
+
+	//stopping
+	//t = ((v - v0)*2d)/(v² - v0²)
+	if (self.finalspeed != self.travelspeed)
+		traveltime += ((self.finalspeed - self.travelspeed)*2*self.realsmdist)/(self.finalspeed*self.finalspeed - self.travelspeed*self.travelspeed);
+	else 
+		traveltime += self.realsmdist/self.finalspeed;
+
+	// changed from the 0.1 default
+	if (traveltime < 0.025)
+	{
+		self.velocity = '0 0 0';
+		self.nextthink = localtime + 0.025;
+		return;
+	}
+	self.idletimer = localtime;
+	dprint("Smooth move started\n");
+
+	self.nextthink = localtime + 0.025;
+
+// scale the destdelta vector by the time spent traveling to get velocity
+	self.velocity = normalize(vdestdelta) * self.startspeed;
+};
+
+
+void() CalcMoveSmooth_Think = {
+	float localtime = getLocalTime();
+
+	float disttofinish = vlen(self.origin - self.finaldest);
+	float disttostart = vlen(self.origin - self.calcmoveorigin);
+
+	float perctostart = clamp(disttostart/self.realsmdist, 0, 1);
+	float perctofinish = clamp(disttofinish/self.realsmdist, 0, 1);
+	float spd;
+	vector dir = normalize(self.finaldest - self.origin);
+
+	// accelerating
+	if (perctostart < perctofinish) {
+		float lg2 = (log2(perctostart) + 7)/7;
+		lg2 *= lg2;
+		
+		if (!self.smoothcurve) spd = lerp(self.startspeed, self.travelspeed, lg2);
+		else spd = lerp(self.startspeed, self.travelspeed, perctostart);
+	}
+	//stopping
+	else if (perctostart > perctofinish) {
+		spd = lerp(self.travelspeed, self.finalspeed, 1 - perctofinish);
+	}
+	else {
+		spd = self.travelspeed;
+	}
+
+	spd = max(spd, self.travelspeed/50);
+	vector newvel = spd * dir;
+
+	//dprint3("Speed difference: ", ftos(vlen(newvel) - vlen(self.velocity)), "\n");
+	//dprint4("perctostart: ", ftos(perctostart), ", perctofinish: ", ftos(perctofinish));
+	//dprint3(", speed: ", ftos(spd), "\n");
+	self.velocity = newvel;
+
+	if (vlen((self.origin + self.velocity * 0.025) - self.calcmoveorigin) > vlen(self.finaldest - self.calcmoveorigin)) {
+		self.think = SUB_CalcMoveDone;
+	}
+
+	self.nextthink = localtime + 0.025;
+}
+
 /*
 ============
 After moving, set origin to exact final destination
@@ -164,6 +329,18 @@ After moving, set origin to exact final destination
 void()  SUB_CalcMoveDone =
 {
 	setorigin(self, self.finaldest);
+	if (self.travelspeed) {
+		
+		dprint3("Smooth move ended. Move time: ", ftos(getLocalTime() - self.idletimer), "\n");
+	}
+	self.idletimer = 0;
+	self.calcmoveorigin = '0 0 0';
+	self.travelspeed = 0;
+	self.startspeed = 0;
+	self.finalspeed = 0;
+	self.realsmdist = 0;
+
+	//dprint3("End time: ", ftos(getLocalTime()), "\n");
 	self.velocity = '0 0 0';
 	self.nextthink = -1;
 	if (self.think1)
@@ -354,6 +531,10 @@ void(string matchstring, .string matchfield) SUB_UseSpecificTarget =
 			}
 			else*/
 				self.use();
+				if (self.dev_announce && developer) {
+					dprint6(self.classname, " with targetname '", matchstring, "'' fired by ", act.classname, "\n");
+					eprint(self);
+				}
 		}
 		self = stemp;
 		other = otemp;
@@ -384,6 +565,12 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 			}
 		}
 
+		if (t.classname == "trigger_secret" && !(t.nextthink > time)) {
+			dprint3("Killed untouched trigger_secret at ", vtos((t.mins + t.maxs)/2), ", marking as found\n");
+			found_secrets = found_secrets + 1;
+			WriteByte (MSG_ALL, SVC_FOUNDSECRET);
+		}
+
 		// liquid brush list handling
 		if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
 		if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
@@ -404,9 +591,10 @@ void() SUB_UseTargets =
 //
 	if (self.delay)
 	{
-		// delay on doors is for opening, not for firing targets
-		// and monsters use the key for delaying trigger-spawning
-		if (self.classname != "func_door" || !(self.flags & FL_MONSTER)){
+		// Delay on doors is for opening, not for firing targets
+		// Monsters use the key for delaying trigger-spawning
+		// trigger_repeat uses delay for the initial firing
+		if (self.classname != "func_door" && !(self.flags & FL_MONSTER) && self.classname != "trigger_repeat"){
 			// create a temp object to fire at a later time
 			t = spawn();
 			t.classname = "DelayedUse";

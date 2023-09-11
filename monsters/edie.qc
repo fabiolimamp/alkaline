@@ -495,7 +495,7 @@ void(float dist, float kickback, float dmg) edie_melee_hit =
 	
 	e = findradius(self.origin, dist);
 	while (e) {
-		if ((e.flags & (FL_MONSTER + FL_CLIENT)) &&	e != self && e.health > 0) {
+		if (e != self && e.health > 0) {
 			makevectors(self.angles);
 			dist_front = vlen(self.origin + (v_forward * 100) - (self.origin + normalize(e.origin - self.origin) * 100));
 
@@ -512,7 +512,7 @@ void(float dist, float kickback, float dmg) edie_melee_hit =
 				}
 
 				// large targets don't get kicked back
-				if (e.size_x <= 32) {
+				if (e.size_x <= 32 && (e.flags & (FL_MONSTER + FL_CLIENT))) {
 					if (e.flags & FL_ONGROUND) e.flags = e.flags - FL_ONGROUND;
 					
 					e.velocity = e.velocity + '0 0 24' * dmg;
@@ -680,7 +680,7 @@ void() edie_death30	=[$death31, edie_death31	] {};
 void() edie_death31	=[$death32, edie_death32	] {};
 void() edie_death32	=[$death33, edie_death33	] {};
 void() edie_death33	=[$death34, edie_death34	] {};
-void() edie_death34	=[$death35, edie_death34	] {self.think = SUB_MakeNotSolid; self.nextthink = time + 5;};
+void() edie_death34	=[$death35, edie_death34	] {monster_dead_dead();};
 
 void() edie_die =
 {
@@ -695,6 +695,7 @@ void() edie_die =
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
 		ThrowGib ("progs/gib3.mdl", self.health);
+		self.deadflag = DEAD_GIBBED;
 		return;
 	}
 
@@ -874,6 +875,8 @@ void() monster_edie_spawner = {
 
 void() monster_edie =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

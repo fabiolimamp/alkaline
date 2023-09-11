@@ -588,6 +588,7 @@ void()   armagon_die14    =[ $ldie12.asc, armagon_die14    ]
 	self.movetype = MOVETYPE_NONE;
 	body.takedamage = DAMAGE_NO;
 	body.solid = SOLID_NOT;
+	self.deadflag = DEAD_DEAD;
 //   setsize (body, '-32 -32 30', '32 32 64' );
 	body.think = armagon_body_explode1;
 	body.nextthink = time + 0.1;
@@ -901,6 +902,8 @@ void() monster_armagon_spawner = {
 
 void() monster_armagon =
 {
+	if (!SUB_InitEntity()) return;
+	
 	if (deathmatch)
 	{
 		remove(self);

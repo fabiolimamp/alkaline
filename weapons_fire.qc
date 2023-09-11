@@ -134,35 +134,44 @@ Collects multiple small damages into a single damage
 ==============================================================================
 */
 
-entity	multi_ent;
-float	multi_damage;
+
+entity	multi_ent_first, multi_ent_last;
+//float	multi_damage;
 
 void() ClearMultiDamage =
 {
-	multi_ent = world;
-	multi_damage = 0;
+	//multi_ent = world;
+	//multi_damage = 0;
 };
 
 void() ApplyMultiDamage =
 {
-	if (!multi_ent)
-		return;
-	T_Damage(multi_ent, self, self, multi_damage, DMGTYPE_BALLISTIC);
+	entity e = multi_ent_first;
+	entity e_nxt;
+	while (e) {
+		e_nxt = e.multi_next;
+		T_Damage(e, self, self, e.multi_dmg, DMGTYPE_BALLISTIC);
+		e.multi_dmg = 0;
+		e.multi_next = world;
+		e = e_nxt;
+	}
+	multi_ent_first = world;
+	multi_ent_last = world;
 };
 
 void(entity hit, float damage) AddMultiDamage =
 {
 	if (!hit)
 		return;
-	
-	if (hit != multi_ent)
+
+	if (!multi_ent_first) multi_ent_first = hit;
+
+	if (!hit.multi_dmg)
 	{
-		ApplyMultiDamage ();
-		multi_damage = damage;
-		multi_ent = hit;
+		if (multi_ent_last) multi_ent_last.multi_next = hit;
+		multi_ent_last = hit;
 	}
-	else
-		multi_damage = multi_damage + damage;
+	hit.multi_dmg += damage;
 };
 
 /*
@@ -219,15 +228,17 @@ void(vector org, vector direction, vector dest) drawTracer = {
 TraceAttack
 ================
 */
-void(float damage, vector dir) TraceAttack =
+void(float damage, vector dir, float penetrate) TraceAttack =
 {
 	local	vector	vel, org;
 	
 	org = trace_endpos - dir*4;
+	//dprint3("Trace hit: ", trace_ent.classname, "\n");
+	
 
-	if (trace_ent.takedamage)
-	{
-		if(trace_ent.bloodtype == SPAWN_DIRT || trace_ent.bloodtype == SPAWN_CHUNK){
+
+	if ((trace_ent.flags & (FL_MONSTER + FL_CLIENT) && trace_ent.deadflag > 0) || trace_ent.takedamage)	{
+		if (trace_ent.bloodtype == SPAWN_DIRT || trace_ent.bloodtype == SPAWN_CHUNK) {
 			vel = normalize(dir - v_up*crandom() * 20 + v_right*crandom());
 			vel = vel + 2*trace_plane_normal;
 			vel = vel * 200;
@@ -241,13 +252,32 @@ void(float damage, vector dir) TraceAttack =
 
 			ImpactSpawn(org, vel*0.2, damage, trace_ent.bloodtype);
 		}
-		
-		AddMultiDamage (trace_ent, damage);
 	}
 	else
-	{
 		gunshot(org);
+	
+
+	if (trace_ent.takedamage) 
+		AddMultiDamage (trace_ent, damage);
+
+	if (
+		penetrate &&
+		trace_ent.flags & (FL_MONSTER + FL_CLIENT) &&
+		(
+			( trace_ent.health - trace_ent.multi_dmg <= 0)
+			|| trace_ent.deadflag > 0
+		)
+	){
+		//dprint2(ftos(trace_ent.flags & (FL_MONSTER + FL_CLIENT)), "\n");
+		traceline (trace_endpos + dir*4, trace_endpos + dir*2048, FALSE, trace_ent);
+		if (trace_fraction != 1.0) {
+			//dprint3("Trace penetrated hit: ", trace_ent.classname, "\n");
+			TraceAttack(damage, dir, FALSE);
+			placebullethole(trace_endpos, trace_plane_normal, trace_ent);
+		}
+		//else dprint("Trace penetrated\n");
 	}
+		
 };
 
 /*
@@ -263,6 +293,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	local	vector direction;
 	local	vector	src;
 	local vector plane_normal;
+	float penetrate = FALSE;
 	//float bullet;
 	makevectors(self.v_angle);
 
@@ -282,7 +313,7 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
 			//JIM
-			TraceAttack(4, direction);
+			TraceAttack(4, direction, penetrate);
 
 			placebullethole(trace_endpos, plane_normal, trace_ent);
 
@@ -293,36 +324,42 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	ApplyMultiDamage ();
 };
 
-void(float shotcount, vector org, vector dir, vector spread) FireBullets2 =
+void(float shotcount, float dmg, vector org, vector dir, vector spread, float centerbias, float penetrate) FireBullets2 =
 {
 	local	vector direction;
 	local vector plane_normal;
+	vector endpoint;
+	entity ent_hit;
 	//float bullet;
 	makevectors(vectoangles(dir));
 
 
-	ClearMultiDamage();
+	//ClearMultiDamage();
 	while (shotcount > 0)
 	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+		if (centerbias) direction = dir + weighted_crandom(centerbias)*spread_x*v_right + weighted_crandom(centerbias)*spread_y*v_up;
+		else direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
 
 		traceline (org, org + direction*2048, FALSE, self);
+		endpoint = trace_endpos;
+		ent_hit = trace_ent;
 
-		if (!(vlen(org - trace_endpos) < 128 && trace_ent.solid == SOLID_BSP))
-			drawTracer(org, direction, trace_endpos);
+		if (!(vlen(org - trace_endpos) < 128 && ent_hit.solid == SOLID_BSP))
+			drawTracer(org, direction, endpoint);
 		
 		if (trace_fraction != 1.0) {
 			plane_normal = trace_plane_normal;
-			//JIM
-			TraceAttack(4, direction);
+			
+			TraceAttack(dmg, direction, penetrate);
 
-			placebullethole(trace_endpos, plane_normal, trace_ent);
+			placebullethole(endpoint, plane_normal, ent_hit);
 
 		}
 		shotcount = shotcount - 1;
 		
 	}
 	ApplyMultiDamage ();
+	//dprint("Attack ended\n");
 };
 
 /*
@@ -340,9 +377,13 @@ void() W_FireShotgun =
 	
 	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
 	dir = aim (self, 100000);
-	FireBullets (6, dir, '0.04 0.04 0');
-};
 
+	//if (cvar("scratch3") == 1)
+		FireBullets2 (6, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.05 0.05 0', 2, TRUE);
+	//else
+	//	FireBullets2 (6, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.04 0.04 0', 0, TRUE);
+};
+//void(float shotcount, float dmg, vector org, vector dir, vector spread, float centerbias, float penetrate) FireBullets2 =
 
 /*
 ================
@@ -365,7 +406,11 @@ void() W_FireSuperShotgun =
 	
 	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
 	dir = aim (self, 100000);
-	FireBullets (14, dir, '0.14 0.08 0');
+	
+	//if (cvar("scratch3") == 1)
+		FireBullets2 (14, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.15 0.09 0', 2, TRUE);
+	//else
+	//	FireBullets2 (14, 4, self.origin + self.view_ofs - '0 0 6', dir, '0.14 0.08 0', 0, TRUE);
 };
 
 
@@ -452,10 +497,7 @@ void(vector org, vector dir) launch_rocket = {
 	//newmis = missile;
 };
 
-void() W_FireRocket =
-{
-	local	vector dir, org;
-	
+void() W_FireRocket = {
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
@@ -463,15 +505,11 @@ void() W_FireRocket =
 	self.punchangle_x = -2;
 
 	makevectors (self.v_angle);
-	dir = aim(self, 1000);
-
-
-	org = self.origin + self.view_ofs - v_up*6;// '0 0 10';
+	
+	vector dir = aim(self, 1000);
+	vector org = self.origin + self.view_ofs - v_up*6;
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_rocket(org + v_forward*24 * trace_fraction, dir);
-
-	//org = self.origin + v_forward*8 + self.view_ofs - v_up*6;
-	//launch_rocket(org, dir);
 
 };
 
@@ -488,73 +526,225 @@ LIGHTNING
 LightningDamage
 =================
 */
-void(vector p1, vector p2, entity from, float damage) LightningDamage =
-{
-	local entity		e1, e2;
-	local vector		f;
+float(vector org, vector dest, entity attacker, float damage) LightningDamage = {
+	entity e1, e2;
+	float damaged;
+	// vector pointing left
+	vector left = normalize(dest - org);
+	left = [-left_y, left_x, 0] * 16; 
 	
-	f = p2 - p1;
-	normalize (f);
-	f_x = 0 - f_y;
-	f_y = f_x;
-	f_z = 0;
-	f = f*16;
-
 	e1 = e2 = world;
 
-	traceline (p1, p2, FALSE, self);
-	if (trace_ent.takedamage)
-	{
-		particle (trace_endpos, '0 0 100', 225, damage*4);
-
-		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
-		if (self.classname == "player")
-		{
+	traceline(org, dest, FALSE, self);
+	if (trace_ent.takedamage) {
+		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
+		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
+		damaged = TRUE;
+		if (self.classname == "player") {
 			if (other.classname == "player")
 				trace_ent.velocity_z = trace_ent.velocity_z + 400;
 		}
 	}
 	e1 = trace_ent;
 
-	traceline (p1 + f, p2 + f, FALSE, self);
-	if (trace_ent != e1 && trace_ent.takedamage)
-	{
-		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
+	traceline(org + left, dest + left, FALSE, self);
+	if (attacker.flags & FL_CLIENT){
+		attacker.lightningcontroller.dest1 = trace_endpos;
+	}
+	if (trace_ent != e1 && trace_ent.takedamage){
+		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
+		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
+		damaged = TRUE;
 	}
 	e2 = trace_ent;
 
-	traceline (p1 - f, p2 - f, FALSE, self);
-	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)
-	{
-		particle (trace_endpos, '0 0 100', 225, damage*4);
-		T_Damage(trace_ent, from, from, damage, DMGTYPE_ENERGY);
+	traceline(org - left, dest - left, FALSE, self);
+	if (attacker.flags & FL_CLIENT){
+		attacker.lightningcontroller.dest2 = trace_endpos;
 	}
+	if (trace_ent != e1 && trace_ent != e2 && trace_ent.takedamage)	{
+		ImpactSpawn(trace_endpos, '0 0 100', damage*2, trace_ent.bloodtype);
+		T_Damage(trace_ent, attacker, attacker, damage, DMGTYPE_ENERGY);
+		damaged = TRUE;
+	}
+	return damaged;
 };
 
 
-void() W_FireLightning =
-{
-	local	vector		org;
-	local	float		cells;
-	local entity victim;
+// Runs at every frame for every player
+// self is player.lightningcontroller
+void() UpdateLightning = {
+	if (!self.count)
+		return;
 
-	if (self.ammo_cells < 1)
-	{
+	if (self.attack_finished < time){
+		ClearLightning();
+		return;
+	}
+	
+	makevectors(self.owner.v_angle);
+	vector org = self.owner.origin + self.owner.view_ofs + v_forward*32 - v_up*12;
+
+	float rnd = random();
+	vector dest;
+	if (rnd < 0.25)
+		dest = self.dest1;
+	else if (rnd < 0.5)
+		dest = self.dest2;
+	else
+		dest = self.pos2;
+
+	float len = vlen(dest - org);
+	vector dir = normalize(dest - org);
+	vector ang;
+
+	
+	float i;
+	vector sgorg;
+	
+	entity sg = self.sibling;
+	entity prevsg;
+	float iterations, segments;
+	while (sg) {
+		// first segment has no previous, so calculate from the player's position
+		if (!prevsg) {
+			setorigin(sg, org);
+			sgorg = bezierCurve(org, org + v_forward*len, dest, dest, i);
+		}
+		else {
+			// divides the full bolt in 100 steps and iterates through that
+			// when the distance to the last segment reaches more than 30 units, place the next one
+			while (vlen(sgorg - prevsg.origin) < 30 && i <= 1) {
+				sgorg = bezierCurve(org, org + v_forward*len, dest, dest, i);
+				i += 0.01;
+				iterations++;
+			}
+			setorigin(sg, sgorg);
+
+			// in some cases the last segments pile up and have 0 distance,
+			// so calculating an angle out of that gives a borked result.
+			// when that happens the previous segment's angles will be reused
+			if (sg.origin - prevsg.origin != '0 0 0') 
+				ang = vectoangles(sg.origin - prevsg.origin);
+
+			prevsg.angles_x = ang_x;
+			prevsg.angles_y = ang_y;
+		}
+
+		prevsg = sg;
+		sg = sg.sibling;
+
+		segments++;
+	}
+
+	if (prevsg && prevsg != self.sibling) {
+		prevsg.angles_x = ang_x;
+		prevsg.angles_y = ang_y;
+	}
+	//dprint5("Segments: ", ftos(segments), ", Iterations: ", ftos(iterations), "\n");
+	//self.nextthink = time + 0.01;
+}
+
+void() LightningSegmentThink = {
+	self.angles_z = random()*360;
+	self.nextthink = time + 0.025;
+	if (self.state) self.alpha -= 0.06;
+	else self.alpha -= 0.1;
+}
+
+void(entity pl, vector org, vector dest, float hit) DrawLightning = {
+	if (pl.lightningcontroller.classname != "lightningcontroller") SUB_CallAsSelf(CreateLightningController, pl);
+	entity ct = pl.lightningcontroller;
+
+	if (ct.pain_finished - time > 0.01 && !hit)
+		return;
+
+	SUB_CallAsSelf(ClearLightning, ct);
+
+	float len = vlen(dest - org);
+	vector dir = normalize(dest - org);
+	vector ang = vectoangles(dest - org);
+
+	ct.count = floor(len/30);
+	entity sg;
+	entity prevsg = ct;
+	for (float i = 0; i < ct.count; i++) {
+		sg = spawn();
+		prevsg.sibling = sg;
+
+		setmodel(sg, "progs/bolt2.mdl");
+		setsize(sg, VEC_ORIGIN, VEC_ORIGIN);
+		setorigin(sg, org + dir * 30 * i);
+
+		sg.flags |= FL_PROJECTILE;
+		sg.classname = "lgsegment";
+		sg.angles = ang;
+		sg.angles_z = random()*360;
+		sg.owner = pl;
+		sg.think = LightningSegmentThink;
+		sg.nextthink = time + 0.02;
+		sg.alpha = 0.9;
+		sg.state = hit;
+		prevsg = sg;
+	}
+	if (sg) sg.effects |= EF_DIMLIGHT;
+
+	
+
+	if (hit){
+		ct.pain_finished = time + 0.2;
+		ct.attack_finished = time + 0.3;
+	}
+	else { 
+		ct.pain_finished = time + 0.1;
+		ct.attack_finished = time + 0.2;
+	}
+	//ct.think = UpdateLightning;
+	//ct.nextthink = time + 0.01;
+	ct.pos1 = org;
+	ct.pos2 = dest;
+}
+
+void() ClearLightning = {
+	entity ct = self;
+
+	if (!ct.count)
+		return;
+
+	entity sg = ct.sibling;
+	entity nxsg;
+
+	while (sg.classname == "lgsegment") {
+		nxsg = sg.sibling;
+		remove(sg);
+		sg = nxsg;
+	}
+
+	ct.sibling = world;
+	ct.count = 0;
+	ct.nextthink = 0;
+}
+
+void() W_FireLightning = {
+	vector 	org;
+	float cells;
+	entity victim;
+
+	if (self.ammo_cells < 1) {
 		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo(TRUE);
 		return;
 	}
 
-// explode if under water
-	if (self.waterlevel > 1) {
+	// explode if under water
+	if (self.waterlevel > 1 && self.flags & FL_INWATER) {
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo(TRUE);
 		victim = findradius(self.origin, 35*cells);
 		
 		while (victim) {
-			if (victim.classname != "monster_eel" && victim.takedamage && victim.waterlevel > 0) {
+			if (victim.takedamage && victim.waterlevel > 0 && victim.flags & FL_INWATER) {
 				T_Damage(victim, self,self, 35*cells, DMGTYPE_ENERGY);					
 			}
 
@@ -573,21 +763,27 @@ void() W_FireLightning =
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
-	org = self.origin + '0 0 16';
+	makevectors(self.v_angle);
+	org = self.origin + self.view_ofs + v_forward*32 - v_up*12;
 	
-	traceline (org, org + v_forward*600, TRUE, self);
+	traceline (org - v_forward*32, org + v_forward*600, TRUE, self);
+	vector endpos = trace_endpos;
+	float hit = LightningDamage(self.origin, endpos + v_forward*4, self, 30);
 
-	WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
-	WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
-	WriteEntity (MSG_BROADCAST, self);
-	WriteCoord (MSG_BROADCAST, org_x);
-	WriteCoord (MSG_BROADCAST, org_y);
-	WriteCoord (MSG_BROADCAST, org_z);
-	WriteCoord (MSG_BROADCAST, trace_endpos_x);
-	WriteCoord (MSG_BROADCAST, trace_endpos_y);
-	WriteCoord (MSG_BROADCAST, trace_endpos_z);
-
-	LightningDamage (self.origin, trace_endpos + v_forward*4, self, 30);
+	if (oldlightning) {
+		WriteByte (MSG_BROADCAST, SVC_TEMPENTITY);
+		WriteByte (MSG_BROADCAST, TE_LIGHTNING2);
+		WriteEntity (MSG_BROADCAST, self);
+		WriteCoord (MSG_BROADCAST, org_x);
+		WriteCoord (MSG_BROADCAST, org_y);
+		WriteCoord (MSG_BROADCAST, org_z);
+		WriteCoord (MSG_BROADCAST, endpos_x);
+		WriteCoord (MSG_BROADCAST, endpos_y);
+		WriteCoord (MSG_BROADCAST, endpos_z);
+	}
+	else {
+		DrawLightning(self, org, endpos, hit);
+	}
 };
 
 
@@ -681,10 +877,128 @@ void() W_FireGrenade =
 };
 
 
+//==========================================================================
+
+
+void() W_FireBall =
+{
+	local	entity missile;
+	
+	
+	//sound (self, CHAN_WEAPON, "weapons/marioball.wav", 1, ATTN_NORM);
+
+	missile = spawn ();
+	missile.owner = self;
+	missile.movetype = MOVETYPE_BOUNCE;
+	missile.solid = SOLID_BBOX;
+	missile.classname = "grenade";
+	missile.flags = missile.flags | FL_PROJECTILE;
+		
+// set missile speed	
+
+	makevectors (self.v_angle);
+
+	if (self.v_angle_x)
+		missile.velocity = v_forward*500 + v_up * 200 + crandom()*v_right*10 + crandom()*v_up*10;
+	else
+	{
+		missile.velocity = aim(self, 10000);
+		missile.velocity = missile.velocity * 500;
+		missile.velocity_z = 200;
+	}
+	missile.gravity = 1.5;
+	missile.avelocity = '300 300 300';
+
+	missile.angles = vectoangles(missile.velocity);
+	
+	missile.movedir = normalize([missile.velocity_x, missile.velocity_y, 0]);
+	missile.touch = FireballTouch;
+	
+// set missile duration
+	missile.attack_finished = time + 2.5;
+	missile.nextthink = time + 0.001;
+	missile.think = FireballThink;
+
+	setmodel (missile, "progs/lavaball.mdl");
+	setsize (missile, '0 0 0', '0 0 0');
+
+	if (oldgrenade) {
+		setorigin (missile, self.origin);
+	}
+	else {
+		vector org = self.origin + self.view_ofs - v_up*12;// '0 0 10';
+		traceline(org, org + v_forward * 24, FALSE, self);
+		setorigin(missile, org + v_forward*24 * trace_fraction);
+	}
+};
+
+void() FireballExplode =
+{
+	if (pointcontents(self.origin) == CONTENT_SKY)
+	{
+		remove(self);
+		return;
+	}
+
+	T_RadiusDamage (self, self.owner, 30, world, DMGTYPE_EXPLOSION);
+
+	BecomeExplosion ();
+};
+
+void() FireballThink = {
+	if (self.jump_flag) {
+		self.velocity = self.movedir * 500;
+		self.velocity_z = 200;
+		self.jump_flag = 0;
+	}
+	else if (self.origin == self.oldorigin) {
+		self.velocity = self.movedir * 500;
+		self.velocity_z = 200;
+		self.flags &~= FL_ONGROUND;
+		self.avelocity = '300 300 300';
+	}
+	//dprint5("Time: ", ftos(time), ", velocity: ", vtos(self.velocity), "\n");
+	//dprint(self.origin == self.oldorigin ? "Not moved\n":"Moved\n");
+	if (time > self.attack_finished) {
+		FireballExplode();
+		return;
+	}
+	self.oldorigin = self.origin;
+	self.nextthink = time + 0.001;
+}
+
+void() FireballTouch =
+{
+	if (other == self.owner)
+		return;		// don't explode on owner
+	if (other.takedamage == DAMAGE_AIM)
+	{
+		FireballExplode();
+		return;
+	}
+	
+	traceline([self.origin_x, self.origin_y, self.origin_z + 4], [self.origin_x, self.origin_y, self.origin_z - 4], TRUE, self);
+	if (trace_fraction < 1) {
+		float dot = trace_plane_normal * '0 0 1';
+		if (dot > 0.3) {
+			self.jump_flag = 1;
+		}
+		else {
+			FireballExplode();
+			return;
+		}
+	}
+	else {
+		FireballExplode();
+		return;
+	}
+
+};
+
+
+
 //=============================================================================
 
-void() spike_touch;
-void() superspike_touch;
 
 
 /*
@@ -754,7 +1068,7 @@ void(float ox) W_FireSpikes =
 	if (self.ammo_nails < 1)
 	{
 		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo ();
+		W_SetCurrentAmmo(TRUE);
 		return;
 	}
 

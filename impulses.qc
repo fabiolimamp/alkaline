@@ -13,13 +13,13 @@ void() GiveAllCommand =
 	self.ammo_nails = 200;
 	self.ammo_shells = 100;
 	self.weapons = self.weapons | ALL_WEAPONS;
-	self.items = self.items | HUD_WEAPONS | IT_KEY1 | IT_KEY2;
+	self.items = self.items | HUD_WEAPONS;
 
 	self.ammo_cells = 100;
 		
 	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.impulse = 0;
-	W_SetCurrentAmmo ();
+	W_SetCurrentAmmo (TRUE);
 
 	stuffcmd (self, "bf\n");
 	sprint(self, "You got everything\n");
@@ -28,29 +28,21 @@ void() GiveAllCommand =
 
 /*
 ============
-GiveWeaponsCommand
+GiveKeysCommand
 ============
 */
-void() GiveWeaponsCommand =
+void() GiveKeysCommand =
 {
 	if (deathmatch || coop)
 		return;
 
-	self.ammo_rockets = 100;
-	self.ammo_nails = 200;
-	self.ammo_shells = 100;
-	self.weapons = self.weapons | ALL_WEAPONS;
-	self.items = self.items | HUD_WEAPONS;
+	self.items = self.items | IT_KEY1 | IT_KEY2 | IT_KEY3;
 
-	self.ammo_cells = 100;
-		
-	self.weapon = WEAPON_ROCKET_LAUNCHER;
 	self.impulse = 0;
-	W_SetCurrentAmmo ();
 
 
 	stuffcmd (self, "bf\n");
-	sprint(self, "You got all weapons and ammo\n");
+	sprint(self, "You got all keys\n");
 	sound (self, CHAN_ITEM, "weapons/pkup.wav", 1, ATTN_NORM);
 };
 
@@ -431,9 +423,25 @@ void() ToggleOldGrenade = {
 		bprint("Old grenade style: enabled\n");
 		oldgrenade = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
+		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
 	}
 }
 
+void() ToggleOldLightning = {
+	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	tmp1 = cvar("saved1");
+	if (oldlightning) {
+		bprint("Old lightning style: disabled\n");
+		oldlightning = 0;
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_OLDLIGHTNING)));
+	}
+	else {
+		bprint("Old lightning style: enabled\n");
+		oldlightning = 1;
+		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDLIGHTNING));
+	}
+}
 
 void() ResetModSettings = {
 	cvar_set("saved1", 0);
@@ -446,6 +454,42 @@ void() ResetPlayerZ = {
 	self.fixangle = 1;
 }
 
+void() CycleHUD = {
+	float tmp1 = cvar("saved1");
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	float current = self.currenthud;
+
+	if (current) {
+		//cvar_set("scratch1", "0");
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTIGNS_OLDSTYLEHUD)));
+		self.currenthud = 0;
+	}
+	else {
+		//cvar_set("scratch1", "1");
+		self.currenthud = 1;
+		cvar_set("saved1", ftos(tmp1 | ALKSETTIGNS_OLDSTYLEHUD));
+	}
+}
+
+
+void() DumpParms = {
+	bprint3("parm1: ", ftos(parm1), "\n");
+	bprint3("parm2: ", ftos(parm2), "\n");
+	bprint3("parm3: ", ftos(parm3), "\n");
+	bprint3("parm4: ", ftos(parm4), "\n");
+	bprint3("parm5: ", ftos(parm5), "\n");
+	bprint3("parm6: ", ftos(parm6), "\n");
+	bprint3("parm7: ", ftos(parm7), "\n");
+	bprint3("parm8: ", ftos(parm8), "\n");
+	bprint3("parm9: ", ftos(parm9), "\n");
+	bprint3("parm10: ", ftos(parm10), "\n");
+	bprint3("parm11: ", ftos(parm11), "\n");
+	bprint3("parm12: ", ftos(parm12), "\n");
+	bprint3("parm13: ", ftos(parm13), "\n");
+	bprint3("parm14: ", ftos(parm14), "\n");
+	bprint3("parm15: ", ftos(parm15), "\n");
+	bprint3("parm16: ", ftos(parm16), "\n");
+}
 /*
 ============
 ImpulseCommands
@@ -478,7 +522,8 @@ void() ImpulseCommands = {
 		ServerflagsCommand();
 
 	if (self.impulse == 13)
-		GiveWeaponsCommand();
+		GiveKeysCommand();
+
 	if (self.impulse >= 91 && self.impulse <= 99)
 		ImpulseTest(self.impulse - 90);
 
@@ -498,6 +543,11 @@ void() ImpulseCommands = {
 		TogglePlayerTracers();
 	if (self.impulse == 44)
 		ToggleOldGrenade();
+	if (self.impulse == 45)
+		ToggleOldLightning();
+
+	if (self.impulse == 50)
+		CycleHUD();
 
 	if (self.impulse == 128)
 		printVersionConsole(self);
@@ -506,6 +556,8 @@ void() ImpulseCommands = {
 		display_monsleft();
 	if (self.impulse == 185)
 		display_mapvar();
+	if (self.impulse == 186)
+		DumpParms();
 	if (self.impulse == 200)
 		dev_reveal();
 	if (self.impulse == 201)

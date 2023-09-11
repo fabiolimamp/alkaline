@@ -15,7 +15,7 @@ void(vector ang) monster_turret_shoot = {
 	makevectors(ang);
 	//LaunchLaser(self.origin - v_up*14 + v_forward*56, v_forward); 
 	//newmis.effects = newmis.effects - EF_DIMLIGHT;
-	FireBullets2(1, self.origin - v_up*14 + v_forward*56, v_forward, '0.1 0.04 0');
+	FireBullets2(1, 4, self.origin - v_up*14 + v_forward*56, v_forward, '0.1 0.04 0', 0, FALSE);
 };
 
 
@@ -194,6 +194,12 @@ void() monster_turret_active_think = {
 //---------------------------------------------------------------------------------------------------------
 
 void() monster_turret_helper_think = {
+
+	if (self.owner.trigger_field != self) {
+		remove(self);
+		return;
+	}
+
 	self.nextthink = time + 0.025;
 
 	entity oself;
@@ -240,7 +246,11 @@ void() monster_turret_helper_think = {
 //---------------------------------------------------------------------------------------------------------
 
 
-void() monster_turret_debris = {
+
+void() monster_turret_die_explode = {
+	self.cnt = 4;
+
+	self.touch = SUB_Null;
 	float i, r;
 	i = 0;
 	
@@ -271,20 +281,16 @@ void() monster_turret_debris = {
 		else
 			new.frame = 2; //small 2
 	}
-	
-};
-
-
-void() monster_turret_die_explode = {
-	self.cnt = 4;
-	self.mdl = "progs/debris.mdl";
-	monster_turret_debris();
 
 	BecomeExplosion();
 }
 
 void() monster_turret_die_think = {
-	self.touch = monster_turret_die_explode;
+	// in case it has already fallen on something, the touch function won't run properly
+	if (self.velocity == '0 0 0')
+		monster_turret_die_explode();
+	else
+		self.touch = monster_turret_die_explode;
 };
 
 void() monster_turret_die = {
@@ -301,10 +307,13 @@ void() monster_turret_die = {
 	self.nextthink = time + 0.3;
 	self.velocity = '0 0 -40';
 
+	setsize(self, VEC_ORIGIN, VEC_ORIGIN);
+	setorigin(self, self.origin);
+	
+
 	activator = self.enemy;
 	SUB_UseTargets();
 
-	setorigin(self, self.origin);
 };
 
 //---------------------------------------------------------------------------------------------------------
@@ -323,6 +332,8 @@ void() monster_turret_use = {
 
 void() monster_turret = {
 
+	if (!SUB_InitEntity()) return;
+	
 	precache_model("progs/alkturret_main_v2.mdl");
 	precache_model("progs/alkturret_base_v2.mdl");
 	precache_model("progs/laser.mdl");
