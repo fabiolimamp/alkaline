@@ -113,7 +113,7 @@ void() chain_fire = {
 	ang_x = angtoenemy_x;
 	makevectors(ang);
 	
-	FireBullets2(1, shotorigin, v_forward, '0.07 0.02 0');
+	FireBullets2(1, 4, shotorigin, v_forward, '0.07 0.02 0',  0, FALSE);
 };
 
 void() chain_change_yaw = {
