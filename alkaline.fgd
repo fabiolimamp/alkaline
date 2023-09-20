@@ -1130,6 +1130,9 @@ model({{
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnotron.mdl", "frame":14}) = monster_arachnotron :
 "Arachnotron, 500 health points." []
 
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/pinklin.mdl"}) = monster_pinklin :
+"Pinklin, 150 health points." []
+
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 

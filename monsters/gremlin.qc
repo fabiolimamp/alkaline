@@ -475,7 +475,7 @@ void() gremlin_sight = {
 };
 
 
-void(entity e) monster_gremlin_start = {
+void(entity e) monster_pinklin_start = {
 	local entity oself;
 
 	oself = self;
@@ -493,7 +493,7 @@ void(entity e) monster_gremlin_start = {
 	self.max_health = 150;
 	self.yaw_speed = 40;
 
-	if (self.obituary == "") self.obituary = "was outsmarted by a Gremlin";
+	if (self.obituary == "") self.obituary = "was outsmarted by a Pinklin";
 
 	self.th_stand = gremlin_stand1;
 	self.th_walk = gremlin_walk1;
@@ -509,15 +509,15 @@ void(entity e) monster_gremlin_start = {
 	self = oself;
 }
 
-void() monster_gremlin_spawner = {
-	monster_spawner(monster_gremlin_start);
+void() monster_pinklin_spawner = {
+	monster_spawner(monster_pinklin_start);
 };
 
 
 /*QUAKED monster_gremlin (1 0 0) (-32 -32 -24) (32 32 64) Ambush
 
 */
-void() monster_gremlin = {
+void() monster_pinklin = {
 	if (!SUB_InitEntity()) return;
 
 	if (deathmatch) {
@@ -542,11 +542,11 @@ void() monster_gremlin = {
 	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
-		self.use = monster_gremlin_spawner;
+		self.use = monster_pinklin_spawner;
 		monster_spawner_updatecounter();
 	}
 	else {
-		monster_gremlin_start(self);
+		monster_pinklin_start(self);
 	}
 
 };
