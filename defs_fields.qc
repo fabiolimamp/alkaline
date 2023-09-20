@@ -461,6 +461,7 @@ FIELDS
 .float      charmed;
 .float		endtime;
 
+.float      stoleweapon;
 // rotate
 .vector neworigin;
 .vector rotate;

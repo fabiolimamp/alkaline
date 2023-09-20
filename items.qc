@@ -1547,6 +1547,9 @@ void() BackpackTouch =
 
 	other.weapons |= new;
 	other.items |= (new & HUD_WEAPONS);
+
+	other.weapons |= self.weapons;
+	other.items |= (self.weapons & HUD_WEAPONS);
 	
 	bound_other_ammo ();
 
