@@ -68,7 +68,6 @@ void(float dist) pinklin_run = {
 	if (self.watertype == CONTENT_LAVA)
 		T_Damage (self, world, world, 2000, DMGTYPE_LAVA);
 
-	movedist = dist;
 	ai_run(dist);
 	
 };
@@ -94,9 +93,21 @@ void()   pinklin_stand15 =[ $stand15.asc,   pinklin_stand16 ] {ai_stand();self.n
 void()   pinklin_stand16 =[ $stand16.asc,   pinklin_stand17 ] {ai_stand();self.nextthink = time + 0.2;};
 void()   pinklin_stand17 =[ $stand17.asc,   pinklin_stand1  ] {ai_stand();self.nextthink = time + 0.2;};
 
+void(float chance) pinklin_idlesound = {
+	if (time < self.air_finished)
+		return;
+
+	if (random() < chance) 
+		return;
+
+	sound (self, CHAN_VOICE, "pinklin/pinkidle1.wav", 1, ATTN_IDLE);
+	self.air_finished = time + 2 + random();
+}
+
 void()   pinklin_walk1 =[ $walk1.asc,      pinklin_walk2 ] {
-//if (random() < 0.1) sound (self, CHAN_VOICE, "pinklin/idle.wav", 1, ATTN_IDLE);
-ai_walk(8);};
+	pinklin_idlesound(0.05);
+	ai_walk(8);
+};
 void()   pinklin_walk2 =[ $walk2.asc,      pinklin_walk3 ] {ai_walk(8);};
 void()   pinklin_walk3 =[ $walk3.asc,      pinklin_walk4 ] {ai_walk(8);};
 void()   pinklin_walk4 =[ $walk4.asc,      pinklin_walk5 ] {ai_walk(8);};
@@ -110,9 +121,12 @@ void()   pinklin_walk11 =[ $walk11.asc,      pinklin_walk12 ] {ai_walk(8);};
 void()   pinklin_walk12 =[ $walk12.asc,      pinklin_walk1 ] {ai_walk(8);};
 
 
+
 float pinklinrunframe = 0.05;
-void()   pinklin_run1 =[ $run1.asc,      pinklin_run2 ] {nxth(pinklinrunframe); pinklin_run(0);
-//if (random() < 0.1) sound (self, CHAN_VOICE, "pinklin/idle.wav", 1, ATTN_IDLE);
+void()   pinklin_run1 =[ $run1.asc,      pinklin_run2 ] {
+	nxth(pinklinrunframe);
+	pinklin_idlesound(0.1);
+	pinklin_run(0);
 };
 void()   pinklin_run2 =[ $run2.asc,      pinklin_run3 ] {nxth(pinklinrunframe); pinklin_run(8);};
 void()   pinklin_run3 =[ $run3.asc,      pinklin_run4 ] {nxth(pinklinrunframe); pinklin_run(13);};
@@ -278,14 +292,6 @@ void()   pinklin_gunpain3   =[ $gpain3.asc,     pinklin_run1 ] {};
 
 void(entity attacker, float damage) pinklin_pain =
 {
-	local float r;
-
-	if (random()<0.8)
-		{
-		self.gorging = FALSE;
-		self.enemy = attacker;
-		FoundTarget();
-		}
 	if (self.touch == Pinklin_JumpTouch)
 		return;
 
@@ -293,21 +299,11 @@ void(entity attacker, float damage) pinklin_pain =
 		return;
 
 	self.pain_finished = time + 1;
-//   if (random()<0.5)
-//      sound (self, CHAN_VOICE, "pinklin/pain2.wav", 1, ATTN_NORM);
-//   else
-	r = random();
-	
+
 	sound (self, CHAN_VOICE, "pinklin/pinkpain.wav", 1, ATTN_NORM);
 	
-	if (self.stoleweapon)
-		{
-		pinklin_gunpain1 ();
-		}
-	else
-		{
-		pinklin_pain1 ();
-		}
+	pinklin_pain1 ();
+		
 };
 
 
@@ -461,12 +457,14 @@ void(float side)  Pinklin_Melee =
 
 	delta = self.enemy.origin - self.origin;
 
+	sound (self, CHAN_WEAPON, "pinklin/pinkattack.wav", 1, ATTN_NORM);
+
 	if (vlen(delta) > 100)
 		return;
 	if (!CanDamage (self.enemy, self.origin))
 		return;
 
-	 sound (self, CHAN_WEAPON, "pinklin/pinkattack.wav", 1, ATTN_NORM);
+	sound (self, CHAN_AUTO, "demon/dhit2.wav", 1, ATTN_NORM);
 	ldmg = 15 + 5*random();
 	T_Damage (self.enemy, self, self, ldmg, DMGTYPE_MELEE);
 
@@ -483,16 +481,6 @@ void()   Pinklin_JumpTouch = {
 	if (self.health <= 0)
 		return;
 
-/*
-	if (other.takedamage)
-	{
-		if ( vlen(self.velocity) > 400 )
-		{
-			ldmg = 40 + 10*random();
-			T_Damage (other, self, self, ldmg);
-		}
-	}
-*/
 	if (!checkbottom(self))
 		{
 		if (self.flags & FL_ONGROUND)
@@ -509,42 +497,6 @@ void()   Pinklin_JumpTouch = {
 	self.nextthink = time + 0.1;
 };
 
-
-/*
-============
-pinklin_recoil
-============
-*/
-/*
-void() pinklin_recoil =
-	{
-	self.nextthink = time + 0.1;
-	self.flags = self.flags - FL_ONGROUND;
-	if (vlen(self.velocity)<2)
-		{
-		self.movetype = self.spawnsolidtype;
-		self.think = self.spawnthink;
-		}
-	};
-*/
-/*
-============
-PinklinRecoil
-============
-*/
-/*
-void(vector dir, float mag) PinklinRecoil =
-	{
-	self.spawnsolidtype = self.movetype;
-	self.movetype = MOVETYPE_BOUNCE;
-	self.spawnthink = self.think;
-	self.think = pinklin_recoil;
-	self.nextthink = time;
-	self.velocity = mag * dir;
-	self.velocity_z = self.velocity_z + 100;
-	self.flags = self.flags - FL_ONGROUND;
-	};
-*/
 
 
 /*
@@ -563,7 +515,8 @@ void() Pinklin_MissileAttack =	{
 //========================================================================================
 
 void() pinklin_sight = {
-	sound (self, CHAN_VOICE, "pinklin/pinksight.wav", 1, ATTN_NORM); //lunaran
+	sound (self, CHAN_VOICE, "pinklin/pinksight.wav", 1, ATTN_NORM);
+	self.air_finished = time + 3;
 };
 
 
@@ -585,14 +538,14 @@ void(entity e) monster_pinklin_start = {
 	self.max_health = 150;
 	self.yaw_speed = 40;
 
-	if (self.obituary == "") self.obituary = "was outsmarted by a Pinklin";
+	if (self.obituary == "") self.obituary = "was sliced by a Pinklin";
 
 	self.th_stand = pinklin_stand1;
 	self.th_walk = pinklin_walk1;
 	self.th_run = pinklin_run1;
 	self.th_die = pinklin_die;
-	self.th_melee = Pinklin_MeleeAttack;     // one of two attacks
-	//self.th_missile = Pinklin_MissileAttack; // check for random jump or firing of weapon
+	self.th_melee = Pinklin_MeleeAttack;
+	//self.th_missile = Pinklin_MissileAttack; // no jumpy
 	self.th_pain = pinklin_pain;
 	self.th_sight = pinklin_sight;
 
@@ -622,6 +575,7 @@ void() monster_pinklin = {
 
 	precache_sound ("pinklin/pinkdeath.wav");
 	precache_sound ("pinklin/pinkattack.wav");
+	precache_sound ("pinklin/pinkidle1.wav");
 	precache_sound ("demon/djump.wav");
 	precache_sound ("demon/dhit2.wav");
 	precache_sound ("pinklin/pinkpain.wav");
