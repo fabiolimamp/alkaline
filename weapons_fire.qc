@@ -297,13 +297,16 @@ void(float shotcount, vector dir, vector spread) FireBullets =
 	//float bullet;
 	makevectors(self.v_angle);
 
+	vector rt = v_right;
+	vector up = v_up;
+
 	src = self.origin + v_forward*10;
 	src_z = self.absmin_z + self.size_z * 0.7;
 
 	ClearMultiDamage ();
 	while (shotcount > 0)
 	{
-		direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+		direction = dir + crandom()*spread_x*rt + crandom()*spread_y*up;
 
 		traceline (src, src + direction*2048, FALSE, self);
 
@@ -330,15 +333,19 @@ void(float shotcount, float dmg, vector org, vector dir, vector spread, float ce
 	local vector plane_normal;
 	vector endpoint;
 	entity ent_hit;
-	//float bullet;
-	makevectors(vectoangles(dir));
 
+	vector angs = vectoangles(dir);
+	makevectors([-angs_x, angs_y, angs_z]);
 
+	vector rt = v_right;
+	vector up = v_up;
 	//ClearMultiDamage();
 	while (shotcount > 0)
 	{
-		if (centerbias) direction = dir + weighted_crandom(centerbias)*spread_x*v_right + weighted_crandom(centerbias)*spread_y*v_up;
-		else direction = dir + crandom()*spread_x*v_right + crandom()*spread_y*v_up;
+		if (centerbias)
+			direction = dir + weighted_crandom(centerbias)*spread_x*rt + weighted_crandom(centerbias)*spread_y*up;
+		else
+			direction = dir + crandom()*spread_x*rt + crandom()*spread_y*up;
 
 		traceline (org, org + direction*2048, FALSE, self);
 		endpoint = trace_endpos;
