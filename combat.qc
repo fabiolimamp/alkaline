@@ -413,7 +413,7 @@ void(entity inflictor, entity attacker, float damage) T_EELZap =
 T_RadiusDamage
 ============
 */
-void(entity inflictor, entity attacker, float damage, entity ignore, float dmgtype) T_RadiusDamage =
+void(entity inflictor, entity attacker, float damage, float radiusscale, entity ignore, float dmgtype) T_RadiusDamage =
 {
 	
 	if (dmgtype == DMGTYPE_EXPLOSION) T_GibDownedZombies(inflictor, attacker, damage+10);
@@ -421,7 +421,7 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float dmgty
 	local	entity	head, next;
 	local	vector	org;
 
-	head = findradius(inflictor.origin, damage+40);
+	head = findradius(inflictor.origin, (damage+40)*radiusscale);
 	
 	while (head)
 	{
@@ -431,18 +431,26 @@ void(entity inflictor, entity attacker, float damage, entity ignore, float dmgty
 		{
 			if (head.takedamage)
 			{
-				org = head.origin + (head.mins + head.maxs)*0.5;
-				points = 0.5*vlen (inflictor.origin - org);
+				org = head.origin + (head.mins + head.maxs)*0.5; // target's origin is its geometrical center
+				
+				points = (0.5 * vlen(inflictor.origin - org)) / radiusscale;
+
 				if (points < 0)
 					points = 0;
+
 				points = damage - points;
+
 				if (head == attacker)
 					points = points * 0.5;
+
 				//johnfitz -- make floyd death less dangerous without shrinking the range of it
+				/*
 				if (attacker.classname == "monster_floyd")
 					points = points * 0.5;
 				else if (attacker.classname == "monster_drone")
 					points = points * 0.625;
+				*/
+				
 				//johnfitz
 				if (points > 0)
 				{

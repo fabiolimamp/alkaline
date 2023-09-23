@@ -179,7 +179,7 @@ entity(vector org, float damg, entity parent, float multi) SpawnExplosion =
 	boom.nextthink = time;
 	boom.think = BecomeExplosion;
 	
-	if (damg > 0) T_RadiusDamage (boom, parent, damg, boom, DMGTYPE_EXPLOSION);
+	if (damg > 0) T_RadiusDamage (boom, parent, damg, 1, boom, DMGTYPE_EXPLOSION);
 	
 	return boom;
 }
@@ -847,7 +847,7 @@ void(float attack, float sustain, float release, float str) screenshake_oneshot 
 void() target_explosion_go =
 {
 	//if (self.dmg) T_RadiusMultiDamage (self, self, self.dmg, self, 0);
-	if (self.dmg) T_RadiusDamage (self, self, self.dmg, self, DMGTYPE_EXPLOSION);
+	if (self.dmg) T_RadiusDamage (self, self, self.dmg, 1, self, DMGTYPE_EXPLOSION);
 	BecomeExplosion();
 }
 

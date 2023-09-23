@@ -18,7 +18,7 @@ void() Projectile_Hit =
 
 	vector prev_vel = self.velocity;
 	self.velocity = '0 0 0';
-	T_RadiusDamage(self, self, 20, self, DMGTYPE_EXPLOSION);
+	T_RadiusDamage(self, self, 20, 1, self, DMGTYPE_EXPLOSION);
 
 	self.origin = self.origin - 8 * normalize(prev_vel);
 
@@ -302,7 +302,7 @@ void() ban_stomp5 = 	[79, ban_stomp6]	{banshee_think(); };
 void() ban_stomp6 = 	[80, ban_stomp7]	{ChangeYaw(); banshee_think();
 	sound(self, 6, "banshee/footfall.wav", 1, ATTN_NORM);
 	FuelTankExplode();
-	T_RadiusDamage(self, self, 100, self, DMGTYPE_MELEE);
+	T_RadiusDamage(self, self, 100, 1, self, DMGTYPE_MELEE);
 };
 void() ban_stomp7 = 	[81, ban_stomp8]	{banshee_think(); };
 void() ban_stomp8 = 	[82, ban_stomp9]	{banshee_think(); };
@@ -402,7 +402,7 @@ void() banshee_repulse_attack = {
 			}
 			head = head.chain;
 		}
-		T_RadiusDamage(self, self, 60, self, DMGTYPE_MELEE);
+		T_RadiusDamage(self, self, 60, 1, self, DMGTYPE_MELEE);
 		self.state = STATE_TOP;
 		SUB_AttackFinished(0.1);
 	}

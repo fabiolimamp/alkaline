@@ -256,7 +256,7 @@ void() ShalMissileTouch =
 
 	self.dmg = zeroconvertdefault(self.dmg, 40);
 
-	T_RadiusDamage (self, self.owner, self.dmg, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, self.dmg, 1, world, DMGTYPE_EXPLOSION);
 	
 	BecomeExplosion();
 };

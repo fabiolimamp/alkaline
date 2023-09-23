@@ -467,7 +467,7 @@ void() T_MissileTouch =
 	// Radius damage type will always be EXPLOSION
 	vector prev_vel = self.velocity;
 	//self.velocity = '0 0 0';
-	T_RadiusDamage (self, self.owner, rdamg, other, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, rdamg, 1, other, DMGTYPE_EXPLOSION);
 
 	self.origin = self.origin - 8*normalize(prev_vel);
 
@@ -805,7 +805,7 @@ void() GrenadeExplode =
 		return;
 	}
 
-	T_RadiusDamage (self, self.owner, 120, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, 120, 1, world, DMGTYPE_EXPLOSION);
 
 	BecomeExplosion ();
 };
@@ -947,7 +947,7 @@ void() FireballExplode =
 		return;
 	}
 
-	T_RadiusDamage (self, self.owner, 30, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, 30, 1, world, DMGTYPE_EXPLOSION);
 
 	BecomeExplosion ();
 };

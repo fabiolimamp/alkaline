@@ -89,21 +89,29 @@ void()	kami_walk24	=[	$prowl_24,	kami_walk1	] {self.pos1 = '4 -2 36';ai_walk(1);
 
 float kamispd = 0.08;
 
+void(float dist) kami_run = {
+	if (visible(self.enemy) && infront(self.enemy) && vlen(self.origin - self.enemy.origin) < 100) {
+		kami_load1();
+		return;
+	}
+	ai_run(dist);
+}
+
 //73-80
 void()	kami_run1	=[	$run1,		kami_run2	] {
 	self.pos1 = '0 0 34';
 	nxth(kamispd);
 	if (random() < 0.2)
 		sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
-	ai_run(14);
+	kami_run(14);
 };
-void()	kami_run2	=[	$run2,		kami_run3	] {self.pos1 = '0 0 34';nxth(kamispd); ai_run(25);};
-void()	kami_run3	=[	$run3,		kami_run4	] {self.pos1 = '0 4 34';nxth(kamispd); ai_run(18);};
-void()	kami_run4	=[	$run4,		kami_run5	] {self.pos1 = '0 6 34';nxth(kamispd); ai_run(18);};
-void()	kami_run5	=[	$run5,		kami_run6	] {self.pos1 = '0 6 34';nxth(kamispd); ai_run(12);};
-void()	kami_run6	=[	$run6,		kami_run7	] {self.pos1 = '0 4 34';nxth(kamispd); ai_run(25);};
-void()	kami_run7	=[	$run7,		kami_run8	] {self.pos1 = '0 2 34';nxth(kamispd); ai_run(18);};
-void()	kami_run8	=[	$run8,		kami_run1	] {self.pos1 = '0 0 34';nxth(kamispd); ai_run(12);};
+void()	kami_run2	=[	$run2,		kami_run3	] {self.pos1 = '0 0 34';nxth(kamispd); kami_run(25);};
+void()	kami_run3	=[	$run3,		kami_run4	] {self.pos1 = '0 4 34';nxth(kamispd); kami_run(18);};
+void()	kami_run4	=[	$run4,		kami_run5	] {self.pos1 = '0 6 34';nxth(kamispd); kami_run(18);};
+void()	kami_run5	=[	$run5,		kami_run6	] {self.pos1 = '0 6 34';nxth(kamispd); kami_run(12);};
+void()	kami_run6	=[	$run6,		kami_run7	] {self.pos1 = '0 4 34';nxth(kamispd); kami_run(25);};
+void()	kami_run7	=[	$run7,		kami_run8	] {self.pos1 = '0 2 34';nxth(kamispd); kami_run(18);};
+void()	kami_run8	=[	$run8,		kami_run1	] {self.pos1 = '0 0 34';nxth(kamispd); kami_run(12);};
 
 
 //=================================================================================================
@@ -183,6 +191,7 @@ void(entity attacker, float damage)	kami_pain =
 		kami_painc1 ();
 		sound (self, CHAN_VOICE, "soldier/pain2.wav", 1, ATTN_NORM);
 	}
+
 };
 
 
@@ -204,7 +213,7 @@ void()	kami_die10	=[	$death10,	kami_die10	] {self.pos1 = '-48 -6 -16'; monster_d
 void()	kami_cdie1	=[	$deathc1,	kami_cdie2	] {self.pos1 = '-26 -4 32';};
 void()	kami_cdie2	=[	$deathc2,	kami_cdie3	] {self.pos1 = '-34 -2 26'; ai_back(5);};
 void()	kami_cdie3	=[	$deathc3,	kami_cdie4	]
-{self.pos1 = '-36 -6 22';self.solid = SOLID_TRIGGER; setorigin(self, self.origin);DropBackpack();ai_back(4);}; //20
+{self.pos1 = '-36 -6 22';self.solid = SOLID_TRIGGER; setorigin(self, self.origin);ai_back(4);}; //20
 void()	kami_cdie4	=[	$deathc4,	kami_cdie5	] {self.pos1 = '-34 -10 18';ai_back(13);};
 void()	kami_cdie5	=[	$deathc5,	kami_cdie6	] {self.pos1 = '-32 -12 16';ai_back(3);};
 void()	kami_cdie6	=[	$deathc6,	kami_cdie7	] {self.pos1 = '-26 -8 14';ai_back(4);};
@@ -229,7 +238,7 @@ void() kami_gib = {
 
 void() kami_die =
 {
-// check for gib
+
 	if (self.health < -35)
 	{
 		kami_gib();
@@ -255,6 +264,11 @@ void() kamikaze_explosivethink = {
 }
 
 void() kamikaze_explosiveboom = {
+	if (self.state == 1) // already exploding
+		return;
+	
+	self.state = 1; // exploding
+
 	self.solid = SOLID_NOT;
 
 	if (self.owner.health <= 0 && self.owner.health > -35) {
@@ -269,11 +283,24 @@ void() kamikaze_explosiveboom = {
 		//eprint(self.owner);
 	}
 
-	T_RadiusDamage(self, self.enemy, 60, self.owner, DMGTYPE_EXPLOSION);
+	T_RadiusDamage(self, self.enemy, 60, 2, self.owner, DMGTYPE_EXPLOSION);
+	dprint("Kaboom\n");
+
+	
 	BecomeExplosion();
 }
 
 
+void() kami_load1 = [$load1, kami_load2] {self.state = 0;};
+void() kami_load2 = [$load2, kami_load3] {};
+void() kami_load3 = [$load3, kami_load4] {};
+void() kami_load4 = [$load4, kami_load5] {};
+void() kami_load5 = [$load5, kami_load5] {SUB_CallAsSelf(kamikaze_explosiveboom, self.trigger_field);};
+void() kami_load6 = [$load6, kami_load7] {};
+void() kami_load7 = [$load7, kami_load8] {};
+void() kami_load8 = [$load8, kami_load8] {SUB_CallAsSelf(kamikaze_explosiveboom, self.trigger_field);};
+
+//=================================================================================================
 
 void() kami_sight = {
 	sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);

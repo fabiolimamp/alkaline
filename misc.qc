@@ -180,7 +180,7 @@ void() barrel_explode =
 	
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	T_RadiusDamage (self, self, self.dmg, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self, self.dmg, 1, world, DMGTYPE_EXPLOSION);
 
 	activator = self.enemy;
 	SUB_UseTargets();
@@ -303,7 +303,7 @@ void() ShalMisTouchEnt = {
 
 	self.owner.dmg = zeroconvertdefault(self.owner.dmg, 40);
 
-	T_RadiusDamage (self.owner, self.owner.owner, self.owner.dmg, self, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self.owner, self.owner.owner, self.owner.dmg, 1, self, DMGTYPE_EXPLOSION);
 
 	sound (self.owner, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	SUB_CallAsSelf(BecomeExplosion, self.owner);
@@ -322,7 +322,7 @@ void() ShalMisTouchWorld = {
 
 	self.dmg = zeroconvertdefault(self.dmg, 40);
 
-	T_RadiusDamage(self, self.owner, self.dmg, self.trigger_field, DMGTYPE_EXPLOSION);
+	T_RadiusDamage(self, self.owner, self.dmg, 1, self.trigger_field, DMGTYPE_EXPLOSION);
 	
 	remove(self.trigger_field);
 

@@ -433,9 +433,9 @@ void() MiniGrenadeExplode = {
 	}
 	
 	if (self.owner.classname == "player")
-		T_RadiusDamage(self, self.owner, 80, world, DMGTYPE_EXPLOSION);
+		T_RadiusDamage(self, self.owner, 80, 1, world, DMGTYPE_EXPLOSION);
 	else
-		T_RadiusDamage(self, self.owner, 80, world, DMGTYPE_EXPLOSION);
+		T_RadiusDamage(self, self.owner, 80, 1, world, DMGTYPE_EXPLOSION);
 		
 	BecomeExplosion();
 };

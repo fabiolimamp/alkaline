@@ -266,7 +266,7 @@ void () func_explobox_explode =
 
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	T_RadiusDamage(self, self, self.dmg, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage(self, self, self.dmg, 1, world, DMGTYPE_EXPLOSION);
 	
 	activator = self.enemy;
 	SUB_UseTargets();

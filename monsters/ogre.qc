@@ -115,7 +115,7 @@ float(float theta, vector dest) IterateElevation = {
 
 void() OgreGrenadeExplode = {
 	if (!self.dmg) self.dmg = 40;
-	T_RadiusDamage (self, self.owner, self.dmg, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, self.dmg, 1, world, DMGTYPE_EXPLOSION);
 	
 	BecomeExplosion();
 };
@@ -154,7 +154,7 @@ void() Ogre_Rocket_Touch = {
 	// was done in the impact
 	vector prev_vel = self.velocity;
 	self.velocity = '0 0 0';
-	T_RadiusDamage (self, self.owner, 50, other, DMGTYPE_EXPLOSION);	// greenwood modify the 50 here to change splash damage
+	T_RadiusDamage (self, self.owner, 50, 1, other, DMGTYPE_EXPLOSION);	// greenwood modify the 50 here to change splash damage
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(prev_vel);
