@@ -1175,7 +1175,16 @@ void() target_removeitems_use = {
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
-	removeitems_go (activator, self.items, self.weapons);
+	if (self.spawnflags & 1) { // all players
+		entity pl = find(world, classname, "player");
+		while (pl) {
+			removeitems_go(pl, self.items, self.weapons);
+			find(pl, classname, "player");
+		}
+	}
+	else {
+		removeitems_go (activator, self.items, self.weapons);
+	}
 
 	if(self.count > 0)
 		self.count--;
