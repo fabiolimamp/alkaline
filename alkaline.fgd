@@ -2277,6 +2277,39 @@ Other than that, this entity functions like a normal button.
 
 
 
+@baseclass base(Appearflags, Targetname, Angle) = Bob
+[
+	spawnflags(flags) = [
+		1 : "Start off" : 0
+		2 : "Crusher (no reverse)" : 0
+		4 : "Don't stop until low pos" : 0
+		8 : "Don't stop until mid pos" : 0
+		16 : "Don't stop until high pos" : 0
+	]
+	wait(string) : "Period (Wavelength)" : "4"
+	distance(integer) : "Length (Amplitude)" : 64
+	delay(string) : "Starting offset (0-1) (Phase)" : "0.0"
+	dmg(integer) : "Damage when blocked" : 2
+	noise(string) : "Override stop sound"
+	noise1(string) : "Override move sound"
+	pos1(string) : "Override peak position (relative)"
+	pos2(string) : "Override trough position (relative)"
+	solid(integer) : "Solid" : 1
+]
+@SolidClass base(Bob) = func_bobbing : "Bobbing platform.
+Moves in a smooth sine wave. Build at the center of motion, specify 'wait' for the wavelength in seconds and 'distance' for the amplitude (distance from end to end) in units. Use 'delay' to set a phase offset (0-1).
+Trigger to freeze in place or reactivate. If any 'don't stop until' spawnflags are checked, the bobber will keep oscillating until it reaches one of the designated positions and stop there.
+
+Set both 'pos1' & 'pos2' to override the two apex positions (ends of the bob) to build and light your plat wherever."  []
+@PointClass size(16 16 16) base(Bob) = func_bobbing_point : "Bobbing platform.
+Moves in a smooth sine wave. Build at the center of motion, specify 'wait' for the wavelength in seconds and 'distance' for the amplitude (distance from end to end) in units. Use 'delay' to set a phase offset (0-1).
+Trigger to freeze in place or reactivate. If any 'don't stop until' spawnflags are checked, the bobber will keep oscillating until it reaches one of the designated positions and stop there.
+
+Set both 'pos1' & 'pos2' to override the two apex positions (ends of the bob) to build and light your plat wherever."  [
+	model(string) : "Model to use"
+]
+
+
 //
 // triggers
 //
@@ -2929,6 +2962,9 @@ When triggered, toggles between 'Gravity' and 'Return Gravity' values.
 "Removes the selected items and weapons from the inventory."
 [
 	count(integer) : "Use count" : : "Maximum usage count. Set to -1 for infinite uses. Default is infinite"
+	spawnflags(flags) = [
+		1: "Remove from all players"
+	]
 ]
 
 

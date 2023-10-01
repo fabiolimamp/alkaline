@@ -16,7 +16,14 @@ float(float a, float b) mod;
 float(float x) sign;
 float(float value, float minValue, float maxValue) wrap;
 
-
+float(float base, float pw) pow = {
+	float ret = 1;
+	while (pw > 0) {
+		ret *= base;
+		pw--;
+	}
+	return ret;
+}
 
 vector(float x, float y, float z) Vector =
 {
