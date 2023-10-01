@@ -76,6 +76,85 @@ void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_run(20);};
 void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15); if (self.classname == "monster_mutant") sound(self, 7, "mutant/step3.wav", 1, ATTN_IDLE);};
 void()	demon1_run6	=[	$run6,		demon1_run1	] {ai_run(36);};
 
+
+
+/*
+===================================================================================================
+CheckDemonJump
+
+===================================================================================================
+*/
+float()	CheckDemonJump =
+{
+	local	vector	dist;
+	local	float	d;
+
+	if (self.origin_z + self.mins_z > self.enemy.origin_z + self.enemy.mins_z
+	+ 0.75 * self.enemy.size_z)
+		return FALSE;
+		
+	if (self.origin_z + self.maxs_z < self.enemy.origin_z + self.enemy.mins_z
+	+ 0.25 * self.enemy.size_z)
+		return FALSE;
+		
+	dist = self.enemy.origin - self.origin;
+	dist_z = 0;
+	
+	d = vlen(dist);
+	
+	if (d < 100)
+		return FALSE;
+		
+	if (d > 200)
+	{
+		if (random() < 0.9)
+			return FALSE;
+	}
+		
+	return TRUE;
+};
+
+void()	Demon_JumpTouch =
+{
+	local	float	ldmg;
+
+	if (self.health <= 0)
+		return;
+		
+	if (other.takedamage)
+	{
+		if ( vlen(self.velocity) > 400 )
+		{
+			if (self.classname == "monster_mutant") ldmg = 25 + 10*random();
+			else ldmg = 40 + 10*random();
+			T_Damage(other, self, self, ldmg, DMGTYPE_MELEE);
+			self.touch = SUB_Null;
+		}
+	}
+
+	if (!checkbottom(self))
+	{
+		if (self.flags & FL_ONGROUND)
+		{	// jump randomly to not get hung up
+			//dprint ("popjump\n");
+			self.touch = SUB_Null;
+			self.think = demon1_jump1;
+			self.nextthink = time + 0.1;
+
+//			self.velocity_x = (random() - 0.5) * 600;
+//			self.velocity_y = (random() - 0.5) * 600;
+//			self.velocity_z = 200;
+//			self.flags = self.flags - FL_ONGROUND;
+		}
+		return;	// not on ground yet
+	}
+
+	self.touch = SUB_Null;
+	self.think = demon1_jump11;
+	self.nextthink = time + 0.1;
+};
+
+
 void()	demon1_jump1	=[	$leap1,		demon1_jump2	] {ai_face();};
 void()	demon1_jump2	=[	$leap2,		demon1_jump3	] {ai_face();};
 void()	demon1_jump3	=[	$leap3,		demon1_jump4	] {ai_face();};
@@ -103,6 +182,8 @@ self.nextthink = time + 3;
 void()	demon1_jump11	=[ 	$leap11,	demon1_jump12	] {};
 void()	demon1_jump12	=[ 	$leap12,	demon1_run1	] {};
 
+
+//=================================================================================================
 
 void()	demon1_atta1	=[	$attacka1,		demon1_atta2	] {ai_charge(4);};
 void()	demon1_atta2	=[	$attacka2,		demon1_atta3	] {ai_charge(0);};
@@ -244,42 +325,6 @@ float()	CheckDemonMelee =
 	return FALSE;
 };
 
-/*
-==============
-CheckDemonJump
-
-==============
-*/
-float()	CheckDemonJump =
-{
-	local	vector	dist;
-	local	float	d;
-
-	if (self.origin_z + self.mins_z > self.enemy.origin_z + self.enemy.mins_z
-	+ 0.75 * self.enemy.size_z)
-		return FALSE;
-		
-	if (self.origin_z + self.maxs_z < self.enemy.origin_z + self.enemy.mins_z
-	+ 0.25 * self.enemy.size_z)
-		return FALSE;
-		
-	dist = self.enemy.origin - self.origin;
-	dist_z = 0;
-	
-	d = vlen(dist);
-	
-	if (d < 100)
-		return FALSE;
-		
-	if (d > 200)
-	{
-		if (random() < 0.9)
-			return FALSE;
-	}
-		
-	return TRUE;
-};
-
 float()	DemonCheckAttack =
 {
 //	local	vector	vec;
@@ -354,45 +399,6 @@ void(float side)	Mutant_Melee =
 
 	makevectors (self.angles);
 	SpawnMeatSpray (self.origin + v_forward*16, side * v_right);
-};
-
-void()	Demon_JumpTouch =
-{
-	local	float	ldmg;
-
-	if (self.health <= 0)
-		return;
-		
-	if (other.takedamage)
-	{
-		if ( vlen(self.velocity) > 400 )
-		{
-			if (self.classname == "monster_mutant") ldmg = 25 + 10*random();
-			else ldmg = 40 + 10*random();
-			T_Damage(other, self, self, ldmg, DMGTYPE_MELEE);	
-		}
-	}
-
-	if (!checkbottom(self))
-	{
-		if (self.flags & FL_ONGROUND)
-		{	// jump randomly to not get hung up
-			//dprint ("popjump\n");
-			self.touch = SUB_Null;
-			self.think = demon1_jump1;
-			self.nextthink = time + 0.1;
-
-//			self.velocity_x = (random() - 0.5) * 600;
-//			self.velocity_y = (random() - 0.5) * 600;
-//			self.velocity_z = 200;
-//			self.flags = self.flags - FL_ONGROUND;
-		}
-		return;	// not on ground yet
-	}
-
-	self.touch = SUB_Null;
-	self.think = demon1_jump11;
-	self.nextthink = time + 0.1;
 };
 
 
