@@ -1188,6 +1188,11 @@ void(float dist) ai_run = {
 		movetogoal2(dist);
 }
 
+void(float dist) ai_runjump = {
+	if (!ai_run_checks(dist)) return;
+	movetogoaljump(dist);
+}
+
 /*
 =============
 ai_run_away
@@ -1289,6 +1294,13 @@ void(float d) ai_charge =
 	ai_face ();	
 	movetogoal2 (d);		// done in C code...
 };
+
+void(float d) ai_chargejump =
+{
+	ai_face ();	
+	movetogoaljump (d);		// done in C code...
+};
+
 
 void() ai_charge_side =
 {
