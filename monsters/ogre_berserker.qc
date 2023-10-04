@@ -177,17 +177,17 @@ void() ogreb_walk14	=[	$walk14,	ogreb_walk15	] {ai_walk(3);};
 void() ogreb_walk15	=[	$walk15,	ogreb_walk16	] {ai_walk(3);};
 void() ogreb_walk16	=[	$walk16,	ogreb_walk1		] {ai_walk(4);};
 
-void() ogreb_run1	=[	$run1,		ogreb_run2	] {ai_run(10);
+void() ogreb_run1	=[	$run1,		ogreb_run2	] {ai_runjump(10);
 if (random() < 0.2)
 	sound (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
 };
-void() ogreb_run2	=[	$run2,		ogreb_run3	] {ai_run(15);};	//ijed +2 for each...
-void() ogreb_run3	=[	$run3,		ogreb_run4	] {ai_run(11);};
-void() ogreb_run4	=[	$run4,		ogreb_run5	] {ai_run(25);};
-void() ogreb_run5	=[	$run5,		ogreb_run6	] {ai_run(19);};
-void() ogreb_run6	=[	$run6,		ogreb_run7	] {ai_run(7);};
-void() ogreb_run7	=[	$run7,		ogreb_run8	] {ai_run(16);};
-void() ogreb_run8	=[	$run8,		ogreb_run1	] {ai_run(27);};
+void() ogreb_run2	=[	$run2,		ogreb_run3	] {ai_runjump(15);};	//ijed +2 for each...
+void() ogreb_run3	=[	$run3,		ogreb_run4	] {ai_runjump(11);};
+void() ogreb_run4	=[	$run4,		ogreb_run5	] {ai_runjump(25);};
+void() ogreb_run5	=[	$run5,		ogreb_run6	] {ai_runjump(19);};
+void() ogreb_run6	=[	$run6,		ogreb_run7	] {ai_runjump(7);};
+void() ogreb_run7	=[	$run7,		ogreb_run8	] {ai_runjump(16);};
+void() ogreb_run8	=[	$run8,		ogreb_run1	] {ai_runjump(27);};
 
 void() ogreb_swing1		=[	$swing1,		ogreb_swing2	] {ai_charge(12); sound (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM); berserk_chainsaw(-50);};
 void() ogreb_swing2		=[	$swing2,		ogreb_swing3	] {ai_charge(2); berserk_chainsaw(-25);};
@@ -488,6 +488,7 @@ void(entity e) monster_ogreb_start =
 	self.th_pain = ogreb_pain;
 	self.th_sight = ogreb_sight;
 	self.th_checkattack = OgreBCheckAttack;
+	self.autojump = defaultFl(self.autojump, 1);
 	
 	walkmonster_start();
 

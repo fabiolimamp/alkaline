@@ -69,12 +69,12 @@ if (random() < 0.2) {
 	if (self.classname == "monster_mutant") sound(self, CHAN_VOICE, "mutant/mutidle1.wav", 1, ATTN_IDLE);
     else sound(self, CHAN_VOICE, "demon/idle1.wav", 1, ATTN_IDLE);
 }
-ai_run(20);};
-void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_run(15); if (self.classname == "monster_mutant") sound(self, 6, "mutant/step1.wav", 1, ATTN_IDLE);};
-void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_run(36);};
-void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_run(20);};
-void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_run(15); if (self.classname == "monster_mutant") sound(self, 7, "mutant/step3.wav", 1, ATTN_IDLE);};
-void()	demon1_run6	=[	$run6,		demon1_run1	] {ai_run(36);};
+ai_runjump(20);};
+void()	demon1_run2	=[	$run2,		demon1_run3	] {ai_runjump(15); if (self.classname == "monster_mutant") sound(self, 6, "mutant/step1.wav", 1, ATTN_IDLE);};
+void()	demon1_run3	=[	$run3,		demon1_run4	] {ai_runjump(36);};
+void()	demon1_run4	=[	$run4,		demon1_run5	] {ai_runjump(20);};
+void()	demon1_run5	=[	$run5,		demon1_run6	] {ai_runjump(15); if (self.classname == "monster_mutant") sound(self, 7, "mutant/step3.wav", 1, ATTN_IDLE);};
+void()	demon1_run6	=[	$run6,		demon1_run1	] {ai_runjump(36);};
 
 
 
@@ -438,7 +438,9 @@ void(entity e) monster_demon1_start =
 	self.th_pain = demon1_pain;
 	self.th_sight = demon1_sight;
 	self.th_checkattack = DemonCheckAttack;
-		
+	
+	self.autojump = defaultFl(self.autojump, 1);
+	
 	walkmonster_start();
 
 	self = oself;
@@ -472,6 +474,8 @@ void(entity e) monster_mutant_start =
 	self.th_sight = demon1_sight;
 	self.th_checkattack = DemonCheckAttack;
 		
+	self.autojump = defaultFl(self.autojump, 1);
+
 	walkmonster_start();
 
 	self = oself;

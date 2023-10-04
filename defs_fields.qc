@@ -678,3 +678,6 @@ float prevdoornum;
 
 .vector pushvelocity;
 .float pushfinished;
+
+.float autojump;
+.float autojump_block_finished;

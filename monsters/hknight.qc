@@ -429,6 +429,8 @@ void(entity e) monster_hell_knight_start = {
 	self.th_pain = hknight_pain;
 	self.th_die = hknight_die;
 	self.th_sight = hknight_sight;
+
+	self.autojump = defaultFl(self.autojump, 1);
 	
 	walkmonster_start ();
 

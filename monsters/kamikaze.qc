@@ -94,7 +94,7 @@ void(float dist) kami_run = {
 		kami_load1();
 		return;
 	}
-	ai_run(dist);
+	ai_runjump(dist);
 }
 
 //73-80
@@ -337,6 +337,8 @@ void(entity e) monster_kamikaze_start =
 	self.th_die = kami_die;
     self.ammo_shells = 5;
     self.th_sight = kami_sight;
+    
+	self.autojump = defaultFl(self.autojump, 1);
     //self.th_checkattack = KamikazeCheckAttack;
 
     self.pos1 = '8 0 32';

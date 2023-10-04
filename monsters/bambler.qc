@@ -73,12 +73,12 @@ void() bam_walk12      =[      $walk12,       bam_walk1 ] {ai_walk(7);
 if (random() > 0.8)
 	sound (self, CHAN_VOICE, "bambler/sidle.wav", 1, ATTN_IDLE);};
 
-void() bam_run1       =[      $run1,        bam_run2      ] {ai_run(20);};
-void() bam_run2       =[      $run2,        bam_run3      ] {ai_run(24);};
-void() bam_run3       =[      $run3,        bam_run4      ] {ai_run(20);};
-void() bam_run4       =[      $run4,        bam_run5      ] {ai_run(20);};
-void() bam_run5       =[      $run5,        bam_run6      ] {ai_run(24);};
-void() bam_run6       =[      $run6,        bam_run1      ] {ai_run(20);
+void() bam_run1       =[      $run1,        bam_run2      ] {ai_runjump(20);};
+void() bam_run2       =[      $run2,        bam_run3      ] {ai_runjump(24);};
+void() bam_run3       =[      $run3,        bam_run4      ] {ai_runjump(20);};
+void() bam_run4       =[      $run4,        bam_run5      ] {ai_runjump(20);};
+void() bam_run5       =[      $run5,        bam_run6      ] {ai_runjump(24);};
+void() bam_run6       =[      $run6,        bam_run1      ] {ai_runjump(20);
 if (random() > 0.8)
 	sound (self, CHAN_VOICE, "bambler/sidle.wav", 1, ATTN_IDLE);
 };
@@ -295,6 +295,8 @@ void(entity e) monster_bambler_start =
 	self.th_pain = bam_pain;
 	self.th_sight = bam_sight;
 	self.th_damage = bambler_customdamage;
+	
+	self.autojump = defaultFl(self.autojump, 1);
 	
 	walkmonster_start();
 

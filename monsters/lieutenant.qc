@@ -92,14 +92,14 @@ void()	lth_walk14	=[	$walk14,	lth_walk15	] {ai_walk(3);};
 void()	lth_walk15	=[	$walk15,	lth_walk16	] {ai_walk(4);};
 void()	lth_walk16	=[	$walk16,	lth_walk1	] {ai_walk(2);};
 
-void()	lth_run1	=[	$run1  ,	lth_run2	] {ai_run(18);};
-void()	lth_run2	=[	$run2  ,	lth_run3	] {ai_run(14);};
-void()	lth_run3	=[	$run3  ,	lth_run4	] {ai_run(7);};
-void()	lth_run4	=[	$run4  ,	lth_run5	] {ai_run(12);};
-void()	lth_run5	=[	$run5  ,	lth_run6	] {ai_run(14);};
-void()	lth_run6	=[	$run6  ,	lth_run7	] {ai_run(14);};
-void()	lth_run7	=[	$run7  ,	lth_run8	] {ai_run(7);};
-void()	lth_run8	=[	$run8  ,	lth_run1	] {ai_run(11);
+void()	lth_run1	=[	$run1  ,	lth_run2	] {ai_runjump(18);};
+void()	lth_run2	=[	$run2  ,	lth_run3	] {ai_runjump(14);};
+void()	lth_run3	=[	$run3  ,	lth_run4	] {ai_runjump(7);};
+void()	lth_run4	=[	$run4  ,	lth_run5	] {ai_runjump(12);};
+void()	lth_run5	=[	$run5  ,	lth_run6	] {ai_runjump(14);};
+void()	lth_run6	=[	$run6  ,	lth_run7	] {ai_runjump(14);};
+void()	lth_run7	=[	$run7  ,	lth_run8	] {ai_runjump(7);};
+void()	lth_run8	=[	$run8  ,	lth_run1	] {ai_runjump(11);
 	if (random() < 0.2)	sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
 };
 

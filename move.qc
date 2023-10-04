@@ -282,7 +282,7 @@ void(float dist) movetogoal2 = {
 //=================================================================================================
 
 
-float(float launch_h, float launch_v, float yaw) ai_testjump = {
+float(float launch_h, float launch_v, float yaw) movejump_test = {
 
 
 	makevectors([0, yaw, 0]);
@@ -357,7 +357,12 @@ float(float launch_h, float launch_v, float yaw) ai_testjump = {
 
 void(float dist) movetogoaljump {
 
-	entity		goal;
+	if (self.autojump <= 0 || time < self.autojump_block_finished) {
+		movetogoal(dist);
+		return;
+	}
+
+	entity goal;
 
 	goal = self.goalentity;
 
@@ -381,7 +386,7 @@ void(float dist) movetogoaljump {
 		else
 			launch_v = 200;
 
-		if (ai_testjump(launch_h, launch_v, prevyaw)) {
+		if (movejump_test(launch_h, launch_v, prevyaw)) {
 			self.angles_y = prevyaw;
 			self.flags &~= FL_ONGROUND;
 			self.velocity = v_forward*launch_h + [0, 0, launch_v];

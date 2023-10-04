@@ -77,14 +77,14 @@ void()	knight_walk14	=[	$walk14,	knight_walk1	] {ai_walk(3);};
 void()	knight_run1	=[	$runb1,		knight_run2	] {
 if (random() < 0.2)
 	sound (self, CHAN_VOICE, "knight/idle.wav", 1,  ATTN_IDLE);
-ai_run(16);};
-void()	knight_run2	=[	$runb2,		knight_run3	] {ai_run(20);};
-void()	knight_run3	=[	$runb3,		knight_run4	] {ai_run(13);};
-void()	knight_run4	=[	$runb4,		knight_run5	] {ai_run(7);};
-void()	knight_run5	=[	$runb5,		knight_run6	] {ai_run(16);};
-void()	knight_run6	=[	$runb6,		knight_run7	] {ai_run(20);};
-void()	knight_run7	=[	$runb7,		knight_run8	] {ai_run(14);};
-void()	knight_run8	=[	$runb8,		knight_run1	] {ai_run(6);};
+ai_runjump(16);};
+void()	knight_run2	=[	$runb2,		knight_run3	] {ai_runjump(20);};
+void()	knight_run3	=[	$runb3,		knight_run4	] {ai_runjump(13);};
+void()	knight_run4	=[	$runb4,		knight_run5	] {ai_runjump(7);};
+void()	knight_run5	=[	$runb5,		knight_run6	] {ai_runjump(16);};
+void()	knight_run6	=[	$runb6,		knight_run7	] {ai_runjump(20);};
+void()	knight_run7	=[	$runb7,		knight_run8	] {ai_runjump(14);};
+void()	knight_run8	=[	$runb8,		knight_run1	] {ai_runjump(6);};
 
 
 void()	knight_runatk1	=[	$runattack1,		knight_runatk2	]
@@ -283,6 +283,8 @@ void(entity e) monster_knight_start =
 	self.th_pain = knight_pain;
 	self.th_die = knight_die;
 	self.th_sight = knight_sight;
+
+	self.autojump = defaultFl(self.autojump, 1);
 	
 	walkmonster_start ();
 
