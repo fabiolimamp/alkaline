@@ -99,6 +99,12 @@
 		0 : "Alkaline style"
 		1 : "Original style"
 	]
+
+	autojump(choices) : "Monster autojump toggle" : 1 : "Toggles autojump behavior in monsters. Check a monster's 'autojump' field for more details.
+Setting this to -1 forces autojump to off in all monsters in the map. 1 is the default per-class/per-entity selection." = [
+	-1 : "Autojump off"
+	1 : "Autojump on"
+	]
 ]
 
 //
@@ -879,11 +885,32 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 	movedir2(string) : "Angle-relative auto-jump" : : "Angle-relative auto jump velocity on spawn/awaken (forward right up)"
 ]
 
+@baseclass = AutoJumpOff [
+	autojump(choices) : "Monster Autojump" : -1 : "Makes the monster jump automatically when on a ledge while chasing its enemy. Can jump down from a height and clear small horizontal gaps.
+
+The jump trajectory is precalculated in a way that it only happens if the monster will land on a walkable ground at least at the same height as the player, so it won't do blind jumps into the void if the player can't be reached.
+
+Set 1 to force on, or -1 to force off. Defaults to OFF in this monster's class."= [
+		-1 : "Off"
+		1 : "On"
+	]
+]
+
+@baseclass = AutoJumpOn [
+	autojump(choices) : "Monster Autojump" : 1 : "Makes the monster jump automatically when on a ledge while chasing its enemy. Can jump down from a height and clear small horizontal gaps.
+
+The jump trajectory is precalculated in a way that it only happens if the monster will land on a walkable ground at least at the same height as the player, so it won't do blind jumps into the void if the player can't be reached.
+
+Set 1 to force on, or -1 to force off. Defaults to ON in this monster's class."= [
+		-1 : "Off"
+		1 : "On"
+	]
+]
 // Rubicon 2 monsters first
 // Centurion, 150 hp
 @PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/cent.mdl"})= monster_centurion : "Centurion, 150 health points." []
 // Dreadnaught, 150 hp
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
 
 @PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 64) model({"path":"progs/floyd.mdl", "frame":1}) = monster_floyd : "Floyd automaton robot, 200 hp
 ROLLING Floyd is on his back and helpless, explodes after taking 75 damage
@@ -899,13 +926,13 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 
 // Regular monsters
 		
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier_alk.mdl"}) = monster_army :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier_alk.mdl"}) = monster_army :
 "Grunt, 30 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
 "Dog (Rottweiler), 25 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model(
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model(
 	{{spawnflags & 8 -> 	"progs/ogre_old.mdl", "progs/ogre_alk.mdl"}}
 ) = monster_ogre :
 "Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
@@ -916,13 +943,13 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
 "Ogre Marksman, 200 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
 "Knight, 75 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({{
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({{
 	spawnflags & 8 -> 	"progs/hknight_old.mdl", "progs/sknight.mdl"
 	}}
 ) = monster_hell_knight :
@@ -946,7 +973,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({{
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({{
 	spawnflags & 8 -> "progs/demon_old.mdl", "progs/demon_alk.mdl"
 	}}
 ) = monster_demon1 :
@@ -958,15 +985,15 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
 "Mutant, 220 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
 "Shambler, 600 health points.
 Rockets only have half damage
 when hitting the Shambler." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/bambler.mdl"}) = monster_bambler :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-32 -32 -24, 32 32 64) model({"path":"progs/bambler.mdl"}) = monster_bambler :
 "Bambler, 500 health points.
 Melee only bald shamblers.
 Rockets only have half damage
@@ -981,7 +1008,7 @@ Only event_lightning can kill him." [
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
 "Enforcer, 80 health points." []
 
 @PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 48) model({{
@@ -1030,22 +1057,22 @@ If crucified, stick the bounding box 12 pixels back into a wall to look right.
 @PointClass base(Monster, MonsterJump) size(-6 -6 -24, 6 6 32) model({"path":"progs/zombie2.mdl"}) = monster_zombie2 :
 "Fast Zombie, 10 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce3.mdl"}) = monster_super_enforcer :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce3.mdl"}) = monster_super_enforcer :
 "Lieutenant, 120 health points, 1000 armor.
 This S.O.B. will turn you into Swiss cheese
 if you are not careful!" []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce2.mdl"}) = monster_me :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce2.mdl"}) = monster_me :
 "Mega Enforcer, 150 health points.
 With a force field, plasma gun, and shoulder
 cannon, look out for this cold-blooded killer." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier_alk.mdl"}) = monster_nailgrunt :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier_alk.mdl"}) = monster_nailgrunt :
 "Nail Grunt, 30 health points.
 This ugly cyborg can penetrate your heart
 ...and not in a good way." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl","frame":17}) = monster_axegrunt :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl","frame":17}) = monster_axegrunt :
 "Axe Grunt, 75 health points." []
 
 @PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/scor.mdl"}) = monster_scourge :
@@ -1055,7 +1082,7 @@ This ugly cyborg can penetrate your heart
 "Armagon, 2000-3500 health points.
 The big boss mam!" []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogreb.mdl"}) = monster_ogreb :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogreb.mdl"}) = monster_ogreb :
 "Berserker, 200 health points.
 Don't shake hands with this crazy bastard!" []
 
@@ -1103,7 +1130,7 @@ model({{
 @PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/edie.mdl", "frame":149}) = monster_edie :
 "Edie, 500 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/kamikaze_grunt_small.mdl"}) = monster_kamikaze :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/kamikaze_grunt_small.mdl"}) = monster_kamikaze :
 "Kamikaze, 40 health points." []
 
 @PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base_v2.mdl"}) = monster_turret :
