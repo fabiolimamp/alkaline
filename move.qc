@@ -357,7 +357,7 @@ float(float launch_h, float launch_v, float yaw) movejump_test = {
 
 void(float dist) movetogoaljump {
 
-	if (self.autojump <= 0 || time < self.autojump_block_finished) {
+	if (self.autojump <= 0 || world.autojump < 0 || time < self.autojump_block_finished) {
 		movetogoal(dist);
 		return;
 	}
