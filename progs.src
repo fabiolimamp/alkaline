@@ -110,3 +110,5 @@ monsters/monster_turret.qc
 monsters/zombie2.qc			// ne_ruins
 
 monsters/kamikaze.qc
+
+monsters/guardian.qc

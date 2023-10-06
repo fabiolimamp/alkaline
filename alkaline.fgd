@@ -1140,6 +1140,9 @@ model({{
 	]
 ]
 
+@PointClass base(Monster, MonsterJump) size(-32 -32 -48, 32 32 88) model({"path":"progs/guardian.mdl"}) = monster_guardian :
+"Guardian, 7000 health points." []
+
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 
