@@ -293,6 +293,12 @@ float(float launch_h, float launch_v, float yaw) movejump_test = {
 		return FALSE;
 	}
 
+	traceline([self.origin_x, self.origin_y, self.absmin_z + 1] + v_forward*self.size_x, [self.origin_x, self.origin_y, self.absmin_z + 1] + v_forward*self.size_x - '0 0 20', FALSE, self);
+	if (trace_fraction < 1){
+		dprint("not a gap\n");
+		return FALSE;
+	}
+
 	vector sim_origin = self.origin + [0, 0, self.mins_z];
 	vector sim_origin_prev = sim_origin;
 
@@ -335,10 +341,14 @@ float(float launch_h, float launch_v, float yaw) movejump_test = {
 	}
 
 	if (trace_endpos_z < (self.enemy.origin_z + self.enemy.mins_z) - 16){
-		dprint("too low\n");
+		dprint("below target\n");
 		return FALSE;
 	}
 	
+	if (fabs(trace_endpos_z - self.origin_z) > 384){
+		dprint("jump too high\n");
+		return FALSE;
+	}
 
 	if (trace_ent.solid != SOLID_BSP){
 		dprint("not bsp\n");
@@ -380,12 +390,22 @@ void(float dist) movetogoaljump {
 	if (!trystep && self.enemy.origin_z <= self.origin_z) {
 		float launch_h, launch_v;
 
-		launch_h = 300;
+		
 		if (fabs(self.enemy.origin_z - self.origin_z) <= 16)
 			launch_v = 300;
 		else
 			launch_v = 200;
+		
+		launch_h = 200;
+		if (movejump_test(launch_h, launch_v, prevyaw)) {
+			self.angles_y = prevyaw;
+			self.flags &~= FL_ONGROUND;
+			self.velocity = v_forward*launch_h + [0, 0, launch_v];
 
+			return;
+		}
+		
+		launch_h = 300;
 		if (movejump_test(launch_h, launch_v, prevyaw)) {
 			self.angles_y = prevyaw;
 			self.flags &~= FL_ONGROUND;
