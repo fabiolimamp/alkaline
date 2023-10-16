@@ -436,7 +436,7 @@ void() PlayerPreThink =
 	self.wasonground = (self.flags & FL_ONGROUND) ? 1 : 0;
 
 	makevectors (self.v_angle);		// is this still used
-
+	//dprint5("vectoyaw: ", ftos(vectoyaw(v_forward)), ", vectoyaw2: ", ftos(vectoyaw2(v_forward)), "\n");
 	CheckRules ();
 	WaterMove ();
 
