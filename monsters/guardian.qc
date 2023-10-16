@@ -607,7 +607,7 @@ void(entity e) monster_guardian_start =
 	self.view_ofs = '0 0 25';
 	self.frame = $start01;
 
-	self.health = 7000;
+	if (!self.health) self.health = 7000;
 
 	self.skin = 3;
 	self.lip = 0;
