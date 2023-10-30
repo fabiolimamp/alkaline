@@ -6,12 +6,6 @@ BLOB
 ==============================================================================
 */
 
-$cd id1/models/tarbaby
-$origin 0 0 24
-$base base		
-
-$skin skin
-
 $frame walk1 walk2 walk3 walk4  walk5 walk6 walk7 walk8 walk9 walk10
 $frame walk11 walk12 walk13 walk14 walk15 walk16 walk17 walk18 walk19
 $frame walk20 walk21 walk22 walk23 walk24 walk25
@@ -26,67 +20,67 @@ $frame fly1 fly2 fly3 fly4
 
 $frame exp
 
-void()	tbaby_stand1	=[	$walk1,		tbaby_stand1	] {ai_stand();};
+void()	spwn_stand1	=[	$walk1,		spwn_stand1	] {ai_stand();};
 
-void()	tbaby_hang1		=[	$walk1,		tbaby_hang1	] {ai_stand();};
+void()	spwn_hang1		=[	$walk1,		spwn_hang1	] {ai_stand();};
 
-void()	tbaby_walk1	=[	$walk1,		tbaby_walk2	] {ai_turn();};
-void()	tbaby_walk2	=[	$walk2,		tbaby_walk3	] {ai_turn();};
-void()	tbaby_walk3	=[	$walk3,		tbaby_walk4	] {ai_turn();};
-void()	tbaby_walk4	=[	$walk4,		tbaby_walk5	] {ai_turn();};
-void()	tbaby_walk5	=[	$walk5,		tbaby_walk6	] {ai_turn();};
-void()	tbaby_walk6	=[	$walk6,		tbaby_walk7	] {ai_turn();};
-void()	tbaby_walk7	=[	$walk7,		tbaby_walk8	] {ai_turn();};
-void()	tbaby_walk8	=[	$walk8,		tbaby_walk9	] {ai_turn();};
-void()	tbaby_walk9	=[	$walk9,		tbaby_walk10	] {ai_turn();};
-void()	tbaby_walk10	=[	$walk10,		tbaby_walk11	] {ai_turn();};
-void()	tbaby_walk11	=[	$walk11,		tbaby_walk12	] {ai_walk(2);};
-void()	tbaby_walk12	=[	$walk12,		tbaby_walk13	] {ai_walk(2);};
-void()	tbaby_walk13	=[	$walk13,		tbaby_walk14	] {ai_walk(2);};
-void()	tbaby_walk14	=[	$walk14,		tbaby_walk15	] {ai_walk(2);};
-void()	tbaby_walk15	=[	$walk15,		tbaby_walk16	] {ai_walk(2);};
-void()	tbaby_walk16	=[	$walk16,		tbaby_walk17	] {ai_walk(2);};
-void()	tbaby_walk17	=[	$walk17,		tbaby_walk18	] {ai_walk(2);};
-void()	tbaby_walk18	=[	$walk18,		tbaby_walk19	] {ai_walk(2);};
-void()	tbaby_walk19	=[	$walk19,		tbaby_walk20	] {ai_walk(2);};
-void()	tbaby_walk20	=[	$walk20,		tbaby_walk21	] {ai_walk(2);};
-void()	tbaby_walk21	=[	$walk21,		tbaby_walk22	] {ai_walk(2);};
-void()	tbaby_walk22	=[	$walk22,		tbaby_walk23	] {ai_walk(2);};
-void()	tbaby_walk23	=[	$walk23,		tbaby_walk24	] {ai_walk(2);};
-void()	tbaby_walk24	=[	$walk24,		tbaby_walk25	] {ai_walk(2);};
-void()	tbaby_walk25	=[	$walk25,		tbaby_walk1	] {ai_walk(2);};
+void()	spwn_walk1	=[	$walk1,		spwn_walk2	] {ai_turn();};
+void()	spwn_walk2	=[	$walk2,		spwn_walk3	] {ai_turn();};
+void()	spwn_walk3	=[	$walk3,		spwn_walk4	] {ai_turn();};
+void()	spwn_walk4	=[	$walk4,		spwn_walk5	] {ai_turn();};
+void()	spwn_walk5	=[	$walk5,		spwn_walk6	] {ai_turn();};
+void()	spwn_walk6	=[	$walk6,		spwn_walk7	] {ai_turn();};
+void()	spwn_walk7	=[	$walk7,		spwn_walk8	] {ai_turn();};
+void()	spwn_walk8	=[	$walk8,		spwn_walk9	] {ai_turn();};
+void()	spwn_walk9	=[	$walk9,		spwn_walk10	] {ai_turn();};
+void()	spwn_walk10	=[	$walk10,		spwn_walk11	] {ai_turn();};
+void()	spwn_walk11	=[	$walk11,		spwn_walk12	] {ai_walk(2);};
+void()	spwn_walk12	=[	$walk12,		spwn_walk13	] {ai_walk(2);};
+void()	spwn_walk13	=[	$walk13,		spwn_walk14	] {ai_walk(2);};
+void()	spwn_walk14	=[	$walk14,		spwn_walk15	] {ai_walk(2);};
+void()	spwn_walk15	=[	$walk15,		spwn_walk16	] {ai_walk(2);};
+void()	spwn_walk16	=[	$walk16,		spwn_walk17	] {ai_walk(2);};
+void()	spwn_walk17	=[	$walk17,		spwn_walk18	] {ai_walk(2);};
+void()	spwn_walk18	=[	$walk18,		spwn_walk19	] {ai_walk(2);};
+void()	spwn_walk19	=[	$walk19,		spwn_walk20	] {ai_walk(2);};
+void()	spwn_walk20	=[	$walk20,		spwn_walk21	] {ai_walk(2);};
+void()	spwn_walk21	=[	$walk21,		spwn_walk22	] {ai_walk(2);};
+void()	spwn_walk22	=[	$walk22,		spwn_walk23	] {ai_walk(2);};
+void()	spwn_walk23	=[	$walk23,		spwn_walk24	] {ai_walk(2);};
+void()	spwn_walk24	=[	$walk24,		spwn_walk25	] {ai_walk(2);};
+void()	spwn_walk25	=[	$walk25,		spwn_walk1	] {ai_walk(2);};
 
-void()	tbaby_run1	=[	$run1,		tbaby_run2	] {ai_face();};
-void()	tbaby_run2	=[	$run2,		tbaby_run3	] {ai_face();};
-void()	tbaby_run3	=[	$run3,		tbaby_run4	] {ai_face();};
-void()	tbaby_run4	=[	$run4,		tbaby_run5	] {ai_face();};
-void()	tbaby_run5	=[	$run5,		tbaby_run6	] {ai_face();};
-void()	tbaby_run6	=[	$run6,		tbaby_run7	] {ai_face();};
-void()	tbaby_run7	=[	$run7,		tbaby_run8	] {ai_face();};
-void()	tbaby_run8	=[	$run8,		tbaby_run9	] {ai_face();};
-void()	tbaby_run9	=[	$run9,		tbaby_run10	] {ai_face();};
-void()	tbaby_run10	=[	$run10,		tbaby_run11	] {ai_face();};
-void()	tbaby_run11	=[	$run11,		tbaby_run12	] {ai_run(2);};
-void()	tbaby_run12	=[	$run12,		tbaby_run13	] {ai_run(2);};
-void()	tbaby_run13	=[	$run13,		tbaby_run14	] {ai_run(2);};
-void()	tbaby_run14	=[	$run14,		tbaby_run15	] {ai_run(2);};
-void()	tbaby_run15	=[	$run15,		tbaby_run16	] {ai_run(2);};
-void()	tbaby_run16	=[	$run16,		tbaby_run17	] {ai_run(2);};
-void()	tbaby_run17	=[	$run17,		tbaby_run18	] {ai_run(2);};
-void()	tbaby_run18	=[	$run18,		tbaby_run19	] {ai_run(2);};
-void()	tbaby_run19	=[	$run19,		tbaby_run20	] {ai_run(2);};
-void()	tbaby_run20	=[	$run20,		tbaby_run21	] {ai_run(2);};
-void()	tbaby_run21	=[	$run21,		tbaby_run22	] {ai_run(2);};
-void()	tbaby_run22	=[	$run22,		tbaby_run23	] {ai_run(2);};
-void()	tbaby_run23	=[	$run23,		tbaby_run24	] {ai_run(2);};
-void()	tbaby_run24	=[	$run24,		tbaby_run25	] {ai_run(2);};
-void()	tbaby_run25	=[	$run25,		tbaby_run1	] {ai_run(2);};
+void()	spwn_run1	=[	$run1,		spwn_run2	] {ai_face();};
+void()	spwn_run2	=[	$run2,		spwn_run3	] {ai_face();};
+void()	spwn_run3	=[	$run3,		spwn_run4	] {ai_face();};
+void()	spwn_run4	=[	$run4,		spwn_run5	] {ai_face();};
+void()	spwn_run5	=[	$run5,		spwn_run6	] {ai_face();};
+void()	spwn_run6	=[	$run6,		spwn_run7	] {ai_face();};
+void()	spwn_run7	=[	$run7,		spwn_run8	] {ai_face();};
+void()	spwn_run8	=[	$run8,		spwn_run9	] {ai_face();};
+void()	spwn_run9	=[	$run9,		spwn_run10	] {ai_face();};
+void()	spwn_run10	=[	$run10,		spwn_run11	] {ai_face();};
+void()	spwn_run11	=[	$run11,		spwn_run12	] {ai_run(2);};
+void()	spwn_run12	=[	$run12,		spwn_run13	] {ai_run(2);};
+void()	spwn_run13	=[	$run13,		spwn_run14	] {ai_run(2);};
+void()	spwn_run14	=[	$run14,		spwn_run15	] {ai_run(2);};
+void()	spwn_run15	=[	$run15,		spwn_run16	] {ai_run(2);};
+void()	spwn_run16	=[	$run16,		spwn_run17	] {ai_run(2);};
+void()	spwn_run17	=[	$run17,		spwn_run18	] {ai_run(2);};
+void()	spwn_run18	=[	$run18,		spwn_run19	] {ai_run(2);};
+void()	spwn_run19	=[	$run19,		spwn_run20	] {ai_run(2);};
+void()	spwn_run20	=[	$run20,		spwn_run21	] {ai_run(2);};
+void()	spwn_run21	=[	$run21,		spwn_run22	] {ai_run(2);};
+void()	spwn_run22	=[	$run22,		spwn_run23	] {ai_run(2);};
+void()	spwn_run23	=[	$run23,		spwn_run24	] {ai_run(2);};
+void()	spwn_run24	=[	$run24,		spwn_run25	] {ai_run(2);};
+void()	spwn_run25	=[	$run25,		spwn_run1	] {ai_run(2);};
 
 
 //============================================================================
 
 
-void()	tbaby_jump1;
+void()	spwn_jump1;
 
 void()	Tar_JumpTouch =
 {
@@ -111,7 +105,7 @@ void()	Tar_JumpTouch =
 		{	// jump randomly to not get hung up
 //dprint ("popjump\n");
 	self.touch = SUB_Null;
-	self.think = tbaby_run1;
+	self.think = spwn_run1;
 	self.movetype = MOVETYPE_STEP;
 	self.nextthink = time + 0.1;
 
@@ -124,29 +118,29 @@ void()	Tar_JumpTouch =
 	}
 
 	self.touch = SUB_Null;
-	self.think = tbaby_jump1;
+	self.think = spwn_jump1;
 	self.nextthink = time + 0.1;
 };
 
-void()	tbaby_jump5;
+void()	spwn_jump5;
 
-void()	tbaby_fly1		=[	$fly1,	tbaby_fly2	] {};
-void()	tbaby_fly2		=[	$fly2,	tbaby_fly3	] {};
-void()	tbaby_fly3		=[	$fly3,	tbaby_fly4	] {};
-void()	tbaby_fly4		=[	$fly4,	tbaby_fly1	] {
+void()	spwn_fly1		=[	$fly1,	spwn_fly2	] {};
+void()	spwn_fly2		=[	$fly2,	spwn_fly3	] {};
+void()	spwn_fly3		=[	$fly3,	spwn_fly4	] {};
+void()	spwn_fly4		=[	$fly4,	spwn_fly1	] {
 self.cnt = self.cnt + 1;
 if (self.cnt == 4)
 {
 //dprint ("spawn hop\n");
-tbaby_jump5 ();
+spwn_jump5 ();
 }
 };
 
-void()	tbaby_jump1		=[	$jump1,	tbaby_jump2		] {ai_face();};
-void()	tbaby_jump2		=[	$jump2,	tbaby_jump3		] {ai_face();};
-void()	tbaby_jump3		=[	$jump3,	tbaby_jump4		] {ai_face();};
-void()	tbaby_jump4		=[	$jump4,	tbaby_jump5		] {ai_face();};
-void()	tbaby_jump5		=[	$jump5,	tbaby_jump6		]
+void()	spwn_jump1		=[	$jump1,	spwn_jump2		] {ai_face();};
+void()	spwn_jump2		=[	$jump2,	spwn_jump3		] {ai_face();};
+void()	spwn_jump3		=[	$jump3,	spwn_jump4		] {ai_face();};
+void()	spwn_jump4		=[	$jump4,	spwn_jump5		] {ai_face();};
+void()	spwn_jump5		=[	$jump5,	spwn_jump6		]
 {	
 	self.movetype = MOVETYPE_BOUNCE;
 	self.touch = Tar_JumpTouch;
@@ -158,16 +152,16 @@ void()	tbaby_jump5		=[	$jump5,	tbaby_jump6		]
 		self.flags = self.flags - FL_ONGROUND;
 	self.cnt = 0;
 };
-void()	tbaby_jump6	=[	$jump6,tbaby_fly1	] {};
+void()	spwn_jump6	=[	$jump6,spwn_fly1	] {};
 
 
 
 //=============================================================================
 
-void()	tbaby_die1	=[	$exp,		tbaby_die2	] {
+void()	spwn_die1	=[	$exp,		spwn_die2	] {
 self.takedamage = DAMAGE_NO;
 };
-void()	tbaby_die2	=[	$exp,		tbaby_run1	] 
+void()	spwn_die2	=[	$exp,		spwn_run1	] 
 {
 	T_RadiusDamage (self, self, 120, 1, world, DMGTYPE_EXPLOSION);
 
@@ -185,16 +179,16 @@ void()	tbaby_die2	=[	$exp,		tbaby_run1	]
 	self.deadflag = DEAD_GIBBED;
 };
 
-void() tbaby_sight = {
+void() spwn_sight = {
 	sound (self, CHAN_VOICE, "blob/sight1.wav", 1, ATTN_NORM);
 };
 
 //=============================================================================
 
 
-/*QUAKED monster_tarbaby (1 0 0) (-16 -16 -24) (16 16 24) Ambush
+/*QUAKED monster_spawn (1 0 0) (-16 -16 -24) (16 16 24) Ambush
 */
-void(entity e) monster_tarbaby_start =
+void(entity e) monster_spawn_start =
 {
 	local entity oself;
 
@@ -212,25 +206,25 @@ void(entity e) monster_tarbaby_start =
 	self.health = 80;
 	if (self.obituary == "") self.obituary = "was slimed by a Spawn";
 
-	self.th_stand = tbaby_stand1;
-	self.th_walk = tbaby_walk1;
-	self.th_run = tbaby_run1;
-	self.th_missile = tbaby_jump1;
-	self.th_melee = tbaby_jump1;
-	self.th_die = tbaby_die1;
-	self.th_sight = tbaby_sight;
+	self.th_stand = spwn_stand1;
+	self.th_walk = spwn_walk1;
+	self.th_run = spwn_run1;
+	self.th_missile = spwn_jump1;
+	self.th_melee = spwn_jump1;
+	self.th_die = spwn_die1;
+	self.th_sight = spwn_sight;
 	
 	walkmonster_start ();
 
 	self = oself;
 };
 
-void() monster_tarbaby_spawner = {
-	monster_spawner(monster_tarbaby_start);
+void() monster_spawn_spawner = {
+	monster_spawner(monster_spawn_start);
 };
 
 
-void() monster_tarbaby =
+void() monster_spawn =
 {
 	if (!SUB_InitEntity()) return;
 	
@@ -253,11 +247,14 @@ void() monster_tarbaby =
 	else setsize(self, self.cmins, self.cmaxs);
 	
 	if (self.spawnflags & MONSTER_SPAWNER) {
-		self.use = monster_tarbaby_spawner;
+		self.use = monster_spawn_spawner;
 		monster_spawner_updatecounter();
 	}
 	else {
-		monster_tarbaby_start(self);
+		monster_spawn_start(self);
 	}
 };
 
+void() monster_tarbaby = {
+	monster_spawn();
+}
