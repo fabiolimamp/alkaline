@@ -74,7 +74,7 @@ monsters/dog.qc
 monsters/zombie.qc
 monsters/boss.qc
 
-monsters/tarbaby.qc			// registered
+monsters/spawn.qc			// registered
 monsters/hknight.qc			// registered
 monsters/fish.qc			// registered
 monsters/shalrath.qc		// registered
