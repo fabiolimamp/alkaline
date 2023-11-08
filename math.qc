@@ -552,3 +552,7 @@ float(vector vec) vectoyaw2 = {
     return (q + uatan_2q) * 90;
 }
 
+
+inline void(vector vec) makevectors_angles = {
+	makevectors([-vec_x, vec_y, vec_z]);
+}
