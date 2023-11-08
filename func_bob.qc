@@ -240,10 +240,12 @@ function, but the result is precise and seamless.
 */
 
 const float SFLAG_BOB_CRUSHER = 2;
-const float SFLAG_BOB_STOPLOW = 4;
-const float SFLAG_BOB_STOPMID = 8;
-const float SFLAG_BOB_STOPHI = 16;
-const float SFLAG_BOB_STOP = 4+8+16;
+const float SFLAG_BOB_NONSOLID = 4;
+const float SFLAG_BOB_STOPLOW = 8;
+const float SFLAG_BOB_STOPMID = 16;
+const float SFLAG_BOB_STOPHI = 32;
+const float SFLAG_BOB_STOP = 8+16+32;
+
 
 void() func_bobbing_blocked = 
 {
@@ -460,7 +462,9 @@ void() func_bobbing_spawn =
 	self.use = func_bobbing_use;
 	self.blocked = func_bobbing_blocked;
 	
-	self.solid = zeroconvertdefault(self.solid, SOLID_BSP);
+	if (!(self.spawnflags & SFLAG_BOB_NONSOLID))
+		self.solid = SOLID_BSP;
+
 	if (!self.solid)
 		self.movetype = MOVETYPE_NOCLIP;
 	else

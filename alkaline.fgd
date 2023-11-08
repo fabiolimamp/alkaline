@@ -2314,9 +2314,11 @@ Other than that, this entity functions like a normal button.
 	spawnflags(flags) = [
 		1 : "Start off" : 0
 		2 : "Crusher (no reverse)" : 0
-		4 : "Don't stop until low pos" : 0
-		8 : "Don't stop until mid pos" : 0
-		16 : "Don't stop until high pos" : 0
+		4 : "Non-solid" : 0
+		8 : "Don't stop until low pos" : 0
+		16 : "Don't stop until mid pos" : 0
+		32 : "Don't stop until high pos" : 0
+
 	]
 	wait(string) : "Period (Wavelength)" : "4"
 	distance(integer) : "Length (Amplitude)" : 64
