@@ -120,7 +120,9 @@ void() BecomeBlast =
 		force_retouch = 2;
 
 	// moves explosion a bit off the ground
-	//if (self.model == "progs/s_explod.spr")
+	if (self.model == "progs/s_explod.spr")
+		setorigin(self, self.origin + [0, 0, 24 - (trace_fraction * 24)]);
+	else
 		setorigin(self, self.origin + [0, 0, 17 - (trace_fraction * 17)]);
 
 	self.nextthink = time + 0.5;
