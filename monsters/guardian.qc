@@ -406,7 +406,7 @@ void() spawn_wave =
 	}
 	else if (self.count == 3)
 	{
-		if (self.target4 && self.target2 != ""){
+		if (self.target4 && self.target4 != ""){
 			activator = self.enemy;
 			SUB_UseSpecificTarget(self.target4, targetname);
 			self.target4 = string_null;
