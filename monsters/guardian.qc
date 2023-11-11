@@ -295,35 +295,55 @@ void() guardian_fire =
 // Charging - monster spawning
 // ============================
 
-void() prepare_for_charging=
-{
+void() guardian_path_touch = {
+	self.touch = SUB_Null;
+
+	other.goalentity = other.enemy;
+	other.oldenemy = world;
+	other.followingpath = FALSE;
+
+	self = other;
+	guardian_charging_on01();
+}
+
+void() guardian_prepare_charge = {
 	self.pain_finished = time + 2;
 	self.count = self.count + 1;
 	self.takedamage = DAMAGE_NO;
-	self.think = guardian_charging_on01;
+
+	
+	entity pth = find(world, targetname, self.path);
+	if (pth.classname != "path_angry"){
+		guardian_charging_on01();
+		return;
+	}
+	else {
+		pth.owner.touch = guardian_path_touch;
+	}
+	self.followingpath = TRUE;
+	self.goalentity = pth;
+	self.oldenemy = self.enemy;
+	self.startpath = world;
+	self.think = self.th_run;
 	self.nextthink = time + 0.1;
+	
+	
 }
 
-float() check_monster_spawning = 
-{
-	if(self.health < 5800 && self.count == 0)
+float() guardian_check_charge = {
+	if (self.health < 6000 && self.count == 0)
 	{
-		prepare_for_charging();
+		guardian_prepare_charge();
 		return TRUE;
 	}
-	else if(self.health < 4600 && self.count == 1)
+	else if (self.health < 4000 && self.count == 1)
 	{
-		prepare_for_charging();
+		guardian_prepare_charge();
 		return TRUE;
 	}
-	else if(self.health < 3400 && self.count == 2)
+	else if (self.health < 2000 && self.count == 2)
 	{
-		prepare_for_charging();
-		return TRUE;
-	}
-	else if(self.health < 2200 && self.count == 3)
-	{
-		prepare_for_charging();
+		guardian_prepare_charge();
 		return TRUE;
 	}
 	return FALSE;
@@ -368,21 +388,29 @@ void() guardian_charge =
 
 void() spawn_wave = 
 {
-	if(self.count == 1)
+	if (self.count == 1)
 	{
-		SUB_UseTargets();
+		if (self.target2 && self.target2 != "") {
+			activator = self.enemy;
+			SUB_UseSpecificTarget(self.target2, targetname);
+			self.target2 = string_null;
+		}
 	}
-	else if(self.count == 2)
+	else if (self.count == 2)
 	{
-		SUB_UseTargets();
+		if (self.target3 && self.target3 != ""){
+			activator = self.enemy;
+			SUB_UseSpecificTarget(self.target3, targetname);
+			self.target3 = string_null;
+		}
 	}
-	else if(self.count == 3)
+	else if (self.count == 3)
 	{
-		SUB_UseTargets();
-	}
-	else if(self.count == 4)
-	{
-		SUB_UseTargets();
+		if (self.target4 && self.target2 != ""){
+			activator = self.enemy;
+			SUB_UseSpecificTarget(self.target4, targetname);
+			self.target4 = string_null;
+		}
 	}
 	
 	guardian_charging_off01();
@@ -430,7 +458,7 @@ void() guardian_painA6 = [ $mfpain06, guardian_painA7 ] {};
 void() guardian_painA7 = [ $mfpain07, guardian_painA8 ] {};
 void() guardian_painA8 = [ $mfpain08, guardian_painA9 ] {};
 void() guardian_painA9 = [ $mfpain09, guardian_painA10 ] {};
-void() guardian_painA10 = [ $mfpain10, guardian_run1 ] {check_monster_spawning();};
+void() guardian_painA10 = [ $mfpain10, guardian_run1 ] {guardian_check_charge();};
 
 void() guardian_painB1 = [ $mfpbin01, guardian_painB2 ] {};
 void() guardian_painB2 = [ $mfpbin02, guardian_painB3 ] {};
@@ -438,14 +466,14 @@ void() guardian_painB3 = [ $mfpbin03, guardian_painB4 ] {};
 void() guardian_painB4 = [ $mfpbin04, guardian_painB5 ] {};
 void() guardian_painB5 = [ $mfpbin05, guardian_painB6 ] {};
 void() guardian_painB6 = [ $mfpbin06, guardian_painB7 ] {};
-void() guardian_painB7 = [ $mfpbin07, guardian_run1 ] {check_monster_spawning();};
+void() guardian_painB7 = [ $mfpbin07, guardian_run1 ] {guardian_check_charge();};
 
 void(entity attacker, float damage) guardian_pain =
 {
 	if (self.pain_finished > time)
 		return;
 	
-	if(check_monster_spawning())
+	if(guardian_check_charge())
 		return;
 	
 	if (random() > 0.10)

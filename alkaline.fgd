@@ -1140,7 +1140,7 @@ model({{
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -48, 32 32 88) model({"path":"progs/guardian.mdl"}) = monster_guardian :
+@PointClass base(Monster, MonsterJump) size(-32 -32 -48, 32 32 88) model({"path":"progs/nephrenka.mdl"}) = monster_guardian :
 "Guardian, 7000 health points." [
 	health(integer) : "Health" : 7000
 ]
