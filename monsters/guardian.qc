@@ -251,7 +251,7 @@ void(vector org, vector dir) guardian_missile =
 	
 	missile = launch_projectile(org, dir * BOSS2_BALL_VEL, "voreball");
 
-	SUB_ChangeModel (missile, "progs/v_spike.mdl");
+	SUB_ChangeModel (missile, "progs/v_nephrenka.mdl");
 
 	missile.avelocity = '300 300 300';
 	missile.nextthink = time + 0.1;
@@ -611,7 +611,7 @@ void(entity e) monster_guardian_start =
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/guardian.mdl");
+	setmodel (self, "progs/nephrenka.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -48', '0 0 -48');
 	else setsize (self, self.cmins, self.cmaxs);
@@ -625,7 +625,7 @@ void(entity e) monster_guardian_start =
 	self.th_die = guardian_die;
 	self.th_checkattack = CheckAttack;
 	
-	if (self.obituary == "") self.obituary = "was crushed by the Guardian";
+	if (self.obituary == "") self.obituary = "was mummified by Nephren-Ka";
 	
 	self.takedamage = DAMAGE_NO;
 	self.flags = self.flags | FL_MONSTER;
@@ -665,8 +665,8 @@ void() monster_guardian =
 		remove(self);
 		return;
 	}
-	precache_model ("progs/guardian.mdl");
-	//precache_model ("progs/morph_eg.mdl");
+	precache_model ("progs/nephrenka.mdl");
+	precache_model ("progs/v_nephrenka.mdl");
 	
 	precache_model2 ("progs/v_spike.mdl");
 	precache_model2 ("progs/laser.mdl");
