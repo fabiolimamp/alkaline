@@ -308,11 +308,10 @@ void() guardian_path_touch = {
 
 void() guardian_prepare_charge = {
 	self.pain_finished = time + 2;
-	self.count = self.count + 1;
 	self.takedamage = DAMAGE_NO;
-
 	
 	entity pth = find(world, targetname, self.path);
+
 	if (pth.classname != "path_angry"){
 		guardian_charging_on01();
 		return;
@@ -320,6 +319,7 @@ void() guardian_prepare_charge = {
 	else {
 		pth.owner.touch = guardian_path_touch;
 	}
+
 	self.followingpath = TRUE;
 	self.goalentity = pth;
 	self.oldenemy = self.enemy;
@@ -331,18 +331,11 @@ void() guardian_prepare_charge = {
 }
 
 float() guardian_check_charge = {
-	if (self.health < 6000 && self.count == 0)
-	{
-		guardian_prepare_charge();
-		return TRUE;
-	}
-	else if (self.health < 4000 && self.count == 1)
-	{
-		guardian_prepare_charge();
-		return TRUE;
-	}
-	else if (self.health < 2000 && self.count == 2)
-	{
+	if ((self.health < 6000 && self.count == 0)
+		|| (self.health < 4000 && self.count == 1)
+		|| (self.health < 2000 && self.count == 2)
+	) {
+		self.count = self.count + 1;
 		guardian_prepare_charge();
 		return TRUE;
 	}
@@ -351,7 +344,7 @@ float() guardian_check_charge = {
 
 void() guardian_emit_lightning =
 {
-	if(self.lip < 10)
+	if (self.lip < 10)
 	{
 		//LightningBeam (self.origin, self.origin + '0 0 2000', self, 0);
 		fx_beam(self.origin + '0 0 32', self.origin + '0 0 2000', self);
