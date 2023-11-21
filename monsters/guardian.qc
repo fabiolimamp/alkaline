@@ -316,9 +316,8 @@ void() guardian_prepare_charge = {
 		guardian_charging_on01();
 		return;
 	}
-	else {
-		pth.owner.touch = guardian_path_touch;
-	}
+
+	pth.owner.touch = guardian_path_touch;
 
 	self.followingpath = TRUE;
 	self.goalentity = pth;
@@ -375,11 +374,13 @@ void() guardian_lightning_emitter =
 void() guardian_charge =
 {
 	guardian_lightning_emitter();
-	self.think = spawn_wave;
+	guardian_fire_targets();
+	
+	self.think = guardian_charging_off01;
 	self.nextthink = time + 3;
 }
 
-void() spawn_wave = 
+void() guardian_fire_targets = 
 {
 	if (self.count == 1)
 	{
@@ -405,8 +406,7 @@ void() spawn_wave =
 			self.target4 = string_null;
 		}
 	}
-	
-	guardian_charging_off01();
+
 }
 
 void() guardian_fire1 = [ $mfata01, guardian_fire2 ] {ai_face();};

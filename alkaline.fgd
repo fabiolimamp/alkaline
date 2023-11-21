@@ -1143,6 +1143,7 @@ model({{
 @PointClass base(Monster, MonsterJump) size(-32 -32 -48, 32 32 88) model({"path":"progs/nephrenka.mdl"}) = monster_guardian :
 "Guardian, 7000 health points." [
 	health(integer) : "Health" : 7000
+	path(target_destination) : "path_angry destination" : : "path_angry entity where the boss will run to prior to firing its lightning into the sky. If unset, or the target isn't a path_angry, it'll fire where it stays"
 ]
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
