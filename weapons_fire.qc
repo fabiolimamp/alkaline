@@ -1133,7 +1133,7 @@ void() spike_touch =
 		WriteCoord (MSG_BROADCAST, self.origin_z);
 
 		if (self.owner.classname != "trap_shooter" && self.owner.classname != "trap_spikeshooter") {
-			makevectors(self.angles);
+			makevectors([-self.angles_x, self.angles_y, self.angles_z]);
 			traceline(self.origin, self.origin + v_forward*32, TRUE, self);
 			if (trace_fraction != 1) placebullethole(trace_endpos, trace_plane_normal, trace_ent);
 		}
@@ -1174,7 +1174,7 @@ void() superspike_touch =
 		WriteCoord (MSG_BROADCAST, self.origin_z);
 
 		if (self.owner.classname != "trap_shooter" && self.owner.classname != "trap_spikeshooter") {
-			makevectors(self.angles);
+			makevectors([-self.angles_x, self.angles_y, self.angles_z]);
 			traceline(self.origin, self.origin + v_forward*32, TRUE, self);
 			if (trace_fraction != 1) placebullethole(trace_endpos, trace_plane_normal, trace_ent);
 		}

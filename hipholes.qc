@@ -166,8 +166,8 @@ void(vector pos, vector norm, entity tgt) placebullethole = {
 
 	new.angles = vectoangles(norm);
 	new.angles_z = floor(random()*3.99) * 90;
-	makevectors(self.angles);
-	setorigin(new, pos - (v_forward * (0.2 + random()*0.1)));
+	makevectors([-self.angles_x, self.angles_y, self.angles_z]);
+	setorigin(new, pos - (v_forward * (0.3 + random()*0.1)));
 
 	new.think = remove_bullethole;
 	new.nextthink = time + BULLETHOLES_LIFETIME;
