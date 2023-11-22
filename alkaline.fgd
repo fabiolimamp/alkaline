@@ -2269,44 +2269,46 @@ Other than that, this entity functions like a normal button.
 @SolidClass base(ModelLight) = func_group : "Brush group. Is treated by qbsp as world brushes but allows you to add light shading settings. _dirt and _shadow currently only accept -1 as a valid setting for func_group" []
 
 
-@SolidClass base(Appearflags, Targetname) = func_bob : "A SOLID bmodel that gently moves back and forth."
-[
-	angle(integer) : "direction movement, use 360 for angle 0" : 0
-	height(integer) : "direction intensity" : 8
-	count(integer) : "direction cycle timer minimum = 1" : 2
-	waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
-	waitmin2(integer) : "Slow down scale default = 0.75"
-	delay(integer) : "Starting time delay defualt = 0, -1 = random"
-	style(integer) : "If set to 1, starts off and waits for trigger"
-	_dirt(integer) : "-1 = will be excluded from dirtmapping"
-	_minlight(integer) : "Minimum light level for any surface of the brush model"
-	_mincolor(integer) : "Minimum light color for any surface (default = '1 1 1' RGB)"
-	_shadow(integer) : "Will cast shadows on other models and itself"
-	_shadowself(integer) : "Will cast shadows on itself"
+// deprecated, use func_bobbing and misc_bobbing instead
 
-	spawnflags(flags) =
-	[
-		2 : "BOB_COLLISION" : 2
-		4 : "BOB_NONSOLID" : 0
-	]
-]
+// @SolidClass base(Appearflags, Targetname) = func_bob : "A SOLID bmodel that gently moves back and forth."
+// [
+	// angle(integer) : "direction movement, use 360 for angle 0" : 0
+	// height(integer) : "direction intensity" : 8
+	// count(integer) : "direction cycle timer minimum = 1" : 2
+	// waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
+	// waitmin2(integer) : "Slow down scale default = 0.75"
+	// delay(integer) : "Starting time delay defualt = 0, -1 = random"
+	// style(integer) : "If set to 1, starts off and waits for trigger"
+	// _dirt(integer) : "-1 = will be excluded from dirtmapping"
+	// _minlight(integer) : "Minimum light level for any surface of the brush model"
+	// _mincolor(integer) : "Minimum light color for any surface (default = '1 1 1' RGB)"
+	// _shadow(integer) : "Will cast shadows on other models and itself"
+	// _shadowself(integer) : "Will cast shadows on itself"
 
-@PointClass base(Appearflags, Targetname) size(16 16 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_bob : "A model that gently moves back and forth."
-[
-	angle(integer) : "direction movement, use 360 for angle 0" : 0
-	height(integer) : "direction intensity" : 8
-	count(integer) : "direction cycle timer minimum = 1" : 2
-	waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
-	waitmin2(integer) : "Slow down scale default = 0.75"
-	delay(integer) : "Starting time delay defualt = 0, -1 = random"
-	style(integer) : "If set to 1, starts off and waits for trigger"
-	mdl(string) : "Path to mdl file"
-	spawnflags(flags) =
-	[
-		2 : "BOB_COLLISION (default)" : 2
-		4 : "BOB_NONSOLID" : 0
-	]
-]
+	// spawnflags(flags) =
+	// [
+		// 2 : "BOB_COLLISION" : 2
+		// 4 : "BOB_NONSOLID" : 0
+	// ]
+// ]
+
+// @PointClass base(Appearflags, Targetname) size(16 16 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_bob : "A model that gently moves back and forth."
+// [
+	// angle(integer) : "direction movement, use 360 for angle 0" : 0
+	// height(integer) : "direction intensity" : 8
+	// count(integer) : "direction cycle timer minimum = 1" : 2
+	// waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
+	// waitmin2(integer) : "Slow down scale default = 0.75"
+	// delay(integer) : "Starting time delay defualt = 0, -1 = random"
+	// style(integer) : "If set to 1, starts off and waits for trigger"
+	// mdl(string) : "Path to mdl file"
+	// spawnflags(flags) =
+	// [
+		// 2 : "BOB_COLLISION (default)" : 2
+		// 4 : "BOB_NONSOLID" : 0
+	// ]
+// ]
 
 
 
