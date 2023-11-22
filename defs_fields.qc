@@ -249,6 +249,7 @@ FIELDS
 // monster ai
 //
 
+.void() 	th_spawn;
 .void()		th_stand;
 .void()		th_walk;
 .void()		th_run;

@@ -306,7 +306,23 @@ void() kami_sight = {
 	sound (self, CHAN_VOICE, "soldier/sight1.wav", 1, ATTN_NORM);
 }
 
-
+void() kami_spawn = {
+	dprint("oi\n");
+    self.trigger_field = spawn();
+    self.trigger_field.classname = "kamikaze_explosive";
+    self.trigger_field.solid = SOLID_BBOX;
+    self.trigger_field.movetype = MOVETYPE_NOCLIP;
+	setsize(self.trigger_field, '-8 -8 -8', '8 8 8');
+	self.trigger_field.bloodtype = SPAWN_YELLOWSPARK;
+	self.trigger_field.owner = self;
+	self.trigger_field.health = 25;
+	self.trigger_field.takedamage = DAMAGE_YES;
+	self.trigger_field.think = kamikaze_explosivethink;
+	self.trigger_field.nextthink = time + 0.05;
+	self.trigger_field.th_die = kamikaze_explosiveboom;
+	
+	//SUB_CallAsSelf(kamikaze_explosivethink, self.trigger_field);
+}
 
 /*QUAKED monster_army (1 0 0) (-16 -16 -24) (16 16 40) Ambush
 */
@@ -335,6 +351,7 @@ void(entity e) monster_kamikaze_start =
 	//self.th_missile = kami_atk1;
 	self.th_pain = kami_pain;
 	self.th_die = kami_die;
+	self.th_spawn = kami_spawn;
     self.ammo_shells = 5;
     self.th_sight = kami_sight;
     
@@ -342,7 +359,8 @@ void(entity e) monster_kamikaze_start =
     //self.th_checkattack = KamikazeCheckAttack;
 
     self.pos1 = '8 0 32';
-    self.trigger_field = spawn();
+	/*
+	self.trigger_field = spawn();
     self.trigger_field.classname = "kamikaze_explosive";
     self.trigger_field.solid = SOLID_BBOX;
     self.trigger_field.movetype = MOVETYPE_NOCLIP;
@@ -354,10 +372,10 @@ void(entity e) monster_kamikaze_start =
 	self.trigger_field.think = kamikaze_explosivethink;
 	self.trigger_field.nextthink = time + 0.05;
 	self.trigger_field.th_die = kamikaze_explosiveboom;
-	
+
 	SUB_CallAsSelf(kamikaze_explosivethink, self.trigger_field);
-	
-	walkmonster_start ();
+	*/
+	walkmonster_start();
 
 	self = oself;
 };

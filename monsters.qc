@@ -85,8 +85,8 @@ void() monster_dead_dead = {
 void(entity e) hide_spawned_monster_entity = {
 	//store the important info in unused fields
 	e.mdl = e.model;
-	e.pos1 = e.mins;
-	e.pos2 = e.maxs;
+	e.cmins = e.mins;
+	e.cmaxs = e.maxs;
 	e.walkframe = e.solid;
 	e.fly_sound = e.movetype;
 
@@ -100,11 +100,8 @@ void(entity e) show_spawned_monster_entity = {
 	e.solid = e.walkframe;
 	e.movetype = e.fly_sound;
 	setmodel(e, e.mdl);
-	setsize (e, e.pos1, e.pos2);
+	setsize (e, e.cmins, e.cmaxs);
 }
-
-// spawn trigger-spawned monster
-void() spawn_monster;
 
 void() spawn_monster_use = {
 	if (self.delay) {
@@ -261,7 +258,7 @@ void() walkmonster_start_go =
 			dprint (vtos(self.origin));
 			dprint ("\n");
 		}
-// this used to be an objerror
+		// this used to be an objerror
 		if (self.movetarget.classname == "path_corner")
 			self.th_walk ();
 		else {
@@ -281,6 +278,9 @@ void() walkmonster_start_go =
 
 	if (self.spawnflags & MONSTER_SPAWNANGRY)
 		monster_use();
+
+	if (self.th_spawn)
+		self.th_spawn();
 };
 
 void() flymonster_start_go =
