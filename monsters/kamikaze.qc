@@ -159,15 +159,6 @@ void(entity attacker, float damage)	kami_pain =
 {
 	local float r;
 	
-	//if (self.classname == "monster_nailgrunt") {
-	//	if (self.health < self.max_health * 0.05)	self.skin = 3;
-	//	else if (self.health < self.max_health * 0.4)	self.skin = 2;
-	//	else if (self.health < self.max_health * 0.8)	self.skin = 1;
-	/*}
-	else {
-		if (self.health < self.max_health * 0.6) self.skin = 1;
-	}*/
-
 	if (self.pain_finished > time)
 		return;
 
@@ -257,6 +248,57 @@ void() kami_die =
 };
 
 
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) kami_damage = {
+	
+	// no need to check hitscan or explosive attacks
+	if (inflictor == attacker || dmgtype == DMGTYPE_EXPLOSION){
+		//dprint("hitscan or explosion\n");
+		return damage;
+	}
+
+	//vector dir = normalize(inflictor.velocity);
+	
+	// tracelines also ignore hits if forent == trace_ent.owner
+	// so set the box's owner to world before testing
+	self.trigger_field.owner = world;
+	// enlarge box bbox a bit
+	setsize(self.trigger_field, '-12 -12 -12', '12 12 12');
+
+	traceline(inflictor.origin, inflictor.origin + normalize(inflictor.velocity)*64, FALSE, self);
+	
+	self.trigger_field.owner = self;
+	setsize(self.trigger_field, '-8 -8 -8', '8 8 8');
+
+	/*
+	dprint3("box origin", vtos(self.trigger_field.origin), "\n");
+	dprint3("trace origin", vtos(inflictor.origin), "\n");
+	dprint3("trace dest", vtos(inflictor.origin + dir*64), "\n");
+	dprint3("trace_ent class: ", trace_ent.classname, "\n");
+	dprint3("trace distance: ", ftos(trace_fraction * 64), "\n");
+	*/
+
+	if (trace_ent.classname != "kamikaze_explosive" || trace_ent.owner != self){
+		//dprint("didn't hit box\n");
+		return damage;
+	}
+	
+	T_Damage(trace_ent, inflictor, attacker, damage, dmgtype);
+
+	ImpactSpawn(inflictor.origin, inflictor.velocity, damage, trace_ent.bloodtype);
+
+	if (self.health <= 0)
+		//dprint("died from blast\n");
+		return 0;
+	else {
+		//dprint("hit\n");
+		return damage * 0.2;
+	}
+
+}
+
+
+//=================================================================================================
+
 void() kamikaze_explosivethink = {
 	makevectors([-self.owner.angles_x, self.owner.angles_y, self.owner.angles_z]);
 	setorigin(self, self.owner.origin + v_forward*self.owner.pos1_x - v_right*self.owner.pos1_y + v_up*self.owner.pos1_z);
@@ -284,7 +326,7 @@ void() kamikaze_explosiveboom = {
 	}
 
 	T_RadiusDamage(self, self.enemy, 60, 2, self.owner, DMGTYPE_EXPLOSION);
-	dprint("Kaboom\n");
+	//dprint("Kaboom\n");
 
 	
 	BecomeExplosion();
@@ -347,7 +389,7 @@ void(entity e) monster_kamikaze_start =
 	self.th_stand = kami_stand1;
 	self.th_walk = kami_walk1;
 	self.th_run = kami_run1;
-	//self.th_damage = kami_damage;
+	self.th_damage = kami_damage;
 	//self.th_missile = kami_atk1;
 	self.th_pain = kami_pain;
 	self.th_die = kami_die;
