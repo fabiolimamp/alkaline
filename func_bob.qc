@@ -177,21 +177,10 @@ void() func_bob_orig =
 }
 Same as func_bob but uses a custom model instead of a brush. Use the mdl key to set the path of the model.
 */
-void() misc_bob =
-{
-	if (!SUB_InitEntity()) return;
-	
-	if (self.mdl == "")
-		self.mdl = string_null;
-	precache_model(self.mdl);
-
-	func_bob();
-};
-
-
-
+void() misc_bob = {func_bob();};
 
 void() func_bob = {
+	if (!SUB_InitEntity()) return;
 
 	if (self.height <= 0)
 		self.height = 8;			// Direction intensity
@@ -425,7 +414,8 @@ void() func_bobbing =
 {
 	if (!SUB_InitEntity()) return;
 	
-	precache_model(self.model);
+	if (self.mdl != "")
+		precache_model(self.mdl);
 	//train_sounds();
 
 	SetMovedir();
@@ -462,7 +452,7 @@ void() func_bobbing_spawn =
 	self.use = func_bobbing_use;
 	self.blocked = func_bobbing_blocked;
 	
-	if (!(self.spawnflags & SFLAG_BOB_NONSOLID))
+	if (!(self.spawnflags & SFLAG_BOB_NONSOLID) && self.mdl == "")
 		self.solid = SOLID_BSP;
 
 	if (!self.solid)
@@ -470,7 +460,13 @@ void() func_bobbing_spawn =
 	else
 		self.movetype = MOVETYPE_PUSH;
 
-	setmodel (self, self.model);
+	if (self.mdl != "")
+		setmodel (self, self.mdl);
+	else
+		setmodel (self, self.model);
+
 	setsize (self, self.mins, self.maxs);
 	setorigin (self, func_bobbing_pos(self.delay));
 }
+
+void() misc_bobbing = {func_bobbing();}
