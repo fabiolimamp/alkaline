@@ -314,6 +314,7 @@ Can be set to be damaged only by explosions, or to ignore monster attacks.
 		2: "Concrete"
 		3: "Glass"
 		4: "Custom"
+		5: "Wood"
 	]
 	spawnflags(flags) =
 	[
