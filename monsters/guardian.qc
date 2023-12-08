@@ -50,24 +50,24 @@ float BOSS2_BALL_VEL = 600;
 // ========================
 // standing
 // ========================
-void() guardian_stand1 = [ $mfstand1, guardian_stand1 ] { ai_stand(); };
+void() guardian_stand1 = [ $mfstand1, guardian_stand1 ] {self.prevorigin = self.origin; ai_stand(); };
 
 // ========================
 // movement
 // ========================
-void() guardian_walk1  = [ $mfwlk01, guardian_walk2  ] {ai_walk(8);};
-void() guardian_walk2  = [ $mfwlk02, guardian_walk3  ] {ai_walk(4);};
-void() guardian_walk3  = [ $mfwlk03, guardian_walk4  ] {ai_walk(6);};
-void() guardian_walk4  = [ $mfwlk04, guardian_walk5  ] {ai_walk(7);};
-void() guardian_walk5  = [ $mfwlk05, guardian_walk6  ] {ai_walk(12);};
-void() guardian_walk6  = [ $mfwlk06, guardian_walk7  ] {ai_walk(9);};
-void() guardian_walk7  = [ $mfwlk07, guardian_walk8  ] {ai_walk(6);};
-void() guardian_walk8  = [ $mfwlk08, guardian_walk9  ] {ai_walk(7);};
-void() guardian_walk9  = [ $mfwlk09, guardian_walk10 ] {ai_walk(4);};
-void() guardian_walk10 = [ $mfwlk10, guardian_walk11 ] {ai_walk(5);};
-void() guardian_walk11 = [ $mfwlk11, guardian_walk12 ] {ai_walk(12);};
-void() guardian_walk12 = [ $mfwlk12, guardian_walk13 ] {ai_walk(11);};
-void() guardian_walk13 = [ $mfwlk13, guardian_walk1  ] {ai_walk(7);};
+void() guardian_walk1  = [ $mfwlk01, guardian_walk2  ] {self.prevorigin = self.origin; ai_walk(8);};
+void() guardian_walk2  = [ $mfwlk02, guardian_walk3  ] {self.prevorigin = self.origin; ai_walk(4);};
+void() guardian_walk3  = [ $mfwlk03, guardian_walk4  ] {self.prevorigin = self.origin; ai_walk(6);};
+void() guardian_walk4  = [ $mfwlk04, guardian_walk5  ] {self.prevorigin = self.origin; ai_walk(7);};
+void() guardian_walk5  = [ $mfwlk05, guardian_walk6  ] {self.prevorigin = self.origin; ai_walk(12);};
+void() guardian_walk6  = [ $mfwlk06, guardian_walk7  ] {self.prevorigin = self.origin; ai_walk(9);};
+void() guardian_walk7  = [ $mfwlk07, guardian_walk8  ] {self.prevorigin = self.origin; ai_walk(6);};
+void() guardian_walk8  = [ $mfwlk08, guardian_walk9  ] {self.prevorigin = self.origin; ai_walk(7);};
+void() guardian_walk9  = [ $mfwlk09, guardian_walk10 ] {self.prevorigin = self.origin; ai_walk(4);};
+void() guardian_walk10 = [ $mfwlk10, guardian_walk11 ] {self.prevorigin = self.origin; ai_walk(5);};
+void() guardian_walk11 = [ $mfwlk11, guardian_walk12 ] {self.prevorigin = self.origin; ai_walk(12);};
+void() guardian_walk12 = [ $mfwlk12, guardian_walk13 ] {self.prevorigin = self.origin; ai_walk(11);};
+void() guardian_walk13 = [ $mfwlk13, guardian_walk1  ] {self.prevorigin = self.origin; ai_walk(7);};
  /*
 void() guardian_run1 = [ $mfrun01, guardian_run2 ] { ai_run(7);};
 void() guardian_run2 = [ $mfrun02, guardian_run3 ] { ai_run(18);};
@@ -82,17 +82,17 @@ void() guardian_run10 =[ $mfrun10, guardian_run11 ] {ai_run(18);};
 void() guardian_run11 =[ $mfrun11, guardian_run1 ] { ai_run(12);};
 */
 
-void() guardian_run1 = [ $mfrun01, guardian_run2 ] { ai_run(14);}; //32
-void() guardian_run2 = [ $mfrun02, guardian_run3 ] { ai_run(10);}; //33
-void() guardian_run3 = [ $mfrun03, guardian_run4 ] { ai_run(26);}; //34
-void() guardian_run4 = [ $mfrun04, guardian_run5 ] { ai_run(22);}; //35
-void() guardian_run5 = [ $mfrun05, guardian_run6 ] { ai_run(26);}; //36
-void() guardian_run6 = [ $mfrun06, guardian_run7 ] { ai_run(8);}; //37
-void() guardian_run7 = [ $mfrun07, guardian_run8 ] { ai_run(4);}; //38
-void() guardian_run8 = [ $mfrun08, guardian_run9 ] { ai_run(10);}; //39
-void() guardian_run9 = [ $mfrun09, guardian_run10 ] {ai_run(14);}; //40
-void() guardian_run10 =[ $mfrun10, guardian_run11 ] {ai_run(22);}; //41
-void() guardian_run11 =[ $mfrun11, guardian_run1 ] { ai_run(24);}; //42
+void() guardian_run1 = [ $mfrun01, guardian_run2 ] { self.prevorigin = self.origin; ai_runjump(14);}; //32
+void() guardian_run2 = [ $mfrun02, guardian_run3 ] { self.prevorigin = self.origin; ai_runjump(10);}; //33
+void() guardian_run3 = [ $mfrun03, guardian_run4 ] { self.prevorigin = self.origin; ai_runjump(26);}; //34
+void() guardian_run4 = [ $mfrun04, guardian_run5 ] { self.prevorigin = self.origin; ai_runjump(22);}; //35
+void() guardian_run5 = [ $mfrun05, guardian_run6 ] { self.prevorigin = self.origin; ai_runjump(26);}; //36
+void() guardian_run6 = [ $mfrun06, guardian_run7 ] { self.prevorigin = self.origin; ai_runjump(8);}; //37
+void() guardian_run7 = [ $mfrun07, guardian_run8 ] { self.prevorigin = self.origin; ai_runjump(4);}; //38
+void() guardian_run8 = [ $mfrun08, guardian_run9 ] { self.prevorigin = self.origin; ai_runjump(10);}; //39
+void() guardian_run9 = [ $mfrun09, guardian_run10 ] {self.prevorigin = self.origin; ai_runjump(14);}; //40
+void() guardian_run10 =[ $mfrun10, guardian_run11 ] {self.prevorigin = self.origin; ai_runjump(22);}; //41
+void() guardian_run11 =[ $mfrun11, guardian_run1 ] { self.prevorigin = self.origin; ai_runjump(24);}; //42
 // ========================
 // new attack code
 // ========================
@@ -146,7 +146,7 @@ void() guardian_stab2 =
 // hand to hand attack
 // ========================
 
-void() guardian_attack01 = [ $mfatb01, guardian_attack02 ] {ai_face();};
+void() guardian_attack01 = [ $mfatb01, guardian_attack02 ] {self.prevorigin = self.origin; ai_face();};
 void() guardian_attack02 = [ $mfatb02, guardian_attack03 ] {ai_face();};
 void() guardian_attack03 = [ $mfatb03, guardian_attack04 ] {ai_face();};
 void() guardian_attack04 = [ $mfatb04, guardian_attack05 ] {ai_face();};
@@ -159,7 +159,7 @@ void() guardian_attack10 = [ $mfatb10, guardian_attack11 ] {ai_face();};
 void() guardian_attack11 = [ $mfatb11, guardian_attack12 ] {ai_face();};
 void() guardian_attack12 = [ $mfatb01, guardian_run1     ] {ai_face();};
 
-void() guardian_bigattack01 = [ $mfatc01, guardian_bigattack02 ] { ai_face(); };
+void() guardian_bigattack01 = [ $mfatc01, guardian_bigattack02 ] { self.prevorigin = self.origin; ai_face(); };
 void() guardian_bigattack02 = [ $mfatc02, guardian_bigattack03 ] { ai_face(); };
 void() guardian_bigattack03 = [ $mfatc03, guardian_bigattack04 ] { ai_face(); };
 void() guardian_bigattack04 = [ $mfatc04, guardian_bigattack05 ] { ai_face(); };
@@ -202,7 +202,7 @@ void() guardian_smack =
 	self.enemy.flags =  not(self.enemy.flags, FL_ONGROUND);
 };
 
-void() guardian_knockback01 = [ $mfknck01, guardian_knockback02 ] { ai_face(); };
+void() guardian_knockback01 = [ $mfknck01, guardian_knockback02 ] { self.prevorigin = self.origin; ai_face(); };
 void() guardian_knockback02 = [ $mfknck02, guardian_knockback03 ] { ai_face(); };
 void() guardian_knockback03 = [ $mfknck03, guardian_knockback04 ] { ai_face(); };
 void() guardian_knockback04 = [ $mfknck04, guardian_knockback05 ] { guardian_smack();};
@@ -217,9 +217,9 @@ void() guardian_knockback12 = [ $mfknck12, guardian_run1        ] { ai_face(); }
 
 void() guardian_attack =
 {
-	local float 	attackChoice;
-	
-	attackChoice = random();
+	self.prevorigin = self.origin;
+
+	float attackChoice = random();
 	
 	if (attackChoice < 0.50)
 		guardian_bigattack01();
@@ -261,6 +261,69 @@ void(vector org, vector dir) guardian_missile =
 	missile.lifetime_finished = time + 30;	 // blow up after a while
 }
 
+//=====================================================================================================================
+
+float() guardian_checkattack = {
+	
+	if (self.goalentity.classname == "path_angry")
+		return FALSE;
+
+	entity targ;
+	float chance;
+
+
+	targ = SUB_entEnemyTarget();
+
+	if (!canshoot(targ)) {
+		return FALSE;
+	}
+
+	if (enemy_range == RANGE_MELEE) {
+		self.th_melee ();
+		return TRUE;
+	}
+	
+		
+	if (time < self.attack_finished)
+		return FALSE;
+		
+	if (enemy_range == RANGE_FAR)
+		return FALSE;
+		
+	if (enemy_range == RANGE_MELEE)
+	{
+		chance = 0.9;
+		self.attack_finished = 0;
+	}
+	else if (enemy_range == RANGE_NEAR)
+	{
+		if (self.th_melee)
+			chance = 0.2;
+		else
+			chance = 0.4;
+	}
+	else if (enemy_range == RANGE_MID)
+	{
+		if (self.th_melee)
+			chance = 0.05;
+		else
+			chance = 0.1;
+	}
+	else
+		chance = 0;
+
+	if (random () < chance)
+	{
+		self.th_missile ();
+		SUB_AttackFinished (2*random());
+		return TRUE;
+	}
+
+	return FALSE;
+};
+
+
+
 // ========================
 // ranged attack
 // ========================
@@ -276,7 +339,10 @@ void() guardian_fire =
 	org = self.origin + v_forward * 69 + v_right * 20 + '0 0 39';
 	dir = normalize ( self.enemy.origin - org);
 	
-	guardian_missile(org,dir);
+	if (random() > 0.5) {
+		guardian_missile(org,dir);
+		return;
+	}
 	
 	if ( vlen (self.enemy.origin - self.origin) > 400 )
 	{
@@ -308,7 +374,9 @@ void() guardian_path_touch = {
 
 void() guardian_prepare_charge = {
 	self.pain_finished = time + 2;
-	self.takedamage = DAMAGE_NO;
+	
+	self.state = 1;
+	self.bloodtype = SPAWN_YELLOWSPARK;
 	
 	entity pth = find(world, targetname, self.path);
 
@@ -326,7 +394,7 @@ void() guardian_prepare_charge = {
 	self.think = self.th_run;
 	self.nextthink = time + 0.1;
 	
-	
+	force_retouch = 2;
 }
 
 float() guardian_check_charge = {
@@ -373,11 +441,18 @@ void() guardian_lightning_emitter =
 
 void() guardian_charge =
 {
+	self.state = 2;
 	guardian_lightning_emitter();
 	guardian_fire_targets();
+
 	
-	self.think = guardian_charging_off01;
-	self.nextthink = time + 3;
+	//self.think = guardian_charging_off01;
+	//self.nextthink = time + 3;
+}
+
+void() guardian_use = {
+	dprint3("State: ", ftos(self.state), "\n");
+	if (self.state >= 2) guardian_charging_off01();
 }
 
 void() guardian_fire_targets = 
@@ -409,7 +484,7 @@ void() guardian_fire_targets =
 
 }
 
-void() guardian_fire1 = [ $mfata01, guardian_fire2 ] {ai_face();};
+void() guardian_fire1 = [ $mfata01, guardian_fire2 ] {self.prevorigin = self.origin; ai_face();};
 void() guardian_fire2 = [ $mfata02, guardian_fire3 ] {ai_face();};
 void() guardian_fire3 = [ $mfata03, guardian_fire4 ] {ai_face();};
 void() guardian_fire4 = [ $mfata04, guardian_fire5 ] {guardian_fire();};
@@ -419,7 +494,7 @@ void() guardian_fire7 = [ $mfata07, guardian_fire8 ] {ai_face();};
 void() guardian_fire8 = [ $mfata08, guardian_fire9] {ai_face();};
 void() guardian_fire9 = [ $mfata09, guardian_run1 ] {ai_face();};
 
-void() guardian_charging_on01 = [ $mfchrg01, guardian_charging_on02 ] {};
+void() guardian_charging_on01 = [ $mfchrg01, guardian_charging_on02 ] {self.state = 1; self.prevorigin = self.origin; };
 void() guardian_charging_on02 = [ $mfchrg02, guardian_charging_on03 ] {};
 void() guardian_charging_on03 = [ $mfchrg03, guardian_charging_on04 ] {};
 void() guardian_charging_on04 = [ $mfchrg04, guardian_charging_on05 ] {};
@@ -429,7 +504,7 @@ void() guardian_charging_on07 = [ $mfchrg07, guardian_charging_on08 ] {};
 void() guardian_charging_on08 = [ $mfchrg08, guardian_charging_on09 ] {};
 void() guardian_charging_on09 = [ $mfchrg09, guardian_charging_on09 ] {guardian_charge();};
 
-void() guardian_charging_off01 = [ $mfchrg09, guardian_charging_off02 ] {};
+void() guardian_charging_off01 = [ $mfchrg09, guardian_charging_off02 ] {self.prevorigin = self.origin;};
 void() guardian_charging_off02 = [ $mfchrg08, guardian_charging_off03 ] {};
 void() guardian_charging_off03 = [ $mfchrg07, guardian_charging_off04 ] {};
 void() guardian_charging_off04 = [ $mfchrg06, guardian_charging_off05 ] {};
@@ -437,12 +512,15 @@ void() guardian_charging_off05 = [ $mfchrg05, guardian_charging_off06 ] {};
 void() guardian_charging_off06 = [ $mfchrg04, guardian_charging_off07 ] {};
 void() guardian_charging_off07 = [ $mfchrg03, guardian_charging_off08 ] {};
 void() guardian_charging_off08 = [ $mfchrg02, guardian_charging_off09 ] {};
-void() guardian_charging_off09 = [ $mfchrg01, guardian_run1 ] {self.takedamage = DAMAGE_AIM;};
+void() guardian_charging_off09 = [ $mfchrg01, guardian_run1 ] {
+	self.state = 0;
+	self.bloodtype = SPAWN_BLOOD;
+};
 
 // ========================
 // pain
 // ========================
-void() guardian_painA1 = [ $mfpain01, guardian_painA2 ] {};
+void() guardian_painA1 = [ $mfpain01, guardian_painA2 ] {self.prevorigin = self.origin;};
 void() guardian_painA2 = [ $mfpain02, guardian_painA3 ] {};
 void() guardian_painA3 = [ $mfpain03, guardian_painA4 ] {};
 void() guardian_painA4 = [ $mfpain04, guardian_painA5 ] {};
@@ -453,7 +531,7 @@ void() guardian_painA8 = [ $mfpain08, guardian_painA9 ] {};
 void() guardian_painA9 = [ $mfpain09, guardian_painA10 ] {};
 void() guardian_painA10 = [ $mfpain10, guardian_run1 ] {guardian_check_charge();};
 
-void() guardian_painB1 = [ $mfpbin01, guardian_painB2 ] {};
+void() guardian_painB1 = [ $mfpbin01, guardian_painB2 ] {self.prevorigin = self.origin;};
 void() guardian_painB2 = [ $mfpbin02, guardian_painB3 ] {};
 void() guardian_painB3 = [ $mfpbin03, guardian_painB4 ] {};
 void() guardian_painB4 = [ $mfpbin04, guardian_painB5 ] {};
@@ -484,10 +562,45 @@ void(entity attacker, float damage) guardian_pain =
 	self.nextthink = time + 0.1;
 };
 
+
+float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) guardian_damage = {
+	if (self.state > 0) {
+		self.sibling.alpha = 0.4;
+		
+		return 0;
+	}
+	else return damage;
+}
+
+void() guardian_shield_think = {
+	self.angles = self.owner.angles;
+	self.frame = self.owner.frame;
+	vector org;
+	
+	if (self.owner.flags & FL_ONGROUND) {
+		org = self.owner.origin - ((self.owner.origin - self.owner.prevorigin) * (self.owner.nextthink - time)*10);
+	}
+	else
+		org = self.owner.origin;
+	
+	
+	setorigin(self, org);
+
+
+	self.nextthink = time + 0.001;
+	
+	if (self.alpha > 0) {
+		self.alpha -= 0.5*frametime;
+	}
+	if (self.alpha <= 0) self.alpha = -1;
+	
+}
+
+
 // ========================
 // die
 // ========================
-void() guardian_die1 = [ $mfdth01, guardian_die2 ] {};
+void() guardian_die1 = [ $mfdth01, guardian_die2 ] {self.prevorigin = self.origin;};
 void() guardian_die2 = [ $mfdth02, guardian_die3 ] {};
 void() guardian_die3 = [ $mfdth03, guardian_die4 ] {};
 void() guardian_die4 = [ $mfdth04, guardian_die5 ] {};
@@ -526,9 +639,10 @@ void() guardian_die =
 // ========================
 void() guardian_wake1 = [ $start01, guardian_wake2 ] 
 {
+	self.takedamage = DAMAGE_NO;
 	sound ( self, CHAN_VOICE, "guard/see1.wav", 1, ATTN_NORM );
 };
-void() guardian_wake2 = [ $start02, guardian_wake3 ] {};
+void() guardian_wake2 = [ $start02, guardian_wake3 ] {self.prevorigin = self.origin;};
 void() guardian_wake3 = [ $start03, guardian_wake4 ] {};
 void() guardian_wake4 = [ $start04, guardian_wake5 ] {};
 void() guardian_wake5 = [ $start05, guardian_wake6 ] {};
@@ -561,6 +675,8 @@ void() guardian_wake31 = [ $start31, guardian_stand1 ]
 {
 	self.solid = SOLID_SLIDEBOX;
 	self.takedamage = DAMAGE_AIM;
+	self.state = 0;
+	self.bloodtype = SPAWN_BLOOD;
 	
 	self.th_stand = guardian_stand1;
 	self.th_walk = guardian_walk1;
@@ -568,14 +684,15 @@ void() guardian_wake31 = [ $start31, guardian_stand1 ]
 	
 	///	Hack to stop copper from killing Guardian on touch, 
 	///	when spawning...
-	self.mins = self.mins + '4 4 0';
-	self.maxs = self.maxs - '4 4 0';
+	//self.mins = self.mins + '4 4 0';
+	//self.maxs = self.maxs - '4 4 0';
 	
-	walkmonster_start();
+	self.use = guardian_use;
 	
 	setsize (self, self.cmins, self.cmaxs);
 };
 
+/*
 void() guardian_try_to_wake =
 {
 	self.solid = SOLID_SLIDEBOX;
@@ -591,6 +708,7 @@ void() guardian_try_to_wake =
 		guardian_wake1();
 	}
 }
+*/
 
 void(entity e) monster_guardian_start =
 {
@@ -616,11 +734,13 @@ void(entity e) monster_guardian_start =
 	self.th_melee = guardian_attack;
 	self.th_pain = guardian_pain;
 	self.th_die = guardian_die;
-	self.th_checkattack = CheckAttack;
+	self.th_checkattack = guardian_checkattack;
+	self.th_damage = guardian_damage;
 	
 	if (self.obituary == "") self.obituary = "was mummified by Nephren-Ka";
 	
 	self.takedamage = DAMAGE_NO;
+
 	self.flags = self.flags | FL_MONSTER;
 	self.ideal_yaw = self.angles * '0 1 0';
 	if (!self.yaw_speed)
@@ -632,8 +752,18 @@ void(entity e) monster_guardian_start =
 
 	self.skin = 3;
 	self.lip = 0;
+	self.prevorigin = self.origin;
+
+	self.sibling = spawn();
+	self.sibling.owner = self;
+	setorigin(self.sibling, self.origin);
+	setmodel(self.sibling, "progs/nephrenka_shield.mdl");
+	self.sibling.think = guardian_shield_think;
+	self.sibling.nextthink = time + 0.01;
+	self.sibling.alpha = -1;
 	
-	guardian_try_to_wake();
+	walkmonster_start();
+	//guardian_try_to_wake();
 
 	self = oself;
 };
@@ -659,6 +789,7 @@ void() monster_guardian =
 		return;
 	}
 	precache_model ("progs/nephrenka.mdl");
+	precache_model ("progs/nephrenka_shield.mdl");
 	precache_model ("progs/v_nephrenka.mdl");
 	
 	precache_model2 ("progs/v_spike.mdl");

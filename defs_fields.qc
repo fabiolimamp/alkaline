@@ -375,6 +375,7 @@ FIELDS
 .entity 	movetarget;
 .entity		sibling;
 .string 	obituary;
+.vector prevorigin;
 
 .float spawncount; // spawner's maximum monsters alive at the same time allowed
 .float totalspawncount; // total spawn count limit
