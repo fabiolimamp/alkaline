@@ -340,10 +340,19 @@ float(float launch_h, float launch_v, float yaw) movejump_test = {
 		return FALSE;
 	}
 
-	if (trace_endpos_z < (self.enemy.origin_z + self.enemy.mins_z) - 16){
-		dprint("below target\n");
-		return FALSE;
+	if (self.goalentity.classname == "path_angry" || self.goalentity.classname == "path_corner") {
+		if (trace_endpos_z < self.goalentity.origin_z - 32){
+			dprint("below target\n");
+			return FALSE;
+		}
 	}
+	else {
+		if (trace_endpos_z < (self.goalentity.origin_z + self.goalentity.mins_z) - 16){
+			dprint("below target\n");
+			return FALSE;
+		}
+	}
+	
 	
 	if (fabs(trace_endpos_z - self.origin_z) > 384){
 		dprint("jump too high\n");
@@ -387,11 +396,11 @@ void(float dist) movetogoaljump {
 	float prevyaw = self.angles_y;
 	float trystep = StepDirection(self.ideal_yaw, dist);
 
-	if (!trystep && self.enemy.origin_z <= self.origin_z) {
+	if (!trystep && self.goalentity.origin_z <= self.origin_z) {
 		float launch_h, launch_v;
 
 		
-		if (fabs(self.enemy.origin_z - self.origin_z) <= 16)
+		if (fabs(self.goalentity.origin_z - self.origin_z) <= 16)
 			launch_v = 300;
 		else
 			launch_v = 200;
