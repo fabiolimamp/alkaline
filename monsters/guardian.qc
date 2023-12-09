@@ -362,6 +362,9 @@ void() guardian_fire =
 // ============================
 
 void() guardian_path_touch = {
+	if (other.classname != "monster_guardian")
+		return;
+	
 	self.touch = SUB_Null;
 
 	other.goalentity = other.enemy;
@@ -411,22 +414,27 @@ float() guardian_check_charge = {
 
 void() guardian_emit_lightning =
 {
-	if (self.lip < 10)
-	{
-		//LightningBeam (self.origin, self.origin + '0 0 2000', self, 0);
-		fx_beam(self.origin + '0 0 32', self.origin + '0 0 2000', self);
-		self.think = guardian_emit_lightning;
-		self.lip++;
-	}
-	else
-	{
+	if (self.owner.state < 2) {
 		remove(self);
+		return;
 	}
+	
+	//LightningBeam (self.origin, self.origin + '0 0 2000', self, 0);
+	fx_beam(self.origin + '0 0 32', self.origin + '0 0 2000', self);
+	
+	if (time > self.attack_finished) {
+		self.attack_finished = time + 0.5;
+		sound (self, CHAN_AUTO, "weapons/lhit.wav", 0.3, ATTN_IDLE);
+	}
+	self.think = guardian_emit_lightning;
 	self.nextthink = time + 0.2;
 }
 
-void() guardian_lightning_emitter =
+void() guardian_charge =
 {
+	self.state = 2;
+
+
 	entity lightning_ent;
 	lightning_ent = spawn();
 	lightning_ent.owner = self;
@@ -437,26 +445,9 @@ void() guardian_lightning_emitter =
 	
 	lightning_ent.think = guardian_emit_lightning;
 	lightning_ent.nextthink = time + 0.2;
-}
 
-void() guardian_charge =
-{
-	self.state = 2;
-	guardian_lightning_emitter();
-	guardian_fire_targets();
-
+	sound (lightning_ent, CHAN_AUTO, "weapons/lstart.wav", 1, ATTN_NORM);
 	
-	//self.think = guardian_charging_off01;
-	//self.nextthink = time + 3;
-}
-
-void() guardian_use = {
-	dprint3("State: ", ftos(self.state), "\n");
-	if (self.state >= 2) guardian_charging_off01();
-}
-
-void() guardian_fire_targets = 
-{
 	if (self.count == 1)
 	{
 		if (self.target2 && self.target2 != "") {
@@ -482,7 +473,22 @@ void() guardian_fire_targets =
 		}
 	}
 
+	
+	self.nextthink = 999999999;
 }
+
+void() guardian_charging_replaysound = {
+	sound (self, CHAN_AUTO, "weapons/lhit.wav", 0.3, ATTN_IDLE);
+	self.think = guardian_charging_replaysound;
+	self.nextthink = time + 0.5;
+}
+
+
+void() guardian_use = {
+	dprint3("State: ", ftos(self.state), "\n");
+	if (self.state >= 2) guardian_charging_off01(); // this call automatically breaks the lightning sound loop
+}
+
 
 void() guardian_fire1 = [ $mfata01, guardian_fire2 ] {self.prevorigin = self.origin; ai_face();};
 void() guardian_fire2 = [ $mfata02, guardian_fire3 ] {ai_face();};
@@ -494,7 +500,7 @@ void() guardian_fire7 = [ $mfata07, guardian_fire8 ] {ai_face();};
 void() guardian_fire8 = [ $mfata08, guardian_fire9] {ai_face();};
 void() guardian_fire9 = [ $mfata09, guardian_run1 ] {ai_face();};
 
-void() guardian_charging_on01 = [ $mfchrg01, guardian_charging_on02 ] {self.state = 1; self.prevorigin = self.origin; };
+void() guardian_charging_on01 = [ $mfchrg01, guardian_charging_on02 ] {self.prevorigin = self.origin; };
 void() guardian_charging_on02 = [ $mfchrg02, guardian_charging_on03 ] {};
 void() guardian_charging_on03 = [ $mfchrg03, guardian_charging_on04 ] {};
 void() guardian_charging_on04 = [ $mfchrg04, guardian_charging_on05 ] {};
@@ -504,7 +510,7 @@ void() guardian_charging_on07 = [ $mfchrg07, guardian_charging_on08 ] {};
 void() guardian_charging_on08 = [ $mfchrg08, guardian_charging_on09 ] {};
 void() guardian_charging_on09 = [ $mfchrg09, guardian_charging_on09 ] {guardian_charge();};
 
-void() guardian_charging_off01 = [ $mfchrg09, guardian_charging_off02 ] {self.prevorigin = self.origin;};
+void() guardian_charging_off01 = [ $mfchrg09, guardian_charging_off02 ] {self.state = 1; self.prevorigin = self.origin;};
 void() guardian_charging_off02 = [ $mfchrg08, guardian_charging_off03 ] {};
 void() guardian_charging_off03 = [ $mfchrg07, guardian_charging_off04 ] {};
 void() guardian_charging_off04 = [ $mfchrg06, guardian_charging_off05 ] {};
@@ -529,7 +535,7 @@ void() guardian_painA6 = [ $mfpain06, guardian_painA7 ] {};
 void() guardian_painA7 = [ $mfpain07, guardian_painA8 ] {};
 void() guardian_painA8 = [ $mfpain08, guardian_painA9 ] {};
 void() guardian_painA9 = [ $mfpain09, guardian_painA10 ] {};
-void() guardian_painA10 = [ $mfpain10, guardian_run1 ] {guardian_check_charge();};
+void() guardian_painA10 = [ $mfpain10, guardian_run1 ] {};
 
 void() guardian_painB1 = [ $mfpbin01, guardian_painB2 ] {self.prevorigin = self.origin;};
 void() guardian_painB2 = [ $mfpbin02, guardian_painB3 ] {};
@@ -537,15 +543,16 @@ void() guardian_painB3 = [ $mfpbin03, guardian_painB4 ] {};
 void() guardian_painB4 = [ $mfpbin04, guardian_painB5 ] {};
 void() guardian_painB5 = [ $mfpbin05, guardian_painB6 ] {};
 void() guardian_painB6 = [ $mfpbin06, guardian_painB7 ] {};
-void() guardian_painB7 = [ $mfpbin07, guardian_run1 ] {guardian_check_charge();};
+void() guardian_painB7 = [ $mfpbin07, guardian_run1 ] {};
 
 void(entity attacker, float damage) guardian_pain =
 {
+	if (guardian_check_charge())
+		return;
+
 	if (self.pain_finished > time)
 		return;
 	
-	if(guardian_check_charge())
-		return;
 	
 	if (random() > 0.10)
 		return;
