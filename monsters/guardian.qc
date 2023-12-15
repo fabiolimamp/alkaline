@@ -82,7 +82,12 @@ void() guardian_run10 =[ $mfrun10, guardian_run11 ] {ai_run(18);};
 void() guardian_run11 =[ $mfrun11, guardian_run1 ] { ai_run(12);};
 */
 
-void() guardian_run1 = [ $mfrun01, guardian_run2 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(14);}; //32
+void() guardian_run1 = [ $mfrun01, guardian_run2 ] {nxth(0.08); self.prevorigin = self.origin; ai_runjump(14); //32
+	if (random() < 0.2 && self.idletimer < time) {
+		sound ( self, CHAN_VOICE, "guard/see1.wav", 1, ATTN_NORM );
+		self.idletimer = time + 3;
+	}
+};
 void() guardian_run2 = [ $mfrun02, guardian_run3 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(10);}; //33
 void() guardian_run3 = [ $mfrun03, guardian_run4 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(26);}; //34
 void() guardian_run4 = [ $mfrun04, guardian_run5 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(22);}; //35
@@ -124,6 +129,8 @@ void() guardian_stab2 =
 	else
 	{
 		self.effects = self.effects | EF_MUZZLEFLASH;
+		sound (self, CHAN_AUTO, "enforcer/enfire.wav", 1, ATTN_NORM);
+
 		org = self.origin + v_forward * 107 + v_right * 0 + '0 0 30';
 		LaunchLaser(org, dir * 600);
 		if ( dist )
@@ -343,6 +350,8 @@ void() guardian_fire =
 		guardian_missile(org,dir);
 		return;
 	}
+	
+	sound (self, CHAN_AUTO, "enforcer/enfire.wav", 1, ATTN_NORM);
 	
 	if ( vlen (self.enemy.origin - self.origin) > 400 )
 	{
@@ -595,11 +604,19 @@ void() guardian_shield_think = {
 
 
 	self.nextthink = time + 0.001;
-	
-	if (self.alpha > 0) {
-		self.alpha -= 0.5*frametime;
+
+	if (!self.owner.state) {
+		if (self.alpha > 0) {
+			self.alpha -= 0.5*frametime;
+		}
+		if (self.alpha <= 0) self.alpha = -1;
 	}
-	if (self.alpha <= 0) self.alpha = -1;
+	else {
+		if (self.alpha > 0.2) {
+			self.alpha -= 0.5*frametime;
+		}
+		if (self.alpha < 0.2) self.alpha = 0.2;
+	}
 	
 }
 
@@ -647,7 +664,7 @@ void() guardian_die =
 void() guardian_wake1 = [ $start01, guardian_wake2 ] 
 {
 	self.takedamage = DAMAGE_NO;
-	sound ( self, CHAN_VOICE, "guard/see1.wav", 1, ATTN_NORM );
+
 };
 void() guardian_wake2 = [ $start02, guardian_wake3 ] {self.prevorigin = self.origin;};
 void() guardian_wake3 = [ $start03, guardian_wake4 ] {};
@@ -664,7 +681,8 @@ void() guardian_wake13 = [ $start13, guardian_wake14 ] {};
 void() guardian_wake14 = [ $start14, guardian_wake15 ] {};
 void() guardian_wake15 = [ $start15, guardian_wake16 ] {};
 void() guardian_wake16 = [ $start16, guardian_wake17 ] {};
-void() guardian_wake17 = [ $start17, guardian_wake18 ] {self.skin = 1;};
+void() guardian_wake17 = [ $start17, guardian_wake18 ] {self.skin = 1;
+	sound ( self, CHAN_VOICE, "guard/see1.wav", 1, ATTN_NORM );};
 void() guardian_wake18 = [ $start18, guardian_wake19 ] {};
 void() guardian_wake19 = [ $start19, guardian_wake20 ] {};
 void() guardian_wake20 = [ $start20, guardian_wake21 ] {};
