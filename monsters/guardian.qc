@@ -82,17 +82,17 @@ void() guardian_run10 =[ $mfrun10, guardian_run11 ] {ai_run(18);};
 void() guardian_run11 =[ $mfrun11, guardian_run1 ] { ai_run(12);};
 */
 
-void() guardian_run1 = [ $mfrun01, guardian_run2 ] { self.prevorigin = self.origin; ai_runjump(14);}; //32
-void() guardian_run2 = [ $mfrun02, guardian_run3 ] { self.prevorigin = self.origin; ai_runjump(10);}; //33
-void() guardian_run3 = [ $mfrun03, guardian_run4 ] { self.prevorigin = self.origin; ai_runjump(26);}; //34
-void() guardian_run4 = [ $mfrun04, guardian_run5 ] { self.prevorigin = self.origin; ai_runjump(22);}; //35
-void() guardian_run5 = [ $mfrun05, guardian_run6 ] { self.prevorigin = self.origin; ai_runjump(26);}; //36
-void() guardian_run6 = [ $mfrun06, guardian_run7 ] { self.prevorigin = self.origin; ai_runjump(8);}; //37
-void() guardian_run7 = [ $mfrun07, guardian_run8 ] { self.prevorigin = self.origin; ai_runjump(4);}; //38
-void() guardian_run8 = [ $mfrun08, guardian_run9 ] { self.prevorigin = self.origin; ai_runjump(10);}; //39
-void() guardian_run9 = [ $mfrun09, guardian_run10 ] {self.prevorigin = self.origin; ai_runjump(14);}; //40
-void() guardian_run10 =[ $mfrun10, guardian_run11 ] {self.prevorigin = self.origin; ai_runjump(22);}; //41
-void() guardian_run11 =[ $mfrun11, guardian_run1 ] { self.prevorigin = self.origin; ai_runjump(24);}; //42
+void() guardian_run1 = [ $mfrun01, guardian_run2 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(14);}; //32
+void() guardian_run2 = [ $mfrun02, guardian_run3 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(10);}; //33
+void() guardian_run3 = [ $mfrun03, guardian_run4 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(26);}; //34
+void() guardian_run4 = [ $mfrun04, guardian_run5 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(22);}; //35
+void() guardian_run5 = [ $mfrun05, guardian_run6 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(26);}; //36
+void() guardian_run6 = [ $mfrun06, guardian_run7 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(8);}; //37
+void() guardian_run7 = [ $mfrun07, guardian_run8 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(4);}; //38
+void() guardian_run8 = [ $mfrun08, guardian_run9 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(10);}; //39
+void() guardian_run9 = [ $mfrun09, guardian_run10 ] {nxth(0.08); self.prevorigin = self.origin; ai_runjump(14);}; //40
+void() guardian_run10 =[ $mfrun10, guardian_run11 ] {nxth(0.08); self.prevorigin = self.origin; ai_runjump(22);}; //41
+void() guardian_run11 =[ $mfrun11, guardian_run1 ] { nxth(0.08); self.prevorigin = self.origin; ai_runjump(24);}; //42
 // ========================
 // new attack code
 // ========================
@@ -364,7 +364,7 @@ void() guardian_fire =
 void() guardian_path_touch = {
 	if (other.classname != "monster_guardian")
 		return;
-	
+
 	self.touch = SUB_Null;
 
 	other.goalentity = other.enemy;
