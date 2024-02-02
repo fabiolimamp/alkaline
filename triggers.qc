@@ -474,6 +474,20 @@ void() trigger_setskill =
 };
 
 
+void() target_setskill_use = {
+	if (self.estate != STATE_ACTIVE) return;
+	if (self.mapvar && !read_mapvar(self.mapvar)) return;
+
+	cvar_set("skill", self.message);
+	skill = cvar("skill");
+}
+
+void() target_setskill = {
+	if (!SUB_InitEntity()) return;
+
+	self.use = target_setskill_use;
+}
+
 /*
 ==============================================================================
 

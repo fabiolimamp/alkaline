@@ -2542,10 +2542,8 @@ Using the destination's 'count' field, you can define which order they'll be sel
 	]
 ]
 
-// need updates:
 
-@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_setskill : "Trigger set skill. Can be activated by triggering.
-" 
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_setskill : "Trigger set skill." 
 [
 	message(choices) : "Skill to change to" : 1 =
 	[
@@ -2555,6 +2553,19 @@ Using the destination's 'count' field, you can define which order they'll be sel
         3 : "Nightmare!"
 	]
 ]
+
+
+@PointClass base(Appearflags, Targetname) = target_setskill : "Point entity for setting skill." 
+[
+	message(choices) : "Skill to change to" : 1 =
+	[
+        0 : "Easy"
+        1 : "Medium"
+        2 : "Hard"
+        3 : "Nightmare!"
+	]
+]
+
 @PointClass base(Appearflags, Trigger) = trigger_relay : "Trigger relay
 
 - 'count' sets a maximum usage count. Set it to 1 to guarantee it can only be fired once.
