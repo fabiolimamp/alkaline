@@ -256,7 +256,7 @@ void(entity attacker, float damage)	ogreb_pain =	//ijed Only has a single short 
 	if (self.health < self.max_health * 0.4)	self.skin = 2;
 	else if (self.health < self.max_health * 0.8)	self.skin = 1;
 	
-	resistance = skill * 100;	// 0/100/200/300 pain resitance on E/M/H/NM
+	resistance = startskill * 100;	// 0/100/200/300 pain resitance on E/M/H/NM
 	
 	if (self.touch == OgreB_SmashTouch)
 		return;

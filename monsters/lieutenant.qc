@@ -236,7 +236,7 @@ void(entity e) monster_super_enforcer_start =
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
 	
-	if (skill == 0)
+	if (startskill == 0)
 		self.health = 100;
 	else
 		self.health = 120;

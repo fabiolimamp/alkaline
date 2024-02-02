@@ -110,7 +110,7 @@ void(vector org, vector vec) launch_hunter_blast =
 {
 	local float shotspeed;
 		
-	shotspeed = ((skill * 100) + 600);
+	shotspeed = ((startskill * 100) + 600);
 	
 	vec = normalize(vec);
 	
@@ -698,7 +698,7 @@ void(entity attacker, float damage)	hunter_pain	=
 	
 	//this is to calculate the probability of blowing an arm off
 	HealthModifier = self.health / 600;				//amount of damage taken; divide current by starting health values
-	SkillModifier = skill / 10;						//more difficult to blow bits off on harder skills
+	SkillModifier = startskill / 10;						//more difficult to blow bits off on harder skills
 	TotalModifier = SkillModifier + HealthModifier;	//add them together
 		
 	self.pain_finished = time + 2;

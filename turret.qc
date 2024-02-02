@@ -23,7 +23,7 @@ float() TurretRefireTime =
 
 float() TurretTurnSpeed =
 {
-	return 50 + skill * 20;
+	return 50 + startskill * 20;
 };
 
 float TURRET_MAX_PITCH = 6;

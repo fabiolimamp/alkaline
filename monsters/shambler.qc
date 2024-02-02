@@ -240,7 +240,7 @@ void() sham_magic6     =[      $magic6,       sham_magic9    ]{
 };
 void() sham_magic9     =[      $magic9,       sham_magic10   ]{CastLightning();};
 void() sham_magic10    =[      $magic10,      sham_magic11   ]{CastLightning();};
-void() sham_magic11    =[      $magic11,      sham_magic12   ]{if (skill == 3)	CastLightning();};
+void() sham_magic11    =[      $magic11,      sham_magic12   ]{if (startskill == 3)	CastLightning();};
 void() sham_magic12    =[      $magic12,      sham_run1	   	] {};
 
 

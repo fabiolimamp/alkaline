@@ -174,7 +174,7 @@ void() MissileSpiralPointer_Home =
 	}
 
 	dir = normalize(vtemp - self.origin);
-	if (skill == 3)
+	if (startskill == 3)
 		self.velocity = dir * 350;
 	else
 		self.velocity = dir * 250;
