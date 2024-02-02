@@ -443,7 +443,8 @@ void() trigger_skill_touch =
 	if (other.classname != "player")
 		return;
 		
-	cvar_set ("skill", self.message);
+	cvar_set("skill", self.message);
+	skill = cvar("skill");
 };
 
 //johnfitz -- make it targetable
