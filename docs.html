@@ -13,7 +13,7 @@ body {
 
 <body>
 
-<h1>Alkaline Mapping Guide</h1>
+<h1>Alkaline Mapping Guide - v1.2.2</h1>
 <h2>Contents</h2>
 <nav>
 <ul>
@@ -26,7 +26,7 @@ body {
 			<li><a href="#monster-spawner">Monster spawner</a></li>
 			<li><a href="#path-angry">Angry monsters' waypoints</a></li>
 			<li><a href="#startpath">Follow a path upon an event</a></li>
-			<li><a href="$autojump">Autojump</a></li>
+			<li><a href="#autojump">Autojump</a></li>
 			<li><a href="#monster-other-features">Other features</a></li>
 			<li><a href="#target_infight">Entity target_infight</a></li>
 			<li><a href="#monsters-list">Monsters list</a></li>
@@ -981,13 +981,13 @@ It can be set to start visible through the "Start on" spawnflag.
 
 <h3 id="jump-pads">Jump Pads</h3>
 
-<p><strong>trigger_jumppad</strong> lets you set an info_notnull point entity as destination, and players and monsters will be thrown exactly at it, similar to Quaked 3's pads. The jump arc is calculated automatically in order to avoid any obstacles in the way in the best way possible. So you can set the destination to be on the other side of a high wall for example, and the jump will be in a high arc. You can manually tune the arc height with the <strong>height</strong> key, pushing it a bit higher (positive values) or lower (negative values). If there isn't any possible trajectory between the trigger and the destination, nothing will happen when the trigger gets touched.</p>
+<p><strong>trigger_jumppad</strong> lets you set an info_notnull point entity as destination, and players and monsters will be thrown exactly at it, similar to Quaked 3's pads. The jump arc is calculated automatically in order to avoid any obstacles in the way in the best way possible. So you can set the destination to be on the other side of a high wall for example, and the jump will be in a high arc. You can manually tune the arc height with the <strong>height</strong> key, pushing it a bit higher (positive values) or lower (negative values) while still hitting the same spot. If there isn't any possible trajectory between the trigger and the destination, nothing will happen when the trigger gets touched.</p>
 
-<p>By default, solid brush entities like doors and trains are ignored by the trajectory calculation, so the jumper will bump into them (say, there's a closed door in the middle of the way). If you want brush entities to affect the trajectory too and be avoided the same way as world brushes, you can check the "dodge brush entities" spawnflag.</p>
+<p>By default, solid brush entities like doors and trains are ignored by the trajectory calculation, so the jumper will bump into them if they're in the way (say a closed door for example). If you want brush entities to affect the trajectory too and be avoided the same way as world brushes, you can check the "dodge brush entities" spawnflag.</p>
 
-<p>The jump trajectory is calculated in real time, so it doesn't matter which part of the trigger is touched, the destination will always be the exact same spot. If you activate the "Fixed push direction" flag, no real time calculation will be done, and the direction and height of the jump will be static. This is useful if you have a wide jump pad trigger.</p>
+<p>The jump trajectory is calculated in real time, so it doesn't matter which part of the trigger is touched, the destination will always be the exact same spot. If you activate the "Fixed push direction" flag, no real time calculation will be done, and jump will be based on a fixed direction and height, precalculated on startup according to the offset between the info_notnull destination and the center of the trigger. This is useful if you have a wide jump pad trigger for example, and want its "landing area" to be as wide as the trigger instead of a single spot.</p>
 
-<p>Due to how Quake physics work, jump pads apply a type of "constant push" along the whole jump arc, in order to try to emulate Quake 3's air control and keep players more or less on the intended trajectory, instead of being able to airstrafe easily to a side. You can disable this behavior with the "Don't hold player" spawnflag.</p>
+<p>Due to how Quake physics work, jump pads apply a type of "constant push" to players along the whole jump arc until they bump into something, in order to try to emulate Quake 3's air control and keep them more or less on the intended trajectory, instead of being able to easily circle-strafe mid-air and change direction. You can disable this behavior with the "Don't hold player" spawnflag.</p>
 
 
 <h3 id="explosions">Explosions</h3>
