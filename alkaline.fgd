@@ -1934,8 +1934,11 @@ If switchable shadows are on, they'll fade together as well.
 
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
-@SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
-You can directly set a custom movement vector with the 'movedir' key.
+@SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once. You can directly set a custom movement vector with the 'movedir' key.
+
+Buttons in Alkaline can also require keys just like doors. Just set that via spawnflags if applicable.
+
+When you have more than one func_button with the same 'groupname', only one button in the group can stay pressed at the same time. This is useful in conjunction with target_setskill to create skill-setting buttons.
 " 
 [
 	speed(integer) : "Speed (units per second)" : 40
@@ -1952,6 +1955,7 @@ You can directly set a custom movement vector with the 'movedir' key.
 	wait(float) : "Delay before reset" : "1.0"
 	delay(string) : "Delay before trigger"
 	movedir(string) : "Custom movement vector (X Y Z)"
+	groupname(string) : "Name of the group the button belongs to. Refer to the main description text"
 	message(string) : "Message"
 	spawnflags(flags) =
 	[
