@@ -76,7 +76,7 @@ monsters/boss.qc
 
 monsters/spawn.qc			// registered
 monsters/hknight.qc			// registered
-monsters/fish.qc			// registered
+monsters/fish.qc			// RRP
 monsters/shalrath.qc		// registered
 monsters/enforcer.qc		// registered
 monsters/megaenforcer.qc	// zerstorer
@@ -106,8 +106,10 @@ monsters/bambler.qc			// greenwood
 monsters/tormentor.qc 		// bmFbr
 monsters/spider.qc 			// bmFbr
 monsters/edie.qc			// quoth
-monsters/monster_turret.qc
+monsters/monster_turret.qc  // bmFbr
 monsters/zombie2.qc			// ne_ruins
+
+monsters/spawn2.qc
 
 monsters/kamikaze.qc
 
