@@ -940,6 +940,11 @@ trigger_monsterjump
 
 ==============================================================================
 */
+float SPAWN_MJUMP_NOLARGE = 1;
+float SPAWN_MJUMP_NOSMALL = 2;
+float SPAWN_MJUMP_MELEES = 8;
+float SPAWN_MJUMP_ONLYFRONT = 16;
+float SPAWN_MJUMP_ONLYBELOW = 32;
 
 void() trigger_monsterjump_touch =
 {
@@ -948,8 +953,8 @@ void() trigger_monsterjump_touch =
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
-	if(!self.count)
-		return;
+	//if(!self.count)
+	//	return;
 
 	// only walking monsters 
 	if (other.flags & (FL_MONSTER | FL_FLY | FL_SWIM) != FL_MONSTER)
@@ -958,11 +963,39 @@ void() trigger_monsterjump_touch =
 	if (other.health <= 0)
 		return;
 
+	/*
 	if (self.include && other.classname != self.include)
 		return;
 
 	if (self.exclude && other.classname == self.exclude)
 		return;
+	*/
+	if (self.include == string_null || 
+		(other.classname != self.include && other.targetname != self.include))	// always allow this class/tname
+	{
+		if (self.spawnflags & SPAWN_MJUMP_NOLARGE && other.maxs_x >= 24) return;
+		if (self.spawnflags & SPAWN_MJUMP_NOSMALL && other.maxs_x < 24) return;
+		//if (self.spawnflags & SPAWN_MJUMP_MELEES && !(other.customflags & CFL_MELEEONLY)) return;
+		
+		if (self.exclude != string_null)
+		{
+			if (self.exclude == other.classname || self.exclude == other.targetname) return; // always exclude this class/tname
+		}
+	}
+
+	if (self.spawnflags & SPAWN_MJUMP_ONLYBELOW) {
+		if (!other.enemy) return;
+		if (other.enemy.absmin_z > (other.absmin_z - 16)) return;
+	}
+
+	if (self.spawnflags & SPAWN_MJUMP_ONLYFRONT) {
+		if (!other.enemy) return;
+		vector dir = other.enemy.origin - other.origin;
+		dir_z = 0;
+		dir = normalize(dir);
+		if (dir * self.movedir < self.distance)
+			return;
+	}
 
 	// set XY even if not on ground, so the jump will clear lips
 	other.velocity_x = self.movedir_x * self.speed;
@@ -974,7 +1007,7 @@ void() trigger_monsterjump_touch =
 	other.flags = other.flags - FL_ONGROUND;
 	other.velocity_z = self.height;
 	
-	if(self.count > 0) self.count--;
+	//if (self.count > 0) self.count--;
 };
 
 /*QUAKED trigger_monsterjump (.5 .5 .5) ?
@@ -994,6 +1027,8 @@ void() trigger_monsterjump =
 		self.angles = '0 360 0';
 	if(!self.count)
 		self.count = -1;
+	if (!self.distance)
+		self.distance = 0.5;
 	InitTrigger ();
 	self.touch = trigger_monsterjump_touch;
 

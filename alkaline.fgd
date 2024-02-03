@@ -2618,9 +2618,16 @@ Note that they're mutually exclusive."
 	speed(integer) : "Jump Speed" : 200
 	height(integer) : "Jump Height" : 200
 	angle(integer) : "Angle"
-	count(integer) : "Triggering limit count"
 	include(string) : "Include filter" : : "Trigger only this monster classname"
 	exclude(string) : "Exclude filter" : : "Trigger all monster classes except this one"
+	//distance(integer) : "Width of facing cone (in degrees) if 'only in front' is set" : 120
+	spawnflags(flags) = [
+		1 : "No large monsters" : 0
+		2 : "No small monsters" : 0
+		//8 : "Only melee monsters" : 0
+		16 : "Only if target in front" : 0
+		32 : "Only if target below" : 0
+	]
 ]
 
 @SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_touchplate : "Trigger touchplate
