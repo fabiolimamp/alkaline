@@ -918,26 +918,6 @@ void() func_togglevisiblewall_use =
 };
 
 
-/*****************
-func_shadow
-
-An invisible bmodel that can be used to only cast shadows.
-
-******************/
-
-void() func_shadow = {
-	if (!SUB_InitEntity()) return;
-	
-
-	self.angles = '0 0 0';
-	self.movetype = MOVETYPE_NONE;
-	self.solid = SOLID_NOT;
-
-	self.modelindex = 0;
-	self.model = "";
-
-}
-
 /*QUAKED func_togglevisiblewall (0 .5 .8) ? TOGGLEVISWALL_STARTOFF TOGGLEVISWALL_NOTSOLID X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
 
 A bmodel which you can toggle its visibility. Behaves much like a traditional func_wall in any other way,
@@ -971,6 +951,100 @@ void() func_togglevisiblewall =
 
 };
 
+/*****************
+func_shadow
+
+An invisible bmodel that can be used to only cast shadows.
+
+******************/
+void() func_shadow_use =
+{
+
+	if (!self.switchshadstyle)
+		return;
+
+	entity shadow = self.shadowcontroller;
+	entity oldself = self;
+	self = shadow;
+
+	
+	if (oldself.estate == 1) {
+		misc_shadowcontroller_setsteps(self.speed);
+		shadow_fade_in();
+		shadow.shadowoff = 0;
+		oldself.estate = 0;
+	} else {
+		misc_shadowcontroller_setsteps(self.speed2);
+		shadow_fade_out();
+		shadow.shadowoff = 1;
+		oldself.estate = 1;
+	}
+	
+	self = oldself;
+	
+};
+
+void(float newstate, float stateflags) func_shadow_setstate = {
+	entity shadow = self.shadowcontroller;
+	entity oldself = self;
+	self = shadow;
+	
+	if (newstate == STATE_ACTIVE) {
+		misc_shadowcontroller_setsteps(self.speed);
+		shadow_fade_in();
+		shadow.shadowoff = 1;
+		oldself.estate = newstate;
+	} else {
+		misc_shadowcontroller_setsteps(self.speed2);
+		shadow_fade_out();
+		shadow.shadowoff = 0;
+		oldself.estate = newstate;
+	}
+
+	self = oldself;
+}
+
+void() func_shadow = {
+	if (!SUB_InitEntity()) return;
+	
+
+	self.angles = '0 0 0';
+	self.movetype = MOVETYPE_NONE;
+	self.solid = SOLID_NOT;
+
+	self.modelindex = 0;
+	self.model = "";
+
+	
+	self.use = func_shadow_use;
+	self.th_setstate = func_shadow_setstate;
+
+	if (self.switchshadstyle) {
+		
+		entity shadow = spawn();
+		
+		self.shadowcontroller = shadow;
+		
+		shadow.classname = "misc_shadowcontroller";
+		shadow.switchshadstyle = self.switchshadstyle;
+		shadow.speed = self.speed;
+		shadow.speed2 = self.speed2;
+		
+		if (self.spawnflags & 1) {
+			self.estate = 1;
+			shadow.spawnflags = 1;
+		}
+		
+		
+		entity oldself = self;
+		
+		self = shadow;
+		misc_shadowcontroller();
+		
+		self = oldself;
+	}
+
+}
 /*QUAKED func_illusionary (0 .5 .8) ?
 A simple entity that looks solid but lets you walk through it.
 */

@@ -1866,10 +1866,18 @@ If the entity has a switchable shadow it also toggles automatically (no need for
 ]
 
 @SolidClass base(Targetname, Shadow, SwitchShadow) = func_shadow : "An invisible, non-solid brush entity that can be used to cast shadows.
+
 You need to set manually at least one of the shadow-related keys for it to have any effect.
 
-A misc_shadowcontroller must be attached to it in order to use switchable shadows (refer to that entity's documentation for more details).
-" []
+If you set _switchableshadow to 1, you can toggle the shadow on/off by targeting the entity. If you set it to have a switchable shadow, you can set the shadow to start off with the respective spawnflag.
+" [
+	speed(float) : "Fade-in speed" : "0.5" : "Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading. Requires '_switchableshadow 1'"
+	speed2(float) : "Fade-out speed" :  : "Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'. Requires '_switchableshadow 1'"
+	spawnflags(flags) =
+	[
+		1 : "Start Off" : 0 : "Requires '_switchableshadow 1'"
+	]
+]
 
 @SolidClass base(Appearflags, Targetname) = func_togglewall : "Creates a invisible clipping wall that can be toggled on and off.
 Blocks movement and gunfire when active.
