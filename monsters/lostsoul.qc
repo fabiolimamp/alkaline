@@ -502,7 +502,7 @@ void(entity attacker, float damage) lost_pain = {
 void() lost_die1 = [ $pain1, lost_die2 ] {};
 void() lost_die2 = [ $pain2, lost_die2 ] {
 	// Lost souls explode when they die
-	T_RadiusDamage (self, self, 40, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self, 40, 1, world, DMGTYPE_EXPLOSION);
 
 	sound (self, CHAN_VOICE, "lostsoul/death.wav", 1, ATTN_NORM);
 
@@ -521,7 +521,7 @@ void() lost_explosion_frame = {
 
 void() lost_die2_orig = [ $pain2, lost_die2_orig ] {
 	// Lost souls explode when they die
-	T_RadiusDamage (self, self, 40, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self, 40, 1, world, DMGTYPE_EXPLOSION);
 	if (random() > 0.5) {
 		self.speed = 0.05;
 		self.count = 13;
