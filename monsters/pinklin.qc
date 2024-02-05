@@ -380,7 +380,7 @@ void() pinklin_die =
 	// check for gib
 	if (self.health < -35) {
 		sound (self, CHAN_VOICE, "player/udeath.wav", 1, ATTN_NORM);
-		ThrowHead ("progs/h_grem.mdl", self.health);
+		ThrowHead ("progs/h_pinklin.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
 		ThrowGib ("progs/gib1.mdl", self.health);
@@ -529,7 +529,7 @@ void(entity e) monster_pinklin_start = {
 	self.solid = SOLID_SLIDEBOX;
 	self.movetype = MOVETYPE_STEP;
 
-	setmodel (self, "progs/pinklin.mdl");
+	setmodel (self, "progs/pinklin_large.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
@@ -570,7 +570,7 @@ void() monster_pinklin = {
 		return;
 	}
 	
-	precache_model ("progs/pinklin.mdl");
+	precache_model ("progs/pinklin_large.mdl");
 	precache_model ("progs/h_pinklin.mdl");
 
 	precache_sound ("pinklin/pinkdeath.wav");
