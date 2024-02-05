@@ -115,7 +115,7 @@ float(float theta, vector dest) IterateElevation = {
 
 void() OgreGrenadeExplode = {
 	if (!self.dmg) self.dmg = 40;
-	T_RadiusDamage (self, self.owner, self.dmg, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, self.dmg, 1, world, DMGTYPE_EXPLOSION);
 	
 	BecomeExplosion();
 };
@@ -154,7 +154,7 @@ void() Ogre_Rocket_Touch = {
 	// was done in the impact
 	vector prev_vel = self.velocity;
 	self.velocity = '0 0 0';
-	T_RadiusDamage (self, self.owner, 50, other, DMGTYPE_EXPLOSION);	// greenwood modify the 50 here to change splash damage
+	T_RadiusDamage (self, self.owner, 50, 1, other, DMGTYPE_EXPLOSION);	// greenwood modify the 50 here to change splash damage
 
 //	sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
 	self.origin = self.origin - 8*normalize(prev_vel);
@@ -342,26 +342,26 @@ void() ogre_run1	=[	$run1,		ogre_run2	] {
 		return;
 	}
 
-	ai_run(9);
+	ai_runjump(9);
 
 };
-void() ogre_run2	=[	$run2,		ogre_run3	] {ai_run(12);};
-void() ogre_run3	=[	$run3,		ogre_run4	] {ai_run(8);};
-void() ogre_run4	=[	$run4,		ogre_run5	] {ai_run(22);};
-void() ogre_run5	=[	$run5,		ogre_run6	] {ai_run(16);};
-void() ogre_run6	=[	$run6,		ogre_run7	] {ai_run(4);};
-void() ogre_run7	=[	$run7,		ogre_run8	] {ai_run(13);};
-void() ogre_run8	=[	$run8,		ogre_run1	] {ai_run(24);};
+void() ogre_run2	=[	$run2,		ogre_run3	] {ai_runjump(12);};
+void() ogre_run3	=[	$run3,		ogre_run4	] {ai_runjump(8);};
+void() ogre_run4	=[	$run4,		ogre_run5	] {ai_runjump(22);};
+void() ogre_run5	=[	$run5,		ogre_run6	] {ai_runjump(16);};
+void() ogre_run6	=[	$run6,		ogre_run7	] {ai_runjump(4);};
+void() ogre_run7	=[	$run7,		ogre_run8	] {ai_runjump(13);};
+void() ogre_run8	=[	$run8,		ogre_run1	] {ai_runjump(24);};
 
 
-void() ogrem_run1	=[	$run1,		ogrem_run2	] {ai_run(4);};
-void() ogrem_run2	=[	$run2,		ogrem_run3	] {ai_run(10);};
-void() ogrem_run3	=[	$run3,		ogrem_run4	] {ai_run(12);};
-void() ogrem_run4	=[	$run4,		ogrem_run5	] {ai_run(16);};
-void() ogrem_run5	=[	$run5,		ogrem_run6	] {ai_run(12);};
-void() ogrem_run6	=[	$run6,		ogrem_run7	] {ai_run(12);};
-void() ogrem_run7	=[	$run7,		ogrem_run8	] {ai_run(4);};
-void() ogrem_run8	=[	$run8,		ogrem_run1	] {ai_run(10);};
+void() ogrem_run1	=[	$run1,		ogrem_run2	] {ai_runjump(4);};
+void() ogrem_run2	=[	$run2,		ogrem_run3	] {ai_runjump(10);};
+void() ogrem_run3	=[	$run3,		ogrem_run4	] {ai_runjump(12);};
+void() ogrem_run4	=[	$run4,		ogrem_run5	] {ai_runjump(16);};
+void() ogrem_run5	=[	$run5,		ogrem_run6	] {ai_runjump(12);};
+void() ogrem_run6	=[	$run6,		ogrem_run7	] {ai_runjump(12);};
+void() ogrem_run7	=[	$run7,		ogrem_run8	] {ai_runjump(4);};
+void() ogrem_run8	=[	$run8,		ogrem_run1	] {ai_runjump(10);};
 
 
 void() ogre_swing1	=[	$swing1,		ogre_swing2	] {ai_charge(11); sound (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM); };

@@ -99,6 +99,12 @@
 		0 : "Alkaline style"
 		1 : "Original style"
 	]
+
+	autojump(choices) : "Monster autojump toggle" : 1 : "Toggles autojump behavior in monsters. Check a monster's 'autojump' field for more details.
+Setting this to -1 forces autojump to off in all monsters in the map. 1 is the default per-class/per-entity selection." = [
+	-1 : "Autojump off"
+	1 : "Autojump on"
+	]
 ]
 
 //
@@ -308,6 +314,7 @@ Can be set to be damaged only by explosions, or to ignore monster attacks.
 		2: "Concrete"
 		3: "Glass"
 		4: "Custom"
+		5: "Wood"
 	]
 	spawnflags(flags) =
 	[
@@ -369,6 +376,8 @@ The laser originates from the horizontal center at the bottom of the model. You 
 When player is touching this entity, they'll move on the direction they're facing when pressing forward, or be able to move straight up/down with the jump/moveup/movedown keys.
 
 The 'angle' key is optional. When set, the player will only stick to the ladder while facing this direction.
+
+The recommended way to set up a ladder trigger is to make it 16 units deep jutting out of whatever solid you're putting it up against. If you have a brushwork ladder on a wall, you can make that a func_illusionary or func_detail_illusionary and put the trigger covering it. Making the trigger too thin, or flush on a solid surface, will make it difficult for the player to climb. We also recommend having the top of the trigger at the same height as the floor you want the player to step out to.
 "
 [
 	angle(integer) : "Angle" : : "Optional. If set, the player will only stick to the ladder while facing this direction. If you need to set angle 0, use 360 instead."
@@ -879,11 +888,32 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 	movedir2(string) : "Angle-relative auto-jump" : : "Angle-relative auto jump velocity on spawn/awaken (forward right up)"
 ]
 
+@baseclass = AutoJumpOff [
+	autojump(choices) : "Monster Autojump" : -1 : "Makes the monster jump automatically when on a ledge while chasing its enemy. Can jump down from a height and clear small horizontal gaps.
+
+The jump trajectory is precalculated in a way that it only happens if the monster will land on a walkable ground at least at the same height as the player, so it won't do blind jumps into the void if the player can't be reached.
+
+Set 1 to force on, or -1 to force off. Defaults to OFF in this monster's class."= [
+		-1 : "Off"
+		1 : "On"
+	]
+]
+
+@baseclass = AutoJumpOn [
+	autojump(choices) : "Monster Autojump" : 1 : "Makes the monster jump automatically when on a ledge while chasing its enemy. Can jump down from a height and clear small horizontal gaps.
+
+The jump trajectory is precalculated in a way that it only happens if the monster will land on a walkable ground at least at the same height as the player, so it won't do blind jumps into the void if the player can't be reached.
+
+Set 1 to force on, or -1 to force off. Defaults to ON in this monster's class."= [
+		-1 : "Off"
+		1 : "On"
+	]
+]
 // Rubicon 2 monsters first
 // Centurion, 150 hp
 @PointClass base(Monster, Above) size(-32 -32 -24, 32 32 64) model({"path":"progs/cent.mdl"})= monster_centurion : "Centurion, 150 health points." []
 // Dreadnaught, 150 hp
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/dread.mdl"}) = monster_dreadnaught : "Dreadnaught, 150 health points." []
 
 @PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 64) model({"path":"progs/floyd.mdl", "frame":1}) = monster_floyd : "Floyd automaton robot, 200 hp
 ROLLING Floyd is on his back and helpless, explodes after taking 75 damage
@@ -899,13 +929,13 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 
 // Regular monsters
 		
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier_alk.mdl"}) = monster_army :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/soldier_alk.mdl"}) = monster_army :
 "Grunt, 30 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-32 -32 -24, 32 32 40) model({"path":"progs/dog_alk.mdl"}) = monster_dog :
 "Dog (Rottweiler), 25 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model(
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model(
 	{{spawnflags & 8 -> 	"progs/ogre_old.mdl", "progs/ogre_alk.mdl"}}
 ) = monster_ogre :
 "Ogre, 200 health points. Original ogre model available through the respective spawnflag." [
@@ -916,13 +946,13 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogrem.mdl"}) = monster_ogre_marksman :
 "Ogre Marksman, 200 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/knight_old.mdl"}) = monster_knight :
 "Knight, 75 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({{
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({{
 	spawnflags & 8 -> 	"progs/hknight_old.mdl", "progs/sknight.mdl"
 	}}
 ) = monster_hell_knight :
@@ -946,7 +976,7 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({{
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({{
 	spawnflags & 8 -> "progs/demon_old.mdl", "progs/demon_alk.mdl"
 	}}
 ) = monster_demon1 :
@@ -958,15 +988,15 @@ ASLEEP Floyd will not respond to anything unless he is shot or his targetname is
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({"path":"progs/mutant.mdl"}) = monster_mutant :
 "Mutant, 220 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-32 -32 -24, 32 32 64) model({"path":"progs/shambler_alk.mdl"}) = monster_shambler :
 "Shambler, 600 health points.
 Rockets only have half damage
 when hitting the Shambler." []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/bambler.mdl"}) = monster_bambler :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-32 -32 -24, 32 32 64) model({"path":"progs/bambler.mdl"}) = monster_bambler :
 "Bambler, 500 health points.
 Melee only bald shamblers.
 Rockets only have half damage
@@ -981,7 +1011,7 @@ Only event_lightning can kill him." [
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforcer.mdl"}) = monster_enforcer :
 "Enforcer, 80 health points." []
 
 @PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 48) model({{
@@ -996,8 +1026,11 @@ Only event_lightning can kill him." [
 	]
 ]
 
-@PointClass base(Monster, MonsterJump) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_tarbaby :
-"Spawn (Tarbaby), 80 health points." []
+@PointClass base(Monster, MonsterJump) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_spawn :
+"Spawn, 80 health points." []
+
+//@PointClass base(Monster, MonsterJump) size(32 32 48) model({"path":"progs/tarbaby.mdl"}) = monster_tarbaby :
+//"Spawn, 80 health points." []
 
 @PointClass base(Monster) size(-8 -8 -24, 8 8 16) model({"path":"progs/fish_small.mdl"}) = monster_fish :
 "Rotfish, 20 health points." []
@@ -1030,22 +1063,22 @@ If crucified, stick the bounding box 12 pixels back into a wall to look right.
 @PointClass base(Monster, MonsterJump) size(-6 -6 -24, 6 6 32) model({"path":"progs/zombie2.mdl"}) = monster_zombie2 :
 "Fast Zombie, 10 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce3.mdl"}) = monster_super_enforcer :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce3.mdl"}) = monster_super_enforcer :
 "Lieutenant, 120 health points, 1000 armor.
 This S.O.B. will turn you into Swiss cheese
 if you are not careful!" []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce2.mdl"}) = monster_me :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/enforce2.mdl"}) = monster_me :
 "Mega Enforcer, 150 health points.
 With a force field, plasma gun, and shoulder
 cannon, look out for this cold-blooded killer." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier_alk.mdl"}) = monster_nailgrunt :
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/nsoldier_alk.mdl"}) = monster_nailgrunt :
 "Nail Grunt, 30 health points.
 This ugly cyborg can penetrate your heart
 ...and not in a good way." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl","frame":17}) = monster_axegrunt :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/axegrunt.mdl","frame":17}) = monster_axegrunt :
 "Axe Grunt, 75 health points." []
 
 @PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/scor.mdl"}) = monster_scourge :
@@ -1055,7 +1088,7 @@ This ugly cyborg can penetrate your heart
 "Armagon, 2000-3500 health points.
 The big boss mam!" []
 
-@PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogreb.mdl"}) = monster_ogreb :
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-32 -32 -24, 32 32 64) model({"path":"progs/ogreb.mdl"}) = monster_ogreb :
 "Berserker, 200 health points.
 Don't shake hands with this crazy bastard!" []
 
@@ -1117,6 +1150,8 @@ model({{
 @PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 64) model({"path":"progs/edie.mdl", "frame":149}) = monster_edie :
 "Edie, 500 health points." []
 
+@PointClass base(Monster, MonsterJump, AutoJumpOn) size(-16 -16 -24, 16 16 40) model({"path":"progs/kamikaze_grunt_small.mdl"}) = monster_kamikaze :
+"Kamikaze, 40 health points." []
 
 @PointClass base(Appearflags, Target, Targetname) size(-16 -16 0, 16 16 14) model({"path":"progs/alkturret_base_v2.mdl"}) = monster_turret :
 "Turret, 50 health points." [
@@ -1132,6 +1167,7 @@ model({{
 
 @PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/pinklin.mdl"}) = monster_pinklin :
 "Pinklin, 150 health points." []
+
 
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
@@ -1848,10 +1884,18 @@ If the entity has a switchable shadow it also toggles automatically (no need for
 ]
 
 @SolidClass base(Targetname, Shadow, SwitchShadow) = func_shadow : "An invisible, non-solid brush entity that can be used to cast shadows.
+
 You need to set manually at least one of the shadow-related keys for it to have any effect.
 
-A misc_shadowcontroller must be attached to it in order to use switchable shadows (refer to that entity's documentation for more details).
-" []
+If you set _switchableshadow to 1, you can toggle the shadow on/off by targeting the entity. If you set it to have a switchable shadow, you can set the shadow to start off with the respective spawnflag.
+" [
+	speed(float) : "Fade-in speed" : "0.5" : "Controls the time in seconds it takes to fade the shadow in. Setting it to -1 disables fading. Requires '_switchableshadow 1'"
+	speed2(float) : "Fade-out speed" :  : "Same as 'speed' but for the fade out animation. If unset it uses the same value as 'speed'. Requires '_switchableshadow 1'"
+	spawnflags(flags) =
+	[
+		1 : "Start Off" : 0 : "Requires '_switchableshadow 1'"
+	]
+]
 
 @SolidClass base(Appearflags, Targetname) = func_togglewall : "Creates a invisible clipping wall that can be toggled on and off.
 Blocks movement and gunfire when active.
@@ -1918,8 +1962,11 @@ If switchable shadows are on, they'll fade together as well.
 
 @SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
 
-@SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
-You can directly set a custom movement vector with the 'movedir' key.
+@SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once. You can directly set a custom movement vector with the 'movedir' key.
+
+Buttons in Alkaline can also require keys just like doors. Just set that via spawnflags if applicable.
+
+When you have more than one func_button with the same 'groupname', only one button in the group can stay pressed at the same time. This is useful in conjunction with target_setskill to create skill-setting buttons.
 " 
 [
 	speed(integer) : "Speed (units per second)" : 40
@@ -1936,6 +1983,7 @@ You can directly set a custom movement vector with the 'movedir' key.
 	wait(float) : "Delay before reset" : "1.0"
 	delay(string) : "Delay before trigger"
 	movedir(string) : "Custom movement vector (X Y Z)"
+	groupname(string) : "Name of the group the button belongs to. Refer to the main description text"
 	message(string) : "Message"
 	spawnflags(flags) =
 	[
@@ -2080,6 +2128,22 @@ Spawnflags:
 		32: "Rotate Y only" : 0
 	]
 ]
+
+
+@PointClass base(Appearflags, Targetname) size(32 32 32) color(0 128 200) model({ "path": ":progs/teleport.mdl" }) = misc_teleporttrain : "Flying teleporter destination
+Annoying spiky ball which players who have beaten Quake understand as a moving teleport target.
+"
+[
+	speed(integer) : "Speed (units per second)" : 100
+	pausetime(integer) : "Default wait time" : : "Wait time used when not defined in path_corner."
+	target(target_source) : "First stop target"
+	spawnflags(flags) =
+	[
+		2: "Move on trigger" : 0
+		4: "Stop on trigger" : 0
+	]
+]
+
 
 @PointClass base(Targetname) color(128 64 0) size(16 16 16) = path_corner :
 "Waypoint for func_train and walking monsters.
@@ -2257,45 +2321,84 @@ Other than that, this entity functions like a normal button.
 @SolidClass base(ModelLight) = func_group : "Brush group. Is treated by qbsp as world brushes but allows you to add light shading settings. _dirt and _shadow currently only accept -1 as a valid setting for func_group" []
 
 
-@SolidClass base(Appearflags, Targetname) = func_bob : "A SOLID bmodel that gently moves back and forth."
+// deprecated, use func_bobbing and misc_bobbing instead
+
+// @SolidClass base(Appearflags, Targetname) = func_bob : "A SOLID bmodel that gently moves back and forth."
+// [
+	// angle(integer) : "direction movement, use 360 for angle 0" : 0
+	// height(integer) : "direction intensity" : 8
+	// count(integer) : "direction cycle timer minimum = 1" : 2
+	// waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
+	// waitmin2(integer) : "Slow down scale default = 0.75"
+	// delay(integer) : "Starting time delay defualt = 0, -1 = random"
+	// style(integer) : "If set to 1, starts off and waits for trigger"
+	// _dirt(integer) : "-1 = will be excluded from dirtmapping"
+	// _minlight(integer) : "Minimum light level for any surface of the brush model"
+	// _mincolor(integer) : "Minimum light color for any surface (default = '1 1 1' RGB)"
+	// _shadow(integer) : "Will cast shadows on other models and itself"
+	// _shadowself(integer) : "Will cast shadows on itself"
+
+	// spawnflags(flags) =
+	// [
+		// 2 : "BOB_COLLISION" : 2
+		// 4 : "BOB_NONSOLID" : 0
+	// ]
+// ]
+
+// @PointClass base(Appearflags, Targetname) size(16 16 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_bob : "A model that gently moves back and forth."
+// [
+	// angle(integer) : "direction movement, use 360 for angle 0" : 0
+	// height(integer) : "direction intensity" : 8
+	// count(integer) : "direction cycle timer minimum = 1" : 2
+	// waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
+	// waitmin2(integer) : "Slow down scale default = 0.75"
+	// delay(integer) : "Starting time delay defualt = 0, -1 = random"
+	// style(integer) : "If set to 1, starts off and waits for trigger"
+	// mdl(string) : "Path to mdl file"
+	// spawnflags(flags) =
+	// [
+		// 2 : "BOB_COLLISION (default)" : 2
+		// 4 : "BOB_NONSOLID" : 0
+	// ]
+// ]
+
+
+
+@baseclass base(Appearflags, Targetname, Angle) = Bob
 [
-	angle(integer) : "direction movement, use 360 for angle 0" : 0
-	height(integer) : "direction intensity" : 8
-	count(integer) : "direction cycle timer minimum = 1" : 2
-	waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
-	waitmin2(integer) : "Slow down scale default = 0.75"
-	delay(integer) : "Starting time delay defualt = 0, -1 = random"
-	style(integer) : "If set to 1, starts off and waits for trigger"
-	_dirt(integer) : "-1 = will be excluded from dirtmapping"
-	_minlight(integer) : "Minimum light level for any surface of the brush model"
-	_mincolor(integer) : "Minimum light color for any surface (default = '1 1 1' RGB)"
-	_shadow(integer) : "Will cast shadows on other models and itself"
-	_shadowself(integer) : "Will cast shadows on itself"
+	spawnflags(flags) = [
+		1 : "Start off" : 0
+		2 : "Crusher (no reverse)" : 0
+		4 : "Non-solid" : 0
+		8 : "Don't stop until low pos" : 0
+		16 : "Don't stop until mid pos" : 0
+		32 : "Don't stop until high pos" : 0
 
-	spawnflags(flags) =
-	[
-		2 : "BOB_COLLISION" : 2
-		4 : "BOB_NONSOLID" : 0
 	]
+	wait(string) : "Period (Wavelength)" : "4"
+	distance(integer) : "Length (Amplitude)" : 64
+	delay(string) : "Starting offset (0-1) (Phase)" : "0.0"
+	dmg(integer) : "Damage when blocked" : 2
+	noise(string) : "Override stop sound"
+	noise1(string) : "Override move sound"
+	pos1(string) : "Override peak position (relative)"
+	pos2(string) : "Override trough position (relative)"
+	solid(integer) : "Solid" : 1
 ]
+@SolidClass base(Bob) = func_bobbing : "Bobbing platform.
+Moves in a smooth sine wave. Build at the center of motion, specify 'wait' for the wavelength in seconds and 'distance' for the amplitude (distance from end to end) in units. Use 'delay' to set a phase offset (0-1).
+Trigger to freeze in place or reactivate. If any 'don't stop until' spawnflags are checked, the bobber will keep oscillating until it reaches one of the designated positions and stop there.
 
-@PointClass base(Appearflags, Targetname) size(16 16 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_bob : "A model that gently moves back and forth."
-[
-	angle(integer) : "direction movement, use 360 for angle 0" : 0
-	height(integer) : "direction intensity" : 8
-	count(integer) : "direction cycle timer minimum = 1" : 2
-	waitmin(integer) : "Speed up scale default = 1, 1+ =non linear" : 1
-	waitmin2(integer) : "Slow down scale default = 0.75"
-	delay(integer) : "Starting time delay defualt = 0, -1 = random"
-	style(integer) : "If set to 1, starts off and waits for trigger"
-	mdl(string) : "Path to mdl file"
-	spawnflags(flags) =
-	[
-		2 : "BOB_COLLISION (default)" : 2
-		4 : "BOB_NONSOLID" : 0
-	]
+Set both 'pos1' & 'pos2' to override the two apex positions (ends of the bob) to build and light your plat wherever."  []
+@PointClass size(16 16 16) base(Bob)  studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_bobbing : "Bobbing platform.
+Moves in a smooth sine wave. Build at the center of motion, specify 'wait' for the wavelength in seconds and 'distance' for the amplitude (distance from end to end) in units. Use 'delay' to set a phase offset (0-1).
+Trigger to freeze in place or reactivate. If any 'don't stop until' spawnflags are checked, the bobber will keep oscillating until it reaches one of the designated positions and stop there.
+
+Set both 'pos1' & 'pos2' to override the two apex positions (ends of the bob) to build and light your plat wherever."  [
+	mdl(string) : "Model to use"
+	frame(integer) : "Model frame to use" : 0
+	skin(integer) : "Model skin to use" : 0
 ]
-
 
 
 //
@@ -2471,10 +2574,8 @@ Using the destination's 'count' field, you can define which order they'll be sel
 	]
 ]
 
-// need updates:
 
-@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_setskill : "Trigger set skill. Can be activated by triggering.
-" 
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_setskill : "Trigger set skill. Use target_setskill if you just need a triggerable point entity." 
 [
 	message(choices) : "Skill to change to" : 1 =
 	[
@@ -2484,6 +2585,19 @@ Using the destination's 'count' field, you can define which order they'll be sel
         3 : "Nightmare!"
 	]
 ]
+
+
+@PointClass base(Appearflags, Targetname) = target_setskill : "Point entity for setting skill." 
+[
+	message(choices) : "Skill to change to" : 1 =
+	[
+        0 : "Easy"
+        1 : "Medium"
+        2 : "Hard"
+        3 : "Nightmare!"
+	]
+]
+
 @PointClass base(Appearflags, Trigger) = trigger_relay : "Trigger relay
 
 - 'count' sets a maximum usage count. Set it to 1 to guarantee it can only be fired once.
@@ -2522,9 +2636,16 @@ Note that they're mutually exclusive."
 	speed(integer) : "Jump Speed" : 200
 	height(integer) : "Jump Height" : 200
 	angle(integer) : "Angle"
-	count(integer) : "Triggering limit count"
-	include(string) : "Include filter" : : "Trigger only this monster classname"
-	exclude(string) : "Exclude filter" : : "Trigger all monster classes except this one"
+	include(string) : "Include filter" : : "Allow this classname of monster, or monsters with this targetname, no matter what"
+	exclude(string) : "Exclude filter" : : "Ignore this classname of monster, or monsters with this targetname, no matter what"
+	//distance(integer) : "Width of facing cone (in degrees) if 'only in front' is set" : 120
+	spawnflags(flags) = [
+		1 : "No large monsters" : 0
+		2 : "No small monsters" : 0
+		//8 : "Only melee monsters" : 0
+		16 : "Only if target in front" : 0
+		32 : "Only if target below" : 0
+	]
 ]
 
 @SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_touchplate : "Trigger touchplate
@@ -2950,6 +3071,9 @@ When triggered, toggles between 'Gravity' and 'Return Gravity' values.
 "Removes the selected items and weapons from the inventory."
 [
 	count(integer) : "Use count" : : "Maximum usage count. Set to -1 for infinite uses. Default is infinite"
+	spawnflags(flags) = [
+		1: "Remove from all players"
+	]
 ]
 
 

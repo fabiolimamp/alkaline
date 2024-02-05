@@ -321,7 +321,7 @@ void(vector p) boss_missile =
 	org = self.origin + p_x*v_forward + p_y*v_right + p_z*'0 0 1';
 	
 // lead the player on hard mode
-	if (skill > 1)
+	if (startskill > 1)
 	{
 		t = vlen(self.enemy.origin - org) / 300;
 		vec = self.enemy.velocity;
@@ -359,7 +359,7 @@ void() boss_awake =
 	setmodel (self, "progs/boss.mdl");
 	setsize (self, '-128 -128 -24', '128 128 256');
 	
-	if (skill == 0) {
+	if (startskill == 0) {
 		self.health = 1000;
 		self.count = 1;
 	}

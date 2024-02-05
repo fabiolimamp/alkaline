@@ -68,7 +68,7 @@ void() multi_exploder_fire = {
 	expl.origin_y = self.absmin_y + (random() * (self.absmax_y - self.absmin_y));
 	expl.origin_z = self.absmin_z + (random() * (self.absmax_z - self.absmin_z));
 	sound (expl , CHAN_VOICE, "misc/shortexp.wav", self.volume, self.speed);
-	T_RadiusDamage (expl, self.owner, self.dmg, other, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (expl, self.owner, self.dmg, 1, other, DMGTYPE_EXPLOSION);
 
 	temp = self;
 	self = expl;
@@ -696,7 +696,7 @@ void() armagon_repulse_attack =
 				}
 			head = head.chain;
 			}
-		T_RadiusDamage (self, self, 60, self, DMGTYPE_EXPLOSION);
+		T_RadiusDamage (self, self, 60, 1, self, DMGTYPE_EXPLOSION);
 		self.state = 0;
 		SUB_AttackFinished (0.1);
 		}

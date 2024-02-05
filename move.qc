@@ -277,3 +277,155 @@ void(float dist) movetogoal2 = {
 		NewChaseDir(goal, dist);
 	}
 }
+
+
+//=================================================================================================
+
+
+float(float launch_h, float launch_v, float yaw) movejump_test = {
+
+
+	makevectors([0, yaw, 0]);
+
+	traceline(self.origin, self.origin + v_forward*64, FALSE, self);
+	if (trace_fraction < 1){
+		dprint("blocked\n");
+		return FALSE;
+	}
+
+	traceline([self.origin_x, self.origin_y, self.absmin_z + 1] + v_forward*self.size_x, [self.origin_x, self.origin_y, self.absmin_z + 1] + v_forward*self.size_x - '0 0 20', FALSE, self);
+	if (trace_fraction < 1){
+		dprint("not a gap\n");
+		return FALSE;
+	}
+
+	vector sim_origin = self.origin + [0, 0, self.mins_z];
+	vector sim_origin_prev = sim_origin;
+
+	float counter = 20;
+	
+	float v_velocity = launch_v;
+
+	float grav = cvar("sv_gravity");
+	if (self.gravity) grav *= self.gravity;
+	
+	sim_origin += v_forward*launch_h*0.1 + [0, 0, v_velocity]*0.1;
+	traceline(sim_origin_prev, sim_origin, FALSE, self);
+
+	entity bbl;
+	
+	while (counter > 0 && trace_fraction == 1) {
+		sim_origin_prev	= sim_origin;
+
+		v_velocity -= grav * 0.1;
+		sim_origin += v_forward*launch_h*0.1 + [0, 0, v_velocity]*0.1;
+
+		traceline(sim_origin_prev, sim_origin, FALSE, self);
+
+		if (developer) {
+			//particle(next, '0 0 0', 250, 9);
+			bbl = spawn();
+			setorigin(bbl, sim_origin);
+			setmodel(bbl, "progs/s_bubble.spr");
+			setsize(bbl, 0, 0);
+			bbl.think = SUB_Remove;
+			bbl.nextthink = time + 5;
+		}
+
+		counter--;
+	}
+
+	if (counter <= 0){
+		dprint("counter max\n");
+		return FALSE;
+	}
+
+	if (self.goalentity.classname == "path_angry" || self.goalentity.classname == "path_corner") {
+		if (trace_endpos_z < self.goalentity.origin_z - 32){
+			dprint("below target\n");
+			return FALSE;
+		}
+	}
+	else {
+		if (trace_endpos_z < (self.goalentity.origin_z + self.goalentity.mins_z) - 16){
+			dprint("below target\n");
+			return FALSE;
+		}
+	}
+	
+	
+	if (fabs(trace_endpos_z - self.origin_z) > 384){
+		dprint("jump too high\n");
+		return FALSE;
+	}
+
+	if (trace_ent.solid != SOLID_BSP){
+		dprint("not bsp\n");
+		return FALSE;
+	}
+
+	if (trace_plane_normal_z < 0.6) {
+		dprint("too steep\n");
+		return FALSE;
+	}
+
+	dprint("jump ok\n");
+	return TRUE;
+
+}
+
+void(float dist) movetogoaljump {
+
+	if (self.autojump <= 0 || world.autojump < 0 || time < self.autojump_block_finished) {
+		movetogoal(dist);
+		return;
+	}
+
+	entity goal;
+
+	goal = self.goalentity;
+
+	if (!(self.flags & FL_ONGROUND))
+		return;
+
+	// if the next step hits the enemy, return immediately
+	if (self.enemy && CloseEnough(goal, dist))
+		return;
+
+	// bump around...
+	float prevyaw = self.angles_y;
+	float trystep = StepDirection(self.ideal_yaw, dist);
+
+	if (!trystep && self.goalentity.origin_z <= self.origin_z) {
+		float launch_h, launch_v;
+
+		
+		if (fabs(self.goalentity.origin_z - self.origin_z) <= 16)
+			launch_v = 300;
+		else
+			launch_v = 200;
+		
+		launch_h = 200;
+		if (movejump_test(launch_h, launch_v, prevyaw)) {
+			self.angles_y = prevyaw;
+			self.flags &~= FL_ONGROUND;
+			self.velocity = v_forward*launch_h + [0, 0, launch_v];
+
+			return;
+		}
+		
+		launch_h = 300;
+		if (movejump_test(launch_h, launch_v, prevyaw)) {
+			self.angles_y = prevyaw;
+			self.flags &~= FL_ONGROUND;
+			self.velocity = v_forward*launch_h + [0, 0, launch_v];
+
+			return;
+		}
+	}
+
+	if ((random() < 0.333 || !trystep) && (self.flags & FL_ONGROUND) ) {
+		NewChaseDir(goal, dist);
+	}
+
+}

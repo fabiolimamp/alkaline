@@ -92,14 +92,14 @@ void()	army_walk24	=[	$prowl_24,	army_walk1	] {ai_walk(1);};
 void()	army_run1	=[	$run1,		army_run2	] {
 if (random() < 0.2)
 	sound (self, CHAN_VOICE, "soldier/idle.wav", 1, ATTN_IDLE);
-ai_run(11);};
-void()	army_run2	=[	$run2,		army_run3	] {ai_run(15);};
-void()	army_run3	=[	$run3,		army_run4	] {ai_run(10);};
-void()	army_run4	=[	$run4,		army_run5	] {ai_run(10);};
-void()	army_run5	=[	$run5,		army_run6	] {ai_run(8);};
-void()	army_run6	=[	$run6,		army_run7	] {ai_run(15);};
-void()	army_run7	=[	$run7,		army_run8	] {ai_run(10);};
-void()	army_run8	=[	$run8,		army_run1	] {ai_run(8);};
+ai_runjump(11);};
+void()	army_run2	=[	$run2,		army_run3	] {ai_runjump(15);};
+void()	army_run3	=[	$run3,		army_run4	] {ai_runjump(10);};
+void()	army_run4	=[	$run4,		army_run5	] {ai_runjump(10);};
+void()	army_run5	=[	$run5,		army_run6	] {ai_runjump(8);};
+void()	army_run6	=[	$run6,		army_run7	] {ai_runjump(15);};
+void()	army_run7	=[	$run7,		army_run8	] {ai_runjump(10);};
+void()	army_run8	=[	$run8,		army_run1	] {ai_runjump(8);};
 
 void()	army_atk1	=[	$shoot1,	army_atk2	] {ai_face();};
 void()	army_atk2	=[	$shoot2,	army_atk3	] {ai_face();};

@@ -13,7 +13,7 @@ body {
 
 <body>
 
-<h1>Alkaline Mapping Guide</h1>
+<h1>Alkaline Mapping Guide - v1.2.2</h1>
 <h2>Contents</h2>
 <nav>
 <ul>
@@ -26,13 +26,14 @@ body {
 			<li><a href="#monster-spawner">Monster spawner</a></li>
 			<li><a href="#path-angry">Angry monsters' waypoints</a></li>
 			<li><a href="#startpath">Follow a path upon an event</a></li>
+			<li><a href="#autojump">Autojump</a></li>
 			<li><a href="#monster-other-features">Other features</a></li>
 			<li><a href="#target_infight">Entity target_infight</a></li>
 			<li><a href="#monsters-list">Monsters list</a></li>
 			<li><a href="#scientists">Scientists</a></li>
 			<li><a href="#turrets">Turrets</a></li>
 			<li><a href="#health-triggers">Health and wake triggers</a></li>
-			<li><a href="#auto-monsterjumps">Auto-monsterjumps</a></li>
+			<li><a href="#self-monsterjumps">Self-monsterjumps</a></li>
 		</ul>
 	</li>
 
@@ -193,6 +194,7 @@ body {
 			<li><a href="#void">Void</a></li>
 			<li><a href="#gravity">Gravity</a></li>
 			<li><a href="#gravity-pads">Gravity pads/floaters</a></li>
+			<li><a href="#jump-pads">Jump Pads</a></li>
 			<li><a href="#explosions">Explosions</a></li>
 			<li><a href="#particle-field">Particle field</a></li>
 			<li><a href="#lightning-trail">Lightning trail</a></li>
@@ -270,6 +272,20 @@ body {
 
 <p>You can set up more than one target_startpath entity for a monster, if you need both walking/angry pathing situations to happen at different times. Or you can even have more than one of the same path type, if you want to route it to a different direction depending on some event.</p>
 
+<h3 id="autojump">Autojump</h3>
+<p>New in Alkaline is the autojump feature. Most walking monsters can automatically jump down from ledges or across small gaps to follow you, without the need for monsterjump triggers.</p>
+<p>Various checks are made before the monster actually attempts to jump:</p>
+<ul>
+	<li>If there's room for the jump without hitting a wall or the ceiling;</li>
+	<li>If it won't drop to a height below you;</li>
+	<li>If it won't land on a non-walkable surface, like a steep slope, or on top of another monster.</li>
+</ul>
+<p>All walking melee monsters now do this by default, but you can control this behavior per-entity with the <strong>autojump</strong> key. A value of 1 forces it to on, and -1 to off. If you want to know whether a specific monster class has autojump enabled by default, just check the default value set on that key. Monsters without the key available in their keys list don't support autojump in any way, such as it's the case for large boss enemies and zombies for example, or any non-walking monster.</p>
+
+<p>Autojump can also be controlled map-wide via the worldspawn key of the same name. 1 enables it for all autojump-supporting monsters in the map, and -1 disables for everyone, thus making everything return to the original behavior. Per-entity settings will always override this choice.</p>
+
+<p>Keep in mind that this doesn't completely negate the need for trigger_monsterjumps in case you absolutely want a jump to occur at a specific spot, so don't be shy of still using them if you feel necessary.</p>
+
 <h3 id="monster-other-features">Other features</h3>
 <ul><li><strong>No sight sound</strong> flag: The monster won't make its sight sound when angry at something.</li>
 <li><strong>No infight</strong> flag: The monster won't be angry at another when hit, only at players. Note that it doesn't prevent some other monster from getting angry at it, thus never giving it a chance to fight back.</li>
@@ -293,6 +309,7 @@ body {
 	<li><strong>Nail Grunt (monster_nailgrunt):</strong> 30 HP</li>
 	<li><strong>Rottweiler (monster_dog):</strong> 25 HP</li>
 	<li><strong>Spiderbot (monster_spiderbot):</strong> 40 HP</li>
+	<li><strong>Kamikaze Grunt (monster_kamikaze):</strong> 40 HP</li>
 	<li><strong>Enforcer (monster_enforcer):</strong> 80 HP</li>
 	<li><strong>Ogre (monster_ogre):</strong> 200 HP</li>
 	<li><strong>Ogre Marksman (monster_ogre_marksman):</strong> 200 HP</li>
@@ -340,7 +357,7 @@ body {
 <p>The <strong>Wake trigger</strong> spawnflag makes the monster fire <strong>target4</strong> upon getting angry for the first time. Note that using this in conjunction with health triggers prevents the 75% damage trigger from firing.</p>
 
 
-<h3 id="auto-monsterjumps">Auto-monsterjumps</h3>
+<h3 id="self-monsterjumps">Self-monsterjumps</h3>
 <p>Taken (stolen) from Copper, lets you set an initial velocity for when the first time a monster gets angry.</p>
 <p>The <strong>movedir2</strong> key sets direct velocities relative to the monster's starting angle, in a "front right up" notation. So, for example, giving this field a value of "300 0 200" means the monster will be pushed with a velocity of 300 forward, and 200 upwards.</p>
 <p><strong>movedir</strong> does the same, but based on absolute world coordinates.</p>
@@ -476,7 +493,7 @@ body {
 <p><strong>trigger_once</strong> and <strong>trigger_multiple</strong> can be set to be activated by monsters as well as players, so you can set them to fall into traps for example.</p>
 
 <h3 id="message-all">Message all players</h3>
-<p>Every entity that can centerprint a message may be set to broadcast it to all connected players. Good for when you have some map-wide event that you want to communicate in a co-op game for example. Just set the spawnflag <strong>message all players</strong> on the messaging entity.</p>
+<p>Every entity that can centerprint a message may be set to broadcast it to all connected players. Good for when you have some map-wide event that you want to communicate in a co-op game for example. It's also useful if there's a chance that whoever's firing the trigger isn't a player, such as monster infighting kills. Just set the spawnflag <strong>message all players</strong> on the messaging entity.</p>
 
 <h3 id="relay-tricks">trigger_relay new tricks</h3>
 <p>trigger_relay got a few more features:</p>
@@ -506,7 +523,7 @@ body {
 <p>The new <strong>target_hurt</strong> entity is a point version of that. It hurts any entity activating it, or the entities defined in its target-target4 fields.</p>
 
 <h3 id="mapvars">Mapvars</h3>
-<p>Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track individual map completion progress on hub maps for example. You have a total of 44 flags availabe to use, each identified by a number in the 1-44 range.
+<p>Mapvars are miscellaneous flags (only true/false values) that can be freely used by the mapper whose values persist across level changes. Useful to track individual map completion progress on hub maps for example. You have a total of 69 flags availabe to use, each identified by a number in the 1-69 range.
 </p>
 <p>You can access them through 2 point entities:</p>
 <ul>
@@ -686,7 +703,7 @@ body {
 
 <h3 id="state-doors">Doors</h3>
 <p>Like in Copper, disabling a door makes it not respond to touches or triggers, and disables its trigger field.</p>
-<p>Doors will also close immediately when disabled. Toggling doors or with <strong>wait -1</strong> set won't close by default, but you can change that behaviour using the spawnflag <strong>Close all doors</strong>. In this case, if re-enabled, the door will return to the position it was before disabling.</p>
+<p>Doors will also close immediately when disabled. Togglable doors or with <strong>wait -1</strong> set won't close by default, but you can change that behaviour using the spawnflag <strong>Close all doors</strong>. In this case, if re-enabled, the door will return to the position it was before disabling.</p>
 
 <h3 id="state-buttons">Buttons</h3>
 
@@ -722,7 +739,7 @@ Also, the state of the last evaluation is stored in this entity's <strong>state<
 
 <h3 id="trigger_everything">trigger_everything</h3>
 
-<p>A no-holds-barred touchable solid trigger. Everything triggers it. Players, monsters, projectiles, gibs, even other solid entities like doors and plats.</p>
+<p>A no-holds-barred touchable solid trigger. Everything triggers it, such as players, monsters, projectiles, gibs, etc.</p>
 
 <p>It can only fire targets matching its <strong>target</strong> field. Due to its "fire-all" nature, it doesn't have support for the 'target2-4' fields, neither 'message' nor 'killtarget'. Useful when used in conjunction with the <strong>trigger_filter</strong> point entity to filter out its firing.</p>
 
@@ -884,9 +901,12 @@ float DMGTYPE_BURN_LONG = 8192; // same as burn but keeps on burning for a few s
 
 <h3 id="ladders">Ladders</h3>
 <p><strong>trigger_ladder</strong> creates an invisible ladder entity. When player is touching it, they'll move in the direction they're facing when pressing forward. Also they can climb directly by pushing "jump".</p>
+<p>The recommended way to set up a ladder trigger is to make it 16 units deep jutting out of whatever solid you're putting it up against. If you have a brushwork ladder on a wall, you can make that a func_illusionary or func_detail_illusionary and put the trigger covering it. Making the trigger too thin, or flush on a solid surface, will make it difficult for the player to climb up/down. We also recommend having the top of the trigger at the same height as the floor you want the player to step out to.</p>
 
 <h3 id="bobbing">Bobbing</h3>
-<p>You can create entities that gently moves back and forth in any direction. <strong>func_bob</strong> is a brush entity, and <strong>misc_bob</strong> is a point entity that uses external models.</p>
+<p>You can create entities that gently move back and forth in any direction. <strong>func_bobbing</strong> is a brush entity, and <strong>misc_bobbing</strong> is a point entity that uses external models.</p>
+
+<p>As of Alkaline 1.2.2, the old <strong>func_bob</strong> and <strong>misc_bob</strong> entities were deprecated in favor of Copper's implementation, which makes more sense to setup and doesn't have drift over time. Current maps set up with those entity classes still work with the newer progs, but they aren't available in the FGD anymore. In-game they get "converted" internally to the new func_bobbing/misc_bobbing, thus won't drift anymore either.</p>
 
 <h3 id="func_fade">Fading brushes</h3>
 <p><strong>func_fade</strong> is a non-solid entity that smoothly fades in/out. It has two operating methods: by proximity and by trigger.</p>
@@ -958,6 +978,16 @@ It can be set to start visible through the "Start on" spawnflag.
 <p><strong>trigger_float</strong> makes things floaty. It pushes entities smoothly towards a set vertical speed, either up or downwards. Affects everything that has gravity - players, monsters, items, projectiles, gibs.</p>
 
 <p>Can be given an optional float sound like trigger_push.</p>
+
+<h3 id="jump-pads">Jump Pads</h3>
+
+<p><strong>trigger_jumppad</strong> lets you set an info_notnull point entity as destination, and players and monsters will be thrown exactly at it, similar to Quaked 3's pads. The jump arc is calculated automatically in order to avoid any obstacles in the way in the best way possible. So you can set the destination to be on the other side of a high wall for example, and the jump will be in a high arc. You can manually tune the arc height with the <strong>height</strong> key, pushing it a bit higher (positive values) or lower (negative values) while still hitting the same spot. If there isn't any possible trajectory between the trigger and the destination, nothing will happen when the trigger gets touched.</p>
+
+<p>By default, solid brush entities like doors and trains are ignored by the trajectory calculation, so the jumper will bump into them if they're in the way (say a closed door for example). If you want brush entities to affect the trajectory too and be avoided the same way as world brushes, you can check the "dodge brush entities" spawnflag.</p>
+
+<p>The jump trajectory is calculated in real time, so it doesn't matter which part of the trigger is touched, the destination will always be the exact same spot. If you activate the "Fixed push direction" flag, no real time calculation will be done, and jump will be based on a fixed direction and height, precalculated on startup according to the offset between the info_notnull destination and the center of the trigger. This is useful if you have a wide jump pad trigger for example, and want its "landing area" to be as wide as the trigger instead of a single spot.</p>
+
+<p>Due to how Quake physics work, jump pads apply a type of "constant push" to players along the whole jump arc until they bump into something, in order to try to emulate Quake 3's air control and keep them more or less on the intended trajectory, instead of being able to easily circle-strafe mid-air and change direction. You can disable this behavior with the "Don't hold player" spawnflag.</p>
 
 
 <h3 id="explosions">Explosions</h3>

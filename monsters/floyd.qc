@@ -291,7 +291,7 @@ void () floyd_explode =
 {
 	local float gibs;
 
-	T_RadiusDamage (self, self, 100, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self, 50, 2, world, DMGTYPE_EXPLOSION);
 	if (self.health > -50) self.health = -50;
 
 	//gibs

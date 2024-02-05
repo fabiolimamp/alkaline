@@ -43,13 +43,13 @@ void() entity_watercheck = {
 
 		self.flags |= FL_INWATER;
 
-		self.waterlevel = 1;
+		//self.waterlevel = 1;
 
 		// Setting watertype here for standard liquid volumes
 		// conflicts with the engine content check later on the same frame,
 		// causing a spam of splash sounds
-		if (!touchedliquidbrush)
-			self.watertype = ct;
+		//if (!touchedliquidbrush)
+			//self.watertype = ct;
 	}
 	else {
 		if (self.flags & FL_SWIM2) self.flags &~= FL_FLY;
@@ -68,9 +68,9 @@ void() entity_watercheck = {
 		self.flags &~= FL_INWATER;
 
 		// same logic as the engine code. It's weird but that's how it is
-		self.waterlevel = ct;
+		//self.waterlevel = ct;
 
-		self.watertype = CONTENT_EMPTY;
+		//self.watertype = CONTENT_EMPTY;
 	}
 
 	if (touchedliquidbrush) self.flags |= FL_INLIQUIDBRUSH;

@@ -102,11 +102,11 @@ void()	axe_run1	=[	$axrun1,		axe_run2	] {
 if (random() < 0.2)
 	sound (self, CHAN_VOICE, "knight/idle.wav", 1,  ATTN_IDLE);
 ai_run(25);};
-void()	axe_run2	=[	$axrun2,		axe_run3	] {ai_run(18);};
-void()	axe_run3	=[	$axrun3,		axe_run4	] {ai_run(12);};
-void()	axe_run4	=[	$axrun4,		axe_run5	] {ai_run(25);};
-void()	axe_run5	=[	$axrun5,		axe_run6	] {ai_run(18);};
-void()	axe_run6	=[	$axrun6,		axe_run1	] {ai_run(12);};
+void()	axe_run2	=[	$axrun2,		axe_run3	] {ai_runjump(18);};
+void()	axe_run3	=[	$axrun3,		axe_run4	] {ai_runjump(12);};
+void()	axe_run4	=[	$axrun4,		axe_run5	] {ai_runjump(25);};
+void()	axe_run5	=[	$axrun5,		axe_run6	] {ai_runjump(18);};
+void()	axe_run6	=[	$axrun6,		axe_run1	] {ai_runjump(12);};
 
 
 void()    axe_walk1    =[    $rockrun1,        axe_walk2    ] {self.nextthink = time + 0.15;
@@ -378,6 +378,8 @@ void(entity e) monster_axegrunt_start =
 	self.th_pain = axe_pain;
 	self.th_die = axe_die;
 	self.th_sight = axe_sight;
+	
+	self.autojump = defaultFl(self.autojump, 1);
 	
 	walkmonster_start ();
 

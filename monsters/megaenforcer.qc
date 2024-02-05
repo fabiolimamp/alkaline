@@ -45,7 +45,7 @@ $frame fieldon1 fieldon2 fieldon3 fieldon4 fieldon5 fieldon6 fieldon7
 void() DrunkExplode =
 {
 	self.velocity = '0 0 0';
-	T_RadiusDamage (self, self.owner, 30, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, 30, 1, world, DMGTYPE_EXPLOSION);
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
 	BecomeBlast();
@@ -174,7 +174,7 @@ void() MissileSpiralPointer_Home =
 	}
 
 	dir = normalize(vtemp - self.origin);
-	if (skill == 3)
+	if (startskill == 3)
 		self.velocity = dir * 350;
 	else
 		self.velocity = dir * 250;
@@ -380,17 +380,17 @@ void()	menf_shld7	=[	$fieldon7 ,	menf_run1	] {};
 
 
 
-void()	menf_run1	=[	$run1  ,	menf_run2	] {ai_run(18);
+void()	menf_run1	=[	$run1  ,	menf_run2	] {ai_runjump(18);
 	if (random() < 0.2)	sound (self, CHAN_VOICE, "me/meidle.wav", 1, ATTN_IDLE);
 	menf_shield_on(TRUE);
 };
-void()	menf_run2	=[	$run2  ,	menf_run3	] {menf_shield_on(FALSE); ai_run(14); };
-void()	menf_run3	=[	$run3  ,	menf_run4	] {menf_shield_on(FALSE); ai_run(7); };
-void()	menf_run4	=[	$run4  ,	menf_run5	] {menf_shield_on(FALSE); ai_run(12); };
-void()	menf_run5	=[	$run5  ,	menf_run6	] {menf_shield_on(FALSE); ai_run(14); };
-void()	menf_run6	=[	$run6  ,	menf_run7	] {menf_shield_on(FALSE); ai_run(14); };
-void()	menf_run7	=[	$run7  ,	menf_run8	] {menf_shield_on(FALSE); ai_run(7); };
-void()	menf_run8	=[	$run8  ,	menf_run1	] {menf_shield_on(FALSE); ai_run(11); };
+void()	menf_run2	=[	$run2  ,	menf_run3	] {menf_shield_on(FALSE); ai_runjump(14); };
+void()	menf_run3	=[	$run3  ,	menf_run4	] {menf_shield_on(FALSE); ai_runjump(7); };
+void()	menf_run4	=[	$run4  ,	menf_run5	] {menf_shield_on(FALSE); ai_runjump(12); };
+void()	menf_run5	=[	$run5  ,	menf_run6	] {menf_shield_on(FALSE); ai_runjump(14); };
+void()	menf_run6	=[	$run6  ,	menf_run7	] {menf_shield_on(FALSE); ai_runjump(14); };
+void()	menf_run7	=[	$run7  ,	menf_run8	] {menf_shield_on(FALSE); ai_runjump(7); };
+void()	menf_run8	=[	$run8  ,	menf_run1	] {menf_shield_on(FALSE); ai_runjump(11); };
 
 
 

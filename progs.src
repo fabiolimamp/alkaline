@@ -75,7 +75,7 @@ monsters/dog.qc
 monsters/zombie.qc
 monsters/boss.qc
 
-monsters/tarbaby.qc			// registered
+monsters/spawn.qc			// registered
 monsters/hknight.qc			// registered
 monsters/fish.qc			// registered
 monsters/shalrath.qc		// registered
@@ -110,8 +110,11 @@ monsters/edie.qc			// quoth
 monsters/monster_turret.qc
 monsters/zombie2.qc			// ne_ruins
 
+
 monsters/lostsoul.qc		// sock/bmFbr
 monsters/gargoyle.qc		// sock/bmFbr
 monsters/chaingunner.qc		// bmFbr
 monsters/arachnotron.qc		// bmFbr
 monsters/pinklin.qc			// bmFbr
+
+monsters/kamikaze.qc

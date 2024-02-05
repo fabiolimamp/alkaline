@@ -16,7 +16,14 @@ float(float a, float b) mod;
 float(float x) sign;
 float(float value, float minValue, float maxValue) wrap;
 
-
+float(float base, float pw) pow = {
+	float ret = 1;
+	while (pw > 0) {
+		ret *= base;
+		pw--;
+	}
+	return ret;
+}
 
 vector(float x, float y, float z) Vector =
 {
@@ -465,3 +472,87 @@ vector(vector ang) normalizeAngles180 = {
 	*/
 	return ang;
 };
+
+
+
+// Approximates atan(x) normalized to the [-1,1] range
+// with a maximum error of 0.1620 degrees.
+
+float(float x) normalized_atan = {
+    float b = 0.596227;
+
+    // Extract the sign bit
+    float ux_s = x < 0 ? -1 : 1;
+
+    // Calculate the arctangent in the first quadrant
+    float bx_a = fabs(b * x);
+    float num = bx_a + x * x;
+    float atan_1q = num / (1 + bx_a + num);
+
+    // Restore the sign bit
+    float atan_2q = atan_1q * ux_s;
+    return atan_2q;
+}
+
+
+// Approximates atan2(y, x) normalized to the [0,4) range
+// with a maximum error of 0.1620 degrees
+
+float(float y, float x) normalized_atan2 = {
+    float b = 0.596227;
+
+    // Extract the sign bits
+    float ux_s  =  x < 0 ? -1 : 1;
+    float uy_s  =  y < 0 ? -1 : 1;
+
+    // Determine the quadrant offset
+    //float q = (float)( ( ~ux_s & uy_s ) >> 29 | ux_s >> 30 ); 
+    float q;
+    if (ux_s > 0 && uy_s > 0) q = 0;
+    else if (ux_s < 0 && uy_s > 0) q = 1;
+    else if (ux_s < 0 && uy_s < 0) q = 2;
+    else q = 3;
+
+    // Calculate the arctangent in the first quadrant
+    float bxy_a = fabs( b * x * y );
+    float num = bxy_a + y * y;
+    float atan_1q =  num / ( x * x + bxy_a + num );
+
+    // Translate it to the proper quadrant
+    //float uatan_2q = (ux_s ^ uy_s) | (uint32_t &)atan_1q;
+    float uatan_2q = ux_s < 0 ? 1 - atan_1q : atan_1q;
+
+    return (q + uatan_2q);
+}
+
+
+// high precision vectoyaw
+float(vector vec) vectoyaw2 = {
+    float b = 0.596227;
+
+    // Extract the sign bits
+    float ux_s  =  vec_x < 0 ? -1 : 1;
+    float uy_s  =  vec_y < 0 ? -1 : 1;
+
+    // Determine the quadrant offset
+    float q;
+    if (ux_s > 0 && uy_s > 0) q = 0;
+    else if (ux_s < 0 && uy_s > 0) q = 1;
+    else if (ux_s < 0 && uy_s < 0) q = 2;
+    else q = 3;
+
+    // Calculate the arctangent in the first quadrant
+    float bxy_a = fabs( b * vec_x * vec_y );
+    float num = bxy_a + vec_y * vec_y;
+    float atan_1q =  num / ( vec_x * vec_x + bxy_a + num );
+
+    // Translate it to the proper quadrant
+    float uatan_2q = ux_s < 0 ? 1 - atan_1q : atan_1q;
+    if (q >= 2) uatan_2q = 1 - uatan_2q;
+    return (q + uatan_2q) * 90;
+}
+
+
+inline void(vector vec) makevectors_angles = {
+	makevectors([-vec_x, vec_y, vec_z]);
+}

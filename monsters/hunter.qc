@@ -101,7 +101,7 @@ void() hunter_shot_touch =
 			T_Damage(other, self, self.owner, 10, DMGTYPE_BALLISTIC);
 	}
 	self.velocity = '0 0 0';
-	T_RadiusDamage (self, self, 20, world, DMGTYPE_EXPLOSION);		//Additional radial damage 
+	T_RadiusDamage (self, self, 20, 1, world, DMGTYPE_EXPLOSION);		//Additional radial damage 
 	
 	become_big_bullet_explosion();	//ball explosion effect
 };
@@ -110,7 +110,7 @@ void(vector org, vector vec) launch_hunter_blast =
 {
 	local float shotspeed;
 		
-	shotspeed = ((skill * 100) + 600);
+	shotspeed = ((startskill * 100) + 600);
 	
 	vec = normalize(vec);
 	
@@ -590,7 +590,7 @@ void() hunter_explode =
 	}
 	
 	//do damage
-	T_RadiusDamage (self, self, 100, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self, 100, 1, world, DMGTYPE_EXPLOSION);
 	
 	TriggerExplosion();
 	SUB_Hide();
@@ -698,7 +698,7 @@ void(entity attacker, float damage)	hunter_pain	=
 	
 	//this is to calculate the probability of blowing an arm off
 	HealthModifier = self.health / 600;				//amount of damage taken; divide current by starting health values
-	SkillModifier = skill / 10;						//more difficult to blow bits off on harder skills
+	SkillModifier = startskill / 10;						//more difficult to blow bits off on harder skills
 	TotalModifier = SkillModifier + HealthModifier;	//add them together
 		
 	self.pain_finished = time + 2;

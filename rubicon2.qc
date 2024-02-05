@@ -91,6 +91,7 @@ float BREAKABLE_GREENMETAL = 0;
 float BREAKABLE_REDMETAL = 1;
 float BREAKABLE_CONCRETE = 2;
 float BREAKABLE_GLASS = 3;
+float BREAKABLE_WOOD = 5;
 
 float BREAKABLE_ALWAYS_SHOOTABLE = 2;
 float BREAKABLE_ONLY_EXPLOSION = 4;
@@ -114,9 +115,10 @@ void() make_breakable_debris = {
 		new.avelocity_x = random()*600;
 		new.avelocity_y = random()*600;
 		new.avelocity_z = random()*600;
-		new.think = SUB_Remove;
+		new.think = GibThink;
 		new.ltime = time;
 		new.nextthink = time + 10 + random()*10;
+		//new.nextthink = time + 3;
 		new.flags = 0;
 
 		if(self.style == BREAKABLE_REDMETAL) {
@@ -228,6 +230,12 @@ void() func_breakable =
 		self.cnt = zeroconvertdefault(self.cnt,6);
 		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
 	}
+	else if (self.style == BREAKABLE_WOOD) {
+		if (!self.noise1) self.noise1 = "misc/wood_impact.wav";
+		if (!self.mdl) self.mdl = "maps/wood07.bsp";
+		self.cnt = zeroconvertdefault(self.cnt,6);
+		if (!self.bloodtype) self.bloodtype = SPAWN_DIRT;
+	}
 	else {
 		if (!self.noise1) self.noise1 = "misc/null.wav";
 		if (!self.mdl) self.mdl = "progs/misc_empty.mdl";
@@ -266,7 +274,7 @@ void () func_explobox_explode =
 
 	sound (self, CHAN_VOICE, "weapons/r_exp3.wav", 1, ATTN_NORM);
 
-	T_RadiusDamage(self, self, self.dmg, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage(self, self, self.dmg, 1, world, DMGTYPE_EXPLOSION);
 	
 	activator = self.enemy;
 	SUB_UseTargets();

@@ -238,7 +238,7 @@ void() ShalHome =
 	//dprint5("Voreball tracking entity: ", self.enemy.classname, " (", vtos(vtemp), ")\n");
 
 	dir = normalize(vtemp - self.origin);
-	if (skill == 3)
+	if (startskill == 3)
 		self.velocity = dir * 350;
 	else
 		self.velocity = dir * 250;
@@ -256,7 +256,7 @@ void() ShalMissileTouch =
 
 	self.dmg = zeroconvertdefault(self.dmg, 40);
 
-	T_RadiusDamage (self, self.owner, self.dmg, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage (self, self.owner, self.dmg, 1, world, DMGTYPE_EXPLOSION);
 	
 	BecomeExplosion();
 };

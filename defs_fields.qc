@@ -249,6 +249,7 @@ FIELDS
 // monster ai
 //
 
+.void() 	th_spawn;
 .void()		th_stand;
 .void()		th_walk;
 .void()		th_run;
@@ -374,6 +375,7 @@ FIELDS
 .entity 	movetarget;
 .entity		sibling;
 .string 	obituary;
+.vector prevorigin;
 
 .float spawncount; // spawner's maximum monsters alive at the same time allowed
 .float totalspawncount; // total spawn count limit
@@ -679,3 +681,6 @@ float prevdoornum;
 
 .vector pushvelocity;
 .float pushfinished;
+
+.float autojump;
+.float autojump_block_finished;

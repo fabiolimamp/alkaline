@@ -32,6 +32,25 @@ void() button_return =
 		self.takedamage = DAMAGE_YES;	// can be shot again
 };
 
+void() button_group_release = {
+	entity e = find(world, groupname, self.groupname);
+
+	while (e) {
+		if (e != self && e.classname == "func_button" && e.state != STATE_BOTTOM) {
+
+			e.state = STATE_DOWN;
+
+			SUB_CalcMoveEnt(e, e.pos1, e.speed, button_done);
+
+			e.frame = 0;			// use normal textures
+			if (e.health)
+				e.takedamage = DAMAGE_YES;	// can be shot again
+		}
+
+		e = find(e, groupname, self.groupname);
+		
+	}
+};
 
 void() button_blocked =
 {	// do nothing, just don't ome all the way back out
@@ -52,6 +71,9 @@ void() button_fire =
 		if (!keylock_try_to_unlock(self.enemy, "", SUB_Null))
 			return;
 	}
+
+	if (self.groupname)
+		button_group_release();
 
 	sound (self, CHAN_VOICE, self.noise, 1, ATTN_NORM);
 
@@ -123,6 +145,7 @@ void(entity b) button_lock =
 
 	self = oself;
 }
+
 void(entity b, float dontresetstate) button_unlock =
 {
 	entity oself;

@@ -147,13 +147,13 @@ void()	enf_run1	=[	$run1  ,	enf_run2	] {
 if (random() < 0.2)
 	sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
 ai_run(18);};
-void()	enf_run2	=[	$run2  ,	enf_run3	] {ai_run(14);};
-void()	enf_run3	=[	$run3  ,	enf_run4	] {ai_run(7);};
-void()	enf_run4	=[	$run4  ,	enf_run5	] {ai_run(12);};
-void()	enf_run5	=[	$run5  ,	enf_run6	] {ai_run(14);};
-void()	enf_run6	=[	$run6  ,	enf_run7	] {ai_run(14);};
-void()	enf_run7	=[	$run7  ,	enf_run8	] {ai_run(7);};
-void()	enf_run8	=[	$run8  ,	enf_run1	] {ai_run(11);};
+void()	enf_run2	=[	$run2  ,	enf_run3	] {ai_runjump(14);};
+void()	enf_run3	=[	$run3  ,	enf_run4	] {ai_runjump(7);};
+void()	enf_run4	=[	$run4  ,	enf_run5	] {ai_runjump(12);};
+void()	enf_run5	=[	$run5  ,	enf_run6	] {ai_runjump(14);};
+void()	enf_run6	=[	$run6  ,	enf_run7	] {ai_runjump(14);};
+void()	enf_run7	=[	$run7  ,	enf_run8	] {ai_runjump(7);};
+void()	enf_run8	=[	$run8  ,	enf_run1	] {ai_runjump(11);};
 
 void()	enf_atk1	=[	$attack1,	enf_atk2	] {ai_face();};
 void()	enf_atk2	=[	$attack2,	enf_atk3	] {ai_face();};

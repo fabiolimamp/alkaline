@@ -328,7 +328,7 @@ void() drn_explode = {
 	ThrowHead("progs/drngib3.mdl", -65);
 
 	self.deadflag = DEAD_GIBBED;
-	T_RadiusDamage(self, self, 80, world, DMGTYPE_EXPLOSION);
+	T_RadiusDamage(self, self, 50, 1.6, world, DMGTYPE_EXPLOSION);
 
 	TriggerExplosion();
 }

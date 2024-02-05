@@ -173,13 +173,13 @@ void()	dread_run1	=[	$run1  ,	dread_run2	] {ai_run(18 * DREAD_RUN_SPEED);
 	if (random() < 0.1)
 		sound (self, CHAN_VOICE, "enforcer/idle1.wav", 1, ATTN_IDLE);
 };
-void()	dread_run2	=[	$run2  ,	dread_run3	] {ai_run(14 * DREAD_RUN_SPEED);};
-void()	dread_run3	=[	$run3  ,	dread_run4	] {ai_run(7 * DREAD_RUN_SPEED);};
-void()	dread_run4	=[	$run4  ,	dread_run5	] {ai_run(12 * DREAD_RUN_SPEED);};
-void()	dread_run5	=[	$run5  ,	dread_run6	] {ai_run(14 * DREAD_RUN_SPEED);};
-void()	dread_run6	=[	$run6  ,	dread_run7	] {ai_run(14 * DREAD_RUN_SPEED);};
-void()	dread_run7	=[	$run7  ,	dread_run8	] {ai_run(7 * DREAD_RUN_SPEED);};
-void()	dread_run8	=[	$run8  ,	dread_run1	] {ai_run(11 * DREAD_RUN_SPEED);};
+void()	dread_run2	=[	$run2  ,	dread_run3	] {ai_runjump(14 * DREAD_RUN_SPEED);};
+void()	dread_run3	=[	$run3  ,	dread_run4	] {ai_runjump(7 * DREAD_RUN_SPEED);};
+void()	dread_run4	=[	$run4  ,	dread_run5	] {ai_runjump(12 * DREAD_RUN_SPEED);};
+void()	dread_run5	=[	$run5  ,	dread_run6	] {ai_runjump(14 * DREAD_RUN_SPEED);};
+void()	dread_run6	=[	$run6  ,	dread_run7	] {ai_runjump(14 * DREAD_RUN_SPEED);};
+void()	dread_run7	=[	$run7  ,	dread_run8	] {ai_runjump(7 * DREAD_RUN_SPEED);};
+void()	dread_run8	=[	$run8  ,	dread_run1	] {ai_runjump(11 * DREAD_RUN_SPEED);};
 
 void()	dread_paina1	=[	$paina1,	dread_paina2	] {};
 void()	dread_paina2	=[	$paina2,	dread_paina3	] {};
@@ -363,6 +363,8 @@ void(entity e) monster_dreadnaught_start =
 	self.th_melee = dread_atk1;
 	self.th_sight = dread_sight;
 	self.th_damage = dread_damage;
+	
+	self.autojump = defaultFl(self.autojump, 1);
 	
 	self.missle = world;
 	

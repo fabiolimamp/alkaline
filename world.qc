@@ -447,6 +447,8 @@ void() LoadSaveGameCallback =
 	e.think = ResetPlayerLoopingSounds;
 	e.nextthink = time + 0.1;
 	
+	cvar_set("skill", ftos(skill));
+
 	FindAndReadGlobalGravity();
 	RestartLoopSounds();
 	loadsavegamecallback_done = 1;
@@ -456,7 +458,7 @@ void() LoadSaveGameCallback =
 void() StartFrame =
 {
 	teamplay = cvar("teamplay");
-	skill = cvar("skill");
+	//skill = cvar("skill");
 	framecount = framecount + 1;
 
 	// todo: unify all this logic -bmFbr
