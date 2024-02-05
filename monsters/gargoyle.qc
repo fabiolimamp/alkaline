@@ -390,7 +390,7 @@ void() garg_die =
 	// In an awkward pose that does not go well into death animations
 	if (self.health < -70 || self.spawnflags & MON_GARGOYLE_PERCH) {
 
-		ThrowHead("progs/h_gargoyle.mdl", self.health);
+		ThrowHead("progs/h_hellimp.mdl", self.health);
 		ThrowGib ("progs/gib_gargwing1.mdl", self.health);
 		ThrowGib ("progs/gib_gargwing2.mdl", self.health);
 		ThrowGib ("progs/gib2.mdl", self.health);
@@ -413,7 +413,7 @@ void() garg_sight = {
 
 /*======================================================================
 QUAKED monster_gargoyle (0.8 0 0.2) (-16 -16 -24) (16 16 40) AMBUSH STATUE PERCH NOSIGHT NOIDLE NOGFX STARTOFF ANGRY Not_Easy Not_Normal Not_Hard Not_DM
-{ model(":progs/mon_gargoyle.mdl"); }
+{ model(":progs/hellimp.mdl"); }
 Gargoyle, 120 health points.
 -------- KEYS --------
 -------- SPAWNFLAGS --------
@@ -438,7 +438,7 @@ void(entity e) monster_gargoyle_start =
 	self.above = zeroconvertdefault(self.above, 128); // Custom height
 	if (self.obituary == "") self.obituary = "was burned by a Gargoyle";
 
-	setmodel (self, "progs/mon_gargoyle.mdl");
+	setmodel (self, "progs/hellimp.mdl");
 
 	if (self.spawnflags & MONSTER_ZEROBBOX) setsize(self, '0 0 -24', '0 0 -24');
 	else setsize(self, self.cmins, self.cmaxs);
@@ -483,8 +483,8 @@ void() monster_gargoyle_spawner = {
 void() monster_gargoyle =
 {
 
-	precache_model ("progs/mon_gargoyle.mdl");
-	precache_model ("progs/h_gargoyle.mdl");
+	precache_model ("progs/hellimp.mdl");
+	precache_model ("progs/h_hellimp.mdl");
 	precache_model ("progs/proj_gargball.mdl");		// FB growing 8 frames
 	//precache_model ("progs/proj_gargoyle.mdl");		// red/smoke wiz projectile
 	precache_model ("progs/gib_gargwing1.mdl");// Left wing
