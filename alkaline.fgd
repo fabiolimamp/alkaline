@@ -1100,9 +1100,9 @@ Don't shake hands with this crazy bastard!" []
 
 @PointClass base(Monster, Above) size(-16 -16 -24, 16 16 40) model({{
 	//ericw came in and saved it with the below format
-	spawnflags & 4 -> 	{"path": "progs/mon_gargoyle.mdl", "frame": 65},
-								 "progs/mon_gargoyle.mdl"
-}}) = monster_gargoyle : "Gargoyle, 120 health points." [
+	spawnflags & 4 -> 	{"path": "progs/hellimp.mdl", "frame": 65},
+								 "progs/hellimp.mdl"
+}}) = monster_gargoyle : "Hell Imp, 120 health points." [
 	spawnflags(flags) = [
 		4 : "Perch" : 0 : "Start in a sitting down, place 44 units out from perching edge, 4 units higher" 
 	]	
@@ -1165,7 +1165,7 @@ model({{
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnotron.mdl", "frame":14}) = monster_arachnotron :
 "Arachnotron, 500 health points." []
 
-@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/pinklin.mdl"}) = monster_pinklin :
+@PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/pinklin_large.mdl"}) = monster_pinklin :
 "Pinklin, 150 health points." []
 
 
