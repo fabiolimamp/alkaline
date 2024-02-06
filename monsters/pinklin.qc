@@ -123,25 +123,26 @@ void()   pinklin_walk12 =[ $walk12.asc,      pinklin_walk1 ] {ai_walk(8);};
 
 
 float pinklinrunframe = 0.05;
+float pinklinrundist = 1;
 void()   pinklin_run1 =[ $run1.asc,      pinklin_run2 ] {
 	nxth(pinklinrunframe);
 	pinklin_idlesound(0.1);
 	pinklin_run(0);
 };
-void()   pinklin_run2 =[ $run2.asc,      pinklin_run3 ] {nxth(pinklinrunframe); pinklin_run(8);};
-void()   pinklin_run3 =[ $run3.asc,      pinklin_run4 ] {nxth(pinklinrunframe); pinklin_run(13);};
-void()   pinklin_run4 =[ $run4.asc,      pinklin_run5 ] {nxth(pinklinrunframe); pinklin_run(18);};
-void()   pinklin_run5 =[ $run5.asc,      pinklin_run6 ] {nxth(pinklinrunframe); pinklin_run(18);};
-void()   pinklin_run6 =[ $run6.asc,      pinklin_run7 ] {nxth(pinklinrunframe); pinklin_run(13);};
-void()   pinklin_run7 =[ $run7.asc,      pinklin_run8 ] {nxth(pinklinrunframe); pinklin_run(8);};
-void()   pinklin_run8 =[ $run8.asc,      pinklin_run9 ] {nxth(pinklinrunframe); pinklin_run(0);};
-void()   pinklin_run9 =[ $run9.asc,      pinklin_run10 ] {nxth(pinklinrunframe); pinklin_run(8);};
-void()   pinklin_run10 =[ $run10.asc,      pinklin_run11 ] {nxth(pinklinrunframe); pinklin_run(13);};
-void()   pinklin_run11 =[ $run11.asc,      pinklin_run12 ] {nxth(pinklinrunframe); pinklin_run(18);};
-void()   pinklin_run12 =[ $run12.asc,      pinklin_run13 ] {nxth(pinklinrunframe); pinklin_run(18);};
-void()   pinklin_run13 =[ $run13.asc,      pinklin_run14 ] {nxth(pinklinrunframe); pinklin_run(13);};
-void()   pinklin_run14 =[ $run14.asc,      pinklin_run15 ] {nxth(pinklinrunframe); pinklin_run(8);};
-void()   pinklin_run15 =[ $run15.asc,      pinklin_run1 ] {nxth(pinklinrunframe); pinklin_run(0);};
+void()   pinklin_run2 =[ $run2.asc,      pinklin_run3 ] {nxth(pinklinrunframe); pinklin_run(8 * pinklinrundist);};
+void()   pinklin_run3 =[ $run3.asc,      pinklin_run4 ] {nxth(pinklinrunframe); pinklin_run(13 * pinklinrundist);};
+void()   pinklin_run4 =[ $run4.asc,      pinklin_run5 ] {nxth(pinklinrunframe); pinklin_run(18 * pinklinrundist);};
+void()   pinklin_run5 =[ $run5.asc,      pinklin_run6 ] {nxth(pinklinrunframe); pinklin_run(18 * pinklinrundist);};
+void()   pinklin_run6 =[ $run6.asc,      pinklin_run7 ] {nxth(pinklinrunframe); pinklin_run(13 * pinklinrundist);};
+void()   pinklin_run7 =[ $run7.asc,      pinklin_run8 ] {nxth(pinklinrunframe); pinklin_run(8 * pinklinrundist);};
+void()   pinklin_run8 =[ $run8.asc,      pinklin_run9 ] {nxth(pinklinrunframe); pinklin_run(0 * pinklinrundist);};
+void()   pinklin_run9 =[ $run9.asc,      pinklin_run10 ] {nxth(pinklinrunframe); pinklin_run(8 * pinklinrundist);};
+void()   pinklin_run10 =[ $run10.asc,      pinklin_run11 ] {nxth(pinklinrunframe); pinklin_run(13 * pinklinrundist);};
+void()   pinklin_run11 =[ $run11.asc,      pinklin_run12 ] {nxth(pinklinrunframe); pinklin_run(18 * pinklinrundist);};
+void()   pinklin_run12 =[ $run12.asc,      pinklin_run13 ] {nxth(pinklinrunframe); pinklin_run(18 * pinklinrundist);};
+void()   pinklin_run13 =[ $run13.asc,      pinklin_run14 ] {nxth(pinklinrunframe); pinklin_run(13 * pinklinrundist);};
+void()   pinklin_run14 =[ $run14.asc,      pinklin_run15 ] {nxth(pinklinrunframe); pinklin_run(8 * pinklinrundist);};
+void()   pinklin_run15 =[ $run15.asc,      pinklin_run1 ] {nxth(pinklinrunframe); pinklin_run(0 * pinklinrundist);};
 
 void()   pinklin_jump1   =[ $jump1.asc,     pinklin_jump2   ] {ai_face();};
 void()   pinklin_jump2   =[ $jump2.asc,     pinklin_jump3   ] {ai_face();};
