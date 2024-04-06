@@ -144,6 +144,7 @@ void() worldspawn =
 	}
 
 	startskill = cvar("skill");
+	skill = startskill;
 	developer = cvar("developer");
 
 	world_sounds = &world.sounds;
@@ -446,7 +447,12 @@ void() LoadSaveGameCallback =
 	e = spawn();
 	e.think = ResetPlayerLoopingSounds;
 	e.nextthink = time + 0.1;
-	
+
+	/*
+	dprint3("\n\n\nLoaded game skill: ", ftos(skill), "\n");
+	dprint3("Current skill: ", ftos(cvar("skill")), "\n");
+	dprint3("Start skill: ", ftos(startskill), "\n\n\n");
+	*/
 	cvar_set("skill", ftos(skill));
 
 	FindAndReadGlobalGravity();
