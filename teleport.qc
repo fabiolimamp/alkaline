@@ -292,8 +292,10 @@ void() teleport_touch =
 	// offsets the current angle by the destination's mangle,
 	// if the destination is a instant brush, or the info_destination has a
 	// "keep angle" flag
-	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT) 
+	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT) {
 		other.angles = vectoangles(t_forward*p_forward_x - t_right*p_forward_y + t_up*p_forward_z);
+		other.angles_y = vectoyaw2(t_forward*p_forward_x - t_right*p_forward_y + t_up*p_forward_z);
+	}
 	else
 		other.angles = tAngle;
 
