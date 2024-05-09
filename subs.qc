@@ -420,7 +420,11 @@ to not lose track of current think functions.
 ===============
 */
 
-void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController =
+inline void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController = {
+	SUB_CalcAngleMoveController_ent(self, destangle, tspeed, func, controller);
+};
+
+void(entity ent, vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController_ent =
 {
 	local vector	destdelta;
 	local float		len, traveltime;
@@ -430,7 +434,7 @@ void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAng
 		
 	// set destdelta to the vector needed to move
 
-	destdelta = normalizeAngles180(destangle - self.angles);
+	destdelta = normalizeAngles180(destangle - ent.angles);
 	/*dprint3("destangle:   ", vtos(destangle), "\n");
 	dprint3("self.angles: ", vtos( self.angles), "\n");
 	dprint3("destdelta:   ", vtos(destdelta), "\n");
@@ -446,10 +450,10 @@ void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAng
 	controller.nextthink = time + traveltime;
 
 	// scale the destdelta vector by the time spent traveling to get velocity
-	self.avelocity = destdelta * (1 / traveltime);
+	ent.avelocity = destdelta * (1 / traveltime);
 	
 	// Makes sure controller.owner points to self so it can be referenced later in the think function
-	controller.owner = self;  
+	controller.owner = ent;  
 	controller.think1 = func;
 	controller.finalangle = destangle;
 	controller.think = SUB_CalcAngleMoveDoneController;
