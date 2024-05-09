@@ -565,6 +565,11 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 			}
 		}
 
+		if (t.classname == "monster_oldone") {
+			killed_monsters = killed_monsters + 1;
+			WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+		}
+
 		if (t.classname == "trigger_secret" && !(t.nextthink > time)) {
 			dprint3("Killed untouched trigger_secret at ", vtos((t.mins + t.maxs)/2), ", marking as found\n");
 			found_secrets = found_secrets + 1;
