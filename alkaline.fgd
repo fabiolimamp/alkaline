@@ -1124,7 +1124,7 @@ model({{
 	spawnflags & 4 -> {"path":"progs/spiderbot.mdl", "frame":10},
 	{"path":"progs/spiderbot.mdl", "frame":0}
 }})= monster_spiderbot :
-"Spiderbot, 30 health points." [
+"Spiderbot, 40 health points." [
 	spawnflags(flags) =	[
 		4 : "Start upright" : 0
 	]
@@ -1155,7 +1155,7 @@ model({{
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 
-Set 'Pacifist' spawn flag (131072) to totally ignore the player.
+Set 'Pacifist' spawnflag (131072) to totally ignore the player.
 Doesn't count into total monster count, unless you set 'Count After Spawn' flag."
 []
 
