@@ -556,7 +556,7 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 
 		if (t.flags & FL_MONSTER || t.flags & FL_UNSPAWNEDMONSTER) { // increase the kill counter if it's a monster
 			if (
-				self.health > 0
+				t.health > 0
 				&& !(t.flags & FL_UNSPAWNEDMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
 				&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
 			){
