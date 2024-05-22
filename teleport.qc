@@ -309,8 +309,8 @@ void() teleport_touch =
 		other.angles_z = pAngle_z;
 	}
 
-
-	spawn_tdeath(t.origin, other);
+	if (other.flags & (FL_MONSTER + FL_CLIENT))
+		spawn_tdeath(t.origin, other);
 
 	// move the player and lock him down for a little while
 	if (!other.health && other.flags & FL_CLIENT)
