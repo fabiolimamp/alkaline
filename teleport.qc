@@ -300,7 +300,7 @@ void() teleport_touch =
 		other.angles = tAngle;
 
 	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT || t.spawnflags & TELEDEST_KEEPVELOCITY) 
-		other.velocity = t_forward*other.velocity_x - t_right*other.velocity_y + t_up*other.velocity_z;
+		other.velocity = f_forward*other.velocity_x - t_right*other.velocity_y + t_up*other.velocity_z;
 
 	// only players, projectiles and gibs maintain their pitch and roll angles
 	// everything else gets set to what it was before
@@ -335,7 +335,17 @@ void() teleport_touch =
 		else
 			neworg = other.origin - teleMid + destMid;
 
-		setorigin(other, neworg);
+		// if the entity is onground, move the origin upwards a bit and drop it to avoid getting stuck at the destination
+		if (other.flags & FL_ONGROUND) {
+			traceline(neworg + [0, 0, other.maxs_z], neworg + [0, 0, other.maxs_z] + '0 0 32', 0, other);
+			setorigin(other, neworg + [0, 0, trace_fraction * 32]);
+			entity oself = self;
+			self = other;
+			droptofloor();
+			self = oself;
+		}
+		else
+			setorigin(other, neworg);
 
 		// projectiles and gibs must have their models removed for a few frames
 		// otherwise effect trails may lerp when the destination is close enough
