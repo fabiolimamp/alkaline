@@ -2832,6 +2832,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	spawnflags(flags) = [
 		1: "Once Only" : 0 
 		2: "Silent" : 0
+		8: "Tunnel center" : 0 : "Suck players towards the center of the brush in the direction of travel to avoid them getting hung up on corners"
 	]
 	speed(integer) : "Speed of push" : 1000
 	noise(string) : "Sound" : "ambience/windfly.wav"

@@ -878,6 +878,8 @@ trigger_push
 
 float PUSH_ONCE = 1;
 float PUSH_SILENT = 2;
+float PUSH_TUNNEL = 8;
+
 
 void() trigger_push_touch =
 {
@@ -898,6 +900,13 @@ void() trigger_push_touch =
 				other.fly_sound = time + self.delay;
 				sound (other, CHAN_AUTO, self.noise, 1, ATTN_NORM);
 			}
+		}
+
+		if (self.spawnflags & PUSH_TUNNEL)
+		{
+			vector suck = self.origin + (self.mins + self.maxs )/2 - other.origin;
+			suck -= self.movedir * (suck * self.movedir);
+			other.velocity += suck * self.speed * 0.1;
 		}
 	}
 	if (self.spawnflags & PUSH_ONCE)
