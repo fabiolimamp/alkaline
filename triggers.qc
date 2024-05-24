@@ -759,17 +759,19 @@ void() heal_think = {
 	dmg_take -> amount of healing already done
 	healamount -> total heal
 	*/
-	if (self.owner.health <= 0 || self.attack_finished < time) {
+	if (self.owner.health <= 0 || self.attack_finished < time || self.owner.health >= self.owner.max_health) {
+		// make sure target health is reached at the last tic
 		if (self.attack_finished < time) {
 			if (self.dmg_save < self.healamount)
 				self.owner.health += self.healamount - self.dmg_save;
 		}
+
 		self.owner.hurtcontroller = world;
 		remove(self);
 		return;
 	}
 
-	self.dmg_take += self.healamount / self.delay / 10;
+	self.dmg_take += self.healamount / self.delay / 20;
 	float take;
 
 	if (fabs(self.dmg_take) >= 1) {
@@ -780,7 +782,6 @@ void() heal_think = {
 		}
 		else {
 			take = floor(self.dmg_take);
-			//T_Damage(self.owner, self.enemy, self.enemy, take, self.style);
 			self.owner.health += take;
 		}
 		
@@ -788,7 +789,7 @@ void() heal_think = {
 		
 		self.dmg_take = self.dmg_take % take;
 	}
-	self.nextthink = time + 0.1;
+	self.nextthink = time + 0.05;
 };
 
 void(entity tgt, float totalheal, float duration) heal_start = {
@@ -819,7 +820,7 @@ void(entity tgt, float totalheal, float duration) heal_start = {
 		controller.delay = duration;
 
 		controller.think = heal_think;
-		controller.nextthink = time + 0.1;
+		controller.nextthink = time + 0.05;
 	}
 
 };
