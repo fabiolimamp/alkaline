@@ -2893,6 +2893,19 @@ Can be given an optional float sound.
 ]
 
 
+@PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_heal : "Heals any entity activating it, or the entities defined in the target-target4 fields. Health progressively increases over a set period. 
+'healamount' sets the total heal to be applied at each triggering.
+'speed' sets the total time it takes for heal to be progressively applied.
+" 
+[
+	healamount(integer) : "Heal amount" : 10 : "Total health to be applied at each triggering"
+	speed(float) : "Heal time" : "1"
+	spawnflags(flags) = [
+		1: "Don't heal players" : 0 
+		2: "Don't heal monsters" : 0
+	]
+]
+
 @PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_hurt : "Trigger hurt. Hurts any entity activating it, or the entities defined in the target-target4 fields.
 'dmg' sets the total damage to be inflicted.
 'speed' sets the total time it takes for damage to be progressively applied.
@@ -2905,7 +2918,6 @@ Can be given an optional float sound.
 		2: "Don't hurt monsters" : 0
 	]
 ]
-
 
 @SolidClass base(Appearflags, Targetname, FogShift, TriggerWait) = trigger_fogblend : 
 "Trigger: Fog Blend
