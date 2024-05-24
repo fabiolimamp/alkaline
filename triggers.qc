@@ -89,6 +89,14 @@ void() multi_trigger = {
 		self.nextthink = time + 0.1;
 		self.think = SUB_Remove;
 	}
+
+	if (self.count > 0) {
+		self.count -= 1;
+		if (self.count == 0) {
+			remove(self);
+			return;
+		}
+	}
 };
 
 void() multi_killed = //dumptruck_ds

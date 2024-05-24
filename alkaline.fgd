@@ -2455,7 +2455,8 @@ Setting a 'health' value makes it solid and shootable.
 " 
 [
 	wait(float) : "Wait before reset" : "4"
-	health(integer) : "Health"
+	health(integer) : "Health" : : "Makes the trigger a solid shootable block."
+	count(integer) : "Maximum usage count" : : "Sets a maximum usage count."
 	spawnflags(flags) = [
 		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
