@@ -2438,10 +2438,15 @@ Flags:
 
 @SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once.
 
+If you set an 'angle' (or 'angles') the trigger will only fire when the player is facing the set direction. To set angle 0, use 360. This field must be added manually, otherwise Trenchbroom might set it inadvertently.
+
+The 'view_ofs' key controls the maximum offset from the set angle in each axis that players will be able to fire the trigger - default is '90 90 0', which means 90 degrees up and down, and 90 degrees to the left and to the right.
+
 Setting a 'health' value makes it solid and shootable.
 "
 [
 	health(integer) : "Health"
+	view_ofs(string) : "Maximum angle offset" : : "For when you have an 'angle' set. Offset angle from the central point in each direction, in 'pitch yaw 0' format"
 	spawnflags(flags) = [
 		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
@@ -2451,12 +2456,17 @@ Setting a 'health' value makes it solid and shootable.
 
 Will keep on firing while the player is touching the trigger, on the interval defined in 'wait'.
 
+If you set an 'angle' (or 'angles') the trigger will only fire when the player is facing the set direction. To set angle 0, use 360. This field must be added manually, otherwise Trenchbroom might set it inadvertently.
+
+The 'view_ofs' key controls the maximum offset from the set angle in each axis that players will be able to fire the trigger - default is '90 90 0', which means 90 degrees up and down, and 90 degrees to the left and to the right.
+
 Setting a 'health' value makes it solid and shootable.
 " 
 [
 	wait(float) : "Wait before reset" : "4"
 	health(integer) : "Health" : : "Makes the trigger a solid shootable block."
 	count(integer) : "Maximum usage count" : : "Sets a maximum usage count."
+	view_ofs(string) : "Maximum angle offset" : : "For when you have an 'angle' set. Offset angle from the central point in each direction, in 'pitch yaw 0' format"
 	spawnflags(flags) = [
 		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
