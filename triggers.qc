@@ -166,30 +166,29 @@ void() trigger_multiple =
 			self.noise = "misc/trigger1.wav";
 	}
 
-	if (self.noise != "") precache_sound(self.noise);
+	if (self.noise != "")
+		precache_sound(self.noise);
 
 	if (!self.wait)
 		self.wait = 0.2;
+
 	self.use = multi_use;
 
-	InitTrigger ();
+	InitTrigger();
 
-	if (self.health)
-	{
+	if (self.health) {
 		if (self.spawnflags & SPAWNFLAG_NOTOUCH)
 			objerror ("health and notouch don't make sense\n");
+
 		self.max_health = self.health;
 		self.th_die = multi_killed;
 		self.takedamage = DAMAGE_YES;
 		self.solid = SOLID_BBOX;
-		setorigin (self, self.origin);	// make sure it links into the world
+		setorigin(self, self.origin);	// make sure it links into the world
 	}
-	else
-	{
-		if ( !(self.spawnflags & SPAWNFLAG_NOTOUCH) )
-		{
+	else {
+		if (!(self.spawnflags & SPAWNFLAG_NOTOUCH)) 
 			self.touch = multi_touch;
-		}
 	}
 
 	SUB_CheckWaiting();
