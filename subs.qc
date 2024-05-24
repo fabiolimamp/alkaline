@@ -89,7 +89,8 @@ void() SetMovedir =
 		makevectors (self.angles);
 		self.movedir = v_forward;
 	}
-	
+	SetAngles();
+	self.mangle = self.angles;
 	self.angles = '0 0 0';
 };
 

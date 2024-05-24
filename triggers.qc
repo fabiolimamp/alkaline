@@ -123,14 +123,18 @@ void() multi_touch =
 		return;
 
 	// if the trigger has an angles field, check player's facing direction.
-	// Deprecated, use mangle+view_ofs instead. This is used in id1's start.wad tho, so don't remove
+	// view_ofs sets the cone angle
 	if (self.movedir != '0 0 0')
 	{
-		makevectors (other.angles);
-		if (v_forward * self.movedir < 0)
-			return;		// not facing the right way
+		vector cone = self.view_ofs;
+
+		if (cone == '0 0 0') 
+			cone = '90 90 0';
+
+		if (!isInAngle([-other.v_angle_x, other.v_angle_y, other.v_angle_z], self.mangle, cone))
+			return;
 	}
-	
+
 	self.enemy = other;
 	multi_trigger ();
 };
