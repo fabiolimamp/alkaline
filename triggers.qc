@@ -636,7 +636,7 @@ void() hurt_think = {
 		return;
 	}
 
-	self.dmg_take += self.dmg / self.delay / 10;
+	self.dmg_take += self.dmg / self.delay / 20;
 	float take;
 
 	if (fabs(self.dmg_take) >= 1) {
@@ -654,7 +654,7 @@ void() hurt_think = {
 		
 		self.dmg_take = self.dmg_take % take;
 	}
-	self.nextthink = time + 0.1;
+	self.nextthink = time + 0.05;
 };
 
 void(entity tgt, float totaldmg, float duration, float dmgtype) hurt_start = {
@@ -686,7 +686,7 @@ void(entity tgt, float totaldmg, float duration, float dmgtype) hurt_start = {
 		controller.style = dmgtype;
 
 		controller.think = hurt_think;
-		controller.nextthink = time + 0.1;
+		controller.nextthink = time + 0.05;
 	}
 
 };
