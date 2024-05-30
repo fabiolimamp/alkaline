@@ -2548,7 +2548,7 @@ This ideally should match the same size and shape of the trigger_teleport brush.
 	spawnflags(flags) = [
 		2: "Preserve pitch angle"
 		4: "Show teleport effect"
-		//8: "Preserve velocity"
+		32: "Don't force drop to floor"
 	]
 ]
 

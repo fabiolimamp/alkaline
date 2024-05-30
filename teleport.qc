@@ -22,6 +22,7 @@ float TELEDEST_KEEPPITCH = 2;
 float TELEDEST_STEALTH = 4;
 float TELEDEST_KEEPVELOCITY = 8;
 float TELEDEST_KEEPANGLE_NOOFFSET = 16;
+float TELEDEST_DONTDROP = 32;
 
 float TELEDEST_STYLE_NORMAL = 0;
 float TELEDEST_STYLE_INSTANT = 1;
@@ -370,7 +371,7 @@ void() teleport_touch =
 			neworg = other.origin - teleMid + destMid;
 
 		// if the entity is onground, move the origin upwards a bit and drop it to avoid getting stuck at the destination
-		if (other.flags & FL_ONGROUND) {
+		if (other.flags & FL_ONGROUND && !(t.spawnflags & TELEDEST_DONTDROP)) {
 			float frac = 1;
 			traceline(neworg + [0, 0, other.maxs_z], neworg + [0, 0, other.maxs_z] + '0 0 32', 0, other);
 			if (trace_fraction < frac) frac = trace_fraction;
@@ -431,7 +432,7 @@ void() teleport_touch =
 	if (other.classname == "player")
 	{
 		fog_setFromEnt(other, t);
-		
+
 		if (t.style == TELEDEST_STYLE_INSTANT)
 			dprint3("Player teleported to instadestination ", t.targetname, "\n");
 		else
