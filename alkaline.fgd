@@ -2539,16 +2539,20 @@ Using the destination's 'count' field, you can define which order they'll be sel
 @SolidClass base(Targetname, Fog, Appearflags) = trigger_teleport_instadestination : "Instant teleport destination. 
 This ideally should match the same size and shape of the trigger_teleport brush.
 
+- 'mangle' field: sets an optional angle offset compared to the trigger_teleport that entities will be turned by. This will make stuff go out at a different orientation than the teleport trigger, including pointing up/downwards, or with a side roll. Uses the 'pitch yaw roll' notation, but you can just follow Trenchbroom's white directional arrow when rotating the instadestination brush.
+
 - 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
 
-- 'Show teleport effect' flag: Draw the teleport fog effect (which is disabled by default for instateleport destinations).
+- 'Show teleport effect' flag: Draw the teleport fog effect (which is disabled by default for teleport instadestinations).
+
+- 'Don't force drop to floor' flag: By default, if the player is onground when teleporting in, they'll be forced to the ground after going out at the destination, in order to avoid getting stuck. In case you deliberately want to teleport the player to a mid-air position, this flag disables this behavior.
 " [
 	count(integer) : "Group order"
-	mangle(string) : "Angle offset"
+	mangle(string) : "Angle offset" : : "Check detailed description below."
 	spawnflags(flags) = [
-		2: "Preserve pitch angle"
-		4: "Show teleport effect"
-		32: "Don't force drop to floor"
+		2: "Preserve pitch angle" : 0 : "Makes players maintain their original pitch view angles even when the destination has a pitch offset."
+		4: "Show teleport effect" : 0 : "Draw the teleport fog effect (which is disabled by default for teleport instadestinations)."
+		32: "Don't force drop to floor" : 0 : "By default, if the player is onground when teleporting in, they'll be forced to the ground after going out at the destination, in order to avoid getting stuck. In case you deliberately want to teleport the player to a mid-air position, this flag disables this behavior."
 	]
 ]
 
