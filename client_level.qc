@@ -450,8 +450,12 @@ void() changelevel_touch = {
 
 	SUB_UseTargets ();
 
-	if ( (self.spawnflags & 1) && (deathmatch == 0) )
-	{	// NO_INTERMISSION
+	if ( (self.spawnflags & 1) && (deathmatch == 0) ) // NO_INTERMISSION
+	{	
+		// flip on whichever mapvar is set into the changelevel trigger
+		if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
+			write_mapvar(self.jump_flag, MAPV_WRITE_ON);
+		
 		GotoNextMap();
 		return;
 	}
