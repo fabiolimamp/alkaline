@@ -431,6 +431,11 @@ void() teleport_touch =
 	if (other.classname == "player")
 	{
 		fog_setFromEnt(other, t);
+		
+		if (t.style == TELEDEST_STYLE_INSTANT)
+			dprint3("Player teleported to instadestination ", t.targetname, "\n");
+		else
+			dprint3("Player teleported to destination ", t.targetname, "\n");
 
 		if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT){
 			// When a changing player's angles field on a frame with fixangle set to 1,
@@ -440,7 +445,6 @@ void() teleport_touch =
 			other.angles_x *= -1;
 
 			if (t.spawnflags & TELEDEST_KEEPPITCH){
-				dprint("aqui\n");
 				other.angles_x = vAngleX;
 			}
 			else {
