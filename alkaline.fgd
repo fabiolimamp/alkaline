@@ -1206,8 +1206,9 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 // misc
 //
 
-@PointClass base(Appearflags, Targetname) = air_bubbles : "Air bubbles" []
-@PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning" []
+@PointClass base(Appearflags, Targetname) = air_bubbles : "Air bubble generator." []
+@PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning. Only meant to be used with the standard hard-coded Chthon setup in e1m7.
+If you want a general-usage lightning bolt, use the misc_lightning_start/relay/end entities." []
 
 @PointClass base(Appearflags, Targetname, Target) size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" [
 	health(integer) : "Health" : 20
@@ -1232,7 +1233,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 //	model(string)
 //]
 
-@PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter" 
+@PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter. Fires once every time it's triggered." 
 [	
 	angle(integer) : "Angle"
 	dmg(integer) : "Custom damage" : : "Custom projectile damage. Defaults:
@@ -1254,7 +1255,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 	]
 ]
 
-@PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter" [
+@PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter. Once triggered, keeps firing continuously until triggered again." [
 	wait(float) : "Firing interval" : "1.0"
 	delay(integer) : "Delay before firing first spike, so multiple shooters can be stagered"
 	rand(integer) : "Additional random firing interval and delay"
@@ -1437,7 +1438,8 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 []
 
 @Pointclass base(Targetname, Appearflags) color(0 128 224) size(16 16 16) = target_explosion : 
-"Causes explosions, same appearance as a rocket/grenade blast." 
+"Spawns an explosion, same appearance as a rocket/grenade blast. Doesn't deal damage by default.
+For reference, player's rockets and grenades deal around 100 damage, while the ogre's grenade deals 40." 
 [
 	count(integer) : "Repeat count" : 1
 	delay(string) : "Delay before first blast" : "0"
@@ -1659,7 +1661,7 @@ If the target entity changes its default behavior when 'targetname' is set (such
 
 
 
-@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound_repeat : "Hipnotic sound player
+@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound_repeat : "Periodic sound player
 
 Plays a one off sound on a periodic basis.
 Do NOT use looped sounds with this entity. For looped sounds use ambient_general.
@@ -1688,7 +1690,7 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 			1 : "Start off" : 0
 		]
 	]
-@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 200 35) = play_sound_triggered : "Custom sound trigger
+@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 200 35) = play_sound_triggered : "Custom sound player. Plays a clip a single time when triggered.
 
 toggle (spawnflags): stopped when triggered again
 volume: how loud (range is 0.1 to 1 default is 1 = full volume)
@@ -1942,7 +1944,7 @@ If switchable shadows are on, they'll fade together as well.
 	]
 ]
 
-@SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
+@SolidClass base(ModelLight, Alpha) = func_illusionary : "Non-solid static brush." []
 
 @SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once. You can directly set a custom movement vector with the 'movedir' key.
 
@@ -1975,8 +1977,9 @@ When you have more than one func_button with the same 'groupname', only one butt
 	]
 ]
 
-@SolidClass base(Targetname, Target, ModelLight, Message) = func_touchplate : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
-You can directly set a custom movement vector with the 'movedir' key.
+@SolidClass base(Targetname, Target, ModelLight, Message) = func_touchplate : "Touchplate button. Place it on the ground, and whenever a player or a monster steps on it, it'll fire all its targets once, and not fire again until it gets unpressed and pressed again.
+
+You can optionally set it to fire only 'target1'/'target2' when stepping on, and 'target3'/'target4' when stepping off.
 " 
 [
 	speed(integer) : "Speed (units per second)" : 40
@@ -2289,7 +2292,7 @@ Other than that, this entity functions like a normal button.
 	]
 ]
 
-@SolidClass = func_bossgate : "Boss gate" []
+@SolidClass = func_bossgate : "Boss gate. Solid brush that disappears if you start the map while carrying all the 4 runes. Used to gate the final boss entrance portal." []
 
 
 @SolidClass color(128 128 230) base(ModelLight) = func_detail : "Detail brush. Ignored by vis so can speed up compile times consideratbly. Also allows you to set new compiler lighting options on brushes. DOES NOT SEAL MAPS FROM VOID" []
@@ -2761,7 +2764,7 @@ Also, the state of the last evaluation is stored in this entity's 'state' field 
 
 
 @SolidClass base(Appearflags, Targetname, SingleTarget, TriggerWait) = trigger_everything : "
-A no-holds-barred touchable trigger. Everything triggers it. Players, monsters, projectiles, gibs, even solid entities like doors and plats.
+A no-holds-barred touchable trigger. Everything triggers it. Players, monsters, projectiles, gibs.
 
 It can only fire targets matching its 'target' field. Doesn't have support for the 'target2-4' fields, neither 'message' nor 'killtarget'. Useful when used in conjunction with the trigger_filter point entity to filter out its firing.
 
@@ -2884,8 +2887,9 @@ Can be given an optional float sound.
 	delay(float) : "Sound loop time (when there's a sound set)" : "1"
 ]
 
-@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_jumppad : "
-"
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_jumppad : "Jump pad trigger. Lets you set an info_notnull point entity as destination, and players and monsters will be thrown exactly at it, similar to Quaked 3's pads. The jump arc is calculated automatically in order to avoid any obstacles in the way in the best way possible. So you can set the destination to be on the other side of a high wall for example, and the jump will be in a high arc.
+
+Check the docs for a more detailed description."
 [
 	spawnflags(flags) = [
 		1: "Don't affect players" : 0 
