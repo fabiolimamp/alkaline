@@ -156,6 +156,7 @@ entity activator;		// the entity that activated a trigger or brush
 
 entity damage_attacker;	// set by T_Damage
 float framecount;
+float lastframetime;
 
 float skill;
 float startskill;
@@ -683,3 +684,5 @@ float prevdoornum;
 
 .float autojump;
 .float autojump_block_finished;
+
+//.entity camera_current;

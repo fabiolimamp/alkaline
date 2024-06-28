@@ -54,6 +54,7 @@ gravity.qc
 water.qc
 touchplate.qc
 jumppad.qc
+//cutscene.qc
 
 misc_scientist.qc
 
