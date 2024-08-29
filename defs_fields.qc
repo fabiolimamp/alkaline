@@ -313,6 +313,9 @@ FIELDS
 .float		trif_time;
 .float		rad_time;
 .float		fly_sound;
+
+.entity 	weaponent;
+.float 		attackpressed, attackhold;
 //.float 		cshift_set, cshift_cleared;
 
 .float		axhitme;

@@ -1,3 +1,348 @@
+typedef struct {
+	float id;
+	string name;
+	string model;
+	.float ammofield;
+	float ammo_item;
+	float ammo_usage;
+	void() animfunction;
+} weaponclass_t;
+
+
+weaponclass_t wpc_no_weapon = {
+	WEAPON_NO_WEAPON,
+	"No weapon", // name
+	"", // model
+	ammo_shells,
+	IT_SHELLS,
+	0, // ammo_usage
+	weaponanim_none // animfunction
+};
+
+weaponclass_t wpc_axe = {
+	WEAPON_AXE,
+	"Axe", // name
+	"progs/v_alkaxe20fps.mdl", // model
+	ammo_shells,
+	IT_SHELLS,
+	0, // ammo_usage
+	weaponanim_axe // animfunction
+};
+
+weaponclass_t wpc_chainsaw = {
+	WEAPON_CHAINSAW,
+	"Chainsaw", // name
+	"progs/sawidle.mdl", // model
+	ammo_shells,
+	IT_SHELLS,
+	0, // ammo_usage
+	weaponanim_chainsaw // animfunction
+};
+
+weaponclass_t wpc_shotgun = {
+	WEAPON_SHOTGUN,
+	"Shotgun", // name
+	"progs/v_shot40fps.mdl", // model
+	ammo_shells,
+	IT_SHELLS,
+	1, // ammo_usage
+	weaponanim_shotgun // animfunction
+};
+
+weaponclass_t wpc_supershotgun = {
+	WEAPON_SUPER_SHOTGUN,
+	"Super Shotgun", // name
+	"progs/v_shot2_40fps.mdl", // model
+	ammo_shells,
+	IT_SHELLS,
+	2, // ammo_usage
+	weaponanim_supershotgun // animfunction
+};
+
+weaponclass_t wpc_nailgun = {
+	WEAPON_NAILGUN,
+	"Nailgun", // name
+	"progs/v_nail_alk40fps.mdl", // model
+	ammo_nails,
+	IT_NAILS,
+	1, // ammo_usage
+	weaponanim_nailgun // animfunction
+};
+
+weaponclass_t wpc_supernailgun = {
+	WEAPON_SUPER_NAILGUN,
+	"Super Nailgun", // name
+	"progs/v_nail3.mdl", // model
+	ammo_nails,
+	IT_NAILS,
+	2, // ammo_usage
+	weaponanim_supernailgun // animfunction
+};
+
+weaponclass_t wpc_grenade = {
+	WEAPON_GRENADE_LAUNCHER,
+	"Grenade Launcher", // name
+	"progs/v_rock_40fps.mdl", // model
+	ammo_rockets,
+	IT_ROCKETS,
+	1, // ammo_usage
+	weaponanim_grenade // animfunction
+};
+
+weaponclass_t wpc_proximity = {
+	WEAPON_PROXIMITY_GUN,
+	"Proximity Launcher", // name
+	"progs/v_mine_40fps.mdl", // model
+	ammo_rockets,
+	IT_ROCKETS,
+	1, // ammo_usage
+	weaponanim_proximity // animfunction
+};
+
+weaponclass_t wpc_rocket = {
+	WEAPON_ROCKET_LAUNCHER,
+	"Rocket Launcher", // name
+	"progs/v_rock2_40fps.mdl", // model
+	ammo_rockets,
+	IT_ROCKETS,
+	1, // ammo_usage
+	weaponanim_rocket // animfunction
+};
+
+weaponclass_t wpc_lg = {
+	WEAPON_LIGHTNING,
+	"Lightning gun", // name
+	"progs/v_light.mdl", // model
+	ammo_cells,
+	IT_CELLS,
+	1, // ammo_usage
+	weaponanim_lg // animfunction
+};
+
+weaponclass_t wpc_laser = {
+	WEAPON_LASER_CANNON,
+	"Laser Cannon", // name
+	"progs/v_laserg40fps.mdl", // model
+	ammo_cells,
+	IT_CELLS,
+	1, // ammo_usage
+	weaponanim_laser // animfunction
+};
+
+weaponclass_t wpc_plasma = {
+	WEAPON_PLASMA,
+	"Plasma Gun", // name
+	"progs/v_plasma.mdl", // model
+	ammo_cells,
+	IT_CELLS,
+	1, // ammo_usage
+	weaponanim_plasma // animfunction
+};
+
+weaponclass_t weaponsclass[13] = {
+	wpc_no_weapon,
+	wpc_axe,
+	wpc_chainsaw,
+	wpc_shotgun,
+	wpc_supershotgun,
+	wpc_nailgun,
+	wpc_supernailgun,
+	wpc_grenade,
+	wpc_proximity,
+	wpc_rocket,
+	wpc_lg,
+	wpc_laser,
+	wpc_plasma
+};
+
+float MAX_WEAPON_NUM = 12;
+
+float(float weap) getWeapon = {
+	switch (weap) {
+		case WEAPON_AXE:				return 1;
+		case WEAPON_CHAINSAW: 			return 2;
+		case WEAPON_SHOTGUN:			return 3;
+		case WEAPON_SUPER_SHOTGUN:		return 4;
+		case WEAPON_NAILGUN:			return 5;
+		case WEAPON_SUPER_NAILGUN:		return 6;
+		case WEAPON_GRENADE_LAUNCHER:	return 7;
+		case WEAPON_PROXIMITY_GUN:		return 8;
+		case WEAPON_ROCKET_LAUNCHER:	return 9;
+		case WEAPON_LIGHTNING:			return 10;
+		case WEAPON_LASER_CANNON:		return 11;
+		case WEAPON_PLASMA:				return 12;
+
+		default:					return 0;
+	}
+}
+
+
+typedef struct {
+	weaponclass_t weaps[4];
+	float qt;
+} weaponslot_t;
+
+weaponslot_t weaponslots[9] = {
+	{{wpc_no_weapon}, 1},
+	{{wpc_axe, wpc_chainsaw}, 2},
+	{{wpc_shotgun}, 1},
+	{{wpc_supershotgun}, 1},
+	{{wpc_nailgun}, 1},
+	{{wpc_supernailgun}, 1},
+	{{wpc_grenade,wpc_proximity}, 2},
+	{{wpc_rocket}, 1},
+	{{wpc_lg,wpc_laser,wpc_plasma}, 3}
+};
+
+
+
+enum {
+	WEAPONSTAT_NOWEAPON,
+	WEAPONSTAT_NOAMMO,
+	WEAPONSTAT_AVAILABLE
+};
+
+/*
+============
+W_WeaponFrame
+
+Called every frame so impulse events can be handled as well as possible
+============
+*/
+void() W_WeaponFrame = {
+	if (self.button0 && time > self.connect_time + 0.2) {
+		if (self.weaponent.attackpressed) self.weaponent.attackhold = 1;
+		else self.weaponent.attackhold = 0;
+
+		self.weaponent.attackpressed = 1;
+
+		W_Attack();
+	}
+	else {
+		self.weaponent.attackpressed = 0;
+		self.weaponent.attackhold = 0;
+	}
+}
+
+
+// syncs up current ammo with its correspondent ammo_* field
+void() W_UpdateCurrentAmmo = {
+	weaponclass_t weap = weaponsclass[getWeapon(self.weapon)];
+	self.currentammo = self.(weap.ammofield);
+}
+
+float(float weapons, entity cl, float waterlevel) W_BestWeaponParms =
+{
+	if (W_CheckWeapon(WEAPON_PLASMA, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_PLASMA;
+	if (W_CheckWeapon(WEAPON_LIGHTNING, cl) == WEAPONSTAT_AVAILABLE && waterlevel <= 1)
+		return WEAPON_LIGHTNING;
+	if (W_CheckWeapon(WEAPON_LASER_CANNON, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_LASER_CANNON;
+	if (W_CheckWeapon(WEAPON_SUPER_NAILGUN, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_SUPER_NAILGUN;
+	if (W_CheckWeapon(WEAPON_SUPER_SHOTGUN, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_SUPER_SHOTGUN;
+	if (W_CheckWeapon(WEAPON_NAILGUN, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_NAILGUN;
+	if (W_CheckWeapon(WEAPON_SHOTGUN, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_SHOTGUN;
+	if (W_CheckWeapon(WEAPON_CHAINSAW, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_CHAINSAW;
+	if (W_CheckWeapon(WEAPON_AXE, cl) == WEAPONSTAT_AVAILABLE)
+		return WEAPON_AXE;
+
+	return WEAPON_NO_WEAPON; 
+};
+
+float() W_BestWeapon = {
+	return W_BestWeaponParms(self.weapons, self, self.waterlevel);
+};
+
+float(float weap, entity cl) W_CheckWeapon = {
+	weaponclass_t weapcl = weaponsclass[getWeapon(weap)];
+
+	if (!(cl.weapons & weap)) return WEAPONSTAT_NOWEAPON;
+
+	if (self.(weapcl.ammofield) < weapcl.ammo_usage) {
+		return WEAPONSTAT_NOAMMO;
+	}
+
+	return WEAPONSTAT_AVAILABLE;
+};
+
+
+
+void() W_Attack = {
+	
+	weaponclass_t weap = weaponsclass[getWeapon(self.weapon)];
+
+	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE) {
+		return;
+	}
+
+	makevectors(self.v_angle);			// calculate forward angle for velocity
+	self.show_hostile = time + 1;	// wake monsters up
+
+	weap.animfunction();
+
+};
+
+
+
+int(float weap) W_ChangeWeapon = {
+
+	float weapstat = W_CheckWeapon(weap, self);
+
+	if (weapstat < WEAPONSTAT_AVAILABLE){
+		return weapstat;
+	}
+
+	weaponclass_t weapcl = weaponsclass[getWeapon(weap)];
+	self.weapon = weap;
+	self.currentammo = self.(weapcl.ammofield);
+	self.items &~= (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
+	self.items |= weapcl.ammo_item;
+
+	self.weaponmodel = weapcl.model;
+	self.weaponframe = 0;
+
+	self.attackpressed = 0;
+	self.attackhold = 0;
+
+	self.think = SUB_Null;
+
+	return weapstat;
+};
+
+
+void(float stp) W_CycleWeapon = {
+
+	float currentWeapon = getWeapon(self.weapon);
+
+	float next = wrap(currentWeapon + stp, 1, MAX_WEAPON_NUM);
+
+	while (next != currentWeapon) {
+		//dprint3("Testing slot ", ftos(next), "...\n");
+		if (W_CheckWeapon(weaponsclass[next].id, self) == WEAPONSTAT_AVAILABLE) {
+		//	dprint3("Fund! slot ", ftos(next), "\n");
+			W_ChangeWeapon(weaponsclass[next].id);
+			return;
+		}
+
+		next = wrap(next + stp, 1, MAX_WEAPON_NUM);
+	}
+}
+
+
+
+
+
+
+
+
+
+
 
 
 /*

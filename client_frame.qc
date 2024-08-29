@@ -922,6 +922,8 @@ void() PlayerPostThink =
 		return;
 		
 // do weapon stuff
+	if (self.impulse)
+		ImpulseCommands();
 
 	W_WeaponFrame ();
 
