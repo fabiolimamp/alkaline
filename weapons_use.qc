@@ -1,5 +1,7 @@
 typedef struct {
 	float id;
+	float slot;
+	float slotPos;
 	string name;
 	string model;
 	.float ammofield;
@@ -11,9 +13,11 @@ typedef struct {
 
 weaponclass_t wpc_no_weapon = {
 	WEAPON_NO_WEAPON,
+	0, // slot
+	0, // slotPos
 	"No weapon", // name
 	"", // model
-	ammo_shells,
+	ammo_shells, // ammofield
 	IT_SHELLS,
 	0, // ammo_usage
 	weaponanim_none // animfunction
@@ -21,9 +25,11 @@ weaponclass_t wpc_no_weapon = {
 
 weaponclass_t wpc_axe = {
 	WEAPON_AXE,
+	1, // slot
+	0, // slotPos
 	"Axe", // name
 	"progs/v_alkaxe20fps.mdl", // model
-	ammo_shells,
+	ammo_shells, // ammofield
 	IT_SHELLS,
 	0, // ammo_usage
 	weaponanim_axe // animfunction
@@ -31,9 +37,11 @@ weaponclass_t wpc_axe = {
 
 weaponclass_t wpc_chainsaw = {
 	WEAPON_CHAINSAW,
+	1, // slot
+	1, // slotPos
 	"Chainsaw", // name
 	"progs/sawidle.mdl", // model
-	ammo_shells,
+	ammo_shells, // ammofield
 	IT_SHELLS,
 	0, // ammo_usage
 	weaponanim_chainsaw // animfunction
@@ -41,9 +49,11 @@ weaponclass_t wpc_chainsaw = {
 
 weaponclass_t wpc_shotgun = {
 	WEAPON_SHOTGUN,
+	2, // slot
+	0, // slotPos
 	"Shotgun", // name
 	"progs/v_shot40fps.mdl", // model
-	ammo_shells,
+	ammo_shells, // ammofield
 	IT_SHELLS,
 	1, // ammo_usage
 	weaponanim_shotgun // animfunction
@@ -51,9 +61,11 @@ weaponclass_t wpc_shotgun = {
 
 weaponclass_t wpc_supershotgun = {
 	WEAPON_SUPER_SHOTGUN,
+	3, // slot
+	0, // slotPos
 	"Super Shotgun", // name
 	"progs/v_shot2_40fps.mdl", // model
-	ammo_shells,
+	ammo_shells, // ammofield
 	IT_SHELLS,
 	2, // ammo_usage
 	weaponanim_supershotgun // animfunction
@@ -61,9 +73,11 @@ weaponclass_t wpc_supershotgun = {
 
 weaponclass_t wpc_nailgun = {
 	WEAPON_NAILGUN,
+	4, // slot
+	0, // slotPos
 	"Nailgun", // name
 	"progs/v_nail_alk40fps.mdl", // model
-	ammo_nails,
+	ammo_nails, // ammofield
 	IT_NAILS,
 	1, // ammo_usage
 	weaponanim_nailgun // animfunction
@@ -71,9 +85,11 @@ weaponclass_t wpc_nailgun = {
 
 weaponclass_t wpc_supernailgun = {
 	WEAPON_SUPER_NAILGUN,
+	5, // slot
+	0, // slotPos
 	"Super Nailgun", // name
 	"progs/v_nail3.mdl", // model
-	ammo_nails,
+	ammo_nails, // ammofield
 	IT_NAILS,
 	2, // ammo_usage
 	weaponanim_supernailgun // animfunction
@@ -81,9 +97,11 @@ weaponclass_t wpc_supernailgun = {
 
 weaponclass_t wpc_grenade = {
 	WEAPON_GRENADE_LAUNCHER,
+	6, // slot
+	0, // slotPos
 	"Grenade Launcher", // name
 	"progs/v_rock_40fps.mdl", // model
-	ammo_rockets,
+	ammo_rockets, // ammofield
 	IT_ROCKETS,
 	1, // ammo_usage
 	weaponanim_grenade // animfunction
@@ -91,9 +109,11 @@ weaponclass_t wpc_grenade = {
 
 weaponclass_t wpc_proximity = {
 	WEAPON_PROXIMITY_GUN,
+	6, // slot
+	1, // slotPos
 	"Proximity Launcher", // name
 	"progs/v_mine_40fps.mdl", // model
-	ammo_rockets,
+	ammo_rockets, // ammofield
 	IT_ROCKETS,
 	1, // ammo_usage
 	weaponanim_proximity // animfunction
@@ -101,9 +121,11 @@ weaponclass_t wpc_proximity = {
 
 weaponclass_t wpc_rocket = {
 	WEAPON_ROCKET_LAUNCHER,
+	7, // slot
+	0, // slotPos
 	"Rocket Launcher", // name
 	"progs/v_rock2_40fps.mdl", // model
-	ammo_rockets,
+	ammo_rockets, // ammofield
 	IT_ROCKETS,
 	1, // ammo_usage
 	weaponanim_rocket // animfunction
@@ -111,9 +133,11 @@ weaponclass_t wpc_rocket = {
 
 weaponclass_t wpc_lg = {
 	WEAPON_LIGHTNING,
+	8, // slot
+	0, // slotPos
 	"Lightning gun", // name
 	"progs/v_light.mdl", // model
-	ammo_cells,
+	ammo_cells, // ammofield
 	IT_CELLS,
 	1, // ammo_usage
 	weaponanim_lg // animfunction
@@ -121,9 +145,11 @@ weaponclass_t wpc_lg = {
 
 weaponclass_t wpc_laser = {
 	WEAPON_LASER_CANNON,
+	8, // slot
+	1, // slotPos
 	"Laser Cannon", // name
 	"progs/v_laserg40fps.mdl", // model
-	ammo_cells,
+	ammo_cells, // ammofield
 	IT_CELLS,
 	1, // ammo_usage
 	weaponanim_laser // animfunction
@@ -131,9 +157,11 @@ weaponclass_t wpc_laser = {
 
 weaponclass_t wpc_plasma = {
 	WEAPON_PLASMA,
+	8, // slot
+	2, // slotPos
 	"Plasma Gun", // name
 	"progs/v_plasma.mdl", // model
-	ammo_cells,
+	ammo_cells, // ammofield
 	IT_CELLS,
 	1, // ammo_usage
 	weaponanim_plasma // animfunction
@@ -195,7 +223,6 @@ weaponslot_t weaponslots[9] = {
 };
 
 
-
 enum {
 	WEAPONSTAT_NOWEAPON,
 	WEAPONSTAT_NOAMMO,
@@ -211,16 +238,16 @@ Called every frame so impulse events can be handled as well as possible
 */
 void() W_WeaponFrame = {
 	if (self.button0 && time > self.connect_time + 0.2) {
-		if (self.weaponent.attackpressed) self.weaponent.attackhold = 1;
-		else self.weaponent.attackhold = 0;
+		if (self.attackpressed) self.attackhold = 1;
+		else self.attackhold = 0;
 
-		self.weaponent.attackpressed = 1;
+		self.attackpressed = 1;
 
 		W_Attack();
 	}
 	else {
-		self.weaponent.attackpressed = 0;
-		self.weaponent.attackhold = 0;
+		self.attackpressed = 0;
+		self.attackhold = 0;
 	}
 }
 
@@ -313,7 +340,38 @@ int(float weap) W_ChangeWeapon = {
 	self.think = SUB_Null;
 
 	return weapstat;
-};
+}
+
+
+int(float imp) W_ChangeSlot = {
+	
+	weaponslot_t slot = weaponslots[imp];
+
+	weaponclass_t currentWeapon = weaponsclass[getWeapon(self.weapon)];
+
+	float startSlotPos;
+
+	if (currentWeapon.slot == imp)
+		startSlotPos = wrap(currentWeapon.slotPos + 1, 0, slot.qt - 1);
+	else
+		startSlotPos = 0;
+
+	float i;
+	weaponclass_t w;
+	float weaponstat;
+
+	while (i < slot.qt) {
+		weaponstat = W_CheckWeapon(slot[startSlotPos].id, self);
+		if (weaponstat == WEAPONSTAT_AVAILABLE){
+			W_ChangeWeapon(slot[startSlotPos].id);
+			return TRUE;
+		}
+		startSlotPos = wrap(startSlotPos + 1, 0, slot.qt - 1);
+		i++;
+	}
+
+	return FALSE;
+}
 
 
 void(float stp) W_CycleWeapon = {
