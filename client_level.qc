@@ -115,8 +115,8 @@ void(entity cl, entity base) TakeAndGiveWeapons = {
 	else if(base.ammo_cells == -1) cl.ammo_cells = 0;
 
 	//if player is wielding a removed or ammo-less weapon
-	if(!(cl.weapon & cl.weapons) || !W_CheckAmmoParms(cl.weapon, cl.ammo_shells, cl.ammo_nails, cl.ammo_rockets, cl.ammo_cells)) {
-		cl.weapon = W_BestWeaponParms(cl.weapons, cl.ammo_shells, cl.ammo_nails, cl.ammo_cells, 0);
+	if(!(cl.weapon & cl.weapons) || W_CheckWeapon(cl.weapon, cl) < WEAPONSTAT_AVAILABLE) {
+		W_ChangeWeapon(W_BestWeaponParms(cl.weapons, cl, 0));
 	}
 };
 
@@ -693,7 +693,7 @@ void() PutClientInServer = {
 		if (spot.spawnflags & 4) self.flags = self.flags | FL_NOTARGET;
 	}
 	
-	W_SetCurrentAmmo (TRUE);
+	W_ChangeWeapon(self.weapon);
 
 	self.attack_finished = time;
 	self.th_pain = player_pain_generic;

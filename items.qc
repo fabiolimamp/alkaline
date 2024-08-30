@@ -669,14 +669,9 @@ void() weapon_touch =
 	self = other;
 
 	if (!deathmatch)
-		self.weapon = new;
+		W_ChangeWeapon(new);
 	else
 		Deathmatch_Weapon (new);
-
-	if (current != new)
-		W_SetCurrentAmmo(TRUE);
-	else
-		W_SetCurrentAmmo(FALSE);
 
 	self = stemp;
 
@@ -983,7 +978,7 @@ void() ammo_touch = {
 	//if (self.weapon != current)
 	//	W_SetCurrentAmmo(TRUE);
 	//else
-		W_SetCurrentAmmo(FALSE);
+	W_UpdateCurrentAmmo();
 
 	self = stemp;
 
@@ -1599,16 +1594,7 @@ void() BackpackTouch =
 	self = other;
 
 // change to the weapon
-	if (!deathmatch)
-		self.weapon = new;
-	else
-		Deathmatch_Weapon (new);
-
-	if (current != new)
-		W_SetCurrentAmmo(TRUE);
-	else
-		W_SetCurrentAmmo(FALSE);
-
+	W_ChangeWeapon(new);
 };
 
 /*

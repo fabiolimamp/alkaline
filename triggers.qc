@@ -1195,13 +1195,10 @@ void(entity plr, float removeditems, float removedweapons) removeitems_go = {
 	self.items -= self.items & removeditems;
 	self.items -= self.items & removedweapons & HUD_WEAPONS;
 	self.weapons -= self.weapons & removedweapons;
+	
 
 	if (!(self.weapons & self.weapon)) { //if player is wielding a removed weapon
-		self.weapon = W_BestWeapon();
-		W_SetCurrentAmmo(TRUE);
-	}
-	else {
-		W_SetCurrentAmmo(FALSE);
+		W_ChangeWeapon(W_BestWeapon());
 	}
 
 	self = oself;

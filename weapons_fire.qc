@@ -738,16 +738,14 @@ void() W_FireLightning = {
 	entity victim;
 
 	if (self.ammo_cells < 1) {
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo(TRUE);
-		return;
+		W_ChangeWeapon(W_BestWeapon());
 	}
 
 	// explode if under water
 	if (self.waterlevel > 1 && self.flags & FL_INWATER) {
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
-		W_SetCurrentAmmo(TRUE);
+		W_UpdateCurrentAmmo();
 		victim = findradius(self.origin, 35*cells);
 		
 		while (victim) {
@@ -1074,9 +1072,8 @@ void(float ox) W_FireSpikes =
 
 	if (self.ammo_nails < 1)
 	{
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo(TRUE);
-		return;
+	
+		W_ChangeWeapon(W_BestWeapon());
 	}
 
 	makevectors (self.v_angle);
