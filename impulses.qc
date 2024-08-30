@@ -501,19 +501,35 @@ void() ImpulseCommands = {
 	// weapon changing must not occur until attack_finished time has passed
 	if (self.impulse >= 1 && self.impulse <= 8) {
 		if (time < self.attack_finished) return;
-		else W_ChangeWeapon();
+		
+		W_ChangeSlot(self.impulse);
 	}
+
 	if (self.impulse >= 224 && self.impulse <= 235) {
 		if (time < self.attack_finished) return;
-		else W_ChangeWeapon();
+		switch(self.impulse) {
+			case 225:	W_ChangeWeapon(WEAPON_LASER_CANNON);
+			case 226:	W_ChangeWeapon(WEAPON_CHAINSAW);
+			case 227:	W_ChangeWeapon(WEAPON_PLASMA);
+			case 228:	W_ChangeWeapon(WEAPON_LIGHTNING);
+			case 229:	W_ChangeWeapon(WEAPON_PROXIMITY_GUN);
+			case 230:	W_ChangeWeapon(WEAPON_GRENADE_LAUNCHER);
+			case 231:	W_ChangeWeapon(WEAPON_AXE);
+		}
+		
 	}
+
 	if (self.impulse == 10) {
 		if (time < self.attack_finished) return;
-		else CycleWeaponCommand();
+		W_CycleWeapon(1);
+		self.impulse = 0;
+		return;
 	}
 	if (self.impulse == 12) {
 		if (time < self.attack_finished) return;
-		else CycleWeaponReverseCommand();
+		W_CycleWeapon(-1);
+		self.impulse = 0;
+		return;
 	}
 
 	if (self.impulse == 9)

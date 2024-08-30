@@ -337,7 +337,7 @@ int(float weap) W_ChangeWeapon = {
 	self.attackpressed = 0;
 	self.attackhold = 0;
 
-	self.think = SUB_Null;
+	self.think = player_run;
 
 	return weapstat;
 }
@@ -345,14 +345,14 @@ int(float weap) W_ChangeWeapon = {
 
 int(float imp) W_ChangeSlot = {
 	
-	weaponslot_t slot = weaponslots[imp];
+	weaponslot_t newSlot = weaponslots[imp];
 
 	weaponclass_t currentWeapon = weaponsclass[getWeapon(self.weapon)];
 
 	float startSlotPos;
 
 	if (currentWeapon.slot == imp)
-		startSlotPos = wrap(currentWeapon.slotPos + 1, 0, slot.qt - 1);
+		startSlotPos = wrap(currentWeapon.slotPos + 1, 0, newSlot.qt - 1);
 	else
 		startSlotPos = 0;
 
@@ -360,13 +360,13 @@ int(float imp) W_ChangeSlot = {
 	weaponclass_t w;
 	float weaponstat;
 
-	while (i < slot.qt) {
-		weaponstat = W_CheckWeapon(slot[startSlotPos].id, self);
+	while (i < newSlot.qt) {
+		weaponstat = W_CheckWeapon(newSlot[startSlotPos].id, self);
 		if (weaponstat == WEAPONSTAT_AVAILABLE){
-			W_ChangeWeapon(slot[startSlotPos].id);
+			W_ChangeWeapon(newSlot[startSlotPos].id);
 			return TRUE;
 		}
-		startSlotPos = wrap(startSlotPos + 1, 0, slot.qt - 1);
+		startSlotPos = wrap(startSlotPos + 1, 0, newSlot.qt - 1);
 		i++;
 	}
 
@@ -391,6 +391,35 @@ void(float stp) W_CycleWeapon = {
 		next = wrap(next + stp, 1, MAX_WEAPON_NUM);
 	}
 }
+
+/*
+========
+SuperDamageSound
+
+Plays sound if needed
+========
+*/
+void() SuperDamageSound =
+{
+	if ((self.super_damage_finished > time) || (self.trif_finished > time))
+	{
+		if (self.super_sound < time)
+		{
+			
+			if(self.trif_finished > time) {
+				sound(self, CHAN_BODY, "items/trifecta3.wav", 1, ATTN_NORM);
+				self.super_sound = time + 0.7;
+			}
+			else{
+				sound (self, CHAN_BODY, "items/damage3.wav", 1, ATTN_NORM);
+				self.super_sound = time + 1;
+			}
+			
+		}
+	}
+	return;
+};
+
 
 
 
