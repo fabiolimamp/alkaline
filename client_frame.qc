@@ -990,58 +990,6 @@ void() PlayerPostThink =
 
 /*
 ===========
-ClientConnect
-
-called when a player connects to a server
-============
-*/
-void() ClientConnect =
-{
-	bprint (self.netname);
-	bprint (" entered the game\n");
-	
-	dprint ("intermission_running: ");
-	dprint (ftos(intermission_running));
-	dprint ("\n");
-	
-	dprint ("nextmap: ");
-	dprint (nextmap);
-	dprint ("\n");
-	
-// a client connecting during an intermission can cause problems
-	if (intermission_running)
-		ExitIntermission ();
-};
-
-
-/*
-===========
-ClientDisconnect
-
-called when a player disconnects from a server
-============
-*/
-void() ClientDisconnect =
-{
-	if (gameover)
-		return;
-	// if the level end trigger has been activated, just return
-	// since they aren't *really* leaving
-
-	if (self.healthcontroller.classname == "healthcontroller") remove(self.healthcontroller);
-	if (self.lightningcontroller.classname == "lightningcontroller") remove(self.lightningcontroller);
-	
-	// let everyone else know
-	bprint (self.netname);
-	bprint (" left the game with ");
-	bprint (ftos(self.frags));
-	bprint (" frags\n");
-	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
-	set_suicide_frame ();
-};
-
-/*
-===========
 ClientObituary
 
 called when a player dies

@@ -822,22 +822,22 @@ void(float hud_item) update_hud_totals =
 };
 
 
-void(float altfoot, float vol_multiplier) play_footstep = {
+void(entity ent, float altfoot, float vol_multiplier) play_footstep = {
 	local float footstep, footstepnext, footvol;
 	local string footstepwav;
 	
 	if (nofootsteps) return;
-	if (self.health < 1) return;
-	if (self.movetype == MOVETYPE_NOCLIP) return;
-	if (self.watertype < CONTENT_EMPTY) return;
-	if (self.steptype == FS_FLYING) return;
+	if (ent.health < 1) return;
+	if (ent.movetype == MOVETYPE_NOCLIP) return;
+	if (ent.watertype < CONTENT_EMPTY) return;
+	if (ent.steptype == FS_FLYING) return;
 	
 	// Wide volume range for player
-	if (self.flags & FL_CLIENT) footvol = 0.15 + random()*0.1;
+	if (ent.flags & FL_CLIENT) footvol = 0.15 + random()*0.1;
 	// feetsteps need to be louder during combat
-	else if (self.enemy) footvol = 1;
+	else if (ent.enemy) footvol = 1;
 	// Dogs have too many legs making noise, reduce volume	
-	//else if (self.classtype == CT_MONDOG) footvol = 0.2 + random()*0.6;
+	//else if (ent.classtype == CT_MONDOG) footvol = 0.2 + random()*0.6;
 	// Slight random volume level out of combat
 	else footvol = 0.7 + random()*0.3;
 
@@ -846,37 +846,37 @@ void(float altfoot, float vol_multiplier) play_footstep = {
 	// Decide which foot sound to play, long live clubfoot!
 	if (altfoot) {
 		// Switch to ALTernative foot sound
-		footstep = self.altsteptype;
-		if (self.altsteplast < 1) self.altsteplast = rint(1 + random()*6);
+		footstep = ent.altsteptype;
+		if (ent.altsteplast < 1) ent.altsteplast = rint(1 + random()*6);
 
 		// Increase footstep sound index by one 
-		footstepnext = rint(self.altsteplast + 1);
+		footstepnext = rint(ent.altsteplast + 1);
 		// Every loop around, randomly reset
 		if (footstepnext > 7) footstepnext = rint(1 + random()*6);
-		self.altsteplast = footstepnext;
+		ent.altsteplast = footstepnext;
 	}
 	else {
 		// Setup last footstep sound
-		footstep = self.steptype;
-		if (self.steplast < 1) self.steplast = rint(1 + random()*6);
+		footstep = ent.steptype;
+		if (ent.steplast < 1) ent.steplast = rint(1 + random()*6);
 
 		// Player is randomly selected footsteps
-		if (self.flags & FL_CLIENT) {
+		if (ent.flags & FL_CLIENT) {
 			// Quake random function is not really super random
 			// Probably a bad seed starting point for function
 			// Use 3 randoms to create something more random!
-			footstepnext = rint(self.steplast + random() + random() + random());
+			footstepnext = rint(ent.steplast + random() + random() + random());
 			if (footstepnext > 7) footstepnext = footstepnext - 7;
 		}
 		else {
 			// Increase footstep sound index by one 
-			footstepnext = rint(self.steplast + 1);
+			footstepnext = rint(ent.steplast + 1);
 			// Every loop around, randomly reset
 			if (footstepnext > 7) footstepnext = rint(1 + random()*6);
 		}
 
 		// update last footstep index
-		self.steplast = footstepnext;
+		ent.steplast = footstepnext;
 	}
 	
 	// Cycle through all footstep types and work out correct sound file
@@ -926,11 +926,11 @@ void(float altfoot, float vol_multiplier) play_footstep = {
 	}
 	else if (footstep == FS_TYPECUSTOM) {
 		// Custom feet sounds (usually boss type creatures)
-		if (footstepnext < 2) footstepwav = self.stepc1;
-		else if (footstepnext < 3) footstepwav = self.stepc2;
-		else if (footstepnext < 4) footstepwav = self.stepc3;
-		else if (footstepnext < 5) footstepwav = self.stepc4;
-		else footstepwav = self.stepc5;
+		if (footstepnext < 2) footstepwav = ent.stepc1;
+		else if (footstepnext < 3) footstepwav = ent.stepc2;
+		else if (footstepnext < 4) footstepwav = ent.stepc3;
+		else if (footstepnext < 5) footstepwav = ent.stepc4;
+		else footstepwav = ent.stepc5;
 	}
 	else if (footstep == FS_TYPEDRAG) {
 		// Small scraping foot on ground
@@ -959,6 +959,6 @@ void(float altfoot, float vol_multiplier) play_footstep = {
 	else footstepwav = "player/foot7.wav";
 
 	// Play the sound (large feet need to be heard further away)
-	if (footstep == FS_TYPELARGE) sound (self, 5, footstepwav, footvol, 1.5);
-	else sound (self, 5, footstepwav, footvol, ATTN_IDLE);
+	if (footstep == FS_TYPELARGE) sound (ent, 5, footstepwav, footvol, 1.5);
+	else sound (ent, 5, footstepwav, footvol, ATTN_IDLE);
 };

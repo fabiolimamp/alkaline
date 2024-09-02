@@ -90,13 +90,15 @@ PLAYER
 */
 
 void() player_stand1 =[	$axstnd1,	player_stand1	] {
-	if (self.velocity_x || self.velocity_y) {
-		self.walkframe = 0;
+	self.owner.frame = $axstnd1;
+
+	if (self.owner.velocity_x || self.owner.velocity_y) {
+		self.owner.walkframe = 0;
 		player_run();
 		return;
 	}
 	
-	if (self.weapon == WEAPON_CHAINSAW) {
+	/*if (self.weapon == WEAPON_CHAINSAW) {
 		self.weaponframe = self.weaponframe + 1;
 		if(self.weaponframe >= 5)
 		{
@@ -111,76 +113,71 @@ void() player_stand1 =[	$axstnd1,	player_stand1	] {
 		
 		return;
 	}
+	*/
 
-	else if(!(self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1))
-		self.weaponframe = 0;
-	
 
-	if (self.weapon == WEAPON_AXE) {
-		if (self.walkframe >= 12)
-			self.walkframe = 0;
-		self.frame = $axstnd1 + self.walkframe;
+	if (self.owner.weapon == WEAPON_AXE) {
+		if (self.owner.walkframe >= 12)
+			self.owner.walkframe = 0;
+		self.owner.frame = $axstnd1 + self.owner.walkframe;
 	}
 	else {
-		if (self.walkframe >= 5)
-			self.walkframe = 0;
-		self.frame = $stand1 + self.walkframe;
+		if (self.owner.walkframe >= 5)
+			self.owner.walkframe = 0;
+		self.owner.frame = $stand1 + self.owner.walkframe;
 	}
-	self.walkframe = self.walkframe + 1;	
+	self.owner.walkframe = self.owner.walkframe + 1;	
 };
 
 
 
 void()	player_run =[	$rockrun1,	player_run	] {
-	if (!self.velocity_x && !self.velocity_y)
+	self.owner.frame = $rockrun1;
+	if (!self.owner.velocity_x && !self.owner.velocity_y)
 	{
-		self.walkframe = 0;
+		self.owner.walkframe = 0;
 		player_stand1();
 		return;
 	}
 	
-	if (self.weapon == WEAPON_SUPER_NAILGUN && self.cnt == 1) {
-		player_super_nail_spindown();
-		return;
-	}
 
-	if (self.weapon == WEAPON_CHAINSAW) {
-		self.weaponframe = self.weaponframe + 1;
-		if (self.weaponframe >= 5) {
-			self.weaponframe = 0;
-			if (self.view_ofs != '0 0 0')
-				sound (self, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_NORM);
+	if (self.owner.weapon == WEAPON_CHAINSAW) {
+		self.owner.weaponframe = self.owner.weaponframe + 1;
+		if (self.owner.weaponframe >= 5) {
+			self.owner.weaponframe = 0;
+			if (self.owner.view_ofs != '0 0 0')
+				sound (self.owner, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_NORM);
 		}
 
-		if (self.walkframe == 6)
-			self.walkframe = 0;
+		if (self.owner.walkframe == 6)
+			self.owner.walkframe = 0;
 
-		self.frame = $sawrun1 + self.walkframe;
-		self.walkframe = self.walkframe + 1;
+		self.owner.frame = $sawrun1 + self.owner.walkframe;
+		self.owner.walkframe = self.owner.walkframe + 1;
 		return;
 	}
 	
-	self.weaponframe = 0;
+	self.owner.weaponframe = 0;
 
-	if (self.weapon == WEAPON_AXE) {
-		if (self.walkframe == 6)
-			self.walkframe = 0;
-		self.frame = $axrun1 + self.walkframe;
+	if (self.owner.weapon == WEAPON_AXE) {
+		if (self.owner.walkframe == 6)
+			self.owner.walkframe = 0;
+		self.owner.frame = $axrun1 + self.owner.walkframe;
 	}
 	else {
-		if (self.walkframe == 6)
-			self.walkframe = 0;
-		self.frame = self.frame + self.walkframe;
+		if (self.owner.walkframe == 6)
+			self.owner.walkframe = 0;
+		self.owner.frame = self.owner.frame + self.owner.walkframe;
 	}
 
-	self.walkframe = self.walkframe + 1;
+	self.owner.walkframe = self.owner.walkframe + 1;
 
-	if ((self.walkframe == 1 || self.walkframe == 4) && self.flags & FL_ONGROUND && !intermission_running) {
+	if ((self.owner.walkframe == 1 || self.owner.walkframe == 4) && self.owner.flags & FL_ONGROUND && !intermission_running) {
 		// Need to be moving before feet sounds
 		float spd;
-		spd = vlen([self.velocity_x, self.velocity_y, 0]);
+		spd = vlen([self.owner.velocity_x, self.owner.velocity_y, 0]);
 		if (spd > 50) {
-			play_footstep(FALSE, clamp(spd, 0, 320)/320);
+			play_footstep(self.owner, FALSE, clamp(spd, 0, 320)/320);
 		}
 	}
 };
@@ -237,7 +234,7 @@ void()	player_sshot21 =	[$shotatt6, player_run		] {self.weaponframe=21; nxth(0.0
 
 
 void() player_axe = {
-	if (!self.weaponframe) {
+	if (!self.owner.weaponframe) {
 		self.weaponframe = floor(random()*4.99)*10 + 2;
 
 		if (self.weaponframe == 2) self.frame = $axattc1;
@@ -271,22 +268,9 @@ void() player_axe = {
 
 //============================================================================
 
-void() player_chainsaw1   =[$sawatt1, player_chainsaw2 ] {self.weaponframe = 5; W_FireSaw();};
-void() player_chainsaw2   =[$sawatt2, player_chainsaw3 ] {self.weaponframe = 6;
-	if (!self.button0) {
-		player_run ();
-		return;
-	}
-};
-void() player_chainsaw3   =[$sawatt1, player_chainsaw4 ] {self.weaponframe = 7; W_FireSaw();};
-void() player_chainsaw4   =[$sawatt2, player_chainsaw5 ] {self.weaponframe = 8;
-	if (!self.button0) {
-		player_run ();
-		return;
-	}
-};
-void() player_chainsaw5   =[$sawatt1, player_chainsaw6 ] {self.weaponframe = 9; W_FireSaw();};
-void() player_chainsaw6   =[$sawatt2, player_run  ] {self.weaponframe=10;};
+void() player_chainsaw1   =[$sawatt1, player_chainsaw2 ] {self.owner.frame = self.frame;};
+void() player_chainsaw2   =[$sawatt2, player_chainsaw1 ] {self.owner.frame = self.frame;};
+
 
 //============================================================================
 
@@ -376,7 +360,7 @@ void() player_super_nail_spindown = {
 			float spd;
 			spd = vlen([self.velocity_x, self.velocity_y, 0]);
 			if (spd > 50) {
-				play_footstep(FALSE, clamp(spd, 0, 320)/320);
+				play_footstep(self.owner, FALSE, clamp(spd, 0, 320)/320);
 			}
 		}
 	}
