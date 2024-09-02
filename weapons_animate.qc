@@ -2,7 +2,36 @@
 // Axe
 //=================================================================================================
 
-void() weaponanim_axe = {};
+void() weaponanim_axe = {
+	if (self.attack_finished > time)
+		return;
+
+	self.attack_finished = time + 0.5;
+	
+	self.weaponframe = floor(random()*4.99)*10 + 2;
+
+	player_axe_start(self.animcontroller, (self.weaponframe - 2)/10);
+
+	self.think = weaponanim_axe1;
+	self.nextthink = time + 0.05;
+}
+
+void() weaponanim_axe1 = {
+	if (self.weaponframe % 10 == 5)
+		W_FireAxe();
+
+	if (self.weaponframe % 10 == 1) {
+		self.weaponframe = 0;
+		return;
+	}
+	else {
+		self.weaponframe++;
+	}
+
+	self.think = weaponanim_axe1;
+	self.nextthink = time + 0.05;
+
+}
 
 
 //=================================================================================================

@@ -198,36 +198,39 @@ void()	player_sshot21 =	[$shotatt6, player_run		] {self.weaponframe=21; nxth(0.0
 
 
 
-void() player_axe = {
-	if (!self.owner.weaponframe) {
-		self.weaponframe = floor(random()*4.99)*10 + 2;
-
-		if (self.weaponframe == 2) self.frame = $axattc1;
-		if (self.weaponframe == 12) self.frame = $axattc1;
-		if (self.weaponframe == 22) self.frame = $axattb1;
-		if (self.weaponframe == 32) self.frame = $axattd1;
-		if (self.weaponframe == 42) self.frame = $axatt1;
+void(entity ctrl, float seq) player_axe_start = {
+	dprint2(ftos(seq), "\n");
+	switch (seq) {
+		case 0: ctrl.owner.frame = $axattc1;
+		case 1: ctrl.owner.frame = $axattc1;
+		case 2: ctrl.owner.frame = $axattb1;
+		case 3: ctrl.owner.frame = $axattd1;
+		case 4: ctrl.owner.frame = $axatt1;
 	}
-	else if (self.weaponframe % 10 == 1) {
+
+	ctrl.think = player_axe;
+	ctrl.nextthink = time + 0.1;
+}
+
+
+void() player_axe = {
+	/*
+	if (self.owner.weaponframe == 2) self.owner.frame = $axattc1;
+	if (self.owner.weaponframe == 12) self.owner.frame = $axattc1;
+	if (self.owner.weaponframe == 22) self.owner.frame = $axattb1;
+	if (self.owner.weaponframe == 32) self.owner.frame = $axattd1;
+	if (self.owner.weaponframe == 42) self.owner.frame = $axatt1;
+	*/
+	if ((self.owner.frame - $axatt1 + 1) % 6 == 0) {
+		dprint("Ended\n");
 		player_run();
 		return;
 	}
-	else {
-		self.weaponframe++;
-	}
 
-	if (self.weaponframe % 10 == 5) W_FireAxe();
-
-	if (
-		self.weaponframe % 10 == 5 ||
-		self.weaponframe % 10 == 8 ||
-		self.weaponframe % 10 == 0
-	) self.frame++;
-
-
+	self.owner.frame++;
 
 	self.think = player_axe;
-	self.nextthink = time + 0.05;
+	self.nextthink = time + 0.1;
 }
 
 
