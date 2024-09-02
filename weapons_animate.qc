@@ -153,7 +153,46 @@ void() weaponanim_shotgun1 = {
 // Super Shotgun
 //=================================================================================================
 
-void() weaponanim_supershotgun = {};
+void() weaponanim_supershotgun = {
+	if (self.attack_finished > time)
+		return;
+
+	if (W_CheckWeapon(WEAPON_SUPER_SHOTGUN, self) != WEAPONSTAT_AVAILABLE){
+		//dprint("Not available!\n");
+		W_ChangeWeapon(W_BestWeapon());
+		return;
+	}
+
+	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
+
+	self.attack_finished = time + 0.7;
+	
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
+	
+	self.effects = self.effects | EF_MUZZLEFLASH;
+
+	W_FireSuperShotgun();
+
+	self.weaponframe = 1;
+	self.think = weaponanim_supershotgun1;
+	self.nextthink = time + 0.025;
+}
+
+void() weaponanim_supershotgun1 = {
+
+	if (self.weaponframe >= 21) {
+		self.weaponframe = 0;
+		return;
+	}
+	else {
+		self.weaponframe++;
+	}
+
+	self.think = weaponanim_supershotgun1;
+	self.nextthink = time + 0.025;
+
+}
+
 
 
 

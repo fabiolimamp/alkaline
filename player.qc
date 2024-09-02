@@ -199,7 +199,6 @@ void()	player_sshot21 =	[$shotatt6, player_run		] {self.weaponframe=21; nxth(0.0
 
 
 void(entity ctrl, float seq) player_axe_start = {
-	dprint2(ftos(seq), "\n");
 	switch (seq) {
 		case 0: ctrl.owner.frame = $axattc1;
 		case 1: ctrl.owner.frame = $axattc1;
@@ -222,7 +221,6 @@ void() player_axe = {
 	if (self.owner.weaponframe == 42) self.owner.frame = $axatt1;
 	*/
 	if ((self.owner.frame - $axatt1 + 1) % 6 == 0) {
-		dprint("Ended\n");
 		player_run();
 		return;
 	}

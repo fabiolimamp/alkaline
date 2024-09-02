@@ -507,13 +507,9 @@ void() PlayerPreThink =
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if (time > self.attack_finished && self.currentammo == 0)
-	{
-		if (self.weapon != WEAPON_AXE && self.weapon != WEAPON_CHAINSAW)
-		{
-			W_ChangeWeapon(W_BestWeapon());
-		}
-	}
+	if (time > self.attack_finished && W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE) 
+		W_ChangeWeapon(W_BestWeapon());
+	
 	
 	if (self.jboots_rechargelimit && (self.flags & FL_ONGROUND))		//jcr jboots prethink for onground checking
 		self.jboots_onground = TRUE;

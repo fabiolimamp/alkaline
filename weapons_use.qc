@@ -297,7 +297,9 @@ float(float weapons, entity cl, float waterlevel) W_BestWeaponParms =
 };
 
 float() W_BestWeapon = {
-	return W_BestWeaponParms(self.weapons, self, self.waterlevel);
+	float weap = W_BestWeaponParms(self.weapons, self, self.waterlevel);
+	//dprint3("Best weapon: ", ftos(weap), "\n");
+	return weap;
 };
 
 float(float weap, entity cl) W_CheckWeapon = {
@@ -305,10 +307,10 @@ float(float weap, entity cl) W_CheckWeapon = {
 
 	if (!(cl.weapons & weap)) return WEAPONSTAT_NOWEAPON;
 
-	if (self.(weapcl.ammofield) < weapcl.ammo_usage) {
+	if (cl.(weapcl.ammofield) < weapcl.ammo_usage) {
 		return WEAPONSTAT_NOAMMO;
 	}
-
+	//dprint3("Ammo: ", ftos(cl.(weapcl.ammofield)), "\n");
 	return WEAPONSTAT_AVAILABLE;
 };
 
