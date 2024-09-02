@@ -1,4 +1,6 @@
-void() weaponanim_none = {};
+//=================================================================================================
+// Axe
+//=================================================================================================
 
 void() weaponanim_axe = {};
 
@@ -16,12 +18,12 @@ void() weaponanim_chainsaw = {
 	if (self.attack_finished > time)
 		return;
 
-	//sound (self, CHAN_WEAPON2, "weapons/sawatck.wav", 1, ATTN_NORM);
+	sound (self, CHAN_WEAPON, "weapons/sawatck.wav", 1, ATTN_NORM);
 	W_FireSaw();
 	
 	SUB_CallAsSelf(player_chainsaw1, self.animcontroller);
 
-	self.attack_finished = time + 0.2;
+	self.attack_finished = time + 0.55;
 
 	self.weaponframe = 5;
 	self.think = weaponanim_chainsaw_loop;
@@ -44,6 +46,8 @@ void() weaponanim_chainsaw_loop = {
 		self.weaponframe++;
 	}
 
+	if (self.weaponframe == 5) sound(self, CHAN_WEAPON, "weapons/sawatck.wav", 1, ATTN_NORM);
+
 	if (self.weaponframe % 2 == 1)
 		W_FireSaw();
 	
@@ -62,21 +66,75 @@ void() weaponanim_chainsaw_idle = {
 		self.weaponframe++;
 	}
 
+	if (self.view_ofs != '0 0 0' && self.weaponframe == 0)
+		sound (self, CHAN_WEAPON, "weapons/sawridle.wav", 1, ATTN_IDLE);
+
 	self.think = weaponanim_chainsaw_idle;
 	self.nextthink = time + 0.1;
 }
+
 
 
 //=================================================================================================
 // Shotgun
 //=================================================================================================
 
-void() weaponanim_shotgun = {};
+void() weaponanim_shotgun = {
+	if (self.attack_finished > time)
+		return;
 
+	if (W_CheckWeapon(WEAPON_SHOTGUN, self) != WEAPONSTAT_AVAILABLE){
+		W_ChangeWeapon(W_BestWeapon());
+		return;
+	}
+
+	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
+
+	self.attack_finished = time + 0.5;
+	
+	SUB_CallAsSelf(player_shot1, self.animcontroller);
+	
+	self.effects = self.effects | EF_MUZZLEFLASH;
+
+	W_FireShotgun();
+
+	self.weaponframe = 1;
+	self.think = weaponanim_shotgun1;
+	self.nextthink = time + 0.025;
+}
+
+void() weaponanim_shotgun1 = {
+
+	if (self.weaponframe >= 24) {
+		self.weaponframe = 0;
+		return;
+	}
+	else {
+		self.weaponframe++;
+	}
+
+	self.think = weaponanim_shotgun1;
+	self.nextthink = time + 0.025;
+
+}
+
+
+
+//=================================================================================================
+// Super Shotgun
+//=================================================================================================
 
 void() weaponanim_supershotgun = {};
 
+
+
+//=================================================================================================
+// Nailgun
+//=================================================================================================
+
 void() weaponanim_nailgun = {};
+
+
 
 //=================================================================================================
 // Super Nailgun

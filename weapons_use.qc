@@ -8,6 +8,7 @@ typedef struct {
 	float ammo_item;
 	float ammo_usage;
 	void() animfunction;
+	void() idlefunction;
 } weaponclass_t;
 
 
@@ -20,7 +21,8 @@ weaponclass_t wpc_no_weapon = {
 	ammo_shells, // ammofield
 	IT_SHELLS,
 	0, // ammo_usage
-	weaponanim_none // animfunction
+	SUB_Null, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_axe = {
@@ -32,7 +34,8 @@ weaponclass_t wpc_axe = {
 	ammo_shells, // ammofield
 	IT_SHELLS,
 	0, // ammo_usage
-	weaponanim_axe // animfunction
+	weaponanim_axe, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_chainsaw = {
@@ -44,7 +47,8 @@ weaponclass_t wpc_chainsaw = {
 	ammo_shells, // ammofield
 	IT_SHELLS,
 	0, // ammo_usage
-	weaponanim_chainsaw // animfunction
+	weaponanim_chainsaw, // animfunction
+	weaponanim_chainsaw_idle
 };
 
 weaponclass_t wpc_shotgun = {
@@ -56,7 +60,8 @@ weaponclass_t wpc_shotgun = {
 	ammo_shells, // ammofield
 	IT_SHELLS,
 	1, // ammo_usage
-	weaponanim_shotgun // animfunction
+	weaponanim_shotgun, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_supershotgun = {
@@ -68,7 +73,8 @@ weaponclass_t wpc_supershotgun = {
 	ammo_shells, // ammofield
 	IT_SHELLS,
 	2, // ammo_usage
-	weaponanim_supershotgun // animfunction
+	weaponanim_supershotgun, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_nailgun = {
@@ -80,7 +86,8 @@ weaponclass_t wpc_nailgun = {
 	ammo_nails, // ammofield
 	IT_NAILS,
 	1, // ammo_usage
-	weaponanim_nailgun // animfunction
+	weaponanim_nailgun, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_supernailgun = {
@@ -92,7 +99,8 @@ weaponclass_t wpc_supernailgun = {
 	ammo_nails, // ammofield
 	IT_NAILS,
 	2, // ammo_usage
-	weaponanim_supernailgun // animfunction
+	weaponanim_supernailgun, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_grenade = {
@@ -104,7 +112,8 @@ weaponclass_t wpc_grenade = {
 	ammo_rockets, // ammofield
 	IT_ROCKETS,
 	1, // ammo_usage
-	weaponanim_grenade // animfunction
+	weaponanim_grenade, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_proximity = {
@@ -116,7 +125,8 @@ weaponclass_t wpc_proximity = {
 	ammo_rockets, // ammofield
 	IT_ROCKETS,
 	1, // ammo_usage
-	weaponanim_proximity // animfunction
+	weaponanim_proximity, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_rocket = {
@@ -128,7 +138,8 @@ weaponclass_t wpc_rocket = {
 	ammo_rockets, // ammofield
 	IT_ROCKETS,
 	1, // ammo_usage
-	weaponanim_rocket // animfunction
+	weaponanim_rocket, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_lg = {
@@ -140,7 +151,8 @@ weaponclass_t wpc_lg = {
 	ammo_cells, // ammofield
 	IT_CELLS,
 	1, // ammo_usage
-	weaponanim_lg // animfunction
+	weaponanim_lg, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_laser = {
@@ -152,7 +164,8 @@ weaponclass_t wpc_laser = {
 	ammo_cells, // ammofield
 	IT_CELLS,
 	1, // ammo_usage
-	weaponanim_laser // animfunction
+	weaponanim_laser, // animfunction
+	SUB_Null
 };
 
 weaponclass_t wpc_plasma = {
@@ -164,7 +177,8 @@ weaponclass_t wpc_plasma = {
 	ammo_cells, // ammofield
 	IT_CELLS,
 	1, // ammo_usage
-	weaponanim_plasma // animfunction
+	weaponanim_plasma, // animfunction
+	SUB_Null
 };
 
 weaponclass_t weaponsclass[13] = {
@@ -337,7 +351,9 @@ float(float weap) W_ChangeWeapon = {
 	self.attackpressed = 0;
 	self.attackhold = 0;
 
-	self.think = player_run;
+	self.animcontroller.think = player_run;
+	self.think = SUB_Null;
+	if (weapcl.idlefunction != SUB_Null) weapcl.idlefunction();
 
 	return weapstat;
 }

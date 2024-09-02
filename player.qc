@@ -139,25 +139,7 @@ void()	player_run =[	$rockrun1,	player_run	] {
 		player_stand1();
 		return;
 	}
-	
 
-	if (self.owner.weapon == WEAPON_CHAINSAW) {
-		self.owner.weaponframe = self.owner.weaponframe + 1;
-		if (self.owner.weaponframe >= 5) {
-			self.owner.weaponframe = 0;
-			if (self.owner.view_ofs != '0 0 0')
-				sound (self.owner, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_NORM);
-		}
-
-		if (self.owner.walkframe == 6)
-			self.owner.walkframe = 0;
-
-		self.owner.frame = $sawrun1 + self.owner.walkframe;
-		self.owner.walkframe = self.owner.walkframe + 1;
-		return;
-	}
-	
-	self.owner.weaponframe = 0;
 
 	if (self.owner.weapon == WEAPON_AXE) {
 		if (self.owner.walkframe == 6)
@@ -182,30 +164,13 @@ void()	player_run =[	$rockrun1,	player_run	] {
 	}
 };
 
-void()	player_shot1 =	[$shotatt1, player_shot2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};
-void()	player_shot2 =	[$shotatt1, player_shot3	] {self.weaponframe=2; nxth(0.025);};
-void()	player_shot3 =	[$shotatt1, player_shot4	] {self.weaponframe=3; nxth(0.025);};
-void()	player_shot4 =	[$shotatt1, player_shot5	] {self.weaponframe=4; nxth(0.025);};
-void()	player_shot5 =	[$shotatt2, player_shot6	] {self.weaponframe=5; nxth(0.025);};
-void()	player_shot6 =	[$shotatt2, player_shot7	] {self.weaponframe=6; nxth(0.025);};
-void()	player_shot7 =	[$shotatt2, player_shot8	] {self.weaponframe=7; nxth(0.025);};
-void()	player_shot8 =	[$shotatt2, player_shot9	] {self.weaponframe=8; nxth(0.025);};
-void()	player_shot9 =	[$shotatt3, player_shot10	] {self.weaponframe=9; nxth(0.025);};
-void()	player_shot10 =	[$shotatt3, player_shot11	] {self.weaponframe=10; nxth(0.025);};
-void()	player_shot11 =	[$shotatt3, player_shot12	] {self.weaponframe=11; nxth(0.025);};
-void()	player_shot12 =	[$shotatt3, player_shot13	] {self.weaponframe=12; nxth(0.025);};
-void()	player_shot13 =	[$shotatt4, player_shot14	] {self.weaponframe=13; nxth(0.025);};
-void()	player_shot14 =	[$shotatt4, player_shot15	] {self.weaponframe=14; nxth(0.025);};
-void()	player_shot15 =	[$shotatt4, player_shot16	] {self.weaponframe=15; nxth(0.025);};
-void()	player_shot16 =	[$shotatt4, player_shot17	] {self.weaponframe=16; nxth(0.025);};
-void()	player_shot17 =	[$shotatt5, player_shot18	] {self.weaponframe=17; nxth(0.025);};
-void()	player_shot18 =	[$shotatt5, player_shot19	] {self.weaponframe=18; nxth(0.025);};
-void()	player_shot19 =	[$shotatt5, player_shot20	] {self.weaponframe=19; nxth(0.025);};
-void()	player_shot20 =	[$shotatt5, player_shot21	] {self.weaponframe=20; nxth(0.025);};
-void()	player_shot21 =	[$shotatt6, player_shot22	] {self.weaponframe=21; nxth(0.025);};
-void()	player_shot22 =	[$shotatt6, player_shot23	] {self.weaponframe=22; nxth(0.025);};
-void()	player_shot23 =	[$shotatt6, player_shot24	] {self.weaponframe=23; nxth(0.025);};
-void()	player_shot24 =	[$shotatt6, player_run		] {self.weaponframe=24; nxth(0.025);};
+void()	player_shot1 =	[$shotatt1, player_shot2	] {self.owner.frame = self.frame;};
+void()	player_shot2 =	[$shotatt2, player_shot3	] {self.owner.frame = self.frame;};
+void()	player_shot3 =	[$shotatt3, player_shot4	] {self.owner.frame = self.frame;};
+void()	player_shot4 =	[$shotatt4, player_shot5	] {self.owner.frame = self.frame;};
+void()	player_shot5 =	[$shotatt5, player_shot6	] {self.owner.frame = self.frame;};
+void()	player_shot6 =	[$shotatt6, player_run		] {self.owner.frame = self.frame;};
+
 
 
 
