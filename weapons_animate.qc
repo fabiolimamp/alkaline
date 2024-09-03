@@ -18,6 +18,8 @@ float() weaponanim_axe = {
 	if (self.attack_finished > time)
 		return FALSE;
 
+	sound (self, CHAN_WEAPON, "weapons/ax1.wav", 1, ATTN_NORM);
+	
 	self.attack_finished = time + 0.5;
 	
 	self.weaponframe = floor(random()*4.99)*10 + 2;

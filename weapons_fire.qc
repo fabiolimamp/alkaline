@@ -17,20 +17,17 @@ animation should done here at all.
 W_FireAxe
 ================
 */
-void() W_FireAxe =
-{
-	local	vector	source;
-	local	vector	org;
-
+void() W_FireAxe = {
+	
 	makevectors (self.v_angle);
-	source = self.origin + self.view_ofs - v_up*6;
+	vector source = self.origin + self.view_ofs - v_up*6;
 	traceline (source, source + v_forward*64, FALSE, self);
 	if (trace_fraction == 1.0)
 		return;
 	
 	self.show_hostile = time + 1; // hit something, so alert monsters
 
-	org = trace_endpos - v_forward*4;
+	vector org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage) {
 		trace_ent.axhitme = 1;
