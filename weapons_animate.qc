@@ -14,9 +14,9 @@ Ammo usage and checking should be managed here too.
 // Axe
 //=================================================================================================
 
-void() weaponanim_axe = {
+float() weaponanim_axe = {
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	self.attack_finished = time + 0.5;
 	
@@ -26,6 +26,8 @@ void() weaponanim_axe = {
 
 	self.think = weaponanim_axe_loop;
 	self.nextthink = time + 0.05;
+
+	return FALSE; // axe swing will never count as fired until it hits something
 }
 
 void() weaponanim_axe_loop = {
@@ -50,14 +52,14 @@ void() weaponanim_axe_loop = {
 // Chainsaw
 //=================================================================================================
 
-void() weaponanim_chainsaw = {
+float() weaponanim_chainsaw = {
 	// handled via animation loop
 	if (self.attackhold) {
-		return;
+		return FALSE;
 	}
 
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	
 	SUB_CallAsSelf(player_chainsaw1, self.animcontroller);
@@ -66,7 +68,9 @@ void() weaponanim_chainsaw = {
 
 	self.weaponframe = 4;
 	weaponanim_chainsaw_loop();
-	}
+	
+	return TRUE;
+}
 
 void() weaponanim_chainsaw_loop = {
 
@@ -120,13 +124,13 @@ void() weaponanim_chainsaw_idle = {
 // Shotgun
 //=================================================================================================
 
-void() weaponanim_shotgun = {
+float() weaponanim_shotgun = {
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
 		W_ChangeWeapon(W_BestWeapon());
-		return;
+		return FALSE;
 	}
 
 	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
@@ -143,6 +147,8 @@ void() weaponanim_shotgun = {
 	self.weaponframe = 1;
 	self.think = weaponanim_shotgun_loop;
 	self.nextthink = time + 0.025;
+	
+	return TRUE;
 }
 
 void() weaponanim_shotgun_loop = {
@@ -166,16 +172,16 @@ void() weaponanim_shotgun_loop = {
 // Super Shotgun
 //=================================================================================================
 
-void() weaponanim_supershotgun = {
+float() weaponanim_supershotgun = {
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	float stat = W_CheckWeapon(self.weapon, self);
 
 	if (stat != WEAPONSTAT_AVAILABLE){
 		//dprint("Not available!\n");
 		W_ChangeWeapon(W_BestWeapon());
-		return;
+		return FALSE;
 	}
 
 	self.attack_finished = time + 0.7;
@@ -198,6 +204,8 @@ void() weaponanim_supershotgun = {
 	self.weaponframe = 1;
 	self.think = weaponanim_supershotgun_loop;
 	self.nextthink = time + 0.025;
+	
+	return TRUE;
 }
 
 void() weaponanim_supershotgun_loop = {
@@ -222,20 +230,22 @@ void() weaponanim_supershotgun_loop = {
 // Nailgun
 //=================================================================================================
 
-void() weaponanim_nailgun = {
+float() weaponanim_nailgun = {
 	// handled via animation loop4
 	if (self.attackhold && self.attack_finished > time) {
-		return;
+		return FALSE;
 	}
 
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	SUB_CallAsSelf(player_nail1, self.animcontroller);
 
 	self.weaponframe = 0;
 	
 	weaponanim_nailgun_loop();
+	
+	return TRUE;
 	
 }
 
@@ -287,14 +297,14 @@ void() weaponanim_nailgun_loop = {
 //=================================================================================================
 
 
-void() weaponanim_supernailgun = {
+float() weaponanim_supernailgun = {
 	// handled via animation loop4
 	if (self.attackhold && self.attack_finished > time) {
-		return;
+		return FALSE;
 	}
 
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	SUB_CallAsSelf(player_nail1, self.animcontroller);
 
@@ -302,6 +312,8 @@ void() weaponanim_supernailgun = {
 	else self.weaponframe = 0;
 	
 	weaponanim_supernailgun_loop();
+	
+	return TRUE;
 	
 }
 
@@ -374,13 +386,13 @@ void() weaponanim_supernailgun_end = {
 // Grenade Launcher
 //=================================================================================================
 
-void() weaponanim_grenade = {
+float() weaponanim_grenade = {
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
 		W_ChangeWeapon(W_BestWeapon());
-		return;
+		return FALSE;
 	}
 
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
@@ -396,6 +408,8 @@ void() weaponanim_grenade = {
 	self.weaponframe = 1;
 	self.think = weaponanim_grenade_loop;
 	self.nextthink = time + 0.025;
+	
+	return TRUE;
 }
 
 void() weaponanim_grenade_loop = {
@@ -419,13 +433,13 @@ void() weaponanim_grenade_loop = {
 // Proximity Launcher
 //=================================================================================================
 
-void() weaponanim_proximity = {
+float() weaponanim_proximity = {
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
 		W_ChangeWeapon(W_BestWeapon());
-		return;
+		return FALSE;
 	}
 
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
@@ -441,6 +455,8 @@ void() weaponanim_proximity = {
 	self.weaponframe = 1;
 	self.think = weaponanim_proximity_loop;
 	self.nextthink = time + 0.025;
+	
+	return TRUE;
 }
 
 void() weaponanim_proximity_loop = {
@@ -464,13 +480,13 @@ void() weaponanim_proximity_loop = {
 // Rocket Launcher
 //=================================================================================================
 
-void() weaponanim_rocket = {
+float() weaponanim_rocket = {
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
 		W_ChangeWeapon(W_BestWeapon());
-		return;
+		return FALSE;
 	}
 
 	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
@@ -486,6 +502,8 @@ void() weaponanim_rocket = {
 	self.weaponframe = 1;
 	self.think = weaponanim_rocket_loop;
 	self.nextthink = time + 0.025;
+	
+	return TRUE;
 }
 
 void() weaponanim_rocket_loop = {
@@ -509,19 +527,21 @@ void() weaponanim_rocket_loop = {
 // Lightning Gun
 //=================================================================================================
 
-void() weaponanim_lg = {	// handled via animation loop4
+float() weaponanim_lg = {	// handled via animation loop4
 	if (self.attackhold && self.attack_finished > time) {
-		return;
+		return FALSE;
 	}
 
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	SUB_CallAsSelf(player_light1, self.animcontroller);
 
 	self.weaponframe = 0;
 	
 	weaponanim_lg_loop();
+	
+	return TRUE;
 	
 }
 
@@ -569,14 +589,14 @@ void() weaponanim_lg_loop = {
 // Laser Cannon
 //=================================================================================================
 
-void() weaponanim_laser = {
+float() weaponanim_laser = {
 	// handled via animation loop4
 	if (self.attackhold && self.attack_finished > time) {
-		return;
+		return FALSE;
 	}
 
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	SUB_CallAsSelf(player_nail1, self.animcontroller);
 
@@ -584,18 +604,20 @@ void() weaponanim_laser = {
 	
 	weaponanim_laser_loop();
 	
+	
+	return TRUE;
 }
 
 void() weaponanim_laser_loop = {
 	if (!self.attackhold && !self.attackpressed){
 		self.weaponframe = 0;
 		SUB_CallAsSelf(player_run, self.animcontroller);
-		return;
+		return FALSE;
 	}
 
 	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
 		W_ChangeWeapon(W_BestWeapon());
-		return;
+		return FALSE;
 	}
 
 	if (self.weaponframe >= 8) {
@@ -633,13 +655,13 @@ void() weaponanim_laser_loop = {
 // Plasma Gun
 //=================================================================================================
 
-void() weaponanim_plasma = {
+float() weaponanim_plasma = {
 	if (self.attack_finished > time)
-		return;
+		return FALSE;
 
 	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
 		W_ChangeWeapon(W_BestWeapon());
-		return;
+		return FALSE;
 	}
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
@@ -656,6 +678,8 @@ void() weaponanim_plasma = {
 	self.weaponframe = 1;
 	self.think = weaponanim_plasma1;
 	self.nextthink = time + 0.05;
+	
+	return TRUE;
 }
 
 void() weaponanim_plasma1 = {

@@ -7,7 +7,7 @@ typedef struct {
 	.float ammofield;
 	float ammo_item;
 	float ammo_usage;
-	void() animfunction;
+	float() animfunction;
 	void() idlefunction;
 } weaponclass_t;
 
@@ -325,10 +325,10 @@ void() W_Attack = {
 	}
 
 	makevectors(self.v_angle);			// calculate forward angle for velocity
-	self.show_hostile = time + 1;	// wake monsters up
+	
+	float fired = weap.animfunction();
 
-	weap.animfunction();
-
+	if (fired) self.show_hostile = time + 1;	// wake monsters up
 };
 
 
