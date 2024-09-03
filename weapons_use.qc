@@ -95,7 +95,7 @@ weaponclass_t wpc_supernailgun = {
 	5, // slot
 	0, // slotPos
 	"Super Nailgun", // name
-	"progs/v_nail3.mdl", // model
+	"progs/v_nail3_v2.mdl", // model
 	ammo_nails, // ammofield
 	IT_NAILS,
 	2, // ammo_usage

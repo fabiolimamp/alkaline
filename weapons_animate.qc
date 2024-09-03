@@ -157,7 +157,7 @@ void() weaponanim_supershotgun = {
 	if (self.attack_finished > time)
 		return;
 
-	if (W_CheckWeapon(WEAPON_SUPER_SHOTGUN, self) != WEAPONSTAT_AVAILABLE){
+	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
 		//dprint("Not available!\n");
 		W_ChangeWeapon(W_BestWeapon());
 		return;
@@ -210,51 +210,66 @@ void() weaponanim_nailgun = {};
 
 
 void() weaponanim_supernailgun = {
-	// handled via animation loop
-	if (self.attackhold) {
+	// handled via animation loop4
+	if (self.attackhold && self.attack_finished > time) {
 		return;
 	}
 
 	if (self.attack_finished > time)
 		return;
 
-	W_FireSaw();
+	SUB_CallAsSelf(player_nail1, self.animcontroller);
+
+	if (self.weaponframe > 8 && self.weaponframe <= 16) self.weaponframe -= 8;
+	else self.weaponframe = 0;
 	
-	player_axe();
-
-	self.attack_finished = time + 0.2;
-
-	self.weaponframe = 1;
-	self.think = weaponanim_supernailgun_loop;
-	self.nextthink = time + 0.1;
+	weaponanim_supernailgun_loop();
+	
 }
 
 void() weaponanim_supernailgun_loop = {
 
-	if (!self.attackhold){
+	if (!self.attackhold && !self.attackpressed){
+		self.weaponframe += 8;
 		weaponanim_supernailgun_end();
+		SUB_CallAsSelf(player_run, self.animcontroller);
 		return;
 	}
 
-	if (self.weaponframe >= 10) {
-		self.weaponframe = 5;
+	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
+		W_ChangeWeapon(W_BestWeapon());
+		return;
+	}
+
+	if (self.weaponframe >= 8) {
+		self.weaponframe = 1;
 	}
 	else {
 		self.weaponframe++;
 	}
 
-	if (self.weaponframe % 2 == 0)
-		W_FireSaw();
+	if (self.weaponframe == 1 || self.weaponframe == 5) {
+		self.attack_finished = time + 0.2;
+
+		self.currentammo = self.ammo_nails = self.ammo_nails - 2;
+
+		self.punchangle_x = -2;
+
+		self.effects |= EF_MUZZLEFLASH;
+
+		SuperDamageSound();
+		W_FireSuperSpikes();
+	}
 	
 
 	self.think = weaponanim_supernailgun_loop;
-	self.nextthink = time + 0.1;
-
+	self.nextthink = time + 0.025;
 }
+
 
 void() weaponanim_supernailgun_end = {
 
-	if (self.weaponframe >= 40) {
+	if (self.weaponframe >= 59) {
 		self.weaponframe = 0;
 		return;
 	}
@@ -262,8 +277,11 @@ void() weaponanim_supernailgun_end = {
 		self.weaponframe++;
 	}
 
+	if (self.weaponframe == 33) sound (self, 7, "weapons/spindn_click.wav", 0.15, ATTN_NORM);
+	if (self.weaponframe == 56) sound (self, 7, "weapons/spindn_click.wav", 0.3, ATTN_NORM);
+
 	self.think = weaponanim_supernailgun_end;
-	self.nextthink = time + 0.05;
+	self.nextthink = time + 0.025;
 
 }
 

@@ -1035,8 +1035,7 @@ void() W_FireSuperSpikes =
 	makevectors (self.v_angle);
 
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
-	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
+
 	dir = aim (self, 1000);
 
 	org = self.origin + self.view_ofs - v_up * 6;//'0 0 16';
@@ -1054,25 +1053,11 @@ void(float ox) W_FireSpikes =
 {
 	local vector	dir;
 	vector org;
-//	local entity	old;
 	
-	if (self.ammo_nails >= 2 && self.weapon == WEAPON_SUPER_NAILGUN)
-	{
-		W_FireSuperSpikes ();
-		return;
-	}
-
-	if (self.ammo_nails < 1)
-	{
-	
-		W_ChangeWeapon(W_BestWeapon());
-	}
-
 	makevectors (self.v_angle);
 
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
-	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+	
 
 	org = self.origin + self.view_ofs - v_up * 8 + v_right*ox;
 	dir = aim (self, 1000);

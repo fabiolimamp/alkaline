@@ -314,7 +314,7 @@ void() worldspawn =
 	precache_model ("progs/v_alkaxe20fps.mdl");
 	precache_model ("progs/v_shot40fps.mdl");
 	precache_model ("progs/v_nail_alk40fps.mdl");
-	precache_model ("progs/v_nail3.mdl");
+	precache_model ("progs/v_nail3_v2.mdl");
 	precache_model ("progs/v_rock_40fps.mdl");
 	precache_model ("progs/v_shot2_40fps.mdl");
 	precache_model ("progs/v_nail2.mdl");
