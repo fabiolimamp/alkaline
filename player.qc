@@ -157,29 +157,6 @@ void()	player_shot6 =	[$shotatt6, player_run		] {self.owner.frame = self.frame;}
 
 
 
-void()	player_sshot1 =	[$shotatt1, player_sshot2	] {self.weaponframe=1; self.effects = self.effects | EF_MUZZLEFLASH; nxth(0.025);};
-void()	player_sshot2 =	[$shotatt1, player_sshot3	] {self.weaponframe=2; nxth(0.025);};
-void()	player_sshot3 =	[$shotatt1, player_sshot4	] {self.weaponframe=3; nxth(0.025);};
-void()	player_sshot4 =	[$shotatt2, player_sshot5	] {self.weaponframe=4; nxth(0.025);};
-void()	player_sshot5 =	[$shotatt2, player_sshot6	] {self.weaponframe=5; nxth(0.025);};
-void()	player_sshot6 =	[$shotatt2, player_sshot7	] {self.weaponframe=6; nxth(0.025);};
-void()	player_sshot7 =	[$shotatt2, player_sshot8	] {self.weaponframe=7; nxth(0.025);};
-void()	player_sshot8 =	[$shotatt3, player_sshot9	] {self.weaponframe=8; nxth(0.025);};
-void()	player_sshot9 =	[$shotatt3, player_sshot10	] {self.weaponframe=9; nxth(0.025);};
-void()	player_sshot10 =	[$shotatt3, player_sshot11	] {self.weaponframe=10; nxth(0.025);};
-void()	player_sshot11 =	[$shotatt4, player_sshot12	] {self.weaponframe=11; nxth(0.025);};
-void()	player_sshot12 =	[$shotatt4, player_sshot13	] {self.weaponframe=12; nxth(0.025);};
-void()	player_sshot13 =	[$shotatt4, player_sshot14	] {self.weaponframe=13; nxth(0.025);};
-void()	player_sshot14 =	[$shotatt5, player_sshot15	] {self.weaponframe=14; nxth(0.025);};
-void()	player_sshot15 =	[$shotatt5, player_sshot16	] {self.weaponframe=15; nxth(0.025);};
-void()	player_sshot16 =	[$shotatt5, player_sshot17	] {self.weaponframe=16; nxth(0.025);};
-void()	player_sshot17 =	[$shotatt5, player_sshot18	] {self.weaponframe=17; nxth(0.025);};
-void()	player_sshot18 =	[$shotatt6, player_sshot19	] {self.weaponframe=18; nxth(0.025);};
-void()	player_sshot19 =	[$shotatt6, player_sshot20	] {self.weaponframe=19; nxth(0.025);};
-void()	player_sshot20 =	[$shotatt6, player_sshot21	] {self.weaponframe=20; nxth(0.025);};
-void()	player_sshot21 =	[$shotatt6, player_run		] {self.weaponframe=21; nxth(0.025);};
-
-
 
 void(entity ctrl, float seq) player_axe_start = {
 	switch (seq) {
@@ -226,39 +203,6 @@ void() player_chainsaw2   =[$sawatt2, player_chainsaw1 ] {self.owner.frame = sel
 
 void() player_nail1   =[$nailatt1, player_nail2 ] {self.owner.frame = self.frame;};
 void() player_nail2   =[$nailatt2, player_nail1 ] {self.owner.frame = self.frame;};
-
-void() player_nail = {
-	if (!self.button0 || self.weapon != WEAPON_NAILGUN) {
-		player_run();
-		return;
-	}
-		
-		
-	if (self.weaponframe >= 8)
-		self.weaponframe = 1;
-	else
-		self.weaponframe++;
-		
-	float offs;
-	if (self.weaponframe == 1 || self.weaponframe == 5) {
-		self.effects |= EF_MUZZLEFLASH;
-		
-		if (self.frame != $nailatt1)
-			self.frame = $nailatt1;
-		else 
-			self.frame += 1;
-
-		if (self.frame == $nailatt1) offs = -3;
-		else offs = 3;
-		SuperDamageSound();
-		W_FireSpikes(offs);
-
-		self.attack_finished = time + 0.2;
-	}
-
-	self.think = player_nail;
-	self.nextthink = time + 0.025;
-}
 
 
 

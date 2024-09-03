@@ -12,11 +12,11 @@ void() weaponanim_axe = {
 
 	player_axe_start(self.animcontroller, (self.weaponframe - 2)/10);
 
-	self.think = weaponanim_axe1;
+	self.think = weaponanim_axe_loop;
 	self.nextthink = time + 0.05;
 }
 
-void() weaponanim_axe1 = {
+void() weaponanim_axe_loop = {
 	if (self.weaponframe % 10 == 5)
 		W_FireAxe();
 
@@ -28,7 +28,7 @@ void() weaponanim_axe1 = {
 		self.weaponframe++;
 	}
 
-	self.think = weaponanim_axe1;
+	self.think = weaponanim_axe_loop;
 	self.nextthink = time + 0.05;
 
 }
@@ -128,11 +128,11 @@ void() weaponanim_shotgun = {
 	W_FireShotgun();
 
 	self.weaponframe = 1;
-	self.think = weaponanim_shotgun1;
+	self.think = weaponanim_shotgun_loop;
 	self.nextthink = time + 0.025;
 }
 
-void() weaponanim_shotgun1 = {
+void() weaponanim_shotgun_loop = {
 
 	if (self.weaponframe >= 24) {
 		self.weaponframe = 0;
@@ -142,7 +142,7 @@ void() weaponanim_shotgun1 = {
 		self.weaponframe++;
 	}
 
-	self.think = weaponanim_shotgun1;
+	self.think = weaponanim_shotgun_loop;
 	self.nextthink = time + 0.025;
 
 }
@@ -174,11 +174,11 @@ void() weaponanim_supershotgun = {
 	W_FireSuperShotgun();
 
 	self.weaponframe = 1;
-	self.think = weaponanim_supershotgun1;
+	self.think = weaponanim_supershotgun_loop;
 	self.nextthink = time + 0.025;
 }
 
-void() weaponanim_supershotgun1 = {
+void() weaponanim_supershotgun_loop = {
 
 	if (self.weaponframe >= 21) {
 		self.weaponframe = 0;
@@ -188,7 +188,7 @@ void() weaponanim_supershotgun1 = {
 		self.weaponframe++;
 	}
 
-	self.think = weaponanim_supershotgun1;
+	self.think = weaponanim_supershotgun_loop;
 	self.nextthink = time + 0.025;
 
 }
@@ -200,8 +200,65 @@ void() weaponanim_supershotgun1 = {
 // Nailgun
 //=================================================================================================
 
-void() weaponanim_nailgun = {};
+void() weaponanim_nailgun = {
+	// handled via animation loop4
+	if (self.attackhold && self.attack_finished > time) {
+		return;
+	}
 
+	if (self.attack_finished > time)
+		return;
+
+	SUB_CallAsSelf(player_nail1, self.animcontroller);
+
+	if (self.weaponframe > 8 && self.weaponframe <= 16) self.weaponframe -= 8;
+	else self.weaponframe = 0;
+	
+	weaponanim_nailgun_loop();
+	
+}
+
+void() weaponanim_nailgun_loop = {
+	if (!self.attackhold && !self.attackpressed){
+		self.weaponframe = 0;
+		SUB_CallAsSelf(player_run, self.animcontroller);
+		return;
+	}
+
+	if (W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE){
+		W_ChangeWeapon(W_BestWeapon());
+		return;
+	}
+
+	if (self.weaponframe >= 8) {
+		self.weaponframe = 1;
+	}
+	else {
+		self.weaponframe++;
+	}
+	
+	float offs;
+	
+	if (self.weaponframe == 1 || self.weaponframe == 5) {
+		self.attack_finished = time + 0.2;
+
+		self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+
+		self.punchangle_x = -2;
+
+		self.effects |= EF_MUZZLEFLASH;
+
+		if (self.weaponframe == 1) offs = -3;
+		else offs = 3;
+
+		SuperDamageSound();
+		W_FireSpikes(offs);
+	}
+	
+
+	self.think = weaponanim_nailgun_loop;
+	self.nextthink = time + 0.025;
+}
 
 
 //=================================================================================================
