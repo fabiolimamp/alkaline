@@ -47,21 +47,18 @@ void() weaponanim_chainsaw = {
 	if (self.attack_finished > time)
 		return;
 
-	sound (self, CHAN_WEAPON, "weapons/sawatck.wav", 1, ATTN_NORM);
-	W_FireSaw();
 	
 	SUB_CallAsSelf(player_chainsaw1, self.animcontroller);
 
 	self.attack_finished = time + 0.55;
 
-	self.weaponframe = 5;
-	self.think = weaponanim_chainsaw_loop;
-	self.nextthink = time + 0.1;
-}
+	self.weaponframe = 4;
+	weaponanim_chainsaw_loop();
+	}
 
 void() weaponanim_chainsaw_loop = {
 
-	if (!self.attackhold){
+	if (!self.attackhold && !self.attackpressed){
 		self.weaponframe = 0;
 		SUB_CallAsSelf(player_stand1, self.animcontroller);
 		weaponanim_chainsaw_idle();
@@ -75,7 +72,7 @@ void() weaponanim_chainsaw_loop = {
 		self.weaponframe++;
 	}
 
-	if (self.weaponframe == 5) sound(self, CHAN_WEAPON, "weapons/sawatck.wav", 1, ATTN_NORM);
+	if (self.weaponframe == 5) sound(self, CHAN_AUTO, "weapons/sawatck.wav", 1, ATTN_NORM);
 
 	if (self.weaponframe % 2 == 1)
 		W_FireSaw();
@@ -88,6 +85,10 @@ void() weaponanim_chainsaw_loop = {
 
 
 void() weaponanim_chainsaw_idle = {
+	
+	if (self.view_ofs != '0 0 0' && self.weaponframe == 0)
+		sound (self, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_IDLE);
+
 	if (self.weaponframe >= 4) {
 		self.weaponframe = 0;
 	}
@@ -95,8 +96,7 @@ void() weaponanim_chainsaw_idle = {
 		self.weaponframe++;
 	}
 
-	if (self.view_ofs != '0 0 0' && self.weaponframe == 0)
-		sound (self, CHAN_WEAPON, "weapons/sawridle.wav", 1, ATTN_IDLE);
+
 
 	self.think = weaponanim_chainsaw_idle;
 	self.nextthink = time + 0.1;

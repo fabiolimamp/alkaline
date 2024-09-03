@@ -220,12 +220,6 @@ void() player_light1 = [$light1, player_light2  ] {self.owner.frame = self.frame
 void() player_light2 = [$light2, player_light1  ] {self.owner.frame = self.frame;}
 
 
-//============================================================================
-
-void()	player_plasma1 =	[$shotatt1, player_plasma2	] {self.weaponframe=1; nxth(0.05); self.effects = self.effects | EF_MUZZLEFLASH;};
-void()	player_plasma2 =	[$shotatt1, player_plasma3	] {self.weaponframe=2; nxth(0.05);};
-void()	player_plasma3 =	[$shotatt3, player_run		] {self.weaponframe=1; nxth(0.1);};
-
 
 
 void(float dmgtype) PainSound = {
