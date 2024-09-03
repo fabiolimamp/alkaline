@@ -156,7 +156,7 @@ entity activator;		// the entity that activated a trigger or brush
 
 entity damage_attacker;	// set by T_Damage
 float framecount;
-float lastframetime;
+//float lastframetime;
 
 float skill;
 float startskill;

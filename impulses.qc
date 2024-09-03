@@ -498,23 +498,36 @@ ImpulseCommands
 
 void() ImpulseCommands = {
 	// weapon changing must not occur until attack_finished time has passed
+	float ret;
 	if (self.impulse >= 1 && self.impulse <= 8) {
 		if (time < self.attack_finished) return;
 		
-		W_ChangeSlot(self.impulse);
+		ret = W_ChangeSlot(self.impulse);
+		if (ret == WEAPONSTAT_NOAMMO)
+			sprint(self, "No ammo.\n");
+
+		if (ret == WEAPONSTAT_NOWEAPON)
+			sprint(self, "No weapon.\n");
 	}
 
 	if (self.impulse >= 224 && self.impulse <= 235) {
 		if (time < self.attack_finished) return;
+
 		switch(self.impulse) {
-			case 225:	W_ChangeWeapon(WEAPON_LASER_CANNON);
-			case 226:	W_ChangeWeapon(WEAPON_CHAINSAW);
-			case 227:	W_ChangeWeapon(WEAPON_PLASMA);
-			case 228:	W_ChangeWeapon(WEAPON_LIGHTNING);
-			case 229:	W_ChangeWeapon(WEAPON_PROXIMITY_GUN);
-			case 230:	W_ChangeWeapon(WEAPON_GRENADE_LAUNCHER);
-			case 231:	W_ChangeWeapon(WEAPON_AXE);
+			case 225:	ret = W_ChangeWeapon(WEAPON_LASER_CANNON);
+			case 226:	ret = W_ChangeWeapon(WEAPON_CHAINSAW);
+			case 227:	ret = W_ChangeWeapon(WEAPON_PLASMA);
+			case 228:	ret = W_ChangeWeapon(WEAPON_LIGHTNING);
+			case 229:	ret = W_ChangeWeapon(WEAPON_PROXIMITY_GUN);
+			case 230:	ret = W_ChangeWeapon(WEAPON_GRENADE_LAUNCHER);
+			case 231:	ret = W_ChangeWeapon(WEAPON_AXE);
 		}
+
+		if (ret == WEAPONSTAT_NOAMMO)
+			sprint(self, "No ammo.\n");
+
+		if (ret == WEAPONSTAT_NOWEAPON)
+			sprint(self, "No weapon.\n");
 		
 	}
 
