@@ -110,19 +110,6 @@ HIP_FireLaser
 */
 void(float stat) HIP_FireLaser = {
 	
-	if (!self.button0) {
-		player_run ();
-		return;
-	}
-
-	if (self.ammo_cells < 1) {
-		W_ChangeWeapon(W_BestWeapon());
-		return;
-	}
-
-	SuperDamageSound();
-	self.effects = self.effects | EF_MUZZLEFLASH;
-	
 	makevectors (self.v_angle);
 	vector dir = aim(self, 1000);
 
@@ -157,7 +144,6 @@ void(float stat) HIP_FireLaser = {
 		}
 	}
 
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 	self.punchangle_x = -1;
 };
 
@@ -194,11 +180,11 @@ void() W_FireProximityGrenade = {
 
 	if (self.ammo_rockets == 1) {
 		newmis.count = 2;
-		self.currentammo = self.ammo_rockets = 0;
+		//self.currentammo = self.ammo_rockets = 0;
 	}
 	else {
 		newmis.count = 4;
-		self.currentammo = self.ammo_rockets = self.ammo_rockets - 2;
+		//self.currentammo = self.ammo_rockets = self.ammo_rockets - 2;
 	}
 
 	/*if (self.ammo_rockets < 4) {

@@ -72,7 +72,7 @@ weaponclass_t wpc_supershotgun = {
 	"progs/v_shot2_40fps.mdl", // model
 	ammo_shells, // ammofield
 	IT_SHELLS,
-	2, // ammo_usage
+	1, // ammo_usage
 	weaponanim_supershotgun, // animfunction
 	SUB_Null
 };
@@ -98,7 +98,7 @@ weaponclass_t wpc_supernailgun = {
 	"progs/v_nail3_v2.mdl", // model
 	ammo_nails, // ammofield
 	IT_NAILS,
-	2, // ammo_usage
+	1, // ammo_usage
 	weaponanim_supernailgun, // animfunction
 	SUB_Null
 };

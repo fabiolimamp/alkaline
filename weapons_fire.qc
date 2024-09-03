@@ -497,7 +497,6 @@ void(vector org, vector dir) launch_rocket = {
 };
 
 void() W_FireRocket = {
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
@@ -729,10 +728,6 @@ void() W_FireLightning = {
 	float cells;
 	entity victim;
 
-	if (self.ammo_cells < 1) {
-		W_ChangeWeapon(W_BestWeapon());
-	}
-
 	// explode if under water
 	if (self.waterlevel > 1 && self.flags & FL_INWATER) {
 		cells = self.ammo_cells;
@@ -757,8 +752,6 @@ void() W_FireLightning = {
 		self.t_width = time + 0.6;
 	}
 	self.punchangle_x = -2;
-
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
 	makevectors(self.v_angle);
 	org = self.origin + self.view_ofs + v_forward*32 - v_up*12;
@@ -823,9 +816,7 @@ W_FireGrenade
 void() W_FireGrenade =
 {
 	local	entity missile;
-	
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-	
+		
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
 	self.punchangle_x = -2;
@@ -1057,7 +1048,7 @@ void(float ox) W_FireSpikes =
 	makevectors (self.v_angle);
 
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
-	
+
 
 	org = self.origin + self.view_ofs - v_up * 8 + v_right*ox;
 	dir = aim (self, 1000);
@@ -1265,7 +1256,7 @@ void() W_FirePlasma =
 	local entity missile;
 	vector org;
 
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+	
 
 	// Taken from Doom...
 	sound (self, CHAN_WEAPON, "weapons/dsplasma.wav", 1, ATTN_NORM);

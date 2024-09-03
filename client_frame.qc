@@ -102,7 +102,7 @@ void() PlayerRessurect =
 
 	W_ChangeWeapon(self.weapon);
 	
-	player_stand1 ();
+	SUB_CallAsSelf(player_stand1, self.animcontroller);
 
 	bprint (self.netname);
 	bprint (" was ressurected\n");
@@ -508,6 +508,7 @@ void() PlayerPreThink =
 		self.velocity = '0 0 0';
 
 	if (time > self.attack_finished && W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE) 
+	//if (time > self.attack_finished && self.currentammo <= 0 && weaponsclass[getWeapon(self.weapon)].ammo_usage > 0)
 		W_ChangeWeapon(W_BestWeapon());
 	
 	
