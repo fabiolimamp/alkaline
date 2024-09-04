@@ -607,7 +607,7 @@ void(float new) Deathmatch_Weapon =
 	or = RankForWeapon (self.weapon);
 	nr = RankForWeapon (new);
 	if ( nr < or )
-		self.weapon = new;
+		W_ChangeWeapon(new);
 };
 
 /*
