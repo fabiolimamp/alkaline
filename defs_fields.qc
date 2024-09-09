@@ -313,6 +313,7 @@ FIELDS
 .float		trif_time;
 .float		rad_time;
 .float		fly_sound;
+.float 		nextthink1;
 
 .entity 	weaponent;
 .float 		attackpressed, attackhold;

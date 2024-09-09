@@ -244,6 +244,7 @@ float() weaponanim_nailgun = {
 	SUB_CallAsSelf(player_nail1, self.animcontroller);
 
 	self.weaponframe = 0;
+	self.nextthink1 = time + 0.1;
 	
 	weaponanim_nailgun_loop();
 	
@@ -269,10 +270,20 @@ void() weaponanim_nailgun_loop = {
 	else {
 		self.weaponframe++;
 	}
-	
+
+	// frame correction so the firing rate isn't so dependent on the server framerate
+	if (time > self.nextthink1) {
+		if (self.weaponframe > 5) self.weaponframe = 1;
+		else if (self.weaponframe > 1) self.weaponframe = 5;
+	}
+
 	float offs;
 	
 	if (self.weaponframe == 1 || self.weaponframe == 5) {
+
+		// fire rate timer. Don't set if on the first firing serverframe, since this will already be set by the startup animation function
+		if (self.attackhold) self.nextthink1 += 0.1;
+		
 		self.attack_finished = time + 0.2;
 
 		self.currentammo = self.ammo_nails = self.ammo_nails - 1;
@@ -290,6 +301,7 @@ void() weaponanim_nailgun_loop = {
 	
 
 	self.think = weaponanim_nailgun_loop;
+	
 	self.nextthink = time + 0.025;
 }
 
@@ -304,7 +316,7 @@ float() weaponanim_supernailgun = {
 	if (self.attackhold && self.attack_finished > time) {
 		return FALSE;
 	}
-
+	
 	if (self.attack_finished > time)
 		return FALSE;
 
@@ -312,7 +324,9 @@ float() weaponanim_supernailgun = {
 
 	if (self.weaponframe > 8 && self.weaponframe <= 16) self.weaponframe -= 8;
 	else self.weaponframe = 0;
-	
+
+	self.nextthink1 = time + 0.1;
+
 	weaponanim_supernailgun_loop();
 	
 	return TRUE;
@@ -339,8 +353,17 @@ void() weaponanim_supernailgun_loop = {
 	else {
 		self.weaponframe++;
 	}
+	
+	// frame correction so the firing rate isn't so dependent on the server frametime
+	if (time > self.nextthink1) {
+		if (self.weaponframe > 5) self.weaponframe = 1;
+		else if (self.weaponframe > 1) self.weaponframe = 5;
+	}
 
 	if (self.weaponframe == 1 || self.weaponframe == 5) {
+		// fire rate timer. Don't set if on the first firing serverframe, since this will already be set by the startup animation function
+		if (self.attackhold) self.nextthink1 += 0.1;
+		
 		self.attack_finished = time + 0.2;
 
 		self.punchangle_x = -2;
@@ -358,7 +381,7 @@ void() weaponanim_supernailgun_loop = {
 			self.currentammo = self.ammo_nails = self.ammo_nails - 2;
 		}
 	}
-	
+
 
 	self.think = weaponanim_supernailgun_loop;
 	self.nextthink = time + 0.025;
@@ -603,7 +626,7 @@ float() weaponanim_laser = {
 	SUB_CallAsSelf(player_nail1, self.animcontroller);
 
 	self.weaponframe = 0;
-	
+	self.nextthink1 = time + 0.1;
 	weaponanim_laser_loop();
 	
 	
@@ -629,8 +652,16 @@ void() weaponanim_laser_loop = {
 		self.weaponframe++;
 	}
 	
-	
+	// frame correction so the firing rate isn't so dependent on the server frametime
+	if (time > self.nextthink1) {
+		if (self.weaponframe > 5) self.weaponframe = 1;
+		else if (self.weaponframe > 1) self.weaponframe = 5;
+	}
+
 	if (self.weaponframe == 1 || self.weaponframe == 5) {
+		// fire rate timer. Don't set if on the first firing serverframe, since this will already be set by the startup animation function
+		if (self.attackhold) self.nextthink1 += 0.1;
+
 		self.attack_finished = time + 0.1;
 
 		self.currentammo = self.ammo_cells = self.ammo_cells - 1;
