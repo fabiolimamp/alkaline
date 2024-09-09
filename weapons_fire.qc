@@ -1028,7 +1028,7 @@ void(vector org, vector dir) launch_spike =
 	newmis.velocity = dir * 1000;
 };
 
-void() W_FireSuperSpikes =
+void(float ox) W_FireSuperSpikes =
 {
 	local vector	dir;
 	vector org;
@@ -1038,16 +1038,17 @@ void() W_FireSuperSpikes =
 
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
 
-	dir = aim (self, 1000);
 
-	org = self.origin + self.view_ofs - v_up * 6;//'0 0 16';
+	org = self.origin + self.view_ofs - v_up * 6 + v_right*ox;//'0 0 16';
+	dir = aim (self, 1000);
 
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_spike (org + v_forward * 24 * trace_fraction , dir);
 
 	newmis.touch = superspike_touch;
 	setmodel (newmis, "progs/s_spike.mdl");
-	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);
+
 	//self.punchangle_x = -2;
 };
 
@@ -1063,10 +1064,11 @@ void(float ox) W_FireSpikes =
 
 	org = self.origin + self.view_ofs - v_up * 8 + v_right*ox;
 	dir = aim (self, 1000);
+
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_spike (org + v_forward * 24 * trace_fraction, dir);
 
-	self.punchangle_x = -2;
+	//self.punchangle_x = -2;
 };
 
 

@@ -322,8 +322,19 @@ float() weaponanim_supernailgun = {
 
 	SUB_CallAsSelf(player_nail1, self.animcontroller);
 
-	if (self.weaponframe > 8 && self.weaponframe <= 16) self.weaponframe -= 8;
-	else self.weaponframe = 0;
+	// firing sequence will restart from the current barrel position if it's still spinning
+	if (self.weaponframe > 8 && self.weaponframe <= 16){
+		self.weaponframe -= 8;
+	}
+	else if (self.weaponframe > 16 && self.weaponframe <= 40) {
+		self.weaponframe = rint((self.weaponframe - 16)/6) + 1;
+		self.effects |= EF_MUZZLEFLASH;
+	}
+	else {
+		self.weaponframe = 0;
+	}
+
+	self.attack_finished = time + 0.2;
 
 	self.nextthink1 = time + 0.1;
 
@@ -359,6 +370,8 @@ void() weaponanim_supernailgun_loop = {
 		if (self.weaponframe > 5) self.weaponframe = 1;
 		else if (self.weaponframe > 1) self.weaponframe = 5;
 	}
+	
+	float offs;
 
 	if (self.weaponframe == 1 || self.weaponframe == 5) {
 		// fire rate timer. Don't set if on the first firing serverframe, since this will already be set by the startup animation function
@@ -372,12 +385,15 @@ void() weaponanim_supernailgun_loop = {
 
 		SuperDamageSound();
 
+		if (self.weaponframe == 1) offs = -0.75;
+		else offs = 0.75;
+
 		if (self.ammo_nails < 2) {
-			W_FireSpikes(0);
+			W_FireSpikes(offs);
 			self.currentammo = self.ammo_nails = self.ammo_nails - 1;
 		}
 		else {
-			W_FireSuperSpikes();
+			W_FireSuperSpikes(offs);
 			self.currentammo = self.ammo_nails = self.ammo_nails - 2;
 		}
 	}
