@@ -1285,7 +1285,7 @@ void() W_FirePlasma =
 	// and slowly recovers after that -bmFbr
 
 	// last projectile was shot continuously, so increase shot count
-	if (time < self.lastshot + 0.08) self.shotcount = min(self.shotcount + 1, 6);
+	if (self.attackhold) self.shotcount = min(self.shotcount + 1, 6);
 	else self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
 	
 	makevectors (self.v_angle);

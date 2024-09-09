@@ -699,7 +699,7 @@ float() weaponanim_plasma = {
 
 	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
-	self.attack_finished = time + 0.05;
+	self.attack_finished = time + 0.06;
 	
 	SUB_CallAsSelf(player_shot1, self.animcontroller);
 	
