@@ -4,13 +4,20 @@ typedef struct {
 	float slotPos;
 	string name;
 	string model;
-	.float ammofield;
+	float ammofield;
 	float ammo_item;
 	float ammo_usage;
 	float() animfunction;
 	void() idlefunction;
 } weaponclass_t;
 
+.float ammofieldlist[5] = {
+	currentammo,
+	ammo_shells,
+	ammo_nails, 
+	ammo_rockets,
+	ammo_cells
+};
 
 weaponclass_t wpc_no_weapon = {
 	WEAPON_NO_WEAPON,
@@ -18,7 +25,7 @@ weaponclass_t wpc_no_weapon = {
 	0, // slotPos
 	"No weapon", // name
 	"", // model
-	currentammo, // ammofield
+	0, // ammofield
 	0, // ammo_item
 	0, // ammo_usage
 	SUB_Null, // animfunction
@@ -31,7 +38,7 @@ weaponclass_t wpc_axe = {
 	0, // slotPos
 	"Axe", // name
 	"progs/v_alkaxe20fps.mdl", // model
-	currentammo, // ammofield
+	0, // ammofield
 	0, // ammo_item
 	0, // ammo_usage
 	weaponanim_axe, // animfunction
@@ -44,7 +51,7 @@ weaponclass_t wpc_chainsaw = {
 	1, // slotPos
 	"Chainsaw", // name
 	"progs/v_saw.mdl", // model
-	currentammo, // ammofield
+	0, // ammofield
 	0, // ammo_item
 	0, // ammo_usage
 	weaponanim_chainsaw, // animfunction
@@ -57,7 +64,7 @@ weaponclass_t wpc_shotgun = {
 	0, // slotPos
 	"Shotgun", // name
 	"progs/v_shot40fps.mdl", // model
-	ammo_shells, // ammofield
+	1, // ammofield
 	IT_SHELLS, // ammo_item
 	1, // ammo_usage
 	weaponanim_shotgun, // animfunction
@@ -70,7 +77,7 @@ weaponclass_t wpc_supershotgun = {
 	0, // slotPos
 	"Super Shotgun", // name
 	"progs/v_shot2_40fps.mdl", // model
-	ammo_shells, // ammofield
+	1, // ammofield
 	IT_SHELLS, // ammo_item
 	1, // ammo_usage
 	weaponanim_supershotgun, // animfunction
@@ -83,7 +90,7 @@ weaponclass_t wpc_nailgun = {
 	0, // slotPos
 	"Nailgun", // name
 	"progs/v_nail_alk40fps.mdl", // model
-	ammo_nails, // ammofield
+	2, // ammofield
 	IT_NAILS, // ammo_item
 	1, // ammo_usage
 	weaponanim_nailgun, // animfunction
@@ -96,7 +103,7 @@ weaponclass_t wpc_supernailgun = {
 	0, // slotPos
 	"Super Nailgun", // name
 	"progs/v_nail3_v2.mdl", // model
-	ammo_nails, // ammofield
+	2, // ammofield
 	IT_NAILS, // ammo_item
 	1, // ammo_usage
 	weaponanim_supernailgun, // animfunction
@@ -109,7 +116,7 @@ weaponclass_t wpc_grenade = {
 	0, // slotPos
 	"Grenade Launcher", // name
 	"progs/v_rock_40fps.mdl", // model
-	ammo_rockets, // ammofield
+	3, // ammofield
 	IT_ROCKETS, // ammo_item
 	1, // ammo_usage
 	weaponanim_grenade, // animfunction
@@ -122,7 +129,7 @@ weaponclass_t wpc_proximity = {
 	1, // slotPos
 	"Proximity Launcher", // name
 	"progs/v_mine_40fps.mdl", // model
-	ammo_rockets, // ammofield
+	3, // ammofield
 	IT_ROCKETS, // ammo_item
 	1, // ammo_usage
 	weaponanim_proximity, // animfunction
@@ -135,7 +142,7 @@ weaponclass_t wpc_rocket = {
 	0, // slotPos
 	"Rocket Launcher", // name
 	"progs/v_rock2_40fps.mdl", // model
-	ammo_rockets, // ammofield
+	3, // ammofield
 	IT_ROCKETS, // ammo_item
 	1, // ammo_usage
 	weaponanim_rocket, // animfunction
@@ -148,7 +155,7 @@ weaponclass_t wpc_lg = {
 	0, // slotPos
 	"Lightning gun", // name
 	"progs/v_light.mdl", // model
-	ammo_cells, // ammofield
+	4, // ammofield
 	IT_CELLS, // ammo_item
 	1, // ammo_usage
 	weaponanim_lg, // animfunction
@@ -161,7 +168,7 @@ weaponclass_t wpc_laser = {
 	1, // slotPos
 	"Laser Cannon", // name
 	"progs/v_laserg40fps.mdl", // model
-	ammo_cells, // ammofield
+	4, // ammofield
 	IT_CELLS, // ammo_item
 	1, // ammo_usage
 	weaponanim_laser, // animfunction
@@ -174,7 +181,7 @@ weaponclass_t wpc_plasma = {
 	2, // slotPos
 	"Plasma Gun", // name
 	"progs/v_plasma.mdl", // model
-	ammo_cells, // ammofield
+	4, // ammofield
 	IT_CELLS, // ammo_item
 	1, // ammo_usage
 	weaponanim_plasma, // animfunction
@@ -269,7 +276,7 @@ void() W_WeaponFrame = {
 // syncs up current ammo with its correspondent ammo_* field
 void() W_UpdateCurrentAmmo = {
 	weaponclass_t weap = weaponsclass[getWeapon(self.weapon)];
-	self.currentammo = self.(weap.ammofield);
+	self.currentammo = self.(ammofieldlist[weap.ammofield]);
 }
 
 float(float weapons, entity cl, float waterlevel) W_BestWeaponParms =
@@ -307,7 +314,7 @@ float(float weap, entity cl) W_CheckWeapon = {
 
 	if (!(cl.weapons & weap)) return WEAPONSTAT_NOWEAPON;
 
-	if (cl.(weapcl.ammofield) < weapcl.ammo_usage) {
+	if (cl.(ammofieldlist[weapcl.ammofield]) < weapcl.ammo_usage) {
 		return WEAPONSTAT_NOAMMO;
 	}
 	//dprint3("Ammo: ", ftos(cl.(weapcl.ammofield)), "\n");
@@ -334,7 +341,8 @@ void() W_Attack = {
 
 
 float(float weap) W_ChangeWeapon = {
-
+	dprint3("Changing weapon to ", ftos(weap), "\n");
+	eprint(self);
 	float weapstat = W_CheckWeapon(weap, self);
 
 	if (weapstat < WEAPONSTAT_AVAILABLE){
@@ -343,12 +351,12 @@ float(float weap) W_ChangeWeapon = {
 
 	weaponclass_t weapcl = weaponsclass[getWeapon(weap)];
 	self.weapon = weap;
-	self.currentammo = self.(weapcl.ammofield);
+	self.currentammo = self.(ammofieldlist[weapcl.ammofield]);
 	self.items &~= (IT_SHELLS | IT_NAILS | IT_ROCKETS | IT_CELLS);
 	self.items |= weapcl.ammo_item;
 
 	if (weapcl.ammo_usage > 0) {
-		self.currentammo = self.(weapcl.ammofield);
+		self.currentammo = self.(ammofieldlist[weapcl.ammofield]);
 	}
 	else {
 		self.currentammo = 0;
