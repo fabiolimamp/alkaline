@@ -326,7 +326,7 @@ void(entity attacker, float damage, float dmgtype) player_pain = {
 		return;		// eyes don't have pain frames
 
 	PainSound(dmgtype);
-	self.weaponframe = 0;
+	//self.weaponframe = 0;
 
 	if (self.weapon == WEAPON_AXE)
 		SUB_CallAsSelf(player_axpain1, self.animcontroller);
@@ -493,27 +493,27 @@ void(float deathbyvoid) PlayerDieGo = {
 	self.angles_z = 0;
 	
 	if (self.weapon == WEAPON_AXE) {
-		player_die_ax1 ();
+		SUB_CallAsSelf(player_die_ax1, self.animcontroller);
 		return;
 	}
 	
 	if (self.weapon == WEAPON_CHAINSAW) {
-		player_die_sw1 ();
+		SUB_CallAsSelf(player_die_sw1, self.animcontroller);
 		return;
 	}
 	
 	i = 1 + floor(random()*6);
 	
 	if (i == 1)
-		player_diea1();
+		SUB_CallAsSelf(player_diea1, self.animcontroller);
 	else if (i == 2)
-		player_dieb1();
+		SUB_CallAsSelf(player_dieb1, self.animcontroller);
 	else if (i == 3)
-		player_diec1();
+		SUB_CallAsSelf(player_diec1, self.animcontroller);
 	else if (i == 4)
-		player_died1();
+		SUB_CallAsSelf(player_died1, self.animcontroller);
 	else
-		player_diee1();
+		SUB_CallAsSelf(player_diee1, self.animcontroller);
 
 }
 
