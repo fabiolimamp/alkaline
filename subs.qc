@@ -554,40 +554,45 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 	t = find (world, matchfield, matchstring);
 	while (t)
 	{
-		if (t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
+		SUB_KillSpecificEntity(t);
+		t = find (t, matchfield, matchstring);
+	}
+}
 
-		if (t.animcontroller) remove(t.animcontroller);
-		if (t.rotatecontroller) remove(t.rotatecontroller);
+void(entity t) SUB_KillSpecificEntity = 
+{
+	if (t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
 
-		if (t.flags & FL_MONSTER || t.flags & FL_UNSPAWNEDMONSTER) { // increase the kill counter if it's a monster
-			if (
-				t.health > 0
-				&& !(t.flags & FL_UNSPAWNEDMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
-				&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
-			){
-				killed_monsters = killed_monsters + 1;
-				WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
-			}
-		}
+	if (t.animcontroller) remove(t.animcontroller);
+	if (t.rotatecontroller) remove(t.rotatecontroller);
 
-		if (t.classname == "monster_oldone") {
+	if (t.flags & FL_MONSTER || t.flags & FL_UNSPAWNEDMONSTER) { // increase the kill counter if it's a monster
+		if (
+			t.health > 0
+			&& !(t.flags & FL_UNSPAWNEDMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
+			&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
+		){
 			killed_monsters = killed_monsters + 1;
 			WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
 		}
-
-		if (t.classname == "trigger_secret" && !(t.nextthink > time)) {
-			dprint3("Killed untouched trigger_secret at ", vtos((t.mins + t.maxs)/2), ", marking as found\n");
-			found_secrets = found_secrets + 1;
-			WriteByte (MSG_ALL, SVC_FOUNDSECRET);
-		}
-
-		// liquid brush list handling
-		if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
-		if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
-
-		remove (t);
-		t = find (t, matchfield, matchstring);
 	}
+
+	if (t.classname == "monster_oldone") {
+		killed_monsters = killed_monsters + 1;
+		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+	}
+
+	if (t.classname == "trigger_secret" && !(t.nextthink > time)) {
+		dprint3("Killed untouched trigger_secret at ", vtos((t.mins + t.maxs)/2), ", marking as found\n");
+		found_secrets = found_secrets + 1;
+		WriteByte (MSG_ALL, SVC_FOUNDSECRET);
+	}
+
+	// liquid brush list handling
+	if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
+	if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
+
+	remove (t);
 }
 
 void() SUB_UseTargets =

@@ -2104,3 +2104,76 @@ void() trigger_float_touch = {
 		}
 	}
 }
+
+
+/*
+=============================================================
+
+trigger_random
+
+=============================================================
+*/
+
+void() trigger_random = {
+	if (!SUB_InitEntity()) return;
+
+	self.use = trigger_random_use;
+}
+
+void() trigger_random_use = {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (self.target == "" && self.target2 == "" && self.target3 == "" && self.target3 == ""){
+		dprint3("Warning: trigger_random with no targets at ", vtos(self.origin), "\n");
+		return;
+	}
+
+
+	entity e;
+
+	if (self.target != "") {
+		e = findRandomEntity(self.target, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+
+	if (self.target2 != "") {
+		e = findRandomEntity(self.target2, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+
+	if (self.target3 != "") {
+		e = findRandomEntity(self.target3, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+
+	if (self.target4 != "") {
+		e = findRandomEntity(self.target4, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+	
+	if (self.killtarget != "") {
+		e = findRandomEntity(self.killtarget, targetname);
+		if (e) SUB_KillSpecificEntity(e);
+	}
+	
+}
+
+
+entity(string matchstring, .string matchfield) findRandomEntity = {
+	entity tgt_entities[256];
+	entity e;
+	float i;
+	
+	e = find(world, matchfield, matchstring);
+	while (e) {
+		tgt_entities[i] = e;
+		i++;
+		e = find(e, matchfield, matchstring);
+	}
+	if (i == 0) return world;
+
+	float j = floor(random() * (i - 0.001));
+	dprint3("index: ", ftos(j), "\n");
+	return tgt_entities[j];
+}

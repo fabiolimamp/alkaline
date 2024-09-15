@@ -71,6 +71,7 @@ body {
 			<li><a href="#message-all">Message all players</a></li>
 			<li><a href="#relay-tricks">trigger_relay new tricks</a></li>
 			<li><a href="#trigger_repeat">Repeater/timer trigger</a></li>
+			<li><a href="#trigger_random">Random trigger</a></li>
 			<li><a href="#monsterjumps">Monsterjumps</a></li>
 			<li><a href="#hurt">Hurt triggers</a></li>
 			<li><a href="#mapvars">Mapvars</a></li>
@@ -509,6 +510,20 @@ body {
 <h3 id="trigger_repeat">Repeater/timer trigger</h3>
 <p>The <strong>trigger_repeat</strong> entity is a point entity that fires its targets repeatedly on a defined interval after activated. Can keep firing indefinitely or for a limited number of times. Targeting it again stops the firing.</p>
 <p>The counter can be optionally not be reset after triggering it again (spawnflag 1), so it functions more like a pause/unpause.</p>
+
+<h3 id="monsterjumps">Monsterjumps</h3>
+<p>The <strong>trigger_monsterjump</strong> entity comes with some new features. You have now a simple monster-class-based filter, so you can let only a single monster class to be affected by it, or exclude a specific one from it.</p>
+
+<h3 id="hurt">Hurt triggers</h3>
+<p>The <strong>trigger_hurt</strong> brush entity works the same as before, but has 2 new features:</p>
+<ul>
+<li>Damage interval and amount can both be customized.</li>
+<li>You can set it to not hurt players and/or monsters.</li>
+</ul>
+
+
+<h3 id="trigger_random">Random trigger</h3>
+<p>For each of the 'target' fields, trigger_random will look for all entities with a matching targetname and fire only one entity at random. For example, if you have 'target' = 'myname', then it'll look for every entity in the map whose targetname is 'myname' and fire only one of them. </p>
 
 <h3 id="monsterjumps">Monsterjumps</h3>
 <p>The <strong>trigger_monsterjump</strong> entity comes with some new features. You have now a simple monster-class-based filter, so you can let only a single monster class to be affected by it, or exclude a specific one from it.</p>

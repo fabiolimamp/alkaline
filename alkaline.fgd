@@ -2623,6 +2623,14 @@ Spawnflags
 		8192 : "Not in Nightmare"
 	]
 ]
+
+
+@PointClass base(Appearflags, Targetname, Target) = trigger_random : "Fires an entity at random.
+
+For each of the 'target' fields, trigger_random will look for all entities with a matching targetname and fire only one entity at random. For example, if you have 'target' = 'myname', then it'll look for every entity in the map whose targetname is 'myname' and fire only one of them. 
+"
+[]
+
 @SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_monsterjump : "Trigger monster jump.
 
 Can be set an optional use limit.
