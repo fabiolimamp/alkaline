@@ -473,6 +473,9 @@ void(float deathbyvoid) PlayerDieGo = {
 	self.solid = SOLID_NOT;
 	self.flags = self.flags - (self.flags & FL_ONGROUND);
 	self.movetype = MOVETYPE_TOSS;
+
+	self.animcontroller.think = SUB_Null;
+	self.animcontroller.nextthink = 0;
 	
 	if (deathbyvoid) {
 		VoidKillPlayer();
