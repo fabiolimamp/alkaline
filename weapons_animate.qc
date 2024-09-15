@@ -252,6 +252,8 @@ float() weaponanim_nailgun = {
 	
 }
 
+//float lastshottime;
+
 void() weaponanim_nailgun_loop = {
 	if (!self.attackhold && !self.attackpressed){
 		self.weaponframe = 0;
@@ -280,7 +282,8 @@ void() weaponanim_nailgun_loop = {
 	float offs;
 	
 	if (self.weaponframe == 1 || self.weaponframe == 5) {
-
+		//dprint5("Interval since last shot: ", ftos((time - lastshottime)*1000), "ms (", ftos(1/(time - lastshottime)), " shots/s)\n");
+		//lastshottime = time;
 		// fire rate timer. Don't set if on the first firing serverframe, since this will already be set by the startup animation function
 		if (self.attackhold) self.nextthink1 += 0.1;
 		

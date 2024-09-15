@@ -341,8 +341,8 @@ void() W_Attack = {
 
 
 float(float weap) W_ChangeWeapon = {
-	dprint3("Changing weapon to ", ftos(weap), "\n");
-	eprint(self);
+	//dprint3("Changing weapon to ", ftos(weap), "\n");
+	//	(self);
 	float weapstat = W_CheckWeapon(weap, self);
 
 	if (weapstat < WEAPONSTAT_AVAILABLE){
