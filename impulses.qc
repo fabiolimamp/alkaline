@@ -500,7 +500,7 @@ void() ImpulseCommands = {
 	// weapon changing must not occur until attack_finished time has passed
 	float ret;
 	if (self.impulse >= 1 && self.impulse <= 8) {
-		if (time < self.attack_finished) return;
+		//if (time < self.attack_finished) return;
 		
 		ret = W_ChangeSlot(self.impulse);
 		if (ret == WEAPONSTAT_NOAMMO)
@@ -511,7 +511,7 @@ void() ImpulseCommands = {
 	}
 
 	if (self.impulse >= 224 && self.impulse <= 235) {
-		if (time < self.attack_finished) return;
+		//if (time < self.attack_finished) return;
 
 		switch(self.impulse) {
 			case 225:	ret = W_ChangeWeapon(WEAPON_LASER_CANNON);
@@ -532,13 +532,13 @@ void() ImpulseCommands = {
 	}
 
 	if (self.impulse == 10) {
-		if (time < self.attack_finished) return;
+		//if (time < self.attack_finished) return;
 		W_CycleWeapon(1);
 		self.impulse = 0;
 		return;
 	}
 	if (self.impulse == 12) {
-		if (time < self.attack_finished) return;
+		//if (time < self.attack_finished) return;
 		W_CycleWeapon(-1);
 		self.impulse = 0;
 		return;
