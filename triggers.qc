@@ -1278,27 +1278,29 @@ trigger_repeat
 */
 
 void() trigger_repeat_think = {
-	if(self.count > 0 && self.cnt <= 0) // has limited uses and has reached 0
+	if (self.count > 0 && self.cnt <= 0) // has limited uses and has reached 0
 		return;
 
 	SUB_UseTargets();
 
 	self.think = trigger_repeat_think;
 
-	if(self.count > 0) {
+	if (self.count > 0) {
 		self.cnt--;
-		if(self.cnt <= 0) {
+		if (self.cnt <= 0) {
 			self.state = STATE_INACTIVE;
-			self.nextthink = -1;
+			self.think = SUB_Null;
+			self.nextthink = 0;
+			return;
 		}
-		else self.nextthink = time + self.wait;
 	}
-	else self.nextthink = time + self.wait;
+
+	self.nextthink = time + self.wait + self.rand*random();
 };
 
 void() trigger_repeat_use = {
-	if(self.state == STATE_INACTIVE) {
-		if(!(self.spawnflags & 1)) self.cnt = self.count;
+	if (self.state == STATE_INACTIVE) {
+		if (!(self.spawnflags & 1)) self.cnt = self.count;
 		
 		if (self.delay) {
 			self.think = trigger_repeat_think;
@@ -1318,7 +1320,7 @@ void() trigger_repeat_use = {
 void() trigger_repeat = {
 	if (!SUB_InitEntity()) return;
 	
-	if(!self.wait) self.wait = 2;
+	if (!self.wait) self.wait = 2;
 
 	self.cnt = self.count; //.cnt is the internal counter
 	self.state = STATE_INACTIVE;

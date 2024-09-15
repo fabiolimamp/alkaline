@@ -2686,7 +2686,8 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 [
 	spawnflags(flags) = [ 1: "Never reset counter" : 0 ]
 	count(integer) : "Firing count" : 0 : "Will fire this amount of times after triggered. Default is 0, repeat forever."
-	wait(integer) : "Repeat interval" : 2 
+	wait(integer) : "Repeat interval" : 2
+	rand(float) : "Additional random time" : 0
 ]
 
 @PointClass base(Appearflags, Targetname, TargetsOnly) = target_setstate : "Changes an entity's state.
