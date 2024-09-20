@@ -610,6 +610,10 @@ float prevdoornum;
 // gravity
 .float return_gravity;
 
+// func_mirror
+.entity mirrorent;
+.entity mirrorent2;
+
 
 //JCR super jump defs
 .float jboots_prevlimit;		

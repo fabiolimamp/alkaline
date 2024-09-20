@@ -77,6 +77,7 @@ body {
 			<li><a href="#mapvars">Mapvars</a></li>
 			<li><a href="#mapstart">Multiple map starting spots</a></li>
 			<li><a href="#trigger_touchplate">Touchplate trigger</a></li>
+			<li><a href="#mirror">Mirrors/reflections</a></li>
 		</ul>
 	</li>
 
@@ -551,6 +552,19 @@ body {
 
 <h3 id="mapstart">Multiple map starting spots</h3>
 <p>You can have multiple player start spots in your map. <strong>trigger_changelevel</strong> entities accept a <strong>count</strong> key, which on the next map will try to direct the player to an <strong>info_player_start</strong> spot with a matching <strong>count</strong> value. That's also true for coop starts.</p>
+
+
+<h3 id="trigger_touchplate">Touchplate triggers</h3>
+<p></p>
+
+<h3 id="mirror">Mirrors/reflections</h3>
+<p>Generates a reflection of all point entities inside the trigger in the direction 'angle' is facing. Reflects monsters, projectiles, items, gibs, everything, except solid brush entities.</p>
+
+<p>Level geometry needs to be duplicated manually. You can do this easily by making your room a single group in Trenchbroom, creating a linked duplicate, and mirroring it.</p>
+
+<p>Only works with axial 'angle' values - 0/90/180/-90 for horizontal reflections, -1 for ceiling, and -2 for floor. The reflection will be generated at the face that 'angle' is pointing at.</p>
+
+<p>If you have two trigger_mirror entities whose reflections are simultaneously visible, you need to give one of them a 'count' value of 2, otherwise you might have issues.</p>
 
 
 <hr>

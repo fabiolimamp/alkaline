@@ -2179,3 +2179,139 @@ entity(string matchstring, .string matchfield) findRandomEntity = {
 	dprint3("index: ", ftos(j), "\n");
 	return tgt_entities[j];
 }
+
+
+
+
+/*
+=============================================================
+
+trigger_mirror
+
+=============================================================
+*/
+
+void() trigger_mirror = {
+	if (!SUB_InitEntity()) return;
+
+	if (self.angles == '0 0 0') self.angles = '0 360 0';
+
+	InitTrigger();
+
+	if (
+		(fabs(self.movedir_x) && (fabs(self.movedir_y) || fabs(self.movedir_z))) ||
+		(fabs(self.movedir_y) && (fabs(self.movedir_x) || fabs(self.movedir_z))) ||
+		(fabs(self.movedir_z) && (fabs(self.movedir_x) || fabs(self.movedir_y)))
+	) {
+		dprint("\bWARNING\b: trigger_mirror near ", vtos((self.absmin + self.absmax)/2), " with non-orthogonal angles\n");
+		return;
+	}
+
+	if (self.count == 0) self.count = 1;
+
+	self.touch = trigger_mirror_touch;
+	
+	self.pos1 = (self.absmin + self.absmax)/2; // real midpoint
+	self.pos2 = self.pos1 + [self.movedir_x * self.size_x, self.movedir_y * self.size_y, self.movedir_z * self.size_z] + self.movedir*self.lip; // mirror midpoint
+
+	self.flags |= FL_NEVERTELEPORT;
+}
+
+void() trigger_mirror_touch = {
+
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (other.solid == SOLID_BSP)
+		return;
+
+	entity mre;
+
+	if (self.count == 1)
+		mre = other.mirrorent;
+	else
+		mre = other.mirrorent2;
+
+	// current mirror is already reflecting this
+	if (mre.owner == other && mre.enemy == self)
+		return;
+
+	if (other.model == "")
+		return;
+
+	if (!mre) {
+		//dprint("Creating mirrorent\n");
+		mre = spawn();
+		mre.classname = "mirrorent";
+		mre.owner = other;
+		mre.flags |= FL_NEVERTELEPORT;
+		setmodel(mre, other.model);
+		setsize(mre, VEC_ORIGIN, VEC_ORIGIN);
+		mre.solid = SOLID_NOT;
+		mre.movetype = MOVETYPE_NOCLIP;
+		//mre.attack_finished = time + 1;
+	}
+
+	if (self.count == 1)
+		other.mirrorent = mre;
+	else
+		other.mirrorent2 = mre;
+
+	mre.enemy = self;
+
+	SUB_CallAsSelf(mirrorent_think, mre);
+}
+
+void() mirrorent_think = {
+	
+	entity mre;
+	if (self.enemy.count == 1)
+		mre = self.owner.mirrorent;
+	else
+		mre = self.owner.mirrorent2;
+
+	if (mre != self) { // lost connection to owner
+		remove(self);
+		return;
+	}
+
+	// main entity is out of the trigger's bounds,
+	// or doesn't have a model anymore,
+	// or the mirror got disabled
+	if (!getTouch(self.owner.origin, self.enemy) || self.owner.model == "" || self.enemy.estate != STATE_ACTIVE) {
+		
+		if (self.enemy.count == 1)
+			self.owner.mirrorent = world;
+		else
+			self.owner.mirrorent2 = world;
+
+		remove(self);
+		return;
+	}
+
+	vector offs = self.owner.origin - self.enemy.pos1; // offset from real entity to real side
+	
+	if (fabs(self.enemy.movedir_x)) offs_x *= -1;
+	else if (fabs(self.enemy.movedir_y)) offs_y *= -1;
+	else offs_z *= -1;
+
+	setorigin(self, self.enemy.pos2 + offs);
+
+	if (self.model != self.owner.model) {
+		setmodel(self, self.owner.model);
+		setsize(self, VEC_ORIGIN, VEC_ORIGIN);
+	}
+
+	self.frame = self.owner.frame;
+	self.alpha = self.owner.alpha;
+	
+	self.angles = self.owner.angles;
+
+	if (fabs(self.enemy.movedir_z)) {
+		self.angles_z = 180 - self.owner.angles_z;
+	}
+	else self.angles_y = 180 - self.owner.angles_y;
+
+	self.think = mirrorent_think;
+	self.nextthink = time + 0.025;
+}

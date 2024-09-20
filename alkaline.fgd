@@ -3169,3 +3169,15 @@ Mapvars are miscellaneous flags (only true/false values) that can be freely used
 		3 : "Toggle flag value"
 	]
 ]
+
+@SolidClass base(Appearflags, Targetname) = trigger_mirror : "Mirror!
+
+Generates a reflection of all point entities that's inside the trigger in the direction 'angle' is facing. Reflects monsters, projectiles, items, gibs, everything.
+
+Only works with axial 'angle' - 0/90/180/-90 for horizontal reflections, -1 for ceiling, and -2 for floor.
+
+If you have two trigger_mirror entities whose reflections are simultaneously visible, you need to give one of them a 'count' value of 2, otherwise you might have issues.
+"
+[
+	count(int) : "Reflection ID" : 1 : "If you have two trigger_mirror entities whose reflections are simultaneously visible, you need to give one of them a 'count' value of 2, otherwise you might have issues."
+]
