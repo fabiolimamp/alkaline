@@ -33,8 +33,10 @@ float() weaponanim_axe = {
 }
 
 void() weaponanim_axe_loop = {
-	if (self.weaponframe % 10 == 5)
+	if (self.weaponframe % 10 == 5){
+		SuperDamageSound();
 		W_FireAxe();
+	}
 
 	if (self.weaponframe % 10 == 1) {
 		self.weaponframe = 0;
@@ -92,8 +94,10 @@ void() weaponanim_chainsaw_loop = {
 
 	if (self.weaponframe == 5) sound(self, CHAN_AUTO, "weapons/sawatck.wav", 1, ATTN_NORM);
 
-	if (self.weaponframe % 2 == 1)
+	if (self.weaponframe % 2 == 1){
+		SuperDamageSound();
 		W_FireSaw();
+	}
 	
 
 	self.think = weaponanim_chainsaw_loop;
@@ -446,7 +450,8 @@ float() weaponanim_grenade = {
 	SUB_CallAsSelf(player_rockatt1, self.animcontroller);
 	
 	self.effects = self.effects | EF_MUZZLEFLASH;
-
+	
+	SuperDamageSound();
 	W_FireGrenade();
 
 	self.weaponframe = 1;
@@ -494,6 +499,7 @@ float() weaponanim_proximity = {
 	
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
+	SuperDamageSound();
 	W_FireProximityGrenade();
 
 	self.weaponframe = 1;
@@ -541,6 +547,7 @@ float() weaponanim_rocket = {
 	
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
+	SuperDamageSound();
 	W_FireRocket();
 
 	self.weaponframe = 1;
