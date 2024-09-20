@@ -2203,7 +2203,7 @@ void() trigger_mirror = {
 		(fabs(self.movedir_y) && (fabs(self.movedir_x) || fabs(self.movedir_z))) ||
 		(fabs(self.movedir_z) && (fabs(self.movedir_x) || fabs(self.movedir_y)))
 	) {
-		dprint("\bWARNING\b: trigger_mirror near ", vtos((self.absmin + self.absmax)/2), " with non-orthogonal angles\n");
+		dprint3("\bWARNING\b: trigger_mirror near ", vtos((self.absmin + self.absmax)/2), " with non-orthogonal angles\n");
 		return;
 	}
 
