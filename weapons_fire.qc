@@ -1028,6 +1028,25 @@ void(vector org, vector dir) launch_spike =
 	newmis.velocity = dir * 1000;
 };
 
+float lastshots[9];
+float lastshotidx;
+
+void() registerShot = {
+	lastshotidx = wrap(lastshotidx + 1, 0, 8);
+	lastshots[lastshotidx] = time;
+
+	float i = wrap(lastshotidx + 1, 0, 8);
+	float prevTime, totalTime;
+	while (i != lastshotidx) {
+		prevTime = lastshots[i];
+		i = wrap(i + 1, 0, 8);
+		totalTime += lastshots[i] - prevTime;
+	}
+
+	dprint3("Average: ", ftos(totalTime/8*1000), "ms\n");
+
+}
+
 void(float ox) W_FireSuperSpikes =
 {
 	local vector	dir;
@@ -1049,6 +1068,7 @@ void(float ox) W_FireSuperSpikes =
 	setmodel (newmis, "progs/s_spike.mdl");
 	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);
 
+	//registerShot();
 	//self.punchangle_x = -2;
 };
 

@@ -494,7 +494,7 @@ void() StartFrame =
 		CreateBackstop();
 	}
 	
-
+	//dprint5("Server: ", ftos(1/frametime), " fps (", ftos(frametime * 1000), "ms)\n");
 };
 
 void() EndFrame = {
