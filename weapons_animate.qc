@@ -491,8 +491,6 @@ float() weaponanim_proximity = {
 		return FALSE;
 	}
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-
 	self.attack_finished = time + 0.6;
 	
 	SUB_CallAsSelf(player_rockatt1, self.animcontroller);
@@ -500,7 +498,14 @@ float() weaponanim_proximity = {
 	self.effects = self.effects | EF_MUZZLEFLASH;
 
 	SuperDamageSound();
-	W_FireProximityGrenade();
+	if (self.ammo_rockets < 2) {
+		self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+		W_FireProximityGrenade(2);
+	}
+	else {
+		self.currentammo = self.ammo_rockets = self.ammo_rockets - 2;
+		W_FireProximityGrenade(4);
+	}
 
 	self.weaponframe = 1;
 	self.think = weaponanim_proximity_loop;

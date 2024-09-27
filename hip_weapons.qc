@@ -159,7 +159,7 @@ Proximity/Multi-grenade hybrid
 */
 
 
-void() W_FireProximityGrenade = {
+void(float clustersize) W_FireProximityGrenade = {
 
 	NumProximityGrenades = NumProximityGrenades + 1;
 	
@@ -178,15 +178,19 @@ void() W_FireProximityGrenade = {
 	newmis.health = 5;
 	newmis.state = 0;
 
+	newmis.count = clustersize;
+
+	/*
 	if (self.ammo_rockets == 1) {
 		newmis.count = 2;
-		//self.currentammo = self.ammo_rockets = 0;
+		self.currentammo = self.ammo_rockets = 0;
 	}
 	else {
 		newmis.count = 4;
-		//self.currentammo = self.ammo_rockets = self.ammo_rockets - 2;
+		self.currentammo = self.ammo_rockets = self.ammo_rockets - 2;
 	}
-
+	*/
+	
 	/*if (self.ammo_rockets < 4) {
 		newmis.count = self.ammo_rockets;
 		self.currentammo = self.ammo_rockets = 0;
