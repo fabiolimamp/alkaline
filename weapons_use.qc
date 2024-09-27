@@ -391,10 +391,11 @@ float(float imp) W_ChangeSlot = {
 
 	float i;
 	
-	float weaponstat;
+	float weaponstat, firstweaponstat;
 
 	while (i < newSlot.qt) {
 		weaponstat = W_CheckWeapon(newSlot.weaps[startSlotPos].id, self);
+		if (i == 0 || weaponstat == WEAPONSTAT_NOAMMO) firstweaponstat = weaponstat;
 		if (weaponstat == WEAPONSTAT_AVAILABLE){
 			W_ChangeWeapon(newSlot.weaps[startSlotPos].id);
 			return weaponstat;
@@ -403,7 +404,7 @@ float(float imp) W_ChangeSlot = {
 		i++;
 	}
 
-	return weaponstat;
+	return firstweaponstat;
 }
 
 
