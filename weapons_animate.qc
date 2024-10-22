@@ -33,7 +33,7 @@ float() weaponanim_axe = {
 }
 
 void() weaponanim_axe_loop = {
-	if (self.weaponframe % 10 == 3){
+	if (self.weaponframe % 10 == 2){
 		SuperDamageSound();
 		W_FireAxe();
 	}
