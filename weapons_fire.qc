@@ -1087,7 +1087,7 @@ void(float ox) W_FireSpikes =
 
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_spike (org + v_forward * 24 * trace_fraction, dir);
-
+	newmis.velocity = dir * 2000;
 	//self.punchangle_x = -2;
 };
 
