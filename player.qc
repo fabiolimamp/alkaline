@@ -149,12 +149,41 @@ void()	player_run =[	$rockrun1,	player_run	] {
 		float spd;
 		spd = vlen([self.owner.velocity_x, self.owner.velocity_y, 0]);
 		if (spd > 50) {
-			play_footstep(self.owner, FALSE, clamp(spd, 0, 320)/320);
+			player_footstep(self.owner, clamp(spd, 0, 320)/320);
 		}
 	}
 };
 
+void(entity ent, float vol_multiplier) player_footstep = {
+	string footstepwav;
+	
+	if (nofootsteps) return;
+	if (ent.movetype == MOVETYPE_NOCLIP) return;
+	if (ent.watertype < CONTENT_EMPTY) return;
+	
 
+	float footvol = 0.15 + random()*0.1 * vol_multiplier;
+
+	if (ent.steplast < 1) ent.steplast = rint(1 + random()*6);
+
+	float footstepnext = rint(ent.steplast + random() + random() + random());
+
+	if (footstepnext > 7) footstepnext = footstepnext - 7;
+
+	// update last footstep index
+	ent.steplast = footstepnext;
+	
+
+	if (footstepnext < 2) footstepwav = "player/foot1.wav";
+	else if (footstepnext < 3) footstepwav = "player/foot2.wav";
+	else if (footstepnext < 4) footstepwav = "player/foot3.wav";
+	else if (footstepnext < 5) footstepwav = "player/foot4.wav";
+	else if (footstepnext < 6) footstepwav = "player/foot5.wav";
+	else if (footstepnext < 7) footstepwav = "player/foot6.wav";
+	else footstepwav = "player/foot7.wav";
+
+	sound (ent, 5, footstepwav, footvol, ATTN_IDLE);
+};
 
 
 

@@ -339,7 +339,7 @@ FIELDS
 
 .float	healamount, healtype;
 
-.float steptype, steplast, altsteptype, altsteplast;
+.float steplast;
 
 .entity hurtcontroller, healthcontroller;
 
