@@ -680,7 +680,7 @@ void(entity pl, vector org, vector dest, float hit) DrawLightning = {
 	for (float i = 0; i < ct.count; i++) {
 		sg = spawn();
 		prevsg.sibling = sg;
-
+		sg.movetype = MOVETYPE_NOCLIP;
 		setmodel(sg, "progs/bolt2.mdl");
 		setsize(sg, VEC_ORIGIN, VEC_ORIGIN);
 		setorigin(sg, org + dir * 30 * i);
