@@ -380,8 +380,9 @@ void() rider_rail_shoot =
 	segments = floor(shotdistance / 32);
 	endsegment = TRUE;
 
+	vec = normalize(trace_endpos - src);
+	vector ang = vectoangles2(vec);
 	while (segments) {
-		vec = normalize(trace_endpos - src);
 
 		newmis = spawn();
 		newmis.classname = "railbeam";
@@ -391,7 +392,7 @@ void() rider_rail_shoot =
 		setorigin(newmis, src + vec * 32 * segments);
 
 		newmis.frame = 2;
-		newmis.angles = vectoangles(vec);
+		newmis.angles = ang;
 		newmis.owner = self;
 		newmis.flags = newmis.flags | FL_PROJECTILE;
 

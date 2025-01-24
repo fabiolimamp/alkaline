@@ -291,6 +291,11 @@ void() teleport_touch =
 	vector s_up = v_up;
 	*/
 
+	// t = teleport destination
+	// p = player
+	// f = final
+
+
 	makevectors([tAngle_x, tAngle_y, tAngle_z]);
 	vector t_forward = v_forward;
 	vector t_right = v_right;
@@ -302,15 +307,23 @@ void() teleport_touch =
 	vector f_right = s_forward*t_right_x - s_right*t_right_y + s_up*t_right_z;
 	vector f_up = s_forward*t_up_x - s_right*t_up_y + s_up*t_up_z;
 	*/
+	/*
+	vector f_forward = rotateVectorAround('0 0 1', t_forward, self.mangle_y);
+	vector f_right = rotateVectorAround('0 0 1', t_right, self.mangle_y);
+	vector f_up = rotateVectorAround('0 0 1', t_up, self.mangle_y);
+	*/
 	vector f_forward = t_forward;
 	vector f_right = t_right;
 	vector f_up = t_up;
-
+	
 	makevectors([-pAngle_x, pAngle_y, pAngle_z]);
-	vector p_forward = v_forward;
-	vector p_right = v_right;
-	vector p_up = v_up;
+	//vector p_forward = v_forward;
+	//vector p_right = v_right;
+	//vector p_up = v_up;
 
+	vector p_forward = rotateVectorAround('0 0 1', v_forward, self.mangle_y);
+	vector p_right = rotateVectorAround('0 0 1', v_right, self.mangle_y);
+	vector p_up = rotateVectorAround('0 0 1', v_up, self.mangle_y);
 	/*dprint3("s_forward: ", vtos(s_forward*100), "\n");
 	dprint3("t_forward: ", vtos(t_forward*100), "\n");
 	dprint3("f_forward: ", vtos(f_forward*100), "\n");
@@ -322,9 +335,9 @@ void() teleport_touch =
 	// if the destination is a instant brush, or the info_destination has a
 	// "keep angle" flag
 	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT) {
+		
 		if (t.mangle != '0 0 0') {
-			other.angles = vectoangles(f_forward*p_forward_x - t_right*p_forward_y + t_up*p_forward_z);
-			other.angles_y = vectoyaw2(f_forward*p_forward_x - t_right*p_forward_y + t_up*p_forward_z);
+			other.angles = vectoangles2(f_forward*p_forward_x - f_right*p_forward_y + f_up*p_forward_z);
 		}
 		else
 			other.angles = pAngle;
@@ -333,9 +346,10 @@ void() teleport_touch =
 		other.angles = tAngle;
 
 	//other.angles_y -= self.mangle_y;
+	other.velocity = rotateVectorAround('0 0 1', other.velocity, self.mangle_y);
 
 	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT || t.spawnflags & TELEDEST_KEEPVELOCITY) 
-		other.velocity = f_forward*other.velocity_x - t_right*other.velocity_y + t_up*other.velocity_z;
+		other.velocity = f_forward*other.velocity_x - f_right*other.velocity_y + f_up*other.velocity_z;
 
 	// only players, projectiles and gibs maintain their pitch and roll angles
 	// everything else gets set to what it was before
@@ -365,7 +379,7 @@ void() teleport_touch =
 		// rotates destination point around mangle
 		if (tAngle) {
 			vector offs = other.origin - teleMid;
-			neworg = destMid + f_forward*offs_x - t_right*offs_y + t_up*offs_z;
+			neworg = destMid + f_forward*offs_x - f_right*offs_y + f_up*offs_z;
 		}
 		else
 			neworg = other.origin - teleMid + destMid;
@@ -456,7 +470,7 @@ void() teleport_touch =
 				// At this point angles already follow the v_angle
 				// convention, so no X inversion is necessary
 				makevectors(other.angles);
-				other.angles_z = atan2(v_right*t_up, v_up*t_up);
+				other.angles_z = vectoyaw2([v_up*f_up, v_right*f_up, 0]);
 			}
 		}
 

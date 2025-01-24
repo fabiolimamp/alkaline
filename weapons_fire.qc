@@ -634,7 +634,7 @@ void() UpdateLightning = {
 			// so calculating an angle out of that gives a borked result.
 			// when that happens the previous segment's angles will be reused
 			if (sg.origin - prevsg.origin != '0 0 0') 
-				ang = vectoangles(sg.origin - prevsg.origin);
+				ang = vectoangles2(sg.origin - prevsg.origin);
 
 			prevsg.angles_x = ang_x;
 			prevsg.angles_y = ang_y;
