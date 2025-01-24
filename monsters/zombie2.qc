@@ -456,7 +456,7 @@ void(entity e) monster_zombie2_start =
 };
 
 void() monster_zombie2_spawner = {
-	monster_spawner(monster_knight_start);
+	monster_spawner(monster_zombie2_start);
 };
 
 void() monster_zombie2 =
