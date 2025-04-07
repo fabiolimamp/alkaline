@@ -332,13 +332,13 @@ void() ToggleBulletHole = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (bulletmode == 0) {
-		bprint("Bullet holes: enabled\n");
+		bprint("Bullet holes: \benabled\b\n");
 		bulletmode = 1;
 		show_bulletholes();
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOBULLETHOLES)));
 	}
 	else {
-		bprint("Bullet holes: disabled\n");
+		bprint("Bullet holes: \bdisabled\b\n");
 		bulletmode = 0;
 		hide_bulletholes();
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOBULLETHOLES));
@@ -350,12 +350,12 @@ void() ToggleFootsteps = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (nofootsteps) {
-		bprint("Footsteps: enabled\n");
+		bprint("Footsteps: \benabled\b\n");
 		nofootsteps = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOFOOTSTEPS)));
 	}
 	else {
-		bprint("Footsteps: disabled\n");
+		bprint("Footsteps: \bdisabled\b\n");
 		nofootsteps = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOFOOTSTEPS));
 	}
@@ -366,12 +366,12 @@ void() ToggleAutosave = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (noautosaves) {
-		bprint("Autosaves: enabled\n");
+		bprint("Autosaves: \benabled\b\n");
 		noautosaves = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOAUTOSAVES)));
 	}
 	else {
-		bprint("Autosaves: disabled\n");
+		bprint("Autosaves: \bdisabled\b\n");
 		noautosaves = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOAUTOSAVES));
 	}
@@ -382,12 +382,12 @@ void() ToggleTracers = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (notracers) {
-		bprint("Tracers: enabled\n");
+		bprint("Tracers: \benabled\b\n");
 		notracers = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOTRACERS)));
 	}
 	else {
-		bprint("Tracers: disabled\n");
+		bprint("Tracers: \bdisabled\b\n");
 		notracers = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOTRACERS));
 	}
@@ -398,12 +398,12 @@ void() TogglePlayerTracers = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (playertracers) {
-		bprint("Player tracers: disabled\n");
+		bprint("Player tracers: \bdisabled\b\n");
 		playertracers = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_PLAYERTRACERS)));
 	}
 	else {
-		bprint("Player tracers: enabled\n");
+		bprint("Player tracers: \benabled\b\n");
 		playertracers = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_PLAYERTRACERS));
 	}
@@ -414,12 +414,12 @@ void() ToggleOldGrenade = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (oldgrenade) {
-		bprint("Old grenade style: disabled\n");
+		bprint("Old grenade style: \bdisabled\b\n");
 		oldgrenade = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_OLDGRENADE)));
 	}
 	else {
-		bprint("Old grenade style: enabled\n");
+		bprint("Old grenade style: \benabled\b\n");
 		oldgrenade = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
 	}
@@ -430,12 +430,12 @@ void() ToggleOldLightning = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (oldlightning) {
-		bprint("Old lightning style: disabled\n");
+		bprint("Old lightning style: \bdisabled\b\n");
 		oldlightning = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_OLDLIGHTNING)));
 	}
 	else {
-		bprint("Old lightning style: enabled\n");
+		bprint("Old lightning style: \benabled\b\n");
 		oldlightning = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDLIGHTNING));
 	}

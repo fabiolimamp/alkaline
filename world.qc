@@ -136,7 +136,7 @@ void() worldspawn =
 	}
 
 	if (options & ALKSETTINGS_FORCENOCLIPTOUCH) {
-		bprint("\bAlkaline options:\b Touches in noclip+notarget mode \benabled\b. Type \"forcenocliptouch\" to disable it.\n");
+		bprint("\bAlkaline options:\b Touches in noclip + notarget mode \benabled\b. Type \"forcenocliptouch\" to disable it.\n");
 		forcenocliptouch = 1;
 	}
 
