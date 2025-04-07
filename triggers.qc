@@ -2217,7 +2217,7 @@ void() trigger_mirror = {
 	if (self.angles == '0 0 0') self.angles = '0 360 0';
 
 	InitTrigger();
-
+	/*
 	if (
 		(fabs(self.movedir_x) && (fabs(self.movedir_y) || fabs(self.movedir_z))) ||
 		(fabs(self.movedir_y) && (fabs(self.movedir_x) || fabs(self.movedir_z))) ||
@@ -2226,7 +2226,7 @@ void() trigger_mirror = {
 		dprint3("\bWARNING\b: trigger_mirror near ", vtos((self.absmin + self.absmax)/2), " with non-orthogonal angles\n");
 		return;
 	}
-
+	*/
 	if (self.count == 0) self.count = 1;
 
 	self.touch = trigger_mirror_touch;
