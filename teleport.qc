@@ -220,6 +220,9 @@ void() teleport_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 	

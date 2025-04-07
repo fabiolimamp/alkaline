@@ -135,6 +135,11 @@ void() worldspawn =
 		oldlightning = 1;
 	}
 
+	if (options & ALKSETTINGS_FORCENOCLIPTOUCH) {
+		bprint("\bAlkaline options:\b Touches in noclip+notarget mode \benabled\b. Type \"forcenocliptouch\" to disable it.\n");
+		forcenocliptouch = 1;
+	}
+
 	if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
 		self.originalmonsters = 1;
 

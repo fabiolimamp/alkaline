@@ -417,6 +417,9 @@ void() changelevel_touch = {
 	if (other.classname != "player")
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	if (self.estate != STATE_ACTIVE)
 		return;
 

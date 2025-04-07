@@ -124,6 +124,9 @@ void() multi_touch =
 	if (other.classname != "player" && !(other.flags & FL_MONSTER && self.spawnflags & TRIGGER_MONSTERTRIGGERABLE))
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	if (self.estate != STATE_ACTIVE)
 		return;
 
@@ -453,6 +456,9 @@ void() trigger_skill_touch =
 
 	if (other.classname != "player")
 		return;
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 		
 	cvar_set("skill", self.message);
 	skill = cvar("skill");
@@ -515,6 +521,9 @@ void() trigger_onlyregistered_touch =
 		return;
 
 	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 	if (self.mapvar && !read_mapvar(self.mapvar))
@@ -583,6 +592,9 @@ void() hurt_touch =
 		T_Damage(other, self, self, self.dmg, self.style);
 		other.hurt_started = time;
 	}
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	// From Copper:
 	// this is not ideal but all the other solutions are also not ideal: monsters
@@ -900,6 +912,9 @@ void() trigger_push_touch =
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
+	if (other.flags & FL_CLIENT && other.movetype == MOVETYPE_NOCLIP)
+		return;
+
 	if (other.classname == "grenade")
 		other.velocity = self.speed * self.movedir * 10;
 	else if (other.health > 0)
@@ -1212,6 +1227,8 @@ void() trigger_removeitems_touch = {
 	if (self.estate != STATE_ACTIVE)
 		return;
 	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 	removeitems_go (other, self.items, self.weapons);
 
@@ -1852,6 +1869,9 @@ trigger_everything
 void() trigger_everything_touch = {
 	if (self.estate != STATE_ACTIVE) return;
 	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 	if (time < self.attack_finished) return;

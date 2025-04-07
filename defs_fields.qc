@@ -197,6 +197,7 @@ float notracers;
 float playertracers;
 float oldgrenade;
 float oldlightning;
+float forcenocliptouch;
 
 // gravity
 entity current_gravity_ent;

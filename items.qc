@@ -398,6 +398,8 @@ void() armor_touch = {
 		return;
 	if (other.classname != "player")
 		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	if (self.classname == "item_armor1")
 	{
@@ -461,6 +463,8 @@ void() shard_touch = { // progs_dump
 	if (other.health <= 0)
 		return;
 	if (other.classname != "player")
+		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 	local	float	bit;
@@ -623,6 +627,9 @@ void() weapon_touch =
 	local	float	leave;
 
 	if (!(other.flags & FL_CLIENT))
+		return;
+	
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 // if the player was using his best weapon, change up to the new one if better		
@@ -903,6 +910,9 @@ void() ammo_touch = {
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
+		return;
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 // if the player was using his best weapon, change up to the new one if better		
@@ -1209,6 +1219,9 @@ void() sigil_touch =
 	if (other.health <= 0)
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	centerprint (other, "You got the rune!");
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
@@ -1268,7 +1281,8 @@ void() powerup_touch =
 		return;
 	if (other.health <= 0)
 		return;
-
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	// if (deathmatch)
 	// {
@@ -1499,6 +1513,8 @@ void() BackpackTouch =
 	if (other.classname != "player")
 		return;
 	if (other.health <= 0)
+		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 	acount = 0;

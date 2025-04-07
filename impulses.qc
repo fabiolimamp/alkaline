@@ -422,7 +422,6 @@ void() ToggleOldGrenade = {
 		bprint("Old grenade style: enabled\n");
 		oldgrenade = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
-		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
 	}
 }
 
@@ -439,6 +438,22 @@ void() ToggleOldLightning = {
 		bprint("Old lightning style: enabled\n");
 		oldlightning = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDLIGHTNING));
+	}
+}
+
+void() ToggleForceNoclipTouch = {
+	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	tmp1 = cvar("saved1");
+	if (forcenocliptouch) {
+		bprint("Touches in noclip + notarget mode: \bdisabled\b\n");
+		forcenocliptouch = 0;
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_FORCENOCLIPTOUCH)));
+	}
+	else {
+		bprint("Touches in noclip+notarget mode: \benabled\b\n");
+		forcenocliptouch = 1;
+		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_FORCENOCLIPTOUCH));
 	}
 }
 
@@ -573,6 +588,8 @@ void() ImpulseCommands = {
 		ToggleOldGrenade();
 	if (self.impulse == 45)
 		ToggleOldLightning();
+	if (self.impulse == 46)
+		ToggleForceNoclipTouch();
 
 	if (self.impulse == 50)
 		CycleHUD();

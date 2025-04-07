@@ -480,6 +480,9 @@ void() door_trigger_touch = {
  	
  	// ignore shootable brushes standing in it, like buttons or breakables
 	if (other.solid == SOLID_BSP) return;
+	
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	// silly fix for sleeping monsters standing behind doors inside their touch fields causing them to open
 	// thanks Lunaran
