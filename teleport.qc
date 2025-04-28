@@ -287,19 +287,30 @@ void() teleport_touch =
 	// stores the original v_angle pitch for players
 	vAngleX = other.v_angle_x;
 
+	// t = teleport destination
+	// s = trigger teleport
+	// p = player
+	// f = final
+
+
 	/*
 	makevectors(self.mangle);
 	vector s_forward = v_forward;
 	vector s_right = v_right;
 	vector s_up = v_up;
 	*/
+	
 
-	// t = teleport destination
-	// p = player
-	// f = final
+	tAngle = normalizeAngles180(tAngle);
+	vector tAngleOrig = tAngle;
+	tAngle -= normalizeAngles180(self.mangle);
+
+	//float tAngleOriginalYaw = tAngle_y;
+	//tAngle_y -= self.angles_y;
 
 
 	makevectors([tAngle_x, tAngle_y, tAngle_z]);
+	//makevectors([tAngle_x, 0, tAngle_z]);
 	vector t_forward = v_forward;
 	vector t_right = v_right;
 	vector t_up = v_up;
@@ -320,13 +331,15 @@ void() teleport_touch =
 	vector f_up = t_up;
 	
 	makevectors([-pAngle_x, pAngle_y, pAngle_z]);
-	//vector p_forward = v_forward;
-	//vector p_right = v_right;
-	//vector p_up = v_up;
+	vector p_forward = v_forward;
+	vector p_right = v_right;
+	vector p_up = v_up;
 
+	/*
 	vector p_forward = rotateVectorAround('0 0 1', v_forward, self.mangle_y);
 	vector p_right = rotateVectorAround('0 0 1', v_right, self.mangle_y);
 	vector p_up = rotateVectorAround('0 0 1', v_up, self.mangle_y);
+	*/
 	/*dprint3("s_forward: ", vtos(s_forward*100), "\n");
 	dprint3("t_forward: ", vtos(t_forward*100), "\n");
 	dprint3("f_forward: ", vtos(f_forward*100), "\n");
@@ -349,7 +362,7 @@ void() teleport_touch =
 		other.angles = tAngle;
 
 	//other.angles_y -= self.mangle_y;
-	other.velocity = rotateVectorAround('0 0 1', other.velocity, self.mangle_y);
+	//other.velocity = rotateVectorAround('0 0 1', other.velocity, self.mangle_y);
 
 	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT || t.spawnflags & TELEDEST_KEEPVELOCITY) 
 		other.velocity = f_forward*other.velocity_x - f_right*other.velocity_y + f_up*other.velocity_z;
