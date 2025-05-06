@@ -776,6 +776,8 @@ void() func_wall =
 		self.think = func_wall_think;
 		self.nextthink = getLocalTime() + 0.1;
 	}
+	
+	if (self.switchshadstyle) lightstyle(self.switchshadstyle, "a");
 };
 
 
