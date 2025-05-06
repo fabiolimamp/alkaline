@@ -1798,6 +1798,7 @@ The door now has built-in support for switchable shadows, that fade in/out autom
         64: "Doom-style unlock" : 0
         128: "Sound during delay" : 0
         16384: "Platinum Key required" : 0
+        32768: "Non-solid" : 0
         65536: "Expanded trigger field X" : 0
         131072: "Expanded trigger field Y" : 0
         262144: "Reduced trigger field X" : 0

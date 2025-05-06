@@ -12,6 +12,7 @@ float DOOR_TOGGLE = 32;
 float DOOR_DOOM_STYLE_UNLOCK = 64;
 float DOOR_SOUND_DURING_DELAY = 128;
 float DOOR_PLAT_KEY = 16384;
+float DOOR_NONSOLID = 32768;
 float DOOR_EXPANDED_TRIGGER_X = 65536;
 float DOOR_EXPANDED_TRIGGER_Y = 131072;
 float DOOR_REDUCED_TRIGGER_X = 262144;
@@ -1020,8 +1021,16 @@ void() func_door = {
 		self.volume = 1;
 
 	self.max_health = self.health;
-	self.solid = SOLID_BSP;
-	self.movetype = MOVETYPE_PUSH;
+
+	if (self.spawnflags & DOOR_NONSOLID) {
+		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_NOCLIP;
+	}
+	else {
+		self.solid = SOLID_BSP;
+		self.movetype = MOVETYPE_PUSH;
+	}
+	
 	setorigin (self, self.origin);	
 	setmodel (self, self.model);
 
