@@ -17,6 +17,7 @@ float DOOR_EXPANDED_TRIGGER_X = 65536;
 float DOOR_EXPANDED_TRIGGER_Y = 131072;
 float DOOR_REDUCED_TRIGGER_X = 262144;
 float DOOR_REDUCED_TRIGGER_Y = 524288;
+float DOOR_NOSTOPSOUND = 1048576;
 
 float DOOR_MIN_THINK_TIME = 0.02;
 
@@ -111,7 +112,7 @@ void() door_stop_sound = {
 		self.nextthink = 10000000000;
 		self.think = SUB_Null;
 	}
-	sound (self, CHAN_VOICE, self.noise1, self.volume, ATTN_NORM);
+	if (!(self.spawnflags & DOOR_NOSTOPSOUND)) sound (self, CHAN_VOICE, self.noise1, self.volume, ATTN_NORM);
 };
 
 void() door_move_top = {
