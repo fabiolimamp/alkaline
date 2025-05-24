@@ -595,6 +595,8 @@ float() weaponanim_lg = {	// handled via animation loop4
 
 	self.weaponframe = 0;
 	
+	sound (self, CHAN_AUTO, "weapons/lstart.wav", 1, ATTN_NORM);
+	
 	weaponanim_lg_loop();
 	
 	return TRUE;
