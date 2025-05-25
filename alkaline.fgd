@@ -1664,12 +1664,13 @@ If the target entity changes its default behavior when 'targetname' is set (such
 @PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound_repeat : "Periodic sound player
 
 Plays a one off sound on a periodic basis.
-Do NOT use looped sounds with this entity. For looped sounds use ambient_general.
-volume: how loud (range is 0.1 to 1 default is 1 = full volume)
-noise: path of sound to play
+Not meant to be used for looped ambients. For this, use the ambient_general entity.
+
+volume: 0.1 to 1. Default is 1 = full volume.
+noise: path of sound to play, not including the /sound/ folder part. EG 'misc/talk.wav' for the message beep sound
 wait: random time between sounds (default 20)
 delay: minimum delay between sounds (default 2)
-impulse: sound channel 0-7 (0 automatic is default)
+impulse: sound channel. Default is 0 = Automatic.
 speed: attenuation factor
 
 NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND folder.)"
@@ -1683,26 +1684,37 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 			3  : "Static (341u)"
 		]
 		volume(integer) : "Volume (0 - 1)" : 1
-		impulse(integer) : "Channel (0 - 7) Automatic" : 0
+		impulse(integer) : "Channel (0 to 7). Leave at 0 for Automatic" : 0
 		wait(integer) : "Random time between sounds" : 20
 		delay(integer) : "Minimum time between sounds" : 2
 		spawnflags(flags) =	[
 			1 : "Start off" : 0
 		]
 	]
+
 @PointClass base(Targetname, Appearflags) size (16 16 24) color(30 200 35) = play_sound_triggered : "Custom sound player. Plays a clip a single time when triggered.
 
-toggle (spawnflags): stopped when triggered again
-volume: how loud (range is 0.1 to 1 default is 1 = full volume)
-noise: path of sound to play
-impulse: sound channel 0-7 (0 automatic is default)
+
+volume: 0.1 to 1. Default is 1 = full volume.
+noise: path of sound to play, not including the /sound/ folder part. EG 'misc/talk.wav' for the message beep sound
+impulse: sound channel. Default is 0 = Automatic.
 speed: attenuation factor
+
+spawnflags:
+- Toggle: stops sound when triggered again.
+- Looped: use in conjuction with the 'toggle' flag to create a looped sound you can toggle on/off.
+- Play on activator: sound source will be whatever entity that's the activator (a monster for example).
+- Play on player: forces the sound source to be a player - either the activator, or if the activator isn't a player, it'll look for the closest player.
+- Play on all players: play the sound for all players.
 
 NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND folder.)"
 	[
 		spawnflags(flags) = [
 			1 : "Toggle" : 0
 			2 : "Looped" : 0
+			4 : "Play on activator" : 0
+			8 : "Play on player" : 0
+			16 : "Play on all players" : 0
 		]
 		noise(string) : "Sound file to play"
 		speed(choices) : "Attenuation of sound" : 1 =[
@@ -1711,8 +1723,8 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 			2  : "Idle (512u)"
 			3  : "Static (341u)"
 		]
-		volume(integer) : "Volume (0 - 1)" : 1
-		impulse(integer) : "Channel (0 - 7) Automatic" : 0
+		volume(integer) : "Volume (decimal in the 0-1 range)" : 1
+		impulse(integer) : "Channel (0 to 7). Leave at 0 for Automatic" : 0
 		//wait(integer) : "Wait before retrigger" : 0 //Quoth2
 	]
 
