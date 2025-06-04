@@ -1355,6 +1355,12 @@ target_setstate
 float SETSTATE_CLOSEALLDOORS = 2;
 float SETSTATE_DONTRESETBUTTON = 4;
 
+float SETSTATE_TOGGLE_ACTIVE = 0;
+float SETSTATE_FORCE_ACTIVE = 1;
+float SETSTATE_FORCE_INACTIVE = 2;
+float SETSTATE_TOGGLE_VISIBLE = 3;
+float SETSTATE_FORCE_INVISIBLE = 4;
+
 float(entity e) entity_get_state = {
 	if (e.classname == "func_door") return e.owner.estate;
 	else return e.estate;
@@ -1387,12 +1393,6 @@ void(entity e, float state, float flags) entity_set_state = {
 		self = oself;
 	}
 	else {
-		if (e.estate == STATE_INVISIBLE) {
-			entity_set_state_unhide(e);
-		}
-		else if (state == STATE_INVISIBLE) {
-			entity_set_state_hide(e);
-		}
 		e.estate = state;
 	}
 
@@ -1405,59 +1405,105 @@ void(entity e, float state, float flags) entity_set_state = {
 	//}
 };
 
-void(string matchstring, .string matchfield, float state, float flags) target_setstate_set_target = {
+void(string matchstring, .string matchfield, float action, float flags) target_setstate_set_target = {
 	local entity t;
 
 	t = find(world, matchfield, matchstring);
 	while (t != world) {
 		if (!(t.classname == "func_door" && t.owner != t)) {
-			if (state == -1){
-				if (entity_get_state(t) == STATE_ACTIVE)
-					entity_set_state(t, STATE_INACTIVE, flags);
-				else
+
+			/*
+			toggle active:
+			invisible -> active
+			active -> inactive
+			inactive -> active
+
+			toggle visible:
+			invisible -> active
+			active -> invisible
+			inactive -> invisible
+			*/
+			float currentstate = entity_get_state(t);
+
+			if (action == SETSTATE_TOGGLE_ACTIVE) {
+				
+				if (currentstate == STATE_INVISIBLE) {
+					entity_set_state_unhide(t);
 					entity_set_state(t, STATE_ACTIVE, flags);
+				}
+				else if (currentstate == STATE_ACTIVE) {
+					entity_set_state(t, STATE_INACTIVE, flags);
+				}
+				else {
+					entity_set_state(t, STATE_ACTIVE, flags);
+				}
 			}
-			else entity_set_state(t, state, flags);
+			
+			if (action == SETSTATE_FORCE_ACTIVE) {
+				if (currentstate == STATE_INVISIBLE)
+					entity_set_state_unhide(t);
+
+				entity_set_state(t, STATE_ACTIVE, flags);
+			}
+
+			if (action == SETSTATE_FORCE_INACTIVE) {
+				if (currentstate == STATE_INVISIBLE)
+					entity_set_state_unhide(t);
+
+				entity_set_state(t, STATE_INACTIVE, flags);
+			}
+
+			if (action == SETSTATE_TOGGLE_VISIBLE) {
+				if (currentstate == STATE_INVISIBLE) {
+					entity_set_state_unhide(t);
+					entity_set_state(t, STATE_ACTIVE, flags);
+				}
+				else if (currentstate == STATE_ACTIVE || currentstate == STATE_INACTIVE) {
+					entity_set_state_hide(t);
+					entity_set_state(t, STATE_INVISIBLE, flags);
+				}
+
+			}
+
+			if (action == SETSTATE_FORCE_INVISIBLE) {
+				if (currentstate != STATE_INVISIBLE)
+					entity_set_state_hide(t);
+
+				entity_set_state(t, STATE_INVISIBLE, flags);
+			}
+
 		}
 		t = find(t, matchfield, matchstring);
 	}
 };
 
-void(float state) target_setstate_set_alltargets = {
+void(float action) target_setstate_set_alltargets = {
 	if (self.target && self.target != "") {
-		target_setstate_set_target(self.target, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target, targetname2, action, self.spawnflags);
 	}
 	if (self.target2 && self.target2 != "") {
-		target_setstate_set_target(self.target2, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target2, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target2, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target2, targetname2, action, self.spawnflags);
 	}
 	if (self.target3 && self.target3 != "") {
-		target_setstate_set_target(self.target3, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target3, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target3, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target3, targetname2, action, self.spawnflags);
 	}
 	if (self.target4 && self.target4 != "") {
-		target_setstate_set_target(self.target4, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target4, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target4, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target4, targetname2, action, self.spawnflags);
 	}
 };
 
-void() target_setstate_use = {
-	local float state;
-
-	if (self.style == 1) state = STATE_ACTIVE;
-	else if (self.style == 2) state = STATE_INACTIVE;
-	else if (self.style == 3) state = STATE_INVISIBLE;
-	else state = -1;
-
-	target_setstate_set_alltargets(state);
-
+inline void() target_setstate_use = {
+	target_setstate_set_alltargets(self.style);
 };
 
 void() target_setstate_startoff_think = {
 	if (door_setup_finished) {
-		if (self.style == 3) target_setstate_set_alltargets(STATE_INVISIBLE);
-		else target_setstate_set_alltargets(STATE_INACTIVE);
+		if (self.style == 3 || self.style == 4) target_setstate_set_alltargets(SETSTATE_FORCE_INVISIBLE);
+		else target_setstate_set_alltargets(SETSTATE_FORCE_INACTIVE);
 	}
 	else {
 		// not finished yet? wait a bit longer
@@ -1471,7 +1517,7 @@ void() target_setstate = {
 	
 	self.use = target_setstate_use;
 
-	if(self.spawnflags & START_OFF) {
+	if (self.spawnflags & START_OFF) {
 		// wait a bit while doors finish being set up
 		self.think = target_setstate_startoff_think;
 		self.nextthink = time + 0.5;

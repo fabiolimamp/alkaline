@@ -2707,20 +2707,21 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 @PointClass base(Appearflags, Targetname, TargetsOnly) = target_setstate : "Changes an entity's state.
 Entities in a disabled state won't execute its main function, depending on context.
 Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
-The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
-You can force the target entities to spawn disabled/locked/invisible with spawnflag 1.
+The 'style' key defines the setstate action. It can toggle the current state, force them to active/inactive, or force/toggle visibility.
+You can force the target entities to spawn disabled/locked/invisible with spawnflag 1. Whether the entity will be invisible or disabled depends on the selected setstate's action.
 " 
 [
 	spawnflags(flags) = [
-		1: "Targets start disabled" : 0
+		1: "Targets start disabled/invisible" : 0
 		2: "Force all doors to close" : 0
 		4: "Don't reset button state" : 0
 	]
-	style(choices) : "Setstate style" = [
-		0 : "Toggle current state"
+	style(choices) : "Action type" = [
+		0 : "Toggle active"
 		1 : "Force active"
 		2 : "Force inactive"
-		3 : "Make invisible"
+		3 : "Toggle visible"
+		4 : "Force invisible"
 	]
 ]
 
