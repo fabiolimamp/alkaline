@@ -257,9 +257,14 @@ void() func_button =
 	if (!self.movedir)
 	{
 		SetMovedir ();
-		if (!self.lip)
-			self.lip = 4;
-		self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+		if (self.distance) {
+			self.pos2 = self.pos1 + self.movedir*self.distance;
+		}
+		else {
+			if (!self.lip)
+				self.lip = 4;
+			self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+		}
 	}
 	else
 		self.pos2 = self.pos1 + self.movedir;

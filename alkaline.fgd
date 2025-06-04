@@ -1969,6 +1969,7 @@ When you have more than one func_button with the same 'groupname', only one butt
 [
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
+	distance(integer) : "Movement distance. Use alternatively to lip"
 	health(integer) : "Health (shootable if > 0)"
 	noise(string) : "Custom pressing sound (overrides 'sounds' setting)"
 	sounds(choices) : "Sounds" = 
