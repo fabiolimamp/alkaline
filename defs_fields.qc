@@ -504,6 +504,7 @@ FIELDS
 
 .float		dismemberment;	//used by hunter.qc
 
+.entity 	delaytriggerchain;
 
 // frogman
 .vector old_angles;

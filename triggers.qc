@@ -292,6 +292,20 @@ void() trigger_relay_use = {
 	}
 }
 
+void(float newstate, float stateflags) trigger_relay_setstate = {
+	if (newstate != STATE_ACTIVE) {
+		entity e = self.delaytriggerchain;
+		entity e2;
+		while (e) {
+			e2 = e.delaytriggerchain;
+			remove(e);
+			e = e2;
+		}
+	}
+	
+	self.estate = newstate;
+}
+
 void() trigger_relay =
 {
 	if (!SUB_InitEntity()) return;
@@ -317,7 +331,8 @@ void() trigger_relay =
 	if (self.noise != "") precache_sound(self.noise);
 
 	self.use = trigger_relay_use;
-	
+	self.th_setstate = trigger_relay_setstate;
+
 	// Spawnflag 1: fire automatically on map start
 	if (self.spawnflags & 1) {
 		self.think = trigger_relay_use;

@@ -484,6 +484,16 @@ void() DelayThink =
 		activator = self.enemy;
 		SUB_UseTargets ();
 	}
+
+	if (self.delaytriggerchain) {
+		self.delaytriggerchain.sibling = self.sibling;
+		//if (self.sibling) // should never happen, but just to be sure
+		self.sibling.delaytriggerchain = self.delaytriggerchain;
+	}
+	else {
+		self.sibling.delaytriggerchain = world;
+	}
+
 	remove(self);
 };
 
@@ -623,6 +633,20 @@ void() SUB_UseTargets =
 			t.target3 = self.target3;
 			t.target4 = self.target4;
 			t.owner = self;
+
+			if (self.delaytriggerchain) {
+				entity e = self.delaytriggerchain;
+
+				while (e.delaytriggerchain) {
+					e = e.delaytriggerchain;
+				}
+				e.delaytriggerchain = t;
+				t.sibling = e;
+			}
+			else {
+				self.delaytriggerchain = t;
+				t.sibling = self;
+			}
 			return;
 		}
 	}
