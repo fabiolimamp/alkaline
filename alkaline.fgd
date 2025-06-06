@@ -2454,6 +2454,21 @@ Flags:
 	]
 ]
 
+@PointClass base(trigger_changelevel) = target_changelevel : "Point entity version of change level trigger.
+
+If you set the 'message' field, an episode-ending screen will be show with the defined text.
+Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text.
+
+By giving the changelevel a 'count' value, the next map will start on a info_player_start/info_player_coop with a matching 'count' field. If no matching player start ID is found, it'll fall back to the first start spot found.
+
+You can define a mapvar to be automatically enabled when the level changes through the 'jump_flag' key.
+
+Flags:
+- 'No intermission': skips level stats and loads the next map instantly.
+- 'Reset items on map change': clears players' inventory before loading the next map.
+"
+[]
+
 @SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once.
 
 If you set an 'angle' (or 'angles') the trigger will only fire when the player is facing the set direction. To set angle 0, use 360. This field must be added manually, otherwise Trenchbroom might set it inadvertently.

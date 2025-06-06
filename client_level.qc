@@ -495,6 +495,16 @@ void() trigger_changelevel = {
 };
 
 
+void() target_changelevel = {
+	if (!SUB_InitEntity()) return;
+	
+	if (!self.map)
+		dprint("changelevel trigger doesn't have map set, will return to the same map\n");
+
+	self.flags = self.flags | FL_NOCENTERPRINT;
+	self.use = changelevel_use;
+};
+
 /*
 ============
 SelectSpawnPoint
