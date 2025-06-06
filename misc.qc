@@ -735,28 +735,41 @@ SIMPLE BMODELS
 ==============================================================================
 */
 
-void() func_wall_use =
-{	// change to alternate textures
+void() func_wall_use = {
+	// change to alternate textures
+	float onframe = (self.spawnflags & 4) ? 0 : 1;
 
-	if (self.spawnflags & 8) {
-		if (self.estate != STATE_ACTIVE)
-			self.estate = STATE_ACTIVE;
-		else
-			self.estate = STATE_INACTIVE;
+	if (self.estate == STATE_ACTIVE) {
+		// when the flicker flag is on, frame is managed via think function
+		if (!(self.spawnflags & 8)) self.frame = 1 - onframe;
+		self.estate = STATE_INACTIVE;
 	}
-	else
-		self.frame = 1 - self.frame;
-
+	else {
+		if (!(self.spawnflags & 8)) self.frame = onframe;
+		self.estate = STATE_ACTIVE;
+	}
 };
+
+void(float newstate, float stateflags) func_wall_setstate = {
+	float onframe = (self.spawnflags & 4) ? 0 : 1;
+
+	if (newstate == STATE_ACTIVE) {
+		self.frame = onframe;
+	}
+	else {
+		self.frame = 1 - onframe;
+	}
+	self.estate = newstate;
+}
 
 /*QUAKED func_wall (0 .5 .8) ?
 This is just a solid wall if not inhibitted
 */
-void() func_wall =
-{
+void() func_wall = {
 	if (!SUB_InitEntity()) return;
 	
 	self.angles = '0 0 0';
+
 	if (self.spawnflags & 2) {
 		self.movetype = MOVETYPE_NONE;
 		self.solid = SOLID_NOT;
@@ -766,13 +779,20 @@ void() func_wall =
 		self.solid = SOLID_BSP;
 	}
 	self.use = func_wall_use;
+	self.th_setstate = func_wall_setstate;
+
 	setmodel (self, self.model);
 	
-	if (self.spawnflags & 4) self.frame = 1 - self.frame;
+	float onframe = (self.spawnflags & 4) ? 0 : 1;
+	
+	self.frame = onframe;
 
-	if (self.spawnflags & 16) self.estate = STATE_INACTIVE;
+	if (self.spawnflags & 16) { // start off
+		self.estate = STATE_INACTIVE;
+		self.frame = 1 - onframe;
+	}
 
-	if (self.spawnflags & 8) {
+	if (self.spawnflags & 8) { // sync with fluoro flicker
 		self.think = func_wall_think;
 		self.nextthink = getLocalTime() + 0.1;
 	}
