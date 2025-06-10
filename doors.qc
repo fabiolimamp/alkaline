@@ -515,6 +515,13 @@ void() door_killed = {
 void(float newstate, float stateflags) door_setstate = {
 	float closealldoors;
 
+	if (newstate == STATE_INVISIBLE ||
+		(self.owner.estate == STATE_INVISIBLE && newstate != STATE_INVISIBLE)
+		) {
+		self.owner.estate = newstate;
+		return;
+	}
+	
 	if (stateflags & SETSTATE_CLOSEALLDOORS) closealldoors = 1;
 
 	if (newstate == STATE_ACTIVE) door_estate_unlock(self, closealldoors);

@@ -1382,6 +1382,26 @@ float(entity e) entity_get_state = {
 };
 
 void(entity e) entity_set_state_hide = {
+
+	if (e.classname == "func_door") {
+		entity master = e.owner;
+		e = master;
+		do {
+			e.estate_orig_solid = e.solid;
+			e.estate_orig_move = e.movetype;
+			e.estate_orig_mdlindex = e.modelindex;
+
+			e.modelindex = 0;
+			e.solid = SOLID_NOT;
+			if (e.movetype == SOLID_BSP) e.movetype = MOVETYPE_NONE;
+			setorigin(e, e.origin); // relink
+
+			e = e.enemy;
+		} while (e != master && e != world);
+
+		return;
+	}
+
 	e.estate_orig_solid = e.solid;
 	e.estate_orig_move = e.movetype;
 	e.estate_orig_mdlindex = e.modelindex;
@@ -1393,6 +1413,21 @@ void(entity e) entity_set_state_hide = {
 }
 
 void(entity e) entity_set_state_unhide = {
+	if (e.classname == "func_door") {
+		entity master = e.owner;
+		e = master;
+		do {
+			e.modelindex = e.estate_orig_mdlindex;
+			e.solid = e.estate_orig_solid;
+			e.movetype = e.estate_orig_move;
+			setorigin(e, e.origin); // relink
+
+			e = e.enemy;
+		} while (e != master && e != world);
+
+		return;
+	}
+
 	e.modelindex = e.estate_orig_mdlindex;
 	e.solid = e.estate_orig_solid;
 	e.movetype = e.estate_orig_move;
