@@ -785,7 +785,7 @@ void() func_wall = {
 	
 	float onframe = (self.spawnflags & 4) ? 0 : 1;
 	
-	self.frame = onframe;
+	//self.frame = onframe;
 
 	if (self.spawnflags & 16) { // start off
 		self.estate = STATE_INACTIVE;
