@@ -156,6 +156,7 @@ entity activator;		// the entity that activated a trigger or brush
 
 entity damage_attacker;	// set by T_Damage
 float framecount;
+//float lastframetime;
 
 float skill;
 float startskill;
@@ -196,6 +197,7 @@ float notracers;
 float playertracers;
 float oldgrenade;
 float oldlightning;
+float forcenocliptouch;
 
 // gravity
 entity current_gravity_ent;
@@ -261,7 +263,7 @@ FIELDS
 .void()		th_wake;
 .float()	th_checkattack;
 .float(entity inflictor, entity attacker, float damage, float orig_damage, float dmgtype) th_damage;
-.void(float newstate, float stateflags) th_setstate;
+.void(float newstate, float stateflags) th_setstate; // setstate callback. Function must handle changing the setstate field manually
 
 .void(entity mon)	start_function;
 
@@ -312,6 +314,10 @@ FIELDS
 .float		trif_time;
 .float		rad_time;
 .float		fly_sound;
+.float 		nextthink1;
+
+.entity 	weaponent;
+.float 		attackpressed, attackhold;
 //.float 		cshift_set, cshift_cleared;
 
 .float		axhitme;
@@ -334,7 +340,7 @@ FIELDS
 
 .float	healamount, healtype;
 
-.float steptype, steplast, altsteptype, altsteplast;
+.float steplast;
 
 .entity hurtcontroller, healthcontroller;
 
@@ -499,6 +505,7 @@ FIELDS
 
 .float		dismemberment;	//used by hunter.qc
 
+.entity 	delaytriggerchain;
 
 // frogman
 .vector old_angles;
@@ -606,6 +613,10 @@ float prevdoornum;
 // gravity
 .float return_gravity;
 
+// func_mirror
+.entity mirrorent;
+.entity mirrorent2;
+
 
 //JCR super jump defs
 .float jboots_prevlimit;		
@@ -684,3 +695,5 @@ float prevdoornum;
 
 .float autojump;
 .float autojump_block_finished;
+
+//.entity camera_current;

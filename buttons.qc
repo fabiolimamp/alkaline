@@ -194,6 +194,15 @@ void() func_button =
 //local float		gtemp, ftemp;
 	string default_noise;
 
+
+	// HARDCODED EXCEPTION NOOOO
+	// Derelict Freighter (alk_derelict) has a func_button with the spawnflag 1 inadvertently set,
+	// which makes it require the silver key, thus breaking map progression
+	if (world.model == "maps/alk_derelict.bsp") {
+		if (self.target == "el1_btn_top_in" || self.target == "el1_btn_bot_in")
+			self.spawnflags &~= 1;
+	}
+
 	if (self.sounds == 0)
 		default_noise = "buttons/airbut1.wav";
 	else if (self.sounds == 1)
@@ -248,9 +257,14 @@ void() func_button =
 	if (!self.movedir)
 	{
 		SetMovedir ();
-		if (!self.lip)
-			self.lip = 4;
-		self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+		if (self.distance) {
+			self.pos2 = self.pos1 + self.movedir*self.distance;
+		}
+		else {
+			if (!self.lip)
+				self.lip = 4;
+			self.pos2 = self.pos1 + self.movedir*(fabs(self.movedir*self.size) - self.lip);
+		}
 	}
 	else
 		self.pos2 = self.pos1 + self.movedir;

@@ -115,8 +115,8 @@ void(entity cl, entity base) TakeAndGiveWeapons = {
 	else if(base.ammo_cells == -1) cl.ammo_cells = 0;
 
 	//if player is wielding a removed or ammo-less weapon
-	if(!(cl.weapon & cl.weapons) || !W_CheckAmmoParms(cl.weapon, cl.ammo_shells, cl.ammo_nails, cl.ammo_rockets, cl.ammo_cells)) {
-		cl.weapon = W_BestWeaponParms(cl.weapons, cl.ammo_shells, cl.ammo_nails, cl.ammo_cells, 0);
+	if(!(cl.weapon & cl.weapons) || W_CheckWeapon(cl.weapon, cl) < WEAPONSTAT_AVAILABLE) {
+		W_ChangeWeapon(W_BestWeaponParms(cl.weapons, cl, 0));
 	}
 };
 
@@ -417,6 +417,9 @@ void() changelevel_touch = {
 	if (other.classname != "player")
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	if (self.estate != STATE_ACTIVE)
 		return;
 
@@ -450,8 +453,12 @@ void() changelevel_touch = {
 
 	SUB_UseTargets ();
 
-	if ( (self.spawnflags & 1) && (deathmatch == 0) )
-	{	// NO_INTERMISSION
+	if ( (self.spawnflags & 1) && (deathmatch == 0) ) // NO_INTERMISSION
+	{	
+		// flip on whichever mapvar is set into the changelevel trigger
+		if (self.jump_flag > 0 && self.jump_flag <= MAPV_TOTAL)
+			write_mapvar(self.jump_flag, MAPV_WRITE_ON);
+		
 		GotoNextMap();
 		return;
 	}
@@ -487,6 +494,16 @@ void() trigger_changelevel = {
 	SUB_CheckWaiting();
 };
 
+
+void() target_changelevel = {
+	if (!SUB_InitEntity()) return;
+	
+	if (!self.map)
+		dprint("changelevel trigger doesn't have map set, will return to the same map\n");
+
+	self.flags = self.flags | FL_NOCENTERPRINT;
+	self.use = changelevel_use;
+};
 
 /*
 ============
@@ -628,6 +645,46 @@ void() CreateHealthController = {
 	self.healthcontroller.classname = "healthcontroller";
 }
 
+void() CreateAnimController = {
+	self.animcontroller = spawn();
+	self.animcontroller.owner = self;
+	self.animcontroller.classname = "animcontroller";
+}
+
+/*
+===========
+ClientConnect
+
+called when a player connects to a server
+============
+*/
+void() ClientConnect =
+{
+	bprint (self.netname);
+	bprint (" entered the game\n");
+	
+	dprint ("intermission_running: ");
+	dprint (ftos(intermission_running));
+	dprint ("\n");
+	
+	dprint ("nextmap: ");
+	dprint (nextmap);
+	dprint ("\n");
+
+	if (!client_ent) client_ent = self; //client_ent will be the first player to enter
+
+	self.currenthud = !!(cvar("saved1") & ALKSETTIGNS_OLDSTYLEHUD);
+
+	if (self.healthcontroller.classname != "healthcontroller") CreateHealthController();
+	if (self.lightningcontroller.classname != "lightningcontroller") CreateLightningController();
+	if (self.animcontroller.classname != "animcontroller") CreateAnimController();
+
+// a client connecting during an intermission can cause problems
+	if (intermission_running)
+		ExitIntermission ();
+};
+
+
 /*
 ===========
 PutClientInServer
@@ -640,8 +697,6 @@ void() PutClientInServer = {
 	local	entity spot;
 
 	dprint5("\b[CLIENT]\b PutClientInServer at ", ftos(time), " seconds, frame ", ftos(framecount), "\n");
-
-	if(!client_ent) client_ent = self; //client_ent will be the first player to enter
 	
 	float just_connected;
 
@@ -672,9 +727,9 @@ void() PutClientInServer = {
 	self.jboots_finished = 0;	//jcr jboots timed
 	self.offground_start = 0;
 	self.sky = world.sky;
-	self.connect_time = time;
+	if (just_connected) self.connect_time = time;
 
-	if (just_connected) self.currenthud = !!(cvar("saved1") & ALKSETTIGNS_OLDSTYLEHUD);
+	//if (just_connected) self.currenthud = !!(cvar("saved1") & ALKSETTIGNS_OLDSTYLEHUD);
 
 	StopBurning(self);//johnfitz -- reset burning	
 
@@ -689,17 +744,16 @@ void() PutClientInServer = {
 		if (spot.spawnflags & 4) self.flags = self.flags | FL_NOTARGET;
 	}
 	
-	W_SetCurrentAmmo (TRUE);
+	W_ChangeWeapon(self.weapon);
 
 	self.attack_finished = time;
 	self.th_pain = player_pain_generic;
 	self.th_die = PlayerDie;
 	
 	self.deadflag = DEAD_NO;
-// paustime is set by teleporters to keep the player from moving a while
+	// paustime is set by teleporters to keep the player from moving a while
 	self.pausetime = 0;
 	
-//	spot = SelectSpawnPoint ();
 
 	self.origin = spot.origin + '0 0 1';
 	self.angles = spot.angles;
@@ -718,7 +772,7 @@ void() PutClientInServer = {
 
 	cleanUpClientStuff = 2;
 
-// oh, this is a hack!
+	// oh, this is a hack!
 	setmodel (self, "progs/eyes.mdl");
 	modelindex_eyes = self.modelindex;
 
@@ -729,7 +783,7 @@ void() PutClientInServer = {
 	
 	self.view_ofs = '0 0 22';
 
-	player_stand1 ();
+	SUB_CallAsSelf(player_stand1, self.animcontroller);
 	
 	if (deathmatch || coop)
 	{
@@ -739,11 +793,35 @@ void() PutClientInServer = {
 
 	spawn_tdeath (self.origin, self);
 
-	if (self.healthcontroller.classname != "healthcontroller") CreateHealthController();
-	if (self.lightningcontroller.classname != "lightningcontroller") CreateLightningController();
 	csf_clear_all(self);
 };
 
+/*
+===========
+ClientDisconnect
+
+called when a player disconnects from a server
+============
+*/
+void() ClientDisconnect =
+{
+	if (gameover)
+		return;
+	// if the level end trigger has been activated, just return
+	// since they aren't *really* leaving
+
+	if (self.healthcontroller.classname == "healthcontroller") remove(self.healthcontroller);
+	if (self.lightningcontroller.classname == "lightningcontroller") remove(self.lightningcontroller);
+	if (self.animcontroller.classname == "animcontroller") remove(self.animcontroller);
+	
+	// let everyone else know
+	bprint (self.netname);
+	bprint (" left the game with ");
+	bprint (ftos(self.frags));
+	bprint (" frags\n");
+	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
+	set_suicide_frame ();
+};
 
 /*
 =============================================================================

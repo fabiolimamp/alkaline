@@ -89,6 +89,14 @@ void() multi_trigger = {
 		self.nextthink = time + 0.1;
 		self.think = SUB_Remove;
 	}
+
+	if (self.count > 0) {
+		self.count -= 1;
+		if (self.count == 0) {
+			remove(self);
+			return;
+		}
+	}
 };
 
 void() multi_killed = //dumptruck_ds
@@ -116,6 +124,9 @@ void() multi_touch =
 	if (other.classname != "player" && !(other.flags & FL_MONSTER && self.spawnflags & TRIGGER_MONSTERTRIGGERABLE))
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	if (self.estate != STATE_ACTIVE)
 		return;
 
@@ -123,14 +134,18 @@ void() multi_touch =
 		return;
 
 	// if the trigger has an angles field, check player's facing direction.
-	// Deprecated, use mangle+view_ofs instead. This is used in id1's start.wad tho, so don't remove
+	// view_ofs sets the cone angle
 	if (self.movedir != '0 0 0')
 	{
-		makevectors (other.angles);
-		if (v_forward * self.movedir < 0)
-			return;		// not facing the right way
+		vector cone = self.view_ofs;
+
+		if (cone == '0 0 0') 
+			cone = '90 90 0';
+
+		if (!isInAngle([-other.v_angle_x, other.v_angle_y, other.v_angle_z], self.mangle, cone))
+			return;
 	}
-	
+
 	self.enemy = other;
 	multi_trigger ();
 };
@@ -162,30 +177,29 @@ void() trigger_multiple =
 			self.noise = "misc/trigger1.wav";
 	}
 
-	if (self.noise != "") precache_sound(self.noise);
+	if (self.noise != "")
+		precache_sound(self.noise);
 
 	if (!self.wait)
 		self.wait = 0.2;
+
 	self.use = multi_use;
 
-	InitTrigger ();
+	InitTrigger();
 
-	if (self.health)
-	{
+	if (self.health) {
 		if (self.spawnflags & SPAWNFLAG_NOTOUCH)
 			objerror ("health and notouch don't make sense\n");
+
 		self.max_health = self.health;
 		self.th_die = multi_killed;
 		self.takedamage = DAMAGE_YES;
 		self.solid = SOLID_BBOX;
-		setorigin (self, self.origin);	// make sure it links into the world
+		setorigin(self, self.origin);	// make sure it links into the world
 	}
-	else
-	{
-		if ( !(self.spawnflags & SPAWNFLAG_NOTOUCH) )
-		{
+	else {
+		if (!(self.spawnflags & SPAWNFLAG_NOTOUCH)) 
 			self.touch = multi_touch;
-		}
 	}
 
 	SUB_CheckWaiting();
@@ -278,6 +292,20 @@ void() trigger_relay_use = {
 	}
 }
 
+void(float newstate, float stateflags) trigger_relay_setstate = {
+	if (newstate != STATE_ACTIVE) {
+		entity e = self.delaytriggerchain;
+		entity e2;
+		while (e) {
+			e2 = e.delaytriggerchain;
+			remove(e);
+			e = e2;
+		}
+	}
+	
+	self.estate = newstate;
+}
+
 void() trigger_relay =
 {
 	if (!SUB_InitEntity()) return;
@@ -303,7 +331,8 @@ void() trigger_relay =
 	if (self.noise != "") precache_sound(self.noise);
 
 	self.use = trigger_relay_use;
-	
+	self.th_setstate = trigger_relay_setstate;
+
 	// Spawnflag 1: fire automatically on map start
 	if (self.spawnflags & 1) {
 		self.think = trigger_relay_use;
@@ -442,6 +471,9 @@ void() trigger_skill_touch =
 
 	if (other.classname != "player")
 		return;
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 		
 	cvar_set("skill", self.message);
 	skill = cvar("skill");
@@ -504,6 +536,9 @@ void() trigger_onlyregistered_touch =
 		return;
 
 	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 	if (self.mapvar && !read_mapvar(self.mapvar))
@@ -573,6 +608,9 @@ void() hurt_touch =
 		other.hurt_started = time;
 	}
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	// From Copper:
 	// this is not ideal but all the other solutions are also not ideal: monsters
 	// who stand still in a trigger hurt don't catch the trigger, so (for example)
@@ -625,7 +663,7 @@ void() hurt_think = {
 		return;
 	}
 
-	self.dmg_take += self.dmg / self.delay / 10;
+	self.dmg_take += self.dmg / self.delay / 20;
 	float take;
 
 	if (fabs(self.dmg_take) >= 1) {
@@ -643,7 +681,7 @@ void() hurt_think = {
 		
 		self.dmg_take = self.dmg_take % take;
 	}
-	self.nextthink = time + 0.1;
+	self.nextthink = time + 0.05;
 };
 
 void(entity tgt, float totaldmg, float duration, float dmgtype) hurt_start = {
@@ -675,7 +713,7 @@ void(entity tgt, float totaldmg, float duration, float dmgtype) hurt_start = {
 		controller.style = dmgtype;
 
 		controller.think = hurt_think;
-		controller.nextthink = time + 0.1;
+		controller.nextthink = time + 0.05;
 	}
 
 };
@@ -748,17 +786,19 @@ void() heal_think = {
 	dmg_take -> amount of healing already done
 	healamount -> total heal
 	*/
-	if (self.owner.health <= 0 || self.attack_finished < time) {
+	if (self.owner.health <= 0 || self.attack_finished < time || self.owner.health >= self.owner.max_health) {
+		// make sure target health is reached at the last tic
 		if (self.attack_finished < time) {
 			if (self.dmg_save < self.healamount)
 				self.owner.health += self.healamount - self.dmg_save;
 		}
+
 		self.owner.hurtcontroller = world;
 		remove(self);
 		return;
 	}
 
-	self.dmg_take += self.healamount / self.delay / 10;
+	self.dmg_take += self.healamount / self.delay / 20;
 	float take;
 
 	if (fabs(self.dmg_take) >= 1) {
@@ -769,7 +809,6 @@ void() heal_think = {
 		}
 		else {
 			take = floor(self.dmg_take);
-			//T_Damage(self.owner, self.enemy, self.enemy, take, self.style);
 			self.owner.health += take;
 		}
 		
@@ -777,7 +816,7 @@ void() heal_think = {
 		
 		self.dmg_take = self.dmg_take % take;
 	}
-	self.nextthink = time + 0.1;
+	self.nextthink = time + 0.05;
 };
 
 void(entity tgt, float totalheal, float duration) heal_start = {
@@ -808,7 +847,7 @@ void(entity tgt, float totalheal, float duration) heal_start = {
 		controller.delay = duration;
 
 		controller.think = heal_think;
-		controller.nextthink = time + 0.1;
+		controller.nextthink = time + 0.05;
 	}
 
 };
@@ -878,12 +917,17 @@ trigger_push
 
 float PUSH_ONCE = 1;
 float PUSH_SILENT = 2;
+float PUSH_TUNNEL = 8;
+
 
 void() trigger_push_touch =
 {
 	if (self.estate != STATE_ACTIVE)
 		return;
 	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+
+	if (other.flags & FL_CLIENT && other.movetype == MOVETYPE_NOCLIP)
 		return;
 
 	if (other.classname == "grenade")
@@ -898,6 +942,13 @@ void() trigger_push_touch =
 				other.fly_sound = time + self.delay;
 				sound (other, CHAN_AUTO, self.noise, 1, ATTN_NORM);
 			}
+		}
+
+		if (self.spawnflags & PUSH_TUNNEL)
+		{
+			vector suck = self.origin + (self.mins + self.maxs )/2 - other.origin;
+			suck -= self.movedir * (suck * self.movedir);
+			other.velocity += suck * self.speed * 0.1;
 		}
 	}
 	if (self.spawnflags & PUSH_ONCE)
@@ -1174,13 +1225,10 @@ void(entity plr, float removeditems, float removedweapons) removeitems_go = {
 	self.items -= self.items & removeditems;
 	self.items -= self.items & removedweapons & HUD_WEAPONS;
 	self.weapons -= self.weapons & removedweapons;
+	
 
 	if (!(self.weapons & self.weapon)) { //if player is wielding a removed weapon
-		self.weapon = W_BestWeapon();
-		W_SetCurrentAmmo(TRUE);
-	}
-	else {
-		W_SetCurrentAmmo(FALSE);
+		W_ChangeWeapon(W_BestWeapon());
 	}
 
 	self = oself;
@@ -1194,6 +1242,8 @@ void() trigger_removeitems_touch = {
 	if (self.estate != STATE_ACTIVE)
 		return;
 	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 	removeitems_go (other, self.items, self.weapons);
 
@@ -1260,27 +1310,29 @@ trigger_repeat
 */
 
 void() trigger_repeat_think = {
-	if(self.count > 0 && self.cnt <= 0) // has limited uses and has reached 0
+	if (self.count > 0 && self.cnt <= 0) // has limited uses and has reached 0
 		return;
 
 	SUB_UseTargets();
 
 	self.think = trigger_repeat_think;
 
-	if(self.count > 0) {
+	if (self.count > 0) {
 		self.cnt--;
-		if(self.cnt <= 0) {
+		if (self.cnt <= 0) {
 			self.state = STATE_INACTIVE;
-			self.nextthink = -1;
+			self.think = SUB_Null;
+			self.nextthink = 0;
+			return;
 		}
-		else self.nextthink = time + self.wait;
 	}
-	else self.nextthink = time + self.wait;
+
+	self.nextthink = time + self.wait + self.rand*random();
 };
 
 void() trigger_repeat_use = {
-	if(self.state == STATE_INACTIVE) {
-		if(!(self.spawnflags & 1)) self.cnt = self.count;
+	if (self.state == STATE_INACTIVE) {
+		if (!(self.spawnflags & 1)) self.cnt = self.count;
 		
 		if (self.delay) {
 			self.think = trigger_repeat_think;
@@ -1300,7 +1352,7 @@ void() trigger_repeat_use = {
 void() trigger_repeat = {
 	if (!SUB_InitEntity()) return;
 	
-	if(!self.wait) self.wait = 2;
+	if (!self.wait) self.wait = 2;
 
 	self.cnt = self.count; //.cnt is the internal counter
 	self.state = STATE_INACTIVE;
@@ -1318,12 +1370,38 @@ target_setstate
 float SETSTATE_CLOSEALLDOORS = 2;
 float SETSTATE_DONTRESETBUTTON = 4;
 
+float SETSTATE_TOGGLE_ACTIVE = 0;
+float SETSTATE_FORCE_ACTIVE = 1;
+float SETSTATE_FORCE_INACTIVE = 2;
+float SETSTATE_TOGGLE_VISIBLE = 3;
+float SETSTATE_FORCE_INVISIBLE = 4;
+
 float(entity e) entity_get_state = {
 	if (e.classname == "func_door") return e.owner.estate;
 	else return e.estate;
 };
 
 void(entity e) entity_set_state_hide = {
+
+	if (e.classname == "func_door") {
+		entity master = e.owner;
+		e = master;
+		do {
+			e.estate_orig_solid = e.solid;
+			e.estate_orig_move = e.movetype;
+			e.estate_orig_mdlindex = e.modelindex;
+
+			e.modelindex = 0;
+			e.solid = SOLID_NOT;
+			if (e.movetype == SOLID_BSP) e.movetype = MOVETYPE_NONE;
+			setorigin(e, e.origin); // relink
+
+			e = e.enemy;
+		} while (e != master && e != world);
+
+		return;
+	}
+
 	e.estate_orig_solid = e.solid;
 	e.estate_orig_move = e.movetype;
 	e.estate_orig_mdlindex = e.modelindex;
@@ -1335,6 +1413,21 @@ void(entity e) entity_set_state_hide = {
 }
 
 void(entity e) entity_set_state_unhide = {
+	if (e.classname == "func_door") {
+		entity master = e.owner;
+		e = master;
+		do {
+			e.modelindex = e.estate_orig_mdlindex;
+			e.solid = e.estate_orig_solid;
+			e.movetype = e.estate_orig_move;
+			setorigin(e, e.origin); // relink
+
+			e = e.enemy;
+		} while (e != master && e != world);
+
+		return;
+	}
+
 	e.modelindex = e.estate_orig_mdlindex;
 	e.solid = e.estate_orig_solid;
 	e.movetype = e.estate_orig_move;
@@ -1350,12 +1443,6 @@ void(entity e, float state, float flags) entity_set_state = {
 		self = oself;
 	}
 	else {
-		if (e.estate == STATE_INVISIBLE) {
-			entity_set_state_unhide(e);
-		}
-		else if (state == STATE_INVISIBLE) {
-			entity_set_state_hide(e);
-		}
 		e.estate = state;
 	}
 
@@ -1368,59 +1455,105 @@ void(entity e, float state, float flags) entity_set_state = {
 	//}
 };
 
-void(string matchstring, .string matchfield, float state, float flags) target_setstate_set_target = {
+void(string matchstring, .string matchfield, float action, float flags) target_setstate_set_target = {
 	local entity t;
 
 	t = find(world, matchfield, matchstring);
 	while (t != world) {
 		if (!(t.classname == "func_door" && t.owner != t)) {
-			if (state == -1){
-				if (entity_get_state(t) == STATE_ACTIVE)
-					entity_set_state(t, STATE_INACTIVE, flags);
-				else
+
+			/*
+			toggle active:
+			invisible -> active
+			active -> inactive
+			inactive -> active
+
+			toggle visible:
+			invisible -> active
+			active -> invisible
+			inactive -> invisible
+			*/
+			float currentstate = entity_get_state(t);
+
+			if (action == SETSTATE_TOGGLE_ACTIVE) {
+				
+				if (currentstate == STATE_INVISIBLE) {
+					entity_set_state_unhide(t);
 					entity_set_state(t, STATE_ACTIVE, flags);
+				}
+				else if (currentstate == STATE_ACTIVE) {
+					entity_set_state(t, STATE_INACTIVE, flags);
+				}
+				else {
+					entity_set_state(t, STATE_ACTIVE, flags);
+				}
 			}
-			else entity_set_state(t, state, flags);
+			
+			if (action == SETSTATE_FORCE_ACTIVE) {
+				if (currentstate == STATE_INVISIBLE)
+					entity_set_state_unhide(t);
+
+				entity_set_state(t, STATE_ACTIVE, flags);
+			}
+
+			if (action == SETSTATE_FORCE_INACTIVE) {
+				if (currentstate == STATE_INVISIBLE)
+					entity_set_state_unhide(t);
+
+				entity_set_state(t, STATE_INACTIVE, flags);
+			}
+
+			if (action == SETSTATE_TOGGLE_VISIBLE) {
+				if (currentstate == STATE_INVISIBLE) {
+					entity_set_state_unhide(t);
+					entity_set_state(t, STATE_ACTIVE, flags);
+				}
+				else if (currentstate == STATE_ACTIVE || currentstate == STATE_INACTIVE) {
+					entity_set_state_hide(t);
+					entity_set_state(t, STATE_INVISIBLE, flags);
+				}
+
+			}
+
+			if (action == SETSTATE_FORCE_INVISIBLE) {
+				if (currentstate != STATE_INVISIBLE)
+					entity_set_state_hide(t);
+
+				entity_set_state(t, STATE_INVISIBLE, flags);
+			}
+
 		}
 		t = find(t, matchfield, matchstring);
 	}
 };
 
-void(float state) target_setstate_set_alltargets = {
+void(float action) target_setstate_set_alltargets = {
 	if (self.target && self.target != "") {
-		target_setstate_set_target(self.target, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target, targetname2, action, self.spawnflags);
 	}
 	if (self.target2 && self.target2 != "") {
-		target_setstate_set_target(self.target2, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target2, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target2, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target2, targetname2, action, self.spawnflags);
 	}
 	if (self.target3 && self.target3 != "") {
-		target_setstate_set_target(self.target3, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target3, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target3, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target3, targetname2, action, self.spawnflags);
 	}
 	if (self.target4 && self.target4 != "") {
-		target_setstate_set_target(self.target4, targetname, state, self.spawnflags);
-		target_setstate_set_target(self.target4, targetname2, state, self.spawnflags);
+		target_setstate_set_target(self.target4, targetname, action, self.spawnflags);
+		target_setstate_set_target(self.target4, targetname2, action, self.spawnflags);
 	}
 };
 
-void() target_setstate_use = {
-	local float state;
-
-	if (self.style == 1) state = STATE_ACTIVE;
-	else if (self.style == 2) state = STATE_INACTIVE;
-	else if (self.style == 3) state = STATE_INVISIBLE;
-	else state = -1;
-
-	target_setstate_set_alltargets(state);
-
+inline void() target_setstate_use = {
+	target_setstate_set_alltargets(self.style);
 };
 
 void() target_setstate_startoff_think = {
 	if (door_setup_finished) {
-		if (self.style == 3) target_setstate_set_alltargets(STATE_INVISIBLE);
-		else target_setstate_set_alltargets(STATE_INACTIVE);
+		if (self.style == 3 || self.style == 4) target_setstate_set_alltargets(SETSTATE_FORCE_INVISIBLE);
+		else target_setstate_set_alltargets(SETSTATE_FORCE_INACTIVE);
 	}
 	else {
 		// not finished yet? wait a bit longer
@@ -1434,7 +1567,7 @@ void() target_setstate = {
 	
 	self.use = target_setstate_use;
 
-	if(self.spawnflags & START_OFF) {
+	if (self.spawnflags & START_OFF) {
 		// wait a bit while doors finish being set up
 		self.think = target_setstate_startoff_think;
 		self.nextthink = time + 0.5;
@@ -1834,6 +1967,9 @@ void() trigger_everything_touch = {
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	if (time < self.attack_finished) return;
 
 	activator = other;
@@ -2085,4 +2221,213 @@ void() trigger_float_touch = {
 			sound(other, CHAN_AUTO, self.noise, 1, ATTN_NORM);
 		}
 	}
+}
+
+
+/*
+=============================================================
+
+trigger_random
+
+=============================================================
+*/
+
+void() trigger_random = {
+	if (!SUB_InitEntity()) return;
+
+	self.use = trigger_random_use;
+}
+
+void() trigger_random_use = {
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (self.target == "" && self.target2 == "" && self.target3 == "" && self.target3 == ""){
+		dprint3("Warning: trigger_random with no targets at ", vtos(self.origin), "\n");
+		return;
+	}
+
+
+	entity e;
+
+	if (self.target != "") {
+		e = findRandomEntity(self.target, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+
+	if (self.target2 != "") {
+		e = findRandomEntity(self.target2, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+
+	if (self.target3 != "") {
+		e = findRandomEntity(self.target3, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+
+	if (self.target4 != "") {
+		e = findRandomEntity(self.target4, targetname);
+		if (e) SUB_CallAsSelf(e.use, e);
+	}
+	
+	if (self.killtarget != "") {
+		e = findRandomEntity(self.killtarget, targetname);
+		if (e) SUB_KillSpecificEntity(e);
+	}
+	
+}
+
+
+entity(string matchstring, .string matchfield) findRandomEntity = {
+	entity tgt_entities[256];
+	entity e;
+	float i;
+	
+	e = find(world, matchfield, matchstring);
+	while (e) {
+		tgt_entities[i] = e;
+		i++;
+		e = find(e, matchfield, matchstring);
+	}
+	if (i == 0) return world;
+
+	float j = floor(random() * (i - 0.001));
+	dprint3("index: ", ftos(j), "\n");
+	return tgt_entities[j];
+}
+
+
+
+
+/*
+=============================================================
+
+trigger_mirror
+
+=============================================================
+*/
+
+void() trigger_mirror = {
+	if (!SUB_InitEntity()) return;
+
+	if (self.angles == '0 0 0') self.angles = '0 360 0';
+
+	InitTrigger();
+	/*
+	if (
+		(fabs(self.movedir_x) && (fabs(self.movedir_y) || fabs(self.movedir_z))) ||
+		(fabs(self.movedir_y) && (fabs(self.movedir_x) || fabs(self.movedir_z))) ||
+		(fabs(self.movedir_z) && (fabs(self.movedir_x) || fabs(self.movedir_y)))
+	) {
+		dprint3("\bWARNING\b: trigger_mirror near ", vtos((self.absmin + self.absmax)/2), " with non-orthogonal angles\n");
+		return;
+	}
+	*/
+	if (self.count == 0) self.count = 1;
+
+	self.touch = trigger_mirror_touch;
+	
+	self.pos1 = (self.absmin + self.absmax)/2; // real midpoint
+	self.pos2 = self.pos1 + [self.movedir_x * self.size_x, self.movedir_y * self.size_y, self.movedir_z * self.size_z] + self.movedir*self.lip; // mirror midpoint
+
+	self.flags |= FL_NEVERTELEPORT;
+}
+
+void() trigger_mirror_touch = {
+
+	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (other.solid == SOLID_BSP)
+		return;
+
+	entity mre;
+
+	if (self.count == 1)
+		mre = other.mirrorent;
+	else
+		mre = other.mirrorent2;
+
+	// current mirror is already reflecting this
+	if (mre.owner == other && mre.enemy == self)
+		return;
+
+	if (other.model == "")
+		return;
+
+	if (!mre) {
+		//dprint("Creating mirrorent\n");
+		mre = spawn();
+		mre.classname = "mirrorent";
+		mre.owner = other;
+		mre.flags |= FL_NEVERTELEPORT;
+		setmodel(mre, other.model);
+		setsize(mre, VEC_ORIGIN, VEC_ORIGIN);
+		mre.solid = SOLID_NOT;
+		mre.movetype = MOVETYPE_NOCLIP;
+		//mre.attack_finished = time + 1;
+	}
+
+	if (self.count == 1)
+		other.mirrorent = mre;
+	else
+		other.mirrorent2 = mre;
+
+	mre.enemy = self;
+
+	SUB_CallAsSelf(mirrorent_think, mre);
+}
+
+void() mirrorent_think = {
+	
+	entity mre;
+	if (self.enemy.count == 1)
+		mre = self.owner.mirrorent;
+	else
+		mre = self.owner.mirrorent2;
+
+	if (mre != self) { // lost connection to owner
+		remove(self);
+		return;
+	}
+
+	// main entity is out of the trigger's bounds,
+	// or doesn't have a model anymore,
+	// or the mirror got disabled
+	if (!getTouch(self.owner.origin, self.enemy) || self.owner.model == "" || self.enemy.estate != STATE_ACTIVE) {
+		
+		if (self.enemy.count == 1)
+			self.owner.mirrorent = world;
+		else
+			self.owner.mirrorent2 = world;
+
+		remove(self);
+		return;
+	}
+
+	vector offs = self.owner.origin - self.enemy.pos1; // offset from real entity to real side
+	
+	if (fabs(self.enemy.movedir_x)) offs_x *= -1;
+	else if (fabs(self.enemy.movedir_y)) offs_y *= -1;
+	else offs_z *= -1;
+
+	setorigin(self, self.enemy.pos2 + offs);
+
+	if (self.model != self.owner.model) {
+		setmodel(self, self.owner.model);
+		setsize(self, VEC_ORIGIN, VEC_ORIGIN);
+	}
+
+	self.frame = self.owner.frame;
+	self.alpha = self.owner.alpha;
+	
+	self.angles = self.owner.angles;
+
+	if (fabs(self.enemy.movedir_z)) {
+		self.angles_z = 180 - self.owner.angles_z;
+	}
+	else self.angles_y = 180 - self.owner.angles_y;
+
+	self.think = mirrorent_think;
+	self.nextthink = time + 0.025;
 }

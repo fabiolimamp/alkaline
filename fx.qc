@@ -266,7 +266,7 @@ Impact spawn functions
 // --bmFbr
 
 void(vector org, vector vel, float damage) SpawnBlood = {
-	particle (org, vel*0.1, 73, damage*2);
+	particle (org, vel*0.1, 73, min(damage*2, 250));
 };
 
 void(vector org, vector vel) SpawnChunk = {
@@ -278,11 +278,11 @@ void(vector org, vector vel, float damage, float bloodtype) ImpactSpawn = {
 		//SpawnChunk(org, vel);
 		gunshot(org);
 	else if(bloodtype == SPAWN_DIRT)
-		particle (org, vel*0.05, 25, damage*2);
+		particle (org, vel*0.05, 25, min(damage*2, 250));
 	else if(bloodtype == SPAWN_YELLOWSPARK)
-		particle (org, vel*0.1, 105, damage);
+		particle (org, vel*0.1, 105, min(damage, 250));
 	else if(bloodtype == SPAWN_WHITESPARK)
-		particle (org, vel*0.1, 9, damage);
+		particle (org, vel*0.1, 9, min(damage, 250));
 	else // blood should always be default, so it works either with .bloodtype = 1 (explicit) or 0 (unset)
 		SpawnBlood(org, vel, damage);
 };

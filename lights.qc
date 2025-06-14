@@ -223,21 +223,37 @@ using a light will turn it on and off
 ==========*/
 void() light_use =
 {
-	if (self.spawnflags & START_OFF) {
-		self.spawnflags = self.spawnflags - START_OFF;
+	if (self.estate == STATE_INACTIVE) {
+		self.estate = STATE_ACTIVE;
 		if (self.spawnflags & FADE_IN_OUT && !self.style2)
 			light_fade_in();
 		else
 			lightstyle(self.style, lightstyle_lookup(self.style2));
 	}
 	else {
-		self.spawnflags = self.spawnflags + START_OFF;
+		self.estate = STATE_INACTIVE;
 		if (self.spawnflags & FADE_IN_OUT && !self.style2)
 			light_fade_out();
 		else
 			lightstyle(self.style, "a");
 	}
 };
+
+void(float newstate, float stateflags) light_setstate = {
+	if (newstate == STATE_ACTIVE) {
+		if (self.spawnflags & FADE_IN_OUT && !self.style2)
+			light_fade_in();
+		else
+			lightstyle(self.style, lightstyle_lookup(self.style2));
+	}
+	else {
+		if (self.spawnflags & FADE_IN_OUT && !self.style2)
+			light_fade_out();
+		else
+			lightstyle(self.style, "a");
+	}
+	self.estate = newstate;
+}
 
 /*QUAKED light (0 1 0) (-8 -8 -8) (8 8 8) START_OFF FADE_IN_OUT X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
 
@@ -390,7 +406,10 @@ void() light = {
 		}
 
 		self.use = light_use;
+		self.th_setstate = light_setstate;
+
 		if (self.spawnflags & START_OFF) {
+			self.estate = STATE_INACTIVE;
 			self.count = 0;
 			lightstyle(self.style, "a");
 		}

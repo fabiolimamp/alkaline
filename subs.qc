@@ -89,7 +89,8 @@ void() SetMovedir =
 		makevectors (self.angles);
 		self.movedir = v_forward;
 	}
-	
+	SetAngles();
+	self.mangle = self.angles;
 	self.angles = '0 0 0';
 };
 
@@ -420,7 +421,11 @@ to not lose track of current think functions.
 ===============
 */
 
-void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController =
+inline void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController = {
+	SUB_CalcAngleMoveController_ent(self, destangle, tspeed, func, controller);
+};
+
+void(entity ent, vector destangle, float tspeed, void() func, entity controller) SUB_CalcAngleMoveController_ent =
 {
 	local vector	destdelta;
 	local float		len, traveltime;
@@ -430,7 +435,7 @@ void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAng
 		
 	// set destdelta to the vector needed to move
 
-	destdelta = normalizeAngles180(destangle - self.angles);
+	destdelta = normalizeAngles180(destangle - ent.angles);
 	/*dprint3("destangle:   ", vtos(destangle), "\n");
 	dprint3("self.angles: ", vtos( self.angles), "\n");
 	dprint3("destdelta:   ", vtos(destdelta), "\n");
@@ -446,10 +451,10 @@ void(vector destangle, float tspeed, void() func, entity controller) SUB_CalcAng
 	controller.nextthink = time + traveltime;
 
 	// scale the destdelta vector by the time spent traveling to get velocity
-	self.avelocity = destdelta * (1 / traveltime);
+	ent.avelocity = destdelta * (1 / traveltime);
 	
 	// Makes sure controller.owner points to self so it can be referenced later in the think function
-	controller.owner = self;  
+	controller.owner = ent;  
 	controller.think1 = func;
 	controller.finalangle = destangle;
 	controller.think = SUB_CalcAngleMoveDoneController;
@@ -479,6 +484,16 @@ void() DelayThink =
 		activator = self.enemy;
 		SUB_UseTargets ();
 	}
+
+	if (self.delaytriggerchain) {
+		self.delaytriggerchain.sibling = self.sibling;
+		//if (self.sibling) // should never happen, but just to be sure
+		self.sibling.delaytriggerchain = self.delaytriggerchain;
+	}
+	else {
+		self.sibling.delaytriggerchain = world;
+	}
+
 	remove(self);
 };
 
@@ -549,35 +564,45 @@ void(string matchstring, .string matchfield) SUB_KillSpecificTarget =
 	t = find (world, matchfield, matchstring);
 	while (t)
 	{
-		if (t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
-
-		if (t.animcontroller) remove(t.animcontroller);
-		if (t.rotatecontroller) remove(t.rotatecontroller);
-
-		if (t.flags & FL_MONSTER || t.flags & FL_UNSPAWNEDMONSTER) { // increase the kill counter if it's a monster
-			if (
-				self.health > 0
-				&& !(t.flags & FL_UNSPAWNEDMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
-				&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
-			){
-				killed_monsters = killed_monsters + 1;
-				WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
-			}
-		}
-
-		if (t.classname == "trigger_secret" && !(t.nextthink > time)) {
-			dprint3("Killed untouched trigger_secret at ", vtos((t.mins + t.maxs)/2), ", marking as found\n");
-			found_secrets = found_secrets + 1;
-			WriteByte (MSG_ALL, SVC_FOUNDSECRET);
-		}
-
-		// liquid brush list handling
-		if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
-		if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
-
-		remove (t);
+		SUB_KillSpecificEntity(t);
 		t = find (t, matchfield, matchstring);
 	}
+}
+
+void(entity t) SUB_KillSpecificEntity = 
+{
+	if (t.switchshadstyle) lightstyle(t.switchshadstyle, "m"); // kills the entity switchable shadow if it has one
+
+	if (t.animcontroller) remove(t.animcontroller);
+	if (t.rotatecontroller) remove(t.rotatecontroller);
+
+	if (t.flags & FL_MONSTER || t.flags & FL_UNSPAWNEDMONSTER) { // increase the kill counter if it's a monster
+		if (
+			t.health > 0
+			&& !(t.flags & FL_UNSPAWNEDMONSTER && t.spawnflags & MONSTER_COUNTONSPAWN) // ignores unspawned count-on-spawn monster
+			&& !(t.flags & FL_PACIFIST && !(t.spawnflags & MONSTER_COUNTONSPAWN)) // ignores non-countable pacifist (scientists)
+		){
+			killed_monsters = killed_monsters + 1;
+			WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+		}
+	}
+
+	if (t.classname == "monster_oldone") {
+		killed_monsters = killed_monsters + 1;
+		WriteByte (MSG_ALL, SVC_KILLEDMONSTER);
+	}
+
+	if (t.classname == "trigger_secret" && !(t.nextthink > time)) {
+		dprint3("Killed untouched trigger_secret at ", vtos((t.mins + t.maxs)/2), ", marking as found\n");
+		found_secrets = found_secrets + 1;
+		WriteByte (MSG_ALL, SVC_FOUNDSECRET);
+	}
+
+	// liquid brush list handling
+	if (t.prevliquidbrush) t.prevliquidbrush.nextliquidbrush = t.nextliquidbrush;
+	if (t.nextliquidbrush) t.nextliquidbrush.prevliquidbrush = t.prevliquidbrush;
+
+	remove (t);
 }
 
 void() SUB_UseTargets =
@@ -608,6 +633,20 @@ void() SUB_UseTargets =
 			t.target3 = self.target3;
 			t.target4 = self.target4;
 			t.owner = self;
+
+			if (self.delaytriggerchain) {
+				entity e = self.delaytriggerchain;
+
+				while (e.delaytriggerchain) {
+					e = e.delaytriggerchain;
+				}
+				e.delaytriggerchain = t;
+				t.sibling = e;
+			}
+			else {
+				self.delaytriggerchain = t;
+				t.sibling = self;
+			}
 			return;
 		}
 	}
@@ -811,144 +850,3 @@ void(float hud_item) update_hud_totals =
 	}
 };
 
-
-void(float altfoot, float vol_multiplier) play_footstep = {
-	local float footstep, footstepnext, footvol;
-	local string footstepwav;
-	
-	if (nofootsteps) return;
-	if (self.health < 1) return;
-	if (self.movetype == MOVETYPE_NOCLIP) return;
-	if (self.watertype < CONTENT_EMPTY) return;
-	if (self.steptype == FS_FLYING) return;
-	
-	// Wide volume range for player
-	if (self.flags & FL_CLIENT) footvol = 0.15 + random()*0.1;
-	// feetsteps need to be louder during combat
-	else if (self.enemy) footvol = 1;
-	// Dogs have too many legs making noise, reduce volume	
-	//else if (self.classtype == CT_MONDOG) footvol = 0.2 + random()*0.6;
-	// Slight random volume level out of combat
-	else footvol = 0.7 + random()*0.3;
-
-	footvol = footvol * vol_multiplier;
-	
-	// Decide which foot sound to play, long live clubfoot!
-	if (altfoot) {
-		// Switch to ALTernative foot sound
-		footstep = self.altsteptype;
-		if (self.altsteplast < 1) self.altsteplast = rint(1 + random()*6);
-
-		// Increase footstep sound index by one 
-		footstepnext = rint(self.altsteplast + 1);
-		// Every loop around, randomly reset
-		if (footstepnext > 7) footstepnext = rint(1 + random()*6);
-		self.altsteplast = footstepnext;
-	}
-	else {
-		// Setup last footstep sound
-		footstep = self.steptype;
-		if (self.steplast < 1) self.steplast = rint(1 + random()*6);
-
-		// Player is randomly selected footsteps
-		if (self.flags & FL_CLIENT) {
-			// Quake random function is not really super random
-			// Probably a bad seed starting point for function
-			// Use 3 randoms to create something more random!
-			footstepnext = rint(self.steplast + random() + random() + random());
-			if (footstepnext > 7) footstepnext = footstepnext - 7;
-		}
-		else {
-			// Increase footstep sound index by one 
-			footstepnext = rint(self.steplast + 1);
-			// Every loop around, randomly reset
-			if (footstepnext > 7) footstepnext = rint(1 + random()*6);
-		}
-
-		// update last footstep index
-		self.steplast = footstepnext;
-	}
-	
-	// Cycle through all footstep types and work out correct sound file
-	// All footstep types reduced down to 5 possible choices (speed things up)
-	// Could store sound files with entity and cycle round quicker, req more memory
-	// re-checking the sound file every footstep is costly on time
-	// Luckly most footstep sounds are several frames apart (too noisy as well)
-	/*if (footstep == FS_TYPELIGHT) {
-		// Light heal/ paw sound
-		if (footstepnext < 2) footstepwav = SOUND_FS_LIGHT1;
-		else if (footstepnext < 3) footstepwav = SOUND_FS_LIGHT2;
-		else if (footstepnext < 4) footstepwav = SOUND_FS_LIGHT3;
-		else if (footstepnext < 5) footstepwav = SOUND_FS_LIGHT4;
-		else footstepwav = SOUND_FS_LIGHT5;
-	}
-	else if (footstep == FS_TYPEMEDIUM) {
-		// Average foot/boot sound
-		if (footstepnext < 2) footstepwav = SOUND_FS_MEDIUM1;
-		else if (footstepnext < 3) footstepwav = SOUND_FS_MEDIUM2;
-		else if (footstepnext < 4) footstepwav = SOUND_FS_MEDIUM3;
-		else if (footstepnext < 5) footstepwav = SOUND_FS_MEDIUM4;
-		else footstepwav = SOUND_FS_MEDIUM5;
-	}
-	else if (footstep == FS_TYPEHEAVY) {
-		// Heavy foot with slight echo
-		if (footstepnext < 2) footstepwav = SOUND_FS_HEAVY1;
-		else if (footstepnext < 3) footstepwav = SOUND_FS_HEAVY2;
-		else if (footstepnext < 4) footstepwav = SOUND_FS_HEAVY3;
-		else if (footstepnext < 5) footstepwav = SOUND_FS_HEAVY4;
-		else footstepwav = SOUND_FS_HEAVY5;
-	}
-	else if (footstep == FS_TYPELARGE) {
-		// Large foot with large echo
-		if (footstepnext < 2) footstepwav = SOUND_FS_LARGE1;
-		else if (footstepnext < 3) footstepwav = SOUND_FS_LARGE2;
-		else if (footstepnext < 4) footstepwav = SOUND_FS_LARGE3;
-		else if (footstepnext < 5) footstepwav = SOUND_FS_LARGE4;
-		else footstepwav = SOUND_FS_LARGE5;
-	}
-	else if (footstep == FS_TYPEGIANT) {
-		// Giant foot with long echo
-		if (footstepnext < 2) footstepwav = SOUND_FS_GIANT1;
-		else if (footstepnext < 3) footstepwav = SOUND_FS_GIANT2;
-		else if (footstepnext < 4) footstepwav = SOUND_FS_GIANT3;
-		else if (footstepnext < 5) footstepwav = SOUND_FS_GIANT4;
-		else footstepwav = SOUND_FS_GIANT5;
-	}
-	else if (footstep == FS_TYPECUSTOM) {
-		// Custom feet sounds (usually boss type creatures)
-		if (footstepnext < 2) footstepwav = self.stepc1;
-		else if (footstepnext < 3) footstepwav = self.stepc2;
-		else if (footstepnext < 4) footstepwav = self.stepc3;
-		else if (footstepnext < 5) footstepwav = self.stepc4;
-		else footstepwav = self.stepc5;
-	}
-	else if (footstep == FS_TYPEDRAG) {
-		// Small scraping foot on ground
-		if (footstepnext < 2) footstepwav = SOUND_FS_DRAG1;
-		else if (footstepnext < 3) footstepwav = SOUND_FS_DRAG2;
-		else if (footstepnext < 4) footstepwav = SOUND_FS_DRAG3;
-		else if (footstepnext < 5) footstepwav = SOUND_FS_DRAG4;
-		else footstepwav = SOUND_FS_DRAG5;
-	}
-	// FS_TYPESLOW (default)
-	else {
-		// Souless shoe foot sound
-		if (footstepnext < 2) footstepwav = SOUND_FS_SLOW1;
-		else if (footstepnext < 3) footstepwav = SOUND_FS_SLOW2;
-		else if (footstepnext < 4) footstepwav = SOUND_FS_SLOW3;
-		else if (footstepnext < 5) footstepwav = SOUND_FS_SLOW4;
-		else footstepwav = SOUND_FS_SLOW5;
-	}*/
-
-	if (footstepnext < 2) footstepwav = "player/foot1.wav";
-	else if (footstepnext < 3) footstepwav = "player/foot2.wav";
-	else if (footstepnext < 4) footstepwav = "player/foot3.wav";
-	else if (footstepnext < 5) footstepwav = "player/foot4.wav";
-	else if (footstepnext < 6) footstepwav = "player/foot5.wav";
-	else if (footstepnext < 7) footstepwav = "player/foot6.wav";
-	else footstepwav = "player/foot7.wav";
-
-	// Play the sound (large feet need to be heard further away)
-	if (footstep == FS_TYPELARGE) sound (self, 5, footstepwav, footvol, 1.5);
-	else sound (self, 5, footstepwav, footvol, ATTN_IDLE);
-};

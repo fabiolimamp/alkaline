@@ -17,9 +17,8 @@ void() GiveAllCommand =
 
 	self.ammo_cells = 100;
 		
-	self.weapon = WEAPON_ROCKET_LAUNCHER;
+	W_ChangeWeapon(WEAPON_ROCKET_LAUNCHER);
 	self.impulse = 0;
-	W_SetCurrentAmmo (TRUE);
 
 	stuffcmd (self, "bf\n");
 	sprint(self, "You got everything\n");
@@ -333,13 +332,13 @@ void() ToggleBulletHole = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (bulletmode == 0) {
-		bprint("Bullet holes: enabled\n");
+		bprint("Bullet holes: \benabled\b\n");
 		bulletmode = 1;
 		show_bulletholes();
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOBULLETHOLES)));
 	}
 	else {
-		bprint("Bullet holes: disabled\n");
+		bprint("Bullet holes: \bdisabled\b\n");
 		bulletmode = 0;
 		hide_bulletholes();
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOBULLETHOLES));
@@ -351,12 +350,12 @@ void() ToggleFootsteps = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("temp1");
 	if (nofootsteps) {
-		bprint("Footsteps: enabled\n");
+		bprint("Footsteps: \benabled\b\n");
 		nofootsteps = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOFOOTSTEPS)));
 	}
 	else {
-		bprint("Footsteps: disabled\n");
+		bprint("Footsteps: \bdisabled\b\n");
 		nofootsteps = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOFOOTSTEPS));
 	}
@@ -367,12 +366,12 @@ void() ToggleAutosave = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (noautosaves) {
-		bprint("Autosaves: enabled\n");
+		bprint("Autosaves: \benabled\b\n");
 		noautosaves = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOAUTOSAVES)));
 	}
 	else {
-		bprint("Autosaves: disabled\n");
+		bprint("Autosaves: \bdisabled\b\n");
 		noautosaves = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOAUTOSAVES));
 	}
@@ -383,12 +382,12 @@ void() ToggleTracers = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (notracers) {
-		bprint("Tracers: enabled\n");
+		bprint("Tracers: \benabled\b\n");
 		notracers = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_NOTRACERS)));
 	}
 	else {
-		bprint("Tracers: disabled\n");
+		bprint("Tracers: \bdisabled\b\n");
 		notracers = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_NOTRACERS));
 	}
@@ -399,12 +398,12 @@ void() TogglePlayerTracers = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (playertracers) {
-		bprint("Player tracers: disabled\n");
+		bprint("Player tracers: \bdisabled\b\n");
 		playertracers = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_PLAYERTRACERS)));
 	}
 	else {
-		bprint("Player tracers: enabled\n");
+		bprint("Player tracers: \benabled\b\n");
 		playertracers = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_PLAYERTRACERS));
 	}
@@ -415,14 +414,13 @@ void() ToggleOldGrenade = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (oldgrenade) {
-		bprint("Old grenade style: disabled\n");
+		bprint("Old grenade style: \bdisabled\b\n");
 		oldgrenade = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_OLDGRENADE)));
 	}
 	else {
-		bprint("Old grenade style: enabled\n");
+		bprint("Old grenade style: \benabled\b\n");
 		oldgrenade = 1;
-		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDGRENADE));
 	}
 }
@@ -432,14 +430,30 @@ void() ToggleOldLightning = {
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
 	tmp1 = cvar("saved1");
 	if (oldlightning) {
-		bprint("Old lightning style: disabled\n");
+		bprint("Old lightning style: \bdisabled\b\n");
 		oldlightning = 0;
 		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_OLDLIGHTNING)));
 	}
 	else {
-		bprint("Old lightning style: enabled\n");
+		bprint("Old lightning style: \benabled\b\n");
 		oldlightning = 1;
 		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_OLDLIGHTNING));
+	}
+}
+
+void() ToggleForceNoclipTouch = {
+	float tmp1;
+	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	tmp1 = cvar("saved1");
+	if (forcenocliptouch) {
+		bprint("Touches in noclip + notarget mode: \bdisabled\b\n");
+		forcenocliptouch = 0;
+		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTINGS_FORCENOCLIPTOUCH)));
+	}
+	else {
+		bprint("Touches in noclip+notarget mode: \benabled\b\n");
+		forcenocliptouch = 1;
+		cvar_set("saved1", ftos(tmp1 | ALKSETTINGS_FORCENOCLIPTOUCH));
 	}
 }
 
@@ -499,21 +513,50 @@ ImpulseCommands
 
 void() ImpulseCommands = {
 	// weapon changing must not occur until attack_finished time has passed
+	float ret;
 	if (self.impulse >= 1 && self.impulse <= 8) {
-		if (time < self.attack_finished) return;
-		else W_ChangeWeapon();
+		//if (time < self.attack_finished) return;
+		
+		ret = W_ChangeSlot(self.impulse);
+		if (ret == WEAPONSTAT_NOAMMO)
+			sprint(self, "No ammo.\n");
+
+		if (ret == WEAPONSTAT_NOWEAPON)
+			sprint(self, "No weapon.\n");
 	}
+
 	if (self.impulse >= 224 && self.impulse <= 235) {
-		if (time < self.attack_finished) return;
-		else W_ChangeWeapon();
+		//if (time < self.attack_finished) return;
+
+		switch(self.impulse) {
+			case 225:	ret = W_ChangeWeapon(WEAPON_LASER_CANNON);
+			case 226:	ret = W_ChangeWeapon(WEAPON_CHAINSAW);
+			case 227:	ret = W_ChangeWeapon(WEAPON_PLASMA);
+			case 228:	ret = W_ChangeWeapon(WEAPON_LIGHTNING);
+			case 229:	ret = W_ChangeWeapon(WEAPON_PROXIMITY_GUN);
+			case 230:	ret = W_ChangeWeapon(WEAPON_GRENADE_LAUNCHER);
+			case 231:	ret = W_ChangeWeapon(WEAPON_AXE);
+		}
+
+		if (ret == WEAPONSTAT_NOAMMO)
+			sprint(self, "No ammo.\n");
+
+		if (ret == WEAPONSTAT_NOWEAPON)
+			sprint(self, "No weapon.\n");
+		
 	}
+
 	if (self.impulse == 10) {
-		if (time < self.attack_finished) return;
-		else CycleWeaponCommand();
+		//if (time < self.attack_finished) return;
+		W_CycleWeapon(1);
+		self.impulse = 0;
+		return;
 	}
 	if (self.impulse == 12) {
-		if (time < self.attack_finished) return;
-		else CycleWeaponReverseCommand();
+		//if (time < self.attack_finished) return;
+		W_CycleWeapon(-1);
+		self.impulse = 0;
+		return;
 	}
 
 	if (self.impulse == 9)
@@ -545,6 +588,8 @@ void() ImpulseCommands = {
 		ToggleOldGrenade();
 	if (self.impulse == 45)
 		ToggleOldLightning();
+	if (self.impulse == 46)
+		ToggleForceNoclipTouch();
 
 	if (self.impulse == 50)
 		CycleHUD();
@@ -580,28 +625,6 @@ void() ImpulseCommands = {
 
 		
 	self.impulse = 0;
-};
-
-/*
-============
-W_WeaponFrame
-
-Called every frame so impulse events can be handled as well as possible
-============
-*/
-void() W_WeaponFrame =
-{
-
-	if (self.impulse) //johnfitz
-		ImpulseCommands();
-
-	if (time < self.attack_finished)
-		return;
-
-// check for attack
-	if (self.button0 && time > self.connect_time + 0.2) {
-		W_Attack ();
-	}
 };
 
 

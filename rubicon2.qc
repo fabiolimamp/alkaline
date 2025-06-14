@@ -491,48 +491,47 @@ item_circuitboard
 ===============================================================================
 */
 
-void () circuitboard_touch =
-{
+void() circuitboard_touch = {
 	if (other.classname != "player")
-	{
 		return;
-	}
+
 	if (other.health <= 0)
-	{
 		return;
-	}
+	
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	stuffcmd (other, "bf\n");
-	if(!(self.spawnflags & 1)) {
+	if (!(self.spawnflags & 1)) {
 		sprint(other, "You got ");
 		sprint(other, self.netname);
 		sprint(other, "\n");
 	}
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
 	activator = other;
-	SUB_UseTargets ();
-	remove (self);
+	SUB_UseTargets();
+	remove(self);
 };
 
 /*QUAKED item_circuitboard (0 .5 .8) (-16 -16 -24) (16 16 32)
 collectible circuit board thing
 */
-void () item_circuitboard =
-{
+void() item_circuitboard = {
 	if (!SUB_InitEntity()) return;
 	
-	if(!self.mdl) self.mdl = "progs/fromitz.mdl";
+	if (!self.mdl) self.mdl = "progs/fromitz.mdl";
 	precache_model (self.mdl);
 	setmodel (self, self.mdl);
 
-	if(!self.netname) self.netname = "the 17-centimeter Fromitz board!";
+	if (!self.netname) self.netname = "the 17-centimeter Fromitz board!";
 	
-	if(!self.noise) self.noise = "misc/basekey.wav";//"items/protect.wav";
+	if (!self.noise) self.noise = "misc/basekey.wav";//"items/protect.wav";
 
 	precache_sound (self.noise);
 
 	self.touch = circuitboard_touch;
-	setsize (self, '-16 -16 -24', '16 16 32');
-	StartItem ();
+	setsize(self, '-16 -16 -24', '16 16 32');
+	StartItem();
 };
 
 /*
@@ -760,6 +759,9 @@ void() smoke_touch =
 
 	if (other.solid == SOLID_TRIGGER)
 		return;	// trigger field, do nothing
+
+	if (other.flags & FL_CLIENT && other.movetype == MOVETYPE_NOCLIP)
+		return;
 
 	if (self.dmg > 0 && other.health)
 	{
@@ -1097,6 +1099,9 @@ void() ladder_touch =
 		return;
 
 	if (self.estate != STATE_ACTIVE)
+		return;
+
+	if (other.movetype == MOVETYPE_NOCLIP)
 		return;
 	
 	if (other.waterlevel > 2)

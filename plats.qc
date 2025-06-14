@@ -96,6 +96,9 @@ void() plat_center_touch =
 {
 	if (other.classname != "player")
 		return;
+
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 		
 	if (other.health <= 0)
 		return;
@@ -463,7 +466,7 @@ void() train_next = {
 
 	if (self.classname == "misc_modeltrain") {
 		if (!(self.spawnflags & TRAIN_NOROTATE)) {
-			destang = vectoangles(targ.origin - self.origin);
+			destang = vectoangles2(targ.origin - self.origin);
 			if (self.spawnflags & TRAIN_ROTATEY) {
 				destang_x = self.angles_x;
 				destang_z = self.angles_z;

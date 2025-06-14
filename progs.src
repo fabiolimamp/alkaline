@@ -24,6 +24,8 @@ combat.qc
 cshift.qc
 items.qc
 keylock.qc
+
+weapons_animate.qc
 weapons_fire.qc
 weapons_use.qc
 impulses.qc
@@ -55,6 +57,7 @@ gravity.qc
 water.qc
 touchplate.qc
 jumppad.qc
+//cutscene.qc
 
 misc_scientist.qc
 

@@ -207,7 +207,7 @@ float(vector throw_spot, vector target_spot) JumpPadCalculateVertical {
 	local float dv;
 	
 	float grav = cvar("sv_gravity");
-	//if (self.enemy.gravity) grav *= self.enemy.gravity;
+	if (self.enemy.gravity) grav *= self.enemy.gravity;
 	
 	dv = throw_spot_z - target_spot_z;
 	return 400 - (1.6*dv);
@@ -261,7 +261,7 @@ float(float v_extra) JumpPadSimulateRun = {
 	
 	// Get world gravity value
 	float grav = cvar("sv_gravity");
-	//if (self.enemy.gravity) grav *= self.enemy.gravity;
+	if (self.enemy.gravity) grav *= self.enemy.gravity;
 
 	// Calculate the velocity we're testing here
 	float v_vertical = v_extra + JumpPadCalculateVertical(throw_spot, target_spot);

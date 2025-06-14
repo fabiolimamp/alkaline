@@ -76,7 +76,7 @@ void() PlayerRessurect =
 	self.movetype = MOVETYPE_WALK;
 	self.show_hostile = 0;
 	self.max_health = 100;
-	self.flags = FL_CLIENT;
+	self.flags |= FL_CLIENT;
 	self.air_finished = time + 12;
 	self.dmg = 2;   		// initial water damage
 	self.attack_finished = time;
@@ -86,22 +86,31 @@ void() PlayerRessurect =
 	self.view_ofs = '0 0 22';
 	
 	//lose powerups
-	self.items &~= IT_INVISIBILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
-	self.items |= IT_INVULNERABILITY;
+	self.items &~= IT_INVULNERABILITY | IT_INVISIBILITY | IT_SUIT | IT_QUAD | IT_TRIFECTA; 
 	self.super_damage_finished = 0;
 	self.radsuit_finished = 0;
 	self.invisible_finished = 0;
-	self.invincible_finished = time + 5;
+
+	if (!(self.flags & FL_GODMODE)) {
+		self.items |= IT_INVULNERABILITY;
+		self.invincible_finished = time + 5;
+		self.invincible_time = 1;
+	}
+	else {
+		self.invincible_finished = 0;
+		self.invincible_time = 0;
+	}
+
 	self.effects = 0;
-	self.invincible_time = 1;
 	self.trif_time = 0;
 	self.trif_finished = 0;
 
 	
 	StopBurning(self);
 
-	W_SetCurrentAmmo (TRUE);
-	player_stand1 ();
+	W_ChangeWeapon(self.weapon);
+	
+	SUB_CallAsSelf(player_stand1, self.animcontroller);
 
 	bprint (self.netname);
 	bprint (" was ressurected\n");
@@ -135,7 +144,7 @@ void() PlayerDeathThink =
 	}
 
 // johnfitz -- ressurection cheat
-	if (self.impulse == 154 && !deathmatch && !coop)
+	if ((self.impulse == 154 || self.flags & FL_GODMODE) && !deathmatch && !coop)
 	{
 		PlayerRessurect();
 	}
@@ -506,14 +515,10 @@ void() PlayerPreThink =
 	if (time < self.pausetime)
 		self.velocity = '0 0 0';
 
-	if (time > self.attack_finished && self.currentammo == 0)
-	{
-		if (self.weapon != WEAPON_AXE && self.weapon != WEAPON_CHAINSAW)
-		{
-			self.weapon = W_BestWeapon ();
-			W_SetCurrentAmmo (TRUE);
-		}
-	}
+	if (time > self.attack_finished && W_CheckWeapon(self.weapon, self) != WEAPONSTAT_AVAILABLE) 
+	//if (time > self.attack_finished && self.currentammo <= 0 && weaponsclass[getWeapon(self.weapon)].ammo_usage > 0)
+		W_ChangeWeapon(W_BestWeapon());
+	
 	
 	if (self.jboots_rechargelimit && (self.flags & FL_ONGROUND))		//jcr jboots prethink for onground checking
 		self.jboots_onground = TRUE;
@@ -922,6 +927,8 @@ void() PlayerPostThink =
 		return;
 		
 // do weapon stuff
+	if (self.impulse)
+		ImpulseCommands();
 
 	W_WeaponFrame ();
 
@@ -985,58 +992,6 @@ void() PlayerPostThink =
 	self.oldvelocity = self.velocity;
 };
 
-
-/*
-===========
-ClientConnect
-
-called when a player connects to a server
-============
-*/
-void() ClientConnect =
-{
-	bprint (self.netname);
-	bprint (" entered the game\n");
-	
-	dprint ("intermission_running: ");
-	dprint (ftos(intermission_running));
-	dprint ("\n");
-	
-	dprint ("nextmap: ");
-	dprint (nextmap);
-	dprint ("\n");
-	
-// a client connecting during an intermission can cause problems
-	if (intermission_running)
-		ExitIntermission ();
-};
-
-
-/*
-===========
-ClientDisconnect
-
-called when a player disconnects from a server
-============
-*/
-void() ClientDisconnect =
-{
-	if (gameover)
-		return;
-	// if the level end trigger has been activated, just return
-	// since they aren't *really* leaving
-
-	if (self.healthcontroller.classname == "healthcontroller") remove(self.healthcontroller);
-	if (self.lightningcontroller.classname == "lightningcontroller") remove(self.lightningcontroller);
-	
-	// let everyone else know
-	bprint (self.netname);
-	bprint (" left the game with ");
-	bprint (ftos(self.frags));
-	bprint (" frags\n");
-	sound (self, CHAN_BODY, "player/tornoff2.wav", 1, ATTN_NONE);
-	set_suicide_frame ();
-};
 
 /*
 ===========

@@ -22,6 +22,7 @@ float TELEDEST_KEEPPITCH = 2;
 float TELEDEST_STEALTH = 4;
 float TELEDEST_KEEPVELOCITY = 8;
 float TELEDEST_KEEPANGLE_NOOFFSET = 16;
+float TELEDEST_DONTDROP = 32;
 
 float TELEDEST_STYLE_NORMAL = 0;
 float TELEDEST_STYLE_INSTANT = 1;
@@ -219,6 +220,9 @@ void() teleport_touch =
 	if (self.estate != STATE_ACTIVE)
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	if (self.mapvar && !read_mapvar(self.mapvar))
 		return;
 	
@@ -269,6 +273,8 @@ void() teleport_touch =
 
 	// teleport destination's angle offset
 	tAngle = t.mangle;
+	//tAngle_y += self.mangle_y;
+	//dprint2(vtos(tAngle), "\n");
 
 	// entity is a client, so take the angles from v_angle instead
 	if (other.flags & FL_CLIENT)
@@ -276,29 +282,90 @@ void() teleport_touch =
 	else
 		pAngle = other.angles;
 
+	//pAngle_y += self.mangle_y;
+
 	// stores the original v_angle pitch for players
 	vAngleX = other.v_angle_x;
 
+	// t = teleport destination
+	// s = trigger teleport
+	// p = player
+	// f = final
+
+
+	/*
+	makevectors(self.mangle);
+	vector s_forward = v_forward;
+	vector s_right = v_right;
+	vector s_up = v_up;
+	*/
+	
+
+	tAngle = normalizeAngles180(tAngle);
+	vector tAngleOrig = tAngle;
+	tAngle -= normalizeAngles180(self.mangle);
+
+	//float tAngleOriginalYaw = tAngle_y;
+	//tAngle_y -= self.angles_y;
+
+
 	makevectors([tAngle_x, tAngle_y, tAngle_z]);
+	//makevectors([tAngle_x, 0, tAngle_z]);
 	vector t_forward = v_forward;
 	vector t_right = v_right;
 	vector t_up = v_up;
 
+	//vector f_forward = t_forward*s_forward_x - t_right*s_forward_y + t_up*s_forward_z;
+	/*
+	vector f_forward = s_forward*t_forward_x - s_right*t_forward_y + s_up*t_forward_z;
+	vector f_right = s_forward*t_right_x - s_right*t_right_y + s_up*t_right_z;
+	vector f_up = s_forward*t_up_x - s_right*t_up_y + s_up*t_up_z;
+	*/
+	/*
+	vector f_forward = rotateVectorAround('0 0 1', t_forward, self.mangle_y);
+	vector f_right = rotateVectorAround('0 0 1', t_right, self.mangle_y);
+	vector f_up = rotateVectorAround('0 0 1', t_up, self.mangle_y);
+	*/
+	vector f_forward = t_forward;
+	vector f_right = t_right;
+	vector f_up = t_up;
+	
 	makevectors([-pAngle_x, pAngle_y, pAngle_z]);
 	vector p_forward = v_forward;
 	vector p_right = v_right;
 	vector p_up = v_up;
 
+	/*
+	vector p_forward = rotateVectorAround('0 0 1', v_forward, self.mangle_y);
+	vector p_right = rotateVectorAround('0 0 1', v_right, self.mangle_y);
+	vector p_up = rotateVectorAround('0 0 1', v_up, self.mangle_y);
+	*/
+	/*dprint3("s_forward: ", vtos(s_forward*100), "\n");
+	dprint3("t_forward: ", vtos(t_forward*100), "\n");
+	dprint3("f_forward: ", vtos(f_forward*100), "\n");
+	dprint3("p_forward: ", vtos(p_forward*100), "\n");
+	*/
+
+
 	// offsets the current angle by the destination's mangle,
 	// if the destination is a instant brush, or the info_destination has a
 	// "keep angle" flag
-	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT) 
-		other.angles = vectoangles(t_forward*p_forward_x - t_right*p_forward_y + t_up*p_forward_z);
+	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT) {
+		
+		if (t.mangle != '0 0 0') {
+			other.angles = vectoangles2(f_forward*p_forward_x - f_right*p_forward_y + f_up*p_forward_z);
+		}
+		else
+			other.angles = pAngle;
+	}
 	else
 		other.angles = tAngle;
 
+	//other.angles_y -= self.mangle_y;
+	//other.velocity = rotateVectorAround('0 0 1', other.velocity, self.mangle_y);
+
 	if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT || t.spawnflags & TELEDEST_KEEPVELOCITY) 
-		other.velocity = t_forward*other.velocity_x - t_right*other.velocity_y + t_up*other.velocity_z;
+		other.velocity = f_forward*other.velocity_x - f_right*other.velocity_y + f_up*other.velocity_z;
 
 	// only players, projectiles and gibs maintain their pitch and roll angles
 	// everything else gets set to what it was before
@@ -307,8 +374,8 @@ void() teleport_touch =
 		other.angles_z = pAngle_z;
 	}
 
-
-	spawn_tdeath(t.origin, other);
+	if (other.flags & (FL_MONSTER + FL_CLIENT))
+		spawn_tdeath(t.origin, other);
 
 	// move the player and lock him down for a little while
 	if (!other.health && other.flags & FL_CLIENT)
@@ -328,12 +395,33 @@ void() teleport_touch =
 		// rotates destination point around mangle
 		if (tAngle) {
 			vector offs = other.origin - teleMid;
-			neworg = destMid + t_forward*offs_x - t_right*offs_y + t_up*offs_z;
+			neworg = destMid + f_forward*offs_x - f_right*offs_y + f_up*offs_z;
 		}
 		else
 			neworg = other.origin - teleMid + destMid;
 
-		setorigin(other, neworg);
+		// if the entity is onground, move the origin upwards a bit and drop it to avoid getting stuck at the destination
+		if (other.flags & FL_ONGROUND && !(t.spawnflags & TELEDEST_DONTDROP)) {
+			float frac = 1;
+			traceline(neworg + [0, 0, other.maxs_z], neworg + [0, 0, other.maxs_z] + '0 0 32', 0, other);
+			if (trace_fraction < frac) frac = trace_fraction;
+			traceline(neworg + [other.mins_x, other.mins_y, other.maxs_z], neworg + [other.mins_x, other.mins_y, other.maxs_z] + '0 0 32', 0, other);
+			if (trace_fraction < frac) frac = trace_fraction;
+			traceline(neworg + [other.maxs_x, other.mins_y, other.maxs_z], neworg + [other.maxs_x, other.mins_y, other.maxs_z] + '0 0 32', 0, other);
+			if (trace_fraction < frac) frac = trace_fraction;
+			traceline(neworg + [other.mins_x, other.maxs_y, other.maxs_z], neworg + [other.mins_x, other.maxs_y, other.maxs_z] + '0 0 32', 0, other);
+			if (trace_fraction < frac) frac = trace_fraction;
+			traceline(neworg + [other.maxs_x, other.maxs_y, other.maxs_z], neworg + [other.maxs_x, other.maxs_y, other.maxs_z] + '0 0 32', 0, other);
+			if (trace_fraction < frac) frac = trace_fraction;
+			
+			setorigin(other, neworg + [0, 0, frac * 32]);
+			entity oself = self;
+			self = other;
+			droptofloor();
+			self = oself;
+		}
+		else
+			setorigin(other, neworg);
 
 		// projectiles and gibs must have their models removed for a few frames
 		// otherwise effect trails may lerp when the destination is close enough
@@ -368,12 +456,17 @@ void() teleport_touch =
 	
 	// spawn a tfog flash in front of the destination
 	if (!(self.spawnflags & TELE_STEALTH || t.spawnflags & TELEDEST_STEALTH))
-		spawn_tfog (other.origin + 32 * t_forward);
+		spawn_tfog (other.origin + 32 * f_forward);
 
 	
 	if (other.classname == "player")
 	{
 		fog_setFromEnt(other, t);
+
+		if (t.style == TELEDEST_STYLE_INSTANT)
+			dprint3("Player teleported to instadestination ", t.targetname, "\n");
+		else
+			dprint3("Player teleported to destination ", t.targetname, "\n");
 
 		if (t.spawnflags & TELEDEST_KEEPANGLE || t.style == TELEDEST_STYLE_INSTANT){
 			// When a changing player's angles field on a frame with fixangle set to 1,
@@ -382,8 +475,9 @@ void() teleport_touch =
 			// +pitch in v_angle points up, and in angles points down
 			other.angles_x *= -1;
 
-			if (t.spawnflags & TELEDEST_KEEPPITCH)
+			if (t.spawnflags & TELEDEST_KEEPPITCH){
 				other.angles_x = vAngleX;
+			}
 			else {
 				// YEAH MATH
 				// Calculates the roll for the player's view angle,
@@ -392,7 +486,7 @@ void() teleport_touch =
 				// At this point angles already follow the v_angle
 				// convention, so no X inversion is necessary
 				makevectors(other.angles);
-				other.angles_z = atan2(v_right*t_up, v_up*t_up);
+				other.angles_z = vectoyaw2([v_up*f_up, v_right*f_up, 0]);
 			}
 		}
 
@@ -412,9 +506,9 @@ void() teleport_touch =
 
 		if (t.style != TELEDEST_STYLE_INSTANT && !(t.spawnflags & TELEDEST_KEEPANGLE)){
 			if (!(t.spawnflags & TELEDEST_KEEPVELOCITY))
-				other.velocity = t_forward * 300;
+				other.velocity = f_forward * 300;
 			else	
-				other.velocity = t_forward * vlen(other.velocity);
+				other.velocity = f_forward * vlen(other.velocity);
 		} 
 
 

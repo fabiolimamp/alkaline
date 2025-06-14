@@ -129,7 +129,7 @@ vector(vector a, vector b) cross_product = {
 	return ret;
 }
 
-vector(vector p1, vector p2, vector p3, vector p4, float u) bezierCurve = {
+vector(vector start, vector start_ctrl, vector end_ctrl, vector end, float u) bezierCurve = {
 	vector dest;
 
 	float a = (1-u)*(1-u)*(1-u);
@@ -137,9 +137,9 @@ vector(vector p1, vector p2, vector p3, vector p4, float u) bezierCurve = {
 	float c = 3*u*u*(1-u);
 	float d = u*u*u;
 
-	dest_x = a*p1_x + b*p2_x + c*p3_x + d*p4_x;
-	dest_y = a*p1_y + b*p2_y + c*p3_y + d*p4_y;
-	dest_z = a*p1_z + b*p2_z + c*p3_z + d*p4_z;
+	dest_x = a*start_x + b*start_ctrl_x + c*end_ctrl_x + d*end_x;
+	dest_y = a*start_y + b*start_ctrl_y + c*end_ctrl_y + d*end_y;
+	dest_z = a*start_z + b*start_ctrl_z + c*end_ctrl_z + d*end_z;
 
 	return dest;
 }
@@ -265,7 +265,7 @@ vector(vector anga, vector angb) anglesdif =
 }
 
 float(vector ang, vector base_ang, vector offset) isInAngle = {
-	if (angledif(ang_x, base_ang_x) > offset_x || angledif(ang_y, base_ang_y) > offset_y)
+	if (angledif(ang_x, anglemod180(base_ang_x)) > offset_x || angledif(ang_y, anglemod180(base_ang_y)) > offset_y)
 		return FALSE;
 	else
 		return TRUE;
@@ -526,7 +526,10 @@ float(float y, float x) normalized_atan2 = {
 }
 
 
-// high precision vectoyaw
+
+// high precision vectoyaw/atan2
+// (bxy + y^2) / (x^2 + 2bxy + y^2)
+// b = 0.596227
 float(vector vec) vectoyaw2 = {
     float b = 0.596227;
 
@@ -536,8 +539,8 @@ float(vector vec) vectoyaw2 = {
 
     // Determine the quadrant offset
     float q;
-    if (ux_s > 0 && uy_s > 0) q = 0;
-    else if (ux_s < 0 && uy_s > 0) q = 1;
+    if (ux_s >= 0 && uy_s >= 0) q = 0;
+    else if (ux_s < 0 && uy_s >= 0) q = 1;
     else if (ux_s < 0 && uy_s < 0) q = 2;
     else q = 3;
 
@@ -552,7 +555,41 @@ float(vector vec) vectoyaw2 = {
     return (q + uatan_2q) * 90;
 }
 
+// high precision vectoangles
+vector(vector vec) vectoangles2 = {
+	float yaw, forward, pitch;
+	
+	if (vec_x == 0 && vec_y == 0)
+	{
+		yaw = 0;
+		if (vec_z > 0) pitch = 90;
+		else pitch = 270;
+	}
+	else {
+		yaw = vectoyaw2(vec);
+		forward = vlen([vec_x, vec_y, 0]);
+		pitch = vectoyaw2([forward, vec_z, 0]);
+	}
+	return [pitch, yaw, 0];
+}
+
 
 inline void(vector vec) makevectors_angles = {
 	makevectors([-vec_x, vec_y, vec_z]);
+}
+
+// rotates B around A
+vector(vector b, vector a, float r) rotateVectorAround =
+{
+	float sin, cos, dot;
+	vector cross, temp;
+	
+	cross = cross_product(a, b);
+	dot = a*b;
+	
+	temp = SinCos(r);
+	sin = temp_x;
+	cos = temp_y;
+	
+	return b*cos + cross*sin + a*dot*(1-cos);
 }

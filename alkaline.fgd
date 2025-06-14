@@ -1138,7 +1138,7 @@ model({{
 	spawnflags & 4 -> {"path":"progs/spiderbot.mdl", "frame":10},
 	{"path":"progs/spiderbot.mdl", "frame":0}
 }})= monster_spiderbot :
-"Spiderbot, 30 health points." [
+"Spiderbot, 40 health points." [
 	spawnflags(flags) =	[
 		4 : "Start upright" : 0
 	]
@@ -1172,7 +1172,7 @@ model({{
 @PointClass base(Monster) size(-16 -16 -24, 16 16 40) model({"path":"progs/misc_scientist.mdl"}) = misc_scientist :
 "Scientist, 15 health points. Doesn't fight.
 Set 'wait' and 'angle' on path_corners near computers, to make him stop and work. 
-Set 'Pacifist' spawn flag (131072) to totally ignore the player.
+Set 'Pacifist' spawnflag (131072) to totally ignore the player.
 Doesn't count into total monster count, unless you set 'Count After Spawn' flag."
 []
 
@@ -1223,8 +1223,9 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 // misc
 //
 
-@PointClass base(Appearflags, Targetname) = air_bubbles : "Air bubbles" []
-@PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning" []
+@PointClass base(Appearflags, Targetname) = air_bubbles : "Air bubble generator." []
+@PointClass base(Appearflags, Targetname) = event_lightning : "Chthon's lightning. Only meant to be used with the standard hard-coded Chthon setup in e1m7.
+If you want a general-usage lightning bolt, use the misc_lightning_start/relay/end entities." []
 
 @PointClass base(Appearflags, Targetname, Target) size(0 0 0, 32 32 64) model({"path":"maps/b_explob.bsp"}) = misc_explobox : "Large nuclear container" [
 	health(integer) : "Health" : 20
@@ -1249,7 +1250,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 //	model(string)
 //]
 
-@PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter" 
+@PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter. Fires once every time it's triggered." 
 [	
 	angle(integer) : "Angle"
 	dmg(integer) : "Custom damage" : : "Custom projectile damage. Defaults:
@@ -1272,7 +1273,7 @@ Set spawnflag 'Blinking' if you want the beacon to blink (set style to 16 to mat
 	]
 ]
 
-@PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter" [
+@PointClass base(trap_spikeshooter) color(220 150 150) = trap_shooter : "Continuous shooter. Once triggered, keeps firing continuously until triggered again." [
 	wait(float) : "Firing interval" : "1.0"
 	delay(integer) : "Delay before firing first spike, so multiple shooters can be stagered"
 	rand(integer) : "Additional random firing interval and delay"
@@ -1455,7 +1456,8 @@ Use the console commands 'viewmodel', 'viewframe', 'viewnext', 'viewprev' to vie
 []
 
 @Pointclass base(Targetname, Appearflags) color(0 128 224) size(16 16 16) = target_explosion : 
-"Causes explosions, same appearance as a rocket/grenade blast." 
+"Spawns an explosion, same appearance as a rocket/grenade blast. Doesn't deal damage by default.
+For reference, player's rockets and grenades deal around 100 damage, while the ogre's grenade deals 40." 
 [
 	count(integer) : "Repeat count" : 1
 	delay(string) : "Delay before first blast" : "0"
@@ -1677,15 +1679,16 @@ If the target entity changes its default behavior when 'targetname' is set (such
 
 
 
-@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound_repeat : "Hipnotic sound player
+@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 150 35) = play_sound_repeat : "Periodic sound player
 
 Plays a one off sound on a periodic basis.
-Do NOT use looped sounds with this entity. For looped sounds use ambient_general.
-volume: how loud (range is 0.1 to 1 default is 1 = full volume)
-noise: path of sound to play
+Not meant to be used for looped ambients. For this, use the ambient_general entity.
+
+volume: 0.1 to 1. Default is 1 = full volume.
+noise: path of sound to play, not including the /sound/ folder part. EG 'misc/talk.wav' for the message beep sound
 wait: random time between sounds (default 20)
 delay: minimum delay between sounds (default 2)
-impulse: sound channel 0-7 (0 automatic is default)
+impulse: sound channel. Default is 0 = Automatic.
 speed: attenuation factor
 
 NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND folder.)"
@@ -1699,26 +1702,37 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 			3  : "Static (341u)"
 		]
 		volume(integer) : "Volume (0 - 1)" : 1
-		impulse(integer) : "Channel (0 - 7) Automatic" : 0
+		impulse(integer) : "Channel (0 to 7). Leave at 0 for Automatic" : 0
 		wait(integer) : "Random time between sounds" : 20
 		delay(integer) : "Minimum time between sounds" : 2
 		spawnflags(flags) =	[
 			1 : "Start off" : 0
 		]
 	]
-@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 200 35) = play_sound_triggered : "Custom sound trigger
 
-toggle (spawnflags): stopped when triggered again
-volume: how loud (range is 0.1 to 1 default is 1 = full volume)
-noise: path of sound to play
-impulse: sound channel 0-7 (0 automatic is default)
+@PointClass base(Targetname, Appearflags) size (16 16 24) color(30 200 35) = play_sound_triggered : "Custom sound player. Plays a clip a single time when triggered.
+
+
+volume: 0.1 to 1. Default is 1 = full volume.
+noise: path of sound to play, not including the /sound/ folder part. EG 'misc/talk.wav' for the message beep sound
+impulse: sound channel. Default is 0 = Automatic.
 speed: attenuation factor
+
+spawnflags:
+- Toggle: stops sound when triggered again.
+- Looped: use in conjuction with the 'toggle' flag to create a looped sound you can toggle on/off.
+- Play on activator: sound source will be whatever entity that's the activator (a monster for example).
+- Play on player: forces the sound source to be a player - either the activator, or if the activator isn't a player, it'll look for the closest player.
+- Play on all players: play the sound for all players.
 
 NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND folder.)"
 	[
 		spawnflags(flags) = [
 			1 : "Toggle" : 0
 			2 : "Looped" : 0
+			4 : "Play on activator" : 0
+			8 : "Play on player" : 0
+			16 : "Play on all players" : 0
 		]
 		noise(string) : "Sound file to play"
 		speed(choices) : "Attenuation of sound" : 1 =[
@@ -1727,8 +1741,8 @@ NOTE - Sound files must be in the SOUND folder (or a sub folder under the SOUND 
 			2  : "Idle (512u)"
 			3  : "Static (341u)"
 		]
-		volume(integer) : "Volume (0 - 1)" : 1
-		impulse(integer) : "Channel (0 - 7) Automatic" : 0
+		volume(integer) : "Volume (decimal in the 0-1 range)" : 1
+		impulse(integer) : "Channel (0 to 7). Leave at 0 for Automatic" : 0
 		//wait(integer) : "Wait before retrigger" : 0 //Quoth2
 	]
 
@@ -1814,10 +1828,12 @@ The door now has built-in support for switchable shadows, that fade in/out autom
         64: "Doom-style unlock" : 0
         128: "Sound during delay" : 0
         16384: "Platinum Key required" : 0
+        32768: "Non-solid" : 0
         65536: "Expanded trigger field X" : 0
         131072: "Expanded trigger field Y" : 0
         262144: "Reduced trigger field X" : 0
         524288: "Reduced trigger field Y" : 0
+        1048576: "No stop sound" : 0
 	]
 	_switchableshadow(choices) : "Switchable shadow" : 0 : "Enables dynamic shadows that fade on/off when the door moves." = [
 		0: "No"
@@ -1960,7 +1976,7 @@ If switchable shadows are on, they'll fade together as well.
 	]
 ]
 
-@SolidClass base(ModelLight, Alpha) = func_illusionary : "Static model" []
+@SolidClass base(ModelLight, Alpha) = func_illusionary : "Non-solid static brush." []
 
 @SolidClass base(Angle, Targetname, Target, ModelLight, Message, Blood) = func_button : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once. You can directly set a custom movement vector with the 'movedir' key.
 
@@ -1971,6 +1987,7 @@ When you have more than one func_button with the same 'groupname', only one butt
 [
 	speed(integer) : "Speed (units per second)" : 40
 	lip(integer) : "Lip" : 4
+	distance(integer) : "Movement distance. Use alternatively to lip"
 	health(integer) : "Health (shootable if > 0)"
 	noise(string) : "Custom pressing sound (overrides 'sounds' setting)"
 	sounds(choices) : "Sounds" = 
@@ -1993,8 +2010,9 @@ When you have more than one func_button with the same 'groupname', only one butt
 	]
 ]
 
-@SolidClass base(Targetname, Target, ModelLight, Message) = func_touchplate : "When a button is touched, it moves some distance in the direction of its angle, triggers all of its targets, waits some time, then returns to its original position where it can be triggered again. Giving it a 'wait -1' value makes it pressable only once.
-You can directly set a custom movement vector with the 'movedir' key.
+@SolidClass base(Targetname, Target, ModelLight, Message) = func_touchplate : "Touchplate button. Place it on the ground, and whenever a player or a monster steps on it, it'll fire all its targets once, and not fire again until it gets unpressed and pressed again.
+
+You can optionally set it to fire only 'target1'/'target2' when stepping on, and 'target3'/'target4' when stepping off.
 " 
 [
 	speed(integer) : "Speed (units per second)" : 40
@@ -2307,7 +2325,7 @@ Other than that, this entity functions like a normal button.
 	]
 ]
 
-@SolidClass = func_bossgate : "Boss gate" []
+@SolidClass = func_bossgate : "Boss gate. Solid brush that disappears if you start the map while carrying all the 4 runes. Used to gate the final boss entrance portal." []
 
 
 @SolidClass color(128 128 230) base(ModelLight) = func_detail : "Detail brush. Ignored by vis so can speed up compile times consideratbly. Also allows you to set new compiler lighting options on brushes. DOES NOT SEAL MAPS FROM VOID" []
@@ -2454,12 +2472,32 @@ Flags:
 	]
 ]
 
+@PointClass base(trigger_changelevel) = target_changelevel : "Point entity version of change level trigger.
+
+If you set the 'message' field, an episode-ending screen will be show with the defined text.
+Horizontal space is limited to 40 characters, so you must place linefeeds (\n) into your text.
+
+By giving the changelevel a 'count' value, the next map will start on a info_player_start/info_player_coop with a matching 'count' field. If no matching player start ID is found, it'll fall back to the first start spot found.
+
+You can define a mapvar to be automatically enabled when the level changes through the 'jump_flag' key.
+
+Flags:
+- 'No intermission': skips level stats and loads the next map instantly.
+- 'Reset items on map change': clears players' inventory before loading the next map.
+"
+[]
+
 @SolidClass base(Appearflags, Trigger, TriggerWait) = trigger_once : "Trigger: Activate once.
+
+If you set an 'angle' (or 'angles') the trigger will only fire when the player is facing the set direction. To set angle 0, use 360. This field must be added manually, otherwise Trenchbroom might set it inadvertently.
+
+The 'view_ofs' key controls the maximum offset from the set angle in each axis that players will be able to fire the trigger - default is '90 90 0', which means 90 degrees up and down, and 90 degrees to the left and to the right.
 
 Setting a 'health' value makes it solid and shootable.
 "
 [
 	health(integer) : "Health"
+	view_ofs(string) : "Maximum angle offset" : : "For when you have an 'angle' set. Offset angle from the central point in each direction, in 'pitch yaw 0' format"
 	spawnflags(flags) = [
 		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
@@ -2469,11 +2507,17 @@ Setting a 'health' value makes it solid and shootable.
 
 Will keep on firing while the player is touching the trigger, on the interval defined in 'wait'.
 
+If you set an 'angle' (or 'angles') the trigger will only fire when the player is facing the set direction. To set angle 0, use 360. This field must be added manually, otherwise Trenchbroom might set it inadvertently.
+
+The 'view_ofs' key controls the maximum offset from the set angle in each axis that players will be able to fire the trigger - default is '90 90 0', which means 90 degrees up and down, and 90 degrees to the left and to the right.
+
 Setting a 'health' value makes it solid and shootable.
 " 
 [
 	wait(float) : "Wait before reset" : "4"
-	health(integer) : "Health"
+	health(integer) : "Health" : : "Makes the trigger a solid shootable block."
+	count(integer) : "Maximum usage count" : : "Sets a maximum usage count."
+	view_ofs(string) : "Maximum angle offset" : : "For when you have an 'angle' set. Offset angle from the central point in each direction, in 'pitch yaw 0' format"
 	spawnflags(flags) = [
 		1: "No touch" : 0
 		128: "Monster-triggerable" : 0
@@ -2543,20 +2587,23 @@ Using the destination's 'count' field, you can define which order they'll be sel
 	count(integer) : "Group order"
 ]
 
-@SolidClass base(Targetname, Fog, Appearflags) = trigger_teleport_instadestination : "Instant teleport destination.
+@SolidClass base(Targetname, Fog, Appearflags) = trigger_teleport_instadestination : "Instant teleport destination. 
+This ideally should match the same size and shape of the trigger_teleport brush.
+
+- 'mangle' field: sets an optional angle offset compared to the trigger_teleport that entities will be turned by. This will make stuff go out at a different orientation than the teleport trigger, including pointing up/downwards, or with a side roll. Uses the 'pitch yaw roll' notation, but you can just follow Trenchbroom's white directional arrow when rotating the instadestination brush.
 
 - 'count' field: ordering when the trigger_teleport targets multiple info_teleport_destination entities. Every destination with the same targetname must have a unique count value if the trigger is set to 'first' or 'cycle' modes (not needed for 'random'). See the trigger_teleport's description for more details.
 
-- 'Free angle' flag: Entities will keep their original angle and velocity direction upon teleporting, instead of spawning in always at the same set angle. You can offset the spawn angle through this entity's 'mangle' field ('pitch yaw 0').
+- 'Show teleport effect' flag: Draw the teleport fog effect (which is disabled by default for teleport instadestinations).
 
-- 'Stealth teleport in' flag: Don't draw the teleport fog effect when spawning in at this spot.
+- 'Don't force drop to floor' flag: By default, if the player is onground when teleporting in, they'll be forced to the ground after going out at the destination, in order to avoid getting stuck. In case you deliberately want to teleport the player to a mid-air position, this flag disables this behavior.
 " [
 	count(integer) : "Group order"
-	mangle(string) : "Angle offset"
+	mangle(string) : "Angle offset" : : "Check detailed description below."
 	spawnflags(flags) = [
-		2: "Preserve pitch angle"
-		4: "Show teleport effect"
-		//8: "Preserve velocity"
+		2: "Preserve pitch angle" : 0 : "Makes players maintain their original pitch view angles even when the destination has a pitch offset."
+		4: "Show teleport effect" : 0 : "Draw the teleport fog effect (which is disabled by default for teleport instadestinations)."
+		32: "Don't force drop to floor" : 0 : "By default, if the player is onground when teleporting in, they'll be forced to the ground after going out at the destination, in order to avoid getting stuck. In case you deliberately want to teleport the player to a mid-air position, this flag disables this behavior."
 	]
 ]
 
@@ -2624,6 +2671,14 @@ Spawnflags
 		8192 : "Not in Nightmare"
 	]
 ]
+
+
+@PointClass base(Appearflags, Targetname, Target) = trigger_random : "Fires an entity at random.
+
+For each of the 'target' fields, trigger_random will look for all entities with a matching targetname and fire only one entity at random. For example, if you have 'target' = 'myname', then it'll look for every entity in the map whose targetname is 'myname' and fire only one of them. 
+"
+[]
+
 @SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_monsterjump : "Trigger monster jump.
 
 Can be set an optional use limit.
@@ -2679,26 +2734,28 @@ The counter can be optionally not be reset after triggering it again (spawnflag 
 [
 	spawnflags(flags) = [ 1: "Never reset counter" : 0 ]
 	count(integer) : "Firing count" : 0 : "Will fire this amount of times after triggered. Default is 0, repeat forever."
-	wait(integer) : "Repeat interval" : 2 
+	wait(integer) : "Repeat interval" : 2
+	rand(float) : "Additional random time" : 0
 ]
 
 @PointClass base(Appearflags, Targetname, TargetsOnly) = target_setstate : "Changes an entity's state.
 Entities in a disabled state won't execute its main function, depending on context.
 Triggers won't fire its targets. Doors won't respond to triggering and touching. Buttons will remain in a pressed position and can't be fired.
-The 'style' key defines if target_setstate will toggle entities' current state, force them to active, or to inactive.
-You can force the target entities to spawn disabled/locked/invisible with spawnflag 1.
+The 'style' key defines the setstate action. It can toggle the current state, force them to active/inactive, or force/toggle visibility.
+You can force the target entities to spawn disabled/locked/invisible with spawnflag 1. Whether the entity will be invisible or disabled depends on the selected setstate's action.
 " 
 [
 	spawnflags(flags) = [
-		1: "Targets start disabled" : 0
+		1: "Targets start disabled/invisible" : 0
 		2: "Force all doors to close" : 0
 		4: "Don't reset button state" : 0
 	]
-	style(choices) : "Setstate style" = [
-		0 : "Toggle current state"
+	style(choices) : "Action type" = [
+		0 : "Toggle active"
 		1 : "Force active"
 		2 : "Force inactive"
-		2 : "Make invisible"
+		3 : "Toggle visible"
+		4 : "Force invisible"
 	]
 ]
 
@@ -2765,7 +2822,7 @@ Also, the state of the last evaluation is stored in this entity's 'state' field 
 
 
 @SolidClass base(Appearflags, Targetname, SingleTarget, TriggerWait) = trigger_everything : "
-A no-holds-barred touchable trigger. Everything triggers it. Players, monsters, projectiles, gibs, even solid entities like doors and plats.
+A no-holds-barred touchable trigger. Everything triggers it. Players, monsters, projectiles, gibs.
 
 It can only fire targets matching its 'target' field. Doesn't have support for the 'target2-4' fields, neither 'message' nor 'killtarget'. Useful when used in conjunction with the trigger_filter point entity to filter out its firing.
 
@@ -2780,7 +2837,7 @@ By default it'll fire for each and every registered touch, even if simultaneous.
 
 
 @PointClass base(Appearflags, Targetname, TargetsOnly) = target_setcount : "Changes the targeted entity's 'count' field. Targets both targetname and targetname2 fields.
-Can be used with a trig'ger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
+Can be used with a trigger_filter to dinamically change its comparing value, or to reset/change a trigger_counter's current use count.
 
 By selecting into the 'style' field, you can either replace the current value with a new one, add/subtract to it (by using a positive or negative 'count'), or toggle the current value (if 'count' is 0 it gets set to 1, and if it's any other value it changes back to 0).
 " 
@@ -2850,6 +2907,7 @@ It respect the door's wait time and enabled/disabled state, but will move even i
 	spawnflags(flags) = [
 		1: "Once Only" : 0 
 		2: "Silent" : 0
+		8: "Tunnel center" : 0 : "Suck players towards the center of the brush in the direction of travel to avoid them getting hung up on corners"
 	]
 	speed(integer) : "Speed of push" : 1000
 	noise(string) : "Sound" : "ambience/windfly.wav"
@@ -2887,8 +2945,9 @@ Can be given an optional float sound.
 	delay(float) : "Sound loop time (when there's a sound set)" : "1"
 ]
 
-@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_jumppad : "
-"
+@SolidClass base(Appearflags, Targetname, TriggerWait) = trigger_jumppad : "Jump pad trigger. Lets you set an info_notnull point entity as destination, and players and monsters will be thrown exactly at it, similar to Quaked 3's pads. The jump arc is calculated automatically in order to avoid any obstacles in the way in the best way possible. So you can set the destination to be on the other side of a high wall for example, and the jump will be in a high arc.
+
+Check the docs for a more detailed description."
 [
 	spawnflags(flags) = [
 		1: "Don't affect players" : 0 
@@ -2909,6 +2968,19 @@ Can be given an optional float sound.
 ]
 
 
+@PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_heal : "Heals any entity activating it, or the entities defined in the target-target4 fields. Health progressively increases over a set period. 
+'healamount' sets the total heal to be applied at each triggering.
+'speed' sets the total time it takes for heal to be progressively applied.
+" 
+[
+	healamount(integer) : "Heal amount" : 10 : "Total health to be applied at each triggering"
+	speed(float) : "Heal time" : "1"
+	spawnflags(flags) = [
+		1: "Don't heal players" : 0 
+		2: "Don't heal monsters" : 0
+	]
+]
+
 @PointClass base(Appearflags, Targetname, TargetsOnly) color(128 128 128) = target_hurt : "Trigger hurt. Hurts any entity activating it, or the entities defined in the target-target4 fields.
 'dmg' sets the total damage to be inflicted.
 'speed' sets the total time it takes for damage to be progressively applied.
@@ -2921,7 +2993,6 @@ Can be given an optional float sound.
 		2: "Don't hurt monsters" : 0
 	]
 ]
-
 
 @SolidClass base(Appearflags, Targetname, FogShift, TriggerWait) = trigger_fogblend : 
 "Trigger: Fog Blend
@@ -3146,4 +3217,16 @@ Mapvars are miscellaneous flags (only true/false values) that can be freely used
 		2 : "Set flag to on/true"
 		3 : "Toggle flag value"
 	]
+]
+
+@SolidClass base(Appearflags, Targetname) = trigger_mirror : "Mirror!
+
+Generates a reflection of all point entities that's inside the trigger in the direction 'angle' is facing. Reflects monsters, projectiles, items, gibs, everything.
+
+Only works with an axial 'angle' value - 0/90/180/-90 for horizontal reflections, -1 for ceiling, and -2 for floor.
+
+If you have two trigger_mirror entities whose reflections are simultaneously visible, you need to give one of them a 'count' value of 2, otherwise you might have issues.
+"
+[
+	count(int) : "Reflection ID" : 1 : "If you have two trigger_mirror entities whose reflections are simultaneously visible, you need to give one of them a 'count' value of 2, otherwise you might have issues."
 ]

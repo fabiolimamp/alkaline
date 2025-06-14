@@ -17,6 +17,7 @@ alias tracers "impulse 42;toggleconsole;wait;toggleconsole"
 alias playertracers "impulse 43;toggleconsole;wait;toggleconsole"
 alias oldgrenade "impulse 44;toggleconsole;wait;toggleconsole"
 alias oldlightning "impulse 45;toggleconsole;wait;toggleconsole"
+alias forcenocliptouch "impulse 46;toggleconsole;wait;toggleconsole"
 alias resetalkalinesettings "impulse 40;toggleconsole;wait;toggleconsole"
 
 

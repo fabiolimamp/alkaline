@@ -135,6 +135,11 @@ void() worldspawn =
 		oldlightning = 1;
 	}
 
+	if (options & ALKSETTINGS_FORCENOCLIPTOUCH) {
+		bprint("\bAlkaline options:\b Touches in noclip + notarget mode \benabled\b. Type \"forcenocliptouch\" to disable it.\n");
+		forcenocliptouch = 1;
+	}
+
 	if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
 		self.originalmonsters = 1;
 
@@ -144,6 +149,7 @@ void() worldspawn =
 	}
 
 	startskill = cvar("skill");
+	skill = startskill;
 	developer = cvar("developer");
 
 	world_sounds = &world.sounds;
@@ -313,7 +319,7 @@ void() worldspawn =
 	precache_model ("progs/v_alkaxe20fps.mdl");
 	precache_model ("progs/v_shot40fps.mdl");
 	precache_model ("progs/v_nail_alk40fps.mdl");
-	precache_model ("progs/v_nail3.mdl");
+	precache_model ("progs/v_nail3_v2.mdl");
 	precache_model ("progs/v_rock_40fps.mdl");
 	precache_model ("progs/v_shot2_40fps.mdl");
 	precache_model ("progs/v_nail2.mdl");
@@ -446,7 +452,12 @@ void() LoadSaveGameCallback =
 	e = spawn();
 	e.think = ResetPlayerLoopingSounds;
 	e.nextthink = time + 0.1;
-	
+
+	/*
+	dprint3("\n\n\nLoaded game skill: ", ftos(skill), "\n");
+	dprint3("Current skill: ", ftos(cvar("skill")), "\n");
+	dprint3("Start skill: ", ftos(startskill), "\n\n\n");
+	*/
 	cvar_set("skill", ftos(skill));
 
 	FindAndReadGlobalGravity();
@@ -488,7 +499,7 @@ void() StartFrame =
 		CreateBackstop();
 	}
 	
-
+	//dprint5("Server: ", ftos(1/frametime), " fps (", ftos(frametime * 1000), "ms)\n");
 };
 
 void() EndFrame = {

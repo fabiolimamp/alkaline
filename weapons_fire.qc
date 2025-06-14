@@ -1,22 +1,33 @@
 /*
+===================================================================================================
+===================================================================================================
+										weapons_fire.qc
+===================================================================================================
+===================================================================================================
+
+Code responsible for generating shots from the player's weapons. No ammo management or viewmodel
+animation should done here at all.
+
+*/
+
+
+
+/*
 ================
 W_FireAxe
 ================
 */
-void() W_FireAxe =
-{
-	local	vector	source;
-	local	vector	org;
-
+void() W_FireAxe = {
+	
 	makevectors (self.v_angle);
-	source = self.origin + self.view_ofs - v_up*6;
+	vector source = self.origin + self.view_ofs - v_up*6;
 	traceline (source, source + v_forward*64, FALSE, self);
 	if (trace_fraction == 1.0)
 		return;
 	
 	self.show_hostile = time + 1; // hit something, so alert monsters
 
-	org = trace_endpos - v_forward*4;
+	vector org = trace_endpos - v_forward*4;
 
 	if (trace_ent.takedamage) {
 		trace_ent.axhitme = 1;
@@ -382,7 +393,6 @@ void() W_FireShotgun =
 
 	self.punchangle_x = -2;
 	
-	self.currentammo = self.ammo_shells = self.ammo_shells - 1;
 	dir = aim (self, 100000);
 
 	//if (cvar("scratch3") == 1)
@@ -401,17 +411,10 @@ void() W_FireSuperShotgun =
 {
 	local vector dir;
 
-	if (self.currentammo == 1)
-	{
-		W_FireShotgun ();
-		return;
-	}
-		
 	sound (self ,CHAN_WEAPON, "weapons/shotgn2.wav", 1, ATTN_NORM);	
 
 	self.punchangle_x = -4;
 	
-	self.currentammo = self.ammo_shells = self.ammo_shells - 2;
 	dir = aim (self, 100000);
 	
 	//if (cvar("scratch3") == 1)
@@ -505,7 +508,6 @@ void(vector org, vector dir) launch_rocket = {
 };
 
 void() W_FireRocket = {
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
 	
 	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
 
@@ -632,7 +634,7 @@ void() UpdateLightning = {
 			// so calculating an angle out of that gives a borked result.
 			// when that happens the previous segment's angles will be reused
 			if (sg.origin - prevsg.origin != '0 0 0') 
-				ang = vectoangles(sg.origin - prevsg.origin);
+				ang = vectoangles2(sg.origin - prevsg.origin);
 
 			prevsg.angles_x = ang_x;
 			prevsg.angles_y = ang_y;
@@ -678,7 +680,7 @@ void(entity pl, vector org, vector dest, float hit) DrawLightning = {
 	for (float i = 0; i < ct.count; i++) {
 		sg = spawn();
 		prevsg.sibling = sg;
-
+		sg.movetype = MOVETYPE_NOCLIP;
 		setmodel(sg, "progs/bolt2.mdl");
 		setsize(sg, VEC_ORIGIN, VEC_ORIGIN);
 		setorigin(sg, org + dir * 30 * i);
@@ -737,17 +739,11 @@ void() W_FireLightning = {
 	float cells;
 	entity victim;
 
-	if (self.ammo_cells < 1) {
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo(TRUE);
-		return;
-	}
-
 	// explode if under water
 	if (self.waterlevel > 1 && self.flags & FL_INWATER) {
 		cells = self.ammo_cells;
 		self.ammo_cells = 0;
-		W_SetCurrentAmmo(TRUE);
+		W_UpdateCurrentAmmo();
 		victim = findradius(self.origin, 35*cells);
 		
 		while (victim) {
@@ -767,8 +763,6 @@ void() W_FireLightning = {
 		self.t_width = time + 0.6;
 	}
 	self.punchangle_x = -2;
-
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
 
 	makevectors(self.v_angle);
 	org = self.origin + self.view_ofs + v_forward*32 - v_up*12;
@@ -833,9 +827,7 @@ W_FireGrenade
 void() W_FireGrenade =
 {
 	local	entity missile;
-	
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
-	
+		
 	sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
 
 	self.punchangle_x = -2;
@@ -1036,7 +1028,26 @@ void(vector org, vector dir) launch_spike =
 	newmis.velocity = dir * 1000;
 };
 
-void() W_FireSuperSpikes =
+float lastshots[9];
+float lastshotidx;
+
+void() registerShot = {
+	lastshotidx = wrap(lastshotidx + 1, 0, 8);
+	lastshots[lastshotidx] = time;
+
+	float i = wrap(lastshotidx + 1, 0, 8);
+	float prevTime, totalTime;
+	while (i != lastshotidx) {
+		prevTime = lastshots[i];
+		i = wrap(i + 1, 0, 8);
+		totalTime += lastshots[i] - prevTime;
+	}
+
+	dprint3("Average: ", ftos(totalTime/8*1000), "ms\n");
+
+}
+
+void(float ox) W_FireSuperSpikes =
 {
 	local vector	dir;
 	vector org;
@@ -1045,18 +1056,19 @@ void() W_FireSuperSpikes =
 	makevectors (self.v_angle);
 
 	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
-	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 2;
-	dir = aim (self, 1000);
 
-	org = self.origin + self.view_ofs - v_up * 6;//'0 0 16';
+
+	org = self.origin + self.view_ofs - v_up * 6 + v_right*ox;//'0 0 16';
+	dir = aim (self, 1000);
 
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_spike (org + v_forward * 24 * trace_fraction , dir);
 
 	newmis.touch = superspike_touch;
 	setmodel (newmis, "progs/s_spike.mdl");
-	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);
+
+	//registerShot();
 	//self.punchangle_x = -2;
 };
 
@@ -1064,33 +1076,19 @@ void(float ox) W_FireSpikes =
 {
 	local vector	dir;
 	vector org;
-//	local entity	old;
 	
-	if (self.ammo_nails >= 2 && self.weapon == WEAPON_SUPER_NAILGUN)
-	{
-		W_FireSuperSpikes ();
-		return;
-	}
-
-	if (self.ammo_nails < 1)
-	{
-		self.weapon = W_BestWeapon ();
-		W_SetCurrentAmmo(TRUE);
-		return;
-	}
-
 	makevectors (self.v_angle);
 
 	sound (self, CHAN_WEAPON, "weapons/rocket1i.wav", 1, ATTN_NORM);
-	self.attack_finished = time + 0.2;
-	self.currentammo = self.ammo_nails = self.ammo_nails - 1;
+
 
 	org = self.origin + self.view_ofs - v_up * 8 + v_right*ox;
 	dir = aim (self, 1000);
+
 	traceline(org, org + v_forward * 24, FALSE, self);
 	launch_spike (org + v_forward * 24 * trace_fraction, dir);
-
-	self.punchangle_x = -2;
+	newmis.velocity = dir * 2000;
+	//self.punchangle_x = -2;
 };
 
 
@@ -1291,7 +1289,7 @@ void() W_FirePlasma =
 	local entity missile;
 	vector org;
 
-	self.currentammo = self.ammo_cells = self.ammo_cells - 1;
+	
 
 	// Taken from Doom...
 	sound (self, CHAN_WEAPON, "weapons/dsplasma.wav", 1, ATTN_NORM);
@@ -1309,7 +1307,7 @@ void() W_FirePlasma =
 	// and slowly recovers after that -bmFbr
 
 	// last projectile was shot continuously, so increase shot count
-	if (time < self.lastshot + 0.08) self.shotcount = min(self.shotcount + 1, 6);
+	if (self.attackhold) self.shotcount = min(self.shotcount + 1, 6);
 	else self.shotcount = max(2, self.shotcount - rint((time - self.lastshot - 0.15)/0.15));
 	
 	makevectors (self.v_angle);

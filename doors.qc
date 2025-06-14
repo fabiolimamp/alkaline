@@ -12,10 +12,12 @@ float DOOR_TOGGLE = 32;
 float DOOR_DOOM_STYLE_UNLOCK = 64;
 float DOOR_SOUND_DURING_DELAY = 128;
 float DOOR_PLAT_KEY = 16384;
+float DOOR_NONSOLID = 32768;
 float DOOR_EXPANDED_TRIGGER_X = 65536;
 float DOOR_EXPANDED_TRIGGER_Y = 131072;
 float DOOR_REDUCED_TRIGGER_X = 262144;
 float DOOR_REDUCED_TRIGGER_Y = 524288;
+float DOOR_NOSTOPSOUND = 1048576;
 
 float DOOR_MIN_THINK_TIME = 0.02;
 
@@ -110,7 +112,7 @@ void() door_stop_sound = {
 		self.nextthink = 10000000000;
 		self.think = SUB_Null;
 	}
-	sound (self, CHAN_VOICE, self.noise1, self.volume, ATTN_NORM);
+	if (!(self.spawnflags & DOOR_NOSTOPSOUND)) sound (self, CHAN_VOICE, self.noise1, self.volume, ATTN_NORM);
 };
 
 void() door_move_top = {
@@ -480,6 +482,9 @@ void() door_trigger_touch = {
  	
  	// ignore shootable brushes standing in it, like buttons or breakables
 	if (other.solid == SOLID_BSP) return;
+	
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	// silly fix for sleeping monsters standing behind doors inside their touch fields causing them to open
 	// thanks Lunaran
@@ -510,6 +515,13 @@ void() door_killed = {
 void(float newstate, float stateflags) door_setstate = {
 	float closealldoors;
 
+	if (newstate == STATE_INVISIBLE ||
+		(self.owner.estate == STATE_INVISIBLE && newstate != STATE_INVISIBLE)
+		) {
+		self.owner.estate = newstate;
+		return;
+	}
+	
 	if (stateflags & SETSTATE_CLOSEALLDOORS) closealldoors = 1;
 
 	if (newstate == STATE_ACTIVE) door_estate_unlock(self, closealldoors);
@@ -1014,8 +1026,16 @@ void() func_door = {
 		self.volume = 1;
 
 	self.max_health = self.health;
-	self.solid = SOLID_BSP;
-	self.movetype = MOVETYPE_PUSH;
+
+	if (self.spawnflags & DOOR_NONSOLID) {
+		self.solid = SOLID_NOT;
+		self.movetype = MOVETYPE_NOCLIP;
+	}
+	else {
+		self.solid = SOLID_BSP;
+		self.movetype = MOVETYPE_PUSH;
+	}
+	
 	setorigin (self, self.origin);	
 	setmodel (self, self.model);
 

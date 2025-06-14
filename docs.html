@@ -13,7 +13,7 @@ body {
 
 <body>
 
-<h1>Alkaline Mapping Guide - v1.2.2</h1>
+<h1>Alkaline Mapping Guide - v1.2.3</h1>
 <h2>Contents</h2>
 <nav>
 <ul>
@@ -71,11 +71,13 @@ body {
 			<li><a href="#message-all">Message all players</a></li>
 			<li><a href="#relay-tricks">trigger_relay new tricks</a></li>
 			<li><a href="#trigger_repeat">Repeater/timer trigger</a></li>
+			<li><a href="#trigger_random">Random trigger</a></li>
 			<li><a href="#monsterjumps">Monsterjumps</a></li>
 			<li><a href="#hurt">Hurt triggers</a></li>
 			<li><a href="#mapvars">Mapvars</a></li>
 			<li><a href="#mapstart">Multiple map starting spots</a></li>
 			<li><a href="#trigger_touchplate">Touchplate trigger</a></li>
+			<li><a href="#mirror">Mirrors/reflections</a></li>
 		</ul>
 	</li>
 
@@ -310,6 +312,7 @@ body {
 	<li><strong>Rottweiler (monster_dog):</strong> 25 HP</li>
 	<li><strong>Spiderbot (monster_spiderbot):</strong> 40 HP</li>
 	<li><strong>Kamikaze Grunt (monster_kamikaze):</strong> 40 HP</li>
+	<li><strong>Fast Zombie (monster_zombie2):</strong> 10 HP</li>
 	<li><strong>Enforcer (monster_enforcer):</strong> 80 HP</li>
 	<li><strong>Ogre (monster_ogre):</strong> 200 HP</li>
 	<li><strong>Ogre Marksman (monster_ogre_marksman):</strong> 200 HP</li>
@@ -318,7 +321,6 @@ body {
 	<li><strong>Sabre Knight (monster_hell_knight):</strong> 250 HP</li>
 	<li><strong>Dreadnaught (monster_dreadnaught):</strong> 150 HP</li>
 	<li><strong>Centroid (monster_scourge):</strong> 300 HP</li>
-	<li><strong>Spiderbot (monster_spiderbot):</strong> 25 HP</li>
 	<li><strong>Eel (monster_eel):</strong> 25 HP</li>
 	<li><strong>Frogman (monster_frogman):</strong> 100 HP</li>
 	<li><strong>Drone (monster_drone):</strong> 100 HP</li>
@@ -520,6 +522,20 @@ body {
 <li>You can set it to not hurt players and/or monsters.</li>
 </ul>
 
+
+<h3 id="trigger_random">Random trigger</h3>
+<p>For each of the 'target' fields, trigger_random will look for all entities with a matching targetname and fire only one entity at random. For example, if you have 'target' = 'myname', then it'll look for every entity in the map whose targetname is 'myname' and fire only one of them. </p>
+
+<h3 id="monsterjumps">Monsterjumps</h3>
+<p>The <strong>trigger_monsterjump</strong> entity comes with some new features. You have now a simple monster-class-based filter, so you can let only a single monster class to be affected by it, or exclude a specific one from it.</p>
+
+<h3 id="hurt">Hurt triggers</h3>
+<p>The <strong>trigger_hurt</strong> brush entity works the same as before, but has 2 new features:</p>
+<ul>
+<li>Damage interval and amount can both be customized.</li>
+<li>You can set it to not hurt players and/or monsters.</li>
+</ul>
+
 <p>The new <strong>target_hurt</strong> entity is a point version of that. It hurts any entity activating it, or the entities defined in its target-target4 fields.</p>
 
 <h3 id="mapvars">Mapvars</h3>
@@ -536,6 +552,19 @@ body {
 
 <h3 id="mapstart">Multiple map starting spots</h3>
 <p>You can have multiple player start spots in your map. <strong>trigger_changelevel</strong> entities accept a <strong>count</strong> key, which on the next map will try to direct the player to an <strong>info_player_start</strong> spot with a matching <strong>count</strong> value. That's also true for coop starts.</p>
+
+
+<h3 id="trigger_touchplate">Touchplate triggers</h3>
+<p></p>
+
+<h3 id="mirror">Mirrors/reflections</h3>
+<p>Generates a reflection of all point entities inside the trigger in the direction 'angle' is facing. Reflects monsters, projectiles, items, gibs, everything, except solid brush entities.</p>
+
+<p>Level geometry needs to be duplicated manually. You can do this easily by making your room a single group in Trenchbroom, creating a linked duplicate, and mirroring it.</p>
+
+<p>Only works with axial 'angle' values - 0/90/180/-90 for horizontal reflections, -1 for ceiling, and -2 for floor. The reflection will be generated at the face that 'angle' is pointing at.</p>
+
+<p>If you have two trigger_mirror entities whose reflections are simultaneously visible, you need to give one of them a 'count' value of 2, otherwise you might have issues.</p>
 
 
 <hr>

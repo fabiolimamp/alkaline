@@ -398,6 +398,8 @@ void() armor_touch = {
 		return;
 	if (other.classname != "player")
 		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	if (self.classname == "item_armor1")
 	{
@@ -461,6 +463,8 @@ void() shard_touch = { // progs_dump
 	if (other.health <= 0)
 		return;
 	if (other.classname != "player")
+		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 	local	float	bit;
@@ -607,7 +611,7 @@ void(float new) Deathmatch_Weapon =
 	or = RankForWeapon (self.weapon);
 	nr = RankForWeapon (new);
 	if ( nr < or )
-		self.weapon = new;
+		W_ChangeWeapon(new);
 };
 
 /*
@@ -623,6 +627,9 @@ void() weapon_touch =
 	local	float	leave;
 
 	if (!(other.flags & FL_CLIENT))
+		return;
+	
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
 		return;
 
 // if the player was using his best weapon, change up to the new one if better		
@@ -669,14 +676,9 @@ void() weapon_touch =
 	self = other;
 
 	if (!deathmatch)
-		self.weapon = new;
+		W_ChangeWeapon(new);
 	else
 		Deathmatch_Weapon (new);
-
-	if (current != new)
-		W_SetCurrentAmmo(TRUE);
-	else
-		W_SetCurrentAmmo(FALSE);
 
 	self = stemp;
 
@@ -910,6 +912,9 @@ void() ammo_touch = {
 	if (other.health <= 0)
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 // if the player was using his best weapon, change up to the new one if better		
 	stemp = self;
 	self = other;
@@ -983,7 +988,7 @@ void() ammo_touch = {
 	//if (self.weapon != current)
 	//	W_SetCurrentAmmo(TRUE);
 	//else
-		W_SetCurrentAmmo(FALSE);
+	W_UpdateCurrentAmmo();
 
 	self = stemp;
 
@@ -1214,6 +1219,9 @@ void() sigil_touch =
 	if (other.health <= 0)
 		return;
 
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+
 	centerprint (other, "You got the rune!");
 
 	sound (other, CHAN_ITEM, self.noise, 1, ATTN_NORM);
@@ -1273,7 +1281,8 @@ void() powerup_touch =
 		return;
 	if (other.health <= 0)
 		return;
-
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	// if (deathmatch)
 	// {
@@ -1505,6 +1514,8 @@ void() BackpackTouch =
 		return;
 	if (other.health <= 0)
 		return;
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
 
 	acount = 0;
 	sprint (other, "You get ");
@@ -1602,16 +1613,7 @@ void() BackpackTouch =
 	self = other;
 
 // change to the weapon
-	if (!deathmatch)
-		self.weapon = new;
-	else
-		Deathmatch_Weapon (new);
-
-	if (current != new)
-		W_SetCurrentAmmo(TRUE);
-	else
-		W_SetCurrentAmmo(FALSE);
-
+	W_ChangeWeapon(new);
 };
 
 /*

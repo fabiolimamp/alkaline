@@ -95,6 +95,22 @@ void() path_angry_touch = {
 		return;		// not running towards this
 
 	dprint2(other.classname, ": Touched path_angry... ");
+
+
+	// fire path's targets
+	if (self.target2 && self.target2 != "") {
+		activator = other;
+		SUB_UseSpecificTarget(self.target2, targetname);
+	}
+	if (self.target3 && self.target3 != "") {
+		activator = other;
+		SUB_UseSpecificTarget(self.target3, targetname);
+	}
+	if (self.target4 && self.target4 != "") {
+		activator = other;
+		SUB_UseSpecificTarget(self.target4, targetname);
+	}
+
 	//eprint(self);
 	entity next, first;
 
@@ -162,6 +178,21 @@ void() t_movetarget = {
 	
 	if (other.enemy)
 		return;		// fighting, not following a path
+
+
+	// fire path_corner's targets
+	if (self.target2 && self.target2 != "") {
+		activator = other;
+		SUB_UseSpecificTarget(self.target2, targetname);
+	}
+	if (self.target3 && self.target3 != "") {
+		activator = other;
+		SUB_UseSpecificTarget(self.target3, targetname);
+	}
+	if (self.target4 && self.target4 != "") {
+		activator = other;
+		SUB_UseSpecificTarget(self.target4, targetname);
+	}
 
 	temp = self;
 	self = other;
