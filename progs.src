@@ -119,5 +119,6 @@ monsters/gargoyle.qc		// sock/bmFbr
 monsters/chaingunner.qc		// bmFbr
 monsters/arachnotron.qc		// bmFbr
 monsters/pinklin.qc			// bmFbr
+monsters/imp.qc				// bmFbr
 
 monsters/kamikaze.qc
