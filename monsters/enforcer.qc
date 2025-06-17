@@ -38,68 +38,6 @@ $frame paind9 paind10 paind11 paind12 paind13 paind14 paind15 paind16
 $frame paind17 paind18 paind19
 
 
-void() Laser_Touch =
-{
-	local vector org;
-	local float damage;
-	
-	damage = zeroconvertdefault(self.dmg, 15);
-
-	if (other == self.owner)
-		return;		// don't explode on owner
-
-	if (pointcontents(self.origin) == CONTENT_SKY)
-	{
-		remove(self);
-		return;
-	}
-	
-	sound (self, CHAN_WEAPON, "enforcer/enfstop.wav", 1, ATTN_STATIC);
-	org = self.origin - 8*normalize(self.velocity);
-
-	if (other.health)
-	{
-		ImpactSpawn(org, self.velocity*0.2, 15, other.bloodtype);
-		T_Damage(other, self, self.owner, damage, DMGTYPE_ENERGY);
-	}
-	else
-	{
-		gunshot(org);
-	}
-	
-	remove(self);	
-};
-
-void(vector org, vector vec) LaunchLaser =
-{
-	//local	vector	vec;
-		
-	if (self.classname == "monster_enforcer")
-		sound (self, CHAN_WEAPON, "enforcer/enfire.wav", 1, ATTN_NORM);
-
-	vec = normalize(vec);
-	
-	newmis = spawn();
-	newmis.owner = self;
-	newmis.movetype = MOVETYPE_FLY;
-	newmis.solid = SOLID_BBOX;
-	newmis.effects = EF_DIMLIGHT;
-	newmis.flags = newmis.flags | FL_PROJECTILE;
-
-	setmodel (newmis, "progs/laser.mdl");
-	setsize (newmis, '0 0 0', '0 0 0');		
-
-	setorigin (newmis, org);
-
-	newmis.velocity = vec * 600;
-	newmis.angles = vectoangles(newmis.velocity);
-
-	newmis.nextthink = time + 5;
-	newmis.think = SUB_Remove;
-	newmis.touch = Laser_Touch;
-};
-
-
 
 void() enforcer_fire =
 {
