@@ -82,7 +82,7 @@ monsters/spawn.qc			// registered
 monsters/hknight.qc			// registered
 monsters/fish.qc			// registered
 monsters/shalrath.qc		// registered
-monsters/enforcer.qc		// registered
+//monsters/enforcer.qc		// registered
 monsters/megaenforcer.qc	// zerstorer
 monsters/lieutenant.qc		// forwards compatible
 monsters/oldone.qc			// registered
