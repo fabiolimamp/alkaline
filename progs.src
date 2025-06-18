@@ -118,6 +118,7 @@ monsters/lostsoul.qc		// sock/bmFbr
 monsters/gargoyle.qc		// sock/bmFbr
 monsters/chaingunner.qc		// bmFbr
 monsters/arachnotron.qc		// bmFbr
+monsters/mastermind.qc		// bmFbr
 monsters/pinklin.qc			// bmFbr
 monsters/imp.qc				// bmFbr
 

@@ -1168,6 +1168,9 @@ model({{
 @PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/arachnotron.mdl", "frame":14}) = monster_arachnotron :
 "Arachnotron, 500 health points." []
 
+@PointClass base(Monster) size(-32 -32 -24, 32 32 64) model({"path":"progs/mastermind.mdl", "frame":14}) = monster_mastermind :
+"Spider Mastermind, 1500 health points." []
+
 @PointClass base(Monster, MonsterJump) size(-16 -16 -24, 16 16 40) model({"path":"progs/pinklin_large.mdl"}) = monster_pinklin :
 "Pinklin, 150 health points." []
 
