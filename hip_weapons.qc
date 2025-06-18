@@ -69,7 +69,7 @@ void() HIP_LaserThink = {
 
 void(vector org, vector vec, float light) HIP_LaunchLaser = {
 	
-	sound(self, CHAN_WEAPON, "hipweap/laserg.wav", 1, ATTN_NORM);
+	sound(self, CHAN_WEAPON, "weapons/unmkr.wav", 1, ATTN_NORM);
 
 	vec = normalize(vec);
 

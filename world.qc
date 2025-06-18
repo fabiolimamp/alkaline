@@ -229,6 +229,10 @@ void() worldspawn =
 	precache_sound ("weapons/sawguts.wav");		//chainsaw hit guts
 	
 	precache_sound ("misc/power.wav");			//lightning for boss
+
+	precache_sound ("weapons/sng.wav");			// super spikes
+	precache_sound ("weapons/rlauncher.wav");	// Rocket launcher
+	precache_sound ("weapons/unmkr.wav");		// Unmaker
 	
 // johnfitz -- precache sounds for ladder
 	//precache_sound ("ladder/metal1.wav");

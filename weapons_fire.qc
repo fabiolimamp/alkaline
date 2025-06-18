@@ -509,7 +509,7 @@ void(vector org, vector dir) launch_rocket = {
 
 void() W_FireRocket = {
 	
-	sound (self, CHAN_WEAPON, "weapons/sgun1.wav", 1, ATTN_NORM);
+	sound (self, CHAN_WEAPON, "weapons/rlauncher.wav", 1, ATTN_NORM);
 
 	self.punchangle_x = -2;
 
@@ -1055,7 +1055,7 @@ void(float ox) W_FireSuperSpikes =
 	
 	makevectors (self.v_angle);
 
-	sound (self, CHAN_WEAPON, "weapons/spike2.wav", 1, ATTN_NORM);
+	sound (self, CHAN_AUTO, "weapons/sng.wav", 1, ATTN_NORM);
 
 
 	org = self.origin + self.view_ofs - v_up * 6 + v_right*ox;//'0 0 16';
