@@ -92,7 +92,7 @@ void() weaponanim_chainsaw_loop = {
 		self.weaponframe++;
 	}
 
-	if (self.weaponframe == 5) sound(self, CHAN_AUTO, "weapons/sawatck.wav", 1, ATTN_NORM);
+	if (self.weaponframe == 5) sound(self, 7, "weapons/sawatck.wav", 1, ATTN_NORM);
 
 	if (self.weaponframe % 2 == 1){
 		SuperDamageSound();
@@ -107,6 +107,8 @@ void() weaponanim_chainsaw_loop = {
 
 
 void() weaponanim_chainsaw_idle = {
+
+	sound(self, 7, "misc/null.wav", 1, ATTN_NORM);
 
 	if (self.view_ofs != '0 0 0' && self.weaponframe == 0)
 		sound (self, CHAN_AUTO, "weapons/sawridle.wav", 1, ATTN_IDLE);
