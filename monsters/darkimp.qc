@@ -38,7 +38,7 @@ void() darkimpball_Touch =
 	local vector org;
 	local float damage;
 	
-	damage = zeroconvertdefault(self.dmg, 20);
+	damage = zeroconvertdefault(self.dmg, 30);
 
 	if (other == self.owner)
 		return;		// don't explode on owner
@@ -68,7 +68,7 @@ void() darkimpball_Touch =
 void(vector org, vector vec) LaunchDarkImpFireball =
 {
 	//local	vector	vec;
-		
+	dprint("Launched!\n");
 	sound (self, CHAN_WEAPON, "imp/imp_fire.wav", 1, ATTN_NORM);
 
 	vec = normalize(vec);
@@ -153,22 +153,59 @@ void()	darkimp_run6	=[	$run6  ,	darkimp_run7	] {ai_runjump(14*darkimp_speed);};
 void()	darkimp_run7	=[	$run7  ,	darkimp_run8	] {ai_runjump(7*darkimp_speed);};
 void()	darkimp_run8	=[	$run8  ,	darkimp_run1	] {ai_runjump(11*darkimp_speed);};
 
+
 void()	darkimp_atk1	=[	$attack1,	darkimp_atk2	] {ai_face();};
-void()	darkimp_atk2	=[	$attack2,	darkimp_atk3	] {ai_face();};
+void()	darkimp_atk2	=[	$attack2,	darkimp_atk3	] {ai_face(); self.attack_finished = time + 2 + random();};
 void()	darkimp_atk3	=[	$attack3,	darkimp_atk4	] {ai_face();};
 void()	darkimp_atk4	=[	$attack4,	darkimp_atk5	] {ai_face();};
 void()	darkimp_atk5	=[	$attack5,	darkimp_atk6	] {ai_face();};
 void()	darkimp_atk6	=[	$attack6,	darkimp_atk7	] {darkimp_fire();};
 void()	darkimp_atk7	=[	$attack7,	darkimp_atk8	] {ai_face();};
 void()	darkimp_atk8	=[	$attack8,	darkimp_atk9	] {ai_face();};
-void()	darkimp_atk9	=[	$attack5,	darkimp_atk10	] {ai_face();};
-void()	darkimp_atk10	=[	$attack6,	darkimp_atk11	] {darkimp_fire();};
-void()	darkimp_atk11	=[	$attack7,	darkimp_atk12	] {ai_face();};
-void()	darkimp_atk12	=[	$attack8,	darkimp_atk13	] {ai_face();};
-void()	darkimp_atk13	=[	$attack9,	darkimp_atk14	] {ai_face();};
-void()	darkimp_atk14	=[	$attack10,	darkimp_run1	] {ai_face();
+void()	darkimp_atk9	=[	$attack9,	darkimp_atk10	] {ai_face();};
+void()	darkimp_atk10	=[	$attack10,	darkimp_run1	] {ai_face();
 SUB_CheckRefire (darkimp_atk1);
 };
+
+
+void() darkimp_slash = {
+	local	float	ldmg;
+	local vector	delta;
+	
+	ai_face ();
+	walkmove2 (self.ideal_yaw, 12);	// allow a little closing
+
+	delta = self.enemy.origin - self.origin;
+	
+	
+	if (vlen(delta) > 100)
+		return;
+	if (!CanDamage (self.enemy, self.origin))
+		return;
+
+	sound (self, CHAN_WEAPON, "demon/dhit2.wav", 1, ATTN_NORM);
+	
+	ldmg = 10 + 5*random();
+	T_Damage(self.enemy, self, self, ldmg, DMGTYPE_MELEE);	
+
+	makevectors (self.angles);
+	SpawnMeatSpray (self.origin + v_forward*16, v_right);
+};
+
+
+void()	darkimp_melee1	=[	$attack1,	darkimp_melee2	] {ai_face();};
+void()	darkimp_melee2	=[	$attack2,	darkimp_melee3	] {ai_face();};
+void()	darkimp_melee3	=[	$attack3,	darkimp_melee4	] {ai_face();};
+void()	darkimp_melee4	=[	$attack4,	darkimp_melee5	] {ai_face();};
+void()	darkimp_melee5	=[	$attack5,	darkimp_melee6	] {ai_face();};
+void()	darkimp_melee6	=[	$attack6,	darkimp_melee7	] {darkimp_slash();};
+void()	darkimp_melee7	=[	$attack7,	darkimp_melee8	] {ai_face();};
+void()	darkimp_melee8	=[	$attack8,	darkimp_melee9	] {ai_face();};
+void()	darkimp_melee9	=[	$attack9,	darkimp_melee10	] {ai_face();};
+void()	darkimp_melee10	=[	$attack10,	darkimp_run1	] {ai_face();
+SUB_CheckRefire (darkimp_melee1);
+};
+
 
 void()	darkimp_paina1	=[	$paina1,	darkimp_paina2	] {};
 void()	darkimp_paina2	=[	$paina2,	darkimp_paina3	] {};
@@ -215,33 +252,30 @@ void(entity attacker, float damage)	darkimp_pain =
 	local float r;
 
 
-	r = random ();
-	if (self.pain_finished > time)
+	if (self.pain_finished > time || random() > 0.3)
 		return;
-
-	
 
 	sound (self, CHAN_VOICE, "imp/imp_hurt.wav", 1, ATTN_NORM);
 
-
+	r = random ();
 	if (r < 0.2)
 	{
-		self.pain_finished = time + 1;
+		self.pain_finished = time + 2;
 		darkimp_paina1 ();
 	}
 	else if (r < 0.4)
 	{
-		self.pain_finished = time + 1;
+		self.pain_finished = time + 2;
 		darkimp_painb1 ();
 	}
 	else if (r < 0.7)
 	{
-		self.pain_finished = time + 1;
+		self.pain_finished = time + 2;
 		darkimp_painc1 ();
 	}
 	else
 	{
-		self.pain_finished = time + 2;
+		self.pain_finished = time + 3;
 		darkimp_paind1 ();
 	}
 };
@@ -339,13 +373,14 @@ void(entity e) monster_darkimp_start =
 	self.health = 200;
 	if (self.obituary == "") self.obituary = "was blasted by an imp";
 
-	self.th_stand = imp_stand1;
-	self.th_walk = imp_walk1;
-	self.th_run = imp_run1;
-	self.th_pain = imp_pain;
-	self.th_die = imp_die;
-	self.th_missile = imp_atk1;
-	self.th_sight = imp_sight;
+	self.th_stand = darkimp_stand1;
+	self.th_walk = darkimp_walk1;
+	self.th_run = darkimp_run1;
+	self.th_pain = darkimp_pain;
+	self.th_die = darkimp_die;
+	self.th_missile = darkimp_atk1;
+	self.th_melee = darkimp_melee1;
+	self.th_sight = darkimp_sight;
 
 	walkmonster_start();
 
@@ -378,6 +413,7 @@ void() monster_darkimp =
 	precache_sound2 ("imp/imp_hurt.wav");
 	precache_sound2 ("imp/imp_idle.wav");
 	precache_sound2 ("imp/imp_sight1.wav");
+	precache_sound2 ("demon/dhit2.wav");
 
 
 	self.cmins = '-16 -16 -24';
