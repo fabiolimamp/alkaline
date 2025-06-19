@@ -1017,6 +1017,9 @@ Only event_lightning can kill him." [
 @PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/imp.mdl"}) = monster_enforcer :
 "Imp, 120 health points." []
 
+@PointClass base(Monster, MonsterJump, AutoJumpOff) size(-16 -16 -24, 16 16 40) model({"path":"progs/imp_dark.mdl"}) = monster_darkimp :
+"Dark Imp, 200 health points." []
+
 @PointClass base(Monster, MonsterJump) size(-32 -32 -24, 32 32 48) model({{
 	spawnflags & 8 -> "progs/shalrath_old.mdl", "progs/shalrath_newer.mdl"
 	}}

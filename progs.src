@@ -121,5 +121,6 @@ monsters/arachnotron.qc		// bmFbr
 monsters/mastermind.qc		// bmFbr
 monsters/pinklin.qc			// bmFbr
 monsters/imp.qc				// bmFbr
+monsters/darkimp.qc				// bmFbr
 
 monsters/kamikaze.qc
