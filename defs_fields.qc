@@ -361,6 +361,8 @@ FIELDS
 .float		strength;
 .float		sounds2;
 
+.float 		scale;
+
 //
 // doors, etc
 //

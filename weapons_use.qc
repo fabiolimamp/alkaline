@@ -190,7 +190,20 @@ weaponclass_t wpc_plasma = {
 	SUB_Null // idlefunction
 };
 
-weaponclass_t weaponsclass[13] = {
+weaponclass_t wpc_bfg = {
+	WEAPON_BFG,
+	8, // slot
+	3, // slotPos
+	"BFG9K", // name
+	"progs/v_bfg.mdl", // model
+	4, // ammofield
+	IT_CELLS, // ammo_item
+	1, // ammo_usage
+	weaponanim_bfg, // animfunction
+	SUB_Null // idlefunction
+};
+
+weaponclass_t weaponsclass[14] = {
 	wpc_no_weapon,
 	wpc_axe,
 	wpc_chainsaw,
@@ -203,10 +216,11 @@ weaponclass_t weaponsclass[13] = {
 	wpc_rocket,
 	wpc_lg,
 	wpc_laser,
-	wpc_plasma
+	wpc_plasma,
+	wpc_bfg
 };
 
-float MAX_WEAPON_NUM = 12;
+float MAX_WEAPON_NUM = 13;
 
 float(float weap) getWeapon = {
 	switch (weap) {
@@ -222,6 +236,7 @@ float(float weap) getWeapon = {
 		case WEAPON_LIGHTNING:			return 10;
 		case WEAPON_LASER_CANNON:		return 11;
 		case WEAPON_PLASMA:				return 12;
+		case WEAPON_BFG:				return 13;
 
 		default:					return 0;
 	}
@@ -242,7 +257,7 @@ weaponslot_t weaponslots[9] = {
 	{{wpc_supernailgun}, 1},
 	{{wpc_grenade,wpc_proximity}, 2},
 	{{wpc_rocket}, 1},
-	{{wpc_lg,wpc_laser,wpc_plasma}, 3}
+	{{wpc_lg,wpc_laser,wpc_plasma,wpc_bfg}, 4}
 };
 
 

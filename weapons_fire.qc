@@ -1403,3 +1403,116 @@ void() W_FirePlasma =
 
 	self.lastshot = time;
 };
+
+
+
+/*
+================
+W_FireBfg
+================
+*/
+
+
+void() W_FireBfg = {
+	
+	sound (self, CHAN_WEAPON, "weapons/rlauncher.wav", 1, ATTN_NORM);
+
+	self.punchangle_x = -4;
+
+	makevectors (self.v_angle);
+	
+	vector dir = aim(self, 1000);
+	vector org = self.origin + self.view_ofs - v_up*6;
+	traceline(org, org + v_forward * 24, FALSE, self);
+
+	launch_bfg(org + v_forward*24 * trace_fraction, dir);
+
+};
+
+void(vector org, vector dir) launch_bfg = {
+	//local	entity missile;
+
+	newmis = spawn();
+	newmis.owner = self;
+	newmis.movetype = MOVETYPE_FLYMISSILE;
+	newmis.solid = SOLID_BBOX;
+	newmis.classname = "missile";
+	newmis.flags = newmis.flags | FL_PROJECTILE;
+	newmis.touch = BfgBoom;
+
+	newmis.angles = vectoangles(dir);
+	newmis.velocity = dir * 400;
+
+	setmodel (newmis, "progs/s_light.spr");
+	setsize (newmis, '0 0 0', '0 0 0');
+	setorigin (newmis, org);
+	newmis.scale = 2;
+
+	newmis.nextthink = time + 0.05;
+	newmis.think = bfgThink;
+	newmis.attack_finished = time + 10;
+	
+};
+
+void() bfgThink = {
+
+	if (time > self.attack_finished) {
+		remove(self);
+		return;
+	}
+
+	entity tgt = findradius(self.origin, 256);
+
+	while (tgt) {
+		if (tgt.takedamage && tgt.health > 0 && tgt != self.owner && tgt.flags & FL_MONSTER + FL_CLIENT) {
+			if (CanDamage(tgt, self.origin)) {
+				fx_beam(self.origin, tgt.origin, tgt);
+				T_Damage(tgt, self, self.owner, 5, DMGTYPE_ENERGY);
+			}
+		}
+		tgt = tgt.chain;
+	}
+
+
+	self.nextthink = time + 0.05;
+	self.think = bfgThink;
+}
+
+
+
+void() BfgBoom = {
+	
+	if (pointcontents(self.origin) == CONTENT_SKY)	{
+		remove(self);
+		return;
+	}
+
+	if (other.takedamage && other.health)
+		T_Damage(other, self, self.owner, 200, DMGTYPE_EXPLOSION);
+	
+
+	vector prev_vel = self.velocity;
+	//self.velocity = '0 0 0';
+	T_RadiusDamage (self, self.owner, 200, 0.5, other, DMGTYPE_EXPLOSION);
+
+
+	entity tgt = findradius(self.origin, 1000);
+	float dmg;
+	while (tgt) {
+		if (tgt.takedamage && tgt != self.owner && tgt.flags & FL_MONSTER + FL_CLIENT) {
+			if (CanDamage(tgt, self.origin) && CanDamage(tgt, self.owner.origin)) {
+				dmg = (1000 - clamp(vlen(tgt.origin - self.origin), 0, 1000)) / 2;
+				
+				T_Damage(tgt, self, self.owner, dmg, DMGTYPE_EXPLOSION);
+			}
+		}
+		tgt = tgt.chain;
+	}
+
+
+	self.origin = self.origin - 8*normalize(prev_vel);
+
+	BecomeExplosion ();
+};
+
+

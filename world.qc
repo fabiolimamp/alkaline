@@ -331,6 +331,7 @@ void() worldspawn =
 	precache_model ("progs/v_laserg40fps.mdl");
 	precache_model ("progs/v_saw.mdl");		//dhm - Chainsaw
 	precache_model ("progs/v_mine_40fps.mdl");
+	precache_model ("progs/v_bfg.mdl");
 	
 	precache_model ("progs/bolt.mdl");		// for lightning gun
 	precache_model ("progs/bolt2.mdl");		// for lightning gun
