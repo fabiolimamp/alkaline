@@ -68,7 +68,6 @@ void() darkimpball_Touch =
 void(vector org, vector vec) LaunchDarkImpFireball =
 {
 	//local	vector	vec;
-	dprint("Launched!\n");
 	sound (self, CHAN_WEAPON, "imp/imp_fire.wav", 1, ATTN_NORM);
 
 	vec = normalize(vec);
