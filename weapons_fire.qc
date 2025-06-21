@@ -1519,7 +1519,7 @@ void() BfgBoom = {
 	self.velocity = '0 0 0';
 	self.solid = SOLID_TRIGGER;
 	setmodel(self, "progs/bfgblast.mdl");
-	setsize(self, '0 0 0');
+	setsize(self, '0 0 0', '0 0 0');
 
 	self.alpha = 0.3;
 	

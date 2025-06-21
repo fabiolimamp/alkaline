@@ -893,6 +893,20 @@ void() weapon_plasmagun =
 	StartItem ();
 };
 
+void() weapon_bfg =
+{
+	if (!SUB_InitEntity()) return;
+	
+	if (!(self.spawnflags & ITEM_DONTPRECACHE)) precache_model ("progs/g_bfg.mdl");
+	setmodel (self, "progs/g_bfg.mdl");
+	self.weapon = WEAPON_BFG;
+	self.classname = "weapon_bfg";
+	self.netname = "BFG9K";
+	self.touch = weapon_touch;
+  	if (!self.ammo_cells) self.ammo_cells = 25;
+	setsize (self, '-16 -16 0', '16 16 56');
+	StartItem ();
+};
 
 /*
 ===============================================================================

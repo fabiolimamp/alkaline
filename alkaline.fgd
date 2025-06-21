@@ -849,6 +849,7 @@ If you want to centerprint a message instead of showing the usual screen-top pic
 @PointClass base(Weapon) model({"path": "progs/g_laserg.mdl"}) = weapon_laser_gun : "Laser Cannon" []
 @PointClass base(Weapon) model({"path": "progs/g_saw.mdl"}) = weapon_chainsaw : "Chainsaw" []
 @PointClass base(Weapon) model({"path": "progs/g_plasma.mdl"}) = weapon_plasmagun : "Plasma rifle" []
+@PointClass base(Weapon) model({"path": "progs/g_bfg.mdl"}) = weapon_bfg : "BFG9K" []
 
 //
 // badasses
