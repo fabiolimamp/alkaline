@@ -781,10 +781,20 @@ float() weaponanim_bfg = {
 		return FALSE;
 	}
 
-	self.currentammo = self.ammo_rockets = self.ammo_rockets - 1;
+	self.attack_finished = time + 3;
+	sound (self, CHAN_WEAPON, "weapons/bfgfire.wav", 1, ATTN_NORM);
 
-	self.attack_finished = time + 2;
+	self.weaponframe = 0;
+	self.think = weaponanim_bfg_fire;
+	self.nextthink = time + 1;
 	
+	return FALSE;
+}
+
+void() weaponanim_bfg_fire = {
+
+	self.currentammo = self.ammo_cells = self.ammo_cells - 25;
+
 	SUB_CallAsSelf(player_rockatt1, self.animcontroller);
 	
 	self.effects = self.effects | EF_MUZZLEFLASH;
@@ -795,8 +805,7 @@ float() weaponanim_bfg = {
 	self.weaponframe = 1;
 	self.think = weaponanim_bfg_loop;
 	self.nextthink = time + 0.1;
-	
-	return TRUE;
+
 }
 
 void() weaponanim_bfg_loop = {

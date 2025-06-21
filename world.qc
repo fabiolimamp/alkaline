@@ -233,6 +233,8 @@ void() worldspawn =
 	precache_sound ("weapons/sng.wav");			// super spikes
 	precache_sound ("weapons/rlauncher.wav");	// Rocket launcher
 	precache_sound ("weapons/unmkr.wav");		// Unmaker
+	precache_sound ("weapons/bfgfire.wav");		// BFG
+	precache_sound ("weapons/bfghit.wav");		// BFG
 	
 // johnfitz -- precache sounds for ladder
 	//precache_sound ("ladder/metal1.wav");
@@ -332,6 +334,8 @@ void() worldspawn =
 	precache_model ("progs/v_saw.mdl");		//dhm - Chainsaw
 	precache_model ("progs/v_mine_40fps.mdl");
 	precache_model ("progs/v_bfg.mdl");
+	precache_model ("progs/bfgball.spr");
+	precache_model ("progs/bfgblast.mdl");
 	
 	precache_model ("progs/bolt.mdl");		// for lightning gun
 	precache_model ("progs/bolt2.mdl");		// for lightning gun

@@ -198,7 +198,7 @@ weaponclass_t wpc_bfg = {
 	"progs/v_bfg.mdl", // model
 	4, // ammofield
 	IT_CELLS, // ammo_item
-	1, // ammo_usage
+	25, // ammo_usage
 	weaponanim_bfg, // animfunction
 	SUB_Null // idlefunction
 };

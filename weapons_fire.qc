@@ -1415,9 +1415,9 @@ W_FireBfg
 
 void() W_FireBfg = {
 	
-	sound (self, CHAN_WEAPON, "weapons/rlauncher.wav", 1, ATTN_NORM);
+	//sound (self, CHAN_WEAPON, "weapons/rlauncher.wav", 1, ATTN_NORM);
 
-	self.punchangle_x = -4;
+	self.punchangle_x = -12;
 
 	makevectors (self.v_angle);
 	
@@ -1443,10 +1443,10 @@ void(vector org, vector dir) launch_bfg = {
 	newmis.angles = vectoangles(dir);
 	newmis.velocity = dir * 400;
 
-	setmodel (newmis, "progs/s_light.spr");
+	setmodel (newmis, "progs/bfgball.spr");
 	setsize (newmis, '0 0 0', '0 0 0');
 	setorigin (newmis, org);
-	newmis.scale = 2;
+	newmis.scale = 1;
 
 	newmis.nextthink = time + 0.05;
 	newmis.think = bfgThink;
@@ -1473,10 +1473,12 @@ void() bfgThink = {
 		tgt = tgt.chain;
 	}
 
-
+	self.frame = 1 - self.frame;
 	self.nextthink = time + 0.05;
 	self.think = bfgThink;
 }
+
+
 
 
 
@@ -1512,7 +1514,24 @@ void() BfgBoom = {
 
 	self.origin = self.origin - 8*normalize(prev_vel);
 
-	BecomeExplosion ();
+	sound (self, CHAN_WEAPON, "weapons/bfghit.wav", 1, ATTN_NORM);
+	
+	self.velocity = '0 0 0';
+	self.solid = SOLID_TRIGGER;
+	setmodel(self, "progs/bfgblast.mdl");
+	setsize(self, '0 0 0');
+
+	self.alpha = 0.3;
+	
+
+	bfgblast1();
 };
 
+
+void()	bfgblast1	=[	0,	bfgblast2	] {self.skin = 0; nxth(0.1);}
+void()	bfgblast2	=[	0,	bfgblast3	] {self.skin = 1; nxth(0.1);}
+void()	bfgblast3	=[	0,	bfgblast4	] {self.skin = 2; nxth(0.1);}
+void()	bfgblast4	=[	0,	bfgblast5	] {self.skin = 3; nxth(0.1);}
+void()	bfgblast5	=[	0,	bfgblast6	] {self.skin = 4; nxth(0.1);}
+void()	bfgblast6	=[	0,	SUB_Remove	] {self.skin = 5; nxth(0.1);}
 
