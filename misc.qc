@@ -737,7 +737,7 @@ SIMPLE BMODELS
 
 void() func_wall_use = {
 	// change to alternate textures
-	float onframe = (self.spawnflags & 4) ? 0 : 1;
+	float onframe = (self.spawnflags & 4) ? 1 : 0;
 
 	if (self.estate == STATE_ACTIVE) {
 		// when the flicker flag is on, frame is managed via think function
@@ -751,7 +751,7 @@ void() func_wall_use = {
 };
 
 void(float newstate, float stateflags) func_wall_setstate = {
-	float onframe = (self.spawnflags & 4) ? 0 : 1;
+	float onframe = (self.spawnflags & 4) ? 1 : 0;
 
 	if (newstate == STATE_ACTIVE) {
 		self.frame = onframe;
@@ -783,7 +783,7 @@ void() func_wall = {
 
 	setmodel (self, self.model);
 	
-	float onframe = (self.spawnflags & 4) ? 0 : 1;
+	float onframe = (self.spawnflags & 4) ? 1 : 0;
 	
 	//self.frame = onframe;
 
