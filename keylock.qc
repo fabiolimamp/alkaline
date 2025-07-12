@@ -725,7 +725,9 @@ void() key_touch =
 		return;
 	if (other.health <= 0)
 		return;
-
+	if (other.flags & FL_CLIENT && other.flags & FL_NOTARGET && other.movetype == MOVETYPE_NOCLIP && !forcenocliptouch)
+		return;
+	
 	if (HasKeys (other, self.items, self.customkeys)){
 		if (!self.state) {
 			sprint (other, "You already got the ");
