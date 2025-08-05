@@ -95,9 +95,10 @@
 		2 : "MDL item boxes, from Copper"
 	]
 
-	originalmonsters(choices) : "Default monster style" : : "Sets default monster style for certain monsters, like the Ogre and Death Knight." = [
+	originalmonsters(choices) : "Default monster style" : : "Sets default monster style for certain monsters, like the Ogre, Scrag and Death Knight." = [
 		0 : "Alkaline style"
 		1 : "Original style"
+		-1 : "Force Alkaline style"
 	]
 
 	autojump(choices) : "Monster autojump toggle" : 1 : "Toggles autojump behavior in monsters. Check a monster's 'autojump' field for more details.

@@ -140,8 +140,13 @@ void() worldspawn =
 		forcenocliptouch = 1;
 	}
 
-	if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
+	// originalmonsters set to -1 forces the setting to off even if the cvar defaults it to on
+	if (self.originalmonsters < 0) 
+		self.originalmonsters = 0;
+	else if (cvar("scratch1") & TEMPSETTINGS_ORIGINALMONSTERS && !self.originalmonsters)
 		self.originalmonsters = 1;
+
+
 
 	if (!self.itemstyle) {
 		if (cvar("scratch1") & TEMPSETTINGS_FORCEMDLBOXES) self.itemstyle = ITEMSTYLE_MDL;
