@@ -1477,6 +1477,7 @@ void(entity controller) textstory_show = {
 void() trigger_textstory_hide = {
 	textstory_hide(self);
 
+	self.pain_finished = 0;
 	self.enemy = world;
 	self.state = 0;
 };
@@ -1484,7 +1485,10 @@ void() trigger_textstory_hide = {
 void() trigger_textstory_show = {
 	textstory_show(self);	
 
-	self.think = trigger_textstory_hide;
+	if (time > self.pain_finished)
+		self.think = trigger_textstory_hide;
+	else
+		self.think = trigger_textstory_show;
 	self.nextthink = time + 0.2;
 
 };
@@ -1499,6 +1503,10 @@ void() trigger_textstory_touch = {
 
 	if (self.mangle && !isInAngle(other.v_angle, self.mangle, self.view_ofs))
 		return;
+
+	if (!self.pain_finished) {
+		self.pain_finished = time + self.wait;
+	}
 
 	if (self.attack_finished < time) {
 

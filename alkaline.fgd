@@ -3145,6 +3145,7 @@ You can set it to be show the message only when the player is facing a certain a
 	mapvar(integer) : "Mapvar filter" : : "If the specified mapvar is true, show 'message2' instead of 'message'"
 	noise1(string) : "Activate sound" : "misc/talk.wav" : "Gets played when the message is shown. Use 'misc/talk.wav' for the default centerprint beep."
 	noise2(string) : "Deactivate sound" : : "Played when the message fades away."
+	wait(integer) : "Minimum message duration" : : "Minimum time the message will stay onscreen, even after the player leaves the trigger"
 	spawnflags(flags) = [
 		1: "Silent"
 		2: "Don't fade background"
