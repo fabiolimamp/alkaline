@@ -1234,7 +1234,7 @@ If you want a general-usage lightning bolt, use the misc_lightning_start/relay/e
 //	model(string)
 //]
 
-@PointClass base(Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter. Fires once every time it's triggered." 
+@PointClass base(Appearflags, Targetname) color(220 150 150) = trap_spikeshooter : "Triggered shooter. Fires once every time it's triggered." 
 [	
 	angle(integer) : "Angle"
 	dmg(integer) : "Custom damage" : : "Custom projectile damage. Defaults:
@@ -1242,17 +1242,24 @@ If you want a general-usage lightning bolt, use the misc_lightning_start/relay/e
 	- Superspike: 18
 	- Laser: 15
 	- Rocket: 60
+	- Grenade: 40
 	"
 	speed(integer) : "Custom projectile speed" : : "Defaults:
-	- Spike/Superspike/rocket: 500
+	- Spike/Superspike/rocket/grenade: 500
 	- Laser: 600"
 	health(integer) : "Voreball health. -1 makes it non-shootable." : 30
+	target(target_destination) : "Aim target" : : "When set, aims towards the entity with this as targetname.
+	Overrides whatever angle you may have set.
+	Target can either be a stationary entity like an info_notnull, or a moving target like a monster.
+	"
 	spawnflags(Flags) = 
 	[
 		1 : "Superspike" : 0
 		2 : "Laser" : 0
 		4 : "Rocket" : 0
 		8 : "Voreball" : 0
+		16 : "Grenade" : 0
+		65536: "Target nearest player" : 0
 	]
 ]
 

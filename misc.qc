@@ -277,6 +277,10 @@ float TRAP_SUPERSPIKE = 1;
 float TRAP_LASER = 2;
 float TRAP_ROCKET = 4;
 float TRAP_VOREBALL = 8;
+float TRAP_GRENADE = 16;
+
+float TRAP_STARTOFF = 128;
+float TRAP_TARGETPLAYER = 65536;
 
 void() ShalMisTouchEnt = {
 
@@ -346,18 +350,32 @@ void() ShalMisTfDie = {
 
 void() spikeshooter_use = {
 	float spd, damage;
+	vector launchdir;
 
 	if (self.estate != STATE_ACTIVE) return;
 
+
+	launchdir = self.movedir;
+	
+	if (self.spawnflags & TRAP_TARGETPLAYER) {
+		entity pl = findClosest(self.origin, classname, "player", 0);
+		launchdir = normalize(pl.origin - self.origin);
+	}
+	else if (self.target != "") {
+		entity tgt = find(world, targetname, self.target);
+		if (tgt) launchdir = normalize(tgt.origin - self.origin);
+	}
+
+
 	if (self.spawnflags & TRAP_LASER) {
 		sound (self, CHAN_VOICE, "enforcer/enfire.wav", 1, ATTN_NORM);
-		LaunchLaser (self.origin, self.movedir);
+		LaunchLaser (self.origin, launchdir);
 		spd = 600;
 		damage = 15;
 	}
 	else if (self.spawnflags & TRAP_ROCKET) {
 		sound (self, CHAN_VOICE, "weapons/sgun1.wav", 1, ATTN_NORM);
-		launch_rocket (self.origin, self.movedir);
+		launch_rocket (self.origin, launchdir);
 		spd = 500;
 		damage = 60;
 	}
@@ -405,10 +423,37 @@ void() spikeshooter_use = {
 		e.classname = "shalmissiletf";
 		//sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
 	}
+	else if (self.spawnflags & TRAP_GRENADE) {
+		sound (self, CHAN_WEAPON, "weapons/grenade.wav", 1, ATTN_NORM);
+
+		newmis = spawn();
+		newmis.classname = "grenade";
+		newmis.owner = self;
+		newmis.movetype = MOVETYPE_BOUNCE;
+		newmis.solid = SOLID_BBOX;
+		newmis.flags |= FL_PROJECTILE;
+
+		// set missile speed
+		newmis.velocity = launchdir * 500;
+		newmis.velocity_z += 200;
+		newmis.avelocity = '300 300 300';
+		newmis.angles = vectoangles(newmis.velocity);
+		newmis.touch = OgreGrenadeTouch;
+
+		// set missile duration
+		newmis.nextthink = time + 2.5;
+		newmis.think = OgreGrenadeExplode;
+
+		setmodel (newmis, "progs/grenade.mdl");
+		setsize (newmis, '0 0 0', '0 0 0');
+		setorigin (newmis, self.origin);
+		spd = 500;
+		damage = 40;
+	}
 	else
 	{
 		sound(self, CHAN_VOICE, "weapons/spike2.wav", 1, ATTN_NORM);
-		launch_spike (self.origin, self.movedir);
+		launch_spike (self.origin, launchdir);
 		spd = 500;
 		if (self.spawnflags & TRAP_SUPERSPIKE) {
 			newmis.touch = superspike_touch;
@@ -421,7 +466,7 @@ void() spikeshooter_use = {
 	newmis.dmg = damage;
 	
 	if (self.speed) spd = self.speed;
-	newmis.velocity = self.movedir * spd;
+	newmis.velocity = normalize(newmis.velocity) * spd;
 };
 
 void() shooter_think =
@@ -443,6 +488,12 @@ void() trap_spikeshooter =
 	if (!SUB_InitEntity()) return;
 	
 	SetMovedir();
+
+	if (self.target != "") {
+		entity tgt = find(world, targetname, self.target);
+		if (tgt) self.movedir = normalize(tgt.origin - self.origin);
+	}
+
 	self.use = spikeshooter_use;
 
 	if (!self.obituary) {
@@ -485,7 +536,7 @@ void() trap_shooter = {
 	if (self.wait == 0)
 		self.wait = 1;
 
-	if (self.spawnflags & 128)
+	if (self.spawnflags & TRAP_STARTOFF)
 		self.estate = STATE_INACTIVE;
 
 	if (!self.delay)
