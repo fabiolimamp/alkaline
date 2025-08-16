@@ -6,6 +6,8 @@
    Copyright (c)1996 Hipnotic Interactive, Inc.
    All rights reserved.
    Do not distribute.
+
+   Deprecated in favor of Copper's misc_particlefield
 */
 
 float FORCEFIELD_START_ON = 1;

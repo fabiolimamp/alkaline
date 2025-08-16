@@ -346,14 +346,14 @@ void() laser_helper_think =
 		return;
 	}
 	
-	if (self.owner.state)
+	if (self.owner.estate == STATE_ACTIVE)
 		self.owner.alpha = self.alpha * 0.8 + self.alpha * random() * 0.4;
 			
 	self.nextthink = time + 0.05;
 };
 
 void() func_laser_touch = {
-	if (!self.state)
+	if (self.estate != STATE_ACTIVE)
 		return;
 
 	if (!self.dmg)
@@ -370,7 +370,7 @@ void() func_laser_touch = {
 };
 
 void () func_laser_use = {
-	if (!self.state) {
+	if (self.estate != STATE_ACTIVE) {
 
 		if (self.spawnflags & LASER_SOLID) {
 			self.solid = SOLID_BSP;
@@ -384,7 +384,7 @@ void () func_laser_use = {
 		if (activator.classname == "player" && self.message != "")
 			centerprint (activator, self.message);
 
-		self.state = 1;
+		self.estate = STATE_ACTIVE;
 	}
 	else {
 
@@ -401,8 +401,43 @@ void () func_laser_use = {
 		if (activator.classname == "player" && self.message2 != "")
 			centerprint (activator, self.message2);
 
-		self.state = 0;
+		self.estate = STATE_INACTIVE;
 	}
+};
+
+
+
+void (float newstate, float stateflags) func_laser_setstate = {
+	if (newstate == STATE_ACTIVE) {
+
+		if (self.spawnflags & LASER_SOLID) {
+			self.solid = SOLID_BSP;
+			self.movetype = MOVETYPE_PUSH;
+		}
+
+		setmodel (self, self.origmodel);
+		if (!(self.spawnflags & LASER_SILENT))
+			sound (activator, CHAN_VOICE, "misc/laser_on.wav", 1, ATTN_NORM);
+
+		if (activator.classname == "player" && self.message != "")
+			centerprint (activator, self.message);
+	}
+	else {
+
+		if (self.spawnflags & LASER_SOLID) {
+			self.solid = SOLID_NOT;
+			self.movetype = MOVETYPE_NONE;
+		}
+
+		setmodel (self, "");
+
+		if (!(self.spawnflags & LASER_SILENT))
+			sound (activator, CHAN_VOICE, "misc/laseroff.wav", 1, ATTN_NORM);
+		
+		if (activator.classname == "player" && self.message2 != "")
+			centerprint (activator, self.message2);
+	}
+	self.estate = newstate;
 };
 
 /*QUAKED func_laser (0 .5 .8) ? START_OFF LASER_SOLID
@@ -448,11 +483,11 @@ void () func_laser =
 	}
 
 	if (self.spawnflags & START_OFF) {
-		self.state = 0;
+		self.estate = STATE_INACTIVE;
 		setmodel(self, "");
 	}
 	else {
-		self.state = 1;
+		self.estate = STATE_ACTIVE;
 		setmodel (self, self.model);
 	}
 
@@ -467,6 +502,8 @@ void () func_laser =
 	self.dmg = zeroconvertdefault(self.dmg, 1);
 		
 	self.use = func_laser_use;
+
+	self.th_setstate = func_laser_setstate;
 
 	self.touch = func_laser_touch;
 
@@ -627,10 +664,10 @@ void()	sparks_fade4 = [0, SUB_Remove]   {self.alpha = 0.2; self.nextthink = time
 
 void() sparks_use =
 {
-	if (self.spawnflags & START_OFF)
-		self.spawnflags = self.spawnflags - START_OFF;
+	if (self.estate != STATE_ACTIVE)
+		self.estate = STATE_ACTIVE;
 	else
-		self.spawnflags = self.spawnflags + START_OFF;
+		self.estate = STATE_INACTIVE;
 };
 
 void() misc_sparks_think;
@@ -681,32 +718,28 @@ void(vector org, float qt, float color, vector vel) spawnsparks = {
 	}
 }
 
-void() misc_sparks_think =
-{
-	if (self.spawnflags & START_OFF)
-	{
+void() misc_sparks_think = {
+	if (self.estate != STATE_ACTIVE) {
 		self.nextthink = time + 0.1;
 		self.think = misc_sparks_think;
+		return;
 	}
-	else
-	{
-		float color;
-		if (self.spawnflags & SPARKS_PALE)
-			color = SPARKS_PALE;
-		else if (self.spawnflags & SPARKS_BLUE)
-			color = SPARKS_BLUE;
+	
+	float color;
+	if (self.spawnflags & SPARKS_PALE)
+		color = SPARKS_PALE;
+	else if (self.spawnflags & SPARKS_BLUE)
+		color = SPARKS_BLUE;
 
-		//spawnsparks(self.origin, self.cnt, color, '0 0 0');
-		spawnsparks(self.origin, self.cnt, color, self.movedir);
+	//spawnsparks(self.origin, self.cnt, color, '0 0 0');
+	spawnsparks(self.origin, self.cnt, color, self.movedir);
 
-		if (self.sounds == 1)
-			sound (self, CHAN_AUTO, "misc/spark.wav", 1, ATTN_STATIC);
+	if (self.sounds == 1)
+		sound (self, CHAN_AUTO, "misc/spark.wav", 1, ATTN_STATIC);
 
-		SUB_UseTargets();
-		self.nextthink = time + 0.1 + random() * 0.1;
-		self.think = spark_turnofflight;
-
-	}
+	SUB_UseTargets();
+	self.nextthink = time + 0.1 + random() * 0.1;
+	self.think = spark_turnofflight;
 	
 };
 
@@ -740,7 +773,10 @@ void() misc_sparks =
 		self.wait = 2;
 	if (!self.cnt)
 		self.cnt = 15;
-	
+
+	if (self.spawnflags & START_OFF)
+		self.estate = STATE_INACTIVE;
+
 	self.use = sparks_use;
 	self.nextthink = time + random()*0.1;
 	self.think = misc_sparks_think;
@@ -790,7 +826,7 @@ void() smoke_rise =
 
 void() smoke_think =
 {
-	if (self.spawnflags & START_OFF)
+	if (self.estate != STATE_ACTIVE)
 	{
 		self.think = smoke_think;
 		self.nextthink = time + 0.1;
@@ -849,24 +885,38 @@ void() smoke_think =
 
 void() smoke_use =
 {
-	if (self.spawnflags & START_OFF)
+	if (self.estate != STATE_ACTIVE)
 	{
-		self.spawnflags = self.spawnflags - START_OFF;
+		self.estate = STATE_ACTIVE;
 		if (self.sounds)
 			sound (self, CHAN_VOICE, "misc/airhiss.wav", 1, ATTN_STATIC);
 	}
 	else
 	{
-		self.spawnflags = self.spawnflags + START_OFF;
+		self.estate = STATE_INACTIVE;
 		if (self.sounds)
 			sound (self, CHAN_VOICE, "misc/airhiss2.wav", 1, ATTN_STATIC);
 	}
 };
 
+void(float newstate, float stateflags) smoke_setstate =
+{
+	if (newstate != STATE_ACTIVE) {
+		if (self.sounds)
+			sound (self, CHAN_VOICE, "misc/airhiss.wav", 1, ATTN_STATIC);
+	}
+	else {
+		if (self.sounds)
+			sound (self, CHAN_VOICE, "misc/airhiss2.wav", 1, ATTN_STATIC);
+	}
+
+	self.estate = newstate;
+};
+
 void() smoke_firstthink =
 {
 	if (self.sounds)
-		if (!(self.spawnflags & START_OFF))
+		if (self.estate == STATE_ACTIVE)
 			sound (self, CHAN_VOICE, "misc/airhiss.wav", 1, ATTN_STATIC);
 
 	smoke_think();
@@ -905,7 +955,11 @@ void() misc_smoke =
 		self.movedir2 = '0 0 0';
 	if (!self.wait)
 		self.wait = 0.1;
-						
+	
+	if (self.spawnflags & START_OFF)
+		self.estate = STATE_INACTIVE;
+
+	self.th_setstate = smoke_setstate;
 	self.use = smoke_use;
 	self.nextthink = time + 0.5;
 	self.think = smoke_firstthink;
@@ -1048,6 +1102,13 @@ misc_splash
 
 void() splash_think =
 {
+	self.think = splash_think;
+	
+	if (self.estate != STATE_ACTIVE) {
+		self.nextthink = time + 0.1;
+		return;
+	}
+
 	local vector vec;
 	local float variance;
 	variance = vlen(self.movedir) / 2;
@@ -1056,6 +1117,13 @@ void() splash_think =
 	vec_z = self.movedir_z - variance + random() * variance * 2;
 	particle (self.origin, vec, self.color, self.volume);
 	self.nextthink = time + self.wait;
+}
+
+void() splash_use = {
+	if (self.estate != STATE_ACTIVE)
+		self.estate = STATE_ACTIVE;
+	else
+		self.estate = STATE_INACTIVE;
 }
 
 /*QUAKED misc_splash (0 .5 .8) (-8 -8 -8) (8 8 8)
@@ -1081,6 +1149,12 @@ void() misc_splash =
 		self.volume = 10;
 	self.color = self.color * 16;
 
+	self.use = splash_use;
+
+	if (self.spawnflags & START_OFF)
+		self.estate = STATE_INACTIVE;
+
+	
 	self.nextthink = time + self.wait;
 	self.think = splash_think;
 };

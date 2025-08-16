@@ -17,6 +17,12 @@ void() misc_fireball = {
 };
 
 void() fire_fly = {
+	self.nextthink = time + (random() * 5) + 3;
+	self.think = fire_fly;
+
+	if (self.estate != STATE_ACTIVE)
+		return;
+
 	entity fireball;
 
 	fireball = spawn();
@@ -34,8 +40,7 @@ void() fire_fly = {
 	fireball.think = SUB_Remove;
 	fireball.touch = fire_touch;
 	
-	self.nextthink = time + (random() * 5) + 3;
-	self.think = fire_fly;
+
 };
 
 
@@ -906,8 +911,8 @@ void () blocker_touch =	{
 };
 
 void () blocker_use = {
-	if ( !self.state ) {
-		self.state = 1;
+	if (self.estate != STATE_ACTIVE) {
+		self.estate = STATE_ACTIVE;
 
 		if (!(self.spawnflags & 2)) { //not solid
 			self.solid = SOLID_BSP;
@@ -919,7 +924,7 @@ void () blocker_use = {
 		// sound(self, CHAN_VOICE, self.noise1, 1, ATTN_NORM);
 	}
 	else {
-		self.state = 0;
+		self.estate = STATE_INACTIVE;
 		self.solid = SOLID_NOT;
 		self.movetype = MOVETYPE_NONE;
 		setmodel(self, "");
@@ -948,8 +953,8 @@ void() func_togglewall = {
 	precache_sound( self.noise );
 	precache_sound( self.noise1 );
 	
-	if ( self.spawnflags & START_OFF ) self.state = 1;
-	else self.state = 0;
+	if ( self.spawnflags & START_OFF ) self.estate = STATE_ACTIVE;
+	else self.estate = STATE_INACTIVE;
 	  
 	blocker_use();
 };
@@ -969,27 +974,31 @@ spawnflag 2: set brush as non-solid
 float TOGGLEVISWALL_STARTOFF = 1;
 float TOGGLEVISWALL_NOTSOLID = 2;
 
-void() func_togglevisiblewall_use =
-{
-	if(!self.state) {
-		if(!(self.spawnflags & TOGGLEVISWALL_NOTSOLID)) {
+void() func_togglevisiblewall_use = {
+	if (self.estate != STATE_ACTIVE) {
+		func_togglevisiblewall_setstate(STATE_ACTIVE, 0);
+	} else {
+		func_togglevisiblewall_setstate(STATE_INACTIVE, 0);
+	}
+};
+
+void(float newstate, float stateflags) func_togglevisiblewall_setstate = {
+	if (newstate == STATE_ACTIVE) {
+		if (!(self.spawnflags & TOGGLEVISWALL_NOTSOLID)) {
 			self.solid = SOLID_BSP;
 			self.movetype = MOVETYPE_PUSH;
 		}
-		setmodel (self, self.origmodel);
-		if(self.switchshadstyle) lightstyle(self.switchshadstyle, "a");
-		self.state = 1;
-	} else {
-
+		setmodel(self, self.origmodel);
+		if (self.switchshadstyle) lightstyle(self.switchshadstyle, "a");
+	}
+	else {
 		self.solid = SOLID_NOT;
 		self.movetype = MOVETYPE_NONE;
-		setmodel (self, "");
-		if(self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
-		self.state = 0;
+		setmodel(self, "");
+		if (self.switchshadstyle) lightstyle(self.switchshadstyle, "m");
 	}
-
-};
-
+	self.estate = newstate;
+}
 
 /*QUAKED func_togglevisiblewall (0 .5 .8) ? TOGGLEVISWALL_STARTOFF TOGGLEVISWALL_NOTSOLID X X X X X X NOT_ON_EASY NOT_ON_NORMAL NOT_ON_HARD_OR_NIGHTMARE NOT_IN_DEATHMATCH NOT_IN_COOP NOT_IN_SINGLEPLAYER X NOT_ON_HARD_ONLY NOT_ON_NIGHTMARE_ONLY
 
@@ -1009,13 +1018,14 @@ void() func_togglevisiblewall =
 
 	self.angles = '0 0 0';
 	self.use = func_togglevisiblewall_use;
+	self.th_setstate = func_togglevisiblewall_setstate;
 
 	self.origmodel = self.model;
 
-	if(self.spawnflags & TOGGLEVISWALL_STARTOFF) self.state = 1;
-	else self.state = 0;
+	if (self.spawnflags & TOGGLEVISWALL_STARTOFF) self.estate = STATE_ACTIVE;
+	else self.estate = STATE_INACTIVE;
 
-	if(self.spawnflags & TOGGLEVISWALL_NOTSOLID) {
+	if (self.spawnflags & TOGGLEVISWALL_NOTSOLID) {
 		self.solid = SOLID_NOT;
 		self.movetype = MOVETYPE_NONE;
 	}
@@ -1330,7 +1340,7 @@ void() play_sound_triggered_use = {
 
 	else src = self;
 
-	if (self.spawnflags & 1) {
+	if (self.spawnflags & 1) { // toggle
 		if (self.state == 0) {
 			self.state = 1;
 
