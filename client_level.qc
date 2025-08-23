@@ -673,7 +673,7 @@ void() ClientConnect =
 
 	if (!client_ent) client_ent = self; //client_ent will be the first player to enter
 
-	self.currenthud = !!(cvar("saved1") & ALKSETTIGNS_OLDSTYLEHUD);
+	self.currenthud = getHudNumber(cvar("saved1") & HUDBITS_ALL);
 
 	if (self.healthcontroller.classname != "healthcontroller") CreateHealthController();
 	if (self.lightningcontroller.classname != "lightningcontroller") CreateLightningController();
@@ -684,6 +684,12 @@ void() ClientConnect =
 		ExitIntermission ();
 };
 
+float(float bits) getHudNumber = {
+	if (bits & HUDBITS_MODERN2 == HUDBITS_MODERN2) return HUD_MODERN2;
+	else if (bits & HUDBITS_CLASSIC == HUDBITS_CLASSIC) return HUD_CLASSIC;
+	else if (bits & HUDBITS_QUAKEWORLD == HUDBITS_QUAKEWORLD) return HUD_QUAKEWORLD;
+	else return HUD_MODERN1;
+}
 
 /*
 ===========

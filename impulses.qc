@@ -469,20 +469,35 @@ void() ResetPlayerZ = {
 }
 
 void() CycleHUD = {
-	float tmp1 = cvar("saved1");
 	sound(self, CHAN_BODY, "misc/menu3.wav", 1, ATTN_NORM);
+	
 	float current = self.currenthud;
+	float saved1 = cvar("saved1");
+	saved1 &~= HUDBITS_ALL;
+	//dprint3("saved1 before: ", ftos(saved1), "\n");
 
-	if (current) {
-		//cvar_set("scratch1", "0");
-		cvar_set("saved1", ftos(tmp1 - (tmp1 & ALKSETTIGNS_OLDSTYLEHUD)));
-		self.currenthud = 0;
+	/*if (current == HUD_MODERN1) {
+		cvar_set("saved1", ftos(saved1 | HUDBITS_MODERN2));
+		sprint(self, "Modern (alternate) HUD selected\n");
+		self.currenthud = 2;
+	}
+	else*/
+	if (current == HUD_MODERN1) {
+		cvar_set("saved1", ftos(saved1 | HUDBITS_CLASSIC));
+		sprint(self, "Classic HUD selected\n");
+		self.currenthud = 3;
+	}
+	else if (current == HUD_CLASSIC) {
+		cvar_set("saved1", ftos(saved1 | HUDBITS_QUAKEWORLD));
+		sprint(self, "Quakeworld-style HUD selected\n");
+		self.currenthud = 4;
 	}
 	else {
-		//cvar_set("scratch1", "1");
+		cvar_set("saved1", ftos(saved1 | HUDBITS_MODERN1));
+		sprint(self, "Modern HUD selected\n");
 		self.currenthud = 1;
-		cvar_set("saved1", ftos(tmp1 | ALKSETTIGNS_OLDSTYLEHUD));
 	}
+	//dprint3("saved1 after: ", ftos(cvar("saved1")), "\n");
 }
 
 

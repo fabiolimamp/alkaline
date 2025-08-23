@@ -595,8 +595,9 @@ void(vector pos) Hud_DrawScoreBar_QSClock = {
 };
 
 
-nonstatic void Hud_Draw(float scoreboard, vector pos) {
-		
+nonstatic void Hud_Draw(float scoreboard) {
+	vector pos = [(screensize_x-480)/2, screensize_y, 0];
+
 	if (scoreboard)	{
 		//Hud_CoopScores_SBar(pos - '0 24 0');
 		Hud_DrawScoreBar_QSClock(pos - '0 24 ');
@@ -617,8 +618,6 @@ nonstatic void Hud_Draw(float scoreboard, vector pos) {
 		Hud_DrawSBar(pos - '0 24 0');
 	}
 
-
-	
 };
 
 //=================================================================================================
@@ -818,6 +817,168 @@ nonstatic void Hud_Draw_2(float scoreboard) {
 };
 
 
+
+
+//=================================================================================================
+//                                   Quakeworld style HUD
+//=================================================================================================
+
+
+
+void Hud_DrawSBar_3(vector pos) {
+		if (st_items & IT_TRIFECTA)	{
+		drawpic(pos + '16 0 0', "gfx/sb_aarmortri", '112 24 0', '1 1 1', 1, 0);
+	}
+	else if (st_items & IT_INVULNERABILITY) {
+		drawpic(pos + '16 0 0', "gfx/sb_aarmor666", '112 24 0', '1 1 1', 1, 0);
+	}
+	else {
+		if (st_items & IT_ARMOR3)
+			drawpic(pos+'16 0 0', "gfx/sb_aarmor3", '24 24 0', '1 1 1', 1, 0);
+		else if (st_items & IT_ARMOR2)
+			drawpic(pos+'16 0 0', "gfx/sb_aarmor2", '24 24 0', '1 1 1', 1, 0);
+		else if (st_items & IT_ARMOR1)
+			drawpic(pos+'16 0 0', "gfx/sb_aarmor1", '24 24 0', '1 1 1', 1, 0);
+
+		//drawpic(pos+'40 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
+		Hud_DrawLargeValue(pos+'48 0 0', getstatf(STAT_ARMOR), 25, 2);
+	}
+
+	Hud_DrawFace(pos+'168 0 0');
+	
+	//drawpic(pos+'192 0 0', "gfx/numbk_health", '88 24 0', '1 1 1', 1, 0);
+	Hud_DrawLargeValue(pos+'200 0 0', getstatf(STAT_HEALTH), 25, 2);
+
+	if (st_items & IT_SHELLS)
+		drawpic(pos+'320 0 0', "gfx/sb_shells", '24 24 0', '1 1 1', 1, 0);
+	else if (st_items & IT_NAILS)
+		drawpic(pos+'320 0 0', "gfx/sb_nails", '24 24 0', '1 1 1', 1, 0);
+	else if (st_items & IT_ROCKETS)
+		drawpic(pos+'320 0 0', "gfx/sb_rocket", '24 24 0', '1 1 1', 1, 0);
+	else if (st_items & IT_CELLS)
+		drawpic(pos+'320 0 0', "gfx/sb_cells", '24 24 0', '1 1 1', 1, 0);
+
+	//drawpic(pos+'344 0 0', "gfx/numbk_armorammo", '88 24 0', '1 1 1', 1, 0);
+	Hud_DrawLargeValue(pos+'352 0 0', getstatf(STAT_AMMO), 10, 2);
+
+};
+
+
+void Hud_DrawIBar_3(vector pos)
+{
+
+
+
+	if (st_items & IT_KEY1)
+		drawpic(pos+'288 8 0', "gfx/sb_key1", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_KEY2)
+		drawpic(pos+'304 8 0', "gfx/sb_key2", '16 16 0', '1 1 1', 1, 0);
+
+
+	if (st_items & IT_KEY3)
+		drawpic(pos+'320 8 0', "gfx/sb_key3", '16 16 0', '1 1 1', 1, 0);
+
+	if (st_items & IT_INVISIBILITY)
+		drawpic(pos+'336 8 0', "gfx/sb_invis", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_INVULNERABILITY)
+		drawpic(pos+'352 8 0', "gfx/sb_invuln", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_SUIT)
+		drawpic(pos+'368 8 0', "gfx/sb_suit", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_QUAD)
+		drawpic(pos+'384 8 0', "gfx/sb_quad", '16 16 0', '1 1 1', 1, 0);
+	if (st_items & IT_TRIFECTA)
+		drawpic(pos+'400 8 0', "gfx/sb_trifecta", '16 16 0', '1 1 1', 1, 0);
+	if (st_boots) {
+		drawpic(pos+'416 8 0', "gfx/sb_boots", '16 16 0', '1 1 1', 1, 0);
+		if (st_boots != 1) {
+			float c;
+			if (st_boots < 0 || st_boots > 9) c = str2chr("+", 0);
+			else c = str2chr(ftos(st_boots), 0);
+			//drawcharacter(left + [24, vertical_left + 4, 0], c, '8 8 0', '1 1 1', 1, 0);
+			drawcharacter(pos+'423 15 0', c, '8 8 0', '1 1 1', 1, 0);
+		}
+	}
+
+};
+
+void Hud_DrawRunes_3(vector pos) {
+	drawpic(pos+'0 0 0', "gfx/bg_runes.lmp", '32 16 0', '1 1 1', 1, 0);
+
+	if (st_items2 & 32){
+		drawpic(pos+'0 0 0', "gfx/sb_sigil1", '8 16 0', '1 1 1', runealpha(0), 0);
+	}
+	if (st_items2 & 64) {
+		drawpic(pos+'8 0 0', "gfx/sb_sigil2", '8 16 0', '1 1 1', runealpha(1), 0);
+	}
+	if (st_items2 & 128) {
+		drawpic(pos+'16 0 0', "gfx/sb_sigil3", '8 16 0', '1 1 1', runealpha(2), 0);
+	}
+	if (st_items2 & 256){
+		drawpic(pos+'24 0 0', "gfx/sb_sigil4", '8 16 0', '1 1 1', runealpha(3), 0);
+	}
+}
+
+
+
+nonstatic void Hud_Draw_3(float scoreboard) {
+
+	
+
+	vector pos = [(screensize_x-480)/2, screensize_y, 0];
+
+
+	if (scoreboard)	{
+		//Hud_CoopScores_SBar(pos - '0 24 0');
+		Hud_DrawScoreBar_QSClock([(screensize_x-480)/2, screensize_y - 24, 0]);
+	}
+
+	if (hudviewsize > 110)
+		return;
+
+	
+	if (!scoreboard)
+		Hud_DrawSBar_3(pos - '0 24 0');
+
+	float lastrunetime;
+	for (float i = 0; i < 4; i++) {
+		if (time - runetime[i] < 3 && time - runetime[i] > lastrunetime) lastrunetime = runetime[i];
+	}
+
+	vector offset;
+	
+	if (hudviewsize < 110) {
+
+		Hud_DrawIBar_3(pos - '-8 48 0');
+
+		vector right =  [screensize_x - 2, screensize_y - 10, 0];
+		drawsubpic(right + [-48, -60, 0], '48 10 0', "gfx/bg_ammo.lmp", '0 0 0', '0.5 0.5 0', '1 1 1', baralpha, 0);
+		Hud_DrawAmmoCount(0, right + [-48, -60, 0] + '10 0 0', FALSE);
+
+		drawsubpic(right + [-48, -50, 0], '48 10 0', "gfx/bg_ammo.lmp", '0.5 0 0', '0.5 0.5 0', '1 1 1', baralpha, 0);
+		Hud_DrawAmmoCount(1, right + [-48, -50, 0] + '10 0 0', FALSE);
+
+		drawsubpic(right + [-48, -40, 0], '48 10 0', "gfx/bg_ammo.lmp", '0 0.5 0', '0.5 0.5 0', '1 1 1', baralpha, 0);
+		Hud_DrawAmmoCount(2, right + [-48, -40, 0] + '10 0 0', FALSE);
+
+		drawsubpic(right + [-48, -30, 0], '48 10 0', "gfx/bg_ammo.lmp", '0.5 0.5 0', '0.5 0.5 0', '1 1 1', baralpha, 0);
+		Hud_DrawAmmoCount(3, right + [-48, -30, 0] + '10 0 0', FALSE);
+		
+
+		if (st_items2 & (32 + 64 + 128 + 256)) 
+			Hud_DrawRunes_2([screensize_x - 34, screensize_y - 24, 0]);
+
+		for (float i = 0; i < 12; i++) {
+			if (st_weapons & weaponflags[i]) {
+				offset += '0 14 0';
+				Hud_DrawWeapon(i, [screensize_x - 25, screensize_y - 260, 0] + offset , '-4 0 0');
+				Hud_DrawWeaponFrame(i, [screensize_x - 25, screensize_y - 260, 0] + offset , '-4 0 0');
+			}
+		}
+	}
+	
+
+};
+
 //=================================================================================================
 //                                      Engine hooks
 //=================================================================================================
@@ -876,8 +1037,12 @@ void(vector virtsize, float showscores) CSQC_DrawHud = {
 		painfinishtime = time + 0.2;
 	}
 
-	if (getstatf(STAT_CURRENTHUD) == 1)
-		Hud_Draw(showscores, [(screensize_x-480)/2, screensize_y, 0]);
-	else
+	if (getstatf(STAT_CURRENTHUD) == 2) // modern alternate
+		Hud_Draw_2(showscores);
+	else if (getstatf(STAT_CURRENTHUD) == 3) // classic
+		Hud_Draw(showscores);
+	else if (getstatf(STAT_CURRENTHUD) == 4) // QuakeWorld
+		Hud_Draw_3(showscores);
+	else // Modern
 		Hud_Draw_2(showscores);
 };
