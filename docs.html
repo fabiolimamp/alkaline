@@ -13,7 +13,7 @@ body {
 
 <body>
 
-<h1>Alkaline Mapping Guide - v1.2.3</h1>
+<h1>Alkaline Mapping Guide - v1.2.4</h1>
 <h2>Contents</h2>
 <nav>
 <ul>
@@ -125,6 +125,7 @@ body {
 			<li><a href="#state-triggers">Trigger brushes of any class</a></li>
 			<li><a href="#state-doors">Doors</a></li>
 			<li><a href="#state-buttons">Buttons</a></li>
+			<li><a href="#state-other">Other entities</a></li>
 		</ul>
 	</li>
 
@@ -739,6 +740,9 @@ body {
 <p>Also similar to Copper, buttons depress themselves when disabled and cannot be activated.</p>
 <p>If the button have a <strong>wait -1</strong> value (that is, it's a press-once button), when re-enabled it'll reset back to its un-pressed state regardless if it had been activated before. You can change that using the spawnflag <strong>Don't reset button state</strong>, in which case it'll revert to its previous state when re-enabled.</p>
 
+<h3 id="state-other">Other entities</h3>
+
+<p>Every entity that can be toggled on/off in some way can be directly controlled via target_setstate as well. This enables finer control over whether you want to explicitly set some entity to either on or off regardless of the state it's in, instead of a simple toggle by triggering it directly - for example, effect emitters such as particles or smoke, trap shooters, or even switchable lights.</p>
 
 
 <hr>
@@ -1084,6 +1088,7 @@ The activator's bounding box can be changed as well by activating spawnflag 1.</
 <h3 id="developer">Developer features</h3>
 <ul>
 	<li><strong>nomonsters</strong> cvar: if set to 1, the map will start with no monsters.</li>
+	<li><strong>forcenocliptouch</strong> command: as of Alkaline 1.2.3, players won't touch triggers or items when both noclip and notarget are active. Use this command if you still want to trigger stuff in this situation.</li>
 	<li><strong>info_player_start_test</strong> entity: developer-only map start (requires <strong>developer 1</strong> cvar to be set). You can set a custom loadout for this specific point. Also it'll always pick the last one created in the map if there's more than one.</li>
 	<li><strong>impulsetarget</strong> key: remote-control triggering. You can add a <strong>impulsetarget</strong> key to any entity and give it a value between 1 and 9, and it'll be triggered by the commands <strong>impulsetest1</strong> to <strong>impulsetest9</strong> (impulses 91 to 99). Useful to trigger some specific event in your map for testing purposes.</li>
 	<li><strong>listmonsters</strong> command (impulse 184): lists all monsters left alive in the map and their current positions. Good to find out where's that last hiding monster that keeps you from getting 100% kills.</li>
