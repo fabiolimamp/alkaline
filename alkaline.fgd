@@ -3113,6 +3113,7 @@ When triggered, toggles between 'Gravity' and 'Return Gravity' values.
 @baseclass = ItemsList [
 	items(flags) = [
 		128: "Jump boots"
+		4096: "Platinum key"
 		131072: "Silver key"
 		262144: "Gold key"
 		524288: "Invisibility"
@@ -3137,6 +3138,27 @@ When triggered, toggles between 'Gravity' and 'Return Gravity' values.
 	]
 ]
 
+
+@PointClass base(Appearflags, Targetname, ItemsList, WeaponsList) = target_giveitems :
+"Gives the selected items and weapons to the player."
+[
+	count(integer) : "Use count" : : "Maximum usage count. Set to -1 for infinite uses. Default is infinite"
+	spawnflags(flags) = [
+		1: "Give to all players"
+	]
+	items(flags) = [
+		128: "Jump boots"
+		256: "Timed Jump Boots"
+		4096: "Platinum key"
+		131072: "Silver key"
+		262144: "Gold key"
+		524288: "Invisibility"
+		1048576: "Pentagram"
+		2097152: "Environtment Suit"
+		4194304: "Quad Damage"
+		8388608: "Trifecta"
+	]
+]
 
 @SolidClass base(Appearflags, Targetname) = trigger_textstory :
 "Trigger to show long centerprint texts. Message remains on screen while player is inside the trigger volume. Can have custom sounds, or be made silent.

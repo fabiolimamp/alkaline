@@ -1301,6 +1301,114 @@ void() target_removeitems = {
 };
 
 
+
+//=================================================================================================
+
+
+
+void(entity plr, float givenitems, float givenweapons) giveitems_go = {
+	entity oself;
+	if (plr.classname != "player")
+		return;
+
+	oself = self;
+	self = plr;
+
+	if (givenitems & IT_INVISIBILITY) {
+		self.invisible_finished = time + 30;
+		self.invisible_time = 1;
+	}
+	if (givenitems & IT_INVULNERABILITY) {
+		self.invincible_time = 1;
+		self.invincible_finished = time + 30;
+	}
+	if (givenitems & IT_TRIFECTA) {
+		self.trif_finished = time + 30;
+		self.trif_time = 1;
+		T_Heal(self, 100, 1);
+		csf_set(self, 32, '96 192 224', 100);
+		self.healthcontroller.nextthink = time + 1;
+	}
+	if (givenitems & IT_QUAD) {
+		self.super_damage_finished = time + 30;
+		self.super_time = 1;
+	}
+	if (givenitems & IT_SUIT) {
+		self.rad_time = 1;
+		self.radsuit_finished = time + 30;
+	}
+	if (givenitems & IT_JBOOTS) {
+		float limit;
+
+		// if theres a timed boot active, add persistent boot in "background mode"
+		if (self.jboots_finished) limit = self.jboots_prevlimit;
+		else limit = self.jboots_rechargelimit;
+
+		if (limit >= 3) {
+			limit = 3;
+			sprint(self, "Jump module limit reached. Module not added.\n");
+		}
+		else {
+			if (limit) sprint(self, "Jump module added.\n");
+			limit = limit + 1;
+		}
+
+		if (self.jboots_finished) self.jboots_prevlimit = limit;
+		else self.jboots_rechargelimit = limit;
+	}
+
+	if (givenitems & 256) { // timed boots
+		if (!self.jboots_finished) self.jboots_prevlimit = self.jboots_rechargelimit;
+		self.jboots_time = 1;
+		self.jboots_finished = time + 30;
+		self.jboots_rechargelimit = -1;
+
+		givenitems |= 128;
+	}
+	givenitems &~= 256; // timed boots
+
+	self.items |= givenitems;
+	self.items |= givenweapons & HUD_WEAPONS;
+	self.weapons |= givenweapons;
+	
+
+	self = oself;
+
+};
+
+void() target_giveitems = {
+	if (!SUB_InitEntity()) return;
+
+	self.use = target_giveitems_use;
+
+	if(!self.count)
+		self.count = -1;
+}
+
+void() target_giveitems_use = {
+	if(!self.count)
+		return;
+
+	if (self.estate != STATE_ACTIVE)
+		return;
+	if (self.mapvar && !read_mapvar(self.mapvar))
+		return;
+
+	if (self.spawnflags & 1) { // all players
+		entity pl = find(world, classname, "player");
+		while (pl) {
+			giveitems_go(pl, self.items, self.weapons);
+			find(pl, classname, "player");
+		}
+	}
+	else {
+		giveitems_go (activator, self.items, self.weapons);
+	}
+
+	if (self.count > 0)
+		self.count--;
+}
+
 /*
 =============================================================
 
