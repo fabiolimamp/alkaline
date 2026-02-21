@@ -1,8 +1,3 @@
-$cd id1/models/edie_c
-$origin 0 0 24
-$base base		
-$skin base
-
 $frame run1 run2 run3 run4 run5 run6 run7 run8 run9 run10 run11 run12 run13 run14 run15 run16
 
 $frame runfire1 runfire2 runfire3 runfire4 runfire5 runfire6 runfire7 runfire8 runfire9 runfire10 runfire11 runfire12 runfire13 runfire14 runfire15 runfire16
@@ -32,26 +27,6 @@ $frame death21 death22 death23 death24 death25 death26 death27 death28 death29 d
 $frame death31 death32 death33 death34 death35
 
 //=============================================================================
-
-void() edie_run1;
-void() edie_run2;
-void() edie_run3;
-void() edie_run4;
-void() edie_run5;
-void() edie_run6;
-void() edie_run7;
-void() edie_run8;
-void() edie_run9;
-void() edie_run10;
-void() edie_run11;
-void() edie_run12;
-void() edie_run13;
-void() edie_run14;
-void() edie_run15;
-void() edie_run16;
-
-float() edieCheckLoS;
-
 
 
 
@@ -405,6 +380,7 @@ void(float dist, float frm) ai_edie_run =
 	
 	ai_run(dist);
 };
+
 
 
 void() edie_run1	=[	$run1,		edie_run2	] {ai_edie_run(self.multiplier * 20,1);};
@@ -858,9 +834,16 @@ void(entity e) monster_edie_start = {
 
 	if (self.obituary == "") self.obituary = "was exterminated by an edie";
 
-	self.yaw_speed = 16;
+	if (startskill == SKILL_NIGHTMARE) {
+		self.yaw_speed = 28;
+		self.multiplier = 1.6;
+	}
+	else {
+		self.yaw_speed = 16;
+		self.multiplier = 1.2;
+	}
 	self.health = 500;
-	self.multiplier = 1.2;
+	
 	
 
 	

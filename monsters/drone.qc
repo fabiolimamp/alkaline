@@ -5,11 +5,6 @@ DRONE
 
 =============================================================================
 */
-$cd /raid/quake/id1/models/drone1
-$origin 0 0 -24
-$base base
-$skin skin
-$scale 1
 
 // 0
 $frame base1
@@ -285,12 +280,17 @@ void()  drn_painb5       =[      $pab5,         drn_run         ] {};
 
 
 void(entity attacker, float damage) drn_pain = {
+	ThrowGib ("progs/spike_old.mdl", -10);
+
+	if (startskill == SKILL_NIGHTMARE) {
+		if (random() > 0.5) return;
+	}
+
 	if (random() > 0.75)
 		sound (self, CHAN_VOICE, "drone/drnpain2.wav", 1, ATTN_NORM);
 	else
 		sound (self, CHAN_VOICE, "drone/drnpain.wav", 1, ATTN_NORM);
 
-	ThrowGib ("progs/spike_old.mdl", -10);
 
 	if (random() > 0.5)
 		drn_paina1 ();

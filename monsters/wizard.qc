@@ -78,8 +78,6 @@ void(entity missile, float mspeed, float accuracy) LaunchMissile =
 };
 
 
-void() wiz_run1;
-void() wiz_side1;
 
 /*
 =================
@@ -207,7 +205,7 @@ void() Wiz_FastFire =
 		self.owner.effects = self.owner.effects | EF_MUZZLEFLASH;
 
 		makevectors (SUB_entEnemyTarget().angles);	
-		dst = SUB_entEnemyTarget().origin - 13*self.movedir;
+		dst = SUB_entEnemyTarget().origin - self.movedir;
 	
 		vec = normalize(dst - self.origin);
 
@@ -221,6 +219,7 @@ void() Wiz_FastFire =
 		newmis.velocity = vec*600;
 		newmis.owner = self.owner;
 		newmis.classname = "wizspike";
+		if (startskill == SKILL_NIGHTMARE) newmis.dmg = 6;
 		setmodel (newmis, "progs/w_spike.mdl");
 		setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
 	}
@@ -231,8 +230,7 @@ void() Wiz_FastFire =
 
 void() Wiz_StartFast =
 {
-	local	entity	missile;
-	
+		
 	if (self.originalmonsters) 
 		sound(self, CHAN_VOICE, "wizard/wattack.wav", 1, ATTN_NORM);
 	else
@@ -242,29 +240,31 @@ void() Wiz_StartFast =
 	self.v_angle = self.angles;
 	makevectors (self.angles);
 
-	missile = spawn ();
-	missile.owner = self;
-	missile.nextthink = time + 0.6;
-	setsize (missile, '0 0 0', '0 0 0');		
-	setorigin (missile, self.origin + '0 0 30' + v_forward*14 + v_right*14);
-	missile.enemy = SUB_entEnemyTarget();
-	missile.nextthink = time + 0.8;
-	missile.think = Wiz_FastFire;
-	missile.movedir = v_right;
-	missile.flags = missile.flags | FL_PROJECTILE;
+	if (startskill == SKILL_NIGHTMARE) {
+		FireWizSpike(0.2, -14);
+		FireWizSpike(0.4, 14);
+		FireWizSpike(0.8, -14);
+		FireWizSpike(1.0, 14);
+	}
+	else {
+		FireWizSpike(0.3, -14);
+		FireWizSpike(0.8, 14);
+	}
 
-	missile = spawn ();
-	missile.owner = self;
-	missile.nextthink = time + 1;
-	setsize (missile, '0 0 0', '0 0 0');		
-	setorigin (missile, self.origin + '0 0 30' + v_forward*14 + v_right* -14);
-	missile.enemy = SUB_entEnemyTarget();
-	missile.nextthink = time + 0.3;
-	missile.think = Wiz_FastFire;
-	missile.movedir = VEC_ORIGIN - v_right;
-	missile.flags = missile.flags | FL_PROJECTILE;
 };
 
+
+void(float firedelay, float offs) FireWizSpike = {
+	entity missile = spawn();
+	missile.owner = self;
+	setsize (missile, '0 0 0', '0 0 0');		
+	setorigin (missile, self.origin + '0 0 30' + v_forward*14 + v_right*offs);
+	missile.enemy = SUB_entEnemyTarget();
+	missile.nextthink = time + firedelay;
+	missile.think = Wiz_FastFire;
+	missile.movedir = v_right * offs;
+	missile.flags = missile.flags | FL_PROJECTILE;
+}
 
 
 void() Wiz_idlesound =
@@ -306,15 +306,15 @@ void()	wiz_walk6	=[	$hover6,		wiz_walk7	] {ai_walk(8);};
 void()	wiz_walk7	=[	$hover7,		wiz_walk8	] {ai_walk(8);};
 void()	wiz_walk8	=[	$hover8,		wiz_walk1	] {ai_walk(8);};
 
-void()	wiz_side1	=[	$hover1,		wiz_side2	] {ai_run(8);
+void()	wiz_side1	=[	$hover1,		wiz_side2	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);
 Wiz_idlesound();};
-void()	wiz_side2	=[	$hover2,		wiz_side3	] {ai_run(8);};
-void()	wiz_side3	=[	$hover3,		wiz_side4	] {ai_run(8);};
-void()	wiz_side4	=[	$hover4,		wiz_side5	] {ai_run(8);};
-void()	wiz_side5	=[	$hover5,		wiz_side6	] {ai_run(8);};
-void()	wiz_side6	=[	$hover6,		wiz_side7	] {ai_run(8);};
-void()	wiz_side7	=[	$hover7,		wiz_side8	] {ai_run(8);};
-void()	wiz_side8	=[	$hover8,		wiz_side1	] {ai_run(8);};
+void()	wiz_side2	=[	$hover2,		wiz_side3	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);};
+void()	wiz_side3	=[	$hover3,		wiz_side4	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);};
+void()	wiz_side4	=[	$hover4,		wiz_side5	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);};
+void()	wiz_side5	=[	$hover5,		wiz_side6	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);};
+void()	wiz_side6	=[	$hover6,		wiz_side7	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);};
+void()	wiz_side7	=[	$hover7,		wiz_side8	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);};
+void()	wiz_side8	=[	$hover8,		wiz_side1	] {if (startskill == SKILL_NIGHTMARE) nxth(0.07); ai_run(8);};
 
 void()	wiz_run1	=[	$fly1,		wiz_run2	] {ai_run(16);
 Wiz_idlesound();
@@ -426,11 +426,6 @@ void(entity attacker, float damage) Wiz_Pain =
 };
 
 
-void() Wiz_Missile =
-{
-	wiz_fast1();
-};
-
 void() wiz_sight = {
 	if (self.originalmonsters) sound (self, CHAN_VOICE, "wizard/wsight.wav", 1, ATTN_NORM);
 	else sound (self, CHAN_VOICE, "cyberscrag/wsight.wav", 1, ATTN_NORM);
@@ -466,7 +461,7 @@ void(entity e) monster_wizard_start =
 	self.th_stand = wiz_stand1;
 	self.th_walk = wiz_walk1;
 	self.th_run = wiz_run1;
-	self.th_missile = Wiz_Missile;
+	self.th_missile = wiz_fast1;
 	self.th_pain = Wiz_Pain;
 	self.th_die = wiz_die;
 	self.th_sight = wiz_sight;

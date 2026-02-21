@@ -340,8 +340,10 @@ void(entity targ, entity inflictor, entity attacker, float damage, float dmgtype
 	else if (self.th_pain) {
 		self.th_pain (attacker, take);
 		// nightmare mode monsters don't go into pain frames often
-		if (startskill == 3 && self.flags & FL_MONSTER)
-			self.pain_finished = time + 5;		
+		if (startskill == 3 && self.flags & FL_MONSTER) {
+			if (self.pain_finished > time) self.pain_finished += 4;
+			else self.pain_finished = time + 5;
+		}
 	}
 
 	if (dmgtype == DMGTYPE_BURN_LONG && self.flags & FL_CLIENT)

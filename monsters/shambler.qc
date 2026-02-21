@@ -175,15 +175,27 @@ if (random()<0.5)
 
 void() sham_melee =
 {
-	local float chance;
 	
-	chance = random();
+	float chance = random();
+
+	// From copper, applied only on Nightrmare.
+	// Gradually building chance that the shambler will lightning instead of 
+	// continuing to melee, so that attempting a shambler dance is an
+	// increasingly dangerous gamble and not a solidly predictable exploit
+	if (startskill == SKILL_NIGHTMARE && chance < floor(self.lip) / 6.66)	// step up by 15% every other melee
+	{
+		sham_magic1();
+		return;
+	}
+
 	if (chance > 0.6 || self.health == 600)
 		sham_smash1 ();
 	else if (chance > 0.3)
 		sham_swingr1 ();
 	else
 		sham_swingl1 ();
+
+	if (startskill == SKILL_NIGHTMARE) self.lip += 0.5;
 };
 
 
@@ -209,7 +221,7 @@ void() CastLightning =
 	LightningDamage (org, trace_endpos, self, 10);
 };
 
-void() sham_magic1     =[      $magic1,       sham_magic2    ] {ai_face(); sound (self, CHAN_WEAPON, "shambler/sattck1.wav", 1, ATTN_NORM);};
+void() sham_magic1     =[      $magic1,       sham_magic2    ] {ai_face(); sound (self, CHAN_WEAPON, "shambler/sattck1.wav", 1, ATTN_NORM); self.lip = 0;};
 void() sham_magic2     =[      $magic2,       sham_magic3    ] {ai_face();};
 void() sham_magic3     =[      $magic3,       sham_magic4    ] {ai_face();self.nextthink = self.nextthink + 0.2;
 	entity o;

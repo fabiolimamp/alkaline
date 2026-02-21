@@ -112,7 +112,11 @@ void() check_onground = {
 void(float dist) arf_run_fr = {
 	check_onground();
 	ai_run(dist);
-	self.nextthink = time + 0.075; 
+
+	if (startskill == SKILL_NIGHTMARE)
+		self.nextthink = time + 0.06; 
+	else
+		self.nextthink = time + 0.075; 
 };
 
 void()	arf_run1	=[	$walk1,		arf_run2	] {arf_run_fr(12); arf_whirr();};
@@ -374,39 +378,31 @@ arfCheckAttack
 based off ShamCheckAttack
 ============
 */
-float() arfCheckAttack =
-{
-	local vector	spot1, spot2;	
-	local entity	targ;
+float() arfCheckAttack = {
+	vector spot1, spot2;	
+	entity targ;
 
 	if (time < self.attack_finished)
 		return FALSE;
 
 	targ = self.enemy;
-// see if any entities are in the way of the shot
+	
+	// see if any entities are in the way of the shot
 	spot1 = self.origin + self.view_ofs;
 	spot2 = targ.origin + targ.view_ofs;	
 
-	if ((enemy_range == RANGE_MELEE) || (enemy_range == RANGE_NEAR))
-	{
-		if (CanDamage (self.enemy, self.origin))
-		{
-			if 	((vlen(spot1 - spot2) > 200) && (vlen(spot1 - spot2) < 500))
-				{
-				
-					if (random() > 0.33)
-					{
-						self.attack_state = AS_MELEE;
-					}
-					else
-					{
-						self.attack_state = AS_MISSILE;
-					}
-				}
-			else
-				{
+	if (enemy_range == RANGE_MELEE || enemy_range == RANGE_NEAR) {
+		if (CanDamage(self.enemy, self.origin)) {
+			float rnd; // jump chance
+
+			if (startskill == SKILL_NIGHTMARE) rnd = 0.5; // more likely to shoot in nightmare
+			else rnd = 0.66;
+
+			if (vlen(spot1 - spot2) > 200 && vlen(spot1 - spot2) < 500 && random() < rnd) 
+				self.attack_state = AS_MELEE;
+			else 
 				self.attack_state = AS_MISSILE;
-				}
+			
 			return TRUE;
 		}
 	}
@@ -423,16 +419,17 @@ float() arfCheckAttack =
 		return FALSE;			// sight line crossed contents
 
 	if (trace_ent != targ)
-	{
 		return FALSE;	// don't have a clear shot
-	}
 			
-// missile attack
+	// missile attack
 	if (enemy_range == RANGE_FAR)
 		return FALSE;
 		
 	self.attack_state = AS_MISSILE;
-	SUB_AttackFinished (2 + 2*random());
+	
+	if (startskill == SKILL_NIGHTMARE) SUB_AttackFinished (1 + 1*random());
+	else SUB_AttackFinished (2 + 2*random());
+
 	return TRUE;
 };
 

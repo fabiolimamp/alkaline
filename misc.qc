@@ -1945,3 +1945,30 @@ void() target_skybox = {
 	
 	self.use = target_skybox_use;
 };
+
+
+void() target_test1 = {
+	self.movetype = MOVETYPE_BOUNCE;
+	self.solid = SOLID_BBOX;
+	precache_model("progs/h_shams_alk.mdl");
+	setmodel(self, "progs/h_shams_alk.mdl");
+	setsize(self, VEC_ORIGIN, VEC_ORIGIN);
+	self.touch = test1_touch;
+}
+
+void() test1_touch = {
+	dprint3("test1 (SOLID_BBOX) touched by ", other.classname, "\n");
+}
+
+void() target_test2 = {
+	self.movetype = MOVETYPE_STEP;
+	self.solid = SOLID_TRIGGER;
+	precache_model("progs/shambler_alk.mdl");
+	setmodel(self, "progs/shambler_alk.mdl");
+	setsize(self, VEC_HULL2_MIN, VEC_HULL2_MAX);
+	self.touch = test2_touch;
+}
+
+void() test2_touch = {
+	dprint3("test2 (SOLID_TRIGGER) touched by ", other.classname, "\n");
+}

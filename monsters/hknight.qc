@@ -70,8 +70,11 @@ void(float offset) hknight_shot = {
 	if (self.originalmonsters) setmodel(newmis, "progs/k_spike.mdl");
 	else setmodel(newmis, "progs/k_laserspike.mdl");
 
-	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);		
-	newmis.velocity = vec*300;
+	setsize (newmis, VEC_ORIGIN, VEC_ORIGIN);
+	
+	if (startskill == SKILL_NIGHTMARE) newmis.velocity = vec*500;
+	else newmis.velocity = vec*300;
+
 	sound (self, CHAN_WEAPON, "hknight/attack1.wav", 1, ATTN_NORM);
 };
 
@@ -151,7 +154,11 @@ void()	hknight_run6	=[	$run6,		hknight_run7	] {ai_runjump(25);};
 void()	hknight_run7	=[	$run7,		hknight_run8	] {ai_runjump(21);};
 void()	hknight_run8	=[	$run8,		hknight_run1	] {ai_runjump(13);};
 
+//===========================================================================
 
+void() hknm = {
+	if (startskill == SKILL_NIGHTMARE) self.nextthink = time + 0.075;
+}
 
 //============================================================================
 
@@ -192,7 +199,11 @@ void()	hknight_magicc1 =[	$magicc1,	hknight_magicc2	] {ai_face();};
 void()	hknight_magicc2 =[	$magicc2,	hknight_magicc3	] {ai_face();};
 void()	hknight_magicc3 =[	$magicc3,	hknight_magicc4	] {ai_face();};
 void()	hknight_magicc4 =[	$magicc4,	hknight_magicc5	] {ai_face();};
-void()	hknight_magicc5 =[	$magicc5,	hknight_magicc6	] {ai_face();};
+void()	hknight_magicc5 =[	$magicc5,	hknight_magicc6	] {
+	hknm();
+	ai_face();
+	if (startskill == SKILL_NIGHTMARE) self.think = hknight_magicc6nm;
+};
 void()	hknight_magicc6 =[	$magicc6,	hknight_magicc7	] {hknight_shot(-2);};
 void()	hknight_magicc7 =[	$magicc7,	hknight_magicc8	] {hknight_shot(-1);};
 void()	hknight_magicc8 =[	$magicc8,	hknight_magicc9	] {hknight_shot(0);};
@@ -200,24 +211,34 @@ void()	hknight_magicc9 =[	$magicc9,	hknight_magicc10] {hknight_shot(1);};
 void()	hknight_magicc10 =[	$magicc10,	hknight_magicc11] {hknight_shot(2);};
 void()	hknight_magicc11 =[	$magicc11,	hknight_run1] {hknight_shot(3);};
 
+
+
+void()	hknight_magicc6nm =[	$magicc6,	hknight_magicc7nm	] {hknm(); hknight_shot(-2.6); hknight_shot(-1.6);};
+void()	hknight_magicc7nm =[	$magicc7,	hknight_magicc8nm	] {hknm(); hknight_shot(-0.6);};
+void()	hknight_magicc8nm =[	$magicc8,	hknight_magicc9nm	] {hknm(); hknight_shot(0);};
+void()	hknight_magicc9nm =[	$magicc9,	hknight_magicc10nm] {hknm(); hknight_shot(0.6);};
+void()	hknight_magicc10nm =[	$magicc10,	hknight_magicc11nm] {hknm(); hknight_shot(1.6); hknight_shot(2.6);};
+void()	hknight_magicc11nm =[	$magicc11,	hknight_run1] {hknm();};
+
+
 //===========================================================================
 
-void()	hknight_char_a1	=[	$char_a1,	hknight_char_a2	] {ai_chargejump(20);};
-void()	hknight_char_a2	=[	$char_a2,	hknight_char_a3	] {ai_chargejump(25);};
-void()	hknight_char_a3	=[	$char_a3,	hknight_char_a4	] {ai_chargejump(18);};
-void()	hknight_char_a4	=[	$char_a4,	hknight_char_a5	] {ai_chargejump(16);};
-void()	hknight_char_a5	=[	$char_a5,	hknight_char_a6	] {ai_chargejump(14);};
-void()	hknight_char_a6	=[	$char_a6,	hknight_char_a7	] {ai_charge(20); ai_melee();};
-void()	hknight_char_a7	=[	$char_a7,	hknight_char_a8	] {ai_charge(21); ai_melee();};
-void()	hknight_char_a8	=[	$char_a8,	hknight_char_a9	] {ai_charge(13); ai_melee();};
-void()	hknight_char_a9	=[	$char_a9,	hknight_char_a10	] {ai_charge(20); ai_melee();};
-void()	hknight_char_a10=[	$char_a10,	hknight_char_a11	] {ai_charge(20); ai_melee();};
-void()	hknight_char_a11=[	$char_a11,	hknight_char_a12	] {ai_charge(18); ai_melee();};
-void()	hknight_char_a12=[	$char_a12,	hknight_char_a13	] {ai_chargejump(16);};
-void()	hknight_char_a13=[	$char_a13,	hknight_char_a14	] {ai_chargejump(14);};
-void()	hknight_char_a14=[	$char_a14,	hknight_char_a15	] {ai_chargejump(25);};
-void()	hknight_char_a15=[	$char_a15,	hknight_char_a16	] {ai_chargejump(21);};
-void()	hknight_char_a16=[	$char_a16,	hknight_run1	] {ai_chargejump(13);};
+void()	hknight_char_a1	=[	$char_a1,	hknight_char_a2		] {hknm(); ai_chargejump(20);};
+void()	hknight_char_a2	=[	$char_a2,	hknight_char_a3		] {hknm(); ai_chargejump(25);};
+void()	hknight_char_a3	=[	$char_a3,	hknight_char_a4		] {hknm(); ai_chargejump(18);};
+void()	hknight_char_a4	=[	$char_a4,	hknight_char_a5		] {hknm(); ai_chargejump(16);};
+void()	hknight_char_a5	=[	$char_a5,	hknight_char_a6		] {hknm(); ai_chargejump(14);};
+void()	hknight_char_a6	=[	$char_a6,	hknight_char_a7		] {hknm(); ai_charge(20); ai_melee();};
+void()	hknight_char_a7	=[	$char_a7,	hknight_char_a8		] {hknm(); ai_charge(21); ai_melee();};
+void()	hknight_char_a8	=[	$char_a8,	hknight_char_a9		] {hknm(); ai_charge(13); ai_melee();};
+void()	hknight_char_a9	=[	$char_a9,	hknight_char_a10	] {hknm(); ai_charge(20); ai_melee();};
+void()	hknight_char_a10=[	$char_a10,	hknight_char_a11	] {hknm(); ai_charge(20); ai_melee();};
+void()	hknight_char_a11=[	$char_a11,	hknight_char_a12	] {hknm(); ai_charge(18); ai_melee();};
+void()	hknight_char_a12=[	$char_a12,	hknight_char_a13	] {hknm(); ai_chargejump(16);};
+void()	hknight_char_a13=[	$char_a13,	hknight_char_a14	] {hknm(); ai_chargejump(14);};
+void()	hknight_char_a14=[	$char_a14,	hknight_char_a15	] {hknm(); ai_chargejump(25);};
+void()	hknight_char_a15=[	$char_a15,	hknight_char_a16	] {hknm(); ai_chargejump(21);};
+void()	hknight_char_a16=[	$char_a16,	hknight_run1		] {hknm(); ai_chargejump(13);};
 
 //===========================================================================
 

@@ -5,10 +5,6 @@ code by john fitzgibbons
 
 ==============================================================================*/
 
-$cd id1/models/enforcer
-$origin 0 -6 24
-$base base		
-$skin skin
 
 $frame stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8
 
@@ -105,7 +101,7 @@ void() centurion_fire =
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	makevectors (self.angles);
 	
-	org = self.origin + v_forward * 34 + v_right * 8.5 + '0 0 24'; //16 for enforcer, added 8 more for platform
+	org = self.origin + v_forward * 34 + v_right * 8.5 + '0 0 20'; //16 for enforcer, added 8 more for platform
 
 	centurion_launch_missle(org, SUB_entEnemyTarget().origin - self.origin);
 };
@@ -176,7 +172,7 @@ void() cent_combatmove = {
 	local vector	spot1, spot2, spot3;
 	local float		r, a, dir, v;
 	entity enem = SUB_entEnemyTarget();
-
+	float velmult = 1;
 	if (enem == world)
 		return;
 	
@@ -266,11 +262,13 @@ void() cent_combatmove = {
 			self.angles_x = 0;
 			self.angles_z = -5;
 		}
+
+		if (startskill == SKILL_NIGHTMARE) velmult = 2;
 	}
 	
 	// Use movetogoal when walkmove fails, because it is the only way to get around obstacles
-	if (!walkmove2 (dir, CENT_RUNSPEED))
-		movetogoal2(CENT_RUNSPEED);
+	if (!walkmove2 (dir, CENT_RUNSPEED * velmult))
+		movetogoal2(CENT_RUNSPEED * velmult);
 		
 	// Restore enemy's correct origin
 	enem.origin_z = enem.origin_z - 1000 * self.height;
@@ -313,11 +311,16 @@ void()	cent_atk6	=[	$attack6,	cent_atk7	] {cent_ai_face();centurion_fire();};
 void()	cent_atk7	=[	$attack6,	cent_atk8	] {cent_ai_face();centurion_fire();abort_if_blocked();};
 void()	cent_atk8	=[	$attack6,	cent_atk9	] {cent_ai_face();centurion_fire();};
 void()	cent_atk9	=[	$attack6,	cent_atk10	] {cent_ai_face();centurion_fire();abort_if_blocked();};
-void()	cent_atk10	=[	$attack6,	cent_atk11	] {cent_ai_face();centurion_fire();};
-void()	cent_atk11	=[	$attack7,	cent_atk12	] {cent_ai_face();};
-void()	cent_atk12	=[	$attack8,	cent_atk13	] {cent_ai_face();};
-void()	cent_atk13	=[	$attack9,	cent_atk14	] {cent_ai_face();};
-void()	cent_atk14	=[	$attack10,	cent_run1	] {cent_ai_face();SUB_CheckRefire (cent_atk1);};
+void()	cent_atk10	=[	$attack6,	cent_atk14	] {cent_ai_face();centurion_fire(); if (startskill == SKILL_NIGHTMARE) self.think = cent_atk11;};
+
+void()	cent_atk11	=[	$attack6,	cent_atk12	] {cent_ai_face();centurion_fire();abort_if_blocked();};
+void()	cent_atk12	=[	$attack6,	cent_atk13	] {cent_ai_face();centurion_fire();};
+void()	cent_atk13	=[	$attack6,	cent_atk14	] {cent_ai_face();centurion_fire();};
+
+void()	cent_atk14	=[	$attack7,	cent_atk15	] {cent_ai_face();};
+void()	cent_atk15	=[	$attack8,	cent_atk16	] {cent_ai_face();};
+void()	cent_atk16	=[	$attack9,	cent_atk17	] {cent_ai_face();};
+void()	cent_atk17	=[	$attack10,	cent_run1	] {cent_ai_face();};
 
 //============================================================================
 

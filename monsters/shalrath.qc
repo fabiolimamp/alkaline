@@ -32,6 +32,10 @@ That gets corrected in every frame function they're used in.
 */
 
 
+const float SHAL_BALL_TURN_RATE		= 265;
+const float SHAL_BALL_THINK_RATE	= 0.1;
+const float SHAL_BALL_VEL			= 300;
+
 void() shal_stand     =[      $stand1,       shal_stand    ] {
 	if (!self.originalmonsters) self.frame = $attack1; // mechavore has stand as frame 0
 	ai_stand();
@@ -180,8 +184,7 @@ void() shalrath_die =
 ShalMissile
 ================
 */
-void() ShalMissileTouch;
-void() ShalHome;
+
 void() ShalMissile =
 {
 	local	vector	dir;
@@ -214,7 +217,8 @@ void() ShalMissile =
 	newmis.velocity = dir * 400;
 	newmis.avelocity = '300 300 300';
 	newmis.nextthink = flytime + time;
-	newmis.think = ShalHome;
+	newmis.lifetime_finished = time + 30;	 // blow up after a while
+	newmis.think = ShalHome2;
 	newmis.enemy = self.enemy;
 	newmis.touch = ShalMissileTouch;
 };
@@ -238,13 +242,173 @@ void() ShalHome =
 	//dprint5("Voreball tracking entity: ", self.enemy.classname, " (", vtos(vtemp), ")\n");
 
 	dir = normalize(vtemp - self.origin);
-	if (startskill == 3)
+
+	if (startskill == SKILL_NIGHTMARE)
 		self.velocity = dir * 350;
 	else
 		self.velocity = dir * 250;
+
 	self.nextthink = time + 0.2;
 	self.think = ShalHome;	
 };
+
+
+
+vector(vector targ, float turnrate) ShalTurnToward =
+{
+	vector	vel, aimdir, temp, temp2, out;
+
+	temp = targ + '0 0 10';
+	aimdir = temp - self.origin;
+	aimdir = normalize(aimdir);
+	vel = normalize(self.velocity);
+	
+	temp = cross_product(vel, aimdir);
+	
+	// try to flatten the rotation to the horizontal plane unless the difference is extreme
+	if (fabs(temp_z) > 0.92)
+	{
+		temp_z *= 4;
+		temp = normalize(temp);
+	}
+	out = rotateVectorAround(vel, temp, turnrate * SHAL_BALL_THINK_RATE);
+	
+	// don't turn past the desired direction
+	temp2 = cross_product(out, aimdir);
+	if ((temp * temp2) < 0)
+		return aimdir;
+	return out;
+}
+
+void() ShalHome2 =
+{
+	// a voreball with perfect homing causes combat to effectively stop, forcing the player
+	// to run around around trying to shake it, often backpedaling through lots of empty map.
+	// limiting the voreball's turn rate so they can be dodged and forgotten about makes vores
+	// a more flexible enemy and more useful to the mapper
+	float dist, rate, dot;
+	
+	if (self.lifetime_finished < time) {
+		ShalMissileExplode();
+		return;
+	}
+
+	if (self.enemy.health <= 0) {
+		self.think = ShalMissileExplode;
+		self.nextthink = self.lifetime_finished;
+		//remove(self);
+		return;
+	}
+	
+	if (!self.deadflag) {
+		if (self.owner.health <= 0)		// if our mama dies
+		{
+			self.deadflag = TRUE;
+			//setmodel(self, "progs/proj_voreball2.mdl");	// stop sparkling
+
+			//setsize(self, VEC_ORIGIN, VEC_ORIGIN);
+		}
+	}
+	
+	self.think = ShalHome2;
+	self.nextthink = time + SHAL_BALL_THINK_RATE;
+	rate = SHAL_BALL_TURN_RATE;
+	dot = normalize(self.velocity) * normalize(self.enemy.origin - self.origin);
+	
+	// reset our owner regularly, or else a voreball that passes through a notrace-invisible
+	// player will become owned by the player and remain nonsolid to them after the ring ends
+	//self.owner = self.trueowner;
+	// if the projectile is inside a notrace entity at this time, it'll touch again this frame
+	// and reset anyway, so this state will pingpong until it passes out the other side
+	
+	// go faster at long distance to close the gap, so snipey vores have a better presence
+	dist = vlen(self.enemy.origin - self.origin);
+	dist = saturate( (dist-200) / 600 );
+	
+	if (startskill < SKILL_NIGHTMARE)
+	{
+		// 'poor' homing (half turn rate):
+		if ( self.deadflag		// if our mama dies or falls in a hole
+			//|| !visible(self.enemy)		// if we lost LOS
+			// took ^^ this one out, because it made voreballs even more effective at going
+			// around corners, which meant that courageous players had a nice new dodge move
+			// but those who tried to fight the vore the old cautious way were punished			
+			//|| has_invis(self.enemy)			// if target is invis
+			|| pointcontents2(self.origin) < CONTENT_SOLID ) // if voreball is underwater
+		{
+			// voreballs headed straight at the player when he's hidden should maintain course, to
+			// make the dodge possible without it immediately turning to hit him
+			if (dot > 0)
+			{
+				rate *= max(1, 1.5 * (1 - dot));
+			}
+			self.velocity = SHAL_BALL_VEL * ShalTurnToward(self.enemy.origin, rate * 0.33);
+		}
+		else // good homing (full turn rate):
+		{
+			// voreballs headed straight away from the player don't normally seem to be able to pick a direction to 
+			// turn and wobble more or less straight away - amp turn rate in these cases to force a 'decision'
+			if (dot < 0)
+			{
+				rate *= min(1.4, 1.4 + fabs(dot));
+			}
+			self.velocity = SHAL_BALL_VEL * ShalTurnToward(self.enemy.origin, rate);
+		}
+		
+		self.velocity *= 1 + dist;
+		self.velocity += [crandom(),crandom(),crandom()] * 16;
+	}
+	else {
+		// nightmare: vanilla-evil homing with corner following to force engagement rather than encourage it
+		enemy_vis = visible(self.enemy);
+		
+		self.dest2 = self.dest;
+		if (enemy_vis)	// go straight to follow player around corners
+		{
+			// remember last seen positions for corner hax
+			self.dest = self.enemy.origin;
+		}
+		else if (self.dest2 == self.dest)
+		{
+			// player has been out of sight for two frames, don't keep changing velocity or
+			// when we reach that point we'll dance around it weirdly
+			self.oldvelocity = self.velocity;
+			return;
+		}
+		
+		// poor homing
+		if ( self.deadflag		// if our mama dies or falls in a hole
+			|| pointcontents2(self.origin) < CONTENT_SOLID )
+		{
+			if (dot > 0)
+			{
+				rate *= max(1, 1.5 * (1 - dot));
+			}
+			self.velocity = SHAL_BALL_VEL * ShalTurnToward(self.dest2, rate * 0.5);
+		}
+		else // evile homing
+		{
+			self.velocity = SHAL_BALL_VEL * normalize(self.dest2 + '0 0 10' - self.origin);
+		}
+		
+		self.velocity *= 1 + dist;
+		self.velocity += [crandom(),crandom(),crandom()] * 16;
+	}
+
+	self.oldvelocity = self.velocity;	
+}
+
+
+
+void() ShalMissileExplode =
+{
+	self.dmg = zeroconvertdefault(self.dmg, 40);
+
+	T_RadiusDamage (self, self.owner, self.dmg, 1, world, DMGTYPE_EXPLOSION);
+	//sound (self, CHAN_WEAPON, "weapons/r_exp3.wav", 1, ATTN_NORM);
+
+	BecomeExplosion();
+}
 
 void() ShalMissileTouch =
 {
@@ -254,12 +418,10 @@ void() ShalMissileTouch =
 	if (other.classname == "monster_zombie")
 		T_Damage(other, self, self, 110, DMGTYPE_EXPLOSION);
 
-	self.dmg = zeroconvertdefault(self.dmg, 40);
-
-	T_RadiusDamage (self, self.owner, self.dmg, 1, world, DMGTYPE_EXPLOSION);
-	
-	BecomeExplosion();
+	ShalMissileExplode();
 };
+
+//=================================================================
 
 void() shal_sight = {
 

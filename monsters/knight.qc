@@ -86,6 +86,9 @@ void()	knight_run6	=[	$runb6,		knight_run7	] {ai_runjump(20);};
 void()	knight_run7	=[	$runb7,		knight_run8	] {ai_runjump(14);};
 void()	knight_run8	=[	$runb8,		knight_run1	] {ai_runjump(6);};
 
+void() knnm = {
+	if (startskill == SKILL_NIGHTMARE) self.nextthink = time + 0.075;
+}
 
 void()	knight_runatk1	=[	$runattack1,		knight_runatk2	]
 {
@@ -96,29 +99,29 @@ else
 ai_charge(20);
 };
 void()	knight_runatk2	=[	$runattack2,	knight_runatk3	] {ai_charge_side();};
-void()	knight_runatk3	=[	$runattack3,	knight_runatk4	] {ai_charge_side();};
-void()	knight_runatk4	=[	$runattack4,	knight_runatk5	] {ai_charge_side();};
-void()	knight_runatk5	=[	$runattack5,	knight_runatk6	] {ai_melee_side();};
-void()	knight_runatk6	=[	$runattack6,	knight_runatk7	] {ai_melee_side();};
-void()	knight_runatk7	=[	$runattack7,	knight_runatk8	] {ai_melee_side();};
-void()	knight_runatk8	=[	$runattack8,	knight_runatk9	] {ai_melee_side();};
-void()	knight_runatk9	=[	$runattack9,	knight_runatk10	] {ai_melee_side();};
-void()	knight_runatk10	=[	$runattack10,	knight_runatk11	] {ai_charge_side();};
-void()	knight_runatk11	=[	$runattack11,	knight_run1	] {ai_charge(10);};
+void()	knight_runatk3	=[	$runattack3,	knight_runatk4	] {knnm(); ai_charge_side();};
+void()	knight_runatk4	=[	$runattack4,	knight_runatk5	] {knnm(); ai_charge_side();};
+void()	knight_runatk5	=[	$runattack5,	knight_runatk6	] {knnm(); ai_melee_side();};
+void()	knight_runatk6	=[	$runattack6,	knight_runatk7	] {knnm(); ai_melee_side();};
+void()	knight_runatk7	=[	$runattack7,	knight_runatk8	] {knnm(); ai_melee_side();};
+void()	knight_runatk8	=[	$runattack8,	knight_runatk9	] {knnm(); ai_melee_side();};
+void()	knight_runatk9	=[	$runattack9,	knight_runatk10	] {knnm(); ai_melee_side();};
+void()	knight_runatk10	=[	$runattack10,	knight_runatk11	] {knnm(); ai_charge_side();};
+void()	knight_runatk11	=[	$runattack11,	knight_run1	] {knnm(); ai_charge(10);};
 
 void()	knight_atk1	=[	$attackb1,		knight_atk2	]
-{
+{knnm(); 
 sound (self, CHAN_WEAPON, "knight/sword1.wav", 1, ATTN_NORM);
 ai_charge(0);};
-void()	knight_atk2	=[	$attackb2,		knight_atk3	] {ai_charge(7);};
-void()	knight_atk3	=[	$attackb3,		knight_atk4	] {ai_charge(4);};
-void()	knight_atk4	=[	$attackb4,		knight_atk5	] {ai_charge(0);};
-void()	knight_atk5	=[	$attackb5,		knight_atk6	] {ai_charge(3);};
-void()	knight_atk6	=[	$attackb6,		knight_atk7	] {ai_charge(4); ai_melee();};
-void()	knight_atk7	=[	$attackb7,		knight_atk8	] {ai_charge(1); ai_melee();};
-void()	knight_atk8	=[	$attackb8,		knight_atk9	] {ai_charge(3);
+void()	knight_atk2	=[	$attackb2,		knight_atk3	] {knnm(); ai_charge(7);};
+void()	knight_atk3	=[	$attackb3,		knight_atk4	] {knnm(); ai_charge(4);};
+void()	knight_atk4	=[	$attackb4,		knight_atk5	] {knnm(); ai_charge(0);};
+void()	knight_atk5	=[	$attackb5,		knight_atk6	] {knnm(); ai_charge(3);};
+void()	knight_atk6	=[	$attackb6,		knight_atk7	] {knnm(); ai_charge(4); ai_melee();};
+void()	knight_atk7	=[	$attackb7,		knight_atk8	] {knnm(); ai_charge(1); ai_melee();};
+void()	knight_atk8	=[	$attackb8,		knight_atk9	] {knnm(); ai_charge(3);
 ai_melee();};
-void()	knight_atk9	=[	$attackb9,		knight_atk10] {ai_charge(1);};
+void()	knight_atk9	=[	$attackb9,		knight_atk10] {knnm(); ai_charge(1);};
 void()	knight_atk10=[	$attackb10,		knight_run1	] {ai_charge(5);};
 
 //void()	knight_atk9	=[	$attack9,		knight_atk10	] {};

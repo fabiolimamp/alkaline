@@ -178,16 +178,17 @@ void() ogreb_walk15	=[	$walk15,	ogreb_walk16	] {ai_walk(3);};
 void() ogreb_walk16	=[	$walk16,	ogreb_walk1		] {ai_walk(4);};
 
 void() ogreb_run1	=[	$run1,		ogreb_run2	] {ai_runjump(10);
-if (random() < 0.2)
-	sound (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
+	if (startskill == SKILL_NIGHTMARE) nxth(0.08);
+	if (random() < 0.2)
+		sound (self, CHAN_VOICE, "ogre/ogidle2.wav", 1, ATTN_IDLE);
 };
-void() ogreb_run2	=[	$run2,		ogreb_run3	] {ai_runjump(15);};	//ijed +2 for each...
-void() ogreb_run3	=[	$run3,		ogreb_run4	] {ai_runjump(11);};
-void() ogreb_run4	=[	$run4,		ogreb_run5	] {ai_runjump(25);};
-void() ogreb_run5	=[	$run5,		ogreb_run6	] {ai_runjump(19);};
-void() ogreb_run6	=[	$run6,		ogreb_run7	] {ai_runjump(7);};
-void() ogreb_run7	=[	$run7,		ogreb_run8	] {ai_runjump(16);};
-void() ogreb_run8	=[	$run8,		ogreb_run1	] {ai_runjump(27);};
+void() ogreb_run2	=[	$run2,		ogreb_run3	] {ai_runjump(15); if (startskill == SKILL_NIGHTMARE) nxth(0.08);};	//ijed +2 for each...
+void() ogreb_run3	=[	$run3,		ogreb_run4	] {ai_runjump(11); if (startskill == SKILL_NIGHTMARE) nxth(0.08);};
+void() ogreb_run4	=[	$run4,		ogreb_run5	] {ai_runjump(25); if (startskill == SKILL_NIGHTMARE) nxth(0.08);};
+void() ogreb_run5	=[	$run5,		ogreb_run6	] {ai_runjump(19); if (startskill == SKILL_NIGHTMARE) nxth(0.08);};
+void() ogreb_run6	=[	$run6,		ogreb_run7	] {ai_runjump(7); if (startskill == SKILL_NIGHTMARE) nxth(0.08);};
+void() ogreb_run7	=[	$run7,		ogreb_run8	] {ai_runjump(16); if (startskill == SKILL_NIGHTMARE) nxth(0.08);};
+void() ogreb_run8	=[	$run8,		ogreb_run1	] {ai_runjump(27); if (startskill == SKILL_NIGHTMARE) nxth(0.08);};
 
 void() ogreb_swing1		=[	$swing1,		ogreb_swing2	] {ai_charge(12); sound (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM); berserk_chainsaw(-50);};
 void() ogreb_swing2		=[	$swing2,		ogreb_swing3	] {ai_charge(2); berserk_chainsaw(-25);};
@@ -205,9 +206,9 @@ void() ogreb_swing13	=[	$swing13,		ogreb_swing14 ] {ai_charge(9);};
 void() ogreb_swing14	=[	$swing14,		ogreb_run1	] {ai_charge(10);};
 
 void() ogreb_smash1		=[	$smash1,		ogreb_smash2	] {ai_charge(6); sound (self, CHAN_WEAPON, "ogre/ogsawatk.wav", 1, ATTN_NORM);};
-void() ogreb_smash2		=[	$smash2,		ogreb_smash3	] {ai_face();};
-void() ogreb_smash3		=[	$smash3,		ogreb_smash4	] {ai_face();};
-void() ogreb_smash4		=[	$smash4,		ogreb_smash5	] {ai_face();};
+void() ogreb_smash2		=[	$smash2,		ogreb_smash3	] {ai_face(); if (startskill == SKILL_NIGHTMARE) nxth(0.05);};
+void() ogreb_smash3		=[	$smash3,		ogreb_smash4	] {ai_face(); if (startskill == SKILL_NIGHTMARE) nxth(0.05);};
+void() ogreb_smash4		=[	$smash4,		ogreb_smash5	] {ai_face(); if (startskill == SKILL_NIGHTMARE) nxth(0.05);};
 void() ogreb_smash5		=[	$smash5,		ogreb_smash6	] 
 {
 	ai_face();

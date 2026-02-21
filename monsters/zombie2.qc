@@ -2,6 +2,15 @@
 
 void(entity e, float a, float b) genHeal = {};
 
+void() zf_transp = {
+	if (startskill < SKILL_NIGHTMARE) return;
+    if (!self.enemy) return;
+	//dprint(ftos(self.alpha));
+
+    float dist = vlen(self.origin - self.enemy.origin);
+	self.alpha = 1.0 - (0.8 * sqrt((dist - 100) / 300.0));
+};
+
 void() zombieFast_stand1 = [ 0, zombieFast_stand2 ]{ai_stand();	genHeal(self, 1, 0);};
 void() zombieFast_stand2 = [ 1, zombieFast_stand3 ]{ai_stand();};
 void() zombieFast_stand3 = [ 2, zombieFast_stand4 ]{ai_stand();};
@@ -135,13 +144,13 @@ void(float step) ai_fZom_run = {
 	
 };
 
-void() zombieFast_run1 = [ 33, zombieFast_run2 ]{ai_fZom_run(24);/*genHeal(self, 1, 0);*/};
-void() zombieFast_run2 = [ 34, zombieFast_run3 ]{ai_fZom_run(24);zombieFast_footStep();};
-void() zombieFast_run3 = [ 35, zombieFast_run4 ]{ai_fZom_run(24);};
-void() zombieFast_run4 = [ 36, zombieFast_run5 ]{ai_fZom_run(24);};
-void() zombieFast_run5 = [ 37, zombieFast_run6 ]{ai_fZom_run(24);};
-void() zombieFast_run6 = [ 38, zombieFast_run7 ]{ai_fZom_run(24);zombieFast_footStep();};
-void() zombieFast_run7 = [ 39, zombieFast_run8 ]{ai_fZom_run(24);};
+void() zombieFast_run1 = [ 33, zombieFast_run2 ]{zf_transp(); ai_fZom_run(24);/*genHeal(self, 1, 0);*/};
+void() zombieFast_run2 = [ 34, zombieFast_run3 ]{zf_transp(); ai_fZom_run(24);zombieFast_footStep();};
+void() zombieFast_run3 = [ 35, zombieFast_run4 ]{zf_transp(); ai_fZom_run(24);};
+void() zombieFast_run4 = [ 36, zombieFast_run5 ]{zf_transp(); ai_fZom_run(24);};
+void() zombieFast_run5 = [ 37, zombieFast_run6 ]{zf_transp(); ai_fZom_run(24);};
+void() zombieFast_run6 = [ 38, zombieFast_run7 ]{zf_transp(); ai_fZom_run(24);zombieFast_footStep();};
+void() zombieFast_run7 = [ 39, zombieFast_run8 ]{zf_transp(); ai_fZom_run(24);};
 void() zombieFast_run8 = [ 40, zombieFast_run1 ]{
 	local float rSnd;
 	ai_fZom_run(24);
@@ -209,32 +218,32 @@ void(float step) ai_zCharge =
 	walkmove2(self.angles_y, step);
 };
 
-void() zombieFast_atkl1 = [ 49, zombieFast_atkl2 ]{ai_zCharge(24);};
-void() zombieFast_atkl2 = [ 50, zombieFast_atkl3 ]{ai_zCharge(24);};
-void() zombieFast_atkl3 = [ 51, zombieFast_atkl4 ]{ai_zCharge(24);};
-void() zombieFast_atkl4 = [ 52, zombieFast_atkl5 ]{ai_zCharge(24);zombieFast_meleeAttack();};
-void() zombieFast_atkl5 = [ 53, zombieFast_atkl6 ]{ai_zCharge(24);};
-void() zombieFast_atkl6 = [ 54, zombieFast_atkl7 ]{ai_zCharge(24);};
-void() zombieFast_atkl7 = [ 55, zombieFast_atkl8 ]{ai_zCharge(24);};
-void() zombieFast_atkl8 = [ 56, zombieFast_run1 ]{ai_zCharge(24);};
+void() zombieFast_atkl1 = [ 49, zombieFast_atkl2 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkl2 = [ 50, zombieFast_atkl3 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkl3 = [ 51, zombieFast_atkl4 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkl4 = [ 52, zombieFast_atkl5 ]{zf_transp(); ai_zCharge(24);zombieFast_meleeAttack();};
+void() zombieFast_atkl5 = [ 53, zombieFast_atkl6 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkl6 = [ 54, zombieFast_atkl7 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkl7 = [ 55, zombieFast_atkl8 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkl8 = [ 56, zombieFast_run1 ]{zf_transp(); ai_zCharge(24);};
 
-void() zombieFast_atkr1 = [ 57, zombieFast_atkr2 ]{ai_zCharge(24);};
-void() zombieFast_atkr2 = [ 58, zombieFast_atkr3 ]{ai_zCharge(24);};
-void() zombieFast_atkr3 = [ 59, zombieFast_atkr4 ]{ai_zCharge(24);};
-void() zombieFast_atkr4 = [ 60, zombieFast_atkr5 ]{ai_zCharge(24);zombieFast_meleeAttack();};
-void() zombieFast_atkr5 = [ 61, zombieFast_atkr6 ]{ai_zCharge(24);};
-void() zombieFast_atkr6 = [ 62, zombieFast_atkr7 ]{ai_zCharge(24);};
-void() zombieFast_atkr7 = [ 63, zombieFast_atkr8 ]{ai_zCharge(24);};
-void() zombieFast_atkr8 = [ 64, zombieFast_run1 ]{ai_zCharge(24);};
+void() zombieFast_atkr1 = [ 57, zombieFast_atkr2 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkr2 = [ 58, zombieFast_atkr3 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkr3 = [ 59, zombieFast_atkr4 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkr4 = [ 60, zombieFast_atkr5 ]{zf_transp(); ai_zCharge(24);zombieFast_meleeAttack();};
+void() zombieFast_atkr5 = [ 61, zombieFast_atkr6 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkr6 = [ 62, zombieFast_atkr7 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkr7 = [ 63, zombieFast_atkr8 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkr8 = [ 64, zombieFast_run1 ]{zf_transp(); ai_zCharge(24);};
 
-void() zombieFast_atkm1 = [ 65, zombieFast_atkm2 ]{ai_zCharge(24);};
-void() zombieFast_atkm2 = [ 66, zombieFast_atkm3 ]{ai_zCharge(24);};
-void() zombieFast_atkm3 = [ 67, zombieFast_atkm4 ]{ai_zCharge(24);};
-void() zombieFast_atkm4 = [ 68, zombieFast_atkm5 ]{ai_zCharge(24);zombieFast_meleeAttack();};
-void() zombieFast_atkm5 = [ 69, zombieFast_atkm6 ]{ai_zCharge(24);};
-void() zombieFast_atkm6 = [ 70, zombieFast_atkm7 ]{ai_zCharge(24);};
-void() zombieFast_atkm7 = [ 71, zombieFast_atkm8 ]{ai_zCharge(24);};
-void() zombieFast_atkm8 = [ 72, zombieFast_run1 ]{ai_zCharge(24);};
+void() zombieFast_atkm1 = [ 65, zombieFast_atkm2 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkm2 = [ 66, zombieFast_atkm3 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkm3 = [ 67, zombieFast_atkm4 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkm4 = [ 68, zombieFast_atkm5 ]{zf_transp(); ai_zCharge(24);zombieFast_meleeAttack();};
+void() zombieFast_atkm5 = [ 69, zombieFast_atkm6 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkm6 = [ 70, zombieFast_atkm7 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkm7 = [ 71, zombieFast_atkm8 ]{zf_transp(); ai_zCharge(24);};
+void() zombieFast_atkm8 = [ 72, zombieFast_run1 ]{zf_transp(); ai_zCharge(24);};
 
 void() zombieFast_melee =
 {
@@ -316,6 +325,7 @@ void() zombieFast_deathD10 = [ 113, zombieFast_deathD10 ]{monster_dead_dead();};
 void() zombieFast_die =
 {
 	local float r;
+	if (startskill == SKILL_NIGHTMARE) self.alpha = 0;
 
 	if (self.health < -40) {
 		sound(self, CHAN_VOICE, "zombie/z_gib.wav", 1, ATTN_NORM);
@@ -449,6 +459,8 @@ void(entity e) monster_zombie2_start =
 	self.th_die = zombieFast_die;
 	self.th_melee = zombieFast_melee;
 	self.yaw_speed = 35;
+
+	if (startskill == SKILL_NIGHTMARE) self.alpha = 0.2;
 
 	walkmonster_start ();
 

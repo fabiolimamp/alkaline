@@ -24,9 +24,9 @@ void(float ofs, float turn) Probe_laser_fire = {
 	src = self.origin + '0 0 -10' + v_right * ofs + v_forward;
 	targ = enem.origin + enem.view_ofs;
 	
-	if (startskill != 0)	{
+	if (startskill >= SKILL_NORMAL)	{
 		dist = vlen(targ - src);
-		targ = targ + enem.velocity * (dist / 1000);
+		targ = targ + enem.velocity * (dist / 5000);
 	}
 
 	vec = targ - src;
@@ -97,9 +97,9 @@ void(float ofs, float elevation) ProbeFireGrenade =
 	src = self.origin + '0 0 -10' + v_right * ofs + v_forward;
 	targ = enem.origin + enem.view_ofs;
 	
-	if (startskill != 0)	{
+	if (startskill >= SKILL_NORMAL)	{
 		dist = vlen(targ - src);
-		targ = targ + enem.velocity * (dist / 800);
+		targ = targ + enem.velocity * (dist / 3000);
 	}
 
 	vec = targ - src;

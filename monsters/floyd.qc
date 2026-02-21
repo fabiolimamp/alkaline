@@ -4,8 +4,6 @@ monster_floyd (Automaton)
 code by john fitzgibbons
 
 ==============================================================================*/
-$skin floyd
-$skin asleep
 
 $frame skin
 $frame idle1
@@ -53,14 +51,16 @@ void () floyd_walk14 = [$walk14, floyd_walk15] {ai_walk (1.875);};
 void () floyd_walk15 = [$walk15, floyd_walk16] {ai_walk (1.875);};
 void () floyd_walk16 = [$walk16, floyd_walk1]  {ai_walk (1.875);};
 
-void () floyd_run1 = [$run1, floyd_run2] {ai_run (3.75);};
-void () floyd_run2 = [$run2, floyd_run3] {ai_run (3.75);};
-void () floyd_run3 = [$run3, floyd_run4] {ai_run (3.75);};
-void () floyd_run4 = [$run4, floyd_run5] {ai_run (3.75);};
-void () floyd_run5 = [$run5, floyd_run6] {ai_run (3.75);};
-void () floyd_run6 = [$run6, floyd_run7] {ai_run (3.75);};
-void () floyd_run7 = [$run7, floyd_run8] {ai_run (3.75);};
-void () floyd_run8 = [$run8, floyd_run1] {ai_run (3.75);};
+float floyd_speed_multi;
+
+void () floyd_run1 = [$run1, floyd_run2] {ai_run (3.75 * floyd_speed_multi);};
+void () floyd_run2 = [$run2, floyd_run3] {ai_run (3.75 * floyd_speed_multi);};
+void () floyd_run3 = [$run3, floyd_run4] {ai_run (3.75 * floyd_speed_multi);};
+void () floyd_run4 = [$run4, floyd_run5] {ai_run (3.75 * floyd_speed_multi);};
+void () floyd_run5 = [$run5, floyd_run6] {ai_run (3.75 * floyd_speed_multi);};
+void () floyd_run6 = [$run6, floyd_run7] {ai_run (3.75 * floyd_speed_multi);};
+void () floyd_run7 = [$run7, floyd_run8] {ai_run (3.75 * floyd_speed_multi);};
+void () floyd_run8 = [$run8, floyd_run1] {ai_run (3.75 * floyd_speed_multi);};
 
 /*
 ================
@@ -145,6 +145,7 @@ void()	floyd_ready4	=[	$run4,		floyd_attack1	]
 {
 	ai_face();
 	if (!clean_shot (self.enemy)) self.think = floyd_run5; //abort if shot is blocked by monster or wall
+	if (startskill == SKILL_NIGHTMARE) self.think = floyd_attacknm1;
 };
 void()	floyd_attack1	=[	$attack1,	floyd_attack2	] {floyd_fire(6);};
 void()	floyd_attack2	=[	$attack2,	floyd_attack3	] {ai_face();};
@@ -154,10 +155,21 @@ void()	floyd_attack5	=[	$attack5,	floyd_attack6	] {ai_face();};
 void()	floyd_attack6	=[	$attack6,	floyd_attack7	] {ai_face();};
 void()	floyd_attack7	=[	$attack7,	floyd_attack8	] {floyd_fire(-6);};
 void()	floyd_attack8	=[	$attack8,	floyd_attack9	] {ai_face();};
-void()	floyd_attack9	=[	$attack9,	floyd_run1		]
-{	
-	ai_face();
-	SUB_CheckRefire (floyd_attack1);
+void()	floyd_attack9	=[	$attack9,	floyd_run1		]{ai_face();
+};
+
+
+void()	floyd_attacknm1	=[	$attack1,	floyd_attacknm2	] {floyd_fire(6);};
+void()	floyd_attacknm2	=[	$attack2,	floyd_attacknm3	] {ai_face(); nxth(0.05);};
+void()	floyd_attacknm3	=[	$attack3,	floyd_attacknm4	] {ai_face(); nxth(0.05);};
+void()	floyd_attacknm4	=[	$attack4,	floyd_attacknm5	] {floyd_fire(0);};
+void()	floyd_attacknm5	=[	$attack5,	floyd_attacknm6	] {ai_face(); nxth(0.05);};
+void()	floyd_attacknm6	=[	$attack6,	floyd_attacknm7	] {ai_face(); nxth(0.05);};
+void()	floyd_attacknm7	=[	$attack7,	floyd_attacknm8	] {floyd_fire(-6);};
+void()	floyd_attacknm8	=[	$attack8,	floyd_attacknm9	] {ai_face(); nxth(0.05);};
+void()	floyd_attacknm9	=[	$attack9,	floyd_run1		]{ai_face();
+ 	nxth(0.05);
+	//SUB_CheckRefire (floyd_attacknm1);
 };
 
 /*
@@ -588,12 +600,14 @@ void() monster_floyd =
 {
 	if (!SUB_InitEntity()) return;
 	
-	
 	if (deathmatch)
 	{
 		remove(self);
 		return;
 	}
+
+	if (startskill == SKILL_NIGHTMARE) floyd_speed_multi = 2;
+	else floyd_speed_multi = 1;
 
 	precache_model2("progs/floyd.mdl");
 	precache_model2("progs/flaser.mdl");

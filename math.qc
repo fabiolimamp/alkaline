@@ -16,6 +16,8 @@ float(float a, float b) mod;
 float(float x) sign;
 float(float value, float minValue, float maxValue) wrap;
 
+float(float a) saturate = { return clamp(a, 0, 1); }
+
 float(float base, float pw) pow = {
 	float ret = 1;
 	while (pw > 0) {

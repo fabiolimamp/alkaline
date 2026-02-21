@@ -8,10 +8,6 @@ NAIL GRUNT VARIANT by Greenwood, from a bit of code from Xsoldier v2
 ==============================================================================
 */
 
-$cd id1/models/soldier3
-$origin 0 -6 24
-$base base		
-$skin skin
 
 $frame stand1 stand2 stand3 stand4 stand5 stand6 stand7 stand8
 
@@ -44,9 +40,6 @@ $frame prowl_17 prowl_18 prowl_19 prowl_20 prowl_21 prowl_22 prowl_23 prowl_24
 SOLDIER CODE
 ==============================================================================
 */
-
-void() army_fire;
-void() army_firenails;
 
 
 void()	army_stand1	=[	$stand1,	army_stand2	] {ai_stand();};

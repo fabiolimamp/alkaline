@@ -87,7 +87,8 @@ void(vector org, vector vec) make_flame =
 	newmis.solid = SOLID_BBOX;
 	newmis.flags = newmis.flags | FL_PROJECTILE;
 	variance = '-10 -10 -10' + random() * '20 20 20';
-	newmis.movedir = normalize(vec) * 250 + '0 0 -50' + variance;
+	if (startskill == SKILL_NIGHTMARE) newmis.movedir = normalize(vec) * 350 + '0 0 -50' + variance;
+	else newmis.movedir = normalize(vec) * 250 + '0 0 -50' + variance;
 	newmis.velocity = newmis.movedir;
 	roll = 350 + random() * 20;
 	newmis.angles_z = anglemod(roll);

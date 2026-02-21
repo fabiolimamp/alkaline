@@ -395,25 +395,66 @@ void() ogre_smash12	=[	$smash12,		ogre_smash13 ] {ai_charge(0);};
 void() ogre_smash13	=[	$smash13,		ogre_smash14 ] {ai_charge(4);};
 void() ogre_smash14	=[	$smash14,		ogre_run1	] {ai_charge(12);};
 
+
+
+float(void() th) ogre_check_refire = {
+	if (skill != 3)
+		return FALSE;
+
+	if (self.enemy.health <= 0)
+		return FALSE;
+	
+		
+	// distance checks
+	enemy_range == range(self.enemy);
+	if (enemy_range <= RANGE_MELEE)
+	{
+		self.attack_finished = 0;
+		return FALSE;
+	}
+	else if (enemy_range >= RANGE_FAR)
+		return FALSE;
+	
+	if (!canshoot(SUB_entEnemyTarget()))
+		return FALSE;
+	
+	float r = random() * 3;
+
+	if ( r > self.cnt + 0.5 )
+	{
+		self.cnt += 1;
+		th();
+		return TRUE;
+	}
+	self.cnt = 0;
+
+	return FALSE;
+}
+
+
 void() ogre_nail1   =[  $shoot1,        ogre_nail2  ] {
-ai_face();
-self.attack_elevation = IterateElevation(OGRE_DEFAULT_ELEVATION, self.enemy.origin);
+	ai_face();
+	self.attack_elevation = IterateElevation(OGRE_DEFAULT_ELEVATION, self.enemy.origin);
 };
 void() ogre_nail2   =[  $shoot2,        ogre_nail3  ] {
-ai_face();
-self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
+	ai_face();
+	self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
 };
 void() ogre_nail3   =[  $shoot2,        ogre_nail4  ] {
-ai_face();
-self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
+	ai_face();
+	self.attack_elevation = IterateElevation(self.attack_elevation, self.enemy.origin);
 };
 void() ogre_nail4   =[  $shoot3,        ogre_nail5  ] {
-ai_face();
-OgreFireGrenade(self.attack_elevation);
+	ai_face();
+	OgreFireGrenade(self.attack_elevation);
 };
-void() ogre_nail5	=[	$shoot4,		ogre_nail6	] {ai_face();};
+void() ogre_nail5	=[	$shoot4,		ogre_nail6	] {ai_face(); ogre_check_refire(ogre_nail6l);};
 void() ogre_nail6	=[	$shoot5,		ogre_nail7	] {ai_face();};
 void() ogre_nail7	=[	$shoot6,		ogre_run1	] {ai_face();};
+
+void() ogre_nail6l	=[	$shoot6,	ogre_nail2	] {ai_face();}
+
+
 
 void() ogre_rock1   =[  $shoot1,        ogre_rock2  ] {ai_face();};
 void() ogre_rock2   =[  $shoot2,        ogre_rock3  ] {ai_face();};

@@ -97,16 +97,18 @@ void()	axe_stand10	=[	$axstnd10,	axe_stand11	] {ai_stand();};
 void()	axe_stand11	=[	$axstnd11,	axe_stand12	] {ai_stand();};
 void()	axe_stand12	=[	$axstnd12,	axe_stand1	] {ai_stand();};
 
+static float axegrunt_runmult;
+
 void()	axe_run1	=[	$axrun1,		axe_run2	] {
 	self.state = 1; // running
 if (random() < 0.2)
 	sound (self, CHAN_VOICE, "knight/idle.wav", 1,  ATTN_IDLE);
 ai_run(25);};
-void()	axe_run2	=[	$axrun2,		axe_run3	] {ai_runjump(18);};
-void()	axe_run3	=[	$axrun3,		axe_run4	] {ai_runjump(12);};
-void()	axe_run4	=[	$axrun4,		axe_run5	] {ai_runjump(25);};
-void()	axe_run5	=[	$axrun5,		axe_run6	] {ai_runjump(18);};
-void()	axe_run6	=[	$axrun6,		axe_run1	] {ai_runjump(12);};
+void()	axe_run2	=[	$axrun2,		axe_run3	] {ai_runjump(18 * axegrunt_runmult);};
+void()	axe_run3	=[	$axrun3,		axe_run4	] {ai_runjump(12 * axegrunt_runmult);};
+void()	axe_run4	=[	$axrun4,		axe_run5	] {ai_runjump(25 * axegrunt_runmult);};
+void()	axe_run5	=[	$axrun5,		axe_run6	] {ai_runjump(18 * axegrunt_runmult);};
+void()	axe_run6	=[	$axrun6,		axe_run1	] {ai_runjump(12 * axegrunt_runmult);};
 
 
 void()    axe_walk1    =[    $rockrun1,        axe_walk2    ] {self.nextthink = time + 0.15;
@@ -150,10 +152,10 @@ if (random() > 0.5)
 	sound (self, CHAN_WEAPON, "knight/sword2.wav", 1, ATTN_NORM);
 else
 	sound (self, CHAN_WEAPON, "knight/sword1.wav", 1, ATTN_NORM);
-ai_charge(30);
+ai_charge(30 * axegrunt_runmult);
 };
-void()	axe_runatka2	=[	$axatt2,		axe_runatka3	] {ai_charge(20);};
-void()	axe_runatka3	=[	$axatt3,		axe_runatka4	] {ai_charge(10); axe_chop('0 0 0');};
+void()	axe_runatka2	=[	$axatt2,		axe_runatka3	] {ai_charge(20 * axegrunt_runmult);};
+void()	axe_runatka3	=[	$axatt3,		axe_runatka4	] {ai_charge(10 * axegrunt_runmult); axe_chop('0 0 0');};
 void()	axe_runatka4	=[	$axatt4,		axe_runatka5	] {axe_chop('50 -20 10');};
 void()	axe_runatka5	=[	$axatt5,		axe_runatka6	] {axe_chop('100 -40 10');};
 void()	axe_runatka6	=[	$axatt6,		axe_run1	] {ai_charge_side();};
@@ -163,10 +165,10 @@ if (random() > 0.5)
 	sound (self, CHAN_WEAPON, "knight/sword2.wav", 1, ATTN_NORM);
 else
 	sound (self, CHAN_WEAPON, "knight/sword1.wav", 1, ATTN_NORM);
-ai_charge(30);
+ai_charge(30 * axegrunt_runmult);
 };
-void()	axe_runatkb2	=[	$axattb2,		axe_runatkb3	] {ai_charge(20);};
-void()	axe_runatkb3	=[	$axattb3,		axe_runatkb4	] {ai_charge(10); axe_chop('0 0 0');};
+void()	axe_runatkb2	=[	$axattb2,		axe_runatkb3	] {ai_charge(20 * axegrunt_runmult);};
+void()	axe_runatkb3	=[	$axattb3,		axe_runatkb4	] {ai_charge(10 * axegrunt_runmult); axe_chop('0 0 0');};
 void()	axe_runatkb4	=[	$axattb4,		axe_runatkb5	] {axe_chop('40 75 10');};
 void()	axe_runatkb5	=[	$axattb5,		axe_runatkb6	] {axe_chop('80 150 20');};
 void()	axe_runatkb6	=[	$axattb6,		axe_run1	] {ai_charge_side();};
@@ -176,10 +178,10 @@ if (random() > 0.5)
 	sound (self, CHAN_WEAPON, "knight/sword2.wav", 1, ATTN_NORM);
 else
 	sound (self, CHAN_WEAPON, "knight/sword1.wav", 1, ATTN_NORM);
-ai_charge(30);
+ai_charge(30 * axegrunt_runmult);
 };
-void()	axe_runatkc2	=[	$axattc2,		axe_runatkc3	] {ai_charge(20);};
-void()	axe_runatkc3	=[	$axattc3,		axe_runatkc4	] {ai_charge(10); axe_chop('0 0 0');};
+void()	axe_runatkc2	=[	$axattc2,		axe_runatkc3	] {ai_charge(20 * axegrunt_runmult);};
+void()	axe_runatkc3	=[	$axattc3,		axe_runatkc4	] {ai_charge(10 * axegrunt_runmult); axe_chop('0 0 0');};
 void()	axe_runatkc4	=[	$axattc4,		axe_runatkc5	] {axe_chop('60 0 10');};
 void()	axe_runatkc5	=[	$axattc5,		axe_runatkc6	] {axe_chop('120 0 20');};
 void()	axe_runatkc6	=[	$axattc6,		axe_run1	] {ai_charge_side();};
@@ -189,10 +191,10 @@ if (random() > 0.5)
 	sound (self, CHAN_WEAPON, "knight/sword2.wav", 1, ATTN_NORM);
 else
 	sound (self, CHAN_WEAPON, "knight/sword1.wav", 1, ATTN_NORM);
-ai_charge(30);
+ai_charge(30 * axegrunt_runmult);
 };
-void()	axe_runatkd2	=[	$axattd2,		axe_runatkd3	] {ai_charge(20);};
-void()	axe_runatkd3	=[	$axattd3,		axe_runatkd4	] {ai_charge(10); axe_chop('0 0 0');};
+void()	axe_runatkd2	=[	$axattd2,		axe_runatkd3	] {ai_charge(20 * axegrunt_runmult);};
+void()	axe_runatkd3	=[	$axattd3,		axe_runatkd4	] {ai_charge(10 * axegrunt_runmult); axe_chop('0 0 0');};
 void()	axe_runatkd4	=[	$axattd4,		axe_runatkd5	] {axe_chop('30 -75 100');};
 void()	axe_runatkd5	=[	$axattd5,		axe_runatkd6	] {axe_chop('60 -150 200');};
 void()	axe_runatkd6	=[	$axattd6,		axe_run1	] {ai_charge_side();};
@@ -394,6 +396,12 @@ void() monster_axegrunt =
 {
 	if (!SUB_InitEntity()) return;
 	
+	if (startskill == SKILL_NIGHTMARE)
+		axegrunt_runmult = 1.2;
+	else
+		axegrunt_runmult = 1;
+
+
 	if (deathmatch)
 	{
 		remove(self);
