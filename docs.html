@@ -19,6 +19,8 @@ body {
 <ul>
 	<li><a href="#philosophy">Philosophy</a></li>
 
+	<li><a href="#how-to-use">How to use the Devkit</a></li>
+
 	<li>
 		<a href="#monsters">Monsters</a>
 		<ul>
@@ -231,10 +233,27 @@ body {
 	Alkaline was originally built upon Rubicon 2 codebase. But over our development period, a great deal of code ended up being changed. Lots of new features, monsters, items, powerups, bug corrections... So it grew up into its own thing. We've borrowed ideas (or entire features altogether) from all the great mods and mod frameworks of our time. Copper, Arcane Dimensions, progs_dump, Zerstorer, Malice, Rubicon Rumble Pack, Quoth... you name it. Also we've got a bunch of exclusive features. Our main focus was on things that we felt would be nice to have in all kinds of base-themed maps.
 </p>
 <p>
-	We've decided to not change anything gameplay-related. All original weapons, monsters and items behave almost exactly the way you've known and loved for the last 25 years. We think it's laudable what mods like Copper or AD have done to improve balance and gameplay, but our intention was to expand over the solid gameplay foundations that vanilla Quake laid, and add a load of new features and mapping quality-of-life enhancements on top of it.
+	A few behaviors have been slightly changed/rebalanced compared to vanilla. It wasn't our intention to do a more comprehensive rebalance such as in Copper, but for some things that we felt that could be slightly improved, we did. But the true focus of the mod was to bring in a load of new features and mapping quality-of-life enhancements, besides the new monsters and weapons.
 </p>
 <p>
 	We'll do a more in-depth walkthrough into Alkaline's features, so any mapper can take it as a framework for their own map or mod. We've decided to go through everything that's been changed from vanilla instead of pure Rubicon 2, for an easier understanding.
+</p>
+
+
+<hr>
+
+<h2 id="how-to-use">How to use the Devkit</h2>
+
+<p>
+	The mod's core files are meant to be packed with your release. Everything needed for Alkaline to work is inside the pak0.pak file, so you can simply create a separate game folder for your release, throw in your map(s) and the pak0 file, and you're all set.
+</p>
+
+<p>
+	Included in the zip are some extra misc assets you can use, such as looping ambient sounds, inside /sound/ambient/, for use with the ambient_general entity, and additional model props, inside the /progs/ folder, for use with misc_model or misc_modeltrain.
+</p>
+
+<p>
+	These files aren't necessary for the mod to work, so pick only the ones you're eventually using in your map(s) when packing your release. <b>Don't throw the totality of the devkit contents into it!</b>
 </p>
 
 <hr>
@@ -1104,6 +1123,7 @@ The activator's bounding box can be changed as well by activating spawnflag 1.</
 	<li><strong>tracers</strong> (impulse 42): Toggles bullet tracers for hitscan weapons. Default on.</li>
 	<li><strong>playertracers</strong> (impulse 43): Toggles bullet tracers for the player weapons as well. Default off.</li>
 	<li><strong>resetalkalinesettings</strong> (impulse 40): Resets all the options above to their default values.</li>
+	<li><strong>cyclehud</strong> (impulse 50): Cycles HUD styles between Modern, Classic and Quakeworld. Bound to the <b>H</b> key by default.</li>
 </ul>
 
 <h3 id="cheats">Cheats commands</h3>
