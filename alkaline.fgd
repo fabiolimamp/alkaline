@@ -1392,7 +1392,8 @@ Big banner is twice as big: 128 wide by 288 long."
 
 @PointClass base(Appearflags, Targetname) size(32 32 16) color(255 128 0) studio({ "path" : mdl, "skin" : skin, "frame" : frame}) = misc_model :
 "A point entity for displaying models. A frame range can be given to animate the model.
-Can be toggled visible/invisible when targeted.
+Can be toggled visible/invisible, or make animation stop/resume when targeted.
+Setting it inactive with a target_setstate stops the animation.
 If you use a rotating model, make sure to enable the 'Don't make static' spawnflag.
 
 mdl: The model to display. Can be of type mdl, bsp, or spr.
@@ -1422,6 +1423,8 @@ mdlsz: entity size (x y z)
 			2: "Solid" : 0
 			4: "Start invisible" : 0
 			8: "Don't make static" : 0
+			16: "Toggling stops animation" : 0
+			32: "Animation starts off" : 0
 		]
 ]
 

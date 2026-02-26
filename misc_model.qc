@@ -16,25 +16,27 @@ last_frame: The last frame of the animation.
 
 float MISC_MODEL_GRAVITY = 1;
 float MISC_MODEL_SOLID = 2;
-float MISC_MODEL_STARTOFF = 4;
+float MISC_MODEL_STARTINVISIBLE = 4;
 float MISC_MODEL_DONTMAKESTATIC = 8;
+float MISC_MODEL_TOGGLEANIMATION = 16;
+float MISC_MODEL_STARTSTOPPED = 32;
 
 void() misc_model_use = {
-	if (self.state == STATE_ACTIVE) {
-		if (self.spawnflags & MISC_MODEL_SOLID) self.solid = SOLID_NOT;
-		self.model = "";
 
-		self.state = STATE_INVISIBLE;
-		setorigin(self, self.origin);
+	if (self.estate == STATE_ACTIVE) {
+		if (self.spawnflags & MISC_MODEL_TOGGLEANIMATION)
+			self.estate = STATE_INACTIVE;
+		else {
+			entity_set_state_hide(self);
+			self.estate = STATE_INVISIBLE;
+		}
 	}
 	else {
-		if (self.spawnflags & MISC_MODEL_SOLID) self.solid = SOLID_BBOX;
-		self.model = self.mdl;
-
-		self.state = STATE_ACTIVE;
-		setorigin(self, self.origin);
+		if (self.estate == STATE_INVISIBLE) entity_set_state_unhide(self);
+		self.estate = STATE_ACTIVE;
 	}
 };
+
 
 void() misc_model_think = {
     self.nextthink = time + fabs(self.speed);
@@ -43,6 +45,7 @@ void() misc_model_think = {
     self.frame = self.frame + sign(self.speed);
     self.frame = wrap(self.frame, self.first_frame, self.last_frame);
 };
+
 
 void() misc_model = {
 	if (!SUB_InitEntity()) return;
@@ -101,12 +104,13 @@ void() misc_model = {
 	    self.nextthink = time + self.speed;
 	    self.think = misc_model_think;
 	}
-
-	if (self.spawnflags & MISC_MODEL_STARTOFF)
-		self.state = STATE_ACTIVE;
-	else
-		self.state = STATE_INVISIBLE;
-
-	misc_model_use();
+	//self.th_setstate = misc_model_setstate;
+	if (self.spawnflags & MISC_MODEL_STARTINVISIBLE){
+		entity_set_state_hide(self);
+		self.estate = STATE_INVISIBLE;
+	}
+	else if (self.spawnflags & MISC_MODEL_STARTSTOPPED)
+		self.estate = STATE_INACTIVE;
+	
 };
 
