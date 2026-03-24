@@ -428,8 +428,9 @@ void() rider_rail10 = 	[51, rider_rail11]	{ai_face(); rider_think(); Rider_Push(
 void() rider_rail11 = 	[52, rider_rail12]	{rider_think_rail(36, -12); };
 void() rider_rail12 = 	[52, rider_rail13]	{rider_think_rail(37, -12); };
 void() rider_rail13 = 	[52, rider_rail14]	{rider_think_rail(38, -12); sound(self, CHAN_VOICE, "rider/rail.wav", 1, ATTN_NORM); };
-void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); if(startskill == SKILL_EASY) rider_aim(3); self.effects = 0;};
-void() rider_rail15 = 	[52, rider_rail16]	{rider_think_rail(38, -12); if(startskill != SKILL_NORMAL) rider_aim(2);};
+void() rider_rail14 = 	[52, rider_rail15]	{rider_think_rail(38, -12); if (startskill == SKILL_EASY) rider_aim(3); self.effects = 0;};
+void() rider_rail15 = 	[52, rider_rail16]	{rider_think_rail(38, -12); if (startskill == SKILL_NORMAL || startskill == SKILL_HARD) rider_aim(2);
+if (startskill >= SKILL_NIGHTMARE) rider_aim(1.6);};
 void() rider_rail16 = 	[52, rider_rail17]	{rider_think_rail(38, -12); };
 void() rider_rail17 = 	[52, rider_rail18]	{rider_think_rail(38, -12); rider_rail_shoot();self.effects = EF_MUZZLEFLASH;};
 void() rider_rail18 = 	[52, rider_rail19]	{rider_think_rail(39, -12); };
