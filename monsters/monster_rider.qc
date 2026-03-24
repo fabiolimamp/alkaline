@@ -370,7 +370,11 @@ void() rider_rail_shoot =
 	traceline(src, shotdest, FALSE, self);
 	
 	if (trace_fraction < 1) {
-		if (trace_ent.health > 0) T_Damage(trace_ent, self, self, 50, DMGTYPE_BALLISTIC);
+		float dmg;
+		if (startskill == SKILL_NIGHTMARE) dmg = 50;
+		else dmg = 40;
+		
+		if (trace_ent.health > 0) T_Damage(trace_ent, self, self, dmg, DMGTYPE_BALLISTIC);
 	}
 
 	shotdistance = vlen(src - trace_endpos);
