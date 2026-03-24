@@ -2413,15 +2413,22 @@ entity(string matchstring, .string matchfield) findRandomEntity = {
 trigger_mirror
 
 =============================================================
+
+mirrorentity/mirrorentity2 = the reflected entity across the mirror
+mirrorentity.enemy = the trigger_mirror entity controlling this reflection
 */
+
 
 void() trigger_mirror = {
 	if (!SUB_InitEntity()) return;
 
 	if (self.angles == '0 0 0') self.angles = '0 360 0';
-
+	
 	InitTrigger();
-	/*
+	self.movedir_x = rint(self.movedir_x);
+	self.movedir_y = rint(self.movedir_y);
+	self.movedir_z = rint(self.movedir_z);
+
 	if (
 		(fabs(self.movedir_x) && (fabs(self.movedir_y) || fabs(self.movedir_z))) ||
 		(fabs(self.movedir_y) && (fabs(self.movedir_x) || fabs(self.movedir_z))) ||
@@ -2430,7 +2437,7 @@ void() trigger_mirror = {
 		dprint3("\bWARNING\b: trigger_mirror near ", vtos((self.absmin + self.absmax)/2), " with non-orthogonal angles\n");
 		return;
 	}
-	*/
+	
 	if (self.count == 0) self.count = 1;
 
 	self.touch = trigger_mirror_touch;
@@ -2515,8 +2522,8 @@ void() mirrorent_think = {
 
 	vector offs = self.owner.origin - self.enemy.pos1; // offset from real entity to real side
 	
-	if (fabs(self.enemy.movedir_x)) offs_x *= -1;
-	else if (fabs(self.enemy.movedir_y)) offs_y *= -1;
+	if (self.enemy.movedir_x) offs_x *= -1;
+	else if (self.enemy.movedir_y) offs_y *= -1;
 	else offs_z *= -1;
 
 	setorigin(self, self.enemy.pos2 + offs);
@@ -2531,10 +2538,12 @@ void() mirrorent_think = {
 	
 	self.angles = self.owner.angles;
 
-	if (fabs(self.enemy.movedir_z)) {
+	if (self.enemy.movedir_z)
 		self.angles_z = 180 - self.owner.angles_z;
-	}
-	else self.angles_y = 180 - self.owner.angles_y;
+	else if (self.enemy.movedir_x)
+		self.angles_y = 180 - self.owner.angles_y;
+	else if (self.enemy.movedir_y)
+		self.angles_y = 180 - self.owner.angles_y + 180;
 
 	self.think = mirrorent_think;
 	self.nextthink = time + 0.025;
