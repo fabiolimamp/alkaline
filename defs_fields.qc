@@ -695,4 +695,6 @@ float prevdoornum;
 .float autojump;
 .float autojump_block_finished;
 
+.entity textstory_helper;
+
 //.entity camera_current;

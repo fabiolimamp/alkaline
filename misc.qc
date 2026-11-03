@@ -1533,26 +1533,14 @@ void(entity controller) textstory_show = {
 	self.state = 1;
 };
 
+void(entity tgt) textstory_clearhelper = {
+	if (tgt.textstory_helper.classname != "textstory_helper") return;
+	remove(tgt.textstory_helper);
+	tgt.textstory_helper = world;
+}
+
+
 //----------------------------------------
-
-void() trigger_textstory_hide = {
-	textstory_hide(self);
-
-	self.pain_finished = 0;
-	self.enemy = world;
-	self.state = 0;
-};
-
-void() trigger_textstory_show = {
-	textstory_show(self);	
-
-	if (time > self.pain_finished)
-		self.think = trigger_textstory_hide;
-	else
-		self.think = trigger_textstory_show;
-	self.nextthink = time + 0.2;
-
-};
 
 void() trigger_textstory_touch = {
 	
@@ -1565,16 +1553,21 @@ void() trigger_textstory_touch = {
 	if (self.mangle && !isInAngle(other.v_angle, self.mangle, self.view_ofs))
 		return;
 
-	if (!self.pain_finished) {
-		self.pain_finished = time + self.wait;
+	if (other.textstory_helper.owner != self){
+		//dprint("Resetting helper\n");
+		textstory_clearhelper(other);
+		textstory_spawn_helper(other);
+		return;
 	}
 
-	if (self.attack_finished < time) {
+	entity helper = other.textstory_helper;
 
-		self.attack_finished = time + 0.1;
-		self.enemy = other;
+	if (helper.pain_finished < time) {
 
-		trigger_textstory_show();
+		helper.pain_finished = time + 0.1;
+		helper.enemy = other;
+		helper.think = textstory_helper_show;
+		helper.nextthink = time + 0.1;
 	}
 };
 
@@ -1611,53 +1604,53 @@ void() trigger_textstory = {
 //-----------------------------
 
 
-void() target_textstory_helper_hide = {
+void() textstory_helper_hide = {
 
 	textstory_hide(self.owner);
+	self.enemy.textstory_helper = world;
 	remove(self);
 };
 
-void() target_textstory_helper_show = {
+
+void() textstory_helper_show = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) {
+		if (self.enemy.textstory_helper == self)
+			textstory_clearhelper(self.enemy);
+
 		remove(self);
 		return;
 	}
 
+	if (self.enemy.textstory_helper != self)
+		textstory_clearhelper(self.enemy);
+
 	textstory_show(self.owner);
 
-	if (self.attack_finished < time) self.think = target_textstory_helper_hide;
+	self.enemy.textstory_helper = self;
+
+	if (self.attack_finished < time) self.think = textstory_helper_hide;
 	
 	self.nextthink = time + 0.1;
 };
 
-void(entity tgt) target_textstory_spawn_helper = {
+void(entity tgt) textstory_spawn_helper = {
 	entity e;
 
 	e = spawn();
-	e.classname = "target_textstory_helper";
+	e.classname = "textstory_helper";
 	e.owner = self;
-	e.think = target_textstory_helper_show;
+	e.think = textstory_helper_show;
 	e.nextthink = time + 0.1;
 	e.attack_finished = time + self.wait;
 	e.enemy = tgt;
 };
 
-void() target_textstory_use = {
 
+void() target_textstory_use = {
 	if (!(activator.flags & FL_CLIENT)) return;
 	if (self.estate != STATE_ACTIVE) return;
-	
-	entity t;
-
-	if (self.spawnflags & TRIGGER_CENTERPRINTALL) {
-		t = find(world, classname, "player");
-		while (t) {
-			target_textstory_spawn_helper(t);
-			t = find(t, classname, "player");
-		}
-	}
-	else
-		target_textstory_spawn_helper(activator);
+		
+	textstory_spawn_helper(activator);
 };
 
 void() target_textstory = {
