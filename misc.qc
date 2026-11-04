@@ -1490,9 +1490,18 @@ trigger_textstory
 
 =============================================================
 */
+
+/*
+player holds a reference to the helper in .textstory_helper
+helper's enemy is the player
+helper's owner is the textstory entity
+textstory entity is the controller
+*/
+
 float TEXTSTORY_SILENT = 1;
 float TEXTSTORY_NOFADE = 2;
 
+// self is the helper
 void(entity controller) textstory_hide = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
 
@@ -1506,6 +1515,7 @@ void(entity controller) textstory_hide = {
 		csf_fade_clear(self.enemy, 0.5, 110);
 };
 
+// self is the helper
 void(entity controller) textstory_show = {
 	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) return;
 
@@ -1533,6 +1543,53 @@ void(entity controller) textstory_show = {
 	self.state = 1;
 };
 
+
+//-----------------------------
+
+// self is helper
+void() textstory_helper_hide = {
+
+	textstory_hide(self.owner);
+	self.enemy.textstory_helper = world;
+	remove(self);
+};
+
+// self is helper
+void() textstory_helper_show = {
+	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) {
+		if (self.enemy.textstory_helper == self)
+			textstory_clearhelper(self.enemy);
+
+		remove(self);
+		return;
+	}
+
+	if (self.enemy.textstory_helper != self)
+		textstory_clearhelper(self.enemy);
+	
+	textstory_show(self.owner);
+
+	self.enemy.textstory_helper = self;
+
+	if (self.attack_finished < time) self.think = textstory_helper_hide;
+	
+	self.nextthink = time + 0.1;
+};
+
+// tgt is the player
+void(entity tgt) textstory_spawn_helper = {
+	entity e;
+
+	e = spawn();
+	e.classname = "textstory_helper";
+	e.owner = self;
+	e.think = textstory_helper_show;
+	e.nextthink = time + 0.0001;
+	e.attack_finished = time + self.wait;
+	e.enemy = tgt;
+};
+
+// tgt is the player
 void(entity tgt) textstory_clearhelper = {
 	if (tgt.textstory_helper.classname != "textstory_helper") return;
 	remove(tgt.textstory_helper);
@@ -1542,13 +1599,11 @@ void(entity tgt) textstory_clearhelper = {
 
 //----------------------------------------
 
+
 void() trigger_textstory_touch = {
 	
 	if (!(other.flags & FL_CLIENT)) return;
 	if (self.estate != STATE_ACTIVE) return;
-
-	// don't show message if another player is already triggering it
-	if (other != self.enemy && self.state == 1) return;
 
 	if (self.mangle && !isInAngle(other.v_angle, self.mangle, self.view_ofs))
 		return;
@@ -1600,50 +1655,7 @@ void() trigger_textstory = {
 	SUB_CheckWaiting();
 };
 
-
-//-----------------------------
-
-
-void() textstory_helper_hide = {
-
-	textstory_hide(self.owner);
-	self.enemy.textstory_helper = world;
-	remove(self);
-};
-
-
-void() textstory_helper_show = {
-	if (!self.enemy || !(self.enemy.flags & FL_CLIENT)) {
-		if (self.enemy.textstory_helper == self)
-			textstory_clearhelper(self.enemy);
-
-		remove(self);
-		return;
-	}
-
-	if (self.enemy.textstory_helper != self)
-		textstory_clearhelper(self.enemy);
-
-	textstory_show(self.owner);
-
-	self.enemy.textstory_helper = self;
-
-	if (self.attack_finished < time) self.think = textstory_helper_hide;
-	
-	self.nextthink = time + 0.1;
-};
-
-void(entity tgt) textstory_spawn_helper = {
-	entity e;
-
-	e = spawn();
-	e.classname = "textstory_helper";
-	e.owner = self;
-	e.think = textstory_helper_show;
-	e.nextthink = time + 0.1;
-	e.attack_finished = time + self.wait;
-	e.enemy = tgt;
-};
+//----------------------------------------
 
 
 void() target_textstory_use = {
