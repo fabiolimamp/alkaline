@@ -131,6 +131,10 @@ void() banshee_think = {
 	setorigin(self.trigger_field, self.origin);
 	self.trigger_field.frame = self.frame;
 
+	// set a dummy think on the trigger field as well to smooth out animation lerping
+	self.trigger_field.nextthink = self.nextthink;
+	self.trigger_field.think = SUB_Null;
+
 	SUB_Copyonground();
 
 	self.trigger_field.angles = self.angles;
@@ -170,6 +174,8 @@ void() ban_thinkwalk = {
 	local float angdelta;
 
 	setorigin(self.trigger_field, self.origin);
+	self.trigger_field.nextthink = self.nextthink;
+	self.trigger_field.think = SUB_Null;
 	SUB_Copyonground();
 	self.trigger_field.angles = self.angles;
 	self.trigger_field.frame = self.frame;
@@ -198,9 +204,9 @@ void() ban_thinkwalk = {
 
 
 void(float next) banshee_stand_frame = {
+	self.nextthink = time + next;
 	ai_stand();
 	banshee_think();
-	self.nextthink = time + next;
 };
 
 void() banshee_stand1 = 	[0, banshee_stand2]		{banshee_stand_frame(0.1); };
@@ -339,27 +345,27 @@ void() ban_launch_field12 = [43, banshee_plant1]		{banshee_think(); SUB_AttackFi
 
 
 
-void() banshee_die1 = 	[57, banshee_die2]		{banshee_think(); self.nextthink = time + 0.2; sound(self, CHAN_AUTO, "banshee/death.wav", 1, ATTN_NORM); };
-void() banshee_die2 = 	[58, banshee_die3]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die3 = 	[59, banshee_die4]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die4 = 	[60, banshee_die5]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die5 = 	[61, banshee_die6]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die6 = 	[62, banshee_die7]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die7 = 	[63, banshee_die8]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die8 = 	[64, banshee_die9]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die9 = 	[65, banshee_die10]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die10 = 	[66, banshee_die11]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die11 = 	[67, banshee_die12]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die12 = 	[68, banshee_die13]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die13 = 	[69, banshee_die14]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die14 = 	[70, banshee_die15]		{banshee_think(); self.nextthink = time + 0.2; };
-void() banshee_die15 = 	[71, banshee_die16]		{banshee_think(); self.nextthink = time + 0.1;
+void() banshee_die1 = 	[57, banshee_die2]		{nxth(0.2); banshee_think(); sound(self, CHAN_AUTO, "banshee/death.wav", 1, ATTN_NORM); };
+void() banshee_die2 = 	[58, banshee_die3]		{nxth(0.2); banshee_think(); };
+void() banshee_die3 = 	[59, banshee_die4]		{nxth(0.2); banshee_think(); };
+void() banshee_die4 = 	[60, banshee_die5]		{nxth(0.2); banshee_think(); };
+void() banshee_die5 = 	[61, banshee_die6]		{nxth(0.2); banshee_think(); };
+void() banshee_die6 = 	[62, banshee_die7]		{nxth(0.2); banshee_think(); };
+void() banshee_die7 = 	[63, banshee_die8]		{nxth(0.2); banshee_think(); };
+void() banshee_die8 = 	[64, banshee_die9]		{nxth(0.2); banshee_think(); };
+void() banshee_die9 = 	[65, banshee_die10]		{nxth(0.2); banshee_think(); };
+void() banshee_die10 = 	[66, banshee_die11]		{nxth(0.2); banshee_think(); };
+void() banshee_die11 = 	[67, banshee_die12]		{nxth(0.2); banshee_think(); };
+void() banshee_die12 = 	[68, banshee_die13]		{nxth(0.2); banshee_think(); };
+void() banshee_die13 = 	[69, banshee_die14]		{nxth(0.2); banshee_think(); };
+void() banshee_die14 = 	[70, banshee_die15]		{nxth(0.2); banshee_think(); };
+void() banshee_die15 = 	[71, banshee_die16]		{banshee_think();;
 	sound(self, CHAN_WEAPON, "doors/airdoor2.wav", 1, ATTN_NORM);
 	sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE);
 };
-void() banshee_die16 = 	[72, banshee_die17]		{banshee_think(); self.nextthink = time + 0.1; };
-void() banshee_die17 = 	[73, banshee_die18]		{banshee_think(); self.nextthink = time + 0.1; };
-void() banshee_die18 = 	[74, banshee_die19]		{banshee_think(); self.nextthink = time + 0.1; sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE); };
+void() banshee_die16 = 	[72, banshee_die17]		{banshee_think();};
+void() banshee_die17 = 	[73, banshee_die18]		{banshee_think();};
+void() banshee_die18 = 	[74, banshee_die19]		{banshee_think();sound(self, CHAN_VOICE, "doors/drclos4.wav", 1, ATTN_NONE); };
 void() banshee_die19 = 	[74, banshee_die19]		{self.solid = SOLID_TRIGGER; setorigin(self, self.origin); monster_dead_dead();};
 
 
