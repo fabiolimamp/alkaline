@@ -187,14 +187,8 @@ ShalMissile
 
 void() ShalMissile =
 {
-	local	vector	dir;
-	local	float	dist, flytime;
-
-	dir = normalize((self.enemy.origin + '0 0 10') - self.origin);
-	dist = vlen (self.enemy.origin - self.origin);
-	flytime = dist * 0.002;
-	if (flytime < 0.1)
-		flytime = 0.1;
+	
+	vector	dir = normalize((self.enemy.origin + '0 0 10') - self.origin);
 
 	self.effects = self.effects | EF_MUZZLEFLASH;
 	sound (self, CHAN_WEAPON, "shalrath/attack2.wav", 1, ATTN_NORM);
@@ -216,7 +210,7 @@ void() ShalMissile =
 	newmis.origin = self.origin + '0 0 10';
 	newmis.velocity = dir * 400;
 	newmis.avelocity = '300 300 300';
-	newmis.nextthink = flytime + time;
+	newmis.nextthink = time + 0.1;
 	newmis.lifetime_finished = time + 30;	 // blow up after a while
 	newmis.think = ShalHome2;
 	newmis.enemy = self.enemy;
